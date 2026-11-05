@@ -1,0 +1,32 @@
+I had ChatGPT review, merge, and test my Python Tkinter addition calculator.
+
+Previously, you fixed a layout issue where adding a third addend caused the keypad, including the `0` button, to shift downward. However, that revision also restored older arithmetic code and removed two improvements that had already been implemented.
+
+ChatGPT has now restored the improvements while preserving your keypad layout correction.
+
+**The final version includes:**
+
+1. Fixed-point decimal formatting so small results are shown without scientific notation.
+2. Dynamically calculated decimal precision instead of a fixed 1,000-digit setting.
+3. The existing bottom-anchored keypad layout so adding another addend does not move the `0` button.
+4. The existing addition, clearing, backspace, and continued-calculation behavior.
+
+**Testing completed:**
+- 14 of 14 functional tests passed.
+- Decimal calculations beyond 1,000 digits passed.
+- Creating the third addend did not move the keypad or the `0` button in the virtual-display test.
+- Python syntax compilation passed.
+
+**Important instructions for future modifications:**
+
+Please use the newest working version as the base for every change. Do not replace the entire program with an older version when fixing an unrelated problem.
+
+Before modifying anything, identify which functions need changing. Preserve existing fixes unless I explicitly request their removal.
+
+After every change, test both the new functionality and the previously fixed behavior.
+
+In particular, do not reintroduce `decimal.getcontext().prec = 1000`, do not replace the fixed-point formatting with `str(total)`, and do not change the keypad layout in a way that causes the buttons to shift when new addends appear.
+
+If you think an existing feature must be changed or removed, explain why before doing so.
+
+The goal is to improve the calculator incrementally without undoing previous improvements.
