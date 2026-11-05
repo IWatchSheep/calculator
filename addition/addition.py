@@ -1,5 +1,14 @@
-from decimal import Decimal, InvalidOperation, localcontext
+import re
 import tkinter as tk
+
+try:
+    from calculator_core.expression import evaluate_addition
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from calculator_core.expression import evaluate_addition
+
 
 class AdditionCalculator:
     BASE_WIDTH: int = 18
@@ -154,10 +163,11 @@ class AdditionCalculator:
 
     def _create_keypad(self) -> None:
         buttons = [
-            ("7", 0, 0), ("8", 0, 1), ("9", 0, 2), ("+", 0, 3),
-            ("4", 1, 0), ("5", 1, 1), ("6", 1, 2), ("C", 1, 3),
-            ("1", 2, 0), ("2", 2, 1), ("3", 2, 2), ("=", 2, 3),
-            ("0", 3, 0), (".", 3, 2),
+            ("(", 0, 0), (")", 0, 2),
+            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("+", 1, 3),
+            ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("C", 2, 3),
+            ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("=", 3, 3),
+            ("0", 4, 0), (".", 4, 2),
         ]
 
         for text, r, c in buttons:
@@ -184,7 +194,7 @@ class AdditionCalculator:
                 activebackground="#cccccc",
                 command=cmd,
             )
-            if text == "0":
+            if text in ("0", "(", ")"):
                 btn.grid(row=r, column=c, columnspan=2, padx=4, pady=4, sticky="nsew")
             elif text == "=":
                 btn.grid(row=r, column=c, rowspan=2, padx=4, pady=4, sticky="nsew")
@@ -204,6 +214,10 @@ class AdditionCalculator:
         self.root.bind("<BackSpace>", lambda _e: self.on_backspace())
         self.root.bind(".", lambda _e: self.on_button_click("."))
         self.root.bind("<KP_Decimal>", lambda _e: self.on_button_click("."))
+        self.root.bind("(", lambda _e: self.on_button_click("("))
+        self.root.bind(")", lambda _e: self.on_button_click(")"))
+        self.root.bind("<parenleft>", lambda _e: self.on_button_click("("))
+        self.root.bind("<parenright>", lambda _e: self.on_button_click(")"))
 
     def _set_active_index(self, index: int) -> None:
         self.current_index = index
@@ -273,6 +287,8 @@ class AdditionCalculator:
             self.handle_plus()
         elif char == ".":
             self.handle_decimal()
+        elif char in ("(", ")"):
+            self.handle_parenthesis(char)
         else:
             self.handle_digit(char)
 
@@ -284,12 +300,25 @@ class AdditionCalculator:
         self.addend_vars[self.current_index].set(self.addends[self.current_index])
         self._update_entry_widths()
 
+    def handle_parenthesis(self, paren: str) -> None:
+        if self.calculated:
+            self.clear_all()
+        cur = self.addends[self.current_index]
+        self.addends[self.current_index] = cur + paren
+        self.addend_vars[self.current_index].set(self.addends[self.current_index])
+        self._update_entry_widths()
+
     def handle_decimal(self) -> None:
         if self.calculated:
             self.clear_all()
         cur = self.addends[self.current_index]
-        if "." not in cur:
-            self.addends[self.current_index] = cur + "." if cur else "0."
+        tokens = re.split(r"[^\d.]+", cur)
+        last_num = tokens[-1] if tokens else ""
+        if "." not in last_num:
+            if not cur or cur[-1] in "( +":
+                self.addends[self.current_index] = cur + "0."
+            else:
+                self.addends[self.current_index] = cur + "."
             self.addend_vars[self.current_index].set(self.addends[self.current_index])
             self._update_entry_widths()
 
@@ -297,9 +326,10 @@ class AdditionCalculator:
         if self.calculated:
             res = self.result_var.get()
             self.clear_all()
-            self.addends[0] = res
-            self.addend_vars[0].set(res)
-            self.current_index = 1
+            if res != "Error":
+                self.addends[0] = res
+                self.addend_vars[0].set(res)
+                self.current_index = 1
             self.calculated = False
             self._update_active_highlight()
             self._update_entry_widths()
@@ -350,48 +380,31 @@ class AdditionCalculator:
             return
 
         cleaned: list[str] = []
-        has_decimal = False
         for a in self.addends:
             s = a.strip()
             if s:
                 if s.endswith("."):
                     s += "0"
-                if "." in s:
-                    has_decimal = True
                 cleaned.append(s)
 
         if not cleaned:
             return
 
-        try:
-            if has_decimal:
-                values = [Decimal(s) for s in cleaned]
+        expr = ""
+        for part in cleaned:
+            if not expr:
+                expr = part
+            elif expr.endswith("+") or part.startswith("+"):
+                expr = f"{expr} {part}"
             else:
-                values = [int(s) for s in cleaned]
-        except (InvalidOperation, ValueError):
+                expr = f"{expr} + {part}"
+
+        try:
+            formatted_result = evaluate_addition(expr)
+        except Exception:
             self.result_var.set("Error")
             return
 
-        if has_decimal:
-            # Choose sufficient precision from the actual input values. Each
-            # addend's smallest decimal place must survive the addition, and
-            # extra digits allow for carries when several addends are summed.
-            highest_place = max(value.adjusted() for value in values)
-            lowest_place = min(value.as_tuple().exponent for value in values)
-            needed_precision = max(1, highest_place - lowest_place + len(values) + 1)
-
-            # Use a local context to avoid changing precision globally.
-            with localcontext() as context:
-                context.prec = needed_precision
-                total = sum(values, Decimal(0))
-
-            # Fixed-point notation avoids scientific notation (such as 3E-24).
-            formatted_result = format(total, "f")
-            if "." in formatted_result:
-                formatted_result = formatted_result.rstrip("0").rstrip(".")
-        else:
-            # Whole numbers remain exact using Python integer arithmetic.
-            formatted_result = str(sum(values))
         self.result_var.set(formatted_result)
         self.calculated = True
         self._update_entry_widths()
@@ -399,7 +412,6 @@ class AdditionCalculator:
         self.root.update_idletasks()
         self.canvas.yview_moveto(1.0)
 
-        expr = " + ".join(str(v) for v in values)
         print(f"{expr} = {formatted_result}")
 
     def clear_all(self) -> None:
