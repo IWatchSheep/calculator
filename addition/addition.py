@@ -1,10 +1,5 @@
-import decimal
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, localcontext
 import tkinter as tk
-
-# Set high precision for decimal calculations
-decimal.getcontext().prec = 1000
-
 
 class AdditionCalculator:
     BASE_WIDTH: int = 18
@@ -378,9 +373,26 @@ class AdditionCalculator:
             self.result_var.set("Error")
             return
 
-        total = values[0] if len(values) == 1 else sum(values)
+        if has_decimal:
+            # Decimal addition uses a working precision. Calculate enough digits
+            # for both the largest whole-number place and the smallest fraction.
+            highest_place = max(value.adjusted() for value in values)
+            lowest_place = min(value.as_tuple().exponent for value in values)
+            needed_precision = max(1, highest_place - lowest_place + 2)
 
-        formatted_result = str(total)
+            with localcontext() as ctx:
+                ctx.prec = needed_precision
+                total = sum(values, Decimal(0))
+
+            # 'f' avoids scientific notation for very small decimal answers.
+            formatted_result = format(total, "f")
+            if "." in formatted_result:
+                formatted_result = formatted_result.rstrip("0").rstrip(".")
+            if Decimal(formatted_result) == 0:
+                formatted_result = "0"
+        else:
+            total = sum(values)
+            formatted_result = str(total)
         self.result_var.set(formatted_result)
         self.calculated = True
         self._update_entry_widths()
