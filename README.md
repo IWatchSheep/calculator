@@ -1,33 +1,73 @@
-A calculator.
+# Python Calculator
 
-addition, 
+A Python calculator project built with Tkinter. The goal is to develop the calculator gradually, starting with addition and expanding to other areas of mathematics.
 
-subtraction, 
+## Project status
 
-multiplication, 
+**Completed: Addition calculator**
 
-division.
+The addition calculator is implemented in `addition/addition.py`. It currently supports:
 
-fractions: simplifying fractions, adding and subtracting fractions, adding and subtracting fractions and finding the common denominator, multiplying fractions, dividing fractions
+- Adding two or more numbers, including whole numbers and decimals.
+- Adding more input fields as needed.
+- A graphical keypad and keyboard input.
+- Editing entries with Backspace and clearing the calculator.
+- Continuing a calculation after displaying a result.
+- Accurate finite-decimal addition using Python's `decimal.Decimal` with precision chosen for the inputs.
+- Displaying small decimal results in standard decimal notation rather than scientific notation.
+- A scrollable input area with the keypad anchored at the bottom when more addends are added.
 
-decimal place value
+**Not yet implemented:** The other arithmetic operations and mathematics topics below are future goals, not features of the current application.
 
-adding subtracting and multiplying decimals.
+## Planned features
 
-dividing decimals
+### Basic arithmetic and number skills
 
-percent
+- Subtraction, multiplication, and division.
+- Fractions: simplification, common denominators, addition, subtraction, multiplication, and division.
+- Decimal place value, along with subtraction, multiplication, and division of decimals.
+- Percentages.
+- Ratios and proportions, including word problems.
 
-ratio and proportion
+### More advanced mathematics
 
-ratio and proportion word problems, which will need a chatbot to sort out the text input to solve the ratio and proportion problem.
+- Pre-algebra 1 and 2.
+- Algebra 1.
+- Geometry.
+- Algebra 2.
+- Algebra word problems.
 
-pre-algebra 1 and 2
+### Possible future text-based assistance
 
-algebra 1
+- Explore adding a chatbot or text-input helper to interpret word problems, including ratio and proportion problems. This is a **future idea** and is not part of the current calculator.
 
-geometry
+## Requirements
 
-algebra 2
+- Python 3 with Tkinter support.
+- A desktop environment capable of opening Tkinter windows.
 
-algebra word problems, updating the chatbot made in the elementary school math curriculum.
+The application uses Python's standard library and does not require additional Python packages.
+
+## Run the addition calculator
+
+From the project root, open a terminal and run:
+
+```powershell
+python addition/addition.py
+```
+
+## Run the regression tests
+
+The project includes tests in `tests/test_calculator.py` for addition, decimal precision, input behavior, and keypad layout.
+
+From the project root, run:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+The tests require a graphical desktop because they create Tkinter windows.
+
+## Development approach
+
+New features will be added incrementally. Changes should preserve working addition functionality and keep the existing regression tests passing.
