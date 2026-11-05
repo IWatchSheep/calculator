@@ -1,65 +1,84 @@
 # Python Calculator
 
-A Python calculator project built with Tkinter. The goal is to develop the calculator gradually, starting with addition and expanding to other areas of mathematics.
+A desktop calculator project built with Python and Tkinter. The project is being developed incrementally: **addition is implemented**, including a separate experimental version that associates words with numbers. Other mathematical operations remain planned features.
 
 ## Project status
 
-**Completed: Addition calculator**
+### Completed: Numeric addition calculator
 
-The addition calculator is implemented in `addition/addition.py`. It currently supports:
+**File:** `addition/addition.py`
 
-- Adding two or more numbers, including whole numbers and decimals.
-- Adding more input fields as needed.
-- A graphical keypad and keyboard input.
-- Editing entries with Backspace and clearing the calculator.
-- Continuing a calculation after displaying a result.
-- Accurate finite-decimal addition using Python's `decimal.Decimal` with precision chosen for the inputs.
-- Displaying small decimal results in standard decimal notation rather than scientific notation.
-- A scrollable input area with the keypad anchored at the bottom when more addends are added.
-- nlp to add words to addition calculator
+- Adds two or more whole numbers and decimals.
+- Adds input rows as needed, with a scrollable entry area and a bottom-anchored keypad.
+- Supports mouse and keyboard input, Backspace, Clear, and continuing a calculation after a result.
+- Uses `decimal.Decimal` with dynamically selected precision for finite-decimal addition.
+- Displays small decimal answers in ordinary decimal notation instead of scientific notation.
 
-**Not yet implemented:** The other arithmetic operations and mathematics topics below are future goals, not features of the current application.
+### Implemented (experimental): Word-enabled addition calculator
 
-## Planned features
+**File:** `addition_chat/addition.py`
 
-### Basic arithmetic and number skills
+This is a **separate Tkinter app** that extends addition with optional word descriptions:
+
+- Attach words to numbers using a dropdown list or custom typed words.
+- Add custom words to the application's selectable options.
+- Combine quantities of the same item, such as **3 apples + 2 apples = 5 apples**.
+- Recognize certain related words using a built-in category list, such as **2 apples + 3 oranges = 5 fruits (2 apples, 3 oranges)**.
+- Display a descriptive summary for different, unrelated items.
+
+**Limitations:** This is an offline, rule-based word helper, **not a general-purpose AI chatbot**. It recognizes a limited set of categories, does not understand arbitrary word problems, and does not automatically convert between units (for example, cents and dollars). Custom word options are maintained in the running application; they are not a persistent word database.
+
+### Not yet implemented: Other mathematics
+
+The following are **development goals**, not features currently available in these apps.
+
+#### Basic arithmetic and number skills
 
 - Subtraction, multiplication, and division.
 - Fractions: simplification, common denominators, addition, subtraction, multiplication, and division.
-- Decimal place value, along with subtraction, multiplication, and division of decimals.
+- More decimal operations and decimal place-value exercises.
 - Percentages.
-- Ratios and proportions, including word problems.
+- Ratios, proportions, and related word problems.
 
-### More advanced mathematics
+#### More advanced mathematics
 
 - Pre-algebra 1 and 2.
-- Algebra 1.
+- Algebra 1 and 2, including word problems.
 - Geometry.
-- Algebra 2.
-- Algebra word problems.
 
-### Possible future text-based assistance
+#### Possible future text assistance
 
-- Explore adding a chatbot or text-input helper to interpret word problems, including ratio and proportion problems. This is a **future idea** and is not part of the current calculator.
+- More advanced text input and interpretation of mathematical word problems, potentially using an AI chatbot. This is a future idea, separate from the existing rule-based word-enabled addition app.
 
 ## Requirements
 
 - Python 3 with Tkinter support.
-- A desktop environment capable of opening Tkinter windows.
+- A desktop environment that can display Tkinter windows (such as Windows with PyCharm).
 
-The application uses Python's standard library and does not require additional Python packages.
+Both applications currently use the Python standard library; no extra Python packages are required.
 
-## Run the addition calculator
+## Run either calculator
 
-From the project root, open a terminal and run:
+Open a terminal in the project's main folder.
+
+**Numeric addition calculator:**
 
 ```powershell
 python addition/addition.py
 ```
 
-## Run the regression tests
+**Experimental word-enabled addition calculator:**
 
-The project includes tests in `tests/test_calculator.py` for addition, decimal precision, input behavior, and keypad layout.
+```powershell
+python addition_chat/addition.py
+```
+
+## Run automated tests
+
+The `tests/` folder contains regression tests for both calculators:
+
+- `tests/test_calculator.py` — numeric addition, decimal precision, input behavior, and keypad layout.
+- `tests/test_addition_chat.py` — word-enabled addition, categories, and related interface behavior.
 
 From the project root, run:
 
@@ -67,8 +86,8 @@ From the project root, run:
 python -m unittest discover -s tests -v
 ```
 
-The tests require a graphical desktop because they create Tkinter windows.
+These tests create Tkinter windows, so they require a working graphical desktop. The current test suite contains **27 tests** (16 numeric calculator tests and 11 word-enabled calculator tests).
 
 ## Development approach
 
-New features will be added incrementally. Changes should preserve working addition functionality and keep the existing regression tests passing.
+New capabilities should be added incrementally without undoing completed functionality. Run the existing tests after each change, and preserve the precision, formatting, and keypad-layout corrections in both applications.
