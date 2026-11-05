@@ -2,6 +2,9 @@
 
 import contextlib
 import io
+import os
+import shutil
+import subprocess
 import sys
 import tkinter as tk
 import unittest
@@ -10,6 +13,49 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 from addition_chat.addition import AdditionCalculator, WordSummerChatbot
+
+_virtual_display = None
+
+
+def setUpModule():
+    """Start a virtual display on headless Linux/POSIX systems if no display is active."""
+    global _virtual_display
+    if os.name == "posix" and not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
+        try:
+            from pyvirtualdisplay import Display
+            _virtual_display = Display(visible=False, size=(1024, 768))
+            _virtual_display.start()
+        except Exception:
+            if shutil.which("Xvfb"):
+                try:
+                    for disp_num in range(99, 110):
+                        disp_str = f":{disp_num}"
+                        if not os.path.exists(f"/tmp/.X11-unix/X{disp_num}"):
+                            proc = subprocess.Popen(
+                                ["Xvfb", disp_str, "-screen", "0", "1024x768x24"],
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL,
+                            )
+                            os.environ["DISPLAY"] = disp_str
+                            _virtual_display = proc
+                            break
+                except Exception:
+                    pass
+
+
+def tearDownModule():
+    """Clean up virtual display if one was started."""
+    global _virtual_display
+    if _virtual_display is not None:
+        try:
+            if hasattr(_virtual_display, "stop"):
+                _virtual_display.stop()
+            elif hasattr(_virtual_display, "terminate"):
+                _virtual_display.terminate()
+                _virtual_display.wait(timeout=2)
+        except Exception:
+            pass
+        _virtual_display = None
 
 
 class AdditionChatTests(unittest.TestCase):
@@ -21,7 +67,25 @@ class AdditionChatTests(unittest.TestCase):
         self.root.withdraw()
         self.calculator = AdditionCalculator(self.root)
         self.root.deiconify()
+        self.root.focus_force()
         self.root.update()
+
+    def press(self, sequence: str):
+        """Simulate real GUI keypad button presses."""
+        app = self.calculator
+        buttons_by_text = {}
+        for child in app.keypad_frame.winfo_children():
+            if isinstance(child, tk.Button):
+                buttons_by_text[child.cget("text")] = child
+
+        with contextlib.redirect_stdout(io.StringIO()):
+            for char in sequence:
+                btn = buttons_by_text.get(char)
+                if btn is not None:
+                    btn.invoke()
+                else:
+                    self.calculator.on_button_click(char)
+                self.root.update()
 
     def tearDown(self):
         self.root.destroy()
@@ -261,6 +325,359 @@ class AdditionChatTests(unittest.TestCase):
             "5",
         )
         self.assertEqual(result, "pens in the drawer")
+
+    # --- New Parentheses Regression Tests ---
+
+    def test_parentheses_button_input(self):
+        """1. Opening and closing parentheses buttons on keypad."""
+        app = self.calculator
+        buttons_by_text = {
+            w.cget("text"): w
+            for w in app.keypad_frame.winfo_children()
+            if isinstance(w, tk.Button)
+        }
+        self.assertIn("(", buttons_by_text)
+        self.assertIn(")", buttons_by_text)
+
+        # Use invoke() on keypad buttons directly
+        buttons_by_text["("].invoke()
+        self.root.update()
+        self.assertEqual(app.addends[0], "(")
+
+        buttons_by_text["2"].invoke()
+        self.root.update()
+        self.assertEqual(app.addends[0], "(2")
+
+        with contextlib.redirect_stdout(io.StringIO()):
+            buttons_by_text["+"].invoke()
+        self.root.update()
+        self.assertEqual(app.current_index, 1)
+
+        buttons_by_text["3"].invoke()
+        self.root.update()
+        buttons_by_text[")"].invoke()
+        self.root.update()
+        self.assertEqual(app.addends[1], "3)")
+
+        with contextlib.redirect_stdout(io.StringIO()):
+            buttons_by_text["="].invoke()
+        self.root.update()
+        self.assertEqual(app.result_var.get(), "5")
+
+    def test_parentheses_physical_keyboard(self):
+        """2. Parentheses entered using the physical keyboard."""
+        app = self.calculator
+        self.root.focus_force()
+        self.root.update()
+        for key in ["<Key-parenleft>", "<Key-2>", "<Key-plus>", "<Key-3>", "<Key-parenright>", "<Return>"]:
+            self.root.event_generate(key)
+            self.root.update()
+        self.assertEqual(app.result_var.get(), "5")
+
+    def test_nested_parentheses_with_words(self):
+        """3. Nested parentheses with words (Example D)."""
+        # User Example D: (2 pens in the drawer + (3 pens in the drawer + 4 pens in the drawer)) -> 9 pens in the drawer
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("(3", "pens", "in the drawer"),
+            ("4))", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "9")
+        self.assertEqual(word_res, "pens in the drawer")
+
+        # Also verify with GUI press sequence
+        self.calculator.clear_all()
+        app = self.calculator
+        app.addend_words[0] = "pens"
+        app.addend_word_vars[0].set("pens")
+        app.addend_contexts[0] = "in the drawer"
+        app.addend_context_vars[0].set("in the drawer")
+        self.press("2+")
+        app.addend_words[1] = "pens"
+        app.addend_word_vars[1].set("pens")
+        app.addend_contexts[1] = "in the drawer"
+        app.addend_context_vars[1].set("in the drawer")
+        self.press("(3+")
+        app.addend_words[2] = "pens"
+        app.addend_word_vars[2].set("pens")
+        app.addend_contexts[2] = "in the drawer"
+        app.addend_context_vars[2].set("in the drawer")
+        self.press("4)=")
+        self.assertEqual(app.result_var.get(), "9")
+        self.assertEqual(app.result_word_var.get(), "pens in the drawer")
+
+    def test_multiple_parenthesized_groups(self):
+        """4. Multiple parenthesized groups (Example E)."""
+        # User Example E: (2 pens in the drawer + 3 pens in the drawer) + (4 pens in the drawer + 1 pen in the drawer) -> 10 pens in the drawer
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("3)", "pens", "in the drawer"),
+            ("(4", "pens", "in the drawer"),
+            ("1)", "pen", "in the drawer"),
+        )
+        self.assertEqual(num_res, "10")
+        self.assertEqual(word_res, "pens in the drawer")
+
+    def test_matching_items_and_contexts_parentheses(self):
+        """5. Matching items and contexts with parentheses (Example A)."""
+        # User Example A: (2 pens in the drawer + 3 pens in the drawer) -> 5 pens in the drawer
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("3)", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens in the drawer")
+
+    def test_different_contexts_with_parentheses(self):
+        """6. Different contexts with parentheses (Example B)."""
+        # User Example B: (2 pens in the drawer + 3 pens on the desk) -> 5 pens (2 in the drawer, 3 on the desk)
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("3)", "pens", "on the desk"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens (2 in the drawer, 3 on the desk)")
+
+    def test_category_aggregation_with_parentheses(self):
+        """7. Category aggregation with parentheses (Example C)."""
+        # User Example C: (2 apples in the fridge + 3 oranges on the counter) -> 5 fruits (2 apples in the fridge, 3 oranges on the counter)
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "apples", "in the fridge"),
+            ("3)", "oranges", "on the counter"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "fruits (2 apples in the fridge, 3 oranges on the counter)")
+
+    def test_decimal_quantities_inside_parentheses(self):
+        """8. Decimal quantities inside parentheses."""
+        # 0.1 + (0.2 + 0.3) -> 0.6 pens in the drawer
+        num_res, word_res = self.calculate_inputs(
+            ("0.1", "pens", "in the drawer"),
+            ("(0.2", "pens", "in the drawer"),
+            ("0.3)", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "0.6")
+        self.assertEqual(word_res, "pens in the drawer")
+
+        # Decimal category aggregation
+        self.calculator.clear_all()
+        num_res, word_res = self.calculate_inputs(
+            ("(0.25", "apples", "in the fridge"),
+            ("0.75)", "oranges", "on the counter"),
+        )
+        self.assertEqual(num_res, "1")
+        self.assertEqual(word_res, "fruits (0.25 apples in the fridge, 0.75 oranges on the counter)")
+
+        # Exact precision without scientific notation
+        self.calculator.clear_all()
+        tiny_a = "0.00000000000000000001"
+        tiny_b = "0.00000000000000000002"
+        tiny_res = "0.00000000000000000003"
+        num_res, word_res = self.calculate_inputs(
+            (f"({tiny_a}", "pens", "in the drawer"),
+            (f"{tiny_b})", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, tiny_res)
+        self.assertEqual(word_res, "pens in the drawer")
+
+    def test_singular_and_plural_handling_with_parentheses(self):
+        """9. Singular and plural word handling with parentheses."""
+        # Total = 1 -> singular "pen"
+        num_res, word_res = self.calculate_inputs(
+            ("(0.5", "pen", "in the drawer"),
+            ("0.5)", "pen", "in the drawer"),
+        )
+        self.assertEqual(num_res, "1")
+        self.assertEqual(word_res, "pen in the drawer")
+
+        # Total = 2 -> plural "pens"
+        self.calculator.clear_all()
+        num_res, word_res = self.calculate_inputs(
+            ("(1", "pen", "in the drawer"),
+            ("1)", "pen", "in the drawer"),
+        )
+        self.assertEqual(num_res, "2")
+        self.assertEqual(word_res, "pens in the drawer")
+
+        # Fractional total != 1 -> plural "pens"
+        self.calculator.clear_all()
+        num_res, word_res = self.calculate_inputs(
+            ("(0.2", "pen", "in the drawer"),
+            ("0.3)", "pen", "in the drawer"),
+        )
+        self.assertEqual(num_res, "0.5")
+        self.assertEqual(word_res, "pens in the drawer")
+
+    def test_unmatched_parentheses(self):
+        """10. Unmatched parentheses return Error and clear word result."""
+        # Missing closing parenthesis
+        num_res, word_res = self.calculate_inputs(
+            ("2", "pens", "in the drawer"),
+            ("(3 + 4", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "Error")
+        self.assertEqual(word_res, "")
+
+        # Unexpected closing parenthesis
+        self.calculator.clear_all()
+        num_res, word_res = self.calculate_inputs(
+            ("2 + 3)", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "Error")
+        self.assertEqual(word_res, "")
+
+        # Keypad sequence with missing closing parenthesis
+        self.calculator.clear_all()
+        self.press("2+(3+4=")
+        self.assertEqual(self.calculator.result_var.get(), "Error")
+        self.assertEqual(self.calculator.result_word_var.get(), "")
+
+    def test_empty_parentheses(self):
+        """11. Empty parentheses return Error."""
+        num_res, word_res = self.calculate_inputs(
+            ("2 + ()", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "Error")
+        self.assertEqual(word_res, "")
+
+        self.calculator.clear_all()
+        self.press("2+()=")
+        self.assertEqual(self.calculator.result_var.get(), "Error")
+        self.assertEqual(self.calculator.result_word_var.get(), "")
+
+    def test_backspace_while_editing_parentheses(self):
+        """12. Backspace while editing parentheses."""
+        app = self.calculator
+        self.press("(")
+        self.assertEqual(app.addends[0], "(")
+        app.on_backspace()
+        self.assertEqual(app.addends[0], "")
+
+        self.press("(2+")
+        self.assertEqual(app.addends[1], "")
+        self.press("3)")
+        self.assertEqual(app.addends[1], "3)")
+        app.on_backspace()
+        self.assertEqual(app.addends[1], "3")
+
+        # Typewriter backspace when word column is active
+        app._set_active_index(0, "word", col=0)
+        app.on_typewriter_char("b")
+        self.assertEqual(app.addend_words[0], "b")
+        app.on_backspace()
+        self.assertEqual(app.addend_words[0], "")
+
+    def test_clear_after_entering_parentheses(self):
+        """13. Clear after entering parentheses resets numbers, words, and results."""
+        app = self.calculator
+        self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("3)", "pens", "in the drawer"),
+        )
+        self.assertEqual(app.result_var.get(), "5")
+        self.assertEqual(app.result_word_var.get(), "pens in the drawer")
+
+        self.press("C")
+        self.assertEqual(app.addends, ["", ""])
+        self.assertEqual(app.addend_words, ["", ""])
+        self.assertEqual(app.addend_contexts, ["", ""])
+        self.assertEqual(app.result_var.get(), "")
+        self.assertEqual(app.result_word_var.get(), "")
+        self.assertEqual(app.current_index, 0)
+
+    def test_continued_calculations_after_equals_with_parentheses(self):
+        """14. Continuing calculations after pressing equals with parentheses."""
+        self.press("(2+3)=+4=")
+        self.assertEqual(self.calculator.result_var.get(), "9")
+
+        self.press("+(1+2)=")
+        self.assertEqual(self.calculator.result_var.get(), "12")
+
+        # Continued addition with words
+        self.calculator.clear_all()
+        app = self.calculator
+        self.calculate_inputs(
+            ("(2", "pens", "in the drawer"),
+            ("3)", "pens", "in the drawer"),
+        )
+        self.assertEqual(app.result_var.get(), "5")
+        self.assertEqual(app.result_word_var.get(), "pens in the drawer")
+
+        # Press + to continue: transfers result 5 into row 0, preserving item and context columns
+        app.on_button_click("+")
+        self.assertEqual(app.addends[0], "5")
+        self.assertEqual(app.addend_words[0], "pens")
+        self.assertEqual(app.addend_contexts[0], "in the drawer")
+        self.assertEqual(app.current_index, 1)
+
+        # Enter row 1 with parentheses
+        app.addends[1] = "(4 + 1)"
+        app.addend_vars[1].set("(4 + 1)")
+        app.addend_words[1] = "pens"
+        app.addend_word_vars[1].set("pens")
+        app.addend_contexts[1] = "in the drawer"
+        app.addend_context_vars[1].set("in the drawer")
+
+        with contextlib.redirect_stdout(io.StringIO()):
+            app.calculate()
+        self.assertEqual(app.result_var.get(), "10")
+        self.assertEqual(app.result_word_var.get(), "pens in the drawer")
+
+    def test_additional_dynamic_columns_with_parentheses(self):
+        """15. Additional dynamic columns combined with parentheses."""
+        app = self.calculator
+        app.add_column("Schedule")
+
+        # Matching dynamic column
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer", "on Monday"),
+            ("3)", "pens", "in the drawer", "on Monday"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens in the drawer on Monday")
+
+        # Different dynamic column values
+        self.calculator.clear_all()
+        num_res, word_res = self.calculate_inputs(
+            ("(2", "pens", "in the drawer", "on Monday"),
+            ("3)", "pens", "in the drawer", "on Tuesday"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens (2 in the drawer on Monday, 3 in the drawer on Tuesday)")
+
+    def test_keypad_stability_after_adding_parentheses_and_new_rows(self):
+        """16. Keypad stability after adding parentheses and new rows."""
+        app = self.calculator
+        self.root.update()
+
+        zero_btn = next(w for w in app.keypad_frame.winfo_children() if w.cget("text") == "0")
+        open_paren_btn = next(w for w in app.keypad_frame.winfo_children() if w.cget("text") == "(")
+        close_paren_btn = next(w for w in app.keypad_frame.winfo_children() if w.cget("text") == ")")
+
+        # Verify grid layout positions
+        self.assertEqual(int(zero_btn.grid_info()["row"]), 4)
+        self.assertEqual(int(zero_btn.grid_info()["column"]), 0)
+        self.assertEqual(int(zero_btn.grid_info()["columnspan"]), 2)
+
+        self.assertEqual(int(open_paren_btn.grid_info()["row"]), 0)
+        self.assertEqual(int(open_paren_btn.grid_info()["column"]), 0)
+        self.assertEqual(int(open_paren_btn.grid_info()["columnspan"]), 2)
+
+        self.assertEqual(int(close_paren_btn.grid_info()["row"]), 0)
+        self.assertEqual(int(close_paren_btn.grid_info()["column"]), 2)
+        self.assertEqual(int(close_paren_btn.grid_info()["columnspan"]), 2)
+
+        before = (app.bottom_container.winfo_rooty(), zero_btn.winfo_rooty())
+
+        # Type parenthesized expressions across 3, 4, and 5 rows
+        with contextlib.redirect_stdout(io.StringIO()):
+            for k in "(1+2)+(3+4)+5=":
+                app.on_button_click(k)
+        self.root.update()
+        after = (app.bottom_container.winfo_rooty(), zero_btn.winfo_rooty())
+
+        self.assertEqual(before, after, "Keypad container and 0 button must remain anchored when rows are added")
+        self.assertGreaterEqual(len(app.addends), 3)
 
 
 if __name__ == "__main__":

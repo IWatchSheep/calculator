@@ -1,8 +1,16 @@
 from decimal import Decimal, InvalidOperation, localcontext
+from pathlib import Path
 import re
+import sys
 import tkinter as tk
 from tkinter import ttk
 from typing import Dict, List, Optional, Set, Tuple
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from calculator_core.expression import evaluate_addition
 
 
 class WordSummerChatbot:
@@ -129,6 +137,29 @@ class WordSummerChatbot:
         return None
 
     @classmethod
+    def _clean_quantity(cls, raw_num: str) -> str:
+        """Evaluates or cleans the numeric quantity for an addend row, stripping syntax parentheses."""
+        s = str(raw_num).strip()
+        if not s:
+            return "0"
+        try:
+            return evaluate_addition(s)
+        except Exception:
+            pass
+        cleaned = re.sub(r"[()]", "", s).strip()
+        if cleaned.startswith("+"):
+            cleaned = cleaned[1:].strip()
+        if cleaned.endswith("+"):
+            cleaned = cleaned[:-1].strip()
+        if not cleaned:
+            return "0"
+        try:
+            return evaluate_addition(cleaned)
+        except Exception:
+            pass
+        return cleaned
+
+    @classmethod
     def summarize(cls, items: List[Tuple], total_formatted: str) -> str:
         """
         Summarizes a list of (number_string, word_string, [context_string, ...]) tuples
@@ -137,7 +168,7 @@ class WordSummerChatbot:
         cleaned_rows: List[Tuple[str, str, str, str]] = []
         for item in items:
             num = item[0] if len(item) > 0 else "0"
-            num_clean = str(num).strip() or "0"
+            num_clean = cls._clean_quantity(str(num))
             word_parts: List[str] = []
             for part in item[1:]:
                 p = str(part).strip()
@@ -152,7 +183,10 @@ class WordSummerChatbot:
         if not cleaned_rows:
             return ""
 
-        is_single_unit = (total_formatted == "1" or total_formatted == "1.0")
+        try:
+            is_single_unit = (Decimal(total_formatted) == Decimal(1))
+        except Exception:
+            is_single_unit = (total_formatted == "1" or total_formatted == "1.0")
 
         # Extract primary word tokens (last word of item_word usually serves as noun head)
         tokens = []
@@ -263,6 +297,7 @@ class AdditionCalculator:
         self._bind_keys()
         self._update_active_highlight()
 
+        self.root.focus_set()
         self.root.update_idletasks()
         self.root.minsize(750, self.root.winfo_reqheight())
 
@@ -731,10 +766,11 @@ class AdditionCalculator:
 
     def _create_keypad(self) -> None:
         buttons = [
-            ("7", 0, 0), ("8", 0, 1), ("9", 0, 2), ("+", 0, 3),
-            ("4", 1, 0), ("5", 1, 1), ("6", 1, 2), ("C", 1, 3),
-            ("1", 2, 0), ("2", 2, 1), ("3", 2, 2), ("=", 2, 3),
-            ("0", 3, 0), (".", 3, 2),
+            ("(", 0, 0), (")", 0, 2),
+            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("+", 1, 3),
+            ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("C", 2, 3),
+            ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("=", 3, 3),
+            ("0", 4, 0), (".", 4, 2),
         ]
 
         for text, r, c in buttons:
@@ -761,7 +797,7 @@ class AdditionCalculator:
                 activebackground="#cccccc",
                 command=cmd,
             )
-            if text == "0":
+            if text in ("0", "(", ")"):
                 btn.grid(row=r, column=c, columnspan=2, padx=3, pady=3, sticky="nsew")
             elif text == "=":
                 btn.grid(row=r, column=c, rowspan=2, padx=3, pady=3, sticky="nsew")
@@ -905,31 +941,54 @@ class AdditionCalculator:
                 self.extra_addend_words[extra_idx][self.current_index] = ""
                 self.extra_word_vars[extra_idx][self.current_index].set("")
 
-    def _bind_keys(self) -> None:
-        # Numeric keys routed to calculator when focused on root
-        for digit in "0123456789":
-            self.root.bind(digit, lambda _e, d=digit: self._handle_key_input(d))
-            self.root.bind(f"<KP_{digit}>", lambda _e, d=digit: self._handle_key_input(d))
-        self.root.bind("+", lambda _e: self.handle_plus())
-        self.root.bind("<KP_Add>", lambda _e: self.handle_plus())
-        self.root.bind("<Return>", lambda _e: self.calculate())
-        self.root.bind("<KP_Enter>", lambda _e: self.calculate())
-        self.root.bind("=", lambda _e: self.calculate())
-        self.root.bind("<Escape>", lambda _e: self.clear_all())
-        self.root.bind(".", lambda _e: self._handle_key_input("."))
-        self.root.bind("<KP_Decimal>", lambda _e: self._handle_key_input("."))
-
-    def _handle_key_input(self, char: str) -> None:
-        # If user is currently typing inside a word combobox/entry, don't hijack their typing
+    def _is_word_entry_focused(self) -> bool:
         focused = self.root.focus_get()
         all_combos = (
             self.addend_word_entries +
             self.addend_context_entries +
             [c for sub in self.extra_word_entries for c in sub]
         )
-        if isinstance(focused, (tk.Entry, ttk.Combobox)) and focused in all_combos:
+        return isinstance(focused, (tk.Entry, ttk.Combobox)) and focused in all_combos
+
+    def _handle_key_input(self, char: str) -> None:
+        if self._is_word_entry_focused():
             return
         self.on_button_click(char)
+
+    def _handle_action(self, func) -> None:
+        if self._is_word_entry_focused():
+            return
+        func()
+
+    def _bind_keys(self) -> None:
+        # Route keys using bind_all so event handling is reliable across virtual
+        # displays and regardless of which widget in the window has focus.
+        for digit in "0123456789":
+            self.root.bind_all(digit, lambda _e, d=digit: self._handle_key_input(d))
+            self.root.bind_all(f"<KP_{digit}>", lambda _e, d=digit: self._handle_key_input(d))
+            self.root.bind_all(f"<Key-{digit}>", lambda _e, d=digit: self._handle_key_input(d))
+
+        self.root.bind_all("+", lambda _e: self._handle_action(self.handle_plus))
+        self.root.bind_all("<plus>", lambda _e: self._handle_action(self.handle_plus))
+        self.root.bind_all("<KP_Add>", lambda _e: self._handle_action(self.handle_plus))
+
+        self.root.bind_all("<Return>", lambda _e: self._handle_action(self.calculate))
+        self.root.bind_all("<KP_Enter>", lambda _e: self._handle_action(self.calculate))
+        self.root.bind_all("=", lambda _e: self._handle_action(self.calculate))
+        self.root.bind_all("<equal>", lambda _e: self._handle_action(self.calculate))
+
+        self.root.bind_all("<Escape>", lambda _e: self._handle_action(self.clear_all))
+        self.root.bind_all("<BackSpace>", lambda _e: self._handle_action(self.on_backspace))
+
+        self.root.bind_all(".", lambda _e: self._handle_key_input("."))
+        self.root.bind_all("<period>", lambda _e: self._handle_key_input("."))
+        self.root.bind_all("<KP_Decimal>", lambda _e: self._handle_key_input("."))
+
+        self.root.bind_all("(", lambda _e: self._handle_key_input("("))
+        self.root.bind_all("<parenleft>", lambda _e: self._handle_key_input("("))
+
+        self.root.bind_all(")", lambda _e: self._handle_key_input(")"))
+        self.root.bind_all("<parenright>", lambda _e: self._handle_key_input(")"))
 
     def _set_active_index(self, index: int, field: str = "number", col: int = 0) -> None:
         self.current_index = index
@@ -1019,6 +1078,8 @@ class AdditionCalculator:
             self.handle_plus()
         elif char == ".":
             self.handle_decimal()
+        elif char in ("(", ")"):
+            self.handle_parenthesis(char)
         else:
             self.handle_digit(char)
 
@@ -1030,12 +1091,25 @@ class AdditionCalculator:
         self.addend_vars[self.current_index].set(self.addends[self.current_index])
         self._update_entry_widths()
 
+    def handle_parenthesis(self, paren: str) -> None:
+        if self.calculated:
+            self.clear_all()
+        cur = self.addends[self.current_index]
+        self.addends[self.current_index] = cur + paren
+        self.addend_vars[self.current_index].set(self.addends[self.current_index])
+        self._update_entry_widths()
+
     def handle_decimal(self) -> None:
         if self.calculated:
             self.clear_all()
         cur = self.addends[self.current_index]
-        if "." not in cur:
-            self.addends[self.current_index] = cur + "." if cur else "0."
+        tokens = re.split(r"[^\d.]+", cur)
+        last_num = tokens[-1] if tokens else ""
+        if "." not in last_num:
+            if not cur or cur[-1] in "( +":
+                self.addends[self.current_index] = cur + "0."
+            else:
+                self.addends[self.current_index] = cur + "."
             self.addend_vars[self.current_index].set(self.addends[self.current_index])
             self._update_entry_widths()
 
@@ -1044,11 +1118,21 @@ class AdditionCalculator:
             res_num = self.result_var.get()
             res_word = self.result_word_var.get()
             self.clear_all()
-            self.addends[0] = res_num
-            self.addend_vars[0].set(res_num)
-            self.addend_words[0] = res_word
-            self.addend_word_vars[0].set(res_word)
-            self.current_index = 1
+            if res_num != "Error":
+                self.addends[0] = res_num
+                self.addend_vars[0].set(res_num)
+                matched_ctx = ""
+                item_part = res_word
+                for ctx in sorted(self.context_options, key=len, reverse=True):
+                    if ctx and not ctx.startswith("(") and res_word.endswith(" " + ctx):
+                        matched_ctx = ctx
+                        item_part = res_word[:-len(" " + ctx)].strip()
+                        break
+                self.addend_words[0] = item_part
+                self.addend_word_vars[0].set(item_part)
+                self.addend_contexts[0] = matched_ctx
+                self.addend_context_vars[0].set(matched_ctx)
+                self.current_index = 1
             self.calculated = False
             self._update_active_highlight()
             self._update_entry_widths()
@@ -1122,43 +1206,31 @@ class AdditionCalculator:
                     self.add_context_to_options(v_clean)
 
         cleaned: List[str] = []
-        has_decimal = False
         for a in self.addends:
             s = a.strip()
             if s:
                 if s.endswith("."):
                     s += "0"
-                if "." in s:
-                    has_decimal = True
                 cleaned.append(s)
 
         if not cleaned:
             return
 
-        try:
-            if has_decimal:
-                values = [Decimal(s) for s in cleaned]
+        expr = ""
+        for part in cleaned:
+            if not expr:
+                expr = part
+            elif expr.endswith("+") or part.startswith("+"):
+                expr = f"{expr} {part}"
             else:
-                values = [int(s) for s in cleaned]
-        except (InvalidOperation, ValueError):
+                expr = f"{expr} + {part}"
+
+        try:
+            formatted_result = evaluate_addition(expr)
+        except Exception:
             self.result_var.set("Error")
             self.result_word_var.set("")
             return
-
-        if has_decimal:
-            highest_place = max(value.adjusted() for value in values)
-            lowest_place = min(int(value.as_tuple().exponent) for value in values)
-            needed_precision = max(1, highest_place - lowest_place + len(values) + 1)
-
-            with localcontext() as context:
-                context.prec = needed_precision
-                total = sum(values, Decimal(0))
-
-            formatted_result = format(total, "f")
-            if "." in formatted_result:
-                formatted_result = formatted_result.rstrip("0").rstrip(".")
-        else:
-            formatted_result = str(sum(values))
 
         self.result_var.set(formatted_result)
 
@@ -1180,7 +1252,6 @@ class AdditionCalculator:
         self.root.update_idletasks()
         self.canvas.yview_moveto(1.0)
 
-        expr = " + ".join(str(v) for v in values)
         print(f"{expr} = {formatted_result} ({word_result})")
 
     def clear_all(self) -> None:
