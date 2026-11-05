@@ -1,9 +1,13 @@
-from decimal import Decimal, InvalidOperation, localcontext
+import decimal
+from decimal import Decimal, InvalidOperation
 import tkinter as tk
+
+# Set high precision for decimal calculations
+decimal.getcontext().prec = 1000
+
 
 class AdditionCalculator:
     BASE_WIDTH: int = 18
-    MAX_CANVAS_HEIGHT: int = 240
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
@@ -24,7 +28,7 @@ class AdditionCalculator:
         self._update_active_highlight()
 
         self.root.update_idletasks()
-        self.root.minsize(280, 260)
+        self.root.minsize(280, self.root.winfo_reqheight())
 
     @staticmethod
     def _get_label_text(index: int) -> str:
@@ -36,6 +40,11 @@ class AdditionCalculator:
         return name if index == 0 else f"{name} (+)"
 
     def _create_widgets(self) -> None:
+        # Keypad container anchored to the bottom so it never gets pushed down or squished
+        self.keypad_frame = tk.Frame(self.root)
+        self.keypad_frame.pack(side="bottom", pady=(4, 12))
+        self._create_keypad()
+
         # Scrollable container nested above the box keypad
         self.scroll_container = tk.Frame(self.root)
         self.scroll_container.pack(side="top", fill="both", expand=True, padx=12, pady=(10, 4))
@@ -95,10 +104,9 @@ class AdditionCalculator:
         self.result_entry.pack(fill="x", expand=True)
         self._bind_mousewheel(self.result_entry)
 
-        # Keypad container (maintains compact box shape regardless of window stretching)
-        self.keypad_frame = tk.Frame(self.root)
-        self.keypad_frame.pack(side="top", pady=(4, 12))
-        self._create_keypad()
+        # Set canvas initial height to cleanly fit the initial 2 addends + result
+        self.root.update_idletasks()
+        self.canvas.configure(height=self.displays_frame.winfo_reqheight())
 
     def _bind_mousewheel(self, widget: tk.Widget) -> None:
         widget.bind("<MouseWheel>", self._on_mousewheel)
@@ -109,10 +117,6 @@ class AdditionCalculator:
 
     def _on_displays_configure(self, _event) -> None:
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        req_w = self.displays_frame.winfo_reqwidth()
-        req_h = self.displays_frame.winfo_reqheight()
-        target_h = min(req_h, self.MAX_CANVAS_HEIGHT)
-        self.canvas.configure(width=req_w, height=target_h)
 
     def _on_canvas_configure(self, event) -> None:
         self.canvas.itemconfig(self.canvas_window_id, width=event.width)
@@ -231,7 +235,7 @@ class AdditionCalculator:
                 self.addend_entries[i].config(readonlybackground="#ffffff")
 
     def add_addend_window(self) -> None:
-        """Pops up another addend window below the rest and above the result and keypad."""
+        """Pops up another addend window below the rest, scrolling top addends up and keeping keypad in place."""
         self.addends.append("")
         idx = len(self.addends) - 1
         self.result_frame.pack_forget()
@@ -373,26 +377,9 @@ class AdditionCalculator:
             self.result_var.set("Error")
             return
 
-        if has_decimal:
-            # Decimal addition uses a working precision. Calculate enough digits
-            # for both the largest whole-number place and the smallest fraction.
-            highest_place = max(value.adjusted() for value in values)
-            lowest_place = min(value.as_tuple().exponent for value in values)
-            needed_precision = max(1, highest_place - lowest_place + 2)
+        total = values[0] if len(values) == 1 else sum(values)
 
-            with localcontext() as ctx:
-                ctx.prec = needed_precision
-                total = sum(values, Decimal(0))
-
-            # 'f' avoids scientific notation for very small decimal answers.
-            formatted_result = format(total, "f")
-            if "." in formatted_result:
-                formatted_result = formatted_result.rstrip("0").rstrip(".")
-            if Decimal(formatted_result) == 0:
-                formatted_result = "0"
-        else:
-            total = sum(values)
-            formatted_result = str(total)
+        formatted_result = str(total)
         self.result_var.set(formatted_result)
         self.calculated = True
         self._update_entry_widths()
