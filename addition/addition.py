@@ -1,8 +1,14 @@
+import decimal
+from decimal import Decimal, InvalidOperation
 import tkinter as tk
+
+# Set high precision for decimal calculations
+decimal.getcontext().prec = 1000
 
 
 class AdditionCalculator:
     BASE_WIDTH: int = 18
+    MAX_CANVAS_HEIGHT: int = 240
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
@@ -23,7 +29,7 @@ class AdditionCalculator:
         self._update_active_highlight()
 
         self.root.update_idletasks()
-        self.root.minsize(260, 200)
+        self.root.minsize(280, 260)
 
     @staticmethod
     def _get_label_text(index: int) -> str:
@@ -35,9 +41,29 @@ class AdditionCalculator:
         return name if index == 0 else f"{name} (+)"
 
     def _create_widgets(self) -> None:
-        # Container for display windows
-        self.displays_frame = tk.Frame(self.root)
-        self.displays_frame.pack(side="top", fill="x", expand=True, padx=12, pady=(10, 6))
+        # Scrollable container nested above the box keypad
+        self.scroll_container = tk.Frame(self.root)
+        self.scroll_container.pack(side="top", fill="both", expand=True, padx=12, pady=(10, 4))
+
+        self.canvas = tk.Canvas(self.scroll_container, highlightthickness=0, bd=0)
+        self.scrollbar = tk.Scrollbar(self.scroll_container, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        self.displays_frame = tk.Frame(self.canvas)
+        self.canvas_window_id = self.canvas.create_window((0, 0), window=self.displays_frame, anchor="nw")
+
+        self.displays_frame.bind("<Configure>", self._on_displays_configure)
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
+
+        self._bind_mousewheel(self.scroll_container)
+        self._bind_mousewheel(self.canvas)
+        self._bind_mousewheel(self.displays_frame)
+
+        self.scroll_container.bind("<Enter>", lambda _e: self.root.bind_all("<MouseWheel>", self._on_mousewheel))
+        self.scroll_container.bind("<Leave>", lambda _e: self.root.unbind_all("<MouseWheel>"))
 
         # Initial two addend windows
         for i in range(2):
@@ -46,6 +72,7 @@ class AdditionCalculator:
         # Result window (always at the bottom of the displays area)
         self.result_frame = tk.Frame(self.displays_frame)
         self.result_frame.pack(side="top", fill="x", expand=True, pady=(6, 2))
+        self._bind_mousewheel(self.result_frame)
 
         self.result_label = tk.Label(
             self.result_frame,
@@ -55,6 +82,7 @@ class AdditionCalculator:
             anchor="w",
         )
         self.result_label.pack(fill="x")
+        self._bind_mousewheel(self.result_label)
 
         self.result_var = tk.StringVar(value="")
         self.result_entry = tk.Entry(
@@ -70,15 +98,34 @@ class AdditionCalculator:
             width=self.BASE_WIDTH,
         )
         self.result_entry.pack(fill="x", expand=True)
+        self._bind_mousewheel(self.result_entry)
 
         # Keypad container (maintains compact box shape regardless of window stretching)
         self.keypad_frame = tk.Frame(self.root)
         self.keypad_frame.pack(side="top", pady=(4, 12))
         self._create_keypad()
 
+    def _bind_mousewheel(self, widget: tk.Widget) -> None:
+        widget.bind("<MouseWheel>", self._on_mousewheel)
+
+    def _on_mousewheel(self, event) -> None:
+        if getattr(event, "delta", 0):
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+    def _on_displays_configure(self, _event) -> None:
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        req_w = self.displays_frame.winfo_reqwidth()
+        req_h = self.displays_frame.winfo_reqheight()
+        target_h = min(req_h, self.MAX_CANVAS_HEIGHT)
+        self.canvas.configure(width=req_w, height=target_h)
+
+    def _on_canvas_configure(self, event) -> None:
+        self.canvas.itemconfig(self.canvas_window_id, width=event.width)
+
     def _create_addend_widget(self, index: int) -> None:
         f = tk.Frame(self.displays_frame)
         f.pack(side="top", fill="x", expand=True, pady=2)
+        self._bind_mousewheel(f)
 
         lbl = tk.Label(
             f,
@@ -88,6 +135,7 @@ class AdditionCalculator:
             anchor="w",
         )
         lbl.pack(fill="x")
+        self._bind_mousewheel(lbl)
 
         var = tk.StringVar(value=self.addends[index])
         entry = tk.Entry(
@@ -102,7 +150,8 @@ class AdditionCalculator:
             width=self.BASE_WIDTH,
         )
         entry.pack(fill="x", expand=True)
-        entry.bind("<Button-1>", lambda e, idx=index: self._set_active_index(idx))
+        entry.bind("<Button-1>", lambda _e, idx=index: self._set_active_index(idx))
+        self._bind_mousewheel(entry)
 
         self.addend_frames.append(f)
         self.addend_labels.append(lbl)
@@ -114,7 +163,7 @@ class AdditionCalculator:
             ("7", 0, 0), ("8", 0, 1), ("9", 0, 2), ("+", 0, 3),
             ("4", 1, 0), ("5", 1, 1), ("6", 1, 2), ("C", 1, 3),
             ("1", 2, 0), ("2", 2, 1), ("3", 2, 2), ("=", 2, 3),
-            ("0", 3, 0),
+            ("0", 3, 0), (".", 3, 2),
         ]
 
         for text, r, c in buttons:
@@ -142,7 +191,7 @@ class AdditionCalculator:
                 command=cmd,
             )
             if text == "0":
-                btn.grid(row=r, column=c, columnspan=3, padx=4, pady=4, sticky="nsew")
+                btn.grid(row=r, column=c, columnspan=2, padx=4, pady=4, sticky="nsew")
             elif text == "=":
                 btn.grid(row=r, column=c, rowspan=2, padx=4, pady=4, sticky="nsew")
             else:
@@ -150,21 +199,31 @@ class AdditionCalculator:
 
     def _bind_keys(self) -> None:
         for digit in "0123456789":
-            self.root.bind(digit, lambda e, d=digit: self.on_button_click(d))
-            self.root.bind(f"<KP_{digit}>", lambda e, d=digit: self.on_button_click(d))
-        self.root.bind("+", lambda e: self.on_button_click("+"))
-        self.root.bind("<KP_Add>", lambda e: self.on_button_click("+"))
-        self.root.bind("<Return>", lambda e: self.on_button_click("="))
-        self.root.bind("<KP_Enter>", lambda e: self.on_button_click("="))
-        self.root.bind("=", lambda e: self.on_button_click("="))
-        self.root.bind("<Escape>", lambda e: self.on_button_click("C"))
-        self.root.bind("<BackSpace>", lambda e: self.on_backspace())
-        self.root.bind(".", lambda e: self.on_button_click("."))
-        self.root.bind("<KP_Decimal>", lambda e: self.on_button_click("."))
+            self.root.bind(digit, lambda _e, d=digit: self.on_button_click(d))
+            self.root.bind(f"<KP_{digit}>", lambda _e, d=digit: self.on_button_click(d))
+        self.root.bind("+", lambda _e: self.on_button_click("+"))
+        self.root.bind("<KP_Add>", lambda _e: self.on_button_click("+"))
+        self.root.bind("<Return>", lambda _e: self.on_button_click("="))
+        self.root.bind("<KP_Enter>", lambda _e: self.on_button_click("="))
+        self.root.bind("=", lambda _e: self.on_button_click("="))
+        self.root.bind("<Escape>", lambda _e: self.on_button_click("C"))
+        self.root.bind("<BackSpace>", lambda _e: self.on_backspace())
+        self.root.bind(".", lambda _e: self.on_button_click("."))
+        self.root.bind("<KP_Decimal>", lambda _e: self.on_button_click("."))
 
     def _set_active_index(self, index: int) -> None:
         self.current_index = index
         self._update_active_highlight()
+        self._ensure_active_visible()
+
+    def _ensure_active_visible(self) -> None:
+        if 0 <= self.current_index < len(self.addend_frames):
+            self.root.update_idletasks()
+            f = self.addend_frames[self.current_index]
+            total_h = self.displays_frame.winfo_reqheight()
+            if total_h > 0:
+                y = f.winfo_y()
+                self.canvas.yview_moveto(y / total_h)
 
     def _update_active_highlight(self) -> None:
         for i, lbl in enumerate(self.addend_labels):
@@ -184,6 +243,8 @@ class AdditionCalculator:
         self._create_addend_widget(idx)
         self.result_frame.pack(side="top", fill="x", expand=True, pady=(6, 2))
         self._update_entry_widths()
+        self.root.update_idletasks()
+        self.canvas.yview_moveto(1.0)
 
     def _remove_last_addend_window(self) -> None:
         if len(self.addends) > 2:
@@ -203,6 +264,11 @@ class AdditionCalculator:
         for entry in self.addend_entries:
             entry.config(width=target_width)
         self.result_entry.config(width=target_width)
+
+        self.root.update_idletasks()
+        needed_w = self.displays_frame.winfo_reqwidth() + self.scrollbar.winfo_reqwidth() + 32
+        if needed_w > self.root.winfo_width():
+            self.root.geometry(f"{needed_w}x{self.root.winfo_height()}")
 
     def on_button_click(self, char: str) -> None:
         if char == "C":
@@ -289,30 +355,38 @@ class AdditionCalculator:
         if self.calculated:
             return
 
-        values: list[int | float] = []
+        cleaned: list[str] = []
+        has_decimal = False
         for a in self.addends:
             s = a.strip()
             if s:
-                try:
-                    val = float(s) if "." in s else int(s)
-                    values.append(val)
-                except ValueError:
-                    self.result_var.set("Error")
-                    return
+                if s.endswith("."):
+                    s += "0"
+                if "." in s:
+                    has_decimal = True
+                cleaned.append(s)
 
-        if not values:
+        if not cleaned:
             return
 
-        if len(values) == 1:
-            total = values[0]
-        else:
-            total = sum(values)
+        try:
+            if has_decimal:
+                values = [Decimal(s) for s in cleaned]
+            else:
+                values = [int(s) for s in cleaned]
+        except (InvalidOperation, ValueError):
+            self.result_var.set("Error")
+            return
+
+        total = values[0] if len(values) == 1 else sum(values)
 
         formatted_result = str(total)
         self.result_var.set(formatted_result)
         self.calculated = True
         self._update_entry_widths()
         self._update_active_highlight()
+        self.root.update_idletasks()
+        self.canvas.yview_moveto(1.0)
 
         expr = " + ".join(str(v) for v in values)
         print(f"{expr} = {formatted_result}")
@@ -333,6 +407,7 @@ class AdditionCalculator:
         self.calculated = False
         self._update_entry_widths()
         self.root.geometry("")
+        self.canvas.yview_moveto(0.0)
         self._update_active_highlight()
 
 
