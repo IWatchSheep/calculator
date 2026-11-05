@@ -16,6 +16,7 @@ The addition calculator is implemented in `addition/addition.py`. It currently s
 - Accurate finite-decimal addition using Python's `decimal.Decimal` with precision chosen for the inputs.
 - Displaying small decimal results in standard decimal notation rather than scientific notation.
 - A scrollable input area with the keypad anchored at the bottom when more addends are added.
+- nlp to add words to addition calculator
 
 **Not yet implemented:** The other arithmetic operations and mathematics topics below are future goals, not features of the current application.
 
