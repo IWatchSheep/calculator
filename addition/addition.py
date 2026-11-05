@@ -33,6 +33,7 @@ class AdditionCalculator:
 
         self.root.update_idletasks()
         self.root.minsize(280, self.root.winfo_reqheight())
+        self.root.focus_set()
 
     @staticmethod
     def _get_label_text(index: int) -> str:
@@ -202,22 +203,33 @@ class AdditionCalculator:
                 btn.grid(row=r, column=c, padx=4, pady=4, sticky="nsew")
 
     def _bind_keys(self) -> None:
+        # Route keys using bind_all so event handling is reliable across virtual
+        # displays and regardless of which widget in the window has focus.
         for digit in "0123456789":
-            self.root.bind(digit, lambda _e, d=digit: self.on_button_click(d))
-            self.root.bind(f"<KP_{digit}>", lambda _e, d=digit: self.on_button_click(d))
-        self.root.bind("+", lambda _e: self.on_button_click("+"))
-        self.root.bind("<KP_Add>", lambda _e: self.on_button_click("+"))
-        self.root.bind("<Return>", lambda _e: self.on_button_click("="))
-        self.root.bind("<KP_Enter>", lambda _e: self.on_button_click("="))
-        self.root.bind("=", lambda _e: self.on_button_click("="))
-        self.root.bind("<Escape>", lambda _e: self.on_button_click("C"))
-        self.root.bind("<BackSpace>", lambda _e: self.on_backspace())
-        self.root.bind(".", lambda _e: self.on_button_click("."))
-        self.root.bind("<KP_Decimal>", lambda _e: self.on_button_click("."))
-        self.root.bind("(", lambda _e: self.on_button_click("("))
-        self.root.bind(")", lambda _e: self.on_button_click(")"))
-        self.root.bind("<parenleft>", lambda _e: self.on_button_click("("))
-        self.root.bind("<parenright>", lambda _e: self.on_button_click(")"))
+            self.root.bind_all(digit, lambda _e, d=digit: self.on_button_click(d))
+            self.root.bind_all(f"<KP_{digit}>", lambda _e, d=digit: self.on_button_click(d))
+
+        self.root.bind_all("+", lambda _e: self.on_button_click("+"))
+        self.root.bind_all("<plus>", lambda _e: self.on_button_click("+"))
+        self.root.bind_all("<KP_Add>", lambda _e: self.on_button_click("+"))
+
+        self.root.bind_all("<Return>", lambda _e: self.on_button_click("="))
+        self.root.bind_all("<KP_Enter>", lambda _e: self.on_button_click("="))
+        self.root.bind_all("=", lambda _e: self.on_button_click("="))
+        self.root.bind_all("<equal>", lambda _e: self.on_button_click("="))
+
+        self.root.bind_all("<Escape>", lambda _e: self.on_button_click("C"))
+        self.root.bind_all("<BackSpace>", lambda _e: self.on_backspace())
+
+        self.root.bind_all(".", lambda _e: self.on_button_click("."))
+        self.root.bind_all("<period>", lambda _e: self.on_button_click("."))
+        self.root.bind_all("<KP_Decimal>", lambda _e: self.on_button_click("."))
+
+        self.root.bind_all("(", lambda _e: self.on_button_click("("))
+        self.root.bind_all("<parenleft>", lambda _e: self.on_button_click("("))
+
+        self.root.bind_all(")", lambda _e: self.on_button_click(")"))
+        self.root.bind_all("<parenright>", lambda _e: self.on_button_click(")"))
 
     def _set_active_index(self, index: int) -> None:
         self.current_index = index

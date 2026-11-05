@@ -9,10 +9,24 @@ A desktop calculator project written in **Python** using **Tkinter**. Developmen
 **File:** `addition/addition.py`
 
 - Adds two or more integers or decimal values.
+- Supports parentheses `(` and `)` on the keypad and via physical keyboard.
+- Connected to the shared expression evaluator `calculator_core/expression.py`.
 - Supports additional input rows in a scrollable area while keeping the keypad anchored at the bottom.
 - Supports keypad and keyboard input, Backspace, Clear, and continuing a calculation after a result.
 - Uses Python's `decimal.Decimal` and operation-specific precision for finite-decimal addition.
 - Displays small values in ordinary decimal notation rather than scientific notation.
+
+### Completed: Expression evaluator & CLI
+
+**File:** `calculator_core/expression.py`
+
+- Evaluates addition expressions with arbitrary nested parentheses and dynamic finite-decimal precision.
+- Command-line interface:
+  ```powershell
+  python -m calculator_core.expression "2 + (3 + 4)"
+  ```
+- Exits with status `0` on success and prints the result.
+- Exits with status `1` on invalid expressions and writes an error message to `stderr`.
 
 ### Implemented (experimental): Word-enabled addition calculator
 
@@ -66,7 +80,7 @@ These are **future goals**, not completed features:
 ## Requirements
 
 - Python 3 with Tkinter available.
-- A desktop environment that supports opening Tkinter windows, such as Windows with PyCharm.
+- A desktop environment or virtual display (such as `Xvfb` on headless Linux) that supports opening Tkinter windows.
 
 The current applications use only Python's standard library; no additional Python packages are required.
 
@@ -86,20 +100,39 @@ python addition/addition.py
 python addition_chat/addition.py
 ```
 
+**Expression evaluator (command line):**
+
+```powershell
+python -m calculator_core.expression "2 + (3 + 4)"
+```
+
 ## Run automated tests
 
-The `tests/` folder contains:
+The `tests/` folder contains **78 automated tests** across three test modules:
 
-- `tests/test_calculator.py` — **16** tests for numeric addition, precision, input behavior, and keypad layout.
+- `tests/test_calculator.py` — **36** tests for numeric addition, parentheses, dynamic decimal precision, automated GUI button clicks, physical keyboard event input, and keypad stability.
+- `tests/test_expression.py` — **21** tests for the expression evaluation core, nested parentheses, precision, syntax errors, and the command-line interface.
 - `tests/test_addition_chat.py` — **21** tests for word-enabled addition, context descriptions, extra columns, custom dropdown entries, and related input behavior.
 
-Run all **37 regression tests** from the project root:
+### Run all tests from the project root
+
+**Standard desktop session (Windows, macOS, or Linux with desktop):**
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-The tests create Tkinter windows and require a graphical desktop. A passing run ends with `OK`. The tests help catch regressions, but do not guarantee identical visual behavior on every Windows display scaling setting.
+**Headless Linux / virtual desktop / CI environments:**
+
+On systems with Xvfb installed, tests can be run using `xvfb-run`:
+
+```bash
+xvfb-run -a python -m unittest discover -s tests -v
+```
+
+Additionally, `tests/__init__.py` and `tests/test_calculator.py` include automatic virtual display startup (`pyvirtualdisplay` or `Xvfb`) if executed on a POSIX system without an active `$DISPLAY`.
+
+A passing run ends with `OK`.
 
 ## Development approach
 

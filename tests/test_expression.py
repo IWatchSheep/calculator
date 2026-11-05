@@ -1,11 +1,12 @@
 """Tests for the shared addition-and-parentheses expression evaluator."""
+import io
 import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from calculator_core.expression import evaluate_addition
+from calculator_core.expression import evaluate_addition, main
 
 
 class ExpressionTests(unittest.TestCase):
@@ -68,6 +69,52 @@ class ExpressionTests(unittest.TestCase):
     def test_no_implicit_multiplication(self):
         with self.assertRaises(ValueError):
             evaluate_addition("2(3 + 4)")
+
+    def test_cli_valid_expression(self):
+        out = io.StringIO()
+        err = io.StringIO()
+        old_out, old_err = sys.stdout, sys.stderr
+        try:
+            sys.stdout, sys.stderr = out, err
+            code = main(["2 + (3 + 4)"])
+        finally:
+            sys.stdout, sys.stderr = old_out, old_err
+        self.assertEqual(code, 0)
+        self.assertEqual(out.getvalue().strip(), "9")
+
+    def test_cli_invalid_expression(self):
+        out = io.StringIO()
+        err = io.StringIO()
+        old_out, old_err = sys.stdout, sys.stderr
+        try:
+            sys.stdout, sys.stderr = out, err
+            code = main(["2 + (3 + 4"])
+        finally:
+            sys.stdout, sys.stderr = old_out, old_err
+        self.assertEqual(code, 1)
+        self.assertIn("Error", err.getvalue())
+
+    def test_cli_empty_args(self):
+        err = io.StringIO()
+        old_err = sys.stderr
+        try:
+            sys.stderr = err
+            code = main([])
+        finally:
+            sys.stderr = old_err
+        self.assertEqual(code, 1)
+        self.assertIn("Usage", err.getvalue())
+
+    def test_cli_subtraction_rejected(self):
+        err = io.StringIO()
+        old_err = sys.stderr
+        try:
+            sys.stderr = err
+            code = main(["5 - 3"])
+        finally:
+            sys.stderr = old_err
+        self.assertEqual(code, 1)
+        self.assertIn("Error", err.getvalue())
 
 
 if __name__ == "__main__":

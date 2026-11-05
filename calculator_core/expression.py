@@ -6,6 +6,7 @@ implemented yet. Existing Tkinter calculators are not changed.
 
 from decimal import Decimal, localcontext
 import re
+import sys
 
 _TOKEN = re.compile(r"\s*(?:(\d+(?:\.\d*)?|\.\d+)|([()+]))")
 
@@ -86,3 +87,29 @@ def evaluate_addition(expression: str) -> str:
     if '.' in result:
         result = result.rstrip('0').rstrip('.')
     return '0' if result in ('', '-0') else result
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Command-line interface to evaluate addition expressions with parentheses.
+
+    Accepts an expression as command-line arguments, prints the result to
+    standard output, and returns exit code 0. For invalid expressions, writes
+    an error message to standard error and returns a non-zero exit code (1).
+    """
+    if argv is None:
+        argv = sys.argv[1:]
+    if not argv:
+        sys.stderr.write("Usage: python -m calculator_core.expression \"<expression>\"\n")
+        return 1
+    expression = " ".join(argv).strip()
+    try:
+        result = evaluate_addition(expression)
+        sys.stdout.write(f"{result}\n")
+        return 0
+    except Exception as exc:
+        sys.stderr.write(f"Error: {exc}\n")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

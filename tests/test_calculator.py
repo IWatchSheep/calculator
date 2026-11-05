@@ -4,10 +4,15 @@ From the PyCharm project root, run:
     python -m unittest discover -s tests -v
 
 A graphical desktop session is needed because these tests instantiate Tkinter.
+On headless Linux systems, tests can run via virtual display (Xvfb / pyvirtualdisplay)
+or using: xvfb-run -a python -m unittest discover -s tests -v
 """
 
 import contextlib
 import io
+import os
+import shutil
+import subprocess
 import sys
 import tkinter as tk
 import unittest
@@ -17,6 +22,49 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 from addition.addition import AdditionCalculator
+
+_virtual_display = None
+
+
+def setUpModule():
+    """Start a virtual display on headless Linux/POSIX systems if no display is active."""
+    global _virtual_display
+    if os.name == "posix" and not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
+        try:
+            from pyvirtualdisplay import Display
+            _virtual_display = Display(visible=False, size=(1024, 768))
+            _virtual_display.start()
+        except Exception:
+            if shutil.which("Xvfb"):
+                try:
+                    for disp_num in range(99, 110):
+                        disp_str = f":{disp_num}"
+                        if not os.path.exists(f"/tmp/.X11-unix/X{disp_num}"):
+                            proc = subprocess.Popen(
+                                ["Xvfb", disp_str, "-screen", "0", "1024x768x24"],
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL,
+                            )
+                            os.environ["DISPLAY"] = disp_str
+                            _virtual_display = proc
+                            break
+                except Exception:
+                    pass
+
+
+def tearDownModule():
+    """Clean up virtual display if one was started."""
+    global _virtual_display
+    if _virtual_display is not None:
+        try:
+            if hasattr(_virtual_display, "stop"):
+                _virtual_display.stop()
+            elif hasattr(_virtual_display, "terminate"):
+                _virtual_display.terminate()
+                _virtual_display.wait(timeout=2)
+        except Exception:
+            pass
+        _virtual_display = None
 
 
 class CalculatorRegressionTests(unittest.TestCase):
@@ -28,6 +76,7 @@ class CalculatorRegressionTests(unittest.TestCase):
         self.root.withdraw()  # Avoid leaving multiple visible test windows.
         self.calculator = AdditionCalculator(self.root)
         self.root.deiconify()
+        self.root.focus_force()
         self.root.update()
 
     def tearDown(self):
@@ -48,6 +97,22 @@ class CalculatorRegressionTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             for key in sequence:
                 self.calculator.on_button_click(key)
+
+    def press_buttons(self, sequence):
+        """Simulate physical button widget clicks by finding keypad Button widgets and invoking them."""
+        buttons_by_text = {
+            w.cget("text"): w
+            for w in self.calculator.keypad_frame.winfo_children()
+            if isinstance(w, tk.Button)
+        }
+        with contextlib.redirect_stdout(io.StringIO()):
+            for char in sequence:
+                btn = buttons_by_text.get(char)
+                if btn is not None:
+                    btn.invoke()
+                else:
+                    self.calculator.on_button_click(char)
+                self.root.update()
 
     def test_integer_addition(self):
         self.assertEqual(self.calculate_inputs("12", "30"), "42")
@@ -131,13 +196,11 @@ class CalculatorRegressionTests(unittest.TestCase):
     def test_parentheses_physical_keyboard(self):
         """2. Parentheses entered using the physical keyboard."""
         app = self.calculator
-        self.root.event_generate("<Key-parenleft>")
-        self.root.event_generate("2")
-        self.root.event_generate("+")
-        self.root.event_generate("3")
-        self.root.event_generate("<Key-parenright>")
-        self.root.event_generate("<Return>")
+        self.root.focus_force()
         self.root.update()
+        for key in ["<Key-parenleft>", "<Key-2>", "<Key-plus>", "<Key-3>", "<Key-parenright>", "<Return>"]:
+            self.root.event_generate(key)
+            self.root.update()
         self.assertEqual(app.result_var.get(), "5")
 
     def test_nested_parentheses(self):
@@ -246,6 +309,80 @@ class CalculatorRegressionTests(unittest.TestCase):
         after = (app.keypad_frame.winfo_rooty(), zero_button.winfo_rooty(), self.root.winfo_height())
         self.assertGreaterEqual(len(app.addends), 3)
         self.assertEqual(before, after, "Keypad must stay stable when three or more inputs with parentheses are entered")
+
+    # Automated GUI button click simulations
+
+    def test_gui_button_clicks_nested_parentheses(self):
+        """Simulate real GUI button clicks for nested parentheses calculation."""
+        self.press_buttons("2+(3+(4+5))=")
+        self.assertEqual(self.calculator.result_var.get(), "14")
+
+    def test_gui_button_clicks_decimal_addition(self):
+        """Simulate real GUI button clicks for decimal addition in parentheses."""
+        self.press_buttons("0.1+(0.2+0.3)=")
+        self.assertEqual(self.calculator.result_var.get(), "0.6")
+
+    def test_gui_button_clicks_clear(self):
+        """Simulate real GUI button clicks for calculation followed by C button."""
+        self.press_buttons("(2+3)=")
+        self.assertEqual(self.calculator.result_var.get(), "5")
+        self.press_buttons("C")
+        self.assertEqual(self.calculator.result_var.get(), "")
+        self.assertEqual(self.calculator.addends, ["", ""])
+
+    def test_gui_button_clicks_error_handling(self):
+        """Simulate real GUI button clicks for invalid syntax and recovery."""
+        self.press_buttons("2+()=")
+        self.assertEqual(self.calculator.result_var.get(), "Error")
+        self.press_buttons("C")
+        self.assertEqual(self.calculator.result_var.get(), "")
+        self.assertEqual(self.calculator.addends, ["", ""])
+
+    # Keypad and 0 button positioning stability across multiple addend rows
+
+    def test_keypad_and_zero_button_stability_multiple_rows(self):
+        """Keypad container and 0 button remain anchored when 3, 4, 5, or more addend rows are created."""
+        app = self.calculator
+        self.root.update()
+        zero_btn = next(w for w in app.keypad_frame.winfo_children() if w.cget("text") == "0")
+        initial_keypad_y = app.keypad_frame.winfo_rooty()
+        initial_zero_pos = (zero_btn.winfo_rootx(), zero_btn.winfo_rooty())
+        initial_height = self.root.winfo_height()
+
+        # Add 3rd, 4th, 5th, and 6th addends
+        self.press("1+2+3+4+5+")
+        self.root.update()
+        self.assertEqual(len(app.addends), 6)
+        self.assertEqual(app.keypad_frame.winfo_rooty(), initial_keypad_y, "Keypad frame y must not shift with multiple addends")
+        self.assertEqual((zero_btn.winfo_rootx(), zero_btn.winfo_rooty()), initial_zero_pos, "0 button position must not shift with multiple addends")
+        self.assertEqual(self.root.winfo_height(), initial_height, "Window height must not grow when new addends scroll inside canvas")
+
+        # Each addend row removal requires backspacing the character and the empty window
+        while len(app.addends) > 2:
+            app.on_backspace()
+            self.root.update()
+        self.assertEqual(len(app.addends), 2)
+        self.assertEqual((zero_btn.winfo_rootx(), zero_btn.winfo_rooty()), initial_zero_pos, "0 button must remain stable when addends are removed")
+
+    def test_keypad_stability_with_parentheses_and_equals(self):
+        """Keypad and 0 button remain stable across parenthesized inputs, equals, and continuations."""
+        app = self.calculator
+        self.root.update()
+        zero_btn = next(w for w in app.keypad_frame.winfo_children() if w.cget("text") == "0")
+        initial_zero_pos = (zero_btn.winfo_rootx(), zero_btn.winfo_rooty())
+        initial_keypad_y = app.keypad_frame.winfo_rooty()
+
+        self.press_buttons("(1+2)+(3+4)=")
+        self.root.update()
+        self.assertEqual(app.result_var.get(), "10")
+        self.assertEqual(app.keypad_frame.winfo_rooty(), initial_keypad_y)
+        self.assertEqual((zero_btn.winfo_rootx(), zero_btn.winfo_rooty()), initial_zero_pos)
+
+        self.press_buttons("+5=")
+        self.root.update()
+        self.assertEqual(app.result_var.get(), "15")
+        self.assertEqual(app.keypad_frame.winfo_rooty(), initial_keypad_y)
+        self.assertEqual((zero_btn.winfo_rootx(), zero_btn.winfo_rooty()), initial_zero_pos)
 
 
 if __name__ == "__main__":
