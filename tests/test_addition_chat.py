@@ -27,19 +27,31 @@ class AdditionChatTests(unittest.TestCase):
         self.root.destroy()
 
     def calculate_inputs(self, *items):
-        """items can be either numbers or (number, word) tuples"""
+        """items can be either numbers, (number, word) tuples, or (number, word, context, ...) tuples."""
         app = self.calculator
         for index, item in enumerate(items):
             if isinstance(item, tuple):
-                num, word = item
+                num = item[0]
+                word = item[1] if len(item) > 1 else ""
+                context = item[2] if len(item) > 2 else ""
+                extras = item[3:] if len(item) > 3 else ()
             else:
-                num, word = item, ""
+                num, word, context, extras = item, "", "", ()
+
             if index >= len(app.addends):
                 app.add_addend_window()
             app.addends[index] = str(num)
             app.addend_vars[index].set(str(num))
             app.addend_words[index] = str(word)
             app.addend_word_vars[index].set(str(word))
+            app.addend_contexts[index] = str(context)
+            app.addend_context_vars[index].set(str(context))
+
+            for col_idx, extra_val in enumerate(extras):
+                while col_idx >= len(app.extra_addend_words):
+                    app.add_column()
+                app.extra_addend_words[col_idx][index] = str(extra_val)
+                app.extra_word_vars[col_idx][index].set(str(extra_val))
 
         with contextlib.redirect_stdout(io.StringIO()):
             app.calculate()
@@ -84,6 +96,7 @@ class AdditionChatTests(unittest.TestCase):
 
         self.assertEqual(len(app.addends), 3)
         self.assertEqual(len(app.addend_words), 3)
+        self.assertEqual(len(app.addend_contexts), 3)
         self.assertEqual(before, after, "Adding a third addend must not shift the keypad container or the 0 button")
 
     def test_typewriter_input(self):
@@ -139,8 +152,115 @@ class AdditionChatTests(unittest.TestCase):
         self.calculator.clear_all()
         self.assertEqual(self.calculator.addends, ["", ""])
         self.assertEqual(self.calculator.addend_words, ["", ""])
+        self.assertEqual(self.calculator.addend_contexts, ["", ""])
         self.assertEqual(self.calculator.result_var.get(), "")
         self.assertEqual(self.calculator.result_word_var.get(), "")
+
+    # Regression and feature tests for Column 3 (Description / Context) and dynamic columns
+
+    def test_third_column_addition_same_item_and_context(self):
+        """User example: 2 pens in the drawer + 3 pens in the drawer -> 5 pens in the drawer."""
+        num_res, word_res = self.calculate_inputs(
+            ("2", "pens", "in the drawer"),
+            ("3", "pens", "in the drawer"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens in the drawer")
+
+    def test_third_column_single_unit_singular(self):
+        num_res, word_res = self.calculate_inputs(
+            ("0.5", "pen", "in the drawer"),
+            ("0.5", "pen", "in the drawer"),
+        )
+        self.assertEqual(num_res, "1")
+        self.assertEqual(word_res, "pen in the drawer")
+
+    def test_third_column_different_contexts_same_item(self):
+        num_res, word_res = self.calculate_inputs(
+            ("2", "pens", "in the drawer"),
+            ("3", "pens", "on the desk"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens (2 in the drawer, 3 on the desk)")
+
+    def test_third_column_category_aggregation_with_context(self):
+        num_res, word_res = self.calculate_inputs(
+            ("2", "apples", "in the fridge"),
+            ("3", "oranges", "on the counter"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "fruits (2 apples in the fridge, 3 oranges on the counter)")
+
+    def test_third_column_dropdown_options(self):
+        app = self.calculator
+        self.assertIn("in the drawer", app.context_options)
+        self.assertIn("on the table", app.context_options)
+        self.assertIn("in the box", app.context_options)
+        self.assertIn("(Type custom description...)", app.context_options)
+
+    def test_third_column_add_custom_context_persists(self):
+        app = self.calculator
+        custom_ctx = "under the rug"
+        self.assertNotIn(custom_ctx, app.context_options)
+
+        app.addend_contexts[0] = custom_ctx
+        app.addend_context_vars[0].set(custom_ctx)
+        app.save_custom_context(0)
+
+        self.assertIn(custom_ctx, app.context_options)
+        for combo in app.addend_context_entries:
+            self.assertIn(custom_ctx, combo["values"])
+
+    def test_typewriter_input_into_third_column(self):
+        app = self.calculator
+        # Activate Column 3 (context)
+        app._set_active_index(0, "word", col=1)
+        app.on_typewriter_char("b")
+        app.on_typewriter_char("o")
+        app.on_typewriter_char("x")
+        self.assertEqual(app.addend_contexts[0], "box")
+        self.assertEqual(app.addend_context_vars[0].get(), "box")
+
+        app.on_typewriter_backspace()
+        self.assertEqual(app.addend_contexts[0], "bo")
+
+        app.on_typewriter_clear_word()
+        self.assertEqual(app.addend_contexts[0], "")
+
+    def test_dynamic_add_column(self):
+        app = self.calculator
+        app.add_column("Extra Detail")
+        self.assertEqual(len(app.extra_addend_words), 1)
+        self.assertEqual(len(app.extra_word_entries[0]), 2)
+
+        num_res, word_res = self.calculate_inputs(
+            ("2", "pens", "in the drawer", "on Monday"),
+            ("3", "pens", "in the drawer", "on Monday"),
+        )
+        self.assertEqual(num_res, "5")
+        self.assertEqual(word_res, "pens in the drawer on Monday")
+
+    def test_clear_all_resets_third_column_and_extra_columns(self):
+        app = self.calculator
+        app.add_column("Extra Detail")
+        self.calculate_inputs(
+            ("2", "pens", "in the drawer", "red"),
+            ("3", "pens", "in the drawer", "blue"),
+        )
+        app.clear_all()
+        self.assertEqual(app.addends, ["", ""])
+        self.assertEqual(app.addend_words, ["", ""])
+        self.assertEqual(app.addend_contexts, ["", ""])
+        self.assertEqual(app.extra_addend_words[0], ["", ""])
+        self.assertEqual(app.result_var.get(), "")
+        self.assertEqual(app.result_word_var.get(), "")
+
+    def test_word_summer_chatbot_direct_invocation(self):
+        result = WordSummerChatbot.summarize(
+            [("2", "pens", "in the drawer"), ("3", "pens", "in the drawer")],
+            "5",
+        )
+        self.assertEqual(result, "pens in the drawer")
 
 
 if __name__ == "__main__":

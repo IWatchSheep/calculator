@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Set, Tuple
 class WordSummerChatbot:
     """
     Offline rule-based NLP helper that sums up and synthesizes
-    word descriptions corresponding to addends.
+    word descriptions corresponding to addends across multiple word columns.
     """
 
     CATEGORIES: Dict[str, Tuple[str, Set[str]]] = {
@@ -129,35 +129,58 @@ class WordSummerChatbot:
         return None
 
     @classmethod
-    def summarize(cls, items: List[Tuple[str, str]], total_formatted: str) -> str:
+    def summarize(cls, items: List[Tuple], total_formatted: str) -> str:
         """
-        Summarizes a list of (number_string, word_string) pairs
+        Summarizes a list of (number_string, word_string, [context_string, ...]) tuples
         into a cohesive word result.
         """
-        cleaned_items: List[Tuple[str, str]] = []
-        for num, text in items:
-            t = text.strip()
-            if t and t != "(Type custom word...)":
-                cleaned_items.append((num.strip() or "0", t))
+        cleaned_rows: List[Tuple[str, str, str, str]] = []
+        for item in items:
+            num = item[0] if len(item) > 0 else "0"
+            num_clean = str(num).strip() or "0"
+            word_parts: List[str] = []
+            for part in item[1:]:
+                p = str(part).strip()
+                if p and not (p.startswith("(") and p.endswith("...)")):
+                    word_parts.append(p)
+            if word_parts:
+                item_word = word_parts[0]
+                context_str = " ".join(word_parts[1:]) if len(word_parts) > 1 else ""
+                full_desc = f"{item_word} {context_str}".strip()
+                cleaned_rows.append((num_clean, item_word, context_str, full_desc))
 
-        if not cleaned_items:
+        if not cleaned_rows:
             return ""
 
         is_single_unit = (total_formatted == "1" or total_formatted == "1.0")
 
-        # Extract primary word tokens (last word of description usually serves as noun head)
+        # Extract primary word tokens (last word of item_word usually serves as noun head)
         tokens = []
-        for _, text in cleaned_items:
-            words = re.findall(r"[A-Za-z]+", text)
-            tokens.append(words[-1] if words else text)
+        for _, item_w, _, _ in cleaned_rows:
+            words = re.findall(r"[A-Za-z]+", item_w)
+            tokens.append(words[-1] if words else item_w)
 
         lemmas = [cls._lemmatize_word(tok) for tok in tokens]
+        all_same_item = (len(set(lemmas)) == 1)
 
-        # Case 1: All descriptions refer to the same noun (e.g. "apples" and "apple")
-        if len(set(lemmas)) == 1:
+        contexts = [ctx for _, _, ctx, _ in cleaned_rows]
+        all_same_context = (len(set(contexts)) == 1)
+
+        # Case 1: All descriptions refer to the same noun (e.g. "pens" and "pen")
+        if all_same_item:
             base = lemmas[0]
             display_word = cls._pluralize_word(base, is_single_unit)
-            return display_word
+            if all_same_context:
+                if contexts[0]:
+                    return f"{display_word} {contexts[0]}"
+                return display_word
+            else:
+                # Same noun, but different contexts (e.g. 2 in the drawer, 3 on the desk)
+                breakdown = ", ".join(
+                    f"{n} {ctx}" if ctx else f"{n} {display_word}"
+                    for n, _, ctx, _ in cleaned_rows
+                )
+                return f"{display_word} ({breakdown})"
 
         # Case 2: Check if all items belong to a common recognized category (e.g. "fruits")
         categories = [cls._find_category(tok) for tok in tokens]
@@ -165,22 +188,22 @@ class WordSummerChatbot:
             cat_keys = {c[0] for c in categories if c is not None}
             if len(cat_keys) == 1:
                 cat_label = categories[0][1]
-                breakdown = ", ".join(f"{n} {w}" for n, w in cleaned_items)
+                breakdown = ", ".join(f"{n} {desc}" for n, _, _, desc in cleaned_rows)
                 return f"{cat_label} ({breakdown})"
 
         # Case 3: Two distinct items
-        if len(cleaned_items) == 2:
-            return f"{cleaned_items[0][1]} and {cleaned_items[1][1]}"
+        if len(cleaned_rows) == 2:
+            return f"{cleaned_rows[0][3]} and {cleaned_rows[1][3]}"
 
         # Case 4: Multiple distinct items (natural listing)
-        breakdown = ", ".join(f"{n} {w}" for n, w in cleaned_items)
+        breakdown = ", ".join(f"{n} {desc}" for n, _, _, desc in cleaned_rows)
         return f"total items ({breakdown})"
 
 
 class AdditionCalculator:
     BASE_WIDTH: int = 16
 
-    # Pre-made hard-coded starter words categorized and ready for use
+    # Pre-made hard-coded starter words categorized and ready for use in Column 2 (Item)
     DEFAULT_WORDS: List[str] = [
         "(Type custom word...)",
         "apples", "bananas", "berries", "books", "cars", "cats", "cents",
@@ -190,17 +213,33 @@ class AdditionCalculator:
         "students", "tables", "tomatoes"
     ]
 
+    # Pre-made hard-coded starter context/description phrases for Column 3 (Description/Context)
+    DEFAULT_CONTEXTS: List[str] = [
+        "(Type custom description...)",
+        "at home", "at school", "at work", "in the basket",
+        "in the box", "in the cabinet", "in the classroom", "in the drawer",
+        "in the fridge", "in the garage", "in the garden", "in the kitchen",
+        "in the library", "in the office", "in the park", "in the room",
+        "on sale", "on the counter", "on the desk", "on the floor",
+        "on the shelf", "on the table", "under the bed", "with friends"
+    ]
+
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Addition Calculator with Word Chatbot")
         self.root.resizable(True, True)
 
         self.word_options: List[str] = list(self.DEFAULT_WORDS)
+        self.context_options: List[str] = list(self.DEFAULT_CONTEXTS)
 
         self.addends: List[str] = ["", ""]
         self.addend_words: List[str] = ["", ""]
+        self.addend_contexts: List[str] = ["", ""]
+        self.extra_addend_words: List[List[str]] = []
+
         self.current_index: int = 0
         self.active_field: str = "number"  # "number" or "word"
+        self.active_word_col: int = 0      # 0 for Item, 1 for Context, 2+ for extra columns
         self.calculated: bool = False
 
         self.addend_frames: List[tk.Frame] = []
@@ -208,15 +247,24 @@ class AdditionCalculator:
         self.addend_entries: List[tk.Entry] = []
         self.addend_vars: List[tk.StringVar] = []
 
+        self.addend_row_inner_frames: List[tk.Frame] = []
+
         self.addend_word_entries: List[ttk.Combobox] = []
         self.addend_word_vars: List[tk.StringVar] = []
+
+        self.addend_context_entries: List[ttk.Combobox] = []
+        self.addend_context_vars: List[tk.StringVar] = []
+
+        self.extra_word_entries: List[List[ttk.Combobox]] = []
+        self.extra_word_vars: List[List[tk.StringVar]] = []
+        self.extra_header_labels: List[tk.Label] = []
 
         self._create_widgets()
         self._bind_keys()
         self._update_active_highlight()
 
         self.root.update_idletasks()
-        self.root.minsize(660, self.root.winfo_reqheight())
+        self.root.minsize(750, self.root.winfo_reqheight())
 
     @staticmethod
     def _get_label_text(index: int) -> str:
@@ -271,21 +319,42 @@ class AdditionCalculator:
         self.header_frame.pack(side="top", fill="x", pady=(0, 4))
         self.header_num_lbl = tk.Label(
             self.header_frame,
-            text="Number (Addends)",
+            text="Number (Quantity)",
             font=("Segoe UI", 9, "bold"),
             fg="#444444",
             width=self.BASE_WIDTH + 2,
             anchor="w"
         )
         self.header_num_lbl.pack(side="left")
+
         self.header_word_lbl = tk.Label(
             self.header_frame,
-            text="Word Description (Drop-down or type custom word)",
+            text="Item (Word)",
             font=("Segoe UI", 9, "bold"),
             fg="#444444",
             anchor="w"
         )
         self.header_word_lbl.pack(side="left", fill="x", expand=True, padx=(8, 0))
+
+        self.header_context_lbl = tk.Label(
+            self.header_frame,
+            text="Description / Context",
+            font=("Segoe UI", 9, "bold"),
+            fg="#444444",
+            anchor="w"
+        )
+        self.header_context_lbl.pack(side="left", fill="x", expand=True, padx=(8, 0))
+
+        self.add_col_btn = tk.Button(
+            self.header_frame,
+            text="+ Column",
+            font=("Segoe UI", 8, "bold"),
+            bg="#e1f5fe",
+            fg="#0277bd",
+            relief="groove",
+            command=self.add_column,
+        )
+        self.add_col_btn.pack(side="left", padx=(8, 0))
 
         # Initial two addend rows
         for i in range(2):
@@ -377,7 +446,7 @@ class AdditionCalculator:
         row_f.pack(fill="x", expand=True)
         self._bind_mousewheel(row_f)
 
-        # Number Entry (Left Column)
+        # Column 1 — Quantity: Numerical value entered by user
         num_var = tk.StringVar(value=self.addends[index])
         num_entry = tk.Entry(
             row_f,
@@ -394,7 +463,7 @@ class AdditionCalculator:
         num_entry.bind("<Button-1>", lambda _e, idx=index: self._set_active_index(idx, "number"))
         self._bind_mousewheel(num_entry)
 
-        # Word Description Drop-down / Entry (Right Column)
+        # Column 2 — Item: Drop-down list with custom-word capability
         word_var = tk.StringVar(value=self.addend_words[index])
         word_combo = ttk.Combobox(
             row_f,
@@ -403,14 +472,13 @@ class AdditionCalculator:
             font=("Segoe UI", 11),
         )
         word_combo.pack(side="left", fill="x", expand=True, padx=(8, 0))
-        word_combo.bind("<Button-1>", lambda _e, idx=index: self._set_active_index(idx, "word"))
-        word_combo.bind("<FocusIn>", lambda _e, idx=index: self._set_active_index(idx, "word"))
+        word_combo.bind("<Button-1>", lambda _e, idx=index: self._set_active_index(idx, "word", col=0))
+        word_combo.bind("<FocusIn>", lambda _e, idx=index: self._set_active_index(idx, "word", col=0))
         word_combo.bind("<<ComboboxSelected>>", lambda _e, idx=index: self._on_combo_select(idx))
         word_combo.bind("<KeyRelease>", lambda _e, idx=index: self._sync_word_from_entry(idx))
         word_combo.bind("<FocusOut>", lambda _e, idx=index: self._on_word_focus_out(idx))
         self._bind_mousewheel(word_combo)
 
-        # Save Word Button (explicit button to add custom word to list for future picks)
         save_btn = tk.Button(
             row_f,
             text="+ Add to List",
@@ -423,12 +491,107 @@ class AdditionCalculator:
         save_btn.pack(side="left", padx=(4, 0))
         self._bind_mousewheel(save_btn)
 
+        # Column 3 — Description / Context: Drop-down list and free-text entry
+        context_var = tk.StringVar(value=self.addend_contexts[index])
+        context_combo = ttk.Combobox(
+            row_f,
+            textvariable=context_var,
+            values=self.context_options,
+            font=("Segoe UI", 11),
+        )
+        context_combo.pack(side="left", fill="x", expand=True, padx=(8, 0))
+        context_combo.bind("<Button-1>", lambda _e, idx=index: self._set_active_index(idx, "word", col=1))
+        context_combo.bind("<FocusIn>", lambda _e, idx=index: self._set_active_index(idx, "word", col=1))
+        context_combo.bind("<<ComboboxSelected>>", lambda _e, idx=index: self._on_context_combo_select(idx))
+        context_combo.bind("<KeyRelease>", lambda _e, idx=index: self._sync_context_from_entry(idx))
+        context_combo.bind("<FocusOut>", lambda _e, idx=index: self._on_context_focus_out(idx))
+        self._bind_mousewheel(context_combo)
+
+        save_context_btn = tk.Button(
+            row_f,
+            text="+ Add to List",
+            font=("Segoe UI", 8, "bold"),
+            bg="#e8f5e9",
+            fg="#2e7d32",
+            relief="groove",
+            command=lambda idx=index: self.save_custom_context(idx),
+        )
+        save_context_btn.pack(side="left", padx=(4, 0))
+        self._bind_mousewheel(save_context_btn)
+
+        # Dynamic extra columns (Column 4, 5, etc.) if previously added
+        for col_idx in range(len(self.extra_addend_words)):
+            self._create_extra_column_widget_for_row(row_f, index, col_idx)
+
         self.addend_frames.append(f)
         self.addend_labels.append(lbl)
         self.addend_vars.append(num_var)
         self.addend_entries.append(num_entry)
         self.addend_word_vars.append(word_var)
         self.addend_word_entries.append(word_combo)
+        self.addend_context_vars.append(context_var)
+        self.addend_context_entries.append(context_combo)
+        self.addend_row_inner_frames.append(row_f)
+
+    def _create_extra_column_widget_for_row(self, row_f: tk.Frame, row_idx: int, col_idx: int) -> None:
+        col_var = tk.StringVar(value=self.extra_addend_words[col_idx][row_idx])
+        col_combo = ttk.Combobox(
+            row_f,
+            textvariable=col_var,
+            values=self.context_options,
+            font=("Segoe UI", 11),
+        )
+        col_combo.pack(side="left", fill="x", expand=True, padx=(8, 0))
+        col_combo.bind("<Button-1>", lambda _e, r=row_idx, c=col_idx: self._set_active_index(r, "word", col=c + 2))
+        col_combo.bind("<FocusIn>", lambda _e, r=row_idx, c=col_idx: self._set_active_index(r, "word", col=c + 2))
+        col_combo.bind("<<ComboboxSelected>>", lambda _e, r=row_idx, c=col_idx: self._on_extra_combo_select(r, c))
+        col_combo.bind("<KeyRelease>", lambda _e, r=row_idx, c=col_idx: self._sync_extra_from_entry(r, c))
+        col_combo.bind("<FocusOut>", lambda _e, r=row_idx, c=col_idx: self._on_extra_focus_out(r, c))
+        self._bind_mousewheel(col_combo)
+
+        save_extra_btn = tk.Button(
+            row_f,
+            text="+ Add to List",
+            font=("Segoe UI", 8, "bold"),
+            bg="#e8f5e9",
+            fg="#2e7d32",
+            relief="groove",
+            command=lambda r=row_idx, c=col_idx: self.save_custom_extra(r, c),
+        )
+        save_extra_btn.pack(side="left", padx=(4, 0))
+        self._bind_mousewheel(save_extra_btn)
+
+        if row_idx >= len(self.extra_word_vars[col_idx]):
+            self.extra_word_vars[col_idx].append(col_var)
+            self.extra_word_entries[col_idx].append(col_combo)
+
+    def add_column(self, col_title: Optional[str] = None) -> None:
+        """Adds a new column to all rows dynamically."""
+        col_idx = len(self.extra_addend_words)
+        title = col_title or f"Column {col_idx + 4} (Extra)"
+
+        self.extra_addend_words.append(["" for _ in range(len(self.addends))])
+        self.extra_word_vars.append([])
+        self.extra_word_entries.append([])
+
+        # Repack + Column button after appending header
+        self.add_col_btn.pack_forget()
+        header_lbl = tk.Label(
+            self.header_frame,
+            text=title,
+            font=("Segoe UI", 9, "bold"),
+            fg="#444444",
+            anchor="w",
+        )
+        header_lbl.pack(side="left", fill="x", expand=True, padx=(8, 0))
+        self.extra_header_labels.append(header_lbl)
+        self.add_col_btn.pack(side="left", padx=(8, 0))
+
+        # Add widget to each row
+        for row_idx, row_f in enumerate(self.addend_row_inner_frames):
+            self._create_extra_column_widget_for_row(row_f, row_idx, col_idx)
+
+        self.root.update_idletasks()
 
     def _on_combo_select(self, index: int) -> None:
         val = self.addend_word_vars[index].get()
@@ -438,17 +601,57 @@ class AdditionCalculator:
             self.addend_word_entries[index].focus_set()
         else:
             self.addend_words[index] = val
-        self._set_active_index(index, "word")
+        self._set_active_index(index, "word", col=0)
+
+    def _on_context_combo_select(self, index: int) -> None:
+        val = self.addend_context_vars[index].get()
+        if val == "(Type custom description...)":
+            self.addend_context_vars[index].set("")
+            self.addend_contexts[index] = ""
+            self.addend_context_entries[index].focus_set()
+        else:
+            self.addend_contexts[index] = val
+        self._set_active_index(index, "word", col=1)
+
+    def _on_extra_combo_select(self, row_idx: int, col_idx: int) -> None:
+        val = self.extra_word_vars[col_idx][row_idx].get()
+        if val == "(Type custom description...)":
+            self.extra_word_vars[col_idx][row_idx].set("")
+            self.extra_addend_words[col_idx][row_idx] = ""
+            self.extra_word_entries[col_idx][row_idx].focus_set()
+        else:
+            self.extra_addend_words[col_idx][row_idx] = val
+        self._set_active_index(row_idx, "word", col=col_idx + 2)
 
     def _sync_word_from_entry(self, index: int) -> None:
         if 0 <= index < len(self.addend_word_vars):
             self.addend_words[index] = self.addend_word_vars[index].get()
+
+    def _sync_context_from_entry(self, index: int) -> None:
+        if 0 <= index < len(self.addend_context_vars):
+            self.addend_contexts[index] = self.addend_context_vars[index].get()
+
+    def _sync_extra_from_entry(self, row_idx: int, col_idx: int) -> None:
+        if 0 <= col_idx < len(self.extra_word_vars) and 0 <= row_idx < len(self.extra_word_vars[col_idx]):
+            self.extra_addend_words[col_idx][row_idx] = self.extra_word_vars[col_idx][row_idx].get()
 
     def _on_word_focus_out(self, index: int) -> None:
         self._sync_word_from_entry(index)
         val = self.addend_words[index].strip()
         if val and val != "(Type custom word...)":
             self.add_word_to_options(val)
+
+    def _on_context_focus_out(self, index: int) -> None:
+        self._sync_context_from_entry(index)
+        val = self.addend_contexts[index].strip()
+        if val and val != "(Type custom description...)":
+            self.add_context_to_options(val)
+
+    def _on_extra_focus_out(self, row_idx: int, col_idx: int) -> None:
+        self._sync_extra_from_entry(row_idx, col_idx)
+        val = self.extra_addend_words[col_idx][row_idx].strip()
+        if val and not (val.startswith("(") and val.endswith("...)")):
+            self.add_context_to_options(val)
 
     def save_custom_word(self, index: Optional[int] = None) -> None:
         """Adds the word in the active row to the saved options list for future selection."""
@@ -458,6 +661,30 @@ class AdditionCalculator:
             val = self.addend_words[idx].strip()
             if val and val != "(Type custom word...)":
                 self.add_word_to_options(val)
+
+    def save_custom_context(self, index: Optional[int] = None) -> None:
+        """Adds the context description in the active row to the saved options list for future selection."""
+        idx = self.current_index if index is None else index
+        if 0 <= idx < len(self.addend_context_vars):
+            self._sync_context_from_entry(idx)
+            val = self.addend_contexts[idx].strip()
+            if val and val != "(Type custom description...)":
+                self.add_context_to_options(val)
+
+    def save_custom_extra(self, row_idx: int, col_idx: int) -> None:
+        self._sync_extra_from_entry(row_idx, col_idx)
+        val = self.extra_addend_words[col_idx][row_idx].strip()
+        if val and not (val.startswith("(") and val.endswith("...)")):
+            self.add_context_to_options(val)
+
+    def save_active_word_or_context(self) -> None:
+        if self.active_word_col == 1:
+            self.save_custom_context()
+        elif self.active_word_col > 1:
+            extra_idx = self.active_word_col - 2
+            self.save_custom_extra(self.current_index, extra_idx)
+        else:
+            self.save_custom_word()
 
     def add_word_to_options(self, word: str) -> bool:
         """Adds a new word to the dropdown options if not already present."""
@@ -475,9 +702,32 @@ class AdditionCalculator:
             return True
         return False
 
+    def add_context_to_options(self, context_str: str) -> bool:
+        """Adds a new context phrase to the dropdown options if not already present."""
+        c = context_str.strip()
+        if not c or c == "(Type custom description...)":
+            return False
+
+        existing_lower = [opt.lower() for opt in self.context_options if opt != "(Type custom description...)"]
+        if c.lower() not in existing_lower:
+            base_options = [opt for opt in self.context_options if opt != "(Type custom description...)"]
+            base_options.append(c)
+            base_options.sort(key=str.lower)
+            self.context_options = ["(Type custom description...)"] + base_options
+            self._refresh_all_context_comboboxes()
+            return True
+        return False
+
     def _refresh_all_comboboxes(self) -> None:
         for combo in self.addend_word_entries:
             combo["values"] = self.word_options
+
+    def _refresh_all_context_comboboxes(self) -> None:
+        for combo in self.addend_context_entries:
+            combo["values"] = self.context_options
+        for col in self.extra_word_entries:
+            for combo in col:
+                combo["values"] = self.context_options
 
     def _create_keypad(self) -> None:
         buttons = [
@@ -599,7 +849,7 @@ class AdditionCalculator:
             height=1,
             bg="#e8f5e9",
             fg="#2e7d32",
-            command=lambda: self.save_custom_word(),
+            command=self.save_active_word_or_context,
         )
         save_word_btn.pack(side="left", padx=2)
 
@@ -607,20 +857,53 @@ class AdditionCalculator:
         if self.calculated:
             self.clear_all()
         self.active_field = "word"
-        cur = self.addend_words[self.current_index]
-        self.addend_words[self.current_index] = cur + char
-        self.addend_word_vars[self.current_index].set(self.addend_words[self.current_index])
+        if self.active_word_col == 0:
+            cur = self.addend_words[self.current_index]
+            self.addend_words[self.current_index] = cur + char
+            self.addend_word_vars[self.current_index].set(self.addend_words[self.current_index])
+        elif self.active_word_col == 1:
+            cur = self.addend_contexts[self.current_index]
+            self.addend_contexts[self.current_index] = cur + char
+            self.addend_context_vars[self.current_index].set(self.addend_contexts[self.current_index])
+        else:
+            extra_idx = self.active_word_col - 2
+            if extra_idx < len(self.extra_addend_words):
+                cur = self.extra_addend_words[extra_idx][self.current_index]
+                self.extra_addend_words[extra_idx][self.current_index] = cur + char
+                self.extra_word_vars[extra_idx][self.current_index].set(self.extra_addend_words[extra_idx][self.current_index])
         self._update_active_highlight()
 
     def on_typewriter_backspace(self) -> None:
-        cur = self.addend_words[self.current_index]
-        if cur:
-            self.addend_words[self.current_index] = cur[:-1]
-            self.addend_word_vars[self.current_index].set(self.addend_words[self.current_index])
+        if self.active_word_col == 0:
+            cur = self.addend_words[self.current_index]
+            if cur:
+                self.addend_words[self.current_index] = cur[:-1]
+                self.addend_word_vars[self.current_index].set(self.addend_words[self.current_index])
+        elif self.active_word_col == 1:
+            cur = self.addend_contexts[self.current_index]
+            if cur:
+                self.addend_contexts[self.current_index] = cur[:-1]
+                self.addend_context_vars[self.current_index].set(self.addend_contexts[self.current_index])
+        else:
+            extra_idx = self.active_word_col - 2
+            if extra_idx < len(self.extra_addend_words):
+                cur = self.extra_addend_words[extra_idx][self.current_index]
+                if cur:
+                    self.extra_addend_words[extra_idx][self.current_index] = cur[:-1]
+                    self.extra_word_vars[extra_idx][self.current_index].set(self.extra_addend_words[extra_idx][self.current_index])
 
     def on_typewriter_clear_word(self) -> None:
-        self.addend_words[self.current_index] = ""
-        self.addend_word_vars[self.current_index].set("")
+        if self.active_word_col == 0:
+            self.addend_words[self.current_index] = ""
+            self.addend_word_vars[self.current_index].set("")
+        elif self.active_word_col == 1:
+            self.addend_contexts[self.current_index] = ""
+            self.addend_context_vars[self.current_index].set("")
+        else:
+            extra_idx = self.active_word_col - 2
+            if extra_idx < len(self.extra_addend_words):
+                self.extra_addend_words[extra_idx][self.current_index] = ""
+                self.extra_word_vars[extra_idx][self.current_index].set("")
 
     def _bind_keys(self) -> None:
         # Numeric keys routed to calculator when focused on root
@@ -639,13 +922,19 @@ class AdditionCalculator:
     def _handle_key_input(self, char: str) -> None:
         # If user is currently typing inside a word combobox/entry, don't hijack their typing
         focused = self.root.focus_get()
-        if isinstance(focused, (tk.Entry, ttk.Combobox)) and focused in self.addend_word_entries:
+        all_combos = (
+            self.addend_word_entries +
+            self.addend_context_entries +
+            [c for sub in self.extra_word_entries for c in sub]
+        )
+        if isinstance(focused, (tk.Entry, ttk.Combobox)) and focused in all_combos:
             return
         self.on_button_click(char)
 
-    def _set_active_index(self, index: int, field: str = "number") -> None:
+    def _set_active_index(self, index: int, field: str = "number", col: int = 0) -> None:
         self.current_index = index
         self.active_field = field
+        self.active_word_col = col
         self._update_active_highlight()
         self._ensure_active_visible()
 
@@ -675,6 +964,9 @@ class AdditionCalculator:
         """Pops up another addend row below the rest, scrolling top addends up and keeping keypad in place."""
         self.addends.append("")
         self.addend_words.append("")
+        self.addend_contexts.append("")
+        for col_idx in range(len(self.extra_addend_words)):
+            self.extra_addend_words[col_idx].append("")
         idx = len(self.addends) - 1
         self.result_frame.pack_forget()
         self._create_addend_widget(idx)
@@ -687,6 +979,14 @@ class AdditionCalculator:
         if len(self.addends) > 2:
             self.addends.pop()
             self.addend_words.pop()
+            self.addend_contexts.pop()
+            for col_idx in range(len(self.extra_addend_words)):
+                self.extra_addend_words[col_idx].pop()
+                if self.extra_word_vars[col_idx]:
+                    self.extra_word_vars[col_idx].pop()
+                if self.extra_word_entries[col_idx]:
+                    w = self.extra_word_entries[col_idx].pop()
+                    w.destroy()
             f = self.addend_frames.pop()
             f.destroy()
             self.addend_labels.pop()
@@ -694,6 +994,9 @@ class AdditionCalculator:
             self.addend_vars.pop()
             self.addend_word_entries.pop()
             self.addend_word_vars.pop()
+            self.addend_context_entries.pop()
+            self.addend_context_vars.pop()
+            self.addend_row_inner_frames.pop()
             self._update_entry_widths()
 
     def _update_entry_widths(self) -> None:
@@ -804,6 +1107,20 @@ class AdditionCalculator:
             if w and w != "(Type custom word...)":
                 self.add_word_to_options(w)
 
+        for idx in range(len(self.addend_contexts)):
+            self.addend_contexts[idx] = self.addend_context_vars[idx].get()
+            c = self.addend_contexts[idx].strip()
+            if c and c != "(Type custom description...)":
+                self.add_context_to_options(c)
+
+        for col_idx in range(len(self.extra_addend_words)):
+            for row_idx in range(len(self.extra_addend_words[col_idx])):
+                val = self.extra_word_vars[col_idx][row_idx].get()
+                self.extra_addend_words[col_idx][row_idx] = val
+                v_clean = val.strip()
+                if v_clean and not (v_clean.startswith("(") and v_clean.endswith("...)")):
+                    self.add_context_to_options(v_clean)
+
         cleaned: List[str] = []
         has_decimal = False
         for a in self.addends:
@@ -830,7 +1147,7 @@ class AdditionCalculator:
 
         if has_decimal:
             highest_place = max(value.adjusted() for value in values)
-            lowest_place = min(value.as_tuple().exponent for value in values)
+            lowest_place = min(int(value.as_tuple().exponent) for value in values)
             needed_precision = max(1, highest_place - lowest_place + len(values) + 1)
 
             with localcontext() as context:
@@ -845,9 +1162,16 @@ class AdditionCalculator:
 
         self.result_var.set(formatted_result)
 
-        # Chatbot calculation for the word result column
-        pairs = list(zip(self.addends, self.addend_words))
-        word_result = WordSummerChatbot.summarize(pairs, formatted_result)
+        # Chatbot calculation for the word result column across all word columns
+        items = []
+        for i in range(len(self.addends)):
+            num = self.addends[i]
+            w = self.addend_words[i]
+            c = self.addend_contexts[i]
+            extras = [self.extra_addend_words[col][i] for col in range(len(self.extra_addend_words))]
+            items.append((num, w, c, *extras))
+
+        word_result = WordSummerChatbot.summarize(items, formatted_result)
         self.result_word_var.set(word_result)
 
         self.calculated = True
@@ -868,17 +1192,37 @@ class AdditionCalculator:
             self.addend_vars.pop()
             self.addend_word_entries.pop()
             self.addend_word_vars.pop()
+            self.addend_context_entries.pop()
+            self.addend_context_vars.pop()
+            self.addend_row_inner_frames.pop()
+            for col_idx in range(len(self.extra_addend_words)):
+                if len(self.extra_addend_words[col_idx]) > 2:
+                    self.extra_addend_words[col_idx].pop()
+                if len(self.extra_word_vars[col_idx]) > 2:
+                    self.extra_word_vars[col_idx].pop()
+                if len(self.extra_word_entries[col_idx]) > 2:
+                    self.extra_word_entries[col_idx].pop().destroy()
 
         self.addends = ["", ""]
         self.addend_words = ["", ""]
+        self.addend_contexts = ["", ""]
         self.addend_vars[0].set("")
         self.addend_vars[1].set("")
         self.addend_word_vars[0].set("")
         self.addend_word_vars[1].set("")
+        self.addend_context_vars[0].set("")
+        self.addend_context_vars[1].set("")
+        for col_idx in range(len(self.extra_addend_words)):
+            self.extra_addend_words[col_idx] = ["", ""]
+            if len(self.extra_word_vars[col_idx]) >= 2:
+                self.extra_word_vars[col_idx][0].set("")
+                self.extra_word_vars[col_idx][1].set("")
+
         self.result_var.set("")
         self.result_word_var.set("")
         self.current_index = 0
         self.active_field = "number"
+        self.active_word_col = 0
         self.calculated = False
         self._update_entry_widths()
         self.canvas.yview_moveto(0.0)
