@@ -52,6 +52,7 @@ class TokenType(Enum):
     NUMBER = auto()       # "1", "2.5", etc.
     ITEM = auto()         # "pen", "pens", "apple", etc.
     CONTEXT = auto()      # "in the drawer", "on the desk", etc.
+    UNKNOWN = auto()      # "□" or placeholder
 
     @classmethod
     def from_str(cls, name: str) -> "TokenType":
@@ -68,6 +69,9 @@ class TokenType(Enum):
             "word": cls.ITEM,
             "context": cls.CONTEXT,
             "description": cls.CONTEXT,
+            "unknown": cls.UNKNOWN,
+            "placeholder": cls.UNKNOWN,
+            "□": cls.UNKNOWN,
         }
         key = name.strip().lower()
         if key in mapping:
@@ -83,6 +87,7 @@ class TokenType(Enum):
             TokenType.NUMBER: "Number",
             TokenType.ITEM: "Item",
             TokenType.CONTEXT: "Context",
+            TokenType.UNKNOWN: "Unknown",
         }
         return labels.get(self, self.name)
 
@@ -393,6 +398,82 @@ class TemplateInstance:
 
         return tokens
 
+    def to_editing_token_stream(self, trailing_labels: Optional[List[str]] = None) -> List[Token]:
+        """
+        Non-validating, read-only editing projection preserving:
+        - Template structure (operators, parentheses).
+        - Current slot values (or '□' placeholder when unfilled).
+        - Slot identifiers (slot_id on Token).
+        - Current selection / metadata.
+        - Associated labels and contexts without throwing validation errors.
+        """
+        tokens: List[Token] = []
+        pattern = self.template.pattern
+        slot_idx = 0
+
+        row_item = ""
+        row_context = ""
+        extra_contexts: List[str] = []
+        if trailing_labels:
+            if len(trailing_labels) > 0 and trailing_labels[0].strip():
+                row_item = trailing_labels[0].strip()
+            if len(trailing_labels) > 1 and trailing_labels[1].strip():
+                row_context = trailing_labels[1].strip()
+            if len(trailing_labels) > 2:
+                extra_contexts = [lbl.strip() for lbl in trailing_labels[2:] if lbl.strip()]
+
+        i = 0
+        while i < len(pattern):
+            ch = pattern[i]
+            if ch == "□":
+                if slot_idx < len(self.slots):
+                    slot = self.slots[slot_idx]
+                    val = slot.value.strip() if slot.value else ""
+                    if val:
+                        tok_val = val
+                        tok_type = TokenType.NUMBER if is_valid_number(val) else TokenType.UNKNOWN
+                    else:
+                        tok_val = "□"
+                        tok_type = TokenType.UNKNOWN
+
+                    tokens.append(Token(
+                        value=tok_val,
+                        token_type=tok_type,
+                        explicit_type=True if val else False,
+                        slot_id=slot.slot_id,
+                    ))
+
+                    # Item / Unit
+                    unit = slot.bound_unit.strip() or row_item
+                    if unit:
+                        tokens.append(Token(value=unit, token_type=TokenType.ITEM))
+
+                    # Context
+                    ctx = slot.bound_context.strip() or row_context
+                    if ctx:
+                        tokens.append(Token(value=ctx, token_type=TokenType.CONTEXT))
+
+                    for extra in extra_contexts:
+                        tokens.append(Token(value=extra, token_type=TokenType.CONTEXT))
+
+                    slot_idx += 1
+                i += 1
+            elif ch == "(":
+                tokens.append(Token(value="(", token_type=TokenType.GROUP_OPEN, explicit_type=True))
+                i += 1
+            elif ch == ")":
+                tokens.append(Token(value=")", token_type=TokenType.GROUP_CLOSE, explicit_type=True))
+                i += 1
+            elif ch == "+":
+                tokens.append(Token(value="+", token_type=TokenType.OPERATOR, explicit_type=True))
+                i += 1
+            elif ch.isspace():
+                i += 1
+            else:
+                i += 1
+
+        return tokens
+
 
 @dataclass
 class TemplateRow:
@@ -408,6 +489,18 @@ class TemplateRow:
             self.template_instance = default_tpl.create_instance()
         if not self.description_columns:
             self.description_columns = ["", ""]
+
+    def to_editing_tokens(self) -> List[Token]:
+        """Projects non-validating editing tokens for this row."""
+        if self.row_type == RowType.ADDEND:
+            if self.template_instance:
+                return self.template_instance.to_editing_token_stream(self.description_columns)
+            return []
+        elif self.row_type == RowType.LABEL:
+            if self.explanation_text:
+                return [Token(value=self.explanation_text, token_type=TokenType.CONTEXT)]
+            return []
+        return []
 
 
 class TemplateGridModel:
@@ -553,6 +646,35 @@ class TemplateGridModel:
             if 0 <= desc_idx < len(row.description_columns):
                 row.description_columns[desc_idx] = row.description_columns[desc_idx][:-1]
 
+    def get_editing_tokens(self) -> List[List[Token]]:
+        """Returns non-validating editing tokens for all active addend rows."""
+        return [row.to_editing_tokens() for row in self.rows if row.row_type == RowType.ADDEND]
+
+    def delete_selected_column(self) -> None:
+        """Deletes or clears the selected column or slot without deleting the entire row."""
+        row = self.rows[self.cursor_row]
+        if row.row_type == RowType.LABEL:
+            row.explanation_text = ""
+            return
+
+        if self.cursor_col == 1:
+            if row.template_instance and row.template_instance.slots:
+                # Clear selected slot value back to empty placeholder (□)
+                row.template_instance.slots[self.cursor_slot].value = ""
+        else:
+            desc_idx = self.cursor_col - 2
+            if 0 <= desc_idx < len(row.description_columns):
+                if len(row.description_columns) > 2:
+                    # Pop extra description column across all rows
+                    for r in self.rows:
+                        if desc_idx < len(r.description_columns):
+                            r.description_columns.pop(desc_idx)
+                    max_cols = self.get_max_description_columns()
+                    self.cursor_col = min(self.cursor_col, max_cols + 1)
+                else:
+                    # Clear required description column value (Item or Context)
+                    row.description_columns[desc_idx] = ""
+
     def clear(self) -> None:
         self.rows = [TemplateRow(row_type=RowType.ADDEND)]
         self.cursor_row = 0
@@ -598,6 +720,7 @@ class Token:
     value: str
     token_type: TokenType = field(default=TokenType.ITEM)
     explicit_type: bool = False
+    slot_id: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.explicit_type:
@@ -606,6 +729,8 @@ class Token:
     @classmethod
     def auto_classify(cls, val: str) -> TokenType:
         s = val.strip()
+        if s == "□":
+            return TokenType.UNKNOWN
         if s == "(":
             return TokenType.GROUP_OPEN
         if s == ")":

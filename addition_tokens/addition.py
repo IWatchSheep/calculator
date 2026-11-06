@@ -57,9 +57,10 @@ class AdditionTokenCalculator:
     QUICK_UNITS = ["pens", "pencils", "books", "apples", "oranges", "cars"]
     QUICK_CONTEXTS = ["in the drawer", "on the desk", "in the room", "in the basket"]
 
-    def __init__(self, root: Optional[tk.Tk] = None) -> None:
+    def __init__(self, root: Optional[tk.Tk] = None, mode: str = "template") -> None:
         self._owns_root = root is None
         self.root = root if root is not None else tk.Tk()
+        self.mode = mode
         self.root.title("Smart Token Addition Calculator (Math Templates & Central Input)")
         self.root.geometry("960x900")
         self.root.minsize(800, 700)
@@ -84,6 +85,8 @@ class AdditionTokenCalculator:
     # -------------------------------------------------------------------------
     @property
     def rows_tokens(self) -> List[List[Token]]:
+        if getattr(self, "mode", "template") == "template":
+            return self.template_grid_model.get_editing_tokens()
         result: List[List[Token]] = []
         for r in self.grid_model.rows:
             if r.row_type == RowType.ADDEND:
@@ -956,7 +959,10 @@ class AdditionTokenCalculator:
             self._update_save_button_state()
 
     def delete_selected_column(self) -> None:
-        self.grid_model.delete_selected_column()
+        if getattr(self, "mode", "template") == "template":
+            self.template_grid_model.delete_selected_column()
+        else:
+            self.grid_model.delete_selected_column()
         self.render_grid()
 
     def _on_keypad_press(self, val: str) -> None:
@@ -996,17 +1002,20 @@ class AdditionTokenCalculator:
             self.clear()
         elif val == "Backspace":
             self.template_grid_model.backspace()
-            self.grid_model.backspace()
+            if getattr(self, "mode", "template") != "template":
+                self.grid_model.backspace()
             self.render_grid()
         elif val in ("Next Slot (→)", "Next Subcol (→)"):
-            self.grid_model.next_subcolumn()
+            if getattr(self, "mode", "template") != "template":
+                self.grid_model.next_subcolumn()
             row = self.template_grid_model.rows[self.template_grid_model.cursor_row]
             if row.template_instance and row.template_instance.slots:
                 next_s = (self.template_grid_model.cursor_slot + 1) % len(row.template_instance.slots)
                 self.template_grid_model.cursor_slot = next_s
             self.render_grid()
         elif val == "Next Col (⇒)":
-            self.grid_model.next_column()
+            if getattr(self, "mode", "template") != "template":
+                self.grid_model.next_column()
             self.template_grid_model.cursor_col += 1
             self.render_grid()
         elif val == "Next Addend (↓)":
@@ -1026,10 +1035,12 @@ class AdditionTokenCalculator:
                 )
                 self.inspector_text.configure(state="disabled")
             else:
-                self.grid_model.input_value(val)
+                if getattr(self, "mode", "template") != "template":
+                    self.grid_model.input_value(val)
                 self.render_grid()
         elif val == "+":
-            self.grid_model.input_value("+")
+            if getattr(self, "mode", "template") != "template":
+                self.grid_model.input_value("+")
             if self.template_grid_model.cursor_col == 1:
                 cur_r = self.template_grid_model.cursor_row
                 row = self.template_grid_model.rows[cur_r]
@@ -1055,7 +1066,8 @@ class AdditionTokenCalculator:
         else:
             # Inputs numeric digit (0-9, .) into active slot or cell
             self.template_grid_model.input_number(val)
-            self.grid_model.input_value(val)
+            if getattr(self, "mode", "template") != "template":
+                self.grid_model.input_value(val)
             self.render_grid()
 
     def _on_vocab_click(self, val: str, token_type: Optional[TokenType] = None) -> None:
@@ -1092,7 +1104,7 @@ class AdditionTokenCalculator:
         t_slot = self.template_grid_model.cursor_slot
 
         # Status label
-        if self.grid_model.cursor_area == "addend":
+        if getattr(self, "mode", "template") != "template" and self.grid_model.cursor_area == "addend":
             r_idx = self.grid_model.cursor_row
             c_idx = self.grid_model.cursor_addend_col
             s_idx = self.grid_model.cursor_subcol
@@ -1388,15 +1400,17 @@ class AdditionTokenCalculator:
     def calculate(self) -> Optional[ParseResult]:
         """Calculates result across rows safely catching validation errors."""
         try:
-            # First try template-driven calculation if template slots are filled
-            template_rows_filled = any(
-                r.row_type == RowType.ADDEND and r.template_instance and any(s.is_filled for s in r.template_instance.slots)
-                for r in self.template_grid_model.rows
-            )
-            if template_rows_filled:
+            if getattr(self, "mode", "template") == "template":
                 parse_res = self.template_grid_model.calculate()
             else:
-                parse_res = self.grid_model.calculate()
+                template_rows_filled = any(
+                    r.row_type == RowType.ADDEND and r.template_instance and any(s.is_filled for s in r.template_instance.slots)
+                    for r in self.template_grid_model.rows
+                )
+                if template_rows_filled:
+                    parse_res = self.template_grid_model.calculate()
+                else:
+                    parse_res = self.grid_model.calculate()
 
         except ValueError as ve:
             err_msg = str(ve)
@@ -1502,13 +1516,20 @@ class AdditionTokenCalculator:
         self.results_text.configure(state="disabled")
 
         # Update Inspector
+        self.render_inspector(parse_res)
+
+        self.render_grid()
+        return parse_res
+
+    def render_inspector(self, parse_res: Optional[ParseResult] = None) -> None:
+        """Renders the three representations in the inspector pane."""
         self.inspector_text.configure(state="normal")
         self.inspector_text.delete("1.0", "end")
 
         output_lines = [
             f"=== TOTAL SUMMARY ===",
-            f"Math Total: {parse_res.total_number}",
-            f"Sentence Result: {parse_res.word_result}",
+            f"Math Total: {parse_res.total_number if parse_res else '(Not calculated)'}",
+            f"Sentence Result: {parse_res.word_result if parse_res else '(Not calculated)'}",
             f"\n=== ADDEND REPRESENTATIONS ===",
         ]
 
@@ -1516,7 +1537,7 @@ class AdditionTokenCalculator:
             any(ac.ordered_subcolumns for ac in r.addend_columns)
             for r in self.grid_model.rows if r.row_type == RowType.ADDEND
         )
-        if has_grid_tokens:
+        if getattr(self, "mode", "template") != "template" and has_grid_tokens:
             addend_count = 0
             for r_idx, row in enumerate(self.grid_model.rows):
                 if row.row_type != RowType.ADDEND:
@@ -1562,23 +1583,26 @@ class AdditionTokenCalculator:
                 output_lines.append(f"  Context (Col 3): '{row.description_columns[1]}'")
 
                 # Rep 1, Rep 2, Rep 3 for template instances
-                raw_toks = inst.to_token_stream(row.description_columns) if inst else []
+                raw_toks = inst.to_editing_token_stream(row.description_columns) if inst else []
                 subcol_str = " | ".join(f"'{t.value}'" for t in raw_toks)
                 output_lines.append(f"  Rep 1 (Ordered Subcolumns): [{subcol_str}]")
                 output_lines.append(f"  Rep 2 (Parsed Structure - Unaggregated):")
-                for t in parse_res.individual_terms:
-                    ctx = f", context='{t.context}'" if t.context else ""
-                    output_lines.append(f"    Quantity: {t.quantity}, Unit: '{t.item}'{ctx}")
+                if parse_res and parse_res.individual_terms:
+                    for t in parse_res.individual_terms:
+                        ctx = f", context='{t.context}'" if t.context else ""
+                        output_lines.append(f"    Quantity: {t.quantity}, Unit: '{t.item}'{ctx}")
+                else:
+                    output_lines.append("    (No parsed terms)")
                 output_lines.append(f"  Rep 3 (Aggregated Results by Units):")
-                for t in parse_res.aggregated_terms:
-                    ctx = f" {t.context}" if t.context else ""
-                    output_lines.append(f"    Subtotal: {t.quantity} {t.item}{ctx}")
+                if parse_res and parse_res.aggregated_terms:
+                    for t in parse_res.aggregated_terms:
+                        ctx = f" {t.context}" if t.context else ""
+                        output_lines.append(f"    Subtotal: {t.quantity} {t.item}{ctx}")
+                else:
+                    output_lines.append("    (No aggregated terms)")
 
         self.inspector_text.insert("1.0", "\n".join(output_lines))
         self.inspector_text.configure(state="disabled")
-
-        self.render_grid()
-        return parse_res
 
     def clear(self) -> None:
         self.template_grid_model.clear()

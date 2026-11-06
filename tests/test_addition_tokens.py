@@ -485,7 +485,7 @@ class TestAdditionTokenCalculatorGUI(unittest.TestCase):
             self.skipTest("Tkinter display not available")
         import tempfile
         self.tmp_dir = tempfile.TemporaryDirectory()
-        self.app = AdditionTokenCalculator(root=self.root)
+        self.app = AdditionTokenCalculator(root=self.root, mode="legacy_subcolumn")
         self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
 
     def tearDown(self):
@@ -631,7 +631,7 @@ class TestClickableCellsAndSafeErrorHandling(unittest.TestCase):
             self.skipTest("Tkinter display not available")
         import tempfile
         self.tmp_dir = tempfile.TemporaryDirectory()
-        self.app = AdditionTokenCalculator(root=self.root)
+        self.app = AdditionTokenCalculator(root=self.root, mode="legacy_subcolumn")
         self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
 
     def tearDown(self):
@@ -1802,6 +1802,149 @@ class TestResultsWindowAndScrolling(unittest.TestCase):
             self.assertFalse(applied_template.is_custom)
             inspector_msg = self.app.inspector_text.get("1.0", "end")
             self.assertIn("existing built-in template", inspector_msg)
+
+
+
+class TestDualModelCleanupAndEditingProjection(unittest.TestCase):
+    """
+    Verification tests for single source of truth (TemplateGridModel)
+    and non-validating editing projections vs strict evaluation:
+    1. to_editing_token_stream non-validating projection preserves incomplete [5] + [□].
+    2. to_token_stream strict validation raises ValueError on empty [□].
+    3. Mathematical keypad inputs (0-9, .) do not mutate TokenGridModel in template mode.
+    4. Keypad '+' button in Column 1 advances to the next slot without appending '+' to TokenGridModel.
+    5. Keypad '+' button at the last slot does not advance into Column 2 and does not mutate slot.
+    6. Keypad parentheses in Column 1 display informational notice and do not mutate TokenGridModel.
+    7. rows_tokens in template mode returns non-validating editing tokens from TemplateGridModel.
+    8. delete_selected_column in template mode resets slot value back to empty □ without deleting row.
+    9. Non-validating editing projection in inspector view works on incomplete templates without crashing.
+    10. Strict validation in calculate() properly rejects incomplete templates with a clear error message.
+    """
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        import tempfile
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.app = AdditionTokenCalculator(root=self.root, mode="template")
+        self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
+
+    def tearDown(self):
+        self.app.clear()
+        if hasattr(self, "tmp_dir"):
+            self.tmp_dir.cleanup()
+
+    def test_1_to_editing_token_stream_preserves_incomplete_template(self):
+        tpl = MathTemplate(template_id="t1", pattern="□ + □", name="Two terms")
+        inst = tpl.create_instance()
+        inst.slots[0].value = "5"
+        # Slot 1 is unfilled ("")
+        editing_tokens = inst.to_editing_token_stream(["apples", "on the desk"])
+        vals = [t.value for t in editing_tokens]
+        self.assertEqual(vals, ["5", "apples", "on the desk", "+", "□", "apples", "on the desk"])
+        self.assertEqual(editing_tokens[0].token_type, TokenType.NUMBER)
+        self.assertEqual(editing_tokens[4].token_type, TokenType.UNKNOWN)
+        self.assertEqual(editing_tokens[4].value, "□")
+        self.assertEqual(editing_tokens[4].slot_id, inst.slots[1].slot_id)
+
+    def test_2_to_token_stream_strictly_validates_unfilled_slots(self):
+        tpl = MathTemplate(template_id="t1", pattern="□ + □", name="Two terms")
+        inst = tpl.create_instance()
+        inst.slots[0].value = "5"
+        with self.assertRaises(ValueError) as ctx:
+            inst.to_token_stream(["apples"])
+        self.assertIn("is empty (□)", str(ctx.exception))
+
+    def test_3_numeric_keypad_does_not_mutate_legacy_model(self):
+        # Default row is template □ + □
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns), 0)
+        self.app._on_keypad_press("5")
+        self.app._on_keypad_press("7")
+        # TemplateGridModel slot 0 has "57"
+        row = self.app.template_grid_model.rows[0]
+        self.assertEqual(row.template_instance.slots[0].value, "57")
+        # TokenGridModel has NO tokens (0)
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns), 0)
+
+    def test_4_keypad_plus_advances_slot_without_mutating_legacy_model(self):
+        self.app._on_keypad_press("5")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
+        self.app._on_keypad_press("+")
+        # Cursor advanced to slot 1
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        # TokenGridModel has NOT received '+' or '5'
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns), 0)
+
+    def test_5_keypad_plus_at_last_slot_does_not_advance_to_col2(self):
+        self.app._on_keypad_press("5")
+        self.app._on_keypad_press("+")
+        self.app._on_keypad_press("9")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        # Press '+' again when already on last slot
+        self.app._on_keypad_press("+")
+        # Still in Column 1 and slot 1
+        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        self.assertIn("All placeholder boxes (□) in this mathematical template have been reached",
+                      self.app.inspector_text.get("1.0", "end"))
+
+    def test_6_keypad_parentheses_show_notice_and_do_not_mutate_legacy(self):
+        self.app._on_keypad_press("(")
+        self.assertIn("Parentheses '(' define mathematical template structure",
+                      self.app.inspector_text.get("1.0", "end"))
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns), 0)
+
+    def test_7_rows_tokens_returns_non_validating_editing_tokens(self):
+        self.app._on_keypad_press("5")
+        # Slot 0 has "5", slot 1 has ""
+        toks = self.app.rows_tokens
+        self.assertEqual(len(toks), 1)
+        tok_vals = [t.value for t in toks[0]]
+        self.assertEqual(tok_vals, ["5", "+", "□"])
+
+    def test_8_delete_selected_column_resets_slot_to_placeholder(self):
+        self.app._on_keypad_press("5")
+        self.app._on_keypad_press("+")
+        self.app._on_keypad_press("9")
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.slots[1].value, "9")
+        # Delete selected column (slot 1)
+        self.app.delete_selected_column()
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.slots[1].value, "")
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.slots[0].value, "5")
+        # The row remains intact
+        self.assertEqual(len(self.app.template_grid_model.rows), 1)
+
+    def test_9_inspector_view_projects_incomplete_templates_without_crashing(self):
+        self.app._on_keypad_press("8")
+        # Only slot 0 filled, slot 1 empty
+        self.app.render_inspector(None)
+        txt = self.app.inspector_text.get("1.0", "end")
+        self.assertIn("Rep 1 (Ordered Subcolumns): ['8' | '+' | '□']", txt)
+        self.assertIn("(No parsed terms)", txt)
+
+    def test_10_calculate_strictly_validates_and_reports_error(self):
+        self.app._on_keypad_press("8")
+        # Attempt calculation with slot 1 unfilled
+        res = self.app.calculate()
+        self.assertIsNone(res)
+        self.assertEqual(self.app.result_var.get(), "Error")
+        self.assertIn("VALIDATION NOTICE: Calculation Not Completed", self.app.results_text.get("1.0", "end"))
 
 
 if __name__ == "__main__":
