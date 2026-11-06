@@ -403,6 +403,32 @@ class TemplateInstance:
                 for meta in self.template.slots_meta
             ]
 
+    def append_addend_slot(self, new_pattern: str) -> TemplateSlot:
+        """
+        Appends a fresh Number Group slot to this active runtime instance in-place,
+        updating the instance's authoritative template pattern while preserving
+        all existing slots, UUIDs, values, item labels, contexts, and extra descriptions.
+        """
+        new_slot_idx = len(self.slots)
+        new_slot = TemplateSlot(
+            slot_id=new_slot_idx,
+            name=f"Term {new_slot_idx + 1}",
+            expected_type="NUMBER",
+            descriptions=[
+                DescriptionField(field_type="item", value="", field_label="Item"),
+                DescriptionField(field_type="context", value="", field_label="Context"),
+            ]
+        )
+        self.slots.append(new_slot)
+        # Update template definition for this instance without modifying the stored blueprint
+        self.template = MathTemplate(
+            template_id=f"ext_{uuid.uuid4().hex[:8]}",
+            pattern=new_pattern,
+            name=f"Template ({new_pattern})",
+            is_custom=True,
+        )
+        return new_slot
+
     def get_blocks(self) -> List[TokenBlock]:
         """Decomposes the template pattern into an ordered sequence of structural and addend blocks."""
         blocks: List[TokenBlock] = []
@@ -690,6 +716,30 @@ class TemplateGridModel:
                 slot.add_description_field(field_type="custom", label=f"Context {col_num}")
                 return len(slot.descriptions)
         return 2
+
+    def extend_row_addition(self, row_idx: Optional[int] = None) -> bool:
+        """
+        Safely extends the addition sequence of Row `row_idx` by appending '+ □'
+        outside existing groups, preserving all existing slots and UUIDs.
+        """
+        r_idx = row_idx if row_idx is not None else self.cursor_row
+        if not (0 <= r_idx < len(self.rows)):
+            return False
+        row = self.rows[r_idx]
+        if row.row_type != RowType.ADDEND or not row.template_instance:
+            return False
+
+        inst = row.template_instance
+        cur_pat = inst.template.pattern.strip()
+        new_pat = f"{cur_pat} + □"
+
+        try:
+            TemplateValidator.validate_addition_pattern(new_pat)
+        except Exception:
+            return False
+
+        inst.append_addend_slot(new_pat)
+        return True
 
     def add_row(self, row_type: RowType, explanation: str = "") -> int:
         """Explicitly creates a new row with designated row type."""

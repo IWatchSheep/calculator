@@ -2316,6 +2316,207 @@ class TestRepeatedBlockAddendArchitecture(unittest.TestCase):
         # Row description columns in TokenGridModel are unchanged
         self.assertEqual(self.app.grid_model.rows[0].description_columns, [])
 
+    def test_next_number_stays_in_row_1_and_never_creates_row_2(self):
+        """Next Number (→) navigates and extends within Row 1 without creating Row 2."""
+        self.assertEqual(len(self.app.template_grid_model.rows), 1)
+        self.app._on_keypad_press("1")
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(len(self.app.template_grid_model.rows), 1)
+        self.assertEqual(self.app.template_grid_model.cursor_row, 0)
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+
+        # Press again on final slot -> extends Row 1
+        self.app._on_keypad_press("2")
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(len(self.app.template_grid_model.rows), 1)
+        self.assertEqual(self.app.template_grid_model.cursor_row, 0)
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 2)
+        self.assertEqual(len(self.app.template_grid_model.rows[0].template_instance.slots), 3)
+
+    def test_next_number_selects_existing_following_number_before_extending(self):
+        """Next Number advances to next slot if one exists, without prematurely creating another slot."""
+        # Row 1 begins with □ + □ (2 slots)
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(len(inst.slots), 2)
+        self.app.template_grid_model.cursor_slot = 0
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        # Did NOT extend; slot count remains 2
+        self.assertEqual(len(inst.slots), 2)
+
+    def test_next_number_extends_single_number_template(self):
+        """Single-number template '□' extends cleanly to '□ + □' when Next Number is pressed."""
+        tpl_single = MathTemplate(template_id="single", pattern="□", name="Single term (a)")
+        self.app.template_grid_model.apply_template_to_row(0, tpl_single, initial_values=["10"])
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(len(inst.slots), 1)
+        self.assertEqual(inst.slots[0].value, "10")
+
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(len(inst.slots), 2)
+        self.assertEqual(inst.template.pattern, "□ + □")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        self.assertEqual(inst.slots[0].value, "10")
+        self.assertEqual(inst.slots[1].value, "")
+
+    def test_repeated_extension_preserves_existing_numerical_values(self):
+        """Extending a row multiple times preserves all previously typed values."""
+        self.app._on_keypad_press("10")
+        self.app._on_keypad_press("Next Number (→)")
+        self.app._on_keypad_press("20")
+        self.app._on_keypad_press("Next Number (→)")
+        self.app._on_keypad_press("30")
+        self.app._on_keypad_press("Next Number (→)")
+        self.app._on_keypad_press("40")
+
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(len(inst.slots), 4)
+        self.assertEqual([s.value for s in inst.slots], ["10", "20", "30", "40"])
+        self.assertEqual(inst.template.pattern, "□ + □ + □ + □")
+
+    def test_slot_uuids_and_identities_preserved_across_extension(self):
+        """Existing TemplateSlot instances and UUIDs remain identical in memory when new slots are appended."""
+        inst = self.app.template_grid_model.rows[0].template_instance
+        orig_slot0 = inst.slots[0]
+        orig_slot1 = inst.slots[1]
+        orig_uuid0 = orig_slot0.slot_uuid
+        orig_uuid1 = orig_slot1.slot_uuid
+
+        self.app.template_grid_model.extend_row_addition(0)
+        self.assertEqual(len(inst.slots), 3)
+        self.assertIs(inst.slots[0], orig_slot0)
+        self.assertIs(inst.slots[1], orig_slot1)
+        self.assertEqual(inst.slots[0].slot_uuid, orig_uuid0)
+        self.assertEqual(inst.slots[1].slot_uuid, orig_uuid1)
+
+    def test_each_number_group_retains_independent_descriptions_across_extension(self):
+        """Typed descriptions do not leak or shift positions when new Number Groups are appended."""
+        self.app.select_slot_field(0, 0, 1)
+        self.app._on_vocab_click("pencils", TokenType.ITEM)
+        self.app.select_slot_field(0, 0, 2)
+        self.app._on_vocab_click("on desk", TokenType.CONTEXT)
+
+        self.app.select_slot_field(0, 1, 1)
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+        self.app.select_slot_field(0, 1, 2)
+        self.app._on_vocab_click("in drawer", TokenType.CONTEXT)
+
+        # Extend row
+        self.app.template_grid_model.cursor_slot = 1
+        self.app._on_keypad_press("Next Number (→)")
+
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(len(inst.slots), 3)
+        self.assertEqual(inst.slots[0].descriptions[0].value, "pencils")
+        self.assertEqual(inst.slots[0].descriptions[1].value, "on desk")
+        self.assertEqual(inst.slots[1].descriptions[0].value, "pens")
+        self.assertEqual(inst.slots[1].descriptions[1].value, "in drawer")
+        self.assertEqual(inst.slots[2].descriptions[0].value, "")
+        self.assertEqual(inst.slots[2].descriptions[1].value, "")
+
+    def test_column_4_plus_remains_private_to_selected_number_group(self):
+        """Column 4+ added to Number 1 does not add extra columns to Number 2 or 3."""
+        self.app.add_description_column_to_slot(0, 0)
+        self.app._on_vocab_click("yellow", TokenType.CONTEXT)
+
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(len(inst.slots[0].descriptions), 3)
+        self.assertEqual(inst.slots[0].descriptions[2].value, "yellow")
+        self.assertEqual(len(inst.slots[1].descriptions), 2)
+
+        # Extend row
+        self.app.template_grid_model.cursor_slot = 1
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(len(inst.slots), 3)
+        self.assertEqual(len(inst.slots[0].descriptions), 3)
+        self.assertEqual(len(inst.slots[1].descriptions), 2)
+        self.assertEqual(len(inst.slots[2].descriptions), 2)
+
+    def test_saved_template_blueprints_remain_immutable_when_runtime_extended(self):
+        """Extending a runtime row does not alter the saved MathTemplate in template manager."""
+        built_in_tpl = self.app.template_manager.templates[0]
+        orig_pattern = built_in_tpl.pattern
+        self.app.template_grid_model.apply_template_to_row(0, built_in_tpl)
+
+        self.app.template_grid_model.cursor_slot = len(built_in_tpl.slots_meta) - 1
+        self.app._on_keypad_press("Next Number (→)")
+
+        # Runtime instance extended
+        self.assertNotEqual(self.app.template_grid_model.rows[0].template_instance.template.pattern, orig_pattern)
+        # Saved blueprint in manager remains unchanged
+        self.assertEqual(built_in_tpl.pattern, orig_pattern)
+
+    def test_parenthesized_template_safe_extension(self):
+        """Extending '(□ + □)' produces '(□ + □) + □' outside the parentheses."""
+        paren_tpl = next((t for t in self.app.template_manager.templates if t.pattern == "(□ + □)"), None)
+        self.assertIsNotNone(paren_tpl)
+        self.app.template_grid_model.apply_template_to_row(0, paren_tpl, initial_values=["1", "2"])
+
+        self.app.template_grid_model.cursor_slot = 1
+        self.app._on_keypad_press("Next Number (→)")
+
+        inst = self.app.template_grid_model.rows[0].template_instance
+        self.assertEqual(inst.template.pattern, "(□ + □) + □")
+        self.assertEqual(len(inst.slots), 3)
+        self.assertEqual(inst.slots[0].value, "1")
+        self.assertEqual(inst.slots[1].value, "2")
+        self.assertEqual(inst.slots[2].value, "")
+
+    def test_editing_projection_and_evaluation_stream_consistent_on_extended_expression(self):
+        """Both non-validating editing tokens and strict calculation tokens reflect extended structure."""
+        self.app._on_keypad_press("1")
+        self.app.select_slot_field(0, 0, 1)
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+
+        self.app.select_slot_field(0, 1, 0)
+        self.app._on_keypad_press("2")
+        self.app.select_slot_field(0, 1, 1)
+        self.app._on_vocab_click("books", TokenType.ITEM)
+
+        # Extend to slot 2
+        self.app._on_keypad_press("Next Number (→)")
+
+        # Editing stream shows 3 numbers (with □ for slot 2)
+        editing_toks = self.app.rows_tokens[0]
+        num_vals = [t.value for t in editing_toks if t.token_type in (TokenType.NUMBER, TokenType.UNKNOWN)]
+        self.assertEqual(num_vals, ["1", "2", "□"])
+
+        # Strict calculate fails before slot 2 is filled
+        with self.assertRaises(ValueError) as ctx:
+            self.app.template_grid_model.calculate()
+        self.assertIn("is empty (□)", str(ctx.exception))
+
+        # Fill slot 2 and recalculate
+        self.app.select_slot_field(0, 2, 0)
+        self.app._on_keypad_press("3")
+        self.app.select_slot_field(0, 2, 1)
+        self.app._on_vocab_click("erasers", TokenType.ITEM)
+
+        res = self.app.template_grid_model.calculate()
+        self.assertEqual(res.total_number, "6")
+        self.assertEqual(len(res.individual_terms), 3)
+
+    def test_saving_extended_template_persists_clean_structure_and_reloads_new_slot_count(self):
+        """Saving an extended row creates a reusable custom template with new slot count and empty □ values."""
+        self.app._on_keypad_press("5")
+        self.app.select_slot_field(0, 0, 1)
+        self.app._on_vocab_click("widgets", TokenType.ITEM)
+        self.app.select_slot_field(0, 1, 0)
+        self.app._on_keypad_press("6")
+        self.app.select_slot_field(0, 1, 1)
+        self.app._on_vocab_click("gadgets", TokenType.ITEM)
+
+        # Extend to 3 terms
+        self.app._on_keypad_press("Next Number (→)")
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.template.pattern, "□ + □ + □")
+
+        # Save template
+        self.app._on_save_custom_template()
+        saved = next((t for t in self.app.template_manager.templates if t.pattern == "□ + □ + □"), None)
+        self.assertIsNotNone(saved)
+        # Blueprint has empty slot meta without values
+        self.assertEqual(len(saved.slots_meta), 3)
+
 
 
 if __name__ == "__main__":

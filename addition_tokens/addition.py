@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from pathlib import Path
+import re
 import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -566,7 +567,7 @@ class AdditionTokenCalculator:
             ("(", 0, 0), (")", 0, 1), ("C", 0, 2), ("+", 0, 3),
             ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("Next Slot (→)", 1, 3),
             ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("Next Col (⇒)", 2, 3),
-            ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("Next Addend (↓)", 3, 3),
+            ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("Next Number (→)", 3, 3),
             ("0", 4, 0), (".", 4, 1), ("Backspace", 4, 2), ("=", 4, 3),
         ]
 
@@ -576,7 +577,7 @@ class AdditionTokenCalculator:
             cmd = lambda val=text: self._on_keypad_press(val)
             bg = "#e0e0e0"
             fg = "#000000"
-            if text in ("=", "Next Addend (↓)"):
+            if text in ("=", "Next Number (→)", "Next Addend (↓)"):
                 bg = "#4caf50"
                 fg = "#ffffff"
             elif text == "C":
@@ -771,8 +772,15 @@ class AdditionTokenCalculator:
 
     def _update_save_button_state(self) -> None:
         expr = self.pasted_expr_var.get().strip() if hasattr(self, "pasted_expr_var") else ""
+        has_extended = False
+        if hasattr(self, "template_grid_model") and 0 <= self.template_grid_model.cursor_row < len(self.template_grid_model.rows):
+            r = self.template_grid_model.rows[self.template_grid_model.cursor_row]
+            if r.row_type == RowType.ADDEND and r.template_instance:
+                p = r.template_instance.template.pattern
+                if not any(t.pattern == p and not t.is_custom for t in self.template_manager.templates):
+                    has_extended = True
         if hasattr(self, "save_tpl_btn"):
-            if expr or getattr(self, "current_preview_template", None) is not None:
+            if expr or getattr(self, "current_preview_template", None) is not None or has_extended:
                 self.save_tpl_btn.configure(state="normal")
             else:
                 self.save_tpl_btn.configure(state="disabled")
@@ -813,10 +821,11 @@ class AdditionTokenCalculator:
 
     def _on_save_custom_template(self) -> None:
         expr = self.pasted_expr_var.get().strip()
-        # Parse expression directly if entered without previewing first or if updated
+        target_template: Optional[MathTemplate] = None
         if expr:
             try:
                 tpl, _initial_vals = ExpressionTemplateParser.parse_pasted_expression(expr)
+                target_template = tpl
                 self.current_preview_template = tpl
             except ValueError as ve:
                 self.inspector_text.configure(state="normal")
@@ -826,19 +835,26 @@ class AdditionTokenCalculator:
                 self.result_var.set("Error")
                 self.result_word_var.set(str(ve))
                 return
+        elif self.current_preview_template:
+            target_template = self.current_preview_template
+        else:
+            cur_r = self.template_grid_model.cursor_row
+            row = self.template_grid_model.rows[cur_r]
+            if row.row_type == RowType.ADDEND and row.template_instance:
+                target_template = row.template_instance.template
 
-        if not self.current_preview_template:
+        if not target_template:
             self.inspector_text.configure(state="normal")
             self.inspector_text.delete("1.0", "end")
             self.inspector_text.insert(
                 "1.0",
-                "Cannot save template: Please enter a mathematical expression into the Pasted Expression box first."
+                "Cannot save template: Please enter a mathematical expression into the Pasted Expression box or extend a template first."
             )
             self.inspector_text.configure(state="disabled")
             return
 
         # 1. Save immutable template structure (pattern, slot metadata) without runtime values
-        existing = next((t for t in self.template_manager.templates if t.pattern == self.current_preview_template.pattern), None)
+        existing = next((t for t in self.template_manager.templates if t.pattern == target_template.pattern), None)
         if existing is not None and not existing.is_custom:
             clean_template = existing
             self.template_manager.save_custom_template(clean_template)
@@ -848,9 +864,9 @@ class AdditionTokenCalculator:
             )
         else:
             clean_template = MathTemplate(
-                template_id=self.current_preview_template.template_id,
-                pattern=self.current_preview_template.pattern,
-                name=self.current_preview_template.name,
+                template_id=f"custom_{re.sub(r'[^a-zA-Z0-9]', '_', target_template.pattern)}",
+                pattern=target_template.pattern,
+                name=f"Template ({target_template.pattern})",
                 is_custom=True,
             )
             self.template_manager.save_custom_template(clean_template)
@@ -865,12 +881,13 @@ class AdditionTokenCalculator:
         self.selected_template_var.set(clean_template.pattern)
         self.save_tpl_btn.configure(state="disabled")
 
-        # 3. Apply clean saved template with empty editable placeholder (□) to active row
-        self.template_grid_model.apply_template_to_row(
-            self.template_grid_model.cursor_row,
-            clean_template,
-            initial_values=None,  # Reset slot value to empty placeholder □
-        )
+        # 3. Apply clean saved template if saved from pasted preview
+        if expr or self.current_preview_template:
+            self.template_grid_model.apply_template_to_row(
+                self.template_grid_model.cursor_row,
+                clean_template,
+                initial_values=None,
+            )
         self.current_preview_template = None
         self.set_active_input_target("grid")
         self.render_grid()
@@ -914,8 +931,6 @@ class AdditionTokenCalculator:
     def select_slot_field(self, row_idx: int, slot_idx: int, desc_col_idx: int = 0) -> None:
         self.set_active_input_target("grid")
         self.template_grid_model.select_slot_field(row_idx, slot_idx, desc_col_idx)
-        if getattr(self, "mode", "template") != "template":
-            self.grid_model.select_cell(row_idx, "addend", 0, slot_idx)
         self.render_grid()
 
     def add_description_column_to_slot(self, row_idx: int, slot_idx: int) -> int:
@@ -994,7 +1009,7 @@ class AdditionTokenCalculator:
                 self.pasted_entry.focus_set()
             elif val == "Backspace":
                 self._backspace_in_pasted_preview()
-            elif val in ("Next Slot (→)", "Next Subcol (→)"):
+            elif val in ("Next Number (→)", "Next Slot (→)", "Next Subcol (→)"):
                 self._insert_into_pasted_preview("□")
             elif val in ("Next Col (⇒)", "Next Addend (↓)"):
                 self.set_active_input_target("grid")
@@ -1023,14 +1038,34 @@ class AdditionTokenCalculator:
             if getattr(self, "mode", "template") != "template":
                 self.grid_model.backspace()
             self.render_grid()
-        elif val in ("Next Slot (→)", "Next Subcol (→)"):
+        elif val == "Next Subcol (→)":
             if getattr(self, "mode", "template") != "template":
                 self.grid_model.next_subcolumn()
-            row = self.template_grid_model.rows[self.template_grid_model.cursor_row]
+            self.render_grid()
+        elif val in ("Next Number (→)", "Next Slot (→)"):
+            cur_r = self.template_grid_model.cursor_row
+            row = self.template_grid_model.rows[cur_r]
             if row.template_instance and row.template_instance.slots:
-                next_s = (self.template_grid_model.cursor_slot + 1) % len(row.template_instance.slots)
-                self.template_grid_model.cursor_slot = next_s
-                self.template_grid_model.cursor_desc_col = 0
+                cur_slot = self.template_grid_model.cursor_slot
+                # If there is a following slot in the current row, advance to it
+                if cur_slot + 1 < len(row.template_instance.slots):
+                    self.select_slot_field(cur_r, cur_slot + 1, 0)
+                else:
+                    # Current slot is the last slot: extend the current row
+                    extended = self.template_grid_model.extend_row_addition(cur_r)
+                    if extended:
+                        self.select_slot_field(cur_r, cur_slot + 1, 0)
+                        self._update_save_button_state()
+                    else:
+                        self.inspector_text.configure(state="normal")
+                        self.inspector_text.delete("1.0", "end")
+                        self.inspector_text.insert(
+                            "1.0",
+                            "Notice: All placeholder boxes (□) in this mathematical template have been reached.\n\n"
+                            "This template structure cannot be extended automatically. To add descriptive words, "
+                            "select Column 2 directly or use 'Next Col (⇒)'."
+                        )
+                        self.inspector_text.configure(state="disabled")
             self.render_grid()
         elif val == "Next Col (⇒)":
             if getattr(self, "mode", "template") != "template":
