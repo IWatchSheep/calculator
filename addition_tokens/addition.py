@@ -887,7 +887,8 @@ class AdditionTokenCalculator:
 
     def add_row_dialog(self, row_type: RowType = RowType.ADDEND, explanation: str = "") -> int:
         idx = self.template_grid_model.add_row(row_type, explanation)
-        self.grid_model.next_addend()
+        if getattr(self, "mode", "template") != "template":
+            self.grid_model.next_addend()
         self.render_grid()
         return idx
 
@@ -902,7 +903,8 @@ class AdditionTokenCalculator:
 
     def select_cell(self, row_idx: int, area: str = "addend", col_idx: int = 0, subcol_idx: int = 0) -> None:
         self.set_active_input_target("grid")
-        self.grid_model.select_cell(row_idx, area, col_idx, subcol_idx)
+        if getattr(self, "mode", "template") != "template":
+            self.grid_model.select_cell(row_idx, area, col_idx, subcol_idx)
         if area == "addend":
             self.template_grid_model.select_slot_field(row_idx, subcol_idx, 0)
         else:
@@ -912,7 +914,8 @@ class AdditionTokenCalculator:
     def select_slot_field(self, row_idx: int, slot_idx: int, desc_col_idx: int = 0) -> None:
         self.set_active_input_target("grid")
         self.template_grid_model.select_slot_field(row_idx, slot_idx, desc_col_idx)
-        self.grid_model.select_cell(row_idx, "addend", 0, slot_idx)
+        if getattr(self, "mode", "template") != "template":
+            self.grid_model.select_cell(row_idx, "addend", 0, slot_idx)
         self.render_grid()
 
     def add_description_column_to_slot(self, row_idx: int, slot_idx: int) -> int:
@@ -1093,7 +1096,8 @@ class AdditionTokenCalculator:
 
     def _on_vocab_click(self, val: str, token_type: Optional[TokenType] = None) -> None:
         tt = token_type if token_type is not None else TokenType.ITEM
-        self.grid_model.input_value(val, tt)
+        if getattr(self, "mode", "template") != "template":
+            self.grid_model.input_value(val, tt)
         self.template_grid_model.set_active_value(val)
         self.render_grid()
 
@@ -1108,7 +1112,8 @@ class AdditionTokenCalculator:
 
     def add_label_row(self, text: str = "Descriptive Annotation") -> int:
         idx = self.template_grid_model.add_row(RowType.LABEL, text)
-        self.grid_model.add_label_row(text)
+        if getattr(self, "mode", "template") != "template":
+            self.grid_model.add_label_row(text)
         self.render_grid()
         return idx
 

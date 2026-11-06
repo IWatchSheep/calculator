@@ -2234,6 +2234,88 @@ class TestRepeatedBlockAddendArchitecture(unittest.TestCase):
         self.assertEqual(r1_slot0.value, "10")
         self.assertEqual(r1_slot0.descriptions[0].value, "pens")
 
+    def test_unlabeled_addend_in_template_mode_raises_validation_error(self):
+        """
+        Exact ChatGPT reproduction:
+        1. Create template □ + □.
+        2. Populate numbers 1 and 2.
+        3. Select Addend 1, Column 2.
+        4. Enter 'pens' via TemplateGridModel.set_active_value('pens').
+        5. Leave Addend 2, Column 2 empty.
+        6. Calculate.
+        Verifies Addend 1 owns 'pens', Addend 2 is empty, row.description_columns is not polluted,
+        and calculate raises ValueError indicating Addend 2 has no item label.
+        """
+        model = self.app.template_grid_model
+        model.select_slot(0, 0)
+        model.input_number("1")
+        model.select_slot(0, 1)
+        model.input_number("2")
+
+        model.select_slot_field(0, 0, 1)
+        model.set_active_value("pens")
+
+        row = model.rows[0]
+        self.assertEqual(row.description_columns, ["", ""])
+        self.assertEqual(row.template_instance.slots[0].descriptions[0].value, "pens")
+        self.assertEqual(row.template_instance.slots[1].descriptions[0].value, "")
+
+        with self.assertRaises(ValueError) as ctx:
+            model.calculate()
+        self.assertIn("Unlabeled quantity: '2' has no item label", str(ctx.exception))
+
+        # Also verify through GUI calculate() error boundary
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "Error")
+        self.assertIn("Unlabeled quantity: '2' has no item label", self.app.result_word_var.get())
+
+    def test_distinct_addends_via_gui_vocab_buttons(self):
+        """
+        Verifies 1 pen + 2 books entered through GUI vocabulary buttons:
+        - Addend 1 receives 'pens'
+        - Addend 2 receives 'books'
+        - Neither pollutes row.description_columns
+        - Calculates correctly preserving both categories
+        """
+        self.app._on_keypad_press("1")
+        self.app._on_keypad_press("+")
+        self.app._on_keypad_press("2")
+
+        # Select Addend 1 Col 2 and click vocab
+        self.app.select_slot_field(0, 0, 1)
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+
+        # Select Addend 2 Col 2 and click vocab
+        self.app.select_slot_field(0, 1, 1)
+        self.app._on_vocab_click("books", TokenType.ITEM)
+
+        row = self.app.template_grid_model.rows[0]
+        self.assertEqual(row.description_columns, ["", ""])
+        self.assertEqual(row.template_instance.slots[0].descriptions[0].value, "pens")
+        self.assertEqual(row.template_instance.slots[1].descriptions[0].value, "books")
+
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "3")
+        self.assertIn("1 pen", self.app.result_word_var.get())
+        self.assertIn("2 books", self.app.result_word_var.get())
+
+    def test_vocab_click_does_not_mutate_legacy_token_grid_model(self):
+        """
+        Verifies that _on_vocab_click in template mode never mutates TokenGridModel.
+        """
+        initial_legacy_cells = [
+            len(r.addend_columns[0].ordered_subcolumns) for r in self.app.grid_model.rows if r.addend_columns
+        ]
+        self.app.select_slot_field(0, 0, 1)
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+
+        current_legacy_cells = [
+            len(r.addend_columns[0].ordered_subcolumns) for r in self.app.grid_model.rows if r.addend_columns
+        ]
+        self.assertEqual(initial_legacy_cells, current_legacy_cells)
+        # Row description columns in TokenGridModel are unchanged
+        self.assertEqual(self.app.grid_model.rows[0].description_columns, [])
+
 
 
 if __name__ == "__main__":

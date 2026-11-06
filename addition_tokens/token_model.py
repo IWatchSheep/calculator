@@ -455,6 +455,11 @@ class TemplateInstance:
         tokens: List[Token] = []
         blocks = self.get_blocks()
 
+        has_any_slot_descriptions = any(
+            any(d.value.strip() for d in s.descriptions) for s in self.slots
+        )
+        allow_row_fallback = not has_any_slot_descriptions and bool(trailing_labels)
+
         for b in blocks:
             if b.is_structural:
                 tokens.append(Token(
@@ -473,14 +478,14 @@ class TemplateInstance:
 
                 # Item (Col 2 of block)
                 item_val = slot.descriptions[0].value.strip() if len(slot.descriptions) > 0 else ""
-                if not item_val and trailing_labels and len(trailing_labels) > 0 and trailing_labels[0].strip():
+                if not item_val and allow_row_fallback and len(trailing_labels) > 0 and trailing_labels[0].strip():
                     item_val = trailing_labels[0].strip()
                 if item_val:
                     tokens.append(Token(value=item_val, token_type=TokenType.ITEM, explicit_type=True))
 
                 # Context (Col 3 of block)
                 ctx_val = slot.descriptions[1].value.strip() if len(slot.descriptions) > 1 else ""
-                if not ctx_val and trailing_labels and len(trailing_labels) > 1 and trailing_labels[1].strip():
+                if not ctx_val and allow_row_fallback and len(trailing_labels) > 1 and trailing_labels[1].strip():
                     ctx_val = trailing_labels[1].strip()
                 if ctx_val:
                     tokens.append(Token(value=ctx_val, token_type=TokenType.CONTEXT, explicit_type=True))
@@ -491,7 +496,7 @@ class TemplateInstance:
                         tokens.append(Token(value=desc.value.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
 
                 # Extra descriptions from trailing_labels fallback
-                if trailing_labels and len(trailing_labels) > 2:
+                if allow_row_fallback and len(trailing_labels) > 2:
                     for extra in trailing_labels[2:]:
                         if extra.strip() and not any(d.value.strip() == extra.strip() for d in slot.descriptions):
                             tokens.append(Token(value=extra.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
@@ -508,6 +513,11 @@ class TemplateInstance:
         """
         tokens: List[Token] = []
         blocks = self.get_blocks()
+
+        has_any_slot_descriptions = any(
+            any(d.value.strip() for d in s.descriptions) for s in self.slots
+        )
+        allow_row_fallback = not has_any_slot_descriptions and bool(trailing_labels)
 
         for b in blocks:
             if b.is_structural:
@@ -535,14 +545,14 @@ class TemplateInstance:
 
                 # Item (Col 2 of block)
                 item_val = slot.descriptions[0].value.strip() if len(slot.descriptions) > 0 else ""
-                if not item_val and trailing_labels and len(trailing_labels) > 0 and trailing_labels[0].strip():
+                if not item_val and allow_row_fallback and len(trailing_labels) > 0 and trailing_labels[0].strip():
                     item_val = trailing_labels[0].strip()
                 if item_val:
                     tokens.append(Token(value=item_val, token_type=TokenType.ITEM, explicit_type=True))
 
                 # Context (Col 3 of block)
                 ctx_val = slot.descriptions[1].value.strip() if len(slot.descriptions) > 1 else ""
-                if not ctx_val and trailing_labels and len(trailing_labels) > 1 and trailing_labels[1].strip():
+                if not ctx_val and allow_row_fallback and len(trailing_labels) > 1 and trailing_labels[1].strip():
                     ctx_val = trailing_labels[1].strip()
                 if ctx_val:
                     tokens.append(Token(value=ctx_val, token_type=TokenType.CONTEXT, explicit_type=True))
@@ -553,7 +563,7 @@ class TemplateInstance:
                         tokens.append(Token(value=desc.value.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
 
                 # Extra descriptions from trailing_labels fallback
-                if trailing_labels and len(trailing_labels) > 2:
+                if allow_row_fallback and len(trailing_labels) > 2:
                     for extra in trailing_labels[2:]:
                         if extra.strip() and not any(d.value.strip() == extra.strip() for d in slot.descriptions):
                             tokens.append(Token(value=extra.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
@@ -601,6 +611,7 @@ class TemplateGridModel:
         self.cursor_row: int = 0
         self.cursor_slot: int = 0       # Active numerical slot index (0..N-1) in active row
         self.cursor_desc_col: int = 0   # 0 = Number slot, 1 = Item (Col 2), 2 = Context (Col 3), 3+ = Extra
+        self._target_is_slot: bool = True
         self.last_parse_result: Optional[ParseResult] = None
 
     @property
@@ -611,6 +622,7 @@ class TemplateGridModel:
     @cursor_col.setter
     def cursor_col(self, val: int) -> None:
         self.cursor_desc_col = max(0, val - 1)
+        self._target_is_slot = False
 
     def get_max_description_columns(self) -> int:
         max_c = 2
@@ -624,6 +636,7 @@ class TemplateGridModel:
         if 0 <= row_idx < len(self.rows):
             self.cursor_row = row_idx
             self.cursor_desc_col = 0
+            self._target_is_slot = True
             row = self.rows[row_idx]
             if row.template_instance and row.template_instance.slots:
                 self.cursor_slot = max(0, min(slot_idx, len(row.template_instance.slots) - 1))
@@ -634,10 +647,12 @@ class TemplateGridModel:
         if 0 <= row_idx < len(self.rows):
             self.cursor_row = row_idx
             self.cursor_desc_col = max(0, col_idx - 1)
+            self._target_is_slot = False
 
     def select_slot_field(self, row_idx: int, slot_idx: int, desc_col_idx: int = 0) -> None:
         if 0 <= row_idx < len(self.rows):
             self.cursor_row = row_idx
+            self._target_is_slot = True
             row = self.rows[row_idx]
             if row.template_instance and row.template_instance.slots:
                 self.cursor_slot = max(0, min(slot_idx, len(row.template_instance.slots) - 1))
@@ -661,6 +676,7 @@ class TemplateGridModel:
         self.cursor_row = row_idx
         self.cursor_slot = 0
         self.cursor_desc_col = 0
+        self._target_is_slot = True
         return inst
 
     def add_description_column(self, slot_idx: Optional[int] = None) -> int:
@@ -686,6 +702,7 @@ class TemplateGridModel:
         self.cursor_row = new_row_idx
         self.cursor_slot = 0
         self.cursor_desc_col = 0
+        self._target_is_slot = True
         return new_row_idx
 
     def input_number(self, val: str) -> None:
@@ -744,11 +761,13 @@ class TemplateGridModel:
                         slot.bound_unit = val
             else:
                 desc_idx = self.cursor_desc_col - 1
-                if 0 <= desc_idx < len(slot.descriptions):
-                    slot.descriptions[desc_idx].value = val
-                while len(row.description_columns) <= desc_idx:
-                    row.description_columns.append("")
-                row.description_columns[desc_idx] = val
+                if getattr(self, "_target_is_slot", True):
+                    if 0 <= desc_idx < len(slot.descriptions):
+                        slot.descriptions[desc_idx].value = val
+                else:
+                    while len(row.description_columns) <= desc_idx:
+                        row.description_columns.append("")
+                    row.description_columns[desc_idx] = val
 
     def backspace(self) -> None:
         row = self.rows[self.cursor_row]
@@ -794,6 +813,7 @@ class TemplateGridModel:
         self.cursor_row = 0
         self.cursor_slot = 0
         self.cursor_desc_col = 0
+        self._target_is_slot = True
         self.last_parse_result = None
 
     def calculate(self) -> Optional[ParseResult]:
