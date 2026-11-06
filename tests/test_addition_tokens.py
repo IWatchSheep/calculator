@@ -483,10 +483,15 @@ class TestAdditionTokenCalculatorGUI(unittest.TestCase):
     def setUp(self):
         if not self.gui_available:
             self.skipTest("Tkinter display not available")
+        import tempfile
+        self.tmp_dir = tempfile.TemporaryDirectory()
         self.app = AdditionTokenCalculator(root=self.root)
+        self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
 
     def tearDown(self):
         self.app.clear()
+        if hasattr(self, "tmp_dir"):
+            self.tmp_dir.cleanup()
 
     def test_keypad_anchoring_and_button_zero(self):
         # Keypad must be packed at bottom container
@@ -624,10 +629,15 @@ class TestClickableCellsAndSafeErrorHandling(unittest.TestCase):
     def setUp(self):
         if not self.gui_available:
             self.skipTest("Tkinter display not available")
+        import tempfile
+        self.tmp_dir = tempfile.TemporaryDirectory()
         self.app = AdditionTokenCalculator(root=self.root)
+        self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
 
     def tearDown(self):
         self.app.clear()
+        if hasattr(self, "tmp_dir"):
+            self.tmp_dir.cleanup()
 
     def test_create_multiple_empty_columns_then_fill_earlier_column(self):
         # Press Next Col (⇒) twice to create multiple empty columns
@@ -946,6 +956,104 @@ class TestTemplateDrivenCalculatorGUI(unittest.TestCase):
         self.assertIsNotNone(res)
         self.assertEqual(self.app.result_var.get(), "60")
         self.assertEqual(self.app.result_word_var.get(), "60 pens in the drawer")
+
+    def test_pasted_preview_receives_number_pad_input_and_parentheses(self):
+        # 1. Select pasted preview as the active destination
+        self.app.select_pasted_preview()
+        self.assertEqual(self.app.active_input_target, "pasted_preview")
+
+        # 2. Enter '(1 + 2) + 5' using the number pad on the bottom left
+        self.app._on_keypad_press("(")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(")
+
+        self.app._on_keypad_press("1")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1")
+
+        self.app._on_keypad_press("+")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + ")
+
+        self.app._on_keypad_press("2")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2")
+
+        self.app._on_keypad_press(")")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2)")
+
+        self.app._on_keypad_press("+")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2) + ")
+
+        self.app._on_keypad_press("3")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2) + 3")
+
+        # 3. Test Backspace via keypad
+        self.app._on_keypad_press("Backspace")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2) + ")
+
+        self.app._on_keypad_press("5")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2) + 5")
+
+        # 4. Press '=' on keypad -> triggers Preview Pasted
+        self.app._on_keypad_press("=")
+
+        # Assert template is loaded into Row 1 Column 1
+        row = self.app.template_grid_model.rows[0]
+        self.assertIsNotNone(row.template_instance)
+        self.assertEqual(row.template_instance.template.pattern, "( □ + □ ) + □")
+        self.assertEqual([s.value for s in row.template_instance.slots], ["1", "2", "5"])
+        self.assertEqual(self.app.active_input_target, "grid")
+
+        # 5. Add unit label and calculate
+        self.app.template_grid_model.rows[0].description_columns[0] = "notebooks"
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "8")
+        self.assertEqual(self.app.result_word_var.get(), "8 notebooks")
+
+        # 6. Test Clear (C) in pasted preview mode
+        self.app.select_pasted_preview()
+        self.app._on_keypad_press("7")
+        self.assertEqual(self.app.pasted_expr_var.get(), "(1 + 2) + 57")
+        self.app._on_keypad_press("C")
+        self.assertEqual(self.app.pasted_expr_var.get(), "")
+
+    def test_save_template_clickable_and_saves_directly_when_entering_via_keypad(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            self.app.template_manager.storage_file = Path(tmp_dir) / "custom_templates.json"
+
+            # 1. Initially Save Template button is disabled
+            self.assertEqual(str(self.app.save_tpl_btn["state"]), "disabled")
+
+            # 2. Select pasted preview entry and enter expression using number pad
+            self.app.select_pasted_preview()
+            self.app._on_keypad_press("(")
+            # Button should immediately become normal (clickable)
+            self.assertEqual(str(self.app.save_tpl_btn["state"]), "normal")
+
+            self.app._on_keypad_press("3")
+            self.app._on_keypad_press("+")
+            self.app._on_keypad_press("4")
+            self.app._on_keypad_press(")")
+            self.assertEqual(self.app.pasted_expr_var.get(), "(3 + 4)")
+            self.assertEqual(str(self.app.save_tpl_btn["state"]), "normal")
+
+            # 3. User clicks Save Template button directly with mouse (simulated via invoke)
+            self.app.save_tpl_btn.invoke()
+
+            # 4. Verify template is saved to registry and dropdown
+            saved = next((t for t in self.app.template_manager.templates if t.pattern == "( □ + □ )"), None)
+            self.assertIsNotNone(saved)
+            self.assertEqual(self.app.selected_template_var.get(), "( □ + □ )")
+
+            # 5. Row 1 Column 1 has clean empty placeholders ready for numbers
+            row = self.app.template_grid_model.rows[0]
+            self.assertIsNotNone(row.template_instance)
+            self.assertEqual(row.template_instance.template.pattern, "( □ + □ )")
+            self.assertEqual([s.value for s in row.template_instance.slots], ["", ""])
+            self.assertFalse(row.template_instance.slots[0].is_filled)
+
+            # 6. Active input target is back to grid, so keypad enters into slot 0
+            self.assertEqual(self.app.active_input_target, "grid")
+            self.app._on_keypad_press("9")
+            self.assertEqual(row.template_instance.slots[0].value, "9")
 
     def test_unfilled_template_slot_shows_safe_error_boundary(self):
         # Set template but leave second slot empty

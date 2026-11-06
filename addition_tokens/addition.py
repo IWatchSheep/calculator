@@ -68,6 +68,7 @@ class AdditionTokenCalculator:
         self.grid_model = TokenGridModel()  # Kept for backward compatibility
         self.last_parse_result: Optional[ParseResult] = None
         self.current_preview_template: Optional[MathTemplate] = None
+        self.active_input_target: str = "grid"  # 'grid' or 'pasted_preview' 
 
         # Build UI layout
         self._build_ui()
@@ -649,9 +650,23 @@ class AdditionTokenCalculator:
             row2,
             textvariable=self.pasted_expr_var,
             font=("Segoe UI", 9),
-            width=16,
+            width=15,
         )
         self.pasted_entry.pack(side="left", padx=2)
+        self.pasted_entry.bind("<FocusIn>", lambda _e: self.set_active_input_target("pasted_preview"))
+        self.pasted_entry.bind("<Button-1>", lambda _e: self.set_active_input_target("pasted_preview"))
+
+        box_btn = tk.Button(
+            row2,
+            text="□",
+            font=("Segoe UI", 8, "bold"),
+            bg="#f1f8e9",
+            fg="#2e7d32",
+            command=lambda: self._insert_into_pasted_preview("□"),
+            width=2,
+            padx=2,
+        )
+        box_btn.pack(side="left", padx=1)
 
         preview_btn = tk.Button(
             row2,
@@ -673,6 +688,9 @@ class AdditionTokenCalculator:
             command=self._on_save_custom_template,
         )
         self.save_tpl_btn.pack(side="left", padx=2)
+
+        # Dynamically enable Save Template whenever user types/edits pasted expression
+        self.pasted_expr_var.trace_add("write", lambda *args: self._update_save_button_state())
 
     def _build_vocab_console(self) -> None:
         """Builds central vocabulary controls to feed labels directly to the active selected cell."""
@@ -735,6 +753,14 @@ class AdditionTokenCalculator:
     # Template Selection & Pasted Expression Preview
     # -------------------------------------------------------------------------
 
+    def _update_save_button_state(self) -> None:
+        expr = self.pasted_expr_var.get().strip() if hasattr(self, "pasted_expr_var") else ""
+        if hasattr(self, "save_tpl_btn"):
+            if expr or getattr(self, "current_preview_template", None) is not None:
+                self.save_tpl_btn.configure(state="normal")
+            else:
+                self.save_tpl_btn.configure(state="disabled")
+
     def _on_apply_selected_template(self) -> None:
         pattern = self.selected_template_var.get()
         tpl = next((t for t in self.template_manager.templates if t.pattern == pattern), None)
@@ -746,6 +772,7 @@ class AdditionTokenCalculator:
             )
             self.current_preview_template = None
             self.save_tpl_btn.configure(state="disabled")
+            self.set_active_input_target("grid")
             self.render_grid()
 
     def _on_preview_pasted_expression(self) -> None:
@@ -762,46 +789,72 @@ class AdditionTokenCalculator:
             )
             # Enable optional Save Template button
             self.save_tpl_btn.configure(state="normal")
+            self.set_active_input_target("grid")
             self.render_grid()
         except ValueError as ve:
             self.result_var.set("Error")
             self.result_word_var.set(str(ve))
 
     def _on_save_custom_template(self) -> None:
-        if self.current_preview_template:
-            # 1. Save immutable template structure (pattern, slot metadata) without runtime values
-            clean_template = MathTemplate(
-                template_id=self.current_preview_template.template_id,
-                pattern=self.current_preview_template.pattern,
-                name=self.current_preview_template.name,
-                is_custom=True,
-            )
-            self.template_manager.save_custom_template(clean_template)
+        expr = self.pasted_expr_var.get().strip()
+        # Parse expression directly if entered without previewing first or if updated
+        if expr:
+            try:
+                tpl, _initial_vals = ExpressionTemplateParser.parse_pasted_expression(expr)
+                self.current_preview_template = tpl
+            except ValueError as ve:
+                self.inspector_text.configure(state="normal")
+                self.inspector_text.delete("1.0", "end")
+                self.inspector_text.insert("1.0", f"Cannot save template: {ve}")
+                self.inspector_text.configure(state="disabled")
+                self.result_var.set("Error")
+                self.result_word_var.set(str(ve))
+                return
 
-            # 2. Update dropdown values and select newly saved template
-            self.template_patterns = [t.pattern for t in self.template_manager.templates]
-            self.template_combo.configure(values=self.template_patterns)
-            self.selected_template_var.set(clean_template.pattern)
-            self.save_tpl_btn.configure(state="disabled")
-
-            # 3. Apply clean saved template with empty editable placeholder (□) to active row
-            self.template_grid_model.apply_template_to_row(
-                self.template_grid_model.cursor_row,
-                clean_template,
-                initial_values=None,  # Reset slot value to empty placeholder □
-            )
-            self.current_preview_template = None
-            self.render_grid()
-
-            # 4. Notify user in inspector
+        if not self.current_preview_template:
             self.inspector_text.configure(state="normal")
             self.inspector_text.delete("1.0", "end")
             self.inspector_text.insert(
                 "1.0",
-                f"Template '{clean_template.pattern}' saved permanently to templates registry.\n"
-                f"Column 1 is now ready with an empty editable placeholder (□)."
+                "Cannot save template: Please enter a mathematical expression into the Pasted Expression box first."
             )
             self.inspector_text.configure(state="disabled")
+            return
+
+        # 1. Save immutable template structure (pattern, slot metadata) without runtime values
+        clean_template = MathTemplate(
+            template_id=self.current_preview_template.template_id,
+            pattern=self.current_preview_template.pattern,
+            name=self.current_preview_template.name,
+            is_custom=True,
+        )
+        self.template_manager.save_custom_template(clean_template)
+
+        # 2. Update dropdown values and select newly saved template
+        self.template_patterns = [t.pattern for t in self.template_manager.templates]
+        self.template_combo.configure(values=self.template_patterns)
+        self.selected_template_var.set(clean_template.pattern)
+        self.save_tpl_btn.configure(state="disabled")
+
+        # 3. Apply clean saved template with empty editable placeholder (□) to active row
+        self.template_grid_model.apply_template_to_row(
+            self.template_grid_model.cursor_row,
+            clean_template,
+            initial_values=None,  # Reset slot value to empty placeholder □
+        )
+        self.current_preview_template = None
+        self.set_active_input_target("grid")
+        self.render_grid()
+
+        # 4. Notify user in inspector
+        self.inspector_text.configure(state="normal")
+        self.inspector_text.delete("1.0", "end")
+        self.inspector_text.insert(
+            "1.0",
+            f"Template '{clean_template.pattern}' saved permanently to templates registry.\n"
+            f"Column 1 is now ready with an empty editable placeholder (□)."
+        )
+        self.inspector_text.configure(state="disabled")
 
     def _prompt_next_row_type(self) -> None:
         """Presents explicit options for row type creation."""
@@ -823,6 +876,7 @@ class AdditionTokenCalculator:
     # -------------------------------------------------------------------------
 
     def select_cell(self, row_idx: int, area: str = "addend", col_idx: int = 0, subcol_idx: int = 0) -> None:
+        self.set_active_input_target("grid")
         self.grid_model.select_cell(row_idx, area, col_idx, subcol_idx)
         if area == "addend":
             self.template_grid_model.select_slot(row_idx, subcol_idx)
@@ -830,11 +884,90 @@ class AdditionTokenCalculator:
             self.template_grid_model.select_col(row_idx, col_idx + 2)
         self.render_grid()
 
+    def set_active_input_target(self, target: str) -> None:
+        """Sets active input target ('grid' or 'pasted_preview') and updates visual feedback."""
+        self.active_input_target = target
+        if target == "pasted_preview":
+            if hasattr(self, "pasted_entry"):
+                self.pasted_entry.configure(bg="#fffde7")
+            if hasattr(self, "selection_status_var"):
+                self.selection_status_var.set("Selected Target: Pasted Expression Template Builder (Keypad routes to Pasted Preview)")
+        else:
+            if hasattr(self, "pasted_entry"):
+                self.pasted_entry.configure(bg="#ffffff")
+
+    def select_pasted_preview(self) -> None:
+        """Explicitly selects the pasted preview entry as the active keypad destination."""
+        self.set_active_input_target("pasted_preview")
+        if hasattr(self, "pasted_entry"):
+            self.pasted_entry.focus_set()
+
+    def _insert_into_pasted_preview(self, char: str) -> None:
+        """Inserts text at cursor position in the pasted preview box."""
+        try:
+            cursor_pos = self.pasted_entry.index(tk.INSERT)
+        except Exception:
+            cursor_pos = len(self.pasted_expr_var.get())
+
+        current_text = self.pasted_expr_var.get()
+        new_text = current_text[:cursor_pos] + char + current_text[cursor_pos:]
+        self.pasted_expr_var.set(new_text)
+
+        new_cursor = cursor_pos + len(char)
+        self.pasted_entry.icursor(new_cursor)
+        self.pasted_entry.focus_set()
+        self._update_save_button_state()
+
+    def _backspace_in_pasted_preview(self) -> None:
+        """Deletes previous character in the pasted preview box."""
+        try:
+            cursor_pos = self.pasted_entry.index(tk.INSERT)
+        except Exception:
+            cursor_pos = len(self.pasted_expr_var.get())
+
+        current_text = self.pasted_expr_var.get()
+        if cursor_pos > 0 and current_text:
+            new_text = current_text[:cursor_pos - 1] + current_text[cursor_pos:]
+            self.pasted_expr_var.set(new_text)
+            self.pasted_entry.icursor(cursor_pos - 1)
+            self.pasted_entry.focus_set()
+            self._update_save_button_state()
+
     def delete_selected_column(self) -> None:
         self.grid_model.delete_selected_column()
         self.render_grid()
 
     def _on_keypad_press(self, val: str) -> None:
+        # Route keypad inputs to Pasted Preview box when it is the active destination
+        if getattr(self, "active_input_target", "grid") == "pasted_preview":
+            if val == "=":
+                self._on_preview_pasted_expression()
+            elif val == "C":
+                self.pasted_expr_var.set("")
+                self.pasted_entry.icursor(0)
+                self.pasted_entry.focus_set()
+            elif val == "Backspace":
+                self._backspace_in_pasted_preview()
+            elif val in ("Next Slot (→)", "Next Subcol (→)"):
+                self._insert_into_pasted_preview("□")
+            elif val in ("Next Col (⇒)", "Next Addend (↓)"):
+                self.set_active_input_target("grid")
+                self.render_grid()
+            elif val in ("(", ")"):
+                self._insert_into_pasted_preview(val)
+            elif val == "+":
+                cur_txt = self.pasted_expr_var.get()
+                try:
+                    c_pos = self.pasted_entry.index(tk.INSERT)
+                except Exception:
+                    c_pos = len(cur_txt)
+                if c_pos > 0 and cur_txt and cur_txt[c_pos - 1] not in ("(", " "):
+                    self._insert_into_pasted_preview(" + ")
+                else:
+                    self._insert_into_pasted_preview("+")
+            else:
+                self._insert_into_pasted_preview(val)
+            return
         if val == "=":
             self.calculate()
         elif val == "C":
@@ -1213,6 +1346,7 @@ class AdditionTokenCalculator:
                 i += 1
 
     def _select_template_slot(self, r: int, s: int) -> None:
+        self.set_active_input_target("grid")
         self.template_grid_model.select_slot(r, s)
         self.grid_model.select_cell(r, "addend", 0, s)
         self.render_grid()
