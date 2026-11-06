@@ -2184,6 +2184,57 @@ class TestRepeatedBlockAddendArchitecture(unittest.TestCase):
         self.assertIn("3 books on shelf", books_term.source_breakdown)
         self.assertIn("4 books in locker", books_term.source_breakdown)
 
+    def test_partially_filled_addend_never_inherits_other_slot_description(self):
+        """A slot with its own description never leaks it to other slots in the row."""
+        tpl = MathTemplate(template_id="t_two", pattern="□ + □")
+        self.app.template_grid_model.apply_template_to_row(0, tpl, ["1", "2"])
+        inst = self.app.template_grid_model.rows[0].template_instance
+
+        # User explicitly labels Slot 0 as 'pen' and Slot 1 as 'books'
+        inst.slots[0].descriptions[0].value = "pen"
+        inst.slots[1].descriptions[0].value = "books"
+
+        parse_res = self.app.calculate()
+        self.assertIsNotNone(parse_res)
+        self.assertEqual(len(parse_res.individual_terms), 2)
+        self.assertEqual(parse_res.individual_terms[0].item, "pen")
+        self.assertEqual(parse_res.individual_terms[1].item, "books")
+        self.assertEqual(len(parse_res.aggregated_terms), 2)
+        self.assertEqual(parse_res.aggregated_terms[0].item, "pen")
+        self.assertEqual(parse_res.aggregated_terms[1].item, "books")
+
+    def test_new_row_creates_genuinely_independent_slots_and_descriptions(self):
+        """Pressing Next Addend (↓) creates independent row without sharing references."""
+        r1_idx = 0
+        r1_row = self.app.template_grid_model.rows[r1_idx]
+        r1_inst = r1_row.template_instance
+        r1_slot0 = r1_inst.slots[0]
+        r1_slot0.value = "10"
+        r1_slot0.descriptions[0].value = "pens"
+
+        # Add new row via dialog / keypad action
+        r2_idx = self.app.add_addend_row()
+        r2_row = self.app.template_grid_model.rows[r2_idx]
+        r2_inst = r2_row.template_instance
+
+        # Distinct instances
+        self.assertIsNot(r1_inst, r2_inst)
+        self.assertIsNot(r1_row.description_columns, r2_row.description_columns)
+
+        # Distinct slots and UUIDs
+        r2_slot0 = r2_inst.slots[0]
+        self.assertIsNot(r1_slot0, r2_slot0)
+        self.assertNotEqual(r1_slot0.slot_uuid, r2_slot0.slot_uuid)
+        self.assertEqual(r2_slot0.value, "")
+        self.assertEqual(r2_slot0.descriptions[0].value, "")
+
+        # Mutating Row 2 does not affect Row 1
+        r2_slot0.value = "50"
+        r2_slot0.descriptions[0].value = "coins"
+        self.assertEqual(r1_slot0.value, "10")
+        self.assertEqual(r1_slot0.descriptions[0].value, "pens")
+
+
 
 if __name__ == "__main__":
     unittest.main()
