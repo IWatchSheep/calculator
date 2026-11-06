@@ -1717,6 +1717,90 @@ class TestResultsWindowAndScrolling(unittest.TestCase):
         self.assertEqual(self.app.result_var.get(), "100")
         self.assertEqual(self.app.result_word_var.get(), "100 dollars")
 
+    def test_future_annotations_present_in_token_model(self):
+        token_model_path = _PROJECT_ROOT / "addition_tokens" / "token_model.py"
+        with open(token_model_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        # Find module docstring end
+        doc_end_idx = None
+        for i, line in enumerate(lines):
+            if '"""' in line and i > 0:
+                doc_end_idx = i
+                break
+        self.assertIsNotNone(doc_end_idx, "Module docstring closing not found")
+        # Ensure 'from __future__ import annotations' appears directly after docstring
+        subsequent_code = "".join(lines[doc_end_idx + 1:doc_end_idx + 10])
+        self.assertIn("from __future__ import annotations", subsequent_code)
+
+    def test_physical_enter_key_respects_active_input_target(self):
+        # 1. When Pasted Preview is selected, physical Enter previews expression (does NOT calculate grid)
+        self.app.select_pasted_preview()
+        self.assertEqual(self.app.active_input_target, "pasted_preview")
+        self.app.pasted_expr_var.set("(10 + 20) + 30")
+
+        # Simulate physical Enter key press
+        res = self.app._on_enter_key()
+        self.assertEqual(res, "break")
+
+        # Expression is previewed in Row 1 Column 1
+        row = self.app.template_grid_model.rows[0]
+        self.assertIsNotNone(row.template_instance)
+        self.assertEqual(row.template_instance.template.pattern, "( □ + □ ) + □")
+        self.assertEqual([s.value for s in row.template_instance.slots], ["10", "20", "30"])
+
+        # Input target automatically transitioned to grid
+        self.assertEqual(self.app.active_input_target, "grid")
+        # Grid has NOT been calculated yet
+        self.assertEqual(self.app.result_var.get(), "")
+
+        # 2. When grid is selected, physical Enter calculates normally
+        row.description_columns[0] = "apples"
+        res_calc = self.app._on_enter_key()
+        self.assertEqual(res_calc, "break")
+        self.assertEqual(self.app.result_var.get(), "60")
+        self.assertEqual(self.app.result_word_var.get(), "60 apples")
+
+    def test_save_duplicate_of_builtin_template_does_not_convert_to_custom(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_storage = Path(tmp_dir) / "custom_templates.json"
+            mgr = MathTemplateManager(storage_file=tmp_storage)
+
+            # Built-in template '□ + □' exists with is_custom=False
+            builtin = next(t for t in mgr.templates if t.pattern == "□ + □")
+            self.assertFalse(builtin.is_custom)
+            initial_count = len(mgr.templates)
+
+            # Attempt to save a duplicate of the built-in template
+            duplicate = MathTemplate(
+                template_id="custom_duplicate",
+                pattern="□ + □",
+                name="Duplicate Two terms",
+                is_custom=True,
+            )
+            mgr.save_custom_template(duplicate)
+
+            # Built-in template definition is retained and NOT converted to custom
+            self.assertFalse(builtin.is_custom)
+            self.assertEqual(len(mgr.templates), initial_count)
+
+            # JSON storage file does not persist the built-in template
+            if tmp_storage.exists():
+                with open(tmp_storage, "r", encoding="utf-8") as f:
+                    stored_data = json.load(f)
+                self.assertFalse(any(item["pattern"] == "□ + □" for item in stored_data))
+
+            # Test through GUI: saving '1 + 2' reuses built-in '□ + □' without converting
+            self.app.template_manager = mgr
+            self.app.pasted_expr_var.set("1 + 2")
+            self.app._on_save_custom_template()
+
+            applied_template = self.app.template_grid_model.rows[0].template_instance.template
+            self.assertEqual(applied_template.pattern, "□ + □")
+            self.assertFalse(applied_template.is_custom)
+            inspector_msg = self.app.inspector_text.get("1.0", "end")
+            self.assertIn("existing built-in template", inspector_msg)
+
 
 if __name__ == "__main__":
     unittest.main()

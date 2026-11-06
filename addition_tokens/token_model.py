@@ -9,6 +9,8 @@ Features:
 - Strict validation, unit identity preservation, and safe error reporting.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 from enum import Enum, auto
@@ -288,13 +290,17 @@ class MathTemplateManager:
     def save_custom_template(self, template: MathTemplate) -> None:
         """Explicitly saves a reviewed template to the permanent templates registry."""
         TemplateValidator.validate_addition_pattern(template.pattern)
-        template.is_custom = True
         existing = next((t for t in self.templates if t.pattern == template.pattern), None)
-        if existing is None:
-            self.templates.append(template)
-        else:
-            existing.is_custom = True
+        if existing is not None:
+            # Prevent saving a duplicate of an existing built-in template from converting it into custom
+            if not existing.is_custom:
+                return
             existing.name = template.name
+            self._persist()
+            return
+
+        template.is_custom = True
+        self.templates.append(template)
         self._persist()
 
     def _persist(self) -> None:

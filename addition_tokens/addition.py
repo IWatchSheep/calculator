@@ -14,6 +14,8 @@ Features:
 - Dedicated, resizable, scrollable Results Window (ttk.PanedWindow) with text size controls, wrapping toggle, and clipboard copy.
 """
 
+from __future__ import annotations
+
 from decimal import Decimal
 from pathlib import Path
 import sys
@@ -655,6 +657,8 @@ class AdditionTokenCalculator:
         self.pasted_entry.pack(side="left", padx=2)
         self.pasted_entry.bind("<FocusIn>", lambda _e: self.set_active_input_target("pasted_preview"))
         self.pasted_entry.bind("<Button-1>", lambda _e: self.set_active_input_target("pasted_preview"))
+        self.pasted_entry.bind("<Return>", self._on_enter_key)
+        self.pasted_entry.bind("<KP_Enter>", self._on_enter_key)
 
         box_btn = tk.Button(
             row2,
@@ -744,9 +748,18 @@ class AdditionTokenCalculator:
         )
         apply_btn.pack(side="left", padx=2)
 
+    def _on_enter_key(self, _event: Optional[tk.Event] = None) -> Optional[str]:
+        """Physical Enter key router: previews when in Pasted Preview, calculates when in grid."""
+        if getattr(self, "active_input_target", "grid") == "pasted_preview":
+            self._on_preview_pasted_expression()
+            return "break"
+        else:
+            self.calculate()
+            return "break"
+
     def _setup_bindings(self) -> None:
-        self.root.bind("<Return>", lambda _e: self.calculate())
-        self.root.bind("<KP_Enter>", lambda _e: self.calculate())
+        self.root.bind("<Return>", self._on_enter_key)
+        self.root.bind("<KP_Enter>", self._on_enter_key)
         self.root.bind("<Escape>", lambda _e: self.clear())
 
     # -------------------------------------------------------------------------
@@ -822,13 +835,26 @@ class AdditionTokenCalculator:
             return
 
         # 1. Save immutable template structure (pattern, slot metadata) without runtime values
-        clean_template = MathTemplate(
-            template_id=self.current_preview_template.template_id,
-            pattern=self.current_preview_template.pattern,
-            name=self.current_preview_template.name,
-            is_custom=True,
-        )
-        self.template_manager.save_custom_template(clean_template)
+        existing = next((t for t in self.template_manager.templates if t.pattern == self.current_preview_template.pattern), None)
+        if existing is not None and not existing.is_custom:
+            clean_template = existing
+            self.template_manager.save_custom_template(clean_template)
+            inspector_msg = (
+                f"Template '{clean_template.pattern}' matches an existing built-in template.\n"
+                f"Reusing built-in template definition without converting to custom. Column 1 is ready with empty editable placeholder (□)."
+            )
+        else:
+            clean_template = MathTemplate(
+                template_id=self.current_preview_template.template_id,
+                pattern=self.current_preview_template.pattern,
+                name=self.current_preview_template.name,
+                is_custom=True,
+            )
+            self.template_manager.save_custom_template(clean_template)
+            inspector_msg = (
+                f"Template '{clean_template.pattern}' saved permanently to templates registry.\n"
+                f"Column 1 is now ready with an empty editable placeholder (□)."
+            )
 
         # 2. Update dropdown values and select newly saved template
         self.template_patterns = [t.pattern for t in self.template_manager.templates]
@@ -849,11 +875,7 @@ class AdditionTokenCalculator:
         # 4. Notify user in inspector
         self.inspector_text.configure(state="normal")
         self.inspector_text.delete("1.0", "end")
-        self.inspector_text.insert(
-            "1.0",
-            f"Template '{clean_template.pattern}' saved permanently to templates registry.\n"
-            f"Column 1 is now ready with an empty editable placeholder (□)."
-        )
+        self.inspector_text.insert("1.0", inspector_msg)
         self.inspector_text.configure(state="disabled")
 
     def _prompt_next_row_type(self) -> None:
