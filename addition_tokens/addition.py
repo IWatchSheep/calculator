@@ -1029,20 +1029,28 @@ class AdditionTokenCalculator:
                 self.grid_model.input_value(val)
                 self.render_grid()
         elif val == "+":
-            # Operator '+' is a fixed structural symbol in the mathematical template.
-            # It must NOT automatically advance from a number slot into the next slot or Col 2.
-            # Slot selection remains strictly explicit via direct clicking or the Next Slot button.
-            if self.template_grid_model.cursor_col == 1:
-                self.inspector_text.configure(state="normal")
-                self.inspector_text.delete("1.0", "end")
-                self.inspector_text.insert(
-                    "1.0",
-                    "Notice: The '+' operator is a fixed structural symbol in the mathematical template.\n\n"
-                    "It does not automatically advance slots or modify numeric values.\n"
-                    "To move to another slot or column, click the cell directly or use the 'Next Slot (→)' button."
-                )
-                self.inspector_text.configure(state="disabled")
             self.grid_model.input_value("+")
+            if self.template_grid_model.cursor_col == 1:
+                cur_r = self.template_grid_model.cursor_row
+                row = self.template_grid_model.rows[cur_r]
+                if row.template_instance and row.template_instance.slots:
+                    cur_slot = self.template_grid_model.cursor_slot
+                    if cur_slot + 1 < len(row.template_instance.slots):
+                        # Advance to the square box on the right side of the '+' sign
+                        self._select_template_slot(cur_r, cur_slot + 1)
+                        return
+                    else:
+                        # Already on the last slot of the mathematical template
+                        self.inspector_text.configure(state="normal")
+                        self.inspector_text.delete("1.0", "end")
+                        self.inspector_text.insert(
+                            "1.0",
+                            "Notice: All placeholder boxes (□) in this mathematical template have been reached.\n\n"
+                            "To add descriptive words (e.g. units or contexts), select Column 2 directly or use 'Next Col (⇒)'."
+                        )
+                        self.inspector_text.configure(state="disabled")
+                        self.render_grid()
+                        return
             self.render_grid()
         else:
             # Inputs numeric digit (0-9, .) into active slot or cell

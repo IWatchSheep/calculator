@@ -1318,35 +1318,37 @@ class TestSlotInputValidationAndGridAlignment(unittest.TestCase):
         self.app._on_keypad_press(".")
         self.assertEqual(slot0.value, "0.5")
 
-    def test_keypad_plus_does_not_auto_advance_and_keeps_navigation_explicit(self):
+    def test_keypad_plus_skips_to_next_slot_on_right_of_plus_sign(self):
         # In template □ + □:
-        # Enter '5' into slot 0
+        # Enter '5' into first square (slot 0)
         self.app._on_keypad_press("5")
-        self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
-        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
-
-        # Press '+' -> does NOT advance to slot 1 or Col 2, preserves slot value
-        self.app._on_keypad_press("+")
         self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
         self.assertEqual(self.app.template_grid_model.cursor_col, 1)
         slot0 = self.app.template_grid_model.rows[0].template_instance.slots[0]
         self.assertEqual(slot0.value, "5")
 
-        # Inspector provides feedback that '+' is a template structural symbol and navigation is explicit
-        inspector_content = self.app.inspector_text.get("1.0", "end")
-        self.assertIn("'+'", inspector_content)
-        self.assertIn("structural symbol", inspector_content)
-
-        # Explicit navigation via Next Slot (→) button
-        self.app._on_keypad_press("Next Slot (→)")
+        # Press '+' -> skips to the square box on the right side of the '+' sign (slot 1)
+        self.app._on_keypad_press("+")
         self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
+        # Value in slot 0 remains intact (preserved)
+        self.assertEqual(slot0.value, "5")
 
         # Enter '3' into slot 1
         self.app._on_keypad_press("3")
         slot1 = self.app.template_grid_model.rows[0].template_instance.slots[1]
         self.assertEqual(slot1.value, "3")
 
-        # Set required item label for mathematical addend quantities
+        # Press '+' while on the last slot -> does NOT advance to Col 2, stays on slot 1
+        self.app._on_keypad_press("+")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
+        inspector_content = self.app.inspector_text.get("1.0", "end")
+        self.assertIn("All placeholder boxes (□) in this mathematical template have been reached", inspector_content)
+
+        # Explicit navigation into Column 2 via Next Col (⇒)
+        self.app._on_keypad_press("Next Col (⇒)")
+        self.assertEqual(self.app.template_grid_model.cursor_col, 2)
         self.app.template_grid_model.rows[0].description_columns[0] = "pens"
 
         # Calculate result
