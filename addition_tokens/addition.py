@@ -904,10 +904,25 @@ class AdditionTokenCalculator:
         self.set_active_input_target("grid")
         self.grid_model.select_cell(row_idx, area, col_idx, subcol_idx)
         if area == "addend":
-            self.template_grid_model.select_slot(row_idx, subcol_idx)
+            self.template_grid_model.select_slot_field(row_idx, subcol_idx, 0)
         else:
-            self.template_grid_model.select_col(row_idx, col_idx + 2)
+            self.template_grid_model.select_slot_field(row_idx, 0, col_idx + 1)
         self.render_grid()
+
+    def select_slot_field(self, row_idx: int, slot_idx: int, desc_col_idx: int = 0) -> None:
+        self.set_active_input_target("grid")
+        self.template_grid_model.select_slot_field(row_idx, slot_idx, desc_col_idx)
+        self.grid_model.select_cell(row_idx, "addend", 0, slot_idx)
+        self.render_grid()
+
+    def add_description_column_to_slot(self, row_idx: int, slot_idx: int) -> int:
+        self.set_active_input_target("grid")
+        self.template_grid_model.cursor_row = row_idx
+        self.template_grid_model.cursor_slot = slot_idx
+        col_count = self.template_grid_model.add_description_column(slot_idx)
+        self.template_grid_model.cursor_desc_col = col_count
+        self.render_grid()
+        return col_count
 
     def set_active_input_target(self, target: str) -> None:
         """Sets active input target ('grid' or 'pasted_preview') and updates visual feedback."""
@@ -1012,17 +1027,23 @@ class AdditionTokenCalculator:
             if row.template_instance and row.template_instance.slots:
                 next_s = (self.template_grid_model.cursor_slot + 1) % len(row.template_instance.slots)
                 self.template_grid_model.cursor_slot = next_s
+                self.template_grid_model.cursor_desc_col = 0
             self.render_grid()
         elif val == "Next Col (⇒)":
             if getattr(self, "mode", "template") != "template":
                 self.grid_model.next_column()
-            self.template_grid_model.cursor_col += 1
+            row = self.template_grid_model.rows[self.template_grid_model.cursor_row]
+            if row.template_instance and row.template_instance.slots:
+                slot = row.template_instance.slots[self.template_grid_model.cursor_slot]
+                self.template_grid_model.cursor_desc_col = (self.template_grid_model.cursor_desc_col + 1) % (len(slot.descriptions) + 1)
+            else:
+                self.template_grid_model.cursor_desc_col += 1
             self.render_grid()
         elif val == "Next Addend (↓)":
             self.add_row_dialog(RowType.ADDEND)
         elif val in ("(", ")"):
             # Parentheses define structural templates, not numeric slot contents
-            if self.template_grid_model.cursor_col == 1:
+            if self.template_grid_model.cursor_desc_col == 0:
                 self.inspector_text.configure(state="normal")
                 self.inspector_text.delete("1.0", "end")
                 self.inspector_text.insert(
@@ -1041,14 +1062,14 @@ class AdditionTokenCalculator:
         elif val == "+":
             if getattr(self, "mode", "template") != "template":
                 self.grid_model.input_value("+")
-            if self.template_grid_model.cursor_col == 1:
+            if self.template_grid_model.cursor_desc_col == 0:
                 cur_r = self.template_grid_model.cursor_row
                 row = self.template_grid_model.rows[cur_r]
                 if row.template_instance and row.template_instance.slots:
                     cur_slot = self.template_grid_model.cursor_slot
                     if cur_slot + 1 < len(row.template_instance.slots):
                         # Advance to the square box on the right side of the '+' sign
-                        self._select_template_slot(cur_r, cur_slot + 1)
+                        self.select_slot_field(cur_r, cur_slot + 1, 0)
                         return
                     else:
                         # Already on the last slot of the mathematical template
@@ -1104,6 +1125,7 @@ class AdditionTokenCalculator:
         t_slot = self.template_grid_model.cursor_slot
 
         # Status label
+        t_desc_col = self.template_grid_model.cursor_desc_col
         if getattr(self, "mode", "template") != "template" and self.grid_model.cursor_area == "addend":
             r_idx = self.grid_model.cursor_row
             c_idx = self.grid_model.cursor_addend_col
@@ -1125,11 +1147,18 @@ class AdditionTokenCalculator:
             if t_row_idx < len(self.template_grid_model.rows):
                 cur_r = self.template_grid_model.rows[t_row_idx]
                 if cur_r.row_type == RowType.LABEL:
-                    status_info += " [Label Row]"
-                elif t_col == 1:
-                    pat = cur_r.template_instance.template.pattern if cur_r.template_instance else "math"
-                    val = cur_r.template_instance.slots[t_slot].value if cur_r.template_instance and t_slot < len(cur_r.template_instance.slots) else ""
-                    status_info += f" | Main Col 1 (Template: {pat}) | Subcol {t_slot + 1} ('{val}')"
+                    status_info += f" [Label Row]: '{cur_r.explanation_text}'"
+                elif cur_r.template_instance and cur_r.template_instance.slots:
+                    inst = cur_r.template_instance
+                    s_idx = min(t_slot, len(inst.slots) - 1)
+                    slot = inst.slots[s_idx]
+                    if t_desc_col == 0:
+                        status_info += f" | Addend {s_idx + 1} ({slot.name}) | Col 1: Number ('{slot.value or '□'}')"
+                    elif t_desc_col <= len(slot.descriptions):
+                        desc = slot.descriptions[t_desc_col - 1]
+                        status_info += f" | Addend {s_idx + 1} ({slot.name}) | Col {t_desc_col + 1}: {desc.field_label} ('{desc.value}')"
+                    else:
+                        status_info += f" | Addend {s_idx + 1} ({slot.name})"
                 else:
                     desc_val = cur_r.description_columns[t_col - 2] if t_col - 2 < len(cur_r.description_columns) else ""
                     status_info += f" | Col {t_col} (Description: '{desc_val}')"
@@ -1209,7 +1238,7 @@ class AdditionTokenCalculator:
         tk.Label(header_bar, text="Row", font=("Segoe UI", 9, "bold"), bg="#e0e0e0", anchor="w", padx=6).grid(row=0, column=0, sticky="w")
         tk.Label(
             header_bar,
-            text="Column 1: Mathematical Template (Editable Slots □)",
+            text="Mathematical Addend Sequence (Each Addend owns: Col 1 [Number] | Col 2 [Item] | Col 3 [Context] | Col 4+ [Extra])",
             font=("Segoe UI", 9, "bold"),
             fg="#1b5e20",
             bg="#e0e0e0",
@@ -1305,33 +1334,12 @@ class AdditionTokenCalculator:
             tag_lbl.grid(row=0, column=0, sticky="w", padx=4, pady=4)
             tag_lbl.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "addend", 0, 0))
 
-            # Column 1: Mathematical Template with Editable Slots
-            col1_frame = tk.Frame(row_card, bg="#fafafa", bd=1, relief="groove")
+            # Column 1: Mathematical Sequence of Addend Cards and Structural Badges
+            col1_frame = tk.Frame(row_card, bg=row_bg, bd=0)
             col1_frame.grid(row=0, column=1, sticky="w", padx=4, pady=4)
 
             if row.template_instance:
                 self._render_template_instance_col1(col1_frame, r_idx, row.template_instance, is_active_row)
-
-            # Columns 2, 3, and beyond: Descriptive Columns
-            for d_idx, desc_val in enumerate(row.description_columns):
-                col_number = d_idx + 2
-                is_active_col = (is_active_row and t_col == col_number)
-
-                desc_cell = tk.Label(
-                    row_card,
-                    text=desc_val or f"[ Col {col_number} ]",
-                    font=("Segoe UI", 9, "bold" if desc_val else "italic"),
-                    fg="#4a148c" if desc_val else "#999999",
-                    bg="#fff59d" if is_active_col else "#ffffff",
-                    bd=2 if is_active_col else 1,
-                    relief="solid" if is_active_col else "ridge",
-                    cursor="hand2",
-                    anchor="w",
-                    padx=8,
-                    pady=3,
-                )
-                desc_cell.grid(row=0, column=col_number, sticky="ew", padx=4, pady=4)
-                desc_cell.bind("<Button-1>", lambda _e, r=r_idx, c=col_number: self.template_grid_model.select_col(r, c) or self.render_grid())
 
     def _render_template_instance_col1(
         self,
@@ -1340,58 +1348,121 @@ class AdditionTokenCalculator:
         inst: TemplateInstance,
         is_active_row: bool
     ) -> None:
-        """Renders mathematical template pattern with clickable, button-like slot cells."""
-        pattern = inst.template.pattern
-        slot_idx = 0
-        i = 0
-        while i < len(pattern):
-            ch = pattern[i]
-            if ch == "□":
-                if slot_idx < len(inst.slots):
-                    slot = inst.slots[slot_idx]
-                    is_active_slot = (
-                        is_active_row and
-                        self.template_grid_model.cursor_col == 1 and
-                        self.template_grid_model.cursor_slot == slot_idx
-                    )
-                    slot_txt = slot.value if slot.value else "□"
-                    slot_btn = tk.Label(
-                        parent,
-                        text=f" {slot_txt} ",
-                        font=("Segoe UI", 10, "bold"),
-                        bg="#fff59d" if is_active_slot else "#e8f5e9",
-                        fg="#b71c1c" if is_active_slot else "#1b5e20",
-                        bd=2 if is_active_slot else 1,
-                        relief="solid" if is_active_slot else "raised",
+        """
+        Renders the Repeated-Block Addend Architecture:
+        - Structural blocks '(', ')', '+' rendered as distinct structural token badges.
+        - Addend blocks rendered as dedicated Addend Cards containing:
+            [Col 1: Number | Col 2: Item | Col 3: Context | Col 4+: Extra... | [+] Button]
+        """
+        blocks = inst.get_blocks()
+        t_slot = self.template_grid_model.cursor_slot
+        t_desc_col = self.template_grid_model.cursor_desc_col
+
+        for b in blocks:
+            if b.is_structural:
+                sym = b.structural_char
+                sym_badge = tk.Label(
+                    parent,
+                    text=f" {sym} ",
+                    font=("Segoe UI", 12, "bold"),
+                    fg="#0d47a1" if sym in ("(", ")") else "#e65100",
+                    bg="#e3f2fd" if sym in ("(", ")") else "#fff3e0",
+                    bd=1,
+                    relief="ridge",
+                    padx=6,
+                    pady=4,
+                )
+                sym_badge.pack(side="left", padx=3, pady=2)
+
+            elif b.is_addend and b.slot:
+                slot = b.slot
+                slot_idx = inst.slots.index(slot) if slot in inst.slots else 0
+                is_active_slot = (is_active_row and t_slot == slot_idx)
+
+                # Addend Card Container
+                card_bg = "#ffffff"
+                card = tk.Frame(
+                    parent,
+                    bg=card_bg,
+                    bd=2 if is_active_slot else 1,
+                    relief="solid" if is_active_slot else "ridge",
+                    padx=3,
+                    pady=3,
+                )
+                card.pack(side="left", padx=4, pady=2)
+
+                # Mini header on the card (Addend 1, Addend 2, etc.)
+                hdr_lbl = tk.Label(
+                    card,
+                    text=f"Addend {slot_idx + 1} ({slot.name})",
+                    font=("Segoe UI", 7, "bold"),
+                    bg=card_bg,
+                    fg="#0d47a1" if is_active_slot else "#546e7a",
+                    anchor="w",
+                )
+                hdr_lbl.pack(side="top", fill="x", padx=2)
+
+                fields_frame = tk.Frame(card, bg=card_bg)
+                fields_frame.pack(side="top", fill="x")
+
+                # Col 1: Number Slot Cell
+                is_num_active = (is_active_slot and t_desc_col == 0)
+                slot_txt = slot.value if slot.value else "□"
+                num_cell = tk.Label(
+                    fields_frame,
+                    text=f" {slot_txt} ",
+                    font=("Consolas", 10, "bold"),
+                    bg="#fff59d" if is_num_active else ("#e8f5e9" if slot.value else "#f5f5f5"),
+                    fg="#b71c1c" if is_num_active else ("#1b5e20" if slot.value else "#888888"),
+                    bd=2 if is_num_active else 1,
+                    relief="solid" if is_num_active else "raised",
+                    cursor="hand2",
+                    padx=6,
+                    pady=2,
+                )
+                num_cell.pack(side="left", padx=2, pady=1)
+                num_cell.bind("<Button-1>", lambda _e, r=row_idx, s=slot_idx: self.select_slot_field(r, s, 0))
+
+                # Descriptive Columns (Col 2: Item, Col 3: Context, Col 4+: Extra)
+                for d_idx, desc in enumerate(slot.descriptions):
+                    col_num = d_idx + 1
+                    is_desc_active = (is_active_slot and t_desc_col == col_num)
+                    desc_val = desc.value.strip()
+                    display_text = desc_val if desc_val else f"[{desc.field_label}]"
+
+                    desc_cell = tk.Label(
+                        fields_frame,
+                        text=display_text,
+                        font=("Segoe UI", 9, "bold" if desc_val else "italic"),
+                        bg="#fff59d" if is_desc_active else ("#ede7f6" if desc_val else "#fafafa"),
+                        fg="#4a148c" if desc_val else "#9e9e9e",
+                        bd=2 if is_desc_active else 1,
+                        relief="solid" if is_desc_active else "sunken",
                         cursor="hand2",
-                        padx=4,
+                        padx=6,
                         pady=2,
                     )
-                    slot_btn.pack(side="left", padx=2, pady=2)
-                    slot_btn.bind("<Button-1>", lambda _e, r=row_idx, s=slot_idx: self._select_template_slot(r, s))
-                    slot_idx += 1
-                i += 1
-            elif ch in ("(", ")", "+"):
-                sym_lbl = tk.Label(
-                    parent,
-                    text=ch,
-                    font=("Segoe UI", 10, "bold"),
-                    fg="#0d47a1" if ch in ("(", ")") else "#e65100",
-                    bg="#fafafa",
-                    padx=2,
+                    desc_cell.pack(side="left", padx=2, pady=1)
+                    desc_cell.bind("<Button-1>", lambda _e, r=row_idx, s=slot_idx, c=col_num: self.select_slot_field(r, s, c))
+
+                # Dynamic Add Description Column [+] Button for this addend card
+                add_col_btn = tk.Button(
+                    fields_frame,
+                    text="+",
+                    font=("Segoe UI", 8, "bold"),
+                    bg="#e8f5e9",
+                    fg="#2e7d32",
+                    bd=1,
+                    relief="raised",
+                    padx=3,
+                    pady=0,
+                    cursor="hand2",
+                    command=lambda r=row_idx, s=slot_idx: self.add_description_column_to_slot(r, s),
                 )
-                sym_lbl.pack(side="left")
-                i += 1
-            elif ch.isspace():
-                i += 1
-            else:
-                i += 1
+                add_col_btn.pack(side="left", padx=2, pady=1)
 
     def _select_template_slot(self, r: int, s: int) -> None:
-        self.set_active_input_target("grid")
-        self.template_grid_model.select_slot(r, s)
-        self.grid_model.select_cell(r, "addend", 0, s)
-        self.render_grid()
+        self.select_slot_field(r, s, 0)
 
     # -------------------------------------------------------------------------
     # Calculation & Safe Exception Boundary
@@ -1511,6 +1582,9 @@ class AdditionTokenCalculator:
             for term in parse_res.aggregated_terms:
                 ctx = f" ({term.context})" if term.context else ""
                 result_lines.append(f"  • Subtotal: {term.quantity} {term.item}{ctx}")
+                if term.source_breakdown:
+                    for src in term.source_breakdown:
+                        result_lines.append(f"      ↳ Source: {src}")
 
         self.results_text.insert("1.0", "\n".join(result_lines))
         self.results_text.configure(state="disabled")
@@ -1577,8 +1651,10 @@ class AdditionTokenCalculator:
                 pat = inst.template.pattern if inst else "empty"
                 output_lines.append(f"\n--- Row {r_idx + 1}: Template ({pat}) ---")
                 if inst:
-                    for s in inst.slots:
-                        output_lines.append(f"  Field '{s.name}': {s.value or '□'}")
+                    for s_idx, s in enumerate(inst.slots):
+                        desc_str = ", ".join(f"{d.field_label}='{d.value}'" for d in s.descriptions if d.value)
+                        desc_info = f" ({desc_str})" if desc_str else ""
+                        output_lines.append(f"  Slot {s_idx + 1} '{s.name}': {s.value or '□'}{desc_info}")
                 output_lines.append(f"  Item (Col 2): '{row.description_columns[0]}'")
                 output_lines.append(f"  Context (Col 3): '{row.description_columns[1]}'")
 
@@ -1598,6 +1674,9 @@ class AdditionTokenCalculator:
                     for t in parse_res.aggregated_terms:
                         ctx = f" {t.context}" if t.context else ""
                         output_lines.append(f"    Subtotal: {t.quantity} {t.item}{ctx}")
+                        if t.source_breakdown:
+                            for src in t.source_breakdown:
+                                output_lines.append(f"      ↳ Source: {src}")
                 else:
                     output_lines.append("    (No aggregated terms)")
 

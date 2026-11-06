@@ -18,6 +18,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import uuid
 from typing import Dict, List, Optional, Set, Tuple
 
 # Ensure calculator_core and addition_chat are importable
@@ -112,18 +113,64 @@ class SlotMetadata:
 
 
 @dataclass
+class DescriptionField:
+    """A typed descriptive field belonging to a specific numerical addend."""
+    field_type: str = "item"         # "item", "context", "location", "time", "condition", "custom"
+    value: str = ""
+    field_label: str = "Item"        # Display label for UI column header
+
+
+@dataclass
 class TemplateSlot:
-    """An instance of an editable value slot, keeping values separate from structure."""
+    """An instance of an editable value slot with stable identity and structured descriptions."""
     slot_id: int
     name: str
     expected_type: str = "NUMBER"
     value: str = ""                 # User-entered quantity (e.g. "1", "2.5")
-    bound_unit: str = ""            # Associated item/unit if explicitly bound to slot
-    bound_context: str = ""         # Associated context if explicitly bound to slot
+    slot_uuid: str = field(default_factory=lambda: f"slot_{uuid.uuid4().hex[:8]}")
+    descriptions: List[DescriptionField] = field(default_factory=lambda: [
+        DescriptionField(field_type="item", value="", field_label="Item"),
+        DescriptionField(field_type="context", value="", field_label="Context")
+    ])
+
+    @property
+    def bound_unit(self) -> str:
+        if self.descriptions and len(self.descriptions) > 0:
+            return self.descriptions[0].value
+        return ""
+
+    @bound_unit.setter
+    def bound_unit(self, val: str) -> None:
+        if not self.descriptions:
+            self.descriptions.append(DescriptionField(field_type="item", value=val, field_label="Item"))
+        else:
+            self.descriptions[0].value = val
+
+    @property
+    def bound_context(self) -> str:
+        if len(self.descriptions) > 1:
+            return self.descriptions[1].value
+        return ""
+
+    @bound_context.setter
+    def bound_context(self, val: str) -> None:
+        while len(self.descriptions) < 2:
+            self.descriptions.append(DescriptionField(field_type="context", value="", field_label="Context"))
+        self.descriptions[1].value = val
+
+    @property
+    def description_values(self) -> List[str]:
+        return [d.value for d in self.descriptions]
 
     @property
     def is_filled(self) -> bool:
         return bool(self.value.strip())
+
+    def add_description_field(self, field_type: str = "custom", label: str = "") -> DescriptionField:
+        lbl = label or f"Description {len(self.descriptions) + 1}"
+        df = DescriptionField(field_type=field_type, value="", field_label=lbl)
+        self.descriptions.append(df)
+        return df
 
 
 @dataclass
@@ -321,9 +368,31 @@ class MathTemplateManager:
             pass
 
 
+class BlockType(Enum):
+    ADDEND = auto()      # Numerical slot + its own description fields
+    STRUCTURAL = auto()  # Operator '+', Parenthesis '(', ')'
+
+
+@dataclass
+class TokenBlock:
+    """Represents an ordered block in the mathematical row sequence."""
+    block_type: BlockType
+    structural_char: str = ""               # For STRUCTURAL: '(', ')', '+'
+    structural_type: Optional[TokenType] = None
+    slot: Optional[TemplateSlot] = None     # For ADDEND: numerical slot with its descriptions
+
+    @property
+    def is_addend(self) -> bool:
+        return self.block_type == BlockType.ADDEND
+
+    @property
+    def is_structural(self) -> bool:
+        return self.block_type == BlockType.STRUCTURAL
+
+
 @dataclass
 class TemplateInstance:
-    """An active template instance applied to Column 1 of an addend row."""
+    """An active template instance applied to an addend row."""
     template: MathTemplate
     slots: List[TemplateSlot] = field(default_factory=list)
 
@@ -334,68 +403,98 @@ class TemplateInstance:
                 for meta in self.template.slots_meta
             ]
 
-    def to_token_stream(self, trailing_labels: Optional[List[str]] = None) -> List[Token]:
-        """
-        Converts the active template into an evaluated Token stream,
-        verifying that all slots are filled.
-        """
-        tokens: List[Token] = []
-        pattern = self.template.pattern
+    def get_blocks(self) -> List[TokenBlock]:
+        """Decomposes the template pattern into an ordered sequence of structural and addend blocks."""
+        blocks: List[TokenBlock] = []
         slot_idx = 0
-
-        row_item = ""
-        row_context = ""
-        extra_contexts: List[str] = []
-        if trailing_labels:
-            if len(trailing_labels) > 0 and trailing_labels[0].strip():
-                row_item = trailing_labels[0].strip()
-            if len(trailing_labels) > 1 and trailing_labels[1].strip():
-                row_context = trailing_labels[1].strip()
-            if len(trailing_labels) > 2:
-                extra_contexts = [lbl.strip() for lbl in trailing_labels[2:] if lbl.strip()]
-
         i = 0
+        pattern = self.template.pattern
         while i < len(pattern):
             ch = pattern[i]
             if ch == "□":
                 if slot_idx < len(self.slots):
-                    slot = self.slots[slot_idx]
-                    val = slot.value.strip()
-                    if not val:
-                        raise ValueError(f"Template field '{slot.name}' is empty (□). Please enter a number before calculating.")
-                    if not is_valid_number(val):
-                        raise ValueError(f"Invalid number '{val}' in template field '{slot.name}'. Expected a valid finite number.")
-                    tokens.append(Token(value=val, token_type=TokenType.NUMBER, explicit_type=True))
-
-                    # Item / Unit
-                    unit = slot.bound_unit.strip() or row_item
-                    if unit:
-                        tokens.append(Token(value=unit, token_type=TokenType.ITEM))
-
-                    # Context
-                    ctx = slot.bound_context.strip() or row_context
-                    if ctx:
-                        tokens.append(Token(value=ctx, token_type=TokenType.CONTEXT))
-
-                    for extra in extra_contexts:
-                        tokens.append(Token(value=extra, token_type=TokenType.CONTEXT))
-
+                    blocks.append(TokenBlock(
+                        block_type=BlockType.ADDEND,
+                        slot=self.slots[slot_idx]
+                    ))
                     slot_idx += 1
                 i += 1
             elif ch == "(":
-                tokens.append(Token(value="(", token_type=TokenType.GROUP_OPEN, explicit_type=True))
+                blocks.append(TokenBlock(
+                    block_type=BlockType.STRUCTURAL,
+                    structural_char="(",
+                    structural_type=TokenType.GROUP_OPEN
+                ))
                 i += 1
             elif ch == ")":
-                tokens.append(Token(value=")", token_type=TokenType.GROUP_CLOSE, explicit_type=True))
+                blocks.append(TokenBlock(
+                    block_type=BlockType.STRUCTURAL,
+                    structural_char=")",
+                    structural_type=TokenType.GROUP_CLOSE
+                ))
                 i += 1
             elif ch == "+":
-                tokens.append(Token(value="+", token_type=TokenType.OPERATOR, explicit_type=True))
+                blocks.append(TokenBlock(
+                    block_type=BlockType.STRUCTURAL,
+                    structural_char="+",
+                    structural_type=TokenType.OPERATOR
+                ))
                 i += 1
             elif ch.isspace():
                 i += 1
             else:
                 i += 1
+        return blocks
 
+    def to_token_stream(self, trailing_labels: Optional[List[str]] = None) -> List[Token]:
+        """
+        Converts the active template into an evaluated Token stream,
+        verifying that all slots are filled.
+        Each addend block emits its own value and its own structured descriptions.
+        """
+        tokens: List[Token] = []
+        blocks = self.get_blocks()
+
+        for b in blocks:
+            if b.is_structural:
+                tokens.append(Token(
+                    value=b.structural_char,
+                    token_type=b.structural_type or TokenType.OPERATOR,
+                    explicit_type=True
+                ))
+            elif b.is_addend and b.slot:
+                slot = b.slot
+                val = slot.value.strip()
+                if not val:
+                    raise ValueError(f"Template field '{slot.name}' is empty (□). Please enter a number before calculating.")
+                if not is_valid_number(val):
+                    raise ValueError(f"Invalid number '{val}' in template field '{slot.name}'. Expected a valid finite number.")
+                tokens.append(Token(value=val, token_type=TokenType.NUMBER, explicit_type=True, slot_id=slot.slot_uuid))
+
+                # Item (Col 2 of block)
+                item_val = slot.descriptions[0].value.strip() if len(slot.descriptions) > 0 else ""
+                if not item_val and trailing_labels and len(trailing_labels) > 0 and trailing_labels[0].strip():
+                    item_val = trailing_labels[0].strip()
+                if item_val:
+                    tokens.append(Token(value=item_val, token_type=TokenType.ITEM, explicit_type=True))
+
+                # Context (Col 3 of block)
+                ctx_val = slot.descriptions[1].value.strip() if len(slot.descriptions) > 1 else ""
+                if not ctx_val and trailing_labels and len(trailing_labels) > 1 and trailing_labels[1].strip():
+                    ctx_val = trailing_labels[1].strip()
+                if ctx_val:
+                    tokens.append(Token(value=ctx_val, token_type=TokenType.CONTEXT, explicit_type=True))
+
+                # Extra descriptions (Col 4+ of block)
+                for desc in slot.descriptions[2:]:
+                    if desc.value.strip():
+                        tokens.append(Token(value=desc.value.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
+
+                # Extra descriptions from trailing_labels fallback
+                if trailing_labels and len(trailing_labels) > 2:
+                    for extra in trailing_labels[2:]:
+                        if extra.strip() and not any(d.value.strip() == extra.strip() for d in slot.descriptions):
+                            tokens.append(Token(value=extra.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
         return tokens
 
     def to_editing_token_stream(self, trailing_labels: Optional[List[str]] = None) -> List[Token]:
@@ -403,75 +502,61 @@ class TemplateInstance:
         Non-validating, read-only editing projection preserving:
         - Template structure (operators, parentheses).
         - Current slot values (or '□' placeholder when unfilled).
-        - Slot identifiers (slot_id on Token).
+        - Slot identifiers (slot_uuid on Token).
         - Current selection / metadata.
         - Associated labels and contexts without throwing validation errors.
         """
         tokens: List[Token] = []
-        pattern = self.template.pattern
-        slot_idx = 0
+        blocks = self.get_blocks()
 
-        row_item = ""
-        row_context = ""
-        extra_contexts: List[str] = []
-        if trailing_labels:
-            if len(trailing_labels) > 0 and trailing_labels[0].strip():
-                row_item = trailing_labels[0].strip()
-            if len(trailing_labels) > 1 and trailing_labels[1].strip():
-                row_context = trailing_labels[1].strip()
-            if len(trailing_labels) > 2:
-                extra_contexts = [lbl.strip() for lbl in trailing_labels[2:] if lbl.strip()]
+        for b in blocks:
+            if b.is_structural:
+                tokens.append(Token(
+                    value=b.structural_char,
+                    token_type=b.structural_type or TokenType.OPERATOR,
+                    explicit_type=True
+                ))
+            elif b.is_addend and b.slot:
+                slot = b.slot
+                val = slot.value.strip() if slot.value else ""
+                if val:
+                    tok_val = val
+                    tok_type = TokenType.NUMBER if is_valid_number(val) else TokenType.UNKNOWN
+                else:
+                    tok_val = "□"
+                    tok_type = TokenType.UNKNOWN
 
-        i = 0
-        while i < len(pattern):
-            ch = pattern[i]
-            if ch == "□":
-                if slot_idx < len(self.slots):
-                    slot = self.slots[slot_idx]
-                    val = slot.value.strip() if slot.value else ""
-                    if val:
-                        tok_val = val
-                        tok_type = TokenType.NUMBER if is_valid_number(val) else TokenType.UNKNOWN
-                    else:
-                        tok_val = "□"
-                        tok_type = TokenType.UNKNOWN
+                tokens.append(Token(
+                    value=tok_val,
+                    token_type=tok_type,
+                    explicit_type=True if val else False,
+                    slot_id=slot.slot_id,
+                ))
 
-                    tokens.append(Token(
-                        value=tok_val,
-                        token_type=tok_type,
-                        explicit_type=True if val else False,
-                        slot_id=slot.slot_id,
-                    ))
+                # Item (Col 2 of block)
+                item_val = slot.descriptions[0].value.strip() if len(slot.descriptions) > 0 else ""
+                if not item_val and trailing_labels and len(trailing_labels) > 0 and trailing_labels[0].strip():
+                    item_val = trailing_labels[0].strip()
+                if item_val:
+                    tokens.append(Token(value=item_val, token_type=TokenType.ITEM, explicit_type=True))
 
-                    # Item / Unit
-                    unit = slot.bound_unit.strip() or row_item
-                    if unit:
-                        tokens.append(Token(value=unit, token_type=TokenType.ITEM))
+                # Context (Col 3 of block)
+                ctx_val = slot.descriptions[1].value.strip() if len(slot.descriptions) > 1 else ""
+                if not ctx_val and trailing_labels and len(trailing_labels) > 1 and trailing_labels[1].strip():
+                    ctx_val = trailing_labels[1].strip()
+                if ctx_val:
+                    tokens.append(Token(value=ctx_val, token_type=TokenType.CONTEXT, explicit_type=True))
 
-                    # Context
-                    ctx = slot.bound_context.strip() or row_context
-                    if ctx:
-                        tokens.append(Token(value=ctx, token_type=TokenType.CONTEXT))
+                # Extra descriptions (Col 4+ of block)
+                for desc in slot.descriptions[2:]:
+                    if desc.value.strip():
+                        tokens.append(Token(value=desc.value.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
 
-                    for extra in extra_contexts:
-                        tokens.append(Token(value=extra, token_type=TokenType.CONTEXT))
-
-                    slot_idx += 1
-                i += 1
-            elif ch == "(":
-                tokens.append(Token(value="(", token_type=TokenType.GROUP_OPEN, explicit_type=True))
-                i += 1
-            elif ch == ")":
-                tokens.append(Token(value=")", token_type=TokenType.GROUP_CLOSE, explicit_type=True))
-                i += 1
-            elif ch == "+":
-                tokens.append(Token(value="+", token_type=TokenType.OPERATOR, explicit_type=True))
-                i += 1
-            elif ch.isspace():
-                i += 1
-            else:
-                i += 1
-
+                # Extra descriptions from trailing_labels fallback
+                if trailing_labels and len(trailing_labels) > 2:
+                    for extra in trailing_labels[2:]:
+                        if extra.strip() and not any(d.value.strip() == extra.strip() for d in slot.descriptions):
+                            tokens.append(Token(value=extra.strip(), token_type=TokenType.CONTEXT, explicit_type=True))
         return tokens
 
 
@@ -481,7 +566,7 @@ class TemplateRow:
     row_type: RowType = RowType.ADDEND
     template_instance: Optional[TemplateInstance] = None
     explanation_text: str = ""                              # For RowType.LABEL
-    description_columns: List[str] = field(default_factory=lambda: ["", ""])  # Col 2: Item, Col 3: Context
+    description_columns: List[str] = field(default_factory=lambda: ["", ""])  # Preserved for backward compatibility
 
     def __post_init__(self) -> None:
         if self.row_type == RowType.ADDEND and self.template_instance is None:
@@ -506,7 +591,7 @@ class TemplateRow:
 class TemplateGridModel:
     """
     Data model managing template-driven rows, slot editing,
-    descriptive columns, and mathematical evaluation.
+    repeated-block addend columns, and mathematical evaluation.
     """
 
     def __init__(self, template_manager: Optional[MathTemplateManager] = None) -> None:
@@ -514,18 +599,31 @@ class TemplateGridModel:
         self.rows: List[TemplateRow] = [TemplateRow(row_type=RowType.ADDEND)]
         # Selection Cursor
         self.cursor_row: int = 0
-        self.cursor_col: int = 1   # 1 = Math Template (Col 1), 2 = Item, 3 = Context, 4+ = extra
-        self.cursor_slot: int = 0  # Which slot (0..N) in Column 1 is active
+        self.cursor_slot: int = 0       # Active numerical slot index (0..N-1) in active row
+        self.cursor_desc_col: int = 0   # 0 = Number slot, 1 = Item (Col 2), 2 = Context (Col 3), 3+ = Extra
         self.last_parse_result: Optional[ParseResult] = None
 
+    @property
+    def cursor_col(self) -> int:
+        """Backward-compatibility mapping of cursor column."""
+        return self.cursor_desc_col + 1
+
+    @cursor_col.setter
+    def cursor_col(self, val: int) -> None:
+        self.cursor_desc_col = max(0, val - 1)
+
     def get_max_description_columns(self) -> int:
-        counts = [len(r.description_columns) for r in self.rows if r.row_type == RowType.ADDEND]
-        return max(counts) if counts else 2
+        max_c = 2
+        for r in self.rows:
+            if r.row_type == RowType.ADDEND and r.template_instance:
+                for s in r.template_instance.slots:
+                    max_c = max(max_c, len(s.descriptions))
+        return max_c
 
     def select_slot(self, row_idx: int, slot_idx: int) -> None:
         if 0 <= row_idx < len(self.rows):
             self.cursor_row = row_idx
-            self.cursor_col = 1
+            self.cursor_desc_col = 0
             row = self.rows[row_idx]
             if row.template_instance and row.template_instance.slots:
                 self.cursor_slot = max(0, min(slot_idx, len(row.template_instance.slots) - 1))
@@ -535,7 +633,17 @@ class TemplateGridModel:
     def select_col(self, row_idx: int, col_idx: int) -> None:
         if 0 <= row_idx < len(self.rows):
             self.cursor_row = row_idx
-            self.cursor_col = col_idx
+            self.cursor_desc_col = max(0, col_idx - 1)
+
+    def select_slot_field(self, row_idx: int, slot_idx: int, desc_col_idx: int = 0) -> None:
+        if 0 <= row_idx < len(self.rows):
+            self.cursor_row = row_idx
+            row = self.rows[row_idx]
+            if row.template_instance and row.template_instance.slots:
+                self.cursor_slot = max(0, min(slot_idx, len(row.template_instance.slots) - 1))
+            else:
+                self.cursor_slot = 0
+            self.cursor_desc_col = desc_col_idx
 
     def apply_template_to_row(
         self,
@@ -543,7 +651,7 @@ class TemplateGridModel:
         template: MathTemplate,
         initial_values: Optional[List[str]] = None
     ) -> TemplateInstance:
-        """Applies a mathematical template to Row `row_idx`, Column 1."""
+        """Applies a mathematical template to Row `row_idx`."""
         if not (0 <= row_idx < len(self.rows)):
             row_idx = 0
         row = self.rows[row_idx]
@@ -551,15 +659,21 @@ class TemplateGridModel:
         inst = template.create_instance(initial_values)
         row.template_instance = inst
         self.cursor_row = row_idx
-        self.cursor_col = 1
         self.cursor_slot = 0
+        self.cursor_desc_col = 0
         return inst
 
-    def add_description_column(self) -> int:
-        """Adds another descriptive column to the right across all rows."""
-        for r in self.rows:
-            r.description_columns.append("")
-        return self.get_max_description_columns()
+    def add_description_column(self, slot_idx: Optional[int] = None) -> int:
+        """Adds another descriptive column to the specified or active addend slot."""
+        row = self.rows[self.cursor_row]
+        if row.row_type == RowType.ADDEND and row.template_instance:
+            target_idx = slot_idx if slot_idx is not None else self.cursor_slot
+            if 0 <= target_idx < len(row.template_instance.slots):
+                slot = row.template_instance.slots[target_idx]
+                col_num = len(slot.descriptions) + 1
+                slot.add_description_field(field_type="custom", label=f"Context {col_num}")
+                return len(slot.descriptions)
+        return 2
 
     def add_row(self, row_type: RowType, explanation: str = "") -> int:
         """Explicitly creates a new row with designated row type."""
@@ -570,8 +684,8 @@ class TemplateGridModel:
         self.rows.append(new_row)
         new_row_idx = len(self.rows) - 1
         self.cursor_row = new_row_idx
-        self.cursor_col = 1 if row_type == RowType.ADDEND else 0
         self.cursor_slot = 0
+        self.cursor_desc_col = 0
         return new_row_idx
 
     def input_number(self, val: str) -> None:
@@ -581,7 +695,7 @@ class TemplateGridModel:
             row.explanation_text = (row.explanation_text + val).strip()
             return
 
-        if self.cursor_col == 1:
+        if self.cursor_desc_col == 0:
             if row.template_instance and row.template_instance.slots:
                 slot = row.template_instance.slots[self.cursor_slot]
                 # Enforce valid numeric input for template slots (digits and single decimal point)
@@ -601,11 +715,12 @@ class TemplateGridModel:
                         slot.value = val
                     else:
                         slot.value = slot.value + val
-                # Non-numeric characters (like '(', ')', '+') are strictly rejected for numeric slots
         else:
-            desc_idx = self.cursor_col - 2
-            if 0 <= desc_idx < len(row.description_columns):
-                row.description_columns[desc_idx] = (row.description_columns[desc_idx] + val).strip()
+            if row.template_instance and row.template_instance.slots:
+                slot = row.template_instance.slots[self.cursor_slot]
+                desc_idx = self.cursor_desc_col - 1
+                if 0 <= desc_idx < len(slot.descriptions):
+                    slot.descriptions[desc_idx].value = (slot.descriptions[desc_idx].value + val).strip()
 
     def set_active_value(self, val: str) -> None:
         """Replaces the value of the currently selected slot or description cell."""
@@ -614,21 +729,25 @@ class TemplateGridModel:
             row.explanation_text = val
             return
 
-        if self.cursor_col == 1:
-            if row.template_instance and row.template_instance.slots:
+        if row.template_instance and row.template_instance.slots:
+            slot = row.template_instance.slots[self.cursor_slot]
+            if self.cursor_desc_col == 0:
                 if is_valid_number(val):
-                    row.template_instance.slots[self.cursor_slot].value = val
+                    slot.value = val
                 else:
-                    # Non-numeric labels route to description columns (Col 2: Item, Col 3: Context)
+                    # Non-numeric labels route to description columns of this slot
                     lower = val.lower().strip()
                     context_prefixes = ("in ", "on ", "at ", "under ", "with ", "near ", "inside ")
                     if any(lower.startswith(p) for p in context_prefixes):
-                        row.description_columns[1] = val
+                        slot.bound_context = val
                     else:
-                        row.description_columns[0] = val
-        else:
-            desc_idx = self.cursor_col - 2
-            if 0 <= desc_idx < len(row.description_columns):
+                        slot.bound_unit = val
+            else:
+                desc_idx = self.cursor_desc_col - 1
+                if 0 <= desc_idx < len(slot.descriptions):
+                    slot.descriptions[desc_idx].value = val
+                while len(row.description_columns) <= desc_idx:
+                    row.description_columns.append("")
                 row.description_columns[desc_idx] = val
 
     def backspace(self) -> None:
@@ -637,14 +756,14 @@ class TemplateGridModel:
             row.explanation_text = row.explanation_text[:-1]
             return
 
-        if self.cursor_col == 1:
-            if row.template_instance and row.template_instance.slots:
-                slot = row.template_instance.slots[self.cursor_slot]
+        if row.template_instance and row.template_instance.slots:
+            slot = row.template_instance.slots[self.cursor_slot]
+            if self.cursor_desc_col == 0:
                 slot.value = slot.value[:-1]
-        else:
-            desc_idx = self.cursor_col - 2
-            if 0 <= desc_idx < len(row.description_columns):
-                row.description_columns[desc_idx] = row.description_columns[desc_idx][:-1]
+            else:
+                desc_idx = self.cursor_desc_col - 1
+                if 0 <= desc_idx < len(slot.descriptions):
+                    slot.descriptions[desc_idx].value = slot.descriptions[desc_idx].value[:-1]
 
     def get_editing_tokens(self) -> List[List[Token]]:
         """Returns non-validating editing tokens for all active addend rows."""
@@ -657,29 +776,24 @@ class TemplateGridModel:
             row.explanation_text = ""
             return
 
-        if self.cursor_col == 1:
-            if row.template_instance and row.template_instance.slots:
-                # Clear selected slot value back to empty placeholder (□)
-                row.template_instance.slots[self.cursor_slot].value = ""
-        else:
-            desc_idx = self.cursor_col - 2
-            if 0 <= desc_idx < len(row.description_columns):
-                if len(row.description_columns) > 2:
-                    # Pop extra description column across all rows
-                    for r in self.rows:
-                        if desc_idx < len(r.description_columns):
-                            r.description_columns.pop(desc_idx)
-                    max_cols = self.get_max_description_columns()
-                    self.cursor_col = min(self.cursor_col, max_cols + 1)
-                else:
-                    # Clear required description column value (Item or Context)
-                    row.description_columns[desc_idx] = ""
+        if row.template_instance and row.template_instance.slots:
+            slot = row.template_instance.slots[self.cursor_slot]
+            if self.cursor_desc_col == 0:
+                slot.value = ""
+            else:
+                desc_idx = self.cursor_desc_col - 1
+                if 0 <= desc_idx < len(slot.descriptions):
+                    if len(slot.descriptions) > 2:
+                        slot.descriptions.pop(desc_idx)
+                        self.cursor_desc_col = min(self.cursor_desc_col, len(slot.descriptions))
+                    else:
+                        slot.descriptions[desc_idx].value = ""
 
     def clear(self) -> None:
         self.rows = [TemplateRow(row_type=RowType.ADDEND)]
         self.cursor_row = 0
-        self.cursor_col = 1
         self.cursor_slot = 0
+        self.cursor_desc_col = 0
         self.last_parse_result = None
 
     def calculate(self) -> Optional[ParseResult]:
@@ -688,7 +802,7 @@ class TemplateGridModel:
 
         for row in self.rows:
             if row.row_type != RowType.ADDEND:
-                continue  # Label rows do not contribute numbers
+                continue
             if not row.template_instance:
                 continue
 
@@ -705,9 +819,8 @@ class TemplateGridModel:
             self.last_parse_result = None
             return None
 
-        parse_res = TokenModelParser.parse_tokens(all_tokens)
-        self.last_parse_result = parse_res
-        return parse_res
+        self.last_parse_result = TokenModelParser.parse_tokens(all_tokens)
+        return self.last_parse_result
 
 
 # -----------------------------------------------------------------------------
@@ -776,6 +889,7 @@ class SemanticTerm:
     item: str
     context: str = ""
     extra_contexts: List[str] = field(default_factory=list)
+    source_breakdown: List[str] = field(default_factory=list)
 
     @property
     def full_description(self) -> str:
@@ -1070,34 +1184,67 @@ class TokenModelParser:
 
     @classmethod
     def _aggregate_terms(cls, terms: List[SemanticTerm]) -> List[SemanticTerm]:
-        groups: Dict[Tuple[str, str], Decimal] = {}
-        order: List[Tuple[str, str]] = []
+        groups: Dict[str, Dict] = {}
+        order: List[str] = []
 
         for t in terms:
             lemma = WordSummerChatbot._lemmatize_word(t.item)
-            key = (lemma, t.context)
             try:
                 val = Decimal(t.quantity)
             except Exception:
                 val = Decimal(0)
 
-            if key not in groups:
-                groups[key] = val
-                order.append(key)
+            src_desc = f"{t.quantity} {t.item}"
+            if t.context:
+                src_desc += f" {t.context}"
+            for ext in t.extra_contexts:
+                if ext:
+                    src_desc += f" {ext}"
+
+            if lemma not in groups:
+                groups[lemma] = {
+                    "total": val,
+                    "contexts": [t.context] if t.context else [],
+                    "extra_contexts": list(t.extra_contexts),
+                    "sources": [src_desc],
+                    "raw_terms": [t],
+                }
+                order.append(lemma)
             else:
-                groups[key] += val
+                groups[lemma]["total"] += val
+                if t.context:
+                    groups[lemma]["contexts"].append(t.context)
+                for ext in t.extra_contexts:
+                    if ext and ext not in groups[lemma]["extra_contexts"]:
+                        groups[lemma]["extra_contexts"].append(ext)
+                groups[lemma]["sources"].append(src_desc)
+                groups[lemma]["raw_terms"].append(t)
 
         aggregated: List[SemanticTerm] = []
-        for key in order:
-            total_val = groups[key]
+        for lemma in order:
+            info = groups[lemma]
+            total_val = info["total"]
             fmt = format(total_val, "f")
             if "." in fmt:
                 fmt = fmt.rstrip("0").rstrip(".")
             if not fmt or fmt == "-0":
                 fmt = "0"
             is_one = (total_val == Decimal(1))
-            disp_item = WordSummerChatbot._pluralize_word(key[0], is_one)
-            aggregated.append(SemanticTerm(quantity=fmt, item=disp_item, context=key[1]))
+            disp_item = WordSummerChatbot._pluralize_word(lemma, is_one)
+
+            unique_contexts = list(dict.fromkeys(info["contexts"]))
+            if len(unique_contexts) == 1 and len(info["raw_terms"]) == len(info["contexts"]):
+                final_context = unique_contexts[0]
+            else:
+                final_context = ""
+
+            aggregated.append(SemanticTerm(
+                quantity=fmt,
+                item=disp_item,
+                context=final_context,
+                extra_contexts=info["extra_contexts"] if not final_context else [],
+                source_breakdown=info["sources"] if len(info["raw_terms"]) > 1 else [],
+            ))
 
         return aggregated
 

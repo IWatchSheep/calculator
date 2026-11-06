@@ -50,6 +50,9 @@ from addition_tokens.token_model import (
     TemplateRow,
     TemplateGridModel,
     is_valid_number,
+    BlockType,
+    TokenBlock,
+    DescriptionField,
 )
 from addition_tokens.addition import AdditionTokenCalculator
 
@@ -1945,6 +1948,241 @@ class TestDualModelCleanupAndEditingProjection(unittest.TestCase):
         self.assertIsNone(res)
         self.assertEqual(self.app.result_var.get(), "Error")
         self.assertIn("VALIDATION NOTICE: Calculation Not Completed", self.app.results_text.get("1.0", "end"))
+
+
+
+
+class TestRepeatedBlockAddendArchitecture(unittest.TestCase):
+    """
+    Targeted regression tests for the Repeated-Block Addend Architecture
+    and the four required architectural refinements:
+    1. Repeated-block token decomposition: (1 pen + 2 pens) + 3 books.
+    2. Refinement A (Stable Slot Identity): slot_uuid decouples slot position from identity.
+    3. Refinement B (Structured Descriptive Fields): DescriptionField types and labels.
+    4. Refinement C (Context-Preserving Aggregation): compatible quantities keep source contexts distinct in source_breakdown.
+    5. Refinement D (Safe Legacy Compatibility): row.description_columns fallback without data loss.
+    6. GUI Addend Card interaction: dynamically adding a column to an individual addend card.
+    7. Multi-row fresh sequence: Row 2 begins a fresh sequence of repeated addend blocks.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        import tempfile
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.app = AdditionTokenCalculator(root=self.root, mode="template")
+        self.app.template_manager.storage_file = Path(self.tmp_dir.name) / "custom_templates.json"
+
+    def tearDown(self):
+        self.app.clear()
+        if hasattr(self, "tmp_dir"):
+            self.tmp_dir.cleanup()
+
+    def test_repeated_block_decomposition(self):
+        """Template (□ + □) + □ decomposes into ordered structural and addend blocks."""
+        tpl = MathTemplate(template_id="t_grouped", pattern="(□ + □) + □")
+        inst = tpl.create_instance(["1", "2", "3"])
+        blocks = inst.get_blocks()
+
+        self.assertEqual(len(blocks), 7)
+        self.assertTrue(blocks[0].is_structural)
+        self.assertEqual(blocks[0].structural_char, "(")
+
+        self.assertTrue(blocks[1].is_addend)
+        self.assertEqual(blocks[1].slot.value, "1")
+
+        self.assertTrue(blocks[2].is_structural)
+        self.assertEqual(blocks[2].structural_char, "+")
+
+        self.assertTrue(blocks[3].is_addend)
+        self.assertEqual(blocks[3].slot.value, "2")
+
+        self.assertTrue(blocks[4].is_structural)
+        self.assertEqual(blocks[4].structural_char, ")")
+
+        self.assertTrue(blocks[5].is_structural)
+        self.assertEqual(blocks[5].structural_char, "+")
+
+        self.assertTrue(blocks[6].is_addend)
+        self.assertEqual(blocks[6].slot.value, "3")
+
+    def test_refinement_a_stable_slot_identity(self):
+        """Refinement A: Stable slot_uuid decouples slot position from identity."""
+        tpl = MathTemplate(template_id="t_pair", pattern="□ + □")
+        inst = tpl.create_instance(["10", "20"])
+        slot0_id = inst.slots[0].slot_uuid
+        slot1_id = inst.slots[1].slot_uuid
+
+        self.assertTrue(slot0_id.startswith("slot_"))
+        self.assertTrue(slot1_id.startswith("slot_"))
+        self.assertNotEqual(slot0_id, slot1_id)
+
+        # Modifying slot values or re-rendering preserves identical permanent uuid
+        inst.slots[0].value = "100"
+        self.assertEqual(inst.slots[0].slot_uuid, slot0_id)
+        self.assertEqual(inst.slots[1].slot_uuid, slot1_id)
+
+    def test_refinement_b_structured_description_fields(self):
+        """Refinement B: Extra descriptions are structured with type, value, and label."""
+        slot = TemplateSlot(slot_id=0, name="term_1", value="5")
+        self.assertEqual(len(slot.descriptions), 2)
+        self.assertEqual(slot.descriptions[0].field_type, "item")
+        self.assertEqual(slot.descriptions[1].field_type, "context")
+
+        extra_field = slot.add_description_field(field_type="location", label="Drawer Location")
+        extra_field.value = "Top Drawer"
+
+        self.assertEqual(len(slot.descriptions), 3)
+        self.assertEqual(slot.descriptions[2].field_type, "location")
+        self.assertEqual(slot.descriptions[2].value, "Top Drawer")
+        self.assertEqual(slot.descriptions[2].field_label, "Drawer Location")
+
+    def test_refinement_c_context_preserving_aggregation(self):
+        """
+        Refinement C: (1 pen in drawer + 2 pens on desk) + 3 books on shelf
+        totals 3 pens and 3 books, keeping source contexts distinct in source_breakdown.
+        """
+        tpl = MathTemplate(template_id="t_three", pattern="(□ + □) + □")
+        self.app.template_grid_model.apply_template_to_row(0, tpl, ["1", "2", "3"])
+        inst = self.app.template_grid_model.rows[0].template_instance
+
+        # Configure individual addends with independent descriptions
+        inst.slots[0].descriptions[0].value = "pen"
+        inst.slots[0].descriptions[1].value = "in drawer"
+
+        inst.slots[1].descriptions[0].value = "pens"
+        inst.slots[1].descriptions[1].value = "on desk"
+
+        inst.slots[2].descriptions[0].value = "books"
+        inst.slots[2].descriptions[1].value = "on shelf"
+
+        parse_res = self.app.calculate()
+        self.assertIsNotNone(parse_res)
+        self.assertEqual(parse_res.total_number, "6")
+
+        # 3 individual terms
+        self.assertEqual(len(parse_res.individual_terms), 3)
+        self.assertEqual(parse_res.individual_terms[0].quantity, "1")
+        self.assertEqual(parse_res.individual_terms[0].item, "pen")
+        self.assertEqual(parse_res.individual_terms[0].context, "in drawer")
+
+        self.assertEqual(parse_res.individual_terms[1].quantity, "2")
+        self.assertEqual(parse_res.individual_terms[1].item, "pens")
+        self.assertEqual(parse_res.individual_terms[1].context, "on desk")
+
+        self.assertEqual(parse_res.individual_terms[2].quantity, "3")
+        self.assertEqual(parse_res.individual_terms[2].item, "books")
+        self.assertEqual(parse_res.individual_terms[2].context, "on shelf")
+
+        # 2 aggregated terms: pens and books
+        self.assertEqual(len(parse_res.aggregated_terms), 2)
+        pens_term = parse_res.aggregated_terms[0]
+        self.assertEqual(pens_term.quantity, "3")
+        self.assertEqual(pens_term.item, "pens")
+        # Context is NOT falsely attributed to a single location
+        self.assertEqual(pens_term.context, "")
+        # Source breakdown preserves each distinct contribution
+        self.assertIn("1 pen in drawer", pens_term.source_breakdown)
+        self.assertIn("2 pens on desk", pens_term.source_breakdown)
+
+        books_term = parse_res.aggregated_terms[1]
+        self.assertEqual(books_term.quantity, "3")
+        self.assertEqual(books_term.item, "books")
+        self.assertEqual(books_term.context, "on shelf")
+
+        # Results window and inspector contain the breakdown
+        res_text = self.app.results_text.get("1.0", "end")
+        self.assertIn("Subtotal: 3 pens", res_text)
+        self.assertIn("Source: 1 pen in drawer", res_text)
+        self.assertIn("Source: 2 pens on desk", res_text)
+        self.assertIn("Subtotal: 3 books (on shelf)", res_text)
+
+    def test_refinement_d_safe_legacy_compatibility(self):
+        """Refinement D: Legacy tests assigning row.description_columns retain fallback."""
+        self.app._on_keypad_press("5")
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press("3")
+        self.app.template_grid_model.rows[0].description_columns[0] = "notebooks"
+        self.app.template_grid_model.rows[0].description_columns[1] = "in backpack"
+
+        res = self.app.calculate()
+        self.assertIsNotNone(res)
+        self.assertEqual(res.total_number, "8")
+        self.assertEqual(len(res.aggregated_terms), 1)
+        self.assertEqual(res.aggregated_terms[0].quantity, "8")
+        self.assertEqual(res.aggregated_terms[0].item, "notebooks")
+        self.assertEqual(res.aggregated_terms[0].context, "in backpack")
+
+    def test_dynamic_add_column_to_single_addend_card(self):
+        """Adding a column to Addend Card 2 does not affect Addend Card 1."""
+        tpl = MathTemplate(template_id="t_two", pattern="□ + □")
+        self.app.template_grid_model.apply_template_to_row(0, tpl)
+        inst = self.app.template_grid_model.rows[0].template_instance
+
+        self.assertEqual(len(inst.slots[0].descriptions), 2)
+        self.assertEqual(len(inst.slots[1].descriptions), 2)
+
+        # Add description column specifically to Slot 1 (Addend 2)
+        new_cnt = self.app.add_description_column_to_slot(row_idx=0, slot_idx=1)
+        self.assertEqual(new_cnt, 3)
+
+        # Slot 1 now has 3 description columns
+        self.assertEqual(len(inst.slots[1].descriptions), 3)
+        # Slot 0 remains strictly with 2 description columns
+        self.assertEqual(len(inst.slots[0].descriptions), 2)
+
+    def test_multiple_rows_repeated_block_fresh_sequence(self):
+        """Row 2 starts a fresh sequence of repeated-block addends."""
+        # Row 1: 1 pen in drawer + 2 pens on desk
+        tpl1 = MathTemplate(template_id="t_r1", pattern="□ + □")
+        self.app.template_grid_model.apply_template_to_row(0, tpl1, ["1", "2"])
+        r1_inst = self.app.template_grid_model.rows[0].template_instance
+        r1_inst.slots[0].descriptions[0].value = "pen"
+        r1_inst.slots[0].descriptions[1].value = "in drawer"
+        r1_inst.slots[1].descriptions[0].value = "pens"
+        r1_inst.slots[1].descriptions[1].value = "on desk"
+
+        # Row 2: 3 books on shelf + 4 books in locker
+        r2_idx = self.app.add_addend_row()
+        tpl2 = MathTemplate(template_id="t_r2", pattern="□ + □")
+        self.app.template_grid_model.apply_template_to_row(r2_idx, tpl2, ["3", "4"])
+        r2_inst = self.app.template_grid_model.rows[r2_idx].template_instance
+        r2_inst.slots[0].descriptions[0].value = "books"
+        r2_inst.slots[0].descriptions[1].value = "on shelf"
+        r2_inst.slots[1].descriptions[0].value = "books"
+        r2_inst.slots[1].descriptions[1].value = "in locker"
+
+        res = self.app.calculate()
+        self.assertIsNotNone(res)
+        self.assertEqual(res.total_number, "10")
+
+        self.assertEqual(len(res.aggregated_terms), 2)
+        pens_term = next(t for t in res.aggregated_terms if t.item == "pens")
+        books_term = next(t for t in res.aggregated_terms if t.item == "books")
+
+        self.assertEqual(pens_term.quantity, "3")
+        self.assertEqual(books_term.quantity, "7")
+        self.assertIn("1 pen in drawer", pens_term.source_breakdown)
+        self.assertIn("2 pens on desk", pens_term.source_breakdown)
+        self.assertIn("3 books on shelf", books_term.source_breakdown)
+        self.assertIn("4 books in locker", books_term.source_breakdown)
 
 
 if __name__ == "__main__":
