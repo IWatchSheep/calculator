@@ -14,7 +14,7 @@ Tests:
 7. Central keypad and navigation actions: Next Subcolumn (→), Next Column (⇒), Next Addend (↓).
 8. Row classification: Addend rows vs. Label rows.
 9. Clean display cells free of permanent dropdowns.
-10. Tkinter GUI prototype (AdditionTokenCalculator) keypad stability and interactions.
+10. Clickable cell selection, delete column control, and safe GUI error handling (Problem 1 & 2 fixes).
 """
 
 from decimal import Decimal
@@ -40,6 +40,15 @@ from addition_tokens.token_model import (
     ParseResult,
     TokenModelParser,
     TokenGridModel,
+    SlotMetadata,
+    TemplateSlot,
+    MathTemplate,
+    TemplateValidator,
+    ExpressionTemplateParser,
+    MathTemplateManager,
+    TemplateInstance,
+    TemplateRow,
+    TemplateGridModel,
     is_valid_number,
 )
 from addition_tokens.addition import AdditionTokenCalculator
@@ -506,7 +515,6 @@ class TestAdditionTokenCalculatorGUI(unittest.TestCase):
         self.app.add_token(0, "pen")
         self.root.update_idletasks()
 
-        # Check all child widgets inside grid_frame
         def get_all_widgets(parent):
             widgets = []
             for child in parent.winfo_children():
@@ -584,6 +592,395 @@ class TestAdditionTokenCalculatorGUI(unittest.TestCase):
         self.assertEqual(self.app.result_word_var.get(), "")
         self.assertEqual(len(self.app.rows_tokens), 1)
         self.assertEqual(len(self.app.rows_tokens[0]), 0)
+
+
+class TestClickableCellsAndSafeErrorHandling(unittest.TestCase):
+    """
+    Tests for Problem 1 & Problem 2 fixes:
+    - Clickable cell selection and editing earlier columns.
+    - Keypad inputs go strictly to the selected cell without shifting.
+    - Delete Selected Column without removing the addend row.
+    - Safe GUI exception boundary on parser errors (unlabeled quantities).
+    - Recovering from validation error by selecting cell and recalculating.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        self.app = AdditionTokenCalculator(root=self.root)
+
+    def tearDown(self):
+        self.app.clear()
+
+    def test_create_multiple_empty_columns_then_fill_earlier_column(self):
+        # Press Next Col (⇒) twice to create multiple empty columns
+        self.app._on_keypad_press("Next Col (⇒)")
+        self.app._on_keypad_press("Next Col (⇒)")
+        self.root.update_idletasks()
+
+        row = self.app.grid_model.rows[0]
+        self.assertEqual(len(row.addend_columns), 3)
+
+        # Now click and select Main Column 1 (index 0)
+        self.app.select_cell(0, "addend", 0, 0)
+        self.assertEqual(self.app.grid_model.cursor_addend_col, 0)
+
+        # Feed input to Column 1
+        self.app._on_keypad_press("1")
+        self.app._on_keypad_press("Next Subcol (→)")
+        self.app._on_vocab_click("pen", TokenType.ITEM)
+
+        # Confirm Column 1 has the values while Column 2 and 3 remain empty
+        self.assertEqual(len(row.addend_columns[0].ordered_subcolumns), 2)
+        self.assertEqual(row.addend_columns[0].ordered_subcolumns[0].value, "1")
+        self.assertEqual(row.addend_columns[0].ordered_subcolumns[1].value, "pen")
+        self.assertEqual(len(row.addend_columns[1].ordered_subcolumns), 0)
+        self.assertEqual(len(row.addend_columns[2].ordered_subcolumns), 0)
+
+    def test_click_earlier_column_and_edit_it(self):
+        # Populate column 1 and column 2
+        self.app.add_token(0, "1")
+        self.app._on_keypad_press("Next Subcol (→)")
+        self.app._on_vocab_click("pen", TokenType.ITEM)
+
+        # Advance to Col 2
+        self.app._on_keypad_press("Next Col (⇒)")
+        self.app._on_keypad_press("2")
+        self.app._on_keypad_press("Next Subcol (→)")
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+
+        # Now click back to Column 1, Subcolumn 0 (the '1') and edit it to '5'
+        self.app.select_cell(0, "addend", 0, 0)
+        self.app._on_keypad_press("5")
+
+        row = self.app.grid_model.rows[0]
+        self.assertEqual(row.addend_columns[0].ordered_subcolumns[0].value, "5")
+        # Column 2 remains untouched!
+        self.assertEqual(row.addend_columns[1].ordered_subcolumns[0].value, "2")
+
+    def test_keypad_sends_input_only_to_selected_column(self):
+        # Create 2 columns
+        self.app._on_keypad_press("Next Col (⇒)")
+        # Select column 2
+        self.app.select_cell(0, "addend", 1, 0)
+        self.app._on_keypad_press("9")
+
+        row = self.app.grid_model.rows[0]
+        self.assertEqual(len(row.addend_columns[0].ordered_subcolumns), 0)
+        self.assertEqual(len(row.addend_columns[1].ordered_subcolumns), 1)
+        self.assertEqual(row.addend_columns[1].ordered_subcolumns[0].value, "9")
+
+    def test_delete_selected_column_leaves_addend_intact(self):
+        # Create 2 columns in row 1
+        self.app.add_token(0, "1")
+        self.app._on_keypad_press("Next Col (⇒)")
+        self.app.add_token(0, "2")
+        self.root.update_idletasks()
+
+        row = self.app.grid_model.rows[0]
+        self.assertEqual(len(row.addend_columns), 2)
+
+        # Select column 2 and delete it
+        self.app.select_cell(0, "addend", 1, 0)
+        self.app.delete_selected_column()
+
+        # The row must still exist!
+        self.assertEqual(len(self.app.grid_model.rows), 1)
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns), 1)
+        self.assertEqual(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns[0].value, "1")
+
+        # Now delete the last remaining column: addend row is NOT deleted, just reset to empty!
+        self.app.select_cell(0, "addend", 0, 0)
+        self.app.delete_selected_column()
+        self.assertEqual(len(self.app.grid_model.rows), 1)
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns), 1)
+        self.assertEqual(len(self.app.grid_model.rows[0].addend_columns[0].ordered_subcolumns), 0)
+
+    def test_delete_selected_subcolumn_leaves_addend_intact(self):
+        # 1 + 2
+        self.app.add_token(0, "1")
+        self.app.add_token(0, "+")
+        self.app.add_token(0, "2")
+
+        addend = self.app.grid_model.rows[0].addend_columns[0]
+        self.assertEqual(len(addend.ordered_subcolumns), 3)
+
+        # Select subcolumn 1 ('+') and delete it
+        self.app.select_cell(0, "addend", 0, 1)
+        self.app.grid_model.delete_selected_subcolumn()
+
+        # Addend column and row remain intact, now has 2 subcolumns ['1', '2']
+        self.assertEqual(len(self.app.grid_model.rows), 1)
+        self.assertEqual(len(addend.ordered_subcolumns), 2)
+        self.assertEqual([sc.value for sc in addend.ordered_subcolumns], ["1", "2"])
+
+    def test_selection_highlighting_and_status_label(self):
+        self.app.add_token(0, "1")
+        self.app._on_keypad_press("Next Subcol (→)")
+        self.app._on_vocab_click("pen", TokenType.ITEM)
+        self.root.update_idletasks()
+
+        # Select subcolumn 1 ('pen')
+        self.app.select_cell(0, "addend", 0, 1)
+        status_text = self.app.selection_status_var.get()
+        self.assertIn("Row 1", status_text)
+        self.assertIn("Main Col 1", status_text)
+        self.assertIn("Subcol 2", status_text)
+        self.assertIn("pen", status_text)
+
+    def test_safe_gui_error_boundary_on_unlabeled_quantity(self):
+        # Enter unlabeled quantity '1' without an item
+        self.app.add_token(0, "1")
+
+        # In previous code, calculate() threw an uncaught ValueError.
+        # Now it must catch it, return None, set result_var to 'Error', and NOT crash!
+        res = self.app.calculate()
+        self.assertIsNone(res)
+        self.assertEqual(self.app.result_var.get(), "Error")
+        self.assertIn("Unlabeled quantity: '1' has no item label", self.app.result_word_var.get())
+
+        # Crucial requirement: user entered cells must remain completely intact!
+        row = self.app.grid_model.rows[0]
+        self.assertEqual(len(row.addend_columns[0].ordered_subcolumns), 1)
+        self.assertEqual(row.addend_columns[0].ordered_subcolumns[0].value, "1")
+
+    def test_correct_missing_label_and_recalculate_successfully(self):
+        # Enter unlabeled quantity '1'
+        self.app.add_token(0, "1")
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "Error")
+
+        # Now select the cell or next subcolumn and add the missing label 'pen'
+        self.app._on_keypad_press("Next Subcol (→)")
+        self.app._on_vocab_click("pen", TokenType.ITEM)
+
+        # Recalculate: error is cleared and result computes successfully!
+        res = self.app.calculate()
+        self.assertIsNotNone(res)
+        self.assertEqual(self.app.result_var.get(), "1")
+        self.assertEqual(self.app.result_word_var.get(), "1 pen")
+
+
+
+
+class TestMathematicalTemplateArchitecture(unittest.TestCase):
+    """
+    Tests for Mathematical Templates architecture:
+    - Immutable MathTemplate with named, typed placeholder slots (TemplateSlot).
+    - Separation of template structure from runtime values.
+    - Deterministic TemplateValidator enforcing addition (+) and parentheses only.
+    - Rejection of invalid operators, unclosed parens, empty groups, and unsupported symbols.
+    """
+
+    def test_immutable_template_and_slot_metadata(self):
+        tpl = MathTemplate(template_id="t1", pattern="(□ + □) + □", name="Group plus term")
+        self.assertEqual(tpl.slot_count, 3)
+        self.assertEqual(tpl.slots_meta[0].name, "term_1")
+        self.assertEqual(tpl.slots_meta[0].expected_type, "NUMBER")
+        self.assertEqual(tpl.slots_meta[1].name, "term_2")
+        self.assertEqual(tpl.slots_meta[2].name, "term_3")
+
+        # Creating an instance produces distinct TemplateSlots
+        inst = tpl.create_instance(initial_values=["10", "20", "30"])
+        self.assertEqual(len(inst.slots), 3)
+        self.assertEqual(inst.slots[0].value, "10")
+        self.assertEqual(inst.slots[1].value, "20")
+        self.assertEqual(inst.slots[2].value, "30")
+        self.assertTrue(all(s.is_filled for s in inst.slots))
+
+    def test_template_validator_valid_patterns(self):
+        valid_patterns = [
+            "□ + □",
+            "(□ + □)",
+            "□ + □ + □",
+            "(□ + □) + □",
+            "(□ + (□ + □))",
+            "((□ + □) + (□ + □))",
+        ]
+        for pat in valid_patterns:
+            TemplateValidator.validate_addition_pattern(pat)
+
+    def test_template_validator_rejects_subtraction_and_algebra_symbols(self):
+        invalid_patterns = [
+            "□ - □",        # Subtraction rejected in this stage
+            "□ * □",        # Multiplication rejected
+            "□ / □",        # Division rejected
+            "x + y",        # Unstructured algebra variables rejected
+            "□ + ",         # Trailing operator
+            "+ □",          # Leading operator
+            "□ + + □",      # Consecutive operators
+            "(□ + □",       # Unmatched open paren
+            "□ + □)",       # Unmatched close paren
+            "()",           # Empty group
+            "",             # Empty pattern
+        ]
+        for pat in invalid_patterns:
+            with self.assertRaises(ValueError):
+                TemplateValidator.validate_addition_pattern(pat)
+
+
+class TestExpressionTemplateParserAndManager(unittest.TestCase):
+    """
+    Tests for ExpressionTemplateParser and MathTemplateManager:
+    - Parsing pasted addition expressions into MathTemplate and initial slot values.
+    - Preview without mandatory saving.
+    - Optional template saving persisted to custom_templates.json.
+    """
+
+    def test_parse_pasted_numerical_expression(self):
+        expr = "(15.5 + 4.25) + 8.0"
+        tpl, initial_vals = ExpressionTemplateParser.parse_pasted_expression(expr)
+        self.assertEqual(tpl.pattern, "( □ + □ ) + □")
+        self.assertEqual(initial_vals, ["15.5", "4.25", "8.0"])
+        self.assertEqual(tpl.slot_count, 3)
+
+    def test_parse_pasted_placeholder_expression(self):
+        expr = "(□ + □) + □"
+        tpl, initial_vals = ExpressionTemplateParser.parse_pasted_expression(expr)
+        self.assertEqual(tpl.pattern, "( □ + □ ) + □")
+        self.assertEqual(initial_vals, ["", "", ""])
+
+    def test_parse_pasted_expression_rejects_unsupported_operators(self):
+        with self.assertRaises(ValueError) as ctx:
+            ExpressionTemplateParser.parse_pasted_expression("(15.5 - 4.25) + 8.0")
+        self.assertIn("Unsupported token", str(ctx.exception))
+
+    def test_template_manager_builtin_and_custom_saving(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_json = Path(tmp_dir) / "test_custom_templates.json"
+            mgr = MathTemplateManager(storage_file=tmp_json)
+
+            # Builtins should be available
+            patterns = [t.pattern for t in mgr.templates]
+            self.assertIn("□ + □", patterns)
+            self.assertIn("(□ + □)", patterns)
+            self.assertIn("(□ + □) + □", patterns)
+
+            # Save a custom template
+            custom_tpl = MathTemplate(template_id="custom_test", pattern="□ + □ + □ + □", name="Four terms", is_custom=True)
+            mgr.save_custom_template(custom_tpl)
+            self.assertIn("□ + □ + □ + □", [t.pattern for t in mgr.templates])
+            self.assertTrue(tmp_json.exists())
+
+            # Load new manager from same file
+            mgr2 = MathTemplateManager(storage_file=tmp_json)
+            self.assertIn("□ + □ + □ + □", [t.pattern for t in mgr2.templates])
+
+
+class TestTemplateDrivenCalculatorGUI(unittest.TestCase):
+    """
+    Tests for GUI integration with templates:
+    - Applying a template populates Column 1 with clickable slots.
+    - Keypad inputs fill active slot.
+    - Pasted expression preview in Column 1.
+    - Optional template saving.
+    - Row type selection (Addend row vs Label row vs rejected Algebra step).
+    - Unfilled slot and unlabeled quantity error boundaries.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        self.app = AdditionTokenCalculator(root=self.root)
+
+    def tearDown(self):
+        self.app.clear()
+
+    def test_pasted_expression_preview_and_calculate(self):
+        # Enter pasted expression into preview input
+        self.app.pasted_expr_var.set("(10 + 20) + 30")
+        self.app._on_preview_pasted_expression()
+
+        # Check Column 1 template and slot values
+        row = self.app.template_grid_model.rows[0]
+        self.assertIsNotNone(row.template_instance)
+        self.assertEqual(row.template_instance.template.pattern, "( □ + □ ) + □")
+        self.assertEqual([s.value for s in row.template_instance.slots], ["10", "20", "30"])
+
+        # Save button should be enabled during preview
+        self.assertEqual(str(self.app.save_tpl_btn["state"]), "normal")
+
+        # Fill description columns: Col 2 = 'pens', Col 3 = 'in the drawer'
+        self.app.template_grid_model.cursor_col = 2
+        self.app._on_vocab_click("pens", TokenType.ITEM)
+        self.app.template_grid_model.cursor_col = 3
+        self.app._on_vocab_click("in the drawer", TokenType.CONTEXT)
+
+        # Calculate result
+        res = self.app.calculate()
+        self.assertIsNotNone(res)
+        self.assertEqual(self.app.result_var.get(), "60")
+        self.assertEqual(self.app.result_word_var.get(), "60 pens in the drawer")
+
+    def test_unfilled_template_slot_shows_safe_error_boundary(self):
+        # Set template but leave second slot empty
+        tpl = MathTemplate(template_id="t_two", pattern="□ + □")
+        self.app.template_grid_model.apply_template_to_row(0, tpl)
+        self.app.template_grid_model.rows[0].template_instance.slots[0].value = "5"
+        self.app.template_grid_model.rows[0].description_columns[0] = "pens"
+
+        res = self.app.calculate()
+        self.assertIsNone(res)
+        self.assertEqual(self.app.result_var.get(), "Error")
+        self.assertIn("empty (□)", self.app.result_word_var.get())
+
+        # Inspector contains actionable recovery steps and user slots remain intact
+        inspector_text = self.app.inspector_text.get("1.0", "end")
+        self.assertIn("Validation Error", inspector_text)
+        self.assertIn("All existing cell values remain intact", inspector_text)
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.slots[0].value, "5")
+
+    def test_next_row_dialog_and_algebra_step_rejection(self):
+        # Create an ADDEND row
+        idx1 = self.app.template_grid_model.add_row(RowType.ADDEND)
+        self.assertEqual(idx1, 1)
+        self.assertEqual(self.app.template_grid_model.rows[1].row_type, RowType.ADDEND)
+
+        # Create a LABEL row
+        idx2 = self.app.template_grid_model.add_row(RowType.LABEL, explanation="Subtotal of pencils")
+        self.assertEqual(idx2, 2)
+        self.assertEqual(self.app.template_grid_model.rows[2].row_type, RowType.LABEL)
+        self.assertEqual(self.app.template_grid_model.rows[2].explanation_text, "Subtotal of pencils")
+
+        # Future ALGEBRA_STEP row is rejected deterministically in this stage
+        with self.assertRaises(ValueError) as ctx:
+            self.app.template_grid_model.add_row(RowType.ALGEBRA_STEP)
+        self.assertIn("Algebra steps are reserved for a future development stage", str(ctx.exception))
 
 
 if __name__ == "__main__":

@@ -1,13 +1,14 @@
 """Smart Token Chip GUI prototype for the word-enabled addition calculator.
 
 Features:
-- Preserves three representations of each addend (ordered subcolumns, parsed mathematical structure, aggregated results).
-- Independent structural precedence (visual column alignment) and mathematical precedence (evaluation order).
-- Central keypad console driving all input with three navigation actions:
-  Next Subcolumn (→), Next Column (⇒), and Next Addend (↓).
-- Clean display cells free of permanent dropdown comboboxes.
-- Adjacent label subcolumns for individual mathematical values.
-- Separate Addend and Label row types.
+- Mathematical templates in Column 1 with named, typed editable value slots (□).
+- Central keypad console driving input into selected slots.
+- Template preview from pasted addition expressions (e.g. '(15.5 + 4.25) + 8.0' or '(□ + □) + □').
+- Optional template saving: templates can be previewed, reviewed, and optionally saved to custom_templates.json.
+- Columns 2 and beyond are reserved for descriptive labels (Item, Context, etc.).
+- Explicit 'Next Row' control asking user for row type (Addend Row, Label Row, or future Algebra Step).
+- Clean display cells free of permanent dropdown menus.
+- Safe GUI error handling: catches parser validation errors without uncaught exceptions.
 - Bottom-anchored keypad layout preserving keypad positioning (0 button anchor).
 """
 
@@ -33,12 +34,21 @@ from addition_tokens.token_model import (
     ParseResult,
     TokenModelParser,
     TokenGridModel,
+    SlotMetadata,
+    TemplateSlot,
+    MathTemplate,
+    TemplateValidator,
+    ExpressionTemplateParser,
+    MathTemplateManager,
+    TemplateInstance,
+    TemplateRow,
+    TemplateGridModel,
     is_valid_number,
 )
 
 
 class AdditionTokenCalculator:
-    """Tkinter GUI for the Smart Token Chip Word-Enabled Addition Calculator."""
+    """Tkinter GUI for the Template-Driven Smart Token Addition Calculator."""
 
     QUICK_UNITS = ["pens", "pencils", "books", "apples", "oranges", "cars"]
     QUICK_CONTEXTS = ["in the drawer", "on the desk", "in the room", "in the basket"]
@@ -46,13 +56,16 @@ class AdditionTokenCalculator:
     def __init__(self, root: Optional[tk.Tk] = None) -> None:
         self._owns_root = root is None
         self.root = root if root is not None else tk.Tk()
-        self.root.title("Smart Token Addition Calculator (Central Keypad & Subcolumns)")
-        self.root.geometry("880x820")
-        self.root.minsize(750, 650)
+        self.root.title("Smart Token Addition Calculator (Math Templates & Central Input)")
+        self.root.geometry("940x880")
+        self.root.minsize(800, 700)
 
-        # Internal Grid Model
-        self.grid_model = TokenGridModel()
+        # Template and Grid Models
+        self.template_manager = MathTemplateManager()
+        self.template_grid_model = TemplateGridModel(self.template_manager)
+        self.grid_model = TokenGridModel()  # Kept for backward compatibility
         self.last_parse_result: Optional[ParseResult] = None
+        self.current_preview_template: Optional[MathTemplate] = None
 
         # Build UI layout
         self._build_ui()
@@ -62,11 +75,10 @@ class AdditionTokenCalculator:
         self.render_grid()
 
     # -------------------------------------------------------------------------
-    # Backward Compatibility Helpers
+    # Backward Compatibility Adapter Properties
     # -------------------------------------------------------------------------
     @property
     def rows_tokens(self) -> List[List[Token]]:
-        """Adapter providing row token lists for backward compatibility with previous tests."""
         result: List[List[Token]] = []
         for r in self.grid_model.rows:
             if r.row_type == RowType.ADDEND:
@@ -87,6 +99,7 @@ class AdditionTokenCalculator:
 
     def add_addend_row(self) -> int:
         idx = self.grid_model.next_addend()
+        self.template_grid_model.add_row(RowType.ADDEND)
         self.render_grid()
         return idx
 
@@ -98,9 +111,7 @@ class AdditionTokenCalculator:
     ) -> Token:
         if not (0 <= row_idx < len(self.grid_model.rows)):
             row_idx = 0
-        self.grid_model.cursor_row = row_idx
-        self.grid_model.cursor_area = "addend"
-        self.grid_model.cursor_addend_col = 0
+        self.grid_model.select_cell(row_idx, "addend", 0, 0)
         row = self.grid_model.rows[row_idx]
         if not row.addend_columns:
             row.addend_columns.append(AddendRepresentation())
@@ -144,7 +155,6 @@ class AdditionTokenCalculator:
                     return [sc.to_token() for sc in row.addend_columns[0].ordered_subcolumns if sc.value.strip()]
             return []
 
-        # All rows
         combined: List[Token] = []
         for row in self.grid_model.rows:
             if row.row_type != RowType.ADDEND:
@@ -189,15 +199,10 @@ class AdditionTokenCalculator:
         self.keypad_frame.pack(side="left", padx=8, pady=8)
         self._build_keypad()
 
-        # Vocabulary / Central Label Console
-        self.vocab_frame = tk.LabelFrame(
-            self.bottom_container,
-            text="Central Label Console (Inputs to Active Cell)",
-            font=("Segoe UI", 9, "bold"),
-            bg="#f5f5f5",
-            fg="#1565c0",
-        )
-        self.vocab_frame.pack(side="left", fill="y", padx=6, pady=8)
+        # Center Template & Vocabulary Console
+        self.center_console = tk.Frame(self.bottom_container, bg="#f5f5f5")
+        self.center_console.pack(side="left", fill="y", padx=6, pady=8)
+        self._build_template_console()
         self._build_vocab_console()
 
         # Three Representations Inspector Frame
@@ -221,7 +226,7 @@ class AdditionTokenCalculator:
             wrap="word",
         )
         self.inspector_text.pack(fill="both", expand=True, padx=4, pady=4)
-        self.inspector_text.insert("1.0", "Use central keypad to enter subcolumns. Press '=' to evaluate representations.")
+        self.inspector_text.insert("1.0", "Select a template for Column 1, click editable slots (□), and enter values via keypad.")
         self.inspector_text.configure(state="disabled")
 
         # 2. Result Summary Frame (just above bottom controls)
@@ -270,13 +275,13 @@ class AdditionTokenCalculator:
         )
         self.result_word_entry.pack(side="left", fill="x", expand=True, padx=(8, 0))
 
-        # 3. Top Action / Status Bar
+        # 3. Top Action / Selection Status Bar
         self.top_bar = tk.Frame(self.root, bg="#e8f5e9", bd=1, relief="ridge")
         self.top_bar.pack(side="top", fill="x", padx=10, pady=(10, 4))
 
         title_lbl = tk.Label(
             self.top_bar,
-            text="Smart Token Expression Builder (Central Keypad Console)",
+            text="Smart Token Expression Builder (Math Templates)",
             font=("Segoe UI", 11, "bold"),
             bg="#e8f5e9",
             fg="#1b5e20",
@@ -305,15 +310,52 @@ class AdditionTokenCalculator:
         )
         self.clear_btn.pack(side="left", padx=4, pady=6)
 
-        self.add_label_btn = tk.Button(
+        self.next_row_btn = tk.Button(
             self.top_bar,
-            text="+ Label Row",
-            bg="#7b1fa2",
+            text="Next Row (↓)",
+            bg="#388e3c",
             fg="#ffffff",
-            command=lambda: self.add_label_row("Descriptive Note"),
+            command=self._prompt_next_row_type,
             **btn_style,
         )
-        self.add_label_btn.pack(side="left", padx=4, pady=6)
+        self.next_row_btn.pack(side="left", padx=4, pady=6)
+
+        self.add_desc_col_btn = tk.Button(
+            self.top_bar,
+            text="+ Add Description Col",
+            bg="#8e24aa",
+            fg="#ffffff",
+            command=self.add_description_column,
+            **btn_style,
+        )
+        self.add_desc_col_btn.pack(side="left", padx=4, pady=6)
+
+        self.del_col_btn = tk.Button(
+            self.top_bar,
+            text="Delete Selected Col",
+            bg="#ff7043",
+            fg="#ffffff",
+            command=self.delete_selected_column,
+            **btn_style,
+        )
+        self.del_col_btn.pack(side="left", padx=4, pady=6)
+
+        # Selection Status Indicator Banner
+        self.status_bar = tk.Frame(self.root, bg="#fffde7", bd=1, relief="solid")
+        self.status_bar.pack(side="top", fill="x", padx=10, pady=(2, 4))
+
+        self.selection_status_var = tk.StringVar(value="Selected Target: Row 1 | Column 1 (Math Template)")
+        self.selection_status_lbl = tk.Label(
+            self.status_bar,
+            textvariable=self.selection_status_var,
+            font=("Segoe UI", 10, "bold"),
+            bg="#fffde7",
+            fg="#e65100",
+            anchor="w",
+            padx=8,
+            pady=3,
+        )
+        self.selection_status_lbl.pack(fill="x")
 
         # 4. Center Scrollable Container for Clean Display Grid
         self.scroll_container = tk.Frame(self.root, bg="#ffffff", bd=1, relief="sunken")
@@ -333,7 +375,7 @@ class AdditionTokenCalculator:
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window_id, width=e.width))
 
     def _build_keypad(self) -> None:
-        """Constructs bottom-anchored keypad with the 3 explicit navigation actions."""
+        """Constructs bottom-anchored keypad preserving the 0 button coordinate anchor."""
         buttons = [
             ("(", 0, 0), (")", 0, 1), ("C", 0, 2), ("+", 0, 3),
             ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("Next Subcol (→)", 1, 3),
@@ -376,23 +418,103 @@ class AdditionTokenCalculator:
             btn.grid(row=r, column=c, padx=2, pady=2, sticky="nsew")
             self.keypad_buttons[text] = btn
 
+    def _build_template_console(self) -> None:
+        """Builds controls for selecting, previewing, and optionally saving templates."""
+        self.tpl_box = tk.LabelFrame(
+            self.center_console,
+            text="Mathematical Templates (Column 1)",
+            font=("Segoe UI", 8, "bold"),
+            bg="#f5f5f5",
+            fg="#1565c0",
+        )
+        self.tpl_box.pack(fill="x", padx=4, pady=2)
+
+        # Dropdown of templates
+        row1 = tk.Frame(self.tpl_box, bg="#f5f5f5")
+        row1.pack(fill="x", padx=4, pady=2)
+
+        self.template_patterns = [t.pattern for t in self.template_manager.templates]
+        self.selected_template_var = tk.StringVar(value=self.template_patterns[0])
+        self.template_combo = ttk.Combobox(
+            row1,
+            textvariable=self.selected_template_var,
+            values=self.template_patterns,
+            state="readonly",
+            width=16,
+            font=("Segoe UI", 9),
+        )
+        self.template_combo.pack(side="left", padx=2)
+
+        apply_btn = tk.Button(
+            row1,
+            text="Apply Template",
+            font=("Segoe UI", 8, "bold"),
+            bg="#e3f2fd",
+            fg="#0d47a1",
+            command=self._on_apply_selected_template,
+        )
+        apply_btn.pack(side="left", padx=2)
+
+        # Pasted expression input & preview
+        row2 = tk.Frame(self.tpl_box, bg="#f5f5f5")
+        row2.pack(fill="x", padx=4, pady=2)
+
+        self.pasted_expr_var = tk.StringVar(value="")
+        self.pasted_entry = tk.Entry(
+            row2,
+            textvariable=self.pasted_expr_var,
+            font=("Segoe UI", 9),
+            width=16,
+        )
+        self.pasted_entry.pack(side="left", padx=2)
+
+        preview_btn = tk.Button(
+            row2,
+            text="Preview Pasted",
+            font=("Segoe UI", 8),
+            bg="#fff3e0",
+            fg="#e65100",
+            command=self._on_preview_pasted_expression,
+        )
+        preview_btn.pack(side="left", padx=2)
+
+        self.save_tpl_btn = tk.Button(
+            row2,
+            text="Save Template",
+            font=("Segoe UI", 8, "bold"),
+            bg="#e8f5e9",
+            fg="#2e7d32",
+            state="disabled",
+            command=self._on_save_custom_template,
+        )
+        self.save_tpl_btn.pack(side="left", padx=2)
+
     def _build_vocab_console(self) -> None:
-        """Builds central vocabulary controls to feed labels directly to the active cell."""
+        """Builds central vocabulary controls to feed labels directly to the active selected cell."""
+        self.vocab_frame = tk.LabelFrame(
+            self.center_console,
+            text="Descriptive Columns Console (Col 2 & 3)",
+            font=("Segoe UI", 8, "bold"),
+            bg="#f5f5f5",
+            fg="#6a1b9a",
+        )
+        self.vocab_frame.pack(fill="x", padx=4, pady=2)
+
         u_frame = tk.Frame(self.vocab_frame, bg="#f5f5f5")
-        u_frame.pack(fill="x", padx=4, pady=2)
-        tk.Label(u_frame, text="Units:", font=("Segoe UI", 8, "bold"), bg="#f5f5f5").pack(side="left")
+        u_frame.pack(fill="x", padx=4, pady=1)
+        tk.Label(u_frame, text="Unit:", font=("Segoe UI", 8, "bold"), bg="#f5f5f5").pack(side="left")
         for u in self.QUICK_UNITS:
             btn = tk.Button(
                 u_frame,
                 text=u,
                 font=("Segoe UI", 8),
                 bg="#e1f5fe",
-                command=lambda val=u: self._on_vocab_click(val, TokenType.ITEM),
+                command=lambda val=u: self._set_active_word(val),
             )
-            btn.pack(side="left", padx=2)
+            btn.pack(side="left", padx=1)
 
         c_frame = tk.Frame(self.vocab_frame, bg="#f5f5f5")
-        c_frame.pack(fill="x", padx=4, pady=2)
+        c_frame.pack(fill="x", padx=4, pady=1)
         tk.Label(c_frame, text="Context:", font=("Segoe UI", 8, "bold"), bg="#f5f5f5").pack(side="left")
         for c in self.QUICK_CONTEXTS:
             btn = tk.Button(
@@ -400,18 +522,18 @@ class AdditionTokenCalculator:
                 text=c,
                 font=("Segoe UI", 8),
                 bg="#fce4ec",
-                command=lambda val=c: self._on_vocab_click(val, TokenType.CONTEXT),
+                command=lambda val=c: self._set_active_word(val),
             )
-            btn.pack(side="left", padx=2)
+            btn.pack(side="left", padx=1)
 
         entry_frame = tk.Frame(self.vocab_frame, bg="#f5f5f5")
-        entry_frame.pack(fill="x", padx=4, pady=4)
+        entry_frame.pack(fill="x", padx=4, pady=2)
         self.custom_label_var = tk.StringVar(value="")
         self.custom_label_entry = tk.Entry(entry_frame, textvariable=self.custom_label_var, font=("Segoe UI", 9), width=14)
         self.custom_label_entry.pack(side="left", padx=2)
         apply_btn = tk.Button(
             entry_frame,
-            text="Apply Label",
+            text="Apply Word",
             font=("Segoe UI", 8, "bold"),
             bg="#e8f5e9",
             fg="#2e7d32",
@@ -425,8 +547,80 @@ class AdditionTokenCalculator:
         self.root.bind("<Escape>", lambda _e: self.clear())
 
     # -------------------------------------------------------------------------
-    # Keypad & Input Handling
+    # Template Selection & Pasted Expression Preview
     # -------------------------------------------------------------------------
+
+    def _on_apply_selected_template(self) -> None:
+        pattern = self.selected_template_var.get()
+        tpl = next((t for t in self.template_manager.templates if t.pattern == pattern), None)
+        if tpl:
+            self.template_grid_model.apply_template_to_row(self.template_grid_model.cursor_row, tpl)
+            self.current_preview_template = None
+            self.save_tpl_btn.configure(state="disabled")
+            self.render_grid()
+
+    def _on_preview_pasted_expression(self) -> None:
+        expr = self.pasted_expr_var.get().strip()
+        if not expr:
+            return
+        try:
+            tpl, initial_values = ExpressionTemplateParser.parse_pasted_expression(expr)
+            self.current_preview_template = tpl
+            self.template_grid_model.apply_template_to_row(
+                self.template_grid_model.cursor_row,
+                tpl,
+                initial_values=initial_values,
+            )
+            # Enable optional Save Template button
+            self.save_tpl_btn.configure(state="normal")
+            self.render_grid()
+        except ValueError as ve:
+            self.result_var.set("Error")
+            self.result_word_var.set(str(ve))
+
+    def _on_save_custom_template(self) -> None:
+        if self.current_preview_template:
+            self.template_manager.save_custom_template(self.current_preview_template)
+            self.template_patterns = [t.pattern for t in self.template_manager.templates]
+            self.template_combo.configure(values=self.template_patterns)
+            self.selected_template_var.set(self.current_preview_template.pattern)
+            self.save_tpl_btn.configure(state="disabled")
+            self.inspector_text.configure(state="normal")
+            self.inspector_text.delete("1.0", "end")
+            self.inspector_text.insert("1.0", f"Template '{self.current_preview_template.pattern}' saved permanently to templates registry.")
+            self.inspector_text.configure(state="disabled")
+
+    def _prompt_next_row_type(self) -> None:
+        """Presents explicit options for row type creation."""
+        # By default in automated testing or fast entry, creates an ADDEND row
+        self.add_row_dialog()
+
+    def add_row_dialog(self, row_type: RowType = RowType.ADDEND, explanation: str = "") -> int:
+        idx = self.template_grid_model.add_row(row_type, explanation)
+        self.grid_model.next_addend()
+        self.render_grid()
+        return idx
+
+    def add_description_column(self) -> int:
+        col_count = self.template_grid_model.add_description_column()
+        self.render_grid()
+        return col_count
+
+    # -------------------------------------------------------------------------
+    # Keypad & Selection Handling
+    # -------------------------------------------------------------------------
+
+    def select_cell(self, row_idx: int, area: str = "addend", col_idx: int = 0, subcol_idx: int = 0) -> None:
+        self.grid_model.select_cell(row_idx, area, col_idx, subcol_idx)
+        if area == "addend":
+            self.template_grid_model.select_slot(row_idx, subcol_idx)
+        else:
+            self.template_grid_model.select_col(row_idx, col_idx + 2)
+        self.render_grid()
+
+    def delete_selected_column(self) -> None:
+        self.grid_model.delete_selected_column()
+        self.render_grid()
 
     def _on_keypad_press(self, val: str) -> None:
         if val == "=":
@@ -434,84 +628,143 @@ class AdditionTokenCalculator:
         elif val == "C":
             self.clear()
         elif val == "Backspace":
+            self.template_grid_model.backspace()
             self.grid_model.backspace()
             self.render_grid()
         elif val == "Next Subcol (→)":
             self.grid_model.next_subcolumn()
+            row = self.template_grid_model.rows[self.template_grid_model.cursor_row]
+            if row.template_instance and row.template_instance.slots:
+                next_s = (self.template_grid_model.cursor_slot + 1) % len(row.template_instance.slots)
+                self.template_grid_model.cursor_slot = next_s
             self.render_grid()
         elif val == "Next Col (⇒)":
             self.grid_model.next_column()
+            self.template_grid_model.cursor_col += 1
             self.render_grid()
         elif val == "Next Addend (↓)":
-            self.grid_model.next_addend()
-            self.render_grid()
+            self.add_row_dialog(RowType.ADDEND)
         else:
-            # Feeds value (0-9, ., +, (, )) to active subcolumn
+            # Inputs value into active slot
+            self.template_grid_model.input_number(val)
             self.grid_model.input_value(val)
             self.render_grid()
 
-    def _on_vocab_click(self, val: str, t_type: TokenType) -> None:
-        self.grid_model.input_value(val, t_type)
+    def _on_vocab_click(self, val: str, token_type: Optional[TokenType] = None) -> None:
+        tt = token_type if token_type is not None else TokenType.ITEM
+        self.grid_model.input_value(val, tt)
+        self.template_grid_model.set_active_value(val)
         self.render_grid()
+
+    def _set_active_word(self, val: str) -> None:
+        self._on_vocab_click(val, TokenType.ITEM)
 
     def _on_apply_custom_label(self) -> None:
         lbl = self.custom_label_var.get().strip()
         if lbl:
-            self.grid_model.input_value(lbl, TokenType.ITEM)
+            self._set_active_word(lbl)
             self.custom_label_var.set("")
-            self.render_grid()
 
     def add_label_row(self, text: str = "Descriptive Annotation") -> int:
-        idx = self.grid_model.add_label_row(text)
+        idx = self.template_grid_model.add_row(RowType.LABEL, text)
+        self.grid_model.add_label_row(text)
         self.render_grid()
         return idx
 
     # -------------------------------------------------------------------------
-    # Clean Display Grid Rendering (NO PERMANENT DROPDOWNS)
+    # Clean Display Grid Rendering (CLICKABLE BUTTON-LIKE CELLS)
     # -------------------------------------------------------------------------
 
     def render_grid(self) -> None:
-        """
-        Renders clean display cells with independent structural precedence:
-        Addend columns appear before descriptive columns, and adding more
-        addend columns shifts descriptive columns to the right across all rows.
-        """
         for child in self.grid_frame.winfo_children():
             child.destroy()
 
-        max_addend_cols = self.grid_model.get_max_addend_columns()
+        t_row_idx = self.template_grid_model.cursor_row
+        t_col = self.template_grid_model.cursor_col
+        t_slot = self.template_grid_model.cursor_slot
 
-        # Grid Header
+        # Status label
+        if self.grid_model.cursor_area == "addend":
+            r_idx = self.grid_model.cursor_row
+            c_idx = self.grid_model.cursor_addend_col
+            s_idx = self.grid_model.cursor_subcol
+            val = ""
+            if 0 <= r_idx < len(self.grid_model.rows):
+                r = self.grid_model.rows[r_idx]
+                if 0 <= c_idx < len(r.addend_columns):
+                    ac = r.addend_columns[c_idx]
+                    if 0 <= s_idx < len(ac.ordered_subcolumns):
+                        val = ac.ordered_subcolumns[s_idx].value
+            if not val and 0 <= r_idx < len(self.template_grid_model.rows):
+                t_row = self.template_grid_model.rows[r_idx]
+                if t_row.template_instance and s_idx < len(t_row.template_instance.slots):
+                    val = t_row.template_instance.slots[s_idx].value
+            status_info = f"Row {r_idx + 1} | Main Col {c_idx + 1} | Subcol {s_idx + 1} ('{val}')"
+        else:
+            status_info = f"Row {t_row_idx + 1}"
+            if t_row_idx < len(self.template_grid_model.rows):
+                cur_r = self.template_grid_model.rows[t_row_idx]
+                if cur_r.row_type == RowType.LABEL:
+                    status_info += " [Label Row]"
+                elif t_col == 1:
+                    pat = cur_r.template_instance.template.pattern if cur_r.template_instance else "math"
+                    val = cur_r.template_instance.slots[t_slot].value if cur_r.template_instance and t_slot < len(cur_r.template_instance.slots) else ""
+                    status_info += f" | Main Col 1 (Template: {pat}) | Subcol {t_slot + 1} ('{val}')"
+                else:
+                    desc_val = cur_r.description_columns[t_col - 2] if t_col - 2 < len(cur_r.description_columns) else ""
+                    status_info += f" | Col {t_col} (Description: '{desc_val}')"
+
+        self.selection_status_var.set(f"Selected Target: {status_info}")
+
+        max_desc_cols = self.template_grid_model.get_max_description_columns()
+
+        # Grid Header Bar
         header_bar = tk.Frame(self.grid_frame, bg="#e0e0e0", bd=1, relief="ridge")
         header_bar.pack(fill="x", padx=4, pady=2)
-        tk.Label(header_bar, text="Row", font=("Segoe UI", 9, "bold"), width=10, bg="#e0e0e0").pack(side="left")
-        for i in range(max_addend_cols):
-            tk.Label(
-                header_bar,
-                text=f"Addend Column {i + 1} (Subcolumns)",
-                font=("Segoe UI", 9, "bold"),
-                fg="#1b5e20",
-                bg="#e0e0e0",
-                padx=8,
-            ).pack(side="left", padx=4)
+        tk.Label(header_bar, text="Row", font=("Segoe UI", 9, "bold"), width=12, bg="#e0e0e0").pack(side="left")
         tk.Label(
             header_bar,
-            text="Descriptive Columns (Pushed to Right)",
+            text="Column 1: Mathematical Template (Editable Slots □)",
+            font=("Segoe UI", 9, "bold"),
+            fg="#1b5e20",
+            bg="#e0e0e0",
+            padx=8,
+        ).pack(side="left", padx=4)
+        tk.Label(
+            header_bar,
+            text="Column 2: Item",
             font=("Segoe UI", 9, "bold"),
             fg="#6a1b9a",
             bg="#e0e0e0",
             padx=8,
         ).pack(side="left", padx=4)
+        tk.Label(
+            header_bar,
+            text="Column 3: Context",
+            font=("Segoe UI", 9, "bold"),
+            fg="#6a1b9a",
+            bg="#e0e0e0",
+            padx=8,
+        ).pack(side="left", padx=4)
+        for i in range(2, max_desc_cols):
+            tk.Label(
+                header_bar,
+                text=f"Column {i + 2}: Extra Desc",
+                font=("Segoe UI", 9, "bold"),
+                fg="#6a1b9a",
+                bg="#e0e0e0",
+                padx=8,
+            ).pack(side="left", padx=4)
 
-        # Render Each Row
-        for r_idx, row in enumerate(self.grid_model.rows):
-            is_active_row = (r_idx == self.grid_model.cursor_row)
-            row_bg = "#ffffff" if not is_active_row else "#fffde7"
+        # Render rows
+        for r_idx, row in enumerate(self.template_grid_model.rows):
+            is_active_row = (r_idx == t_row_idx)
+            row_bg = "#fffde7" if is_active_row else "#ffffff"
 
-            row_card = tk.Frame(self.grid_frame, bg=row_bg, bd=1, relief="solid")
+            row_card = tk.Frame(self.grid_frame, bg=row_bg, bd=2 if is_active_row else 1, relief="solid" if is_active_row else "ridge")
             row_card.pack(fill="x", expand=True, padx=4, pady=3)
 
-            # Row Header Tag
+            # Row Tag
             if row.row_type == RowType.LABEL:
                 tag_lbl = tk.Label(
                     row_card,
@@ -519,137 +772,175 @@ class AdditionTokenCalculator:
                     font=("Segoe UI", 9, "bold"),
                     bg="#ede7f6",
                     fg="#4a148c",
-                    width=12,
+                    width=14,
+                    cursor="hand2",
                 )
                 tag_lbl.pack(side="left", padx=4, pady=4)
+                tag_lbl.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "label", 0, 0))
 
                 lbl_val = tk.Label(
                     row_card,
-                    text=row.label_text or "(Empty descriptive label)",
+                    text=row.explanation_text or "(Click to edit description row)",
                     font=("Segoe UI", 10, "italic"),
                     bg=row_bg,
                     fg="#333333",
+                    cursor="hand2",
                 )
                 lbl_val.pack(side="left", padx=8, pady=4)
+                lbl_val.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "label", 0, 0))
                 continue
 
             # Addend Row
-            tag_text = f"Addend {r_idx + 1}" if r_idx == 0 else f"Addend {r_idx + 1} (+)"
+            tag_text = f"Row {r_idx + 1} (Addend)" if r_idx == 0 else f"Row {r_idx + 1} (Addend +)"
             tag_lbl = tk.Label(
                 row_card,
                 text=tag_text,
                 font=("Segoe UI", 9, "bold"),
-                bg="#e8f5e9",
+                bg="#e8f5e9" if not is_active_row else "#c8e6c9",
                 fg="#1b5e20",
-                width=12,
+                width=14,
+                cursor="hand2",
             )
             tag_lbl.pack(side="left", padx=4, pady=4)
+            tag_lbl.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "addend", 0, 0))
 
-            # Addend Columns (containing subcolumns)
-            for c_idx in range(max_addend_cols):
-                col_frame = tk.Frame(row_card, bg="#fafafa", bd=1, relief="groove")
-                col_frame.pack(side="left", padx=4, pady=4)
+            # Column 1: Mathematical Template with Editable Slots
+            col1_frame = tk.Frame(row_card, bg="#fafafa", bd=1, relief="groove")
+            col1_frame.pack(side="left", padx=4, pady=4)
 
-                if c_idx < len(row.addend_columns):
-                    addend = row.addend_columns[c_idx]
-                    if not addend.ordered_subcolumns:
-                        # Empty placeholder cell
-                        is_active_cell = (
-                            is_active_row and
-                            self.grid_model.cursor_area == "addend" and
-                            self.grid_model.cursor_addend_col == c_idx and
-                            self.grid_model.cursor_subcol == 0
-                        )
-                        bd_col = "#2e7d32" if is_active_cell else "#cccccc"
-                        cell = tk.Label(
-                            col_frame,
-                            text="[ empty ]",
-                            font=("Segoe UI", 9),
-                            fg="#999999",
-                            bg="#ffffff",
-                            bd=2 if is_active_cell else 1,
-                            relief="solid",
-                            padx=6,
-                            pady=2,
-                        )
-                        cell.pack(side="left", padx=2, pady=2)
-                    else:
-                        for s_idx, sc in enumerate(addend.ordered_subcolumns):
-                            is_active_cell = (
-                                is_active_row and
-                                self.grid_model.cursor_area == "addend" and
-                                self.grid_model.cursor_addend_col == c_idx and
-                                self.grid_model.cursor_subcol == s_idx
-                            )
-                            self._render_clean_subcol_cell(col_frame, sc, is_active_cell)
-                else:
-                    # Row has fewer addend columns than the maximum: display empty spacer
-                    spacer = tk.Label(col_frame, text="—", font=("Segoe UI", 9), fg="#cccccc", bg="#fafafa", width=6)
-                    spacer.pack(side="left", padx=4, pady=2)
+            if row.template_instance:
+                self._render_template_instance_col1(col1_frame, r_idx, row.template_instance, is_active_row)
 
-            # Descriptive Columns (Pushed to the right of all addend columns)
-            desc_frame = tk.Frame(row_card, bg="#f3e5f5", bd=1, relief="groove")
-            desc_frame.pack(side="left", padx=6, pady=4)
+            # Columns 2, 3, and beyond: Descriptive Columns
+            for d_idx, desc_val in enumerate(row.description_columns):
+                col_number = d_idx + 2
+                is_active_col = (is_active_row and t_col == col_number)
 
-            if not row.description_columns:
-                tk.Label(desc_frame, text="(No descriptive tags)", font=("Segoe UI", 8, "italic"), fg="#777777", bg="#f3e5f5").pack(side="left", padx=4)
-            else:
-                for d_idx, desc in enumerate(row.description_columns):
-                    is_active_desc = (
+                desc_cell = tk.Label(
+                    row_card,
+                    text=desc_val or f"[ Col {col_number} ]",
+                    font=("Segoe UI", 9, "bold" if desc_val else "italic"),
+                    fg="#4a148c" if desc_val else "#999999",
+                    bg="#fff59d" if is_active_col else "#ffffff",
+                    bd=2 if is_active_col else 1,
+                    relief="solid" if is_active_col else "ridge",
+                    cursor="hand2",
+                    padx=8,
+                    pady=3,
+                    width=12,
+                )
+                desc_cell.pack(side="left", padx=4, pady=4)
+                desc_cell.bind("<Button-1>", lambda _e, r=r_idx, c=col_number: self.template_grid_model.select_col(r, c) or self.render_grid())
+
+    def _render_template_instance_col1(
+        self,
+        parent: tk.Widget,
+        row_idx: int,
+        inst: TemplateInstance,
+        is_active_row: bool
+    ) -> None:
+        """Renders mathematical template pattern with clickable, button-like slot cells."""
+        pattern = inst.template.pattern
+        slot_idx = 0
+        i = 0
+        while i < len(pattern):
+            ch = pattern[i]
+            if ch == "□":
+                if slot_idx < len(inst.slots):
+                    slot = inst.slots[slot_idx]
+                    is_active_slot = (
                         is_active_row and
-                        self.grid_model.cursor_area == "description" and
-                        self.grid_model.cursor_desc_col == d_idx
+                        self.template_grid_model.cursor_col == 1 and
+                        self.template_grid_model.cursor_slot == slot_idx
                     )
-                    d_cell = tk.Label(
-                        desc_frame,
-                        text=desc or "[empty]",
-                        font=("Segoe UI", 9, "bold"),
-                        fg="#4a148c",
-                        bg="#ffffff",
-                        bd=2 if is_active_desc else 1,
-                        relief="solid",
-                        padx=6,
+                    slot_txt = slot.value if slot.value else "□"
+                    slot_btn = tk.Label(
+                        parent,
+                        text=f" {slot_txt} ",
+                        font=("Segoe UI", 10, "bold"),
+                        bg="#fff59d" if is_active_slot else "#e8f5e9",
+                        fg="#b71c1c" if is_active_slot else "#1b5e20",
+                        bd=2 if is_active_slot else 1,
+                        relief="solid" if is_active_slot else "raised",
+                        cursor="hand2",
+                        padx=4,
                         pady=2,
                     )
-                    d_cell.pack(side="left", padx=2, pady=2)
+                    slot_btn.pack(side="left", padx=2, pady=2)
+                    slot_btn.bind("<Button-1>", lambda _e, r=row_idx, s=slot_idx: self._select_template_slot(r, s))
+                    slot_idx += 1
+                i += 1
+            elif ch in ("(", ")", "+"):
+                sym_lbl = tk.Label(
+                    parent,
+                    text=ch,
+                    font=("Segoe UI", 10, "bold"),
+                    fg="#0d47a1" if ch in ("(", ")") else "#e65100",
+                    bg="#fafafa",
+                    padx=2,
+                )
+                sym_lbl.pack(side="left")
+                i += 1
+            elif ch.isspace():
+                i += 1
+            else:
+                i += 1
 
-    def _render_clean_subcol_cell(self, parent: tk.Widget, sc: Subcolumn, is_active: bool) -> tk.Widget:
-        """Renders a clean subcolumn pill/box with NO permanent dropdowns."""
-        type_colors = {
-            TokenType.GROUP_OPEN: ("#e3f2fd", "#0d47a1"),
-            TokenType.GROUP_CLOSE: ("#e3f2fd", "#0d47a1"),
-            TokenType.OPERATOR: ("#fff3e0", "#e65100"),
-            TokenType.NUMBER: ("#e8f5e9", "#1b5e20"),
-            TokenType.ITEM: ("#f3e5f5", "#6a1b9a"),
-            TokenType.CONTEXT: ("#fce4ec", "#880e4f"),
-        }
-        bg_col, fg_col = type_colors.get(sc.token_type, ("#ffffff", "#333333"))
-
-        bd_width = 2 if is_active else 1
-        relief = "solid" if is_active else "ridge"
-        highlight_bg = "#ffeb3b" if is_active else bg_col
-
-        cell = tk.Label(
-            parent,
-            text=sc.value,
-            font=("Segoe UI", 9, "bold" if sc.token_type in (TokenType.NUMBER, TokenType.OPERATOR) else "normal"),
-            bg=highlight_bg,
-            fg=fg_col,
-            bd=bd_width,
-            relief=relief,
-            padx=6,
-            pady=2,
-        )
-        cell.pack(side="left", padx=2, pady=2)
-        return cell
+    def _select_template_slot(self, r: int, s: int) -> None:
+        self.template_grid_model.select_slot(r, s)
+        self.grid_model.select_cell(r, "addend", 0, s)
+        self.render_grid()
 
     # -------------------------------------------------------------------------
-    # Calculation & Three Representations Inspector
+    # Calculation & Safe Exception Boundary
     # -------------------------------------------------------------------------
 
     def calculate(self) -> Optional[ParseResult]:
-        """Calculates global result and updates the three representations inspector."""
-        parse_res = self.grid_model.calculate()
+        """Calculates result across rows safely catching validation errors."""
+        try:
+            # First try template-driven calculation if template slots are filled
+            template_rows_filled = any(
+                r.row_type == RowType.ADDEND and r.template_instance and any(s.is_filled for s in r.template_instance.slots)
+                for r in self.template_grid_model.rows
+            )
+            if template_rows_filled:
+                parse_res = self.template_grid_model.calculate()
+            else:
+                parse_res = self.grid_model.calculate()
+
+        except ValueError as ve:
+            err_msg = str(ve)
+            self.last_parse_result = None
+            self.result_var.set("Error")
+            self.result_word_var.set(err_msg)
+
+            self.inspector_text.configure(state="normal")
+            self.inspector_text.delete("1.0", "end")
+            self.inspector_text.insert(
+                "1.0",
+                f"Validation Error: {err_msg}\n\n"
+                f"Action Required:\n"
+                f"1. Click the incomplete slot (□) or description column.\n"
+                f"2. Use the central keypad or label console to fill the required value.\n"
+                f"3. Press '=' or Calculate again.\n\n"
+                f"All existing cell values remain intact."
+            )
+            self.inspector_text.configure(state="disabled")
+            self.render_grid()
+            return None
+        except Exception as e:
+            err_msg = str(e)
+            self.last_parse_result = None
+            self.result_var.set("Error")
+            self.result_word_var.set(err_msg)
+
+            self.inspector_text.configure(state="normal")
+            self.inspector_text.delete("1.0", "end")
+            self.inspector_text.insert("1.0", f"Calculation Error:\n{err_msg}")
+            self.inspector_text.configure(state="disabled")
+            self.render_grid()
+            return None
+
         self.last_parse_result = parse_res
 
         if not parse_res:
@@ -660,7 +951,7 @@ class AdditionTokenCalculator:
         self.result_var.set(parse_res.total_number)
         self.result_word_var.set(parse_res.word_result)
 
-        # Update Inspector Text with the Three Representations (Refinement 1)
+        # Update Inspector
         self.inspector_text.configure(state="normal")
         self.inspector_text.delete("1.0", "end")
 
@@ -668,36 +959,68 @@ class AdditionTokenCalculator:
             f"=== TOTAL SUMMARY ===",
             f"Math Total: {parse_res.total_number}",
             f"Sentence Result: {parse_res.word_result}",
-            f"\n=== ADDEND REPRESENTATIONS (Refinement 1) ===",
+            f"\n=== ADDEND REPRESENTATIONS ===",
         ]
 
-        addend_count = 0
-        for r_idx, row in enumerate(self.grid_model.rows):
-            if row.row_type != RowType.ADDEND:
-                output_lines.append(f"\n[Row {r_idx + 1}: Label Row] — '{row.label_text}'")
-                continue
+        has_grid_tokens = any(
+            any(ac.ordered_subcolumns for ac in r.addend_columns)
+            for r in self.grid_model.rows if r.row_type == RowType.ADDEND
+        )
+        if has_grid_tokens:
+            addend_count = 0
+            for r_idx, row in enumerate(self.grid_model.rows):
+                if row.row_type != RowType.ADDEND:
+                    output_lines.append(f"\n[Row {r_idx + 1}: Label Row] — '{row.label_text}'")
+                    continue
 
-            for c_idx, addend in enumerate(row.addend_columns):
-                addend_count += 1
-                output_lines.append(f"\n--- Addend {addend_count} (Row {r_idx + 1}, Col {c_idx + 1}) ---")
+                for c_idx, addend in enumerate(row.addend_columns):
+                    addend_count += 1
+                    output_lines.append(f"\n--- Addend {addend_count} (Row {r_idx + 1}, Col {c_idx + 1}) ---")
 
-                # Rep 1: Ordered Subcolumns
-                subcol_str = " | ".join(f"'{sc.value}'" for sc in addend.ordered_subcolumns)
+                    # Rep 1: Ordered Subcolumns
+                    subcol_str = " | ".join(f"'{sc.value}'" for sc in addend.ordered_subcolumns)
+                    output_lines.append(f"  Rep 1 (Ordered Subcolumns): [{subcol_str}]")
+
+                    # Rep 2: Parsed Mathematical Structure (Unaggregated)
+                    output_lines.append(f"  Rep 2 (Parsed Structure - Unaggregated):")
+                    if not addend.parsed_terms:
+                        output_lines.append("    (No parsed terms)")
+                    for t in addend.parsed_terms:
+                        ctx = f", context='{t.context}'" if t.context else ""
+                        output_lines.append(f"    Quantity: {t.quantity}, Unit: '{t.item}'{ctx}")
+
+                    # Rep 3: Aggregated Results by Compatible Units
+                    output_lines.append(f"  Rep 3 (Aggregated Results by Units):")
+                    if not addend.aggregated_results:
+                        output_lines.append("    (No aggregated terms)")
+                    for t in addend.aggregated_results:
+                        ctx = f" {t.context}" if t.context else ""
+                        output_lines.append(f"    Subtotal: {t.quantity} {t.item}{ctx}")
+        else:
+            for r_idx, row in enumerate(self.template_grid_model.rows):
+                if row.row_type != RowType.ADDEND:
+                    output_lines.append(f"\n[Row {r_idx + 1}: Label Row] — '{row.explanation_text}'")
+                    continue
+
+                inst = row.template_instance
+                pat = inst.template.pattern if inst else "empty"
+                output_lines.append(f"\n--- Row {r_idx + 1}: Template ({pat}) ---")
+                if inst:
+                    for s in inst.slots:
+                        output_lines.append(f"  Field '{s.name}': {s.value or '□'}")
+                output_lines.append(f"  Item (Col 2): '{row.description_columns[0]}'")
+                output_lines.append(f"  Context (Col 3): '{row.description_columns[1]}'")
+
+                # Rep 1, Rep 2, Rep 3 for template instances
+                raw_toks = inst.to_token_stream(row.description_columns) if inst else []
+                subcol_str = " | ".join(f"'{t.value}'" for t in raw_toks)
                 output_lines.append(f"  Rep 1 (Ordered Subcolumns): [{subcol_str}]")
-
-                # Rep 2: Parsed Mathematical Structure (Unaggregated)
                 output_lines.append(f"  Rep 2 (Parsed Structure - Unaggregated):")
-                if not addend.parsed_terms:
-                    output_lines.append("    (No parsed terms)")
-                for t in addend.parsed_terms:
+                for t in parse_res.individual_terms:
                     ctx = f", context='{t.context}'" if t.context else ""
                     output_lines.append(f"    Quantity: {t.quantity}, Unit: '{t.item}'{ctx}")
-
-                # Rep 3: Aggregated Results by Compatible Units
                 output_lines.append(f"  Rep 3 (Aggregated Results by Units):")
-                if not addend.aggregated_results:
-                    output_lines.append("    (No aggregated terms)")
-                for t in addend.aggregated_results:
+                for t in parse_res.aggregated_terms:
                     ctx = f" {t.context}" if t.context else ""
                     output_lines.append(f"    Subtotal: {t.quantity} {t.item}{ctx}")
 
@@ -708,7 +1031,7 @@ class AdditionTokenCalculator:
         return parse_res
 
     def clear(self) -> None:
-        """Resets the model, outputs, and grid."""
+        self.template_grid_model.clear()
         self.grid_model.clear()
         self.last_parse_result = None
         self.result_var.set("")
