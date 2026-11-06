@@ -497,6 +497,11 @@ class TemplateGridModel:
                             slot.value = "0."
                         else:
                             slot.value = slot.value + "."
+                elif val.replace(".", "", 1).isdigit() and val.count(".") <= 1:
+                    if not slot.value or slot.value == "0":
+                        slot.value = val
+                    else:
+                        slot.value = slot.value + val
                 # Non-numeric characters (like '(', ')', '+') are strictly rejected for numeric slots
         else:
             desc_idx = self.cursor_col - 2

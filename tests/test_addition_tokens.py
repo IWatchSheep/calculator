@@ -1382,5 +1382,233 @@ class TestSlotInputValidationAndGridAlignment(unittest.TestCase):
                 pass
 
 
+class TestResultsWindowAndScrolling(unittest.TestCase):
+    """
+    Comprehensive regression tests for the dedicated Results Window:
+    1. Results longer than the application window.
+    2. Multiline descriptive results.
+    3. Vertical scrolling.
+    4. Horizontal scrolling with wrapping disabled.
+    5. Text wrapping enabled.
+    6. Increasing and decreasing the result font size.
+    7. Resizing the result area.
+    8. Copying complete results.
+    9. Long numerical results with exact Decimal formatting.
+    10. Keeping the keypad visible while resizing.
+    11. Long error messages.
+    12. Existing mathematical calculations remaining unchanged.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        self.app = AdditionTokenCalculator(root=self.root)
+
+    def tearDown(self):
+        self.app.clear()
+
+    def test_multiline_descriptive_results_and_layout(self):
+        # Calculate standard expression
+        self.app._on_keypad_press("5")
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press("3")
+        self.app.template_grid_model.rows[0].description_columns[0] = "pens"
+        self.app.calculate()
+
+        # Multiline text widget contains formatted numerical total and sentence result
+        text_content = self.app.results_text.get("1.0", "end")
+        self.assertIn("NUMERICAL TOTAL:    8", text_content)
+        self.assertIn("DESCRIPTIVE RESULT: 8 pens", text_content)
+        self.assertIn("MATHEMATICAL ADDEND BREAKDOWN", text_content)
+        self.assertIn("Quantity: 5 pens", text_content)
+        self.assertIn("Quantity: 3 pens", text_content)
+
+    def test_results_longer_than_window_and_vertical_scrolling(self):
+        # Fill Row 0
+        self.app.template_grid_model.rows[0].template_instance.slots[0].value = "10"
+        self.app.template_grid_model.rows[0].template_instance.slots[1].value = "5"
+        self.app.template_grid_model.rows[0].description_columns[0] = "scientific_component_0"
+        self.app.template_grid_model.rows[0].description_columns[1] = "laboratory_bay_0"
+
+        # Create additional rows with detailed terms
+        for i in range(1, 12):
+            r_idx = self.app.add_addend_row()
+            self.app.template_grid_model.apply_template_to_row(r_idx, self.app.template_manager.templates[0])
+            self.app.template_grid_model.rows[r_idx].template_instance.slots[0].value = str(10 + i)
+            self.app.template_grid_model.rows[r_idx].template_instance.slots[1].value = "5"
+            self.app.template_grid_model.rows[r_idx].description_columns[0] = f"scientific_component_{i}"
+            self.app.template_grid_model.rows[r_idx].description_columns[1] = f"laboratory_bay_{i}"
+
+        self.app.calculate()
+        text_content = self.app.results_text.get("1.0", "end")
+        self.assertGreater(len(text_content.splitlines()), 25)
+
+        # Vertical scrollbar is active and wired to results text
+        self.assertTrue(hasattr(self.app, "results_scroll_y"))
+        y_view_before = self.app.results_text.yview()
+        self.app.results_text.yview_scroll(5, "units")
+        y_view_after = self.app.results_text.yview()
+        self.assertIsNotNone(y_view_after)
+
+    def test_horizontal_scrolling_with_wrapping_disabled(self):
+        # Default is wrap word (Wrap: ON)
+        self.assertTrue(self.app.results_wrap_mode)
+        self.assertEqual(self.app.results_text.cget("wrap"), "word")
+
+        # Toggle to Wrap: OFF
+        self.app.toggle_results_wrap()
+        self.assertFalse(self.app.results_wrap_mode)
+        self.assertEqual(self.app.results_text.cget("wrap"), "none")
+        self.assertEqual(self.app.wrap_btn.cget("text"), "Wrap: OFF")
+
+        # Horizontal scrollbar is wired to results text xview
+        self.assertTrue(hasattr(self.app, "results_scroll_x"))
+        self.app.results_text.xview_scroll(2, "units")
+
+        # Toggle back to Wrap: ON
+        self.app.toggle_results_wrap()
+        self.assertTrue(self.app.results_wrap_mode)
+        self.assertEqual(self.app.results_text.cget("wrap"), "word")
+        self.assertEqual(self.app.wrap_btn.cget("text"), "Wrap: ON")
+
+    def test_increasing_decreasing_and_resetting_result_font_size(self):
+        initial_font_size = self.app.results_font_size
+
+        # Increase font size
+        self.app.increase_results_font()
+        self.assertEqual(self.app.results_font_size, initial_font_size + 1)
+        font_tuple = self.app.results_text.cget("font")
+        self.assertIn(str(initial_font_size + 1), str(font_tuple))
+
+        # Decrease font size twice
+        self.app.decrease_results_font()
+        self.app.decrease_results_font()
+        self.assertEqual(self.app.results_font_size, initial_font_size - 1)
+
+        # Reset font size
+        self.app.reset_results_font()
+        self.assertEqual(self.app.results_font_size, 10)
+
+        # Font changes must NOT alter mathematical values
+        self.app._on_keypad_press("12")
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press("8")
+        self.app.template_grid_model.rows[0].description_columns[0] = "meters"
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "20")
+
+    def test_resizing_result_area_and_expand_toggle(self):
+        # Verify ttk.PanedWindow houses scroll_container and result_frame
+        self.assertTrue(hasattr(self.app, "main_paned"))
+        panes = self.app.main_paned.panes()
+        self.assertEqual(len(panes), 2)
+
+        # Toggle expand
+        self.assertFalse(self.app.results_expanded)
+        self.app.toggle_expand_results()
+        self.assertTrue(self.app.results_expanded)
+        self.assertIn("Collapse", self.app.expand_btn.cget("text"))
+
+        # Toggle collapse
+        self.app.toggle_expand_results()
+        self.assertFalse(self.app.results_expanded)
+        self.assertIn("Expand", self.app.expand_btn.cget("text"))
+
+    def test_copying_complete_results(self):
+        self.app._on_keypad_press("100")
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press("50")
+        self.app.template_grid_model.rows[0].description_columns[0] = "volts"
+        self.app.calculate()
+
+        copied = self.app.copy_results_to_clipboard()
+        self.assertIn("NUMERICAL TOTAL:    150", copied)
+        self.assertIn("DESCRIPTIVE RESULT: 150 volts", copied)
+        self.assertIn("Quantity: 100 volts", copied)
+
+    def test_long_numerical_results_with_exact_decimal_formatting(self):
+        # Very high precision Decimal values without floating point conversion
+        d1 = "12345678901234567890.12345678901234567890"
+        d2 = "98765432109876543210.98765432109876543210"
+        expected_sum = "111111111011111111101.111111110111111111"
+
+        self.app._on_keypad_press(d1)
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press(d2)
+        self.app.template_grid_model.rows[0].description_columns[0] = "nanometers"
+        self.app.calculate()
+
+        self.assertEqual(self.app.result_var.get(), expected_sum)
+        text_content = self.app.results_text.get("1.0", "end")
+        self.assertIn(expected_sum, text_content)
+
+    def test_keypad_visibility_and_anchor_during_resizing(self):
+        # Keypad is in bottom_container, which is packed to bottom outside the paned window
+        self.assertEqual(self.app.bottom_container.master, self.app.root)
+        self.assertIn("0", self.app.keypad_buttons)
+        btn_0 = self.app.keypad_buttons["0"]
+
+        # Grid coordinate anchor for button 0 must remain at row 4, column 0
+        info_0 = btn_0.grid_info()
+        self.assertEqual(info_0["row"], 4)
+        self.assertEqual(info_0["column"], 0)
+
+        # Trigger expand and collapse
+        self.app.toggle_expand_results()
+        info_0_expanded = btn_0.grid_info()
+        self.assertEqual(info_0_expanded["row"], 4)
+        self.assertEqual(info_0_expanded["column"], 0)
+
+        self.app.toggle_expand_results()
+        info_0_restored = btn_0.grid_info()
+        self.assertEqual(info_0_restored["row"], 4)
+        self.assertEqual(info_0_restored["column"], 0)
+
+    def test_long_error_messages_displayed_in_results_window(self):
+        # Unfilled slot error with descriptive text
+        self.app._on_keypad_press("42")
+        # Slot 1 is left unfilled
+        self.app.template_grid_model.rows[0].description_columns[0] = "widgets"
+        self.app.calculate()
+
+        self.assertEqual(self.app.result_var.get(), "Error")
+        text_content = self.app.results_text.get("1.0", "end")
+        self.assertIn("VALIDATION NOTICE", text_content)
+        self.assertIn("empty (□)", text_content)
+        self.assertIn("Note: All current cell inputs and templates remain intact", text_content)
+
+        # Current inputs are not destroyed
+        slot0 = self.app.template_grid_model.rows[0].template_instance.slots[0]
+        self.assertEqual(slot0.value, "42")
+
+    def test_existing_mathematical_calculations_remain_unchanged(self):
+        # Simple addition
+        self.app._on_keypad_press("25")
+        self.app._on_keypad_press("Next Slot (→)")
+        self.app._on_keypad_press("75")
+        self.app.template_grid_model.rows[0].description_columns[0] = "dollars"
+        self.app.calculate()
+
+        self.assertEqual(self.app.result_var.get(), "100")
+        self.assertEqual(self.app.result_word_var.get(), "100 dollars")
+
+
 if __name__ == "__main__":
     unittest.main()

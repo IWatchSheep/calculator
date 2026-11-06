@@ -11,6 +11,7 @@ Features:
 - Safe GUI error handling: catches parser validation errors without uncaught exceptions.
 - Bottom-anchored keypad layout preserving keypad positioning (0 button anchor).
 - Synchronized column width calculation and horizontal scrolling preventing expression displacement.
+- Dedicated, resizable, scrollable Results Window (ttk.PanedWindow) with text size controls, wrapping toggle, and clipboard copy.
 """
 
 from decimal import Decimal
@@ -58,7 +59,7 @@ class AdditionTokenCalculator:
         self._owns_root = root is None
         self.root = root if root is not None else tk.Tk()
         self.root.title("Smart Token Addition Calculator (Math Templates & Central Input)")
-        self.root.geometry("940x880")
+        self.root.geometry("960x900")
         self.root.minsize(800, 700)
 
         # Template and Grid Models
@@ -191,7 +192,8 @@ class AdditionTokenCalculator:
     # -------------------------------------------------------------------------
 
     def _build_ui(self) -> None:
-        # 1. Bottom Container anchored to bottom
+        # 1. Bottom Container anchored firmly to the bottom of the window
+        # Contains: Central Keypad, Center Vocab/Templates Console, Inspector
         self.bottom_container = tk.Frame(self.root, bg="#f5f5f5", bd=1, relief="ridge")
         self.bottom_container.pack(side="bottom", fill="x", padx=10, pady=(4, 10))
 
@@ -216,6 +218,9 @@ class AdditionTokenCalculator:
         )
         self.inspector_frame.pack(side="left", fill="both", expand=True, padx=8, pady=8)
 
+        self.inspector_scroll_y = tk.Scrollbar(self.inspector_frame, orient="vertical")
+        self.inspector_scroll_y.pack(side="right", fill="y")
+
         self.inspector_text = tk.Text(
             self.inspector_frame,
             height=8,
@@ -225,58 +230,14 @@ class AdditionTokenCalculator:
             relief="sunken",
             bd=1,
             wrap="word",
+            yscrollcommand=self.inspector_scroll_y.set,
         )
+        self.inspector_scroll_y.config(command=self.inspector_text.yview)
         self.inspector_text.pack(fill="both", expand=True, padx=4, pady=4)
         self.inspector_text.insert("1.0", "Select a template for Column 1, click editable slots (□), and enter values via keypad.")
         self.inspector_text.configure(state="disabled")
 
-        # 2. Result Summary Frame (just above bottom controls)
-        self.result_frame = tk.Frame(self.root, bg="#ffffff", bd=2, relief="groove")
-        self.result_frame.pack(side="bottom", fill="x", padx=10, pady=4)
-
-        res_lbl = tk.Label(
-            self.result_frame,
-            text="Result Summary:",
-            font=("Segoe UI", 9, "bold"),
-            bg="#ffffff",
-            fg="#1b5e20",
-            anchor="w",
-        )
-        res_lbl.pack(fill="x", padx=8, pady=(4, 2))
-
-        result_row = tk.Frame(self.result_frame, bg="#ffffff")
-        result_row.pack(fill="x", expand=True, padx=8, pady=(0, 6))
-
-        self.result_var = tk.StringVar(value="")
-        self.result_entry = tk.Entry(
-            result_row,
-            textvariable=self.result_var,
-            font=("Consolas", 14, "bold"),
-            justify="right",
-            state="readonly",
-            readonlybackground="#f4f9f4",
-            fg="#1b5e20",
-            bd=2,
-            relief="sunken",
-            width=12,
-        )
-        self.result_entry.pack(side="left")
-
-        self.result_word_var = tk.StringVar(value="")
-        self.result_word_entry = tk.Entry(
-            result_row,
-            textvariable=self.result_word_var,
-            font=("Segoe UI", 12, "bold"),
-            justify="left",
-            state="readonly",
-            readonlybackground="#f4f9f4",
-            fg="#1b5e20",
-            bd=2,
-            relief="sunken",
-        )
-        self.result_word_entry.pack(side="left", fill="x", expand=True, padx=(8, 0))
-
-        # 3. Top Action / Selection Status Bar
+        # 2. Top Action / Selection Status Bar
         self.top_bar = tk.Frame(self.root, bg="#e8f5e9", bd=1, relief="ridge")
         self.top_bar.pack(side="top", fill="x", padx=10, pady=(10, 4))
 
@@ -358,9 +319,14 @@ class AdditionTokenCalculator:
         )
         self.selection_status_lbl.pack(fill="x")
 
-        # 4. Center Scrollable Container for Clean Display Grid (Vertical & Horizontal Scrolling)
-        self.scroll_container = tk.Frame(self.root, bg="#ffffff", bd=1, relief="sunken")
-        self.scroll_container.pack(side="top", fill="both", expand=True, padx=10, pady=4)
+        # 3. Vertical PanedWindow: Divides Mathematical Grid (Top Pane) and Results Window (Bottom Pane)
+        # Positioned right between Status Bar and Bottom Keypad Console
+        self.main_paned = ttk.PanedWindow(self.root, orient="vertical")
+        self.main_paned.pack(side="top", fill="both", expand=True, padx=10, pady=4)
+
+        # Upper Pane: Mathematical Grid Scrollable Container (Canvas + Scrollbars)
+        self.scroll_container = tk.Frame(self.main_paned, bg="#ffffff", bd=1, relief="sunken")
+        self.main_paned.add(self.scroll_container, weight=3)
 
         self.canvas = tk.Canvas(self.scroll_container, bg="#ffffff", highlightthickness=0, bd=0)
         self.scrollbar = tk.Scrollbar(self.scroll_container, orient="vertical", command=self.canvas.yview)
@@ -379,6 +345,207 @@ class AdditionTokenCalculator:
 
         self.grid_frame.bind("<Configure>", self._on_grid_frame_configure)
         self.canvas.bind("<Configure>", self._on_canvas_configure)
+
+        # Lower Pane: Dedicated, Resizable, Scrollable Results Window
+        self._build_results_panel()
+
+    def _build_results_panel(self) -> None:
+        """Constructs dedicated multiline, resizable, scrollable Results Window with toolbar controls."""
+        self.result_frame = tk.Frame(self.main_paned, bg="#ffffff", bd=2, relief="groove")
+        self.main_paned.add(self.result_frame, weight=2)
+
+        self.results_font_size = 10
+        self.results_wrap_mode = True
+        self.results_expanded = False
+
+        # Results Toolbar
+        res_header = tk.Frame(self.result_frame, bg="#f1f8e9", bd=1, relief="ridge")
+        res_header.pack(side="top", fill="x", padx=2, pady=2)
+
+        res_lbl = tk.Label(
+            res_header,
+            text="Detailed Results & Mathematical Analysis:",
+            font=("Segoe UI", 9, "bold"),
+            bg="#f1f8e9",
+            fg="#1b5e20",
+            anchor="w",
+        )
+        res_lbl.pack(side="left", padx=6, pady=3)
+
+        # Numerical and word summary entries (Preserved for backward-compatibility)
+        self.result_var = tk.StringVar(value="")
+        self.result_entry = tk.Entry(
+            res_header,
+            textvariable=self.result_var,
+            font=("Consolas", 11, "bold"),
+            justify="right",
+            state="readonly",
+            readonlybackground="#e8f5e9",
+            fg="#1b5e20",
+            bd=1,
+            relief="sunken",
+            width=12,
+        )
+        self.result_entry.pack(side="left", padx=4, pady=2)
+
+        self.result_word_var = tk.StringVar(value="")
+        self.result_word_entry = tk.Entry(
+            res_header,
+            textvariable=self.result_word_var,
+            font=("Segoe UI", 9),
+            justify="left",
+            state="readonly",
+            readonlybackground="#ffffff",
+            fg="#333333",
+            bd=1,
+            relief="sunken",
+            width=24,
+        )
+        self.result_word_entry.pack(side="left", padx=2, pady=2)
+
+        btn_kw = {"font": ("Segoe UI", 8, "bold"), "relief": "raised", "bd": 1, "padx": 4, "pady": 1}
+
+        # Toolbar controls aligned right
+        self.font_down_btn = tk.Button(
+            res_header,
+            text="A-",
+            command=self.decrease_results_font,
+            bg="#f5f5f5",
+            **btn_kw,
+        )
+        self.font_down_btn.pack(side="right", padx=1)
+
+        self.font_reset_btn = tk.Button(
+            res_header,
+            text="100%",
+            command=self.reset_results_font,
+            bg="#f5f5f5",
+            **btn_kw,
+        )
+        self.font_reset_btn.pack(side="right", padx=1)
+
+        self.font_up_btn = tk.Button(
+            res_header,
+            text="A+",
+            command=self.increase_results_font,
+            bg="#f5f5f5",
+            **btn_kw,
+        )
+        self.font_up_btn.pack(side="right", padx=1)
+
+        self.wrap_btn = tk.Button(
+            res_header,
+            text="Wrap: ON",
+            command=self.toggle_results_wrap,
+            bg="#e3f2fd",
+            fg="#0d47a1",
+            **btn_kw,
+        )
+        self.wrap_btn.pack(side="right", padx=3)
+
+        self.copy_btn = tk.Button(
+            res_header,
+            text="Copy Results",
+            command=self.copy_results_to_clipboard,
+            bg="#ede7f6",
+            fg="#4a148c",
+            **btn_kw,
+        )
+        self.copy_btn.pack(side="right", padx=3)
+
+        self.expand_btn = tk.Button(
+            res_header,
+            text="Expand ⇕",
+            command=self.toggle_expand_results,
+            bg="#fff3e0",
+            fg="#e65100",
+            **btn_kw,
+        )
+        self.expand_btn.pack(side="right", padx=3)
+
+        # Multiline text container with vertical AND horizontal scrollbars
+        self.results_text_container = tk.Frame(self.result_frame, bg="#ffffff")
+        self.results_text_container.pack(fill="both", expand=True, padx=4, pady=2)
+
+        self.results_scroll_y = tk.Scrollbar(self.results_text_container, orient="vertical")
+        self.results_scroll_x = tk.Scrollbar(self.results_text_container, orient="horizontal")
+
+        self.results_text = tk.Text(
+            self.results_text_container,
+            font=("Consolas", self.results_font_size),
+            wrap="word",
+            bg="#ffffff",
+            fg="#1b5e20",
+            bd=1,
+            relief="sunken",
+            yscrollcommand=self.results_scroll_y.set,
+            xscrollcommand=self.results_scroll_x.set,
+        )
+        self.results_scroll_y.config(command=self.results_text.yview)
+        self.results_scroll_x.config(command=self.results_text.xview)
+
+        self.results_scroll_y.pack(side="right", fill="y")
+        self.results_scroll_x.pack(side="bottom", fill="x")
+        self.results_text.pack(side="left", fill="both", expand=True)
+
+        self.results_text.insert("1.0", "Mathematical and descriptive calculation results will appear here.")
+        self.results_text.configure(state="disabled")
+
+    def increase_results_font(self) -> None:
+        """Increases results font size without altering mathematical values."""
+        if self.results_font_size < 28:
+            self.results_font_size += 1
+            self.results_text.configure(font=("Consolas", self.results_font_size))
+
+    def decrease_results_font(self) -> None:
+        """Decreases results font size without altering mathematical values."""
+        if self.results_font_size > 7:
+            self.results_font_size -= 1
+            self.results_text.configure(font=("Consolas", self.results_font_size))
+
+    def reset_results_font(self) -> None:
+        """Resets results font size to standard 10pt without altering mathematical values."""
+        self.results_font_size = 10
+        self.results_text.configure(font=("Consolas", self.results_font_size))
+
+    def toggle_results_wrap(self) -> None:
+        """Toggles results text wrapping between word-wrap and horizontal scrolling."""
+        self.results_wrap_mode = not self.results_wrap_mode
+        if self.results_wrap_mode:
+            self.results_text.configure(wrap="word")
+            self.wrap_btn.configure(text="Wrap: ON", bg="#e3f2fd", fg="#0d47a1")
+        else:
+            self.results_text.configure(wrap="none")
+            self.wrap_btn.configure(text="Wrap: OFF", bg="#fffde7", fg="#e65100")
+
+    def copy_results_to_clipboard(self) -> str:
+        """Copies full results text to clipboard and returns content."""
+        content = self.results_text.get("1.0", "end-1c")
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(content)
+        except Exception:
+            pass
+        return content
+
+    def toggle_expand_results(self) -> None:
+        """Toggles results panel between standard split and expanded view."""
+        self.results_expanded = not self.results_expanded
+        if hasattr(self, "main_paned"):
+            try:
+                if self.results_expanded:
+                    self.main_paned.pane(self.scroll_container, weight=1)
+                    self.main_paned.pane(self.result_frame, weight=4)
+                    self.expand_btn.configure(text="Collapse ⇕", bg="#ffebee", fg="#c62828")
+                else:
+                    self.main_paned.pane(self.scroll_container, weight=3)
+                    self.main_paned.pane(self.result_frame, weight=2)
+                    self.expand_btn.configure(text="Expand ⇕", bg="#fff3e0", fg="#e65100")
+            except Exception:
+                if self.results_expanded:
+                    self.expand_btn.configure(text="Collapse ⇕", bg="#ffebee", fg="#c62828")
+                else:
+                    self.expand_btn.configure(text="Expand ⇕", bg="#fff3e0", fg="#e65100")
 
     def _on_grid_frame_configure(self, _event: Optional[tk.Event] = None) -> None:
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -638,7 +805,6 @@ class AdditionTokenCalculator:
 
     def _prompt_next_row_type(self) -> None:
         """Presents explicit options for row type creation."""
-        # By default in automated testing or fast entry, creates an ADDEND row
         self.add_row_dialog()
 
     def add_row_dialog(self, row_type: RowType = RowType.ADDEND, explanation: str = "") -> int:
@@ -1074,6 +1240,24 @@ class AdditionTokenCalculator:
             self.result_var.set("Error")
             self.result_word_var.set(err_msg)
 
+            # Update Dedicated Results Text Window
+            self.results_text.configure(state="normal")
+            self.results_text.delete("1.0", "end")
+            self.results_text.insert(
+                "1.0",
+                f"╔══════════════════════════════════════════════════════════════════════════════\n"
+                f"║ VALIDATION NOTICE: Calculation Not Completed\n"
+                f"╚══════════════════════════════════════════════════════════════════════════════\n\n"
+                f"Error Details:\n  {err_msg}\n\n"
+                f"Action Required:\n"
+                f"  1. Review the highlighted incomplete slot (□) or description column.\n"
+                f"  2. Use the central keypad or label console to fill the required value.\n"
+                f"  3. Press '=' or Calculate again.\n\n"
+                f"Note: All current cell inputs and templates remain intact."
+            )
+            self.results_text.configure(state="disabled")
+
+            # Update Inspector
             self.inspector_text.configure(state="normal")
             self.inspector_text.delete("1.0", "end")
             self.inspector_text.insert(
@@ -1094,6 +1278,17 @@ class AdditionTokenCalculator:
             self.result_var.set("Error")
             self.result_word_var.set(err_msg)
 
+            self.results_text.configure(state="normal")
+            self.results_text.delete("1.0", "end")
+            self.results_text.insert(
+                "1.0",
+                f"╔══════════════════════════════════════════════════════════════════════════════\n"
+                f"║ CALCULATION ERROR\n"
+                f"╚══════════════════════════════════════════════════════════════════════════════\n\n"
+                f"Error Details:\n  {err_msg}"
+            )
+            self.results_text.configure(state="disabled")
+
             self.inspector_text.configure(state="normal")
             self.inspector_text.delete("1.0", "end")
             self.inspector_text.insert("1.0", f"Calculation Error:\n{err_msg}")
@@ -1106,10 +1301,41 @@ class AdditionTokenCalculator:
         if not parse_res:
             self.result_var.set("")
             self.result_word_var.set("Expression is empty")
+            self.results_text.configure(state="normal")
+            self.results_text.delete("1.0", "end")
+            self.results_text.insert("1.0", "Expression is empty.")
+            self.results_text.configure(state="disabled")
             return None
 
+        # Exact Decimal representation preserved
         self.result_var.set(parse_res.total_number)
         self.result_word_var.set(parse_res.word_result)
+
+        # Update Dedicated Results Text Window
+        self.results_text.configure(state="normal")
+        self.results_text.delete("1.0", "end")
+
+        result_lines = [
+            "╔══════════════════════════════════════════════════════════════════════════════",
+            f"║ NUMERICAL TOTAL:    {parse_res.total_number}",
+            f"║ DESCRIPTIVE RESULT: {parse_res.word_result}",
+            "╚══════════════════════════════════════════════════════════════════════════════",
+            "",
+            "─── MATHEMATICAL ADDEND BREAKDOWN ───",
+        ]
+        for term in parse_res.individual_terms:
+            ctx = f" ({term.context})" if term.context else ""
+            result_lines.append(f"  • Quantity: {term.quantity} {term.item}{ctx}")
+
+        if parse_res.aggregated_terms:
+            result_lines.append("")
+            result_lines.append("─── AGGREGATED CATEGORIES ───")
+            for term in parse_res.aggregated_terms:
+                ctx = f" ({term.context})" if term.context else ""
+                result_lines.append(f"  • Subtotal: {term.quantity} {term.item}{ctx}")
+
+        self.results_text.insert("1.0", "\n".join(result_lines))
+        self.results_text.configure(state="disabled")
 
         # Update Inspector
         self.inspector_text.configure(state="normal")
@@ -1196,6 +1422,11 @@ class AdditionTokenCalculator:
         self.last_parse_result = None
         self.result_var.set("")
         self.result_word_var.set("")
+
+        self.results_text.configure(state="normal")
+        self.results_text.delete("1.0", "end")
+        self.results_text.insert("1.0", "Cleared. Ready for new calculation.")
+        self.results_text.configure(state="disabled")
 
         self.inspector_text.configure(state="normal")
         self.inspector_text.delete("1.0", "end")
