@@ -10,6 +10,7 @@ Features:
 - Clean display cells free of permanent dropdown menus.
 - Safe GUI error handling: catches parser validation errors without uncaught exceptions.
 - Bottom-anchored keypad layout preserving keypad positioning (0 button anchor).
+- Synchronized column width calculation and horizontal scrolling preventing expression displacement.
 """
 
 from decimal import Decimal
@@ -357,28 +358,40 @@ class AdditionTokenCalculator:
         )
         self.selection_status_lbl.pack(fill="x")
 
-        # 4. Center Scrollable Container for Clean Display Grid
+        # 4. Center Scrollable Container for Clean Display Grid (Vertical & Horizontal Scrolling)
         self.scroll_container = tk.Frame(self.root, bg="#ffffff", bd=1, relief="sunken")
         self.scroll_container.pack(side="top", fill="both", expand=True, padx=10, pady=4)
 
         self.canvas = tk.Canvas(self.scroll_container, bg="#ffffff", highlightthickness=0, bd=0)
         self.scrollbar = tk.Scrollbar(self.scroll_container, orient="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.scrollbar_y = self.scrollbar  # Backward compatibility alias
+        self.scrollbar_x = tk.Scrollbar(self.scroll_container, orient="horizontal", command=self.canvas.xview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set, xscrollcommand=self.scrollbar_x.set)
 
         self.scrollbar.pack(side="right", fill="y")
+        self.scrollbar_x.pack(side="bottom", fill="x")
         self.canvas.pack(side="left", fill="both", expand=True)
+
+        self.total_grid_content_width = 800
 
         self.grid_frame = tk.Frame(self.canvas, bg="#ffffff")
         self.canvas_window_id = self.canvas.create_window((0, 0), window=self.grid_frame, anchor="nw")
 
-        self.grid_frame.bind("<Configure>", lambda _e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-        self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window_id, width=e.width))
+        self.grid_frame.bind("<Configure>", self._on_grid_frame_configure)
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
+
+    def _on_grid_frame_configure(self, _event: Optional[tk.Event] = None) -> None:
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _on_canvas_configure(self, event: tk.Event) -> None:
+        target_w = max(event.width, getattr(self, "total_grid_content_width", 800))
+        self.canvas.itemconfig(self.canvas_window_id, width=target_w)
 
     def _build_keypad(self) -> None:
         """Constructs bottom-anchored keypad preserving the 0 button coordinate anchor."""
         buttons = [
             ("(", 0, 0), (")", 0, 1), ("C", 0, 2), ("+", 0, 3),
-            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("Next Subcol (→)", 1, 3),
+            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("Next Slot (→)", 1, 3),
             ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("Next Col (⇒)", 2, 3),
             ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("Next Addend (↓)", 3, 3),
             ("0", 4, 0), (".", 4, 1), ("Backspace", 4, 2), ("=", 4, 3),
@@ -418,6 +431,10 @@ class AdditionTokenCalculator:
             btn.grid(row=r, column=c, padx=2, pady=2, sticky="nsew")
             self.keypad_buttons[text] = btn
 
+        # Backward compatibility alias for tests or callers referencing 'Next Subcol (→)'
+        if "Next Slot (→)" in self.keypad_buttons:
+            self.keypad_buttons["Next Subcol (→)"] = self.keypad_buttons["Next Slot (→)"]
+
     def _build_template_console(self) -> None:
         """Builds controls for selecting, previewing, and optionally saving templates."""
         self.tpl_box = tk.LabelFrame(
@@ -444,6 +461,7 @@ class AdditionTokenCalculator:
             font=("Segoe UI", 9),
         )
         self.template_combo.pack(side="left", padx=2)
+        self.template_combo.bind("<<ComboboxSelected>>", lambda _e: self._on_apply_selected_template())
 
         apply_btn = tk.Button(
             row1,
@@ -554,7 +572,11 @@ class AdditionTokenCalculator:
         pattern = self.selected_template_var.get()
         tpl = next((t for t in self.template_manager.templates if t.pattern == pattern), None)
         if tpl:
-            self.template_grid_model.apply_template_to_row(self.template_grid_model.cursor_row, tpl)
+            self.template_grid_model.apply_template_to_row(
+                self.template_grid_model.cursor_row,
+                tpl,
+                initial_values=None,  # Guarantees empty placeholders □
+            )
             self.current_preview_template = None
             self.save_tpl_btn.configure(state="disabled")
             self.render_grid()
@@ -580,14 +602,38 @@ class AdditionTokenCalculator:
 
     def _on_save_custom_template(self) -> None:
         if self.current_preview_template:
-            self.template_manager.save_custom_template(self.current_preview_template)
+            # 1. Save immutable template structure (pattern, slot metadata) without runtime values
+            clean_template = MathTemplate(
+                template_id=self.current_preview_template.template_id,
+                pattern=self.current_preview_template.pattern,
+                name=self.current_preview_template.name,
+                is_custom=True,
+            )
+            self.template_manager.save_custom_template(clean_template)
+
+            # 2. Update dropdown values and select newly saved template
             self.template_patterns = [t.pattern for t in self.template_manager.templates]
             self.template_combo.configure(values=self.template_patterns)
-            self.selected_template_var.set(self.current_preview_template.pattern)
+            self.selected_template_var.set(clean_template.pattern)
             self.save_tpl_btn.configure(state="disabled")
+
+            # 3. Apply clean saved template with empty editable placeholder (□) to active row
+            self.template_grid_model.apply_template_to_row(
+                self.template_grid_model.cursor_row,
+                clean_template,
+                initial_values=None,  # Reset slot value to empty placeholder □
+            )
+            self.current_preview_template = None
+            self.render_grid()
+
+            # 4. Notify user in inspector
             self.inspector_text.configure(state="normal")
             self.inspector_text.delete("1.0", "end")
-            self.inspector_text.insert("1.0", f"Template '{self.current_preview_template.pattern}' saved permanently to templates registry.")
+            self.inspector_text.insert(
+                "1.0",
+                f"Template '{clean_template.pattern}' saved permanently to templates registry.\n"
+                f"Column 1 is now ready with an empty editable placeholder (□)."
+            )
             self.inspector_text.configure(state="disabled")
 
     def _prompt_next_row_type(self) -> None:
@@ -631,7 +677,7 @@ class AdditionTokenCalculator:
             self.template_grid_model.backspace()
             self.grid_model.backspace()
             self.render_grid()
-        elif val == "Next Subcol (→)":
+        elif val in ("Next Slot (→)", "Next Subcol (→)"):
             self.grid_model.next_subcolumn()
             row = self.template_grid_model.rows[self.template_grid_model.cursor_row]
             if row.template_instance and row.template_instance.slots:
@@ -644,8 +690,41 @@ class AdditionTokenCalculator:
             self.render_grid()
         elif val == "Next Addend (↓)":
             self.add_row_dialog(RowType.ADDEND)
+        elif val in ("(", ")"):
+            # Parentheses define structural templates, not numeric slot contents
+            if self.template_grid_model.cursor_col == 1:
+                self.inspector_text.configure(state="normal")
+                self.inspector_text.delete("1.0", "end")
+                self.inspector_text.insert(
+                    "1.0",
+                    f"Notice: Parentheses '{val}' define mathematical template structure.\n\n"
+                    f"Each box (□) holds a single number. To use parentheses in your math,\n"
+                    f"select a parenthesized template (e.g. '(□ + □)' or '(□ + □) + □')\n"
+                    f"from the Templates dropdown or enter a parenthesized expression in\n"
+                    f"the 'Preview Pasted' box."
+                )
+                self.inspector_text.configure(state="disabled")
+            else:
+                self.grid_model.input_value(val)
+                self.render_grid()
+        elif val == "+":
+            # Operator '+' is a fixed structural symbol in the mathematical template.
+            # It must NOT automatically advance from a number slot into the next slot or Col 2.
+            # Slot selection remains strictly explicit via direct clicking or the Next Slot button.
+            if self.template_grid_model.cursor_col == 1:
+                self.inspector_text.configure(state="normal")
+                self.inspector_text.delete("1.0", "end")
+                self.inspector_text.insert(
+                    "1.0",
+                    "Notice: The '+' operator is a fixed structural symbol in the mathematical template.\n\n"
+                    "It does not automatically advance slots or modify numeric values.\n"
+                    "To move to another slot or column, click the cell directly or use the 'Next Slot (→)' button."
+                )
+                self.inspector_text.configure(state="disabled")
+            self.grid_model.input_value("+")
+            self.render_grid()
         else:
-            # Inputs value into active slot
+            # Inputs numeric digit (0-9, .) into active slot or cell
             self.template_grid_model.input_number(val)
             self.grid_model.input_value(val)
             self.render_grid()
@@ -718,43 +797,112 @@ class AdditionTokenCalculator:
 
         max_desc_cols = self.template_grid_model.get_max_description_columns()
 
+        # Synchronize column widths across all rows and header bar so long expressions
+        # or long labels never cause horizontal displacement of Columns 2 and 3.
+        col0_sync_w = 140
+
+        def _est_col1_width(row: TemplateRow) -> int:
+            if row.row_type != RowType.ADDEND or not row.template_instance:
+                return 320
+            inst = row.template_instance
+            slots_cnt = len(inst.slots)
+            chars_cnt = sum(max(len(s.value) if s.value else 1, 1) for s in inst.slots)
+            non_slot_chars = len(inst.template.pattern.replace("□", "").strip())
+            ops_cnt = max(sum(1 for ch in inst.template.pattern if ch in ("(", ")", "+")), non_slot_chars)
+            est = chars_cnt * 14 + slots_cnt * 26 + ops_cnt * 22 + 40
+            return max(320, est)
+
+        col1_sync_w = max(
+            max((_est_col1_width(r) for r in self.template_grid_model.rows), default=320),
+            320,
+        )
+
+        col2_sync_w = max(
+            max(
+                (len(r.description_columns[0]) * 10 + 36 for r in self.template_grid_model.rows if r.description_columns),
+                default=140,
+            ),
+            140,
+        )
+
+        col3_sync_w = max(
+            max(
+                (len(r.description_columns[1]) * 10 + 36 for r in self.template_grid_model.rows if len(r.description_columns) > 1),
+                default=180,
+            ),
+            180,
+        )
+
+        extra_desc_sync_w: Dict[int, int] = {}
+        for i in range(2, max_desc_cols):
+            col_num = i + 2
+            w = max(
+                max(
+                    (len(r.description_columns[i]) * 10 + 36 for r in self.template_grid_model.rows if len(r.description_columns) > i),
+                    default=140,
+                ),
+                140,
+            )
+            extra_desc_sync_w[col_num] = w
+
+        self.total_grid_content_width = (
+            col0_sync_w + col1_sync_w + col2_sync_w + col3_sync_w + sum(extra_desc_sync_w.values()) + 60
+        )
+
+        # Update canvas window width to accommodate synchronized width
+        if hasattr(self, "canvas") and hasattr(self, "canvas_window_id"):
+            cur_canvas_w = self.canvas.winfo_width()
+            target_w = max(cur_canvas_w, self.total_grid_content_width)
+            self.canvas.itemconfig(self.canvas_window_id, width=target_w)
+
         # Grid Header Bar
         header_bar = tk.Frame(self.grid_frame, bg="#e0e0e0", bd=1, relief="ridge")
         header_bar.pack(fill="x", padx=4, pady=2)
-        tk.Label(header_bar, text="Row", font=("Segoe UI", 9, "bold"), width=12, bg="#e0e0e0").pack(side="left")
+        header_bar.columnconfigure(0, weight=0, minsize=col0_sync_w)
+        header_bar.columnconfigure(1, weight=0, minsize=col1_sync_w)
+        header_bar.columnconfigure(2, weight=0, minsize=col2_sync_w)
+        header_bar.columnconfigure(3, weight=0, minsize=col3_sync_w)
+        for col_num, w in extra_desc_sync_w.items():
+            header_bar.columnconfigure(col_num, weight=0, minsize=w)
+
+        tk.Label(header_bar, text="Row", font=("Segoe UI", 9, "bold"), bg="#e0e0e0", anchor="w", padx=6).grid(row=0, column=0, sticky="w")
         tk.Label(
             header_bar,
             text="Column 1: Mathematical Template (Editable Slots □)",
             font=("Segoe UI", 9, "bold"),
             fg="#1b5e20",
             bg="#e0e0e0",
-            padx=8,
-        ).pack(side="left", padx=4)
+            anchor="w",
+            padx=6,
+        ).grid(row=0, column=1, sticky="w")
         tk.Label(
             header_bar,
             text="Column 2: Item",
             font=("Segoe UI", 9, "bold"),
             fg="#6a1b9a",
             bg="#e0e0e0",
-            padx=8,
-        ).pack(side="left", padx=4)
+            anchor="w",
+            padx=6,
+        ).grid(row=0, column=2, sticky="w")
         tk.Label(
             header_bar,
             text="Column 3: Context",
             font=("Segoe UI", 9, "bold"),
             fg="#6a1b9a",
             bg="#e0e0e0",
-            padx=8,
-        ).pack(side="left", padx=4)
-        for i in range(2, max_desc_cols):
+            anchor="w",
+            padx=6,
+        ).grid(row=0, column=3, sticky="w")
+        for col_num in sorted(extra_desc_sync_w.keys()):
             tk.Label(
                 header_bar,
-                text=f"Column {i + 2}: Extra Desc",
+                text=f"Column {col_num}: Extra Desc",
                 font=("Segoe UI", 9, "bold"),
                 fg="#6a1b9a",
                 bg="#e0e0e0",
-                padx=8,
-            ).pack(side="left", padx=4)
+                anchor="w",
+                padx=6,
+            ).grid(row=0, column=col_num, sticky="w")
 
         # Render rows
         for r_idx, row in enumerate(self.template_grid_model.rows):
@@ -763,6 +911,12 @@ class AdditionTokenCalculator:
 
             row_card = tk.Frame(self.grid_frame, bg=row_bg, bd=2 if is_active_row else 1, relief="solid" if is_active_row else "ridge")
             row_card.pack(fill="x", expand=True, padx=4, pady=3)
+            row_card.columnconfigure(0, weight=0, minsize=col0_sync_w)
+            row_card.columnconfigure(1, weight=0, minsize=col1_sync_w)
+            row_card.columnconfigure(2, weight=0, minsize=col2_sync_w)
+            row_card.columnconfigure(3, weight=0, minsize=col3_sync_w)
+            for col_num, w in extra_desc_sync_w.items():
+                row_card.columnconfigure(col_num, weight=0, minsize=w)
 
             # Row Tag
             if row.row_type == RowType.LABEL:
@@ -773,9 +927,11 @@ class AdditionTokenCalculator:
                     bg="#ede7f6",
                     fg="#4a148c",
                     width=14,
+                    anchor="w",
+                    padx=6,
                     cursor="hand2",
                 )
-                tag_lbl.pack(side="left", padx=4, pady=4)
+                tag_lbl.grid(row=0, column=0, sticky="w", padx=4, pady=4)
                 tag_lbl.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "label", 0, 0))
 
                 lbl_val = tk.Label(
@@ -784,9 +940,11 @@ class AdditionTokenCalculator:
                     font=("Segoe UI", 10, "italic"),
                     bg=row_bg,
                     fg="#333333",
+                    anchor="w",
+                    padx=8,
                     cursor="hand2",
                 )
-                lbl_val.pack(side="left", padx=8, pady=4)
+                lbl_val.grid(row=0, column=1, columnspan=max(1, max_desc_cols + 1), sticky="w", padx=4, pady=4)
                 lbl_val.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "label", 0, 0))
                 continue
 
@@ -799,14 +957,16 @@ class AdditionTokenCalculator:
                 bg="#e8f5e9" if not is_active_row else "#c8e6c9",
                 fg="#1b5e20",
                 width=14,
+                anchor="w",
+                padx=6,
                 cursor="hand2",
             )
-            tag_lbl.pack(side="left", padx=4, pady=4)
+            tag_lbl.grid(row=0, column=0, sticky="w", padx=4, pady=4)
             tag_lbl.bind("<Button-1>", lambda _e, r=r_idx: self.select_cell(r, "addend", 0, 0))
 
             # Column 1: Mathematical Template with Editable Slots
             col1_frame = tk.Frame(row_card, bg="#fafafa", bd=1, relief="groove")
-            col1_frame.pack(side="left", padx=4, pady=4)
+            col1_frame.grid(row=0, column=1, sticky="w", padx=4, pady=4)
 
             if row.template_instance:
                 self._render_template_instance_col1(col1_frame, r_idx, row.template_instance, is_active_row)
@@ -825,11 +985,11 @@ class AdditionTokenCalculator:
                     bd=2 if is_active_col else 1,
                     relief="solid" if is_active_col else "ridge",
                     cursor="hand2",
+                    anchor="w",
                     padx=8,
                     pady=3,
-                    width=12,
                 )
-                desc_cell.pack(side="left", padx=4, pady=4)
+                desc_cell.grid(row=0, column=col_number, sticky="ew", padx=4, pady=4)
                 desc_cell.bind("<Button-1>", lambda _e, r=r_idx, c=col_number: self.template_grid_model.select_col(r, c) or self.render_grid())
 
     def _render_template_instance_col1(
@@ -1045,13 +1205,24 @@ class AdditionTokenCalculator:
         self.render_grid()
 
     def run(self) -> None:
+        """Runs Tkinter mainloop catching only KeyboardInterrupt for clean termination."""
         if self._owns_root:
-            self.root.mainloop()
+            try:
+                self.root.mainloop()
+            except KeyboardInterrupt:
+                try:
+                    self.root.destroy()
+                except Exception:
+                    pass
 
 
 def main() -> None:
-    app = AdditionTokenCalculator()
-    app.run()
+    """Application entry point catching only KeyboardInterrupt for graceful exit."""
+    try:
+        app = AdditionTokenCalculator()
+        app.run()
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":

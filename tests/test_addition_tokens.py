@@ -983,5 +983,404 @@ class TestTemplateDrivenCalculatorGUI(unittest.TestCase):
         self.assertIn("Algebra steps are reserved for a future development stage", str(ctx.exception))
 
 
+
+class TestSingleSlotTemplateLifecycle(unittest.TestCase):
+    """
+    Regression tests for single-slot template lifecycle:
+    - Previewing '1' generates a reusable single-slot template '□'.
+    - Preview retains '1' as current editable value.
+    - Saving template preserves reusable placeholder '□' (not permanently storing '1').
+    - Saving resets mathematical column to show empty editable placeholder '□'.
+    - Entering another number using central keypad fills that placeholder.
+    - Selecting saved template for a new calculation shows empty editable placeholder.
+    - Saving and loading templates keeps structure separate from runtime values.
+    - Existing calculations and labels remain unchanged.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        self.app = AdditionTokenCalculator(root=self.root)
+
+    def tearDown(self):
+        self.app.clear()
+
+    def test_single_slot_preview_retains_value_but_saving_preserves_empty_placeholder(self):
+        # 1. Previewing '1' generates a reusable single-slot template '□'
+        self.app.pasted_expr_var.set("1")
+        self.app._on_preview_pasted_expression()
+
+        row = self.app.template_grid_model.rows[0]
+        self.assertIsNotNone(row.template_instance)
+        # Template pattern is strictly the placeholder '□'
+        self.assertEqual(row.template_instance.template.pattern, "□")
+        self.assertEqual(row.template_instance.template.slot_count, 1)
+
+        # 2. Preview retains '1' as current editable value
+        self.assertEqual(row.template_instance.slots[0].value, "1")
+        self.assertEqual(str(self.app.save_tpl_btn["state"]), "normal")
+
+        # 3. Saving template must preserve reusable placeholder '□', not '1'
+        self.app._on_save_custom_template()
+
+        # The saved template pattern in manager is '□'
+        saved_tpl = next((t for t in self.app.template_manager.templates if t.pattern == "□"), None)
+        self.assertIsNotNone(saved_tpl)
+        self.assertEqual(saved_tpl.pattern, "□")
+        self.assertEqual(saved_tpl.slot_count, 1)
+
+        # Mathematical column in the grid now shows the clean empty placeholder '□'
+        self.assertEqual(row.template_instance.slots[0].value, "")
+        self.assertFalse(row.template_instance.slots[0].is_filled)
+
+        # 4. Entering another number using central keypad fills that placeholder
+        self.app._on_keypad_press("4")
+        self.app._on_keypad_press("2")
+        self.assertEqual(row.template_instance.slots[0].value, "42")
+
+    def test_select_saved_single_slot_template_for_new_calculation(self):
+        # Ensure single-slot template '□' is in manager
+        single_tpl = MathTemplate(template_id="custom_single", pattern="□", name="Single term", is_custom=True)
+        self.app.template_manager.save_custom_template(single_tpl)
+
+        # Row 1: Set a calculation with labels
+        row1 = self.app.template_grid_model.rows[0]
+        row1.description_columns[0] = "pens"
+        row1.description_columns[1] = "in the drawer"
+
+        # Apply saved single-slot template '□'
+        self.app.selected_template_var.set("□")
+        self.app._on_apply_selected_template()
+
+        # Must show empty editable placeholder
+        self.assertEqual(row1.template_instance.slots[0].value, "")
+        self.assertFalse(row1.template_instance.slots[0].is_filled)
+
+        # Labels on the row must remain unchanged
+        self.assertEqual(row1.description_columns[0], "pens")
+        self.assertEqual(row1.description_columns[1], "in the drawer")
+
+        # Fill placeholder with keypad
+        self.app._on_keypad_press("5")
+        self.assertEqual(row1.template_instance.slots[0].value, "5")
+
+        # Calculate result
+        res = self.app.calculate()
+        self.assertIsNotNone(res)
+        self.assertEqual(self.app.result_var.get(), "5")
+        self.assertEqual(self.app.result_word_var.get(), "5 pens in the drawer")
+
+    def test_combobox_selection_applies_empty_placeholder_immediately(self):
+        # Ensure single-slot template '□' is available
+        single_tpl = MathTemplate(template_id="custom_single_combo", pattern="□", name="Single term", is_custom=True)
+        self.app.template_manager.save_custom_template(single_tpl)
+
+        # Put a dummy value into slot
+        self.app.template_grid_model.rows[0].template_instance.slots[0].value = "99"
+
+        # Change dropdown selection and fire event
+        self.app.selected_template_var.set("□")
+        self.app._on_apply_selected_template()
+
+        # Slot is reset to clean empty placeholder
+        self.assertEqual(self.app.template_grid_model.rows[0].template_instance.slots[0].value, "")
+
+    def test_saving_and_loading_keeps_structure_separate_from_runtime_values(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_json = Path(tmp_dir) / "custom_templates.json"
+            mgr1 = MathTemplateManager(storage_file=tmp_json)
+
+            # Parse expression with runtime value '1'
+            tpl, initial_vals = ExpressionTemplateParser.parse_pasted_expression("1")
+            self.assertEqual(tpl.pattern, "□")
+            self.assertEqual(initial_vals, ["1"])
+
+            # Save clean template to manager
+            mgr1.save_custom_template(tpl)
+
+            # Verify persisted JSON has pattern '□' and NO numbers
+            raw_json = tmp_json.read_text(encoding="utf-8")
+            self.assertIn('"pattern": "□"', raw_json)
+            self.assertNotIn('"1"', raw_json)
+
+            # Load new manager from disk
+            mgr2 = MathTemplateManager(storage_file=tmp_json)
+            loaded_tpl = next((t for t in mgr2.templates if t.pattern == "□"), None)
+            self.assertIsNotNone(loaded_tpl)
+            self.assertEqual(loaded_tpl.pattern, "□")
+
+            # Instantiating creates empty placeholder
+            new_inst = loaded_tpl.create_instance()
+            self.assertEqual(new_inst.slots[0].value, "")
+
+
+
+class TestSlotInputValidationAndGridAlignment(unittest.TestCase):
+    """
+    Regression tests for:
+    - Slot input validation: rejecting parentheses '(', ')' inside numeric slots.
+    - Preventing unbalanced parentheses corruption in numeric slots.
+    - Decimal point entered only once per slot.
+    - Keypad '+' in template mode advancing to the next slot.
+    - Grid-column alignment: Column 2 (Item) and Column 3 (Context) aligned directly below each other
+      across different rows regardless of varying Column 1 template sizes.
+    - Clean KeyboardInterrupt handling on program termination.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+            cls.gui_available = True
+        except Exception:
+            cls.gui_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        if getattr(cls, "gui_available", False) and hasattr(cls, "root"):
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def setUp(self):
+        if not self.gui_available:
+            self.skipTest("Tkinter display not available")
+        self.app = AdditionTokenCalculator(root=self.root)
+
+    def tearDown(self):
+        self.app.clear()
+
+    def test_numeric_slot_rejects_parentheses_and_unbalanced_syntax(self):
+        # Default template: □ + □
+        # 1. Give Slot 1 value '5'
+        self.app._on_keypad_press("5")
+        slot0 = self.app.template_grid_model.rows[0].template_instance.slots[0]
+        self.assertEqual(slot0.value, "5")
+
+        # 2. Click the box / select slot 0 again
+        self.app.select_cell(0, "addend", 0, 0)
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
+
+        # 3. Press '(' on keypad
+        self.app._on_keypad_press("(")
+
+        # Value must remain '5' and NOT become '5(' or '('
+        self.assertEqual(slot0.value, "5")
+
+        # Press ')' on keypad
+        self.app._on_keypad_press(")")
+        self.assertEqual(slot0.value, "5")
+
+        # Inspector provides clear feedback explaining that parentheses define template structure
+        inspector_content = self.app.inspector_text.get("1.0", "end")
+        self.assertIn("Parentheses", inspector_content)
+        self.assertIn("template structure", inspector_content)
+
+    def test_decimal_point_entered_only_once_per_slot(self):
+        # Empty slot: press '.' -> becomes '0.'
+        self.app._on_keypad_press(".")
+        slot0 = self.app.template_grid_model.rows[0].template_instance.slots[0]
+        self.assertEqual(slot0.value, "0.")
+
+        # Press '5' -> '0.5'
+        self.app._on_keypad_press("5")
+        self.assertEqual(slot0.value, "0.5")
+
+        # Press '.' again -> must still be '0.5', NOT '0.5.'
+        self.app._on_keypad_press(".")
+        self.assertEqual(slot0.value, "0.5")
+
+    def test_keypad_plus_does_not_auto_advance_and_keeps_navigation_explicit(self):
+        # In template □ + □:
+        # Enter '5' into slot 0
+        self.app._on_keypad_press("5")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
+        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
+
+        # Press '+' -> does NOT advance to slot 1 or Col 2, preserves slot value
+        self.app._on_keypad_press("+")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 0)
+        self.assertEqual(self.app.template_grid_model.cursor_col, 1)
+        slot0 = self.app.template_grid_model.rows[0].template_instance.slots[0]
+        self.assertEqual(slot0.value, "5")
+
+        # Inspector provides feedback that '+' is a template structural symbol and navigation is explicit
+        inspector_content = self.app.inspector_text.get("1.0", "end")
+        self.assertIn("'+'", inspector_content)
+        self.assertIn("structural symbol", inspector_content)
+
+        # Explicit navigation via Next Slot (→) button
+        self.app._on_keypad_press("Next Slot (→)")
+        self.assertEqual(self.app.template_grid_model.cursor_slot, 1)
+
+        # Enter '3' into slot 1
+        self.app._on_keypad_press("3")
+        slot1 = self.app.template_grid_model.rows[0].template_instance.slots[1]
+        self.assertEqual(slot1.value, "3")
+
+        # Set required item label for mathematical addend quantities
+        self.app.template_grid_model.rows[0].description_columns[0] = "pens"
+
+        # Calculate result
+        self.app.calculate()
+        self.assertEqual(self.app.result_var.get(), "8")
+        self.assertEqual(self.app.result_word_var.get(), "8 pens")
+
+    def test_grid_columns_align_across_different_template_sizes(self):
+        # Row 1: Single slot template '□'
+        tpl1 = MathTemplate(template_id="t_single", pattern="□", name="Single term")
+        self.app.template_grid_model.apply_template_to_row(0, tpl1)
+        self.app.template_grid_model.rows[0].description_columns[0] = "pens"
+        self.app.template_grid_model.rows[0].description_columns[1] = "in the drawer"
+
+        # Row 2: Three slot template '□ + □ + □' (wider than Row 1)
+        tpl2 = MathTemplate(template_id="t_three", pattern="□ + □ + □", name="Three terms")
+        row2_idx = self.app.template_grid_model.add_row(RowType.ADDEND)
+        self.app.template_grid_model.apply_template_to_row(row2_idx, tpl2)
+        self.app.template_grid_model.rows[row2_idx].description_columns[0] = "apples"
+        self.app.template_grid_model.rows[row2_idx].description_columns[1] = "in the basket"
+
+        self.app.render_grid()
+        self.root.update_idletasks()
+
+        # Check grid configuration of row cards and header bar
+        cards = [child for child in self.app.grid_frame.winfo_children() if isinstance(child, tk.Frame)]
+        header_bar = cards[0]
+        row_cards = cards[1:]
+        self.assertEqual(len(row_cards), 2)
+
+        card1 = row_cards[0]
+        card2 = row_cards[1]
+
+        # Verify header bar and row cards have identical column minsize configurations
+        self.assertEqual(header_bar.columnconfigure(1)["minsize"], 320)
+        self.assertEqual(card1.columnconfigure(1)["minsize"], 320)
+        self.assertEqual(card2.columnconfigure(1)["minsize"], 320)
+
+        self.assertEqual(header_bar.columnconfigure(2)["minsize"], 140)
+        self.assertEqual(card1.columnconfigure(2)["minsize"], 140)
+        self.assertEqual(card2.columnconfigure(2)["minsize"], 140)
+
+        self.assertEqual(header_bar.columnconfigure(3)["minsize"], 180)
+        self.assertEqual(card1.columnconfigure(3)["minsize"], 180)
+        self.assertEqual(card2.columnconfigure(3)["minsize"], 180)
+
+    def test_synchronized_alignment_with_long_mathematical_expressions_and_labels(self):
+        # Row 1: Short single-slot template '□'
+        tpl1 = MathTemplate(template_id="t_single", pattern="□", name="Single term")
+        self.app.template_grid_model.apply_template_to_row(0, tpl1)
+        self.app.template_grid_model.rows[0].description_columns[0] = "pens"
+        self.app.template_grid_model.rows[0].description_columns[1] = "desk"
+
+        # Row 2: Long nested expression template: ((□ + □) + (□ + □)) + ((□ + □) + (□ + □))
+        long_pattern = "((□ + □) + (□ + □)) + ((□ + □) + (□ + □))"
+        tpl_long = MathTemplate(template_id="t_long", pattern=long_pattern, name="Long expression")
+        row2_idx = self.app.template_grid_model.add_row(RowType.ADDEND)
+        self.app.template_grid_model.apply_template_to_row(row2_idx, tpl_long)
+
+        # Long descriptive labels in Row 2
+        long_item = "extraordinary long chemical pharmaceutical reagent grade substance"
+        long_context = "stored inside pressurized temperature-regulated cleanroom facility cabinet"
+        self.app.template_grid_model.rows[row2_idx].description_columns[0] = long_item
+        self.app.template_grid_model.rows[row2_idx].description_columns[1] = long_context
+
+        self.app.render_grid()
+        self.root.update_idletasks()
+
+        cards = [child for child in self.app.grid_frame.winfo_children() if isinstance(child, tk.Frame)]
+        header_bar = cards[0]
+        card1 = cards[1]
+        card2 = cards[2]
+
+        # Column 1 minsize must dynamically expand to accommodate long expression (well over 320)
+        sync_col1 = card1.columnconfigure(1)["minsize"]
+        self.assertGreater(sync_col1, 320)
+        self.assertEqual(card2.columnconfigure(1)["minsize"], sync_col1)
+        self.assertEqual(header_bar.columnconfigure(1)["minsize"], sync_col1)
+
+        # Column 2 minsize must dynamically expand to accommodate long item label (well over 140)
+        sync_col2 = card1.columnconfigure(2)["minsize"]
+        self.assertGreater(sync_col2, 140)
+        self.assertEqual(card2.columnconfigure(2)["minsize"], sync_col2)
+        self.assertEqual(header_bar.columnconfigure(2)["minsize"], sync_col2)
+
+        # Column 3 minsize must dynamically expand to accommodate long context label (well over 180)
+        sync_col3 = card1.columnconfigure(3)["minsize"]
+        self.assertGreater(sync_col3, 180)
+        self.assertEqual(card2.columnconfigure(3)["minsize"], sync_col3)
+        self.assertEqual(header_bar.columnconfigure(3)["minsize"], sync_col3)
+
+    def test_horizontal_scrolling_and_narrow_window_support(self):
+        # Verify horizontal scrollbar exists and is wired to canvas xview
+        self.assertTrue(hasattr(self.app, "scrollbar_x"))
+        self.assertIsInstance(self.app.scrollbar_x, tk.Scrollbar)
+
+        # Verify total_grid_content_width is calculated and positive
+        self.assertGreater(self.app.total_grid_content_width, 0)
+
+        # Verify canvas configure callback preserves minimum content width on narrow resizing
+        dummy_event = tk.Event()
+        dummy_event.width = 400  # Narrow window width below grid content width
+        self.app._on_canvas_configure(dummy_event)
+        canvas_win_w = self.app.canvas.itemcget(self.app.canvas_window_id, "width")
+        self.assertGreaterEqual(float(canvas_win_w), self.app.total_grid_content_width)
+
+    def test_graceful_exit_on_keyboard_interrupt(self):
+        from unittest.mock import patch
+        from addition_tokens.addition import main, AdditionTokenCalculator
+
+        # Create isolated root for the shutdown test so class root is not destroyed
+        isolated_root = tk.Tk()
+        isolated_root.withdraw()
+        app = AdditionTokenCalculator(root=isolated_root)
+        app._owns_root = True
+
+        # Simulate KeyboardInterrupt on mainloop
+        with patch.object(app.root, "mainloop", side_effect=KeyboardInterrupt):
+            # run() should catch KeyboardInterrupt without re-raising and cleanly destroy isolated_root
+            app.run()
+
+        with patch("addition_tokens.addition.AdditionTokenCalculator") as mock_calc:
+            mock_inst = mock_calc.return_value
+            mock_inst.run.side_effect = KeyboardInterrupt
+            # main() should catch KeyboardInterrupt without re-raising
+            main()
+
+        # Non-KeyboardInterrupt exceptions (like ValueError) must NOT be masked and should propagate
+        isolated_root2 = tk.Tk()
+        isolated_root2.withdraw()
+        try:
+            app2 = AdditionTokenCalculator(root=isolated_root2)
+            app2._owns_root = True
+            with patch.object(app2.root, "mainloop", side_effect=ValueError("test unmasked error")):
+                with self.assertRaises(ValueError):
+                    app2.run()
+        finally:
+            try:
+                isolated_root2.destroy()
+            except Exception:
+                pass
+
+
 if __name__ == "__main__":
     unittest.main()

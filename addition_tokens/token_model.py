@@ -289,9 +289,13 @@ class MathTemplateManager:
         """Explicitly saves a reviewed template to the permanent templates registry."""
         TemplateValidator.validate_addition_pattern(template.pattern)
         template.is_custom = True
-        if not any(t.pattern == template.pattern for t in self.templates):
+        existing = next((t for t in self.templates if t.pattern == template.pattern), None)
+        if existing is None:
             self.templates.append(template)
-            self._persist()
+        else:
+            existing.is_custom = True
+            existing.name = template.name
+        self._persist()
 
     def _persist(self) -> None:
         customs = [
@@ -301,7 +305,7 @@ class MathTemplateManager:
         try:
             self.storage_file.parent.mkdir(parents=True, exist_ok=True)
             with open(self.storage_file, "w", encoding="utf-8") as f:
-                json.dump(customs, f, indent=2)
+                json.dump(customs, f, indent=2, ensure_ascii=False)
         except Exception:
             pass
 
@@ -348,6 +352,8 @@ class TemplateInstance:
                     val = slot.value.strip()
                     if not val:
                         raise ValueError(f"Template field '{slot.name}' is empty (□). Please enter a number before calculating.")
+                    if not is_valid_number(val):
+                        raise ValueError(f"Invalid number '{val}' in template field '{slot.name}'. Expected a valid finite number.")
                     tokens.append(Token(value=val, token_type=TokenType.NUMBER, explicit_type=True))
 
                     # Item / Unit
@@ -479,7 +485,19 @@ class TemplateGridModel:
         if self.cursor_col == 1:
             if row.template_instance and row.template_instance.slots:
                 slot = row.template_instance.slots[self.cursor_slot]
-                slot.value = (slot.value + val).strip()
+                # Enforce valid numeric input for template slots (digits and single decimal point)
+                if val.isdigit():
+                    if slot.value == "0":
+                        slot.value = val
+                    else:
+                        slot.value = slot.value + val
+                elif val == ".":
+                    if "." not in slot.value:
+                        if not slot.value:
+                            slot.value = "0."
+                        else:
+                            slot.value = slot.value + "."
+                # Non-numeric characters (like '(', ')', '+') are strictly rejected for numeric slots
         else:
             desc_idx = self.cursor_col - 2
             if 0 <= desc_idx < len(row.description_columns):
