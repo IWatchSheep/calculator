@@ -16,7 +16,7 @@ FRESH = [
     ("Five consecutive integers sum to 105. What are they?", [19, 20, 21, 22, 23]),
     ("Three odd integers in a row total 87. What are they?", [27, 29, 31]),
     ("The sum of 2 consecutive even integers is 90. What are they?", [44, 46]),
-    ("The product of two consecutive integers is 56. Find them.", None),
+    ("The product of two consecutive integers is 56. Find them.", [7, 8]),   # was a required decline until the consecutive_product family
     ("The sum of 3 consecutive integers is 61. Find them.", None),
     # ---- two workers together
     ("Ann can paint a room in 6 hours and Bob can paint it in 3 hours. Working together, how long will they take?", [2]),

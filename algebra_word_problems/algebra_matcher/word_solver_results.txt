@@ -379,3 +379,45 @@ Measured:
   9 required declines: 9 of 9; 0 wrong.  The declined one: "How long after her friend leaves until she is caught?" has no catch / catches / overtake
   word (a safe miss, not fixed).
   44 word-solver and number-puzzle tests pass.
+
+Batch 12: the catch-up fix and three families in one commit: toward_each_other, consecutive_product, most_you_can_buy
+==============================================================
+Fix (catch_up): the family assumed the first speed left first.  "A train leaves at 40 mph. Two hours later it follows a 60 mph train that left earlier.
+  How long until it catches up?" and "... it follows the train that left at 60 mph ..." were answered 4 hours, but the 40 mph train leaves LATER and
+  is the slower one: it never catches up.  Now the head start must sit in the sentence of the second speed, that sentence's subject is the follower
+  (a pronoun alone declines, because it cannot say who leaves later), the first sentence must not follow anything, and "that left", "who started",
+  "earlier", "ahead", "before", "already", "had left", or a speed followed by a vehicle noun ("a 60 mph train") declines.
+  "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph" still returns 4.  "She is caught" is still a safe miss (fresh set 13 stays locked).
+toward_each_other  (generator "toward each other", no head start):  (s1 + s2) t = D.  "Two hikers start 18 km apart and walk toward each other at
+  4 km/h and 5 km/h. When do they meet?" is 2 hours.  Answers on "toward" or "meet" with two hourly speeds in one unit, one "<n> km|miles apart", and a
+  question for the time.  Declines "opposite", "away", a head start (later / earlier / before / follow / catch), a question for a distance ("how far from
+  the start do they meet") or a speed, mixed units, a third traveller, a spelled number that is not "Two <travellers>".  (opposite_directions
+  declines "toward" and "meet", so the two never claim the same sentence.)
+consecutive_product  (generator "consecutive_product"):  x (x + step) = P, step 2 for even / odd, 1 for plain.  "Two even numbers that come one after
+  another multiply to 168. What are they?" is 12 and 14.  The product must be a whole positive number whose equation has a whole-number root of the
+  right kind (even / odd).  A product with no such pair (170, 165, 16.5, 100 for plain integers) declines, as do sum / difference / squares questions,
+  "negative", a third number, "such", and "part of".  When the sentence does not say "positive", the reading names the negative pair as well:
+  "x = 12 and the numbers are 12 and 14 (the pair -14 and -12 also multiplies to 168)".
+most_you_can_buy  (generator budget inequality "to spend ... entry fee"):  c n + f <= B, the greatest whole n.  "You have $45. A movie costs $9 per
+  ticket. What is the greatest number of tickets you can buy?" is 5; "no more than $60, tickets $4 each, $12 entry fee" is 12.  The money, the price of one
+  and the optional fee are each found by their words (have / spend / no more than; each / per; entry fee / delivery fee), all numbers are dollars, and
+  one more item must go over the money (checked: n c + f <= B < (n + 1) c + f).  Declines: money left over, a discount / coupon / free / tax / percent,
+  the least or a "must", too little money to buy even one, a second per-item price ("$3 for each snack"), a spelled number, a total followed by "each"
+  ("$45 each").  (As in the savings family, "each / per" after the PRICE OF ONE is the role there, and after a total it declines.)
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time,
+  exact fractions (5/6 hours, 13/4 hours, readings with whole numbers), no control characters (the test over every .py file passes).
+Two required declines became answers and their expectations were changed, with notes in the tests and in fresh_word_problems.py:
+  "The product of two consecutive integers is 56. Find them." was a required decline (test_consecutive and fresh set 1); it is now 7 and 8.
+  Fresh set 1 now scores 22 solved, 0 declined, 11 required declines (was 21 / 0 / 12).
+Measured:
+  1,000 generated problems: claims 127 -> 141, wrong 0.  The 14 new claims, each equal to the stored answer:
+    toward_each_other 0150 (2), 0151 (2), 0153 (1), 0155 (5), 0158 (5) = every generated "toward each other" problem without a head start;
+    consecutive_product 0733 (3, 4), 0738 (14, 15), 0741 (14, 16), 0747 (12, 14), 0753 (5, 7) = every "product of two consecutive positive integers" problem;
+    most_you_can_buy 0363 (11), 0372 (10), 0382 (17), 0388 (10) = every "to spend ... entry fee ... What is the most" problem.
+  Hand-written problems claimed by the family solver: 25 -> 29, all match the hand-calculated answers:
+    "Two even numbers that come one after another multiply to 168" 12 and 14;  "walk toward each other at 4 km/h and 5 km/h, 18 km apart" 2 hours;
+    "The product of two consecutive odd numbers is 143" 11 and 13;  "$45 ... $9 per ticket ... greatest number of tickets" 5.
+  Fresh set 14 (16 wordings, written after all three families were finished, run once, untuned): 9 with an answer: 8 solved, 1 declined;
+  7 required declines: 7 of 7; 0 wrong.  The declined one: "Two whole numbers that follow each other multiply to 168..." ("follow each other" is
+  not one of the next-to-each-other phrases): a safe miss, not fixed.
+  49 word-solver and number-puzzle tests pass.

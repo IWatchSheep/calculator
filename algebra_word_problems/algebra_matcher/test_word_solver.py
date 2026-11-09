@@ -39,6 +39,10 @@ HAND_ANSWERS = {
     "On a farm there are some hens and some sheep. Altogether I count 30 heads and 84 feet. How many sheep?": [12, 18],
     "How many sides does a polygon have if its inside angles total 1440 degrees?": [10],
     "Two cars leave the same spot heading in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart?": [3],
+    "Two even numbers that come one after another multiply to 168. What are they?": [12, 14],
+    "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. When do they meet?": [2],
+    "The product of two consecutive odd numbers is 143. Find them.": [11, 13],
+    "You have $45. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?": [5],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -76,7 +80,8 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("Three odd integers in a row total 87. What are they?"), values(27, 29, 31))
         self.assertIsNone(answers("The sum of 3 consecutive integers is 61. Find them."))            # no whole answer
         self.assertIsNone(answers("The sum of 3 consecutive odd integers is 60. Find them."))          # parity does not fit
-        self.assertIsNone(answers("The product of two consecutive integers is 56. Find them."))
+        # a product of two consecutive integers was a required decline here until the consecutive_product family; it is now answered (7 and 8)
+        self.assertEqual(answers("The product of two consecutive integers is 56. Find them."), values(7, 8))
 
     def test_work_together(self):
         self.assertEqual(answers("Elena can clean the house in 4 hours. Vera can do it in 6 hours. How long will it take them working together?"), values(Fraction(12, 5)))
@@ -326,7 +331,7 @@ class DevelopmentWordings(unittest.TestCase):
         from fresh_word_problems import FRESH
         solved, declined, required = score(FRESH)
         print("  development wordings (first fresh set): %d solved, %d declined, %d required declines correct" % (solved, declined, required))
-        self.assertEqual((solved, declined, required), (21, 0, 12))
+        self.assertEqual((solved, declined, required), (22, 0, 11))      # 21/0/12 before consecutive_product answered the product-of-integers item
 
 
 class DevelopmentWordingsLater(unittest.TestCase):
@@ -559,6 +564,96 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (thirteenth set, distance and geometry): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 1, 9))
+
+    def test_catch_up_the_later_vehicle_must_be_faster(self):
+        # the 40 mph train is the one that leaves LATER and it is the slower one: it never catches the 60 mph train
+        self.assertIsNone(answers("A train leaves at 40 mph. Two hours later it follows a 60 mph train that left earlier. How long until it catches up?"))
+        self.assertIsNone(answers("A train leaves at 40 mph. Two hours later it follows the train that left at 60 mph. How long until it catches up?"))
+        self.assertIsNone(answers("A train leaves at 40 mph. Two hours later it follows a 60 mph train. How long until it catches up?"))
+        # the usual orders still answer
+        self.assertEqual(answers("A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How long until the fast one catches it?"), values(4))
+        self.assertEqual(answers("Sam leaves at 30 km/h. One hour later Ravi chases him at 45 km/h. How long until Ravi catches Sam?"), values(2))
+        self.assertEqual(answers("Caleb leaves at 39 mph. 2 hours later, Aiden follows the same route at 63 mph. How long after Aiden leaves will Aiden catch up?"), values(Fraction(13, 4)))
+        # a pronoun as the follower cannot say who leaves later: decline
+        self.assertIsNone(answers("She leaves at 40 mph. Two hours later he follows at 60 mph. How long until he catches her?"))
+
+    def test_toward_each_other(self):
+        self.assertEqual(answers("Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. When do they meet?"), values(2))
+        self.assertEqual(answers("Two trains start 142 miles apart and travel toward each other at 38 mph and 33 mph. When will they meet?"), values(2))
+        self.assertEqual(answers("Two cyclists are 198 km apart and ride toward each other at 64 km/h and 35 km/h. How long until they meet?"), values(2))
+        r = WS.solve("Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. When do they meet?")
+        self.assertIn("(4 + 5)t = 18", r.reading)
+        r = WS.solve("Two hikers start 10 km apart and walk toward each other at 4 km/h and 8 km/h. When do they meet?")
+        self.assertEqual(r.values, [Fraction(5, 6)])
+        self.assertIn("5/6 hours", r.reading)
+        # a head start, a question for a distance, away from, mixed units, a third hiker, a spelled number that is not the count, a speed question
+        for text in ("Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. How far from the start do they meet?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. One leaves an hour later. When do they meet?",
+                     "Two hikers start 18 km apart and walk away from each other at 4 km/h and 5 km/h. When do they meet?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 mph and 5 km/h. When do they meet?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 km/h and twice that. When do they meet?",
+                     "Three hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. When do they meet?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. How fast is each?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h for part of the day. When do they meet?",
+                     "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h, such as on half the days. When do they meet?"):
+            self.assertIsNone(answers(text), text)
+        # opposite directions still declines "toward" and "meet", and this family declines "opposite"
+        self.assertIsNone(answers("Two hikers start 18 km apart and walk in opposite directions toward the same hill at 4 km/h and 5 km/h. When do they meet?"))
+
+    def test_consecutive_product(self):
+        self.assertEqual(answers("Two even numbers that come one after another multiply to 168. What are they?"), values(12, 14))
+        self.assertEqual(answers("The product of two consecutive positive integers is 12. Find the integers."), values(3, 4))
+        self.assertEqual(answers("The product of two consecutive odd numbers is 143. Find them."), values(11, 13))
+        r = WS.solve("Two even numbers that come one after another multiply to 168. What are they?")
+        self.assertIn("x(x + 2) = 168", r.reading)
+        self.assertIn("-14 and -12 also multiplies to 168", r.reading)      # the negative pair is named, not hidden
+        r = WS.solve("The product of two consecutive positive integers is 12. Find the integers.")
+        self.assertNotIn("also multiplies", r.reading)                       # "positive" was said
+        # not two whole numbers, the wrong kind, a sum, a negative pair, a third number, a decimal
+        for text in ("Two even numbers that come one after another multiply to 170. What are they?",
+                     "Two odd numbers that come one after another multiply to 168. What are they?",
+                     "Two even numbers that come one after another multiply to 165. What are they?",
+                     "Two numbers that come one after another multiply to 168. What are they?",
+                     "The product of two consecutive integers is 100. Find the integers.",
+                     "Two even numbers that come one after another multiply to 168. What is their sum?",
+                     "Two even numbers that come one after another add to 168. What are they?",
+                     "The sum of two consecutive even integers is 50 and their product is 624. Find the integers.",
+                     "Two negative even numbers that come one after another multiply to 168. What are they?",
+                     "Three even numbers that come one after another multiply to 168. What are they?",
+                     "Two even numbers that come one after another multiply to 16.5. What are they?",
+                     "Two even numbers that come one after another multiply to 168, such that one is large. What are they?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_most_you_can_buy(self):
+        self.assertEqual(answers("You have $45. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?"), values(5))
+        self.assertEqual(answers("You can spend no more than $60. Tickets cost $4 each and there is a $12 entry fee. What is the greatest number of tickets?"), values(12))
+        self.assertEqual(answers("Hana has $157 to spend. There is a $25 entry fee, and T-shirts cost $12.00 each. What is the most T-shirts that can be bought?"), values(11))
+        self.assertEqual(answers("You have $50. A movie costs $9 per ticket. How many tickets can you buy?"), values(5))
+        r = WS.solve("You can spend no more than $60. Tickets cost $4 each and there is a $12 entry fee. What is the greatest number of tickets?")
+        self.assertIn("4n + 12 <= 60", r.reading)
+        self.assertIn("one more would cost $64, over $60", r.reading)      # one more ticket goes over the money
+        # money left over, a discount, a total that is "each", too little money, the fee alone is too much, the least, part of the year,
+        # a second per-item price, a spelled number, a percent
+        for text in ("You have $45. A movie costs $9 per ticket. How much money is left after buying the most tickets?",
+                     "You have $45. A movie costs $9 per ticket. What is the greatest number of tickets you can buy if there is a discount?",
+                     "You have $45 each. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?",
+                     "You have $5. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?",
+                     "You have $45. A movie costs $9 per ticket and a $50 entry fee. What is the greatest number of tickets you can buy?",
+                     "You have $45. A movie costs $9 per ticket. What is the least number of tickets you can buy?",
+                     "You have $45 for part of the year. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?",
+                     "You have $45. A movie costs $9 per ticket and $3 for each snack. What is the greatest number of tickets you can buy?",
+                     "You have $45. A movie costs $9 per ticket. What is the greatest number of tickets for two people?",
+                     "You have $45. Tickets cost $9 each with a 10% discount for groups. What is the greatest number of tickets you can buy?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_buy_consecutive_toward_set(self):
+        """Set 14: wordings for toward_each_other, consecutive_product and most_you_can_buy, written after all three were finished and run once,
+        untuned.  One answer is declined (a safe miss): "follow each other" is not one of the 'next to one another' phrases."""
+        from fresh_word_problems_14 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (fourteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (8, 1, 7))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

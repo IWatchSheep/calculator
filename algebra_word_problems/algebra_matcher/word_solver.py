@@ -903,8 +903,18 @@ def catch_up(problem):
     foll_s = next((s for s in sents if speeds[1].group(0) in s), None)
     if lead_s is None or foll_s is None or lead_s == foll_s:
         return None
+    # the head start belongs to the sentence of the SECOND speed, and that sentence's subject is the follower: the vehicle that leaves later
+    # must be the faster one.  "Two hours later it follows a 60 mph train that left earlier" has the slower vehicle leaving later: decline.
+    if not _HEAD_START.search(foll_s) or _HEAD_START.search(lead_s) or _FOLLOW_VERB.search(lead_s):
+        return None
+    if re.search(r"\b(?:that|who|which)\s+(?:left|started|set off|departed|had)\b|\bearlier\b|\bahead\b|\bbefore\b|\balready\b|\bhad (?:left|started)\b", t):
+        return None
+    if re.search(r"(?:" + _SPEED_UNIT + r")\s+(?:train|car|bus|bike|bicycle|truck|plane|runner|cyclist|boat|ship|jogger|walker|hiker|vehicle|motorcycle|rider|driver)\b", t):
+        return None
     foll_s = _HEAD_START.sub(" ", foll_s)
     F, Ld = _subject_tokens(foll_s), _subject_tokens(lead_s)
+    if not F or F <= {"it", "he", "she", "they", "him", "her", "them", "i", "we", "you"}:
+        return None
     for am in re.finditer(r"\bafter\s+(.*?)\s+(?:leaves|starts|departs|sets off|begins)\b", tail):
         C = set(re.findall(r"[a-z]+", am.group(1))) - _ARTICLES
         if not (C & (F - Ld)) or (C & (Ld - F)):
@@ -944,9 +954,156 @@ def polygon_angle_sum(problem):
     return Result("polygon_angle_sum", [n], eq, "n = number of sides: %s, so n = %s sides" % (eq, show_exact(n)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 16. walking / driving toward each other:   (s1 + s2) t = D      (the generator's "toward each other", without a head start)
+# ---------------------------------------------------------------------------------------------------------
+def toward_each_other(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or len(digit_numbers(problem)) != 3:
+        return None
+    if not re.search(r"\b(?:toward|towards|meet|meets)\b", t):
+        return None
+    if re.search(r"\b(?:opposite|away|same direction|later|earlier|before|head start|ahead|behind|follow\w*|catch\w*|chase\w*|round trip|return\w*|back|then|"
+                 r"current|stream|wind|stop\w*|rest\w*|break)\b", t):
+        return None
+    if re.search(_SPELLED_ANY, _TWO_VEHICLES.sub(" ", t)):
+        return None
+    speeds = list(_SPEED.finditer(t))
+    dists = list(_DIST.finditer(t))
+    if len(speeds) != 2 or len(dists) != 1:
+        return None
+    g1, g2 = _speed_group(speeds[0].group(2)), _speed_group(speeds[1].group(2))
+    if not (g1 == g2 == _dist_group(dists[0].group(2))):
+        return None
+    if not _ASKS_TIME.search(t) or _ASKS_OTHER.search(t):
+        return None
+    s1, s2, D = Fraction(speeds[0].group(1)), Fraction(speeds[1].group(1)), Fraction(dists[0].group(1))
+    if s1 <= 0 or s2 <= 0 or D <= 0:
+        return None
+    tt = D / (s1 + s2)
+    eq = "(%s + %s)t = %s" % (show(s1), show(s2), show(D))
+    return Result("toward_each_other", [tt], eq, "t = hours until they meet: %s, so t = %s hours" % (eq, show_exact(tt)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 17. product of two consecutive (even / odd) integers:   x (x + step) = P      (the generator's "consecutive_product")
+# ---------------------------------------------------------------------------------------------------------
+_PRODUCT_WORD = re.compile(r"\b(?:product|multiply|multiplies|multiplied|times each other)\b")
+_NEXT_WORD = re.compile(r"\b(?:consecutive|one after another|one after the other|in a row|back to back|next to each other|following each other)\b")
+_TWO_NUMBERS = re.compile(r"\btwo\b(?= (?:(?:consecutive|even|odd|whole|positive|natural) )*(?:numbers|integers))")
+
+
+def _isqrt_exact(n):
+    """The integer square root of the integer n, or None when n is not a perfect square."""
+    if n < 0:
+        return None
+    r = int(n ** 0.5)
+    for c in (r - 1, r, r + 1):
+        if c >= 0 and c * c == n:
+            return c
+    return None
+
+
+def consecutive_product(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 1 or nums[0][1] or "$" in t or "%" in t or _CHANGES_EQUATION.search(t):
+        return None
+    P = nums[0][0]
+    if P.denominator != 1 or P <= 0 or "." in t[nums[0][2]:nums[0][3]]:
+        return None
+    if not _TWO_NUMBERS.search(t) and not re.search(r"\bpair of\b", t):
+        return None
+    if re.search(_SPELLED_ANY, _TWO_NUMBERS.sub(" ", t)):
+        return None
+    if not _PRODUCT_WORD.search(t) or not _NEXT_WORD.search(t):
+        return None
+    if re.search(r"\b(?:sum|add|adds|plus|difference|square|squares|squared|negative|larger|smaller|greater|less|average|mean|reciprocal|quotient|divide\w*)\b", t):
+        return None
+    if not re.search(r"\b(?:what are|find|which|what numbers|what integers|name|list)\b", t):
+        return None
+    kind = "even" if re.search(r"\beven\b", t) else "odd" if re.search(r"\bodd\b", t) else ""
+    if "even" in t.split() and "odd" in t.split():
+        return None
+    step = 2 if kind else 1
+    root = _isqrt_exact(int(step * step + 4 * P))
+    if root is None:
+        return None
+    x2 = root - step
+    if x2 % 2 != 0:
+        return None
+    x = Fraction(x2, 2)
+    if x < 1 or (kind == "even" and x % 2 != 0) or (kind == "odd" and x % 2 != 1):
+        return None
+    eq = "x(x + %d) = %s" % (step, show(P))
+    note = "" if re.search(r"\bpositive\b", t) else " (the pair %s and %s also multiplies to %s)" % (show_exact(-(x + step)), show_exact(-x), show(P))
+    return Result("consecutive_product", [x, x + step], eq,
+                  "x = the smaller number: %s, so x = %s and the numbers are %s and %s%s" % (
+                      eq, show_exact(x), show_exact(x), show_exact(x + step), note))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 18. the most you can buy:   c n + f <= B, the greatest whole n      (the generator's budget inequality "to spend ... entry fee")
+# ---------------------------------------------------------------------------------------------------------
+_FEE_WORD = re.compile(r"\b(?:fee|admission|entry|membership|delivery|shipping|deposit|cover charge|fixed|setup|registration)\b")
+_BUDGET_BEFORE = re.compile(r"\b(?:have|has|had|budget of|spend|spending|no more than|at most|up to|only|limit of|brought|bring|saved|allowance of|with)\s*(?:only\s+)?$")
+_BUDGET_AFTER = re.compile(r"^\s*(?:to spend|available|to use|budget|in total|total)\b")
+_UNIT_AFTER = re.compile(r"^\s*(?:(?:for|a)\s+)?(?:each|apiece|per\s+\w+)\b")
+_UNIT_BEFORE = re.compile(r"\b(?:cost|costs|costing|priced at|sell for|sells for|sold for|are|is|at)\s*$")
+_BUY_OTHER = re.compile(r"\b(?:discount\w*|coupon\w*|free|sale|bogo|off|tax|tip|bulk|every|additional|after the first|for the first|profit|least|fewest|minimum|"
+                        r"must|how much|left|change|remain\w*|leftover|spare|altogether|total cost|loan|borrow\w*|interest|per month|a month|a week|per week)\b|%")
+
+
+def most_you_can_buy(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) not in (2, 3) or not all(n[1] for n in nums) or _CHANGES_EQUATION.search(t):
+        return None
+    if re.search(_SPELLED_ANY, t) or _BUY_OTHER.search(t.replace("no more than", " ").replace("at most", " ").replace("the most", " ")):
+        return None
+    # the question: the greatest number you can buy (not money left over)
+    q = max(t.rfind("what "), t.rfind("how "), t.rfind("which "))
+    if q == -1:
+        return None
+    tail = t[q:]
+    asks_most = re.search(r"\b(?:greatest|largest|most|maximum|max|biggest|highest)\b", tail) or re.search(r"\bhow many\b.*\b(?:can|could)\b.*\b(?:buy|afford|purchase|get)\b", tail) \
+        or re.search(r"\bhow many\b.*\bcan be (?:bought|purchased)\b", tail)
+    if not asks_most or not re.search(r"\b(?:buy|bought|afford|purchase\w*|get|number|many)\b", tail):
+        return None
+    roles = {"fee": [], "unit": [], "budget": []}
+    for n in nums:
+        before, after = t[:n[2]].rstrip(), t[n[3]:]
+        window = " ".join(before.split()[-3:]) + " " + " ".join(after.split()[:3])
+        if _FEE_WORD.search(window) and not _UNIT_AFTER.match(after):
+            roles["fee"].append(n)
+        elif _UNIT_AFTER.match(after):
+            roles["unit"].append(n)
+        elif _BUDGET_BEFORE.search(before) or _BUDGET_AFTER.match(after):
+            roles["budget"].append(n)
+        elif _UNIT_BEFORE.search(before):
+            roles["unit"].append(n)
+        else:
+            return None
+    if len(roles["unit"]) != 1 or len(roles["budget"]) != 1 or len(roles["fee"]) > 1 or len(nums) != 2 + len(roles["fee"]):
+        return None
+    B, c = roles["budget"][0][0], roles["unit"][0][0]
+    f = roles["fee"][0][0] if roles["fee"] else Fraction(0)
+    # a budget or a fee followed by "each / apiece / per" would be a price of one, not the money available
+    if c <= 0 or B <= 0 or f < 0:
+        return None
+    n = (B - f) // c
+    if n < 1 or not (n * c + f <= B < (n + 1) * c + f):
+        return None
+    eq = "%sn + %s <= %s" % (show(c), show(f), show(B)) if f else "%sn <= %s" % (show(c), show(B))
+    return Result("most_you_can_buy", [Fraction(n)], eq,
+                  "n = the number bought: %s, so n <= %s and the most is %s (one more would cost $%s, over $%s)" % (
+                      eq, show_exact((B - f) / c), show_exact(Fraction(n)), show_exact((n + 1) * c + f), show_exact(B)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
-            opposite_directions, catch_up, polygon_angle_sum]
+            opposite_directions, catch_up, polygon_angle_sum,
+            toward_each_other, consecutive_product, most_you_can_buy]
 
 
 def solve(problem):
