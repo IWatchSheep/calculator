@@ -461,3 +461,38 @@ Measured:
   7 required declines: 7 of 7; 0 wrong.  The declined one: "A motorboat goes 45 miles with the current in 3 hours and 20 miles against the
   current in 2 hours" (words between the distance and "in 3 hours"): a safe miss, not fixed.
   55 word-solver and number-puzzle tests pass.
+
+Batch 14: the hour abbreviation and two families in one commit: catch_up_clock, periodic_growth
+==============================================================
+Fix (still_water_current): the hand-written boat sentence says "in 2 h" and the family only accepted "hour" / "hr".  A lone "h" after the time is now hours:
+  "24 km in 2 h, ... 12 km in 2 h" returns 9 km/h in still water.  "2 hours", "2 hr" and "2h" answer; "h" never matches inside another word ("2 hat",
+  "2 hm" decline) and minutes decline ("2 min").
+catch_up_clock  (a head start given as clock times):  s1 (t + h) = s2 t.  "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph.
+  When does the car catch the cyclist?" is 1 hour after the car leaves (reading: 12(t + 2) = 36t, "3 hours after noon").  "noon" is 12:00 (0 hours), "H pm" is
+  H hours after noon (12 pm = noon); the head start is the difference of the two departures, and the order of the two sentences does not matter: the LATER
+  departure is the follower and must be the faster one.  The question must name the catching vehicle (the later one) before "catch / overtake", so a
+  question that names the earlier vehicle, or only "it", declines.  Declines: minutes ("2:30 pm"), half past / quarter / o'clock, am, midnight, the same time, equal or
+  slower follower, a question for a distance, a stop, "part of", "also", "another".
+periodic_growth  (generator "Exponential": doubles / triples / half-life):  "A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?" is 8 hours
+  (810/10 = 81 = 3^4, 4 periods of 2 hours).  Doubles (every 3 hours from 500 to 8000 is 12 hours) and halves (every 5 years from 160 g to 20 g is 15 years) too;
+  "half-life of 2 years" is a halving period.  The period is "every N <unit>" (digits, or a spelled count, or "every hour" = 1) or the half-life; exactly one of
+  doubles / triples / halves; the end amount is the one after reach / to / become / decays to / when will (there be), the other number is the start; the
+  start-to-end ratio must be an exact whole power of 2 or 3 (a whole number of periods) in the right direction (growing for doubles / triples, shrinking for halves).
+  Declines: a ratio that is not an exact power (800 / 10, 100 / 10), the wrong direction, a question for another unit ("in minutes"), two kinds, a question for an
+  amount after a time, quadruples / twice / percent / fold, a spelled number other than the period, "such", "part of".  Periods may be fractions: every 1.5 hours,
+  10 to 80, is 9/2 hours, exact.
+A second name collision, caught again by the duplicate-name test: periodic_growth first reused _TIME_UNIT (work_together's) and every work problem declined (the
+  generated claims for it went to 0).  Renamed _GROWTH_UNIT; the test fails if any module-level name is defined twice, and it did its job.
+Checks on each family (test_word_solver.py): spelled counts (only the period may be spelled), each / apiece / per after a total (no prices), such / of the year / for part of /
+  of the time, exact fractions in values and readings (4/3 hours, 9/2 hours), no control characters (the test over every .py file passes).
+Measured:
+  1,000 generated problems: claims 151 -> 165, wrong 0.  The 14 new claims, each equal to the stored answer, are every generated doubles / triples / half-life problem:
+    periodic_growth 0164 (6 years), 0165 (40 minutes), 0166 (10 days), 0167 (12 days), 0168 (10 years), 0169 (16 hours), 0170 (8 days), 0171 (30 hours),
+    0172 (18 years), 0173 (18 hours), 0174 (12 days), 0175 (5 years), 0176 (4 hours), 0177 (15 days).
+    catch_up_clock adds no generated claims: the generator has no clock-time catch-up template.
+  Hand-written problems claimed by the family solver: 31 -> 36, all match the hand-calculated answers:
+    "Rowing ... 24 km in 2 h ... 12 km in 2 h ... What's my rowing speed in still water?" 9;  "A bacteria colony doubles every 3 hours. Starting at 500 cells, when will
+    there be 8000?" 12;  "A radioactive sample halves every 5 years. When does 160 g become 20 g?" 15;  "A cyclist leaves at noon going 12 mph. A car leaves the same place
+    at 2 pm going 36 mph along the same road. When does the car catch the cyclist?" 1 hour;  "... a yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?" 8.
+  Fresh set 16 (15 wordings, written after everything was finished, run once, untuned): 8 with an answer: 8 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
+  59 word-solver and number-puzzle tests pass.

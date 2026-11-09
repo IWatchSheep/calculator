@@ -1106,7 +1106,7 @@ def most_you_can_buy(problem):
 # ---------------------------------------------------------------------------------------------------------
 # 19. still water and current:   b + c = D1/T1 (downstream),  b - c = D2/T2 (upstream)      (the generator's "boat")
 # ---------------------------------------------------------------------------------------------------------
-_LEG = re.compile(NUM + r"\s*(km|kilometers?|kilometres?|miles?|mi|meters?|metres?)\b(?:\s+(?:downstream|upstream))?\s+in\s+" + NUM + r"\s*(?:hours?|hrs?)\b")
+_LEG = re.compile(NUM + r"\s*(km|kilometers?|kilometres?|miles?|mi|meters?|metres?)\b(?:\s+(?:downstream|upstream))?\s+in\s+" + NUM + r"\s*(?:hours?\b|hrs?\b|h(?![a-z]))")      # "2 hours", "2 hr", "2 h" (a lone h, never inside another word)
 _DOWNSTREAM = re.compile(r"\b(?:downstream|with the (?:current|stream|flow)|down the river|down river)\b")
 _UPSTREAM = re.compile(r"\b(?:upstream|against the (?:current|stream|flow)|against it|up the river|up river)\b")
 
@@ -1278,11 +1278,154 @@ def three_numbers(problem):
                   "%s, so x = %s, y = %s, z = %s" % (", ".join(facts), show_exact(out[0]), show_exact(out[1]), show_exact(out[2])))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 23. a clock head start:  "leaves at noon ... leaves at 2 pm ... when does the car catch the cyclist?"    s1 (t + h) = s2 t
+# ---------------------------------------------------------------------------------------------------------
+_TIME_EXPR = re.compile(r"\b(?:(noon)|(\d{1,2})\s*(?:pm|p\.m\.))(?![\w:])")
+_CATCHER = re.compile(r"\b(?:when|how long|how many hours)\b(?:\s+(?:does|do|did|will|would|can|could|is|until|after))*\s+(.*?)\s+(?:catch|catches|overtake|overtakes)\b")
+_QUESTION_STOP = {"it", "he", "she", "they", "him", "her", "them", "i", "we", "you", "up", "one"}
+
+
+def _clock_hours(m):
+    """Hours after noon for 'noon' (0) or 'H pm' (H, with 12 pm = noon); None for anything else."""
+    if m.group(1):
+        return Fraction(0)
+    h = int(m.group(2))
+    if h == 12:
+        return Fraction(0)
+    return Fraction(h) if 1 <= h <= 11 else None
+
+
+def catch_up_clock(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    if re.search(r"\b(?:later|earlier|head start|am|midnight|minutes?|half past|quarter|opposite|toward|towards|meet|meets|apart|return\w*|back|stops?|rests?|breaks?|"
+                 r"detour|lunch|current|stream|wind|also|another)\b|\d:\d\d|a\.m\.|o'clock", t):
+        return None
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    qs = [s for s in sents if _CATCH_CUE.search(s) and re.search(r"\b(?:when|how long|how many hours)\b", s)]
+    if len(qs) != 1 or _ASKS_OTHER.search(qs[0]):
+        return None
+    facts = [s for s in sents if s is not qs[0]]
+    facts = [s for s in facts if _SPEED.search(s)]
+    if len(facts) != 2:
+        return None
+    infos = []
+    clock_digits = 0
+    for s in facts:
+        sp, tm = list(_SPEED.finditer(s)), list(_TIME_EXPR.finditer(s))
+        if len(sp) != 1 or len(tm) != 1:
+            return None
+        hrs = _clock_hours(tm[0])
+        if hrs is None:
+            return None
+        clock_digits += 0 if tm[0].group(1) else 1
+        infos.append((Fraction(sp[0].group(1)), hrs, _speed_group(sp[0].group(2)), _subject_tokens(s)))
+    if infos[0][2] != infos[1][2] or len(digit_numbers(problem)) != 2 + clock_digits:
+        return None
+    (s1, h1, _, tok1), (s2, h2, _, tok2) = infos
+    if h1 == h2:
+        return None
+    if h1 > h2:                                          # the vehicle named second left first
+        (s1, h1, _, tok1), (s2, h2, _, tok2) = (s2, h2, _, tok2), (s1, h1, _, tok1)
+    head = h2 - h1
+    if s1 <= 0 or s2 <= s1:
+        return None                                      # the one that leaves later must be the faster one
+    cm = _CATCHER.search(qs[0])
+    if not cm:
+        return None
+    C = set(re.findall(r"[a-z]+", cm.group(1))) - _ARTICLES - _QUESTION_STOP
+    if not C or not (C & (tok2 - tok1)) or (C & (tok1 - tok2)):
+        return None
+    tt = s1 * head / (s2 - s1)
+    eq = "%s(t + %s) = %st" % (show(s1), show(head), show(s2))
+    return Result("catch_up_clock", [tt], eq,
+                  "the later vehicle leaves %s hours after the earlier one; t = hours after it leaves: %s, so t = %s hour%s (%s after noon)" % (
+                      show_exact(head), eq, show_exact(tt), "" if tt == 1 else "s", show_exact(h2 + tt) + (" hour" if h2 + tt == 1 else " hours")))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 24. doubling, tripling, halving every period, exact whole numbers of periods     (the generator's "Exponential": doubles / triples / half-life)
+# ---------------------------------------------------------------------------------------------------------
+_GROWTH_UNIT = r"(?:hours?|hrs?|days?|weeks?|months?|years?|minutes?|mins?|seconds?|secs?)"
+_TIME_NAME = {"hour": "hour", "hr": "hour", "day": "day", "week": "week", "month": "month", "year": "year", "minute": "minute", "min": "minute", "second": "second", "sec": "second"}
+_PERIOD_PATTERNS = [
+    re.compile(r"\bevery\s+(\d+(?:\.\d+)?|two|three|four|five|six|seven|eight|nine|ten)\s+(" + _GROWTH_UNIT + r")\b"),
+    re.compile(r"\bevery\s+()(" + _GROWTH_UNIT + r")\b"),
+    re.compile(r"\bhalf-life of\s+(\d+(?:\.\d+)?)\s+(" + _GROWTH_UNIT + r")\b"),
+]
+_GROW_END_CUE = re.compile(r"(?:reach(?:es)?|to|becomes?|decays to|falls to|grows to|when will(?: there be)?|will there be|there be|there are|are there)\s*$")
+
+
+def _unit_name(word):
+    return _TIME_NAME[word.rstrip("s")] if word.rstrip("s") in _TIME_NAME else _TIME_NAME[word]
+
+
+def periodic_growth(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or re.search(r"\b(?:per|twice|thrice|quadrupl\w*|quarter\w*|tenfold|fold|then|other|percent)\b", t):
+        return None
+    kinds = [k for k, pat in (("double", r"\b(?:doubles|double|doubling|doubled)\b"), ("triple", r"\b(?:triples|triple|tripling|tripled)\b"),
+                              ("halve", r"\b(?:halves|halving|halved|half-life)\b")) if re.search(pat, t)]
+    if len(kinds) != 1:
+        return None
+    found = [m for pat in _PERIOD_PATTERNS for m in pat.finditer(t)]
+    if len(found) != 1:
+        return None
+    pm = found[0]
+    period = fr(pm.group(1)) if pm.group(1) else Fraction(1)
+    unit = _unit_name(pm.group(2))
+    work = t[:pm.start()] + " " + t[pm.end():]
+    work = work.replace("half-life", " ")
+    if re.search(r"\b(?:two|three|four|five|six|seven|eight|nine|ten|half)\b", work):
+        return None
+    nums = digit_numbers(problem)
+    period_digit = pm.start(1) if pm.group(1) and pm.group(1)[0].isdigit() else None
+    others = [n for n in nums if period_digit is None or not (n[2] <= period_digit < n[3])]
+    if len(others) != 2 or len(nums) != len(others) + (1 if period_digit is not None else 0) or any(n[1] for n in others):
+        return None
+    ends = [n for n in others if _GROW_END_CUE.search(t[:n[2]].rstrip())]
+    if len(ends) != 1:
+        return None
+    end = ends[0]
+    start = others[0] if others[1] is end else others[1]
+    A, B = start[0], end[0]
+    if A <= 0 or B <= 0 or period <= 0:
+        return None
+    # the question asks for the time, in the unit of the period
+    qs = [s for s in re.split(r"[.?!]\s*", t) if re.search(r"\b(?:when|how long|how many " + _GROWTH_UNIT + r"|after how many)\b", s)]
+    if len(qs) != 1:
+        return None
+    for w in re.findall(_GROWTH_UNIT, qs[0]):
+        if _unit_name(w) != unit:
+            return None
+    f = Fraction(3) if kinds[0] == "triple" else Fraction(2)
+    ratio = (A / B) if kinds[0] == "halve" else (B / A)
+    if ratio <= 1 or ratio.denominator != 1:
+        return None
+    k, r = 0, int(ratio)
+    while r % int(f) == 0:
+        r //= int(f)
+        k += 1
+    if r != 1 or k < 1:
+        return None
+    total = period * k
+    if kinds[0] == "halve":
+        eq = "%s / 2^k = %s" % (show(A), show(B))
+        step = "%s / %s = %s = 2^%d" % (show(A), show(B), show_exact(ratio), k)
+    else:
+        eq = "%s x %d^k = %s" % (show(A), int(f), show(B))
+        step = "%s / %s = %s = %d^%d" % (show(B), show(A), show_exact(ratio), int(f), k)
+    return Result("periodic_growth", [total], eq,
+                  "%s, so %d periods of %s %ss: t = %s %ss" % (step, k, show_exact(period), unit, show_exact(total), unit))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
-            still_water_current, ratio_split, three_numbers]
+            still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth]
 
 
 def solve(problem):

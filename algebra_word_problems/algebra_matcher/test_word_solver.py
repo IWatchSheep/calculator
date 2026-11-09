@@ -45,6 +45,11 @@ HAND_ANSWERS = {
     "You have $45. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?": [5],
     "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water?": [6],
     "The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What are the numbers?": [8, 10, 12],
+    "Rowing with the current I cover 24 km in 2 h, but against it only 12 km in 2 h. What's my rowing speed in still water?": [9],
+    "A bacteria colony doubles every 3 hours. Starting at 500 cells, when will there be 8000?": [12],
+    "A radioactive sample halves every 5 years. When does 160 g become 20 g?": [15],
+    "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph along the same road. When does the car catch the cyclist?": [1],
+    "An investment of bacteria... a yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?": [8],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -753,6 +758,82 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (fifteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (7, 1, 7))
+
+    def test_hour_abbreviation_h(self):
+        # a lone "h" after the time is hours; "2 hours" and "2 hr" stay answered; "h" never matches inside another word
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2 h, but against it only 12 km in 2 h. What's my rowing speed in still water?"), values(9))
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. What is my rowing speed in still water?"), values(9))
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2 hr, but against it only 12 km in 2 hr. What is my rowing speed in still water?"), values(9))
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2h, but against it only 12 km in 2h. What is my rowing speed in still water?"), values(9))
+        self.assertIsNone(answers("Rowing with the current I cover 24 km in 2 hat, but against it only 12 km in 2 h. What is my rowing speed in still water?"))
+        self.assertIsNone(answers("Rowing with the current I cover 24 km in 2 hm, but against it only 12 km in 2 h. What is my rowing speed in still water?"))
+        self.assertIsNone(answers("Rowing with the current I cover 24 km in 2 min, but against it only 12 km in 2 h. What is my rowing speed in still water?"))
+
+    def test_catch_up_clock(self):
+        self.assertEqual(answers("A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph. When does the car catch the cyclist?"), values(1))
+        self.assertEqual(answers("A cyclist leaves at 1 pm going 12 mph. A car leaves the same place at 4 pm going 36 mph. When does the car catch the cyclist?"), values(Fraction(3, 2)))
+        # the order of the two sentences does not matter: the later departure is the follower
+        self.assertEqual(answers("A car leaves the same place at 2 pm going 36 mph. A cyclist leaves at noon going 12 mph. When does the car catch the cyclist?"), values(1))
+        r = WS.solve("A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph. When does the car catch the cyclist?")
+        self.assertIn("12(t + 2) = 36t", r.reading)
+        self.assertIn("t = 1 hour (3 hours after noon)", r.reading)
+        r = WS.solve("A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 30 mph. When does the car catch the cyclist?")
+        self.assertEqual(r.values, [Fraction(4, 3)])                    # 24 / 18, exact
+        self.assertIn("4/3 hours", r.reading)
+        # the later vehicle is not faster (slower or equal), the question names the earlier vehicle, minutes, half past, am, the same time,
+        # a question for a distance or with only "it", a stop, part of the way
+        for text in ("A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 6 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 36 mph. A car leaves the same place at 2 pm going 12 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 12 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph. When does the cyclist catch the car?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2:30 pm going 36 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at half past two going 36 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at 9 am going 12 mph. A car leaves the same place at noon going 36 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at noon going 36 mph. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph. How far from the start does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph. When does it catch up?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph and stops for lunch. When does the car catch the cyclist?",
+                     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph for part of the way. When does the car catch the cyclist?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_periodic_growth(self):
+        self.assertEqual(answers("A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?"), values(8))
+        self.assertEqual(answers("A bacteria colony doubles every 3 hours. Starting at 500 cells, when will there be 8000?"), values(12))
+        self.assertEqual(answers("A radioactive sample halves every 5 years. When does 160 g become 20 g?"), values(15))
+        self.assertEqual(answers("Doubles every 3 hours from 500 to 8000. How long?"), values(12))
+        self.assertEqual(answers("A bacteria culture starts with 1000 cells and doubles every 20 minutes. When will it reach 4,000 cells?"), values(40))
+        self.assertEqual(answers("A substance has a half-life of 2 years. How long until 200 g decays to 25 g?"), values(6))
+        self.assertEqual(answers("A culture doubles every two hours, starting at 10 cells. When does it reach 160?"), values(8))      # a spelled period is a count the equation uses
+        r = WS.solve("A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?")
+        self.assertIn("810 / 10 = 81 = 3^4", r.reading)
+        self.assertIn("4 periods of 2 hours: t = 8 hours", r.reading)
+        r = WS.solve("A culture doubles every 1.5 hours, starting at 10 cells. When does it reach 80?")
+        self.assertEqual(r.values, [Fraction(9, 2)])                    # an exact fraction: 3 periods of 3/2
+        self.assertIn("9/2 hours", r.reading)
+        # a ratio that is not an exact power, the wrong direction, a different unit asked, two kinds, a question for an amount, a spelled other number
+        for text in ("A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 800?",
+                     "A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 10?",
+                     "A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 5?",
+                     "A culture doubles every 3 hours, starting at 10 cells. When does it reach 100?",
+                     "Halves every 5 years from 20 g to 160 g. How long?",
+                     "A yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810 cells, in minutes?",
+                     "A culture triples every 2 hours and doubles every 3 hours. When does it reach 810 from 10?",
+                     "A yeast culture triples every 2 hours, starting at 10 cells. How many cells after 8 hours?",
+                     "A culture quadruples every 2 hours, starting at 10 cells. When does it reach 160?",
+                     "A culture doubles every 3 hours from 500 to 8000 and then triples. When does it reach that?",
+                     "A culture doubles every 3 hours from 500 to 4000, for part of the time. How long?",
+                     "A culture doubles every 3 hours from 500 to 4000, such as twice. How long?",
+                     "A culture doubles every 3 hours from 500 to 8000 percent. How long?",
+                     "A culture doubles every 3 hours from 500 to 4000 with three dishes. How long?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_clock_and_growth_set(self):
+        """Set 16: wordings for the hour abbreviation, catch_up_clock and periodic_growth, written after everything was finished and run once, untuned."""
+        from fresh_word_problems_16 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (sixteenth set, h / clock / growth): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (8, 0, 7))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
