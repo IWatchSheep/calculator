@@ -185,3 +185,34 @@ Batch 6 patch: a disabled check and exact amounts in the reading (found by Grok)
   * Not changed (outside the request): the proportion reading still uses show() for its answer.
   1,000 generated problems: claims 88, wrong 0.  15 word-solver tests and 12 number-puzzle tests pass.
   The fresh sets 6 and 7 are unaffected (their results were the same before and after the fix).
+
+Batch 7: money split between two interest rates (the generator's "interest")
+============================================================================
+New family two_rate_interest:  r1*x + r2*(T - x) = I.   Answers only when
+  * there are exactly four numbers: two percents and two dollar amounts (a question that repeats one rate, such as
+    "How much was invested at 6%?", is not counted as a new number),
+  * the amount nearest a word like "interest" / "earned" is the interest, and the other amount is the money invested
+    (the two must be at least two words apart in distance, or it declines),
+  * the money is SPLIT between the rates ("part ... the rest", "some ... and some", "two accounts", "one at ..."),
+  * the interest lies strictly between T*r1 and T*r2 (a positive amount at each rate),
+  * nothing else changes the equation: no years / months / "how long", compound, monthly, same interest / equal,
+    "how much more" / extra, "times as", twice/double/half, a rate asked for, a loan, or a spelled count of three or more.
+  Decided but left for later (as asked): interest for how long, equal-interest comparisons, an extra amount, compound.
+  The stored amounts are exact fractions and the reading shows them with show_exact:
+  "0.03x + 0.05(24000 - x) = 920 ... so $14000 at 3% and $10000 at 5%".
+Measured:
+  1,000 generated problems: claims 88 -> 93.  The 5 new claims are exactly the 5 "Simple interest" two-rate problems
+  (ids 0863, 0867, 0872, 0875, 0881); every dollar amount equals the stored answer, wrong 0.  The other 15 problems in the
+  "Simple interest" category (time, equal interest, extra amount) are declined, and the interest family claimed nothing
+  outside that category.
+  Hand-written problems claimed by the family solver: 16 -> 18 (the $10,000 / $420 account and the $8,000 / $400 investment),
+  all 18 match the hand-calculated answers: 4000 + 6000 and 4000 + 4000.
+  Fresh set 8 (9 wordings, written after the family, run once, untuned): 5 with an answer: 4 solved, 1 declined
+  ("Mia splits $30,000 ...": "splits" is not a cue word; not fixed), 4 required declines: 4 of 4, 0 wrong.
+  One of the required declines (a bank paying 3% on $4,000 and 5% on another amount) repeats a sentence in the unit tests.
+  Pipeline on the 100 hand-written problems (reader, families, matcher), right first / in top 3:
+      set A 53/60, 60/60 and set B 35/40, 40/40 - unchanged by this batch: the matcher already put the two interest problems first.
+Debugging notes: (1) the first version declined every problem containing "year" ("After one year ..."): the word list now
+  rejects only "two years", months, and "how long"; (2) a repeated rate in the question was counted as a fifth number, which
+  declined both hand-written problems; (3) without the "split" cue, "3% on $4,000 and 5% on another amount" is only
+  declined by luck (the arithmetic gives a negative amount), so the cue is required.

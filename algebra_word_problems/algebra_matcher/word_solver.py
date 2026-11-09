@@ -398,7 +398,67 @@ def two_solution_mix(problem):
                       show(p1), show(T), show(p2), eq, show_exact(x1), unit, show(p1), show_exact(x2), unit, show(p2)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix]
+# ---------------------------------------------------------------------------------------------------------
+# 7. money split between two interest rates:   r1*x + r2*(T - x) = I      (the generator's "interest")
+# ---------------------------------------------------------------------------------------------------------
+_INT_WORD = re.compile(r"\b(?:interest|earn|earns|earned|earning|earnings|yield|yields|yielded|return|returns)\b")
+_INT_OTHER = re.compile(r"\b(?:compound\w*|monthly|quarterly|per month|each month|a month|semi|daily|months?|two years|how long|how many years|"
+                        r"same interest|equal|equally|overall|how much more|extra|additional|rate of|what rate|loan|borrow\w*|owe\w*|"
+                        r"times as|twice|double|triple|half|as much|more than|less than|three|four|five|six|seven|eight|nine|ten)\b")
+_INVEST_WORD = re.compile(r"\b(?:invest\w*|account|accounts|deposit\w*|savings|bonds?|put|saved|fund|funds)\b")
+
+
+def two_rate_interest(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    # "How much was invested at 6%?" repeats one of the two rates to say which amount is asked for: not a new number
+    q = t.rfind("how ")
+    if q != -1:
+        for n in list(nums):
+            if n[2] > q and t[n[3]:n[3] + 1] == "%" and any(m is not n and m[0] == n[0] and m[2] < q for m in nums):
+                nums.remove(n)
+    if len(nums) != 4:
+        return None
+    pct = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
+    money = [n for n in nums if n not in pct]
+    if len(pct) != 2 or len(money) != 2 or not all(n[1] for n in money):
+        return None
+    if _INT_OTHER.search(t) or not _INT_WORD.search(t) or not _INVEST_WORD.search(t):
+        return None
+    if not re.search(r"\bhow much\b", t):
+        return None
+    # the money invested must be SPLIT between the two rates ("part ... the rest", "some ... and some", "two accounts"):
+    # otherwise the first amount may be the money at one rate only, and the equation is different
+    if not re.search(r"\b(?:rest|remainder|remaining|part|some|split|divided|each|one at|two (?:accounts|funds|bonds|investments|loans))\b", t):
+        return None
+    # the interest is the amount nearest a word like "interest" / "earned"; the other amount is the money invested
+    words = t.split()
+    marks = [i for i, w in enumerate(words) if _INT_WORD.fullmatch(w.strip(".,;:?!"))]
+    if not marks:
+        return None
+
+    def word_index(n):
+        return len(t[:n[2]].split())
+
+    dist = [min(abs(word_index(n) - m) for m in marks) for n in money]
+    if abs(dist[0] - dist[1]) < 2:
+        return None
+    interest, total = (money[0], money[1]) if dist[0] < dist[1] else (money[1], money[0])
+    I, T = interest[0], total[0]
+    r1, r2 = pct[0][0], pct[1][0]
+    if r1 == r2 or T <= 0 or I <= 0:
+        return None
+    x1 = (I - r2 * T / 100) / ((r1 - r2) / 100)          # invested at the first rate
+    x2 = T - x1
+    if x1 <= 0 or x2 <= 0:
+        return None
+    eq = "%sx + %s(%s - x) = %s" % (show(r1 / 100), show(r2 / 100), show(T), show(I))
+    return Result("two_rate_interest", [x1, x2], eq,
+                  "x = amount at %s%%, %s - x at %s%%: %s, so $%s at %s%% and $%s at %s%%" % (
+                      show(r1), show(T), show(r2), eq, show_exact(x1), show(r1), show_exact(x2), show(r2)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest]
 
 
 def solve(problem):

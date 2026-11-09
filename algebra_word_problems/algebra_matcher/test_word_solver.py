@@ -30,6 +30,8 @@ HAND_ANSWERS = {
     "A TV is marked down 25% to $450. What was the original price?": [600],
     "Rent went up 5% to $1,260 a month. What was the old rent?": [1200],
     "If 3 kg of apples cost $7.50, how much do 8 kg cost?": [20],
+    "I put some money in an account at 3% and the rest at 5%, $10,000 total. I earned $420 in interest in a year. How much was at 5%?": [4000, 6000],
+    "$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?": [4000, 4000],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -151,6 +153,20 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Mixing 5 liters of a 20% solution with 5 liters of a 40% solution gives what percent?"))
         self.assertIsNone(answers("A 30% solution and a 60% solution make 12 liters of 50% solution, with three times as much of the stronger one. How much of each?"))
 
+    def test_two_rate_interest(self):
+        self.assertEqual(answers("Emeka invests $24,000.00, part at 3% and the rest at 5% simple annual interest. After one year the total interest is $920.00. How much was invested at each rate?"), values(10000, 14000))
+        self.assertEqual(answers("I put some money in an account at 3% and the rest at 5%, $10,000 total. I earned $420 in interest in a year. How much was at 5%?"), values(4000, 6000))
+        self.assertEqual(answers("$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?"), values(4000, 4000))
+        # other interest shapes: time, equal interest, an extra amount, compound, commission, one amount at one rate only
+        self.assertIsNone(answers("How many years will it take $24,500.00 to earn $11,025.00 in simple interest at 5% per year?"))
+        self.assertIsNone(answers("$25,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each?"))
+        self.assertIsNone(answers("Tara has $12,000.00 invested at 3%. How much more must be invested at 8% so that the total earns 7% overall?"))
+        self.assertIsNone(answers("Ben invests $9,000, part at 4% and the rest at 6%, compounded monthly. The interest after a year is $450. How much at each rate?"))
+        self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"))
+        self.assertIsNone(answers("A bank pays 3% on $4,000 and 5% on another amount. The total interest is $380. How much is the other amount?"))
+        # the interest is not between the two possible extremes: no split can give it
+        self.assertIsNone(answers("Leo invests $10,000, part at 3% and the rest at 5%. After one year the interest is $900. How much was invested at each rate?"))
+
     def test_every_number_needs_a_role(self):
         # one extra number the patterns do not use -> decline, whatever the rest says
         self.assertIsNone(answers("The sum of two numbers is 90 and their difference is 14. Find the numbers between 1 and 100."))
@@ -160,6 +176,8 @@ class Families(unittest.TestCase):
 class GroundTruth(unittest.TestCase):
     @staticmethod
     def numbers_of(text):
+        if re.search(r"\$[\d,.]+ at \d+(?:\.\d+)?%", text):                # an interest answer: compare the dollars, not the rates
+            return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
@@ -262,6 +280,15 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (seventh set, mixtures): %d of 2 solved, %d of 3 required declines correct, 0 wrong" % (s7[0], s7[2]))
         self.assertEqual(s6, (4, 0, 6))
         self.assertEqual(s7, (2, 0, 3))
+
+    def test_interest_set(self):
+        """Set 8: two-rate interest wordings written after the family and run once, untuned.  One answer is declined
+        because "splits" is not one of the split cue words; one of its declines repeats a sentence from the unit tests."""
+        from fresh_word_problems_8 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (eighth set, interest): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 1, 4))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
