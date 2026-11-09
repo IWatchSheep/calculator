@@ -2154,6 +2154,10 @@ def plan_with_included(problem):
     q = next((s for s in reversed(sents) if re.search(r"\bhow (?:much|many)\b", s)), None)
     if q is None or not re.search(r"\b(?:used|use|uses|consumed)\b", q):
         return None
+    # "how many X" must count the included unit: "how many hours" on a plan in GB asks for something else
+    hm = re.search(r"\bhow many ([a-z]+)", q)
+    if hm and _stem_unit(hm.group(1)) != _stem_unit(unit):
+        return None
     B, T = base[0], bill[0]
     if rate <= 0 or inc < 0 or T <= B:
         return None                                           # a bill that is not above the monthly price means no extra was used
@@ -2218,6 +2222,123 @@ def most_that_fits(problem):
                       eq, show_exact((limit - w) / b), show_exact(Fraction(n)), show_exact(w + b * (n + 1)), show(limit)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 42. a straight fare from two rides:   4m + b = y1,  11m + b = y2, then  m x + b = target      (the generator's "The cost is linear: C = m·x + b")
+# ---------------------------------------------------------------------------------------------------------
+_LINE2_RIDE = re.compile(r"(?<![\w$.])(\d+(?:\.\d+)?)\s+([a-z]+)\s+cost\s+\$(\d+(?:\.\d+)?)")
+_LINE2_TARGET = re.compile(r"\bhow many ([a-z]+)\s+cost\s+\$(\d+(?:\.\d+)?)")
+_LINE2_OTHER = re.compile(r"\b(?:quadratic|exponential|squared|per|each|tax|discount\w*|%)\b|%")
+
+
+def line_from_two_points(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if _CHANGES_EQUATION.search(t) or _LINE2_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    rides = list(_LINE2_RIDE.finditer(t))
+    tm = list(_LINE2_TARGET.finditer(t))
+    if len(rides) < 2 or len(tm) != 1 or len(nums) != 2 * len(rides) + 1:
+        return None
+    unit = _stem_unit(rides[0].group(2))
+    if any(_stem_unit(r.group(2)) != unit for r in rides) or _stem_unit(tm[0].group(1)) != unit:
+        return None
+    pts = [(Fraction(r.group(1)), Fraction(r.group(3))) for r in rides]
+    (x1, y1), (x2, y2) = pts[0], pts[1]
+    if x1 == x2:
+        return None
+    m = (y2 - y1) / (x2 - x1)
+    b = y1 - m * x1
+    # a further ride must sit on the same line
+    if any(y != m * x + b for x, y in pts[2:]):
+        return None
+    if m <= 0 or b < 0:
+        return None
+    target = Fraction(tm[0].group(2))
+    x = (target - b) / m
+    if x <= 0 or (x.denominator != 1 and unit not in _FIXED_CONTINUOUS):
+        return None
+    asks_mb = bool(re.search(r"\bfind m and b\b|\bfind the rate and\b|\bfind m, b\b", t))
+    vals = [m, b, x] if asks_mb else [x]
+    eq = "%sm + b = %s;  %sm + b = %s;  %sx + %s = %s" % (show(x1), show(y1), show(x2), show(y2), show(m), show(b), show(target))
+    return Result("line_from_two_points", vals, eq,
+                  "m = (%s - %s) / (%s - %s) = %s and b = %s - %s x %s = %s: C = %sx + %s; %sx + %s = %s, so x = %s %s%s" % (
+                      show(y2), show(y1), show(x2), show(x1), show_exact(m), show(y1), show_exact(m), show(x1), show_exact(b),
+                      show_exact(m), show_exact(b), show_exact(m), show_exact(b), show(target), show_exact(x), unit, "" if x == 1 else "s"))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 43. an election margin:   (2p - 100)% of V = M      (the generator's "In a two-candidate election, the winner got p% of the votes and won by M votes")
+# ---------------------------------------------------------------------------------------------------------
+_VOTE_OTHER = re.compile(r"\b(?:three|third|runner-up|others?|independent|spoiled|abstain\w*|absent|turnout|each|per)\b|\$")
+
+
+def election_margin(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or t.count("%") != 1 or _CHANGES_EQUATION.search(t) or _VOTE_OTHER.search(t):
+        return None
+    if re.search(_SPELLED_ANY, re.sub(r"\btwo[- ](?:candidate|person|way|party|man|woman)s?\b", " ", t)):
+        return None
+    pct = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
+    other = [n for n in nums if n not in pct]
+    if len(pct) != 1 or len(other) != 1 or other[0][1]:
+        return None
+    if not re.match(r"\s*%\s*of\s+the\s+(?:votes|vote|ballots|total)\b", t[pct[0][3]:]):
+        return None
+    if not re.search(r"\b(?:winner|won|wins|winning)\b", t) or re.search(r"\b(?:loser|lost|lose|loses)\b", t):
+        return None
+    if not re.match(r"\s*(?:votes|ballots)\b", t[other[0][3]:]) or not re.search(r"\b(?:won|wins|win) by\s*$|\bmargin of\s*$", t[:other[0][2]].rstrip()):
+        return None
+    q = t.rfind("how many")
+    if q == -1 or not re.search(r"\b(?:votes|ballots)\b[^.?!]*\b(?:cast|in all|total|altogether|counted)\b", t[q:]):
+        return None
+    p, M = pct[0][0], other[0][0]
+    if not (50 < p < 100) or M <= 0:
+        return None
+    gap = (2 * p - 100) / 100                                  # the winner's share minus the other candidate's
+    V = M / gap
+    if V <= 0 or V.denominator != 1:
+        return None
+    eq = "%s%% of V - %s%% of V = %s" % (show(p), show(100 - p), show(M))
+    return Result("election_margin", [V], eq,
+                  "%s, so %sV = %s and V = %s" % (eq, show(gap), show(M), show_exact(V)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 44. the same time with and against the wind:   a / (p + w) = b / (p - w)      (the generator's "plane ... tailwind ... headwind")
+# ---------------------------------------------------------------------------------------------------------
+_WIND_SPEED_UNIT = r"(?:mph|km/h|kph|miles per hour|kilometers per hour|kilometres per hour)"
+_WIND_DIST_UNIT = r"(?:miles?|mi|km|kilometers?|kilometres?)"
+_WIND_WITH = re.compile(r"(\d+(?:\.\d+)?)\s*(" + _WIND_DIST_UNIT + r")\s+with\s+an?\s+(\d+(?:\.\d+)?)\s*(" + _WIND_SPEED_UNIT + r")\s+(?:tailwind|wind)")
+_WIND_AGAINST = re.compile(r"in the same time (?:it|the \w+) flies\s+(\d+(?:\.\d+)?)\s*(" + _WIND_DIST_UNIT + r")\s+(?:into|against)\s+(?:the same|that|this|the)\s+(?:wind|headwind)")
+_WIND_OTHER = re.compile(r"\b(?:round trip|return\w*|back|stops?|rests?|twice|fuel|climb\w*|descend\w*)\b|%|\$")
+
+
+def wind_same_time(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or _WIND_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    wm, am = _WIND_WITH.search(t), _WIND_AGAINST.search(t)
+    if not wm or not am:
+        return None
+    a, w, b = Fraction(wm.group(1)), Fraction(wm.group(3)), Fraction(am.group(1))
+    d1, d2 = _dist_group(wm.group(2)), _dist_group(am.group(2))
+    if not (d1 == d2 == _speed_group(wm.group(4))):
+        return None
+    # the question asks for the speed in still air
+    if not re.search(r"\bspeed\b[^.?!]*\b(?:still air|calm air|no wind|without (?:the )?wind)\b|\b(?:still air|calm air)\b[^.?!]*\bspeed\b", t):
+        return None
+    if a <= 0 or b <= 0 or w <= 0 or b >= a:
+        return None                                            # the headwind trip must be the shorter one, or no speed can be found
+    p = w * (a + b) / (a - b)
+    if p <= w:
+        return None
+    eq = "%s/(p + %s) = %s/(p - %s)" % (show(a), show(w), show(b), show(w))
+    return Result("wind_same_time", [p], eq,
+                  "%s, so %s(p - %s) = %s(p + %s) and p = %s %s" % (eq, show(a), show(w), show(b), show(w), show_exact(p), "mph" if d1 == "mi" else "km/h"))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2228,7 +2349,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             two_prices_known_count, drain_or_fill, percent_of_count,
             percent_change_between, ages_later_multiple, shared_fixed_cost,
             two_rates_one_pile, least_for_profit,
-            two_priced_items, plan_with_included, most_that_fits]
+            two_priced_items, plan_with_included, most_that_fits,
+            line_from_two_points, election_margin, wind_same_time]
 
 
 def solve(problem):

@@ -1317,6 +1317,83 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 1, 6))
 
+    def test_plan_question_counts_the_included_unit(self):
+        # "how many hours were used" on a plan in gigabytes asks for something else: X in "how many X" has to be the included unit
+        self.assertIsNone(answers("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How many hours were used?"))
+        self.assertIsNone(answers("A gym plan costs $40 a month and includes 10 hours of court time. Each extra hour costs $6. The bill was $76. How many days were used?"))
+        self.assertEqual(answers("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much data was used?"), values(13))
+        self.assertEqual(answers("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How many GB were used?"), values(13))
+        self.assertEqual(answers("A gym plan costs $40 a month and includes 10 hours of court time. Each extra hour costs $6. The bill was $76. How many hours were used?"), values(16))
+
+    def test_line_from_two_points(self):
+        self.assertEqual(answers("For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How many miles cost $136?"), values(19))
+        self.assertEqual(answers("For a taxi ride, 4 miles cost $46 and 11 miles cost $88. The cost is linear: C = m·x + b. Find m and b, then how many miles cost $136."), values(6, 19, 22))
+        self.assertEqual(answers("For a plumber's bill, 5 hours cost $107 and 7 hours cost $121. The cost is linear: C = m·x + b. Find m and b, then how many hours cost $163."), values(7, 13, 72))
+        r = WS.solve("For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How many miles cost $136?")
+        self.assertEqual(r.values, [Fraction(19)])
+        self.assertIn("m = (88 - 46) / (11 - 4) = 6 and b = 46 - 6 x 4 = 22", r.reading)       # m and b are shown
+        self.assertIn("6x + 22 = 136", r.reading)
+        r = WS.solve("For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How many miles cost $137?")
+        self.assertEqual(r.values, [Fraction(115, 6)])                      # an exact fraction of a mile
+        # a third ride that is on the line still answers; one that is not declines
+        self.assertEqual(answers("For a taxi, 4 miles cost $46 and 11 miles cost $88 and 6 miles cost $58. The cost is C = m·x + b. How many miles cost $136?"), values(19))
+        for text in ("For a taxi, 4 miles cost $46 and 11 miles cost $88 and 6 miles cost $60. The cost is C = m·x + b. How many miles cost $136?",
+                     "For a taxi, 4 miles cost $46 and 4 miles cost $50. The cost is C = m·x + b. How many miles cost $136?",
+                     "For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How many miles cost $20?",
+                     "For a taxi, 4 miles cost $46 and 11 hours cost $88. The cost is C = m·x + b. How many miles cost $136?",
+                     "For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How much do 19 miles cost?",
+                     "For a taxi, 4 miles cost $46 and 11 miles cost $40. The cost is C = m·x + b. How many miles cost $136?",
+                     "For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is quadratic. How many miles cost $136?",
+                     "For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m·x + b. How many miles cost $136 for part of the year?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_election_margin(self):
+        self.assertEqual(answers("The winner got 58% of the votes and won by 3,392 votes. How many votes were cast?"), values(21200))
+        self.assertEqual(answers("In a two-candidate election, the winner got 60% of the votes and won by 1360 votes. How many votes were cast?"), values(6800))
+        r = WS.solve("The winner got 58% of the votes and won by 3,392 votes. How many votes were cast?")
+        self.assertEqual(r.values, [Fraction(21200)])
+        self.assertIn("58% of V - 42% of V = 3392", r.reading)
+        self.assertIn("0.16V = 3392 and V = 21200", r.reading)
+        # a total that is not a whole number, a share of 50% or less, a third candidate, the loser's figures, a question for a percent, twice, part of the year
+        for text in ("The winner got 58% of the votes and won by 3,393 votes. How many votes were cast?",
+                     "The winner got 50% of the votes and won by 3,392 votes. How many votes were cast?",
+                     "The winner got 48% of the votes and won by 3,392 votes. How many votes were cast?",
+                     "In a three-candidate race, the winner got 58% of the votes and won by 3,392 votes. How many votes were cast?",
+                     "The winner got 58% of the votes and won by 3,392 votes over the third candidate. How many votes were cast?",
+                     "The loser got 42% of the votes and lost by 3,392 votes. How many votes were cast?",
+                     "The winner got 58% of the votes and won by 3,392 votes. What percent did the loser get?",
+                     "The winner got 58% of the votes and won by twice 3,392 votes. How many votes were cast?",
+                     "The winner got 58% of the votes and won by 3,392 votes for part of the year. How many votes were cast?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_wind_same_time(self):
+        self.assertEqual(answers("A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,350 miles into that wind. What is its speed in still air?"), values(490))
+        self.assertEqual(answers("A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. What is the plane's speed in still air?"), values(490))
+        r = WS.solve("A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,350 miles into that wind. What is its speed in still air?")
+        self.assertIn("1590/(p + 40) = 1350/(p - 40)", r.reading)
+        self.assertIn("p = 490 mph", r.reading)
+        r = WS.solve("A plane flies 1,000 miles with a 30 mph tailwind in the same time it flies 900 miles into that wind. What is its speed in still air?")
+        self.assertEqual(r.values, [Fraction(30 * 1900, 100)])               # 570, and the two times really are equal
+        p = r.values[0]
+        self.assertEqual(Fraction(1000) / (p + 30), Fraction(900) / (p - 30))
+        # the headwind trip is longer, the trips are equal, mixed units, the wind speed asked, a return trip, part of the year
+        for text in ("A plane flies 1,350 miles with a 40 mph tailwind in the same time it flies 1,590 miles into that wind. What is its speed in still air?",
+                     "A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,590 miles into that wind. What is its speed in still air?",
+                     "A plane flies 1,590 miles with a 40 km/h tailwind in the same time it flies 1,350 miles into that wind. What is its speed in still air?",
+                     "A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,350 miles into that wind. What is the wind speed?",
+                     "A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,350 miles into that wind and then returns. What is its speed in still air?",
+                     "A plane flies 1,590 miles with a 40 mph tailwind in the same time it flies 1,350 miles into that wind for part of the year. What is its speed in still air?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_line_election_wind_set(self):
+        """Set 24: wordings for the question-unit fix and the three families added together, written after all of it was finished and run once, untuned.
+        One answer is declined (a safe miss): "two people" is not one of the "two <candidates>" phrases."""
+        from fresh_word_problems_24 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-fourth set, question unit and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 1, 5))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

@@ -683,3 +683,31 @@ Measured:
   Fresh set 23 (13 wordings, written after all of it was finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 6 required declines: 6 of 6; 0 wrong.  The declined one is a safe miss, not fixed:
   "How many GB were stored?" does not say "used".
   86 word-solver and number-puzzle tests pass.
+
+Batch 21: the question-unit fix and three families in one commit: line_from_two_points, election_margin, wind_same_time
+==============================================================
+Fix (plan_with_included): "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How many hours were used?" was answered 13; the plan is in gigabytes.  When the
+  question says "how many X", X must be the included unit (GB here, hours for a gym plan).  "How much data was used?" and "How many GB were used?" still return 13.
+line_from_two_points  (generator "The cost is linear: C = m x + b"):  4m + b = y1, 11m + b = y2, then m x + b = target.  "For a taxi, 4 miles cost $46 and 11 miles cost $88. The cost is C = m x + b. How many
+  miles cost $136?" is 19 miles; m = 6 and b = 22 are shown in the reading ("m = (88 - 46) / (11 - 4) = 6 and b = 46 - 6 x 4 = 22 ... 6x + 22 = 136").  If the problem says "Find m and b, then how many ...", the values
+  are m, b and the amount (6, 22, 19); otherwise only the amount.  Two or more "<n> <unit> cost $y" rides and one "how many <unit> cost $T"; a third ride must sit on the same line (6 miles cost $58 does, $60
+  does not).  Declines: a third ride off the line, equal distances, a target below the fixed fee (a negative amount), different units, a question for a cost instead of a distance, a negative slope, quadratic, "part of".
+  A continuous unit (miles, hours ...) may be an exact fraction: $137 is 115/6 miles.
+election_margin  (generator "In a two-candidate election, the winner got p% of the votes and won by M votes"):  (2p - 100)% of V = M.  "The winner got 58% of the votes and won by 3,392 votes. How many votes were cast?"
+  is 21,200 (58% - 42% = 16%, 0.16 V = 3,392).  The winner's share must be above 50% and below 100%, and V a positive whole number.  "Two-candidate / two-person / two-way" is allowed, a mention of a third or "three"
+  candidate declines.  Declines: a total that is not whole (a margin of 3,393), a share of 50% or less, the loser's figures ("lost by"), a question for a percent, twice, "part of the year".
+wind_same_time  (generator "A plane flies a miles with a w mph tailwind in the same time it flies b miles into the same wind"):  a / (p + w) = b / (p - w), so p = w (a + b) / (a - b).  "A plane flies 1,590 miles with
+  a 40 mph tailwind in the same time it flies 1,350 miles into that wind. What is its speed in still air?" is 490 mph (the two times are equal; a test checks 1,000 / (570 + 30) = 900 / (570 - 30)).  The headwind trip
+  must be the SHORTER one: a longer or equal headwind distance declines.  Distance and speed must be in one system (miles with mph, km with km/h), the question must ask the speed in still air, not the wind
+  speed.  Declines: mixed units, a return trip, "part of the year", any spelled number.
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings (115/6), no control characters,
+  no module-level name defined twice (the new names are _LINE2_*, _VOTE_*, _WIND_*).
+Measured:
+  1,000 generated problems: claims 267 -> 282, wrong 0.  The 15 new claims, each equal to the stored answer:
+    line_from_two_points 0482 (m 6, b 22, 19 miles), 0494 (6, 74, 14), 0504 (5, 94, 13), 0522 (7, 72, 10 hours), 0530 (14, 52, 13) = every generated "The cost is linear" problem;
+    election_margin 0616 (21,200), 0627 (6,800), 0643 (4,200), 0667 (35,000), 0671 (10,000) = every generated two-candidate election problem;
+    wind_same_time 0813 (490), 0824 (150), 0829 (570), 0841 (300), 0845 (360) = every generated tailwind / headwind problem.
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these shapes).
+  Fresh set 24 (11 wordings, written after all of it was finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 5 required declines: 5 of 5; 0 wrong.  The declined one is a safe miss, not fixed:
+  "In a race between two people" is not one of the "two <candidates>" phrases.
+  91 word-solver and number-puzzle tests pass.
