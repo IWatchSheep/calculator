@@ -147,7 +147,8 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?"))
         self.assertIsNone(answers("If 6 workers build a wall in 12 days, how long would 9 workers take?"))
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
-        self.assertIsNone(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"))
+        # two typists on one pile of words was a required decline here until the two_rates_one_pile family; it is now answered (16 minutes)
+        self.assertEqual(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"), values(16))
 
     def test_price_blend(self):
         # the percent mixture with prices: p1*x + p2*(T - x) = blend*T
@@ -1160,6 +1161,78 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (twenty-first set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 2, 6))
+
+    def test_known_weight_at_two_prices(self):
+        # "two teas" is the two prices, the same way "two jobs" already is
+        self.assertEqual(answers("A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?"), values(12, 19))
+        self.assertEqual(answers("A shop sold 30 kg of two teas, one at $6/kg and one at $9/kg, for $231. How many kg of each?"), values(13, 17))
+        self.assertEqual(answers("A shop sold 50 kg of two coffees, one at $8/kg and one at $10/kg, for $424. How many kg of each?"), values(12, 38))
+        r = WS.solve("A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?")
+        self.assertEqual(r.values, [Fraction(19), Fraction(12)])
+        self.assertIn("x + y = 31 and 5x + 12y = 239", r.reading)
+        # a third price, a spelled number other than "two <kinds>", a total that is not reachable, equal prices, "each" after the total, a question for money, part of the year
+        for text in ("A shop sold 31 kg of two teas, one at $5/kg, one at $8/kg and one at $12/kg, for $239. How many kg of each?",
+                     "A shop sold 31 kg of three teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $240. How many kg of each?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $100. How many kg of each?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $5/kg, for $239. How many kg of each?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239 each. How many kg of each?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How much did the first tea earn?",
+                     "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239 for part of the year. How many kg of each?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_two_rates_one_pile(self):
+        self.assertEqual(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 words?"), values(16))
+        self.assertEqual(answers("Two typists type 70 and 30 words per minute. Working together, how long will they take to type 3800 words?"), values(38))
+        self.assertEqual(answers("Two typists type 55 words per minute and 35 words per minute. Working together, how long will they take to type 1,440 words?"), values(16))
+        self.assertEqual(answers("Two pumps move 25 and 15 gallons per hour. Working together, how many hours will they take to move 200 gallons?"), values(5))
+        r = WS.solve("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 words?")
+        self.assertIn("(55 + 35)t = 1440", r.reading)
+        self.assertIn("t = 16 minutes", r.reading)
+        r = WS.solve("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,445 words?")
+        self.assertEqual(r.values, [Fraction(289, 18)])                   # an exact fraction of a minute
+        # the unit asked is not the unit of the rates, a rate asked for, a rate of zero, "alone", a different pile unit, a third typist, a spelled number, part of the day
+        for text in ("Two typists type 55 and 35 words per minute. Working together, how many hours will they take to type 1,440 words?",
+                     "Two typists type 55 and 35 words per minute. Working together, how many words per minute is that?",
+                     "Two typists type 55 and 0 words per minute. Working together, how long will they take to type 1,440 words?",
+                     "Two typists type 55 and 35 words per minute. Alone, how long will the first take to type 1,440 words?",
+                     "Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 pages?",
+                     "Three typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 words?",
+                     "Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 words for part of the day?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_least_for_profit(self):
+        self.assertEqual(answers("A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2,200?"), values(313))
+        self.assertEqual(answers("A school dance costs $385 to run. Tickets are $12. How many tickets must be sold for a profit of at least $700?"), values(91))
+        self.assertEqual(answers("A club dinner costs $450 to host. Plates are $15. How many plates must be sold for a profit of at least $600?"), values(70))
+        r = WS.solve("A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2,200?")
+        self.assertIn("8n - 303 >= 2200", r.reading)
+        self.assertIn("313 sold make $2201, one fewer makes $2193", r.reading)   # 313 reaches the goal, 312 does not
+        for text, n in (("A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2,200?", 313),
+                        ("A school dance costs $385 to run. Tickets are $12. How many tickets must be sold for a profit of at least $700?", 91),
+                        ("A club dinner costs $450 to host. Plates are $15. How many plates must be sold for a profit of at least $600?", 70)):
+            nums = [Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+)", text)]
+            cost, price, goal = nums[0], nums[1], nums[2]
+            self.assertGreaterEqual(price * n - cost, goal)                   # n is enough
+            self.assertLess(price * (n - 1) - cost, goal)                     # one fewer is not
+        # "at most", a question about something that can be sold ("can be sold"), another thing sold, break even, a "per" or percent, a spelled number, part of the year, tax
+        for text in ("A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at most $2,200?",
+                     "A school dance costs $303 to run. Tickets are $8. How many tickets can be sold for a profit of at least $2,200?",
+                     "A school dance costs $303 to run. Tickets are $8. How many snacks must be sold for a profit of at least $2,200?",
+                     "A school dance costs $303 to run. Tickets are $8. How many tickets must be sold to break even?",
+                     "A school dance costs $303 to run. Tickets are twice $8. How many tickets must be sold for a profit of at least $2,200?",
+                     "A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2,200 for part of the year?",
+                     "A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2,200 after tax?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_weights_piles_profit_set(self):
+        """Set 22: wordings for the three families added together, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "two flours" is not one of the "two <kinds>" words."""
+        from fresh_word_problems_22 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-second set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 1, 4))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

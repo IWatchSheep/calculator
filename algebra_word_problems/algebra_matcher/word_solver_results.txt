@@ -625,3 +625,32 @@ Measured:
   Fresh set 21 (12 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 4 solved, 2 declined; 6 required declines: 6 of 6; 0 wrong.  The two declined are safe
   misses, not fixed: "twice as old" is a spelled number, and "$5 per ticket" does not match the question "how many people".
   77 word-solver and number-puzzle tests pass.
+
+Batch 19: a known weight at two prices, two rates on one pile, the least number sold for a profit
+==============================================================
+two prices and a known weight (two_prices_known_count, extended):  "A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?" is 19 kg at $5 and 12 kg at $12
+  (x + y = 31, 5x + 12y = 239).  The family already read "$16/h and $22/h"; "/kg" is a per-unit price and "two teas" is the two prices, the same way "two jobs" already was.  The list of "two <kinds>"
+  words grew by teas, coffees, grades, flavors, varieties, blends, candies, nuts, oils, fruits; any other spelled number still declines.  A third price, equal prices, a total that gives no whole
+  positive amounts ($240 or $100 for the 31 kg), "each" after the total, a question for money and "part of the year" decline.
+two_rates_one_pile  (generator "Two typists type a and b words per minute"):  (r1 + r2) t = W.  "Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1,440 words?"
+  is 16 minutes.  The rates are "a and b <unit> per <time>" or "a <unit> per <time> and b <unit> per <time>"; the pile is a number followed by the same unit; the text says together / both /
+  combined; "Two typists / workers / machines / printers / pumps ..." is the count of the two rates and is allowed.  The question must ask how long, or how many of the rates' TIME unit.  Exact: 1,445 words
+  is 289/18 minutes.  Declines: a question for a rate ("how many words per minute"), another time unit ("how many hours"), a rate of zero, "alone" / first / then, a different pile unit (pages), a third worker,
+  any other spelled number, "part of the day".
+least_for_profit  (generator "A school dance costs $F to run. Tickets are $p ... profit of at least $G"):  p n - F >= G, the least whole n = ceil((G + F) / p).  "A school dance costs $303 to run. Tickets
+  are $8. How many tickets must be sold for a profit of at least $2,200?" is 313 (8 x 313 - 303 = 2201 reaches 2,200; 8 x 312 - 303 = 2,193 does not; the reading shows both, and a test checks them).
+  The fixed cost is followed by "to run / host / put on / organize ...", the goal follows "at least", the price is "<things> are / cost / sell for $p" (or "$p each"), and the question must say how many of
+  the SAME thing must be sold.  Declines: "at most", "can be sold", another thing (snacks), break even, a spelled number, tax, "part of the year", a loss.
+Required decline that became an answer (test and note): "Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?" was a required decline in test_proportion;
+  it is now answered, 16 minutes.
+Checks on each family (test_word_solver.py): spelled counts (only "Two <workers or kinds>" is allowed), each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values
+  and readings (289/18), no control characters, no module-level name defined twice (the new names are _PILE_*, _LEAST_*).
+Measured:
+  1,000 generated problems: claims 240 -> 253, wrong 0.  The 13 new claims, each equal to the stored answer:
+    two_prices_known_count 0886 (19 and 12), 0899 (13 and 17), 0915 (12 and 6), 0933 (26 and 7) = every generated "two teas" problem;
+    two_rates_one_pile 0964 (16), 0979 (38), 0985 (58), 0988 (41) = every generated typists problem;
+    least_for_profit 0359 (313), 0376 (91), 0381 (519), 0393 (144), 0398 (463) = every generated school-dance problem.
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 22 (11 wordings, written after all three families were finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 4 required declines: 4 of 4; 0 wrong.  The declined one is a safe miss,
+  not fixed: "two flours" is not one of the "two <kinds>" words.
+  81 word-solver and number-puzzle tests pass.

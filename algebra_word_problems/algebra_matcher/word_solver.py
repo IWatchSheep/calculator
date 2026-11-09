@@ -1690,7 +1690,7 @@ def triangle_ratio(problem):
 _TP_RATE_AFTER = re.compile(r"\s*(?:/\s*(?:h|hr|hrs|hour|lb|kg|ea|each)\b|(?:an?|per)\s+[a-z]+\b|each\b|apiece\b)")
 _TP_TOTAL_BEFORE = re.compile(r"(?:\b(?:for|earning|earned|earns|totaling|totalling|totaled|costing|cost|costs|paying|paid|made|worth|in all)\s*(?:a total of\s*)?|\btotal of\s*)$")
 _TP_OTHER = re.compile(r"\b(?:tax|discount|tip|bonus|overtime|percent|extra|also|third|another|rest|remaining)\b|%")
-_TP_TWO_WORDS = re.compile(r"\btwo (?:jobs|kinds|types|rates|prices|wages|sizes|brands)\b")
+_TP_TWO_WORDS = re.compile(r"\btwo (?:jobs|kinds|types|rates|prices|wages|sizes|brands|teas|coffees|grades|flavors|varieties|blends|candies|nuts|oils|fruits)\b")
 
 
 def two_prices_known_count(problem):
@@ -1944,6 +1944,110 @@ def shared_fixed_cost(problem):
                   "n = number of %ss: %s, so n = %s / %s = %s" % (unit, eq, show(bus), show_exact(each - fee), show_exact(n)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 37. two rates working on one pile together:   (r1 + r2) t = W      (the generator's "Two typists type a and b words per minute ...")
+# ---------------------------------------------------------------------------------------------------------
+_PILE_RATES = [
+    re.compile(r"(\d+(?:\.\d+)?)\s*(?:[a-z]+\s+)?and\s+(\d+(?:\.\d+)?)\s+([a-z]+)\s+(?:per|a|each)\s+([a-z]+)"),
+    re.compile(r"(\d+(?:\.\d+)?)\s+([a-z]+)\s+(?:per|a|each)\s+([a-z]+)\s+and\s+(\d+(?:\.\d+)?)\s+(?:\2)\s+(?:per|a|each)\s+(?:\3)"),
+]
+_PILE_WORKERS = re.compile(r"\btwo (?:typists|workers|machines|printers|pumps|pipes|people|painters|bakers|copiers|computers|robots|trucks|scanners|clerks|writers|friends|students|assistants)\b")
+_PILE_OTHER = re.compile(r"\b(?:alone|then|first|after|before|later|earlier|breaks?|stops?|rests?|each other|faster|slower|more than|less than|per hour of|how fast|how many (?:words|pages|items|pieces|units) per)\b|%|\$")
+_PILE_TIME = {"minute": "minute", "min": "minute", "hour": "hour", "hr": "hour", "second": "second", "sec": "second", "day": "day", "week": "week"}
+
+
+def two_rates_one_pile(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or _PILE_OTHER.search(t) or re.search(_SPELLED_ANY, _PILE_WORKERS.sub(" ", t)):
+        return None
+    if not re.search(r"\b(?:together|both|combined|at the same time|at once)\b", t):
+        return None
+    found = None
+    m = _PILE_RATES[0].search(t)
+    if m:
+        found = (Fraction(m.group(1)), Fraction(m.group(2)), m.group(3), m.group(4), m.end())
+    else:
+        m = _PILE_RATES[1].search(t)
+        if m:
+            found = (Fraction(m.group(1)), Fraction(m.group(4)), m.group(2), m.group(3), m.end())
+    if found is None:
+        return None
+    r1, r2, unit, per, end = found
+    tname = _PILE_TIME.get(per.rstrip("s"), _PILE_TIME.get(per))
+    if tname is None:
+        return None
+    rate_pos = {m.start(1), m.start(2) if m.re is _PILE_RATES[0] else m.start(4)}
+    rest = [n for n in nums if not any(n[2] <= p < n[3] for p in rate_pos)]
+    if len(rest) != 1 or rest[0][1]:
+        return None
+    W_n = rest[0]
+    wm = re.match(r"\s*(?:of\s+)?" + re.escape(unit) + r"\b", t[W_n[3]:])
+    if not wm:
+        return None
+    # the question asks for the TIME, in the unit of the rates
+    qm = re.search(r"\bhow (?:long|many (" + "|".join(_PILE_TIME) + r")s?|much time)\b", t)
+    if not qm or (qm.group(1) and _PILE_TIME[qm.group(1)] != tname):
+        return None
+    if r1 <= 0 or r2 <= 0 or W_n[0] <= 0:
+        return None
+    tt = W_n[0] / (r1 + r2)
+    eq = "(%s + %s)t = %s" % (show(r1), show(r2), show(W_n[0]))
+    return Result("two_rates_one_pile", [tt], eq, "t = %ss: %s, so t = %s %s%s" % (tname, eq, show_exact(tt), tname, "" if tt == 1 else "s"))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 38. the least number sold for a profit:   p n - F >= G, the least whole n      (the generator's "A school dance costs $F to run. Tickets are $p.")
+# ---------------------------------------------------------------------------------------------------------
+_LEAST_FIXED_AFTER = re.compile(r"\s*(?:to\s+(?:run|host|put on|hold|stage|organize|set up|produce|operate)|in (?:costs|expenses))\b")
+_LEAST_GOAL_BEFORE = re.compile(r"\bat least\s*$")
+_LEAST_PRICE_BEFORE = re.compile(r"(?:([a-z]+)\s+)?(?:are|is|cost|costs|sell for|sells for|go for|goes for|priced at|sold at|at)\s*$")
+_LEAST_OTHER = re.compile(r"\b(?:at most|no more than|maximum|fewer|less than|tax|discount\w*|free|loss|break even|each month|per month|first)\b|%")
+
+
+def least_for_profit(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or not all(n[1] for n in nums) or _CHANGES_EQUATION.search(t) or _LEAST_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    if not re.search(r"\bprofit\b", t) or not re.search(r"\bat least\b", t):
+        return None
+    G = [n for n in nums if _LEAST_GOAL_BEFORE.search(t[:n[2]].rstrip())]
+    F = [n for n in nums if _LEAST_FIXED_AFTER.match(t[n[3]:])]
+    if len(G) != 1 or len(F) != 1 or G[0] is F[0]:
+        return None
+    P = [n for n in nums if n is not G[0] and n is not F[0]]
+    if len(P) != 1:
+        return None
+    price_n = P[0]
+    pm = _LEAST_PRICE_BEFORE.search(t[:price_n[2]].rstrip())
+    per_unit = re.match(r"\s*(?:each|apiece|per\s+[a-z]+)\b", t[price_n[3]:])
+    if not pm and not per_unit:
+        return None
+    if _EACH_AFTER.match(t[F[0][3]:]) or _EACH_AFTER.match(t[G[0][3]:]):
+        return None
+    # the question asks how many (of the thing sold) must be sold
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow many\b", s)), None)
+    if q is None or not re.search(r"\b(?:must|need to|have to|has to|should)\b[^.?!]*\b(?:sold|sell|sale)\b|\b(?:sold|sell)\b[^.?!]*\b(?:must|need)\b", q):
+        return None
+    qm = re.search(r"\bhow many ([a-z]+)", q)
+    noun = pm.group(1) if pm else None
+    if noun and qm and _stem_unit(noun) != _stem_unit(qm.group(1)):
+        return None
+    cost, price, goal = F[0][0], price_n[0], G[0][0]
+    if price <= 0 or goal < 0 or cost < 0:
+        return None
+    need = (goal + cost) / price
+    n = -((-need.numerator) // need.denominator)          # ceiling of an exact fraction
+    if n < 1 or not (price * n - cost >= goal and price * (n - 1) - cost < goal):
+        return None
+    eq = "%sn - %s >= %s" % (show(price), show(cost), show(goal))
+    return Result("least_for_profit", [Fraction(n)], eq,
+                  "%s, so n >= %s and the least is %s (%s sold make $%s, one fewer makes $%s)" % (
+                      eq, show_exact(need), n, n, show_exact(price * n - cost), show_exact(price * (n - 1) - cost)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -1952,7 +2056,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             fixed_plus_rate, two_changing_equal, add_to_blend,
             two_scores, two_discounts, triangle_ratio,
             two_prices_known_count, drain_or_fill, percent_of_count,
-            percent_change_between, ages_later_multiple, shared_fixed_cost]
+            percent_change_between, ages_later_multiple, shared_fixed_cost,
+            two_rates_one_pile, least_for_profit]
 
 
 def solve(problem):
