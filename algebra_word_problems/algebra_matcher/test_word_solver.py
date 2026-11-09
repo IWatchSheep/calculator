@@ -44,6 +44,15 @@ def values(*xs):
     return sorted(Fraction(x) for x in xs)
 
 
+class SourceHygiene(unittest.TestCase):
+    def test_no_control_characters_in_the_source(self):
+        # "\\b" written inside a normal string becomes a backspace: that once disabled a check in word_solver.py
+        for name in ("word_solver.py", "number_puzzle.py"):
+            text = open(name, encoding="utf-8").read()
+            bad = [i for i, c in enumerate(text) if ord(c) < 32 and c not in "\n\r\t"]
+            self.assertEqual(bad, [], name + " contains control characters")
+
+
 class Families(unittest.TestCase):
     def test_sum_difference(self):
         self.assertEqual(answers("The sum of two numbers is 235 and their difference is 103. Find the numbers."), values(66, 169))
@@ -129,6 +138,14 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("How many liters of a 20% solution must be added to 10 liters of a 50% solution to make a 40% solution?"))
         self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?"))
         self.assertIsNone(answers("A 12-litre bucket of 60% paint thinner is diluted with water down to 40%. How much water is added?"))
+        # a spelled count of three or more ("three batches") is a number with no role (the word boundary was once stored as a backspace)
+        self.assertIsNone(answers("How many liters of a 20% acid and a 50% acid are needed to make 20 liters of 30% acid if I mix three batches?"))
+        # the reading shows exact amounts, never a rounded decimal
+        r = WS.solve("How many liters of a 20% acid solution must be mixed with a 50% acid solution to make 20 liters of a 30% acid solution?")
+        self.assertEqual(r.values, [Fraction(20, 1) * 2 / 3, Fraction(20, 1) / 3])
+        self.assertIn("40/3 liters of the 20%", r.reading)
+        self.assertIn("20/3 liters of the 50%", r.reading)
+        self.assertNotIn("13.3333", r.reading)
         # the target is not between the two sources, the percents are not all there, or a ratio is given
         self.assertIsNone(answers("How many liters of a 10% solution and a 30% solution make 10 liters of a 40% solution?"))
         self.assertIsNone(answers("Mixing 5 liters of a 20% solution with 5 liters of a 40% solution gives what percent?"))

@@ -361,7 +361,7 @@ def two_solution_mix(problem):
     if len(nums) != 4 or "$" in problem:
         return None
     # "two solutions" / "another alloy" are the shape of this problem; a bigger spelled count (three batches ...) is not
-    if _MIX_OTHER.search(t) or _MIX_EXTRA.search(t) or re.search(r"(?:three|four|five|six|seven|eight|nine|ten)", t):
+    if _MIX_OTHER.search(t) or _MIX_EXTRA.search(t) or re.search(r"\b(?:three|four|five|six|seven|eight|nine|ten)\b", t):
         return None
     if not re.search(r"\b(?:mix\w*|combin\w*|blend\w*|alloy\w*|solutions?|make|use)\b", t):
         return None
@@ -395,7 +395,7 @@ def two_solution_mix(problem):
     eq = "%sx + %s(%s - x) = %s(%s)" % (show(p1 / 100), show(p2 / 100), show(T), show(tg / 100), show(T))
     return Result("two_solution_mix", [x1, x2], eq,
                   "x = amount of the %s%% solution, %s - x of the %s%%: %s, so x = %s %s of the %s%% and %s %s of the %s%%" % (
-                      show(p1), show(T), show(p2), eq, show(x1), unit, show(p1), show(x2), unit, show(p2)))
+                      show(p1), show(T), show(p2), eq, show_exact(x1), unit, show(p1), show_exact(x2), unit, show(p2)))
 
 
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix]

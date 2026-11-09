@@ -172,3 +172,16 @@ Measured:
   Pipeline on the 100 hand-written problems (number reader, five families + mixtures, then the matcher), right first / in top 3:
       set A (60, tuned on): 48 -> 53 / 58 -> 60      set B (40): 29 -> 35 / 36 -> 40  (B top-1 87.5%)
       The families were chosen because of these sets' misses, so these two sets are no longer a clean test.
+
+Batch 6 patch: a disabled check and exact amounts in the reading (found by Grok)
+=================================================================================
+  * The mixture family's "three ... ten" check was stored with two real backspace characters where the word-boundary
+    marks (backslash b) belong, so it never matched.  "...to make 20 liters of 30% acid if I mix three batches?" was
+    answered 40/3 and 20/3 although "three" has no role.  Cause: a regular (non-raw) string written through a script.
+    Fixed, the sentence is a regression test, and a new test (SourceHygiene) fails if any control character appears in
+    word_solver.py or number_puzzle.py.  A scan of every Python file in this folder found no other occurrence.
+  * The mixture reading printed amounts through show(), so 20/3 appeared as 6.6667; it now uses show_exact:
+    "x = 40/3 liters of the 20% and 20/3 liters of the 50%".
+  * Not changed (outside the request): the proportion reading still uses show() for its answer.
+  1,000 generated problems: claims 88, wrong 0.  15 word-solver tests and 12 number-puzzle tests pass.
+  The fresh sets 6 and 7 are unaffected (their results were the same before and after the fix).
