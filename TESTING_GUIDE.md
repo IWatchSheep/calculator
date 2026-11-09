@@ -15,7 +15,7 @@ python tests/test_operators.py NumericTests.test_000_math.arithmetic.addition   
 Use the project's `.venv` Python if Pillow is not installed globally. Without Pillow one test is
 skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test is skipped.
 
-**Last full run (author's machine, Python 3.15, Windows): 654 tests, all passed (the full run now takes about a minute because it drives the real window).**
+**Last full run (author's machine, Python 3.15, Windows): 672 tests, all passed (the full run now takes about a minute because it drives the real window).**
 
 ## 2. What the project contains
 
@@ -43,6 +43,8 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 | `GuiSmokeTest` | 1 | `main.CalculatorGUI()` builds, updates and closes |
 | `NewPhysicsRowTests` | 3 | The 49 magnetism / fluid / quantum / optics / relativity operators: row module boxes match `compute()` arguments, every operator has a calculator button, row evaluation equals `compute()` |
 | `NewPhysicsCalculatorTests` | 6 | Drives the real window for all 49 new operators: pick the operator, type the numbers on the keypad (including the `±` and `EE` keys for negative and tiny values), press `=`, compare with the hand-calculated answer; checks the `±`/`EE` key rules, the `C` / Clear button and that every keypad key is a working one; errors are shown as readable messages |
+| `TemplateMathTests` | 9 | The typed-math parser behind the Templates panel: precedence and brackets, operators by name and short name, every alias, empty boxes, readable error messages, unsafe text rejected, the saved-templates file |
+| `TemplatePanelTests` | 9 | The Templates panel in the real window: Preview Posted, `=`, Save Template (list + file), Apply Template into the row, filling the boxes and calculating, duplicates, nothing picked, nesting; the three removed toolbar buttons are gone |
 
 ## 4. How another AI should verify (do not just trust the suite)
 
@@ -97,6 +99,8 @@ Run `python main.py`, then for each item note pass/fail:
 
 - [ ] Window opens; layout matches `picture_of_gui/gui_template.png`
 - [ ] Number pad: type `12 + 7 =` → `19`; `7 ÷ 0` shows an error and does not crash
+- [ ] Templates: type `(□ + 3) × 2`, press **Preview Posted** (shows the row and `1 empty square box`), **Save Template**, pick it in the list, **Apply Template**, fill the box, `=`
+- [ ] Templates: close and reopen the calculator; the saved template is still in the list. Bad math (`sqrt(`) shows a message and is not saved
 - [ ] `C` key and the toolbar `Clear (C)` button: every row goes back to one empty box, join symbols disappear, the results area says "Cleared"
 - [ ] `±` key: flips a box between `5` and `-5`; after `EE` it flips the exponent's sign
 - [ ] `EE` key: `1.5 EE ± 3` gives `1.5e-3`; a second `EE`, an `EE` on an empty box, and a `.` after `EE` are ignored

@@ -1042,5 +1042,235 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         self.assertIn("speed must be less than the speed of light", said)
 
 
+# --------------------------------------------------------------------------- 7. Mathematical Templates (typed math)
+class TemplateMathTests(unittest.TestCase):
+    """operator_row_math.template_math: typed math -> the operator tree a row can hold."""
+
+    def setUp(self):
+        from operator_row_math import row_tree, template_math
+        self.tm, self.rt = template_math, row_tree
+
+    def value(self, text):
+        return self.rt.evaluate(self.tm.parse_math(text))
+
+    def test_calculates_like_ordinary_maths(self):
+        cases = [("2 + 3 × 4", 14), ("(2+3)×4", 20), ("2^3^2", 512), ("-2^2", -4),
+                 ("-5 + 2", -3), ("7 − 2 − 1", 4), ("8 / 4 / 2", 1), ("2 * -3", -6), ("10 % 4", 2),
+                 ("2 + 3 * 4 - 5", 9), ("(1 + 2) * (3 + 4)", 21), ("1.5e-3 * 1000", 1.5), (".5 + .5", 1)]
+        for text, expected in cases:
+            self.assertTrue(approx(self.value(text), expected), text)
+
+    def test_operators_by_name_and_short_name(self):
+        cases = [("sqrt(16) + abs(-3)", 7), ("square root(81)", 9), ("Square_Root(81)", 9),
+                 ("Time dilation(1, 179875474.8)", 1.25), ("Newton's second law(2, 5)", 10),
+                 ("sin(pi / 2)", 1), ("ln(e)", 1), ("log(1000) ÷ 3", 1), ("max(2, 9, 4)", 9), ("round(2.6)", 3),
+                 ("factorial(5)", 120), ("gcd(12, 18)", 6), ("lcm(4, 6)", 12)]
+        for text, expected in cases:
+            self.assertTrue(approx(self.value(text), expected), text)
+
+    def test_every_alias_points_at_a_real_operator(self):
+        for alias, ident in self.tm.ALIASES.items():
+            key = self.tm.find_operator(alias)
+            self.assertIsNotNone(key, alias)
+            self.assertEqual(key, self.tm.find_operator(ident), alias)
+
+    def test_description_shows_the_grouping(self):
+        d = lambda t: self.tm.describe(self.tm.parse_math(t))
+        self.assertEqual(d("(2 + 3) × 4"), "(2 + 3) × 4")
+        self.assertEqual(d("2 + 3 × 4"), "2 + (3 × 4)")
+        self.assertEqual(d("(□ + 3) * 2"), "(□ + 3) × 2")
+        self.assertEqual(d("Time dilation(1, x)"), "Time dilation( 1 , □ )")
+
+    def test_empty_boxes(self):
+        n = lambda t: self.tm.empty_boxes(self.tm.parse_math(t))
+        self.assertEqual(n("(□ + 3) * 2"), 1)
+        self.assertEqual(n("x * x + ?"), 3)                  # each box, bare letter or ? is its own box
+        self.assertEqual(n("2 + 3"), 0)
+        with self.assertRaises(ValueError):
+            self.value("x + 1")                              # cannot calculate until the box is filled
+
+    def test_mistakes_get_readable_messages(self):
+        bad = [("", "Type some math"), ("2 +", "ends too soon"), ("(2 + 3", "never closed"),
+               ("2 + 3)", "Unexpected"), ("5", "at least one operator"), ("3 3", "Put an operator between"),
+               ("2 x", "Put an operator between"), ("foo(2)", "no operator called"),
+               ("Time dilation(1)", "needs 2 input"), ("sqrt(1, 2)", "needs 1 input"),
+               ("square root 9", "inputs in brackets"), ("2 $ 3", "don't understand")]
+        for text, expected in bad:
+            with self.assertRaises(ValueError, msg=text) as ctx:
+                self.tm.parse_math(text)
+            self.assertIn(expected, str(ctx.exception), text)
+
+    def test_runtime_errors_are_value_errors(self):
+        with self.assertRaises(ValueError):
+            self.value("7 ÷ 0")
+        with self.assertRaises(ValueError):
+            self.value("sqrt(-4)")
+
+    def test_unsafe_text_is_just_rejected(self):
+        for text in ("__import__('os').system('echo hi')", "open('f')", "x.__class__", "exec('1')"):
+            with self.assertRaises(ValueError, msg=text):
+                self.tm.parse_math(text)
+
+    def test_saved_file_round_trip(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "saved_templates.json")
+            self.assertEqual(self.tm.load_templates(path), [])                     # missing file
+            self.tm.save_templates(path, ["(□ + 3) × 2", "Time dilation(1, □)", "x ÷ π"])
+            self.assertEqual(self.tm.load_templates(path), ["(□ + 3) × 2", "Time dilation(1, □)", "x ÷ π"])
+            with open(path, "w", encoding="utf-8") as f:
+                f.write("this is not json")
+            self.assertEqual(self.tm.load_templates(path), [])                     # damaged file
+            with open(path, "w", encoding="utf-8") as f:
+                f.write('["ok", 5, "", null, "also ok"]')
+            self.assertEqual(self.tm.load_templates(path), ["ok", "also ok"])
+
+
+class TemplatePanelTests(unittest.TestCase):
+    """The Mathematical Templates panel in the real window: type, Preview, Save, Apply, calculate."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            import tkinter
+            import main
+            cls.app = main.CalculatorGUI()
+            cls.app.update()
+        except (ImportError, tkinter.TclError) as exc:
+            raise unittest.SkipTest(f"no GUI available: {exc}")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.destroy()
+
+    def setUp(self):
+        import tempfile
+        self.folder = tempfile.TemporaryDirectory()
+        app = self.app
+        app.template_path = os.path.join(self.folder.name, "saved_templates.json")   # never touch the real file
+        app.saved_templates = []
+        app.tpl_combo.configure(values=[])
+        app.tpl_combo.set("")
+        app._clear_all()
+
+    def tearDown(self):
+        self.folder.cleanup()
+
+    def button(self, text):
+        import tkinter as tk
+        stack = [self.app]
+        while stack:
+            w = stack.pop()
+            stack.extend(w.winfo_children())
+            if isinstance(w, tk.Button) and w.cget("text") == text:
+                return w
+        self.fail(f"no button {text!r}")
+
+    def said(self):
+        return self.app.results.get("1.0", "end")
+
+    def type_math(self, text):
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, text)
+
+    def test_the_three_unused_toolbar_buttons_are_gone(self):
+        import tkinter as tk
+        texts = set()
+        stack = [self.app]
+        while stack:
+            w = stack.pop()
+            stack.extend(w.winfo_children())
+            if isinstance(w, tk.Button):
+                texts.add(w.cget("text"))
+        for gone in ("Calculate (e)", "+ Add Description Col", "Delete Selected Col"):
+            self.assertNotIn(gone, texts)
+        for kept in ("Clear (C)", "Next Row (↓)", "Apply Template", "Save Template", "Preview Posted"):
+            self.assertIn(kept, texts)
+
+    def test_preview_posted(self):
+        self.type_math("(□ + 3) * 2")
+        self.button("Preview Posted").invoke()
+        self.assertIn("(□ + 3) × 2", self.said())
+        self.assertIn("1 empty square box", self.said())
+        self.assertIn("Row 1", self.said())
+
+    def test_equals_next_to_the_text_box_calculates(self):
+        self.type_math("(2 + 3) * 4")
+        self.app.tpl_equals_btn.invoke()
+        self.assertIn("= 20", self.said().replace("  ", " "))
+        self.type_math("x + 1")
+        self.app.tpl_equals_btn.invoke()
+        self.assertIn("Fill every square box", self.said())
+
+    def test_bad_math_is_explained_and_not_saved(self):
+        self.type_math("sqrt(")
+        self.button("Save Template").invoke()
+        self.assertEqual(self.app.saved_templates, [])
+        self.assertIn("Template:", self.said())
+        self.assertFalse(os.path.exists(self.app.template_path))
+
+    def test_save_then_apply_then_calculate(self):
+        app = self.app
+        self.type_math("(□ + 3) × 2")
+        self.button("Save Template").invoke()
+        self.assertEqual(app.saved_templates, ["(□ + 3) × 2"])
+        self.assertIn("(□ + 3) × 2", app.tpl_combo.cget("values"))
+        self.assertEqual(app.tpl_combo.get(), "(□ + 3) × 2")
+        self.assertEqual(os.path.exists(app.template_path), True)
+        from operator_row_math import template_math
+        self.assertEqual(template_math.load_templates(app.template_path), ["(□ + 3) × 2"])   # survives a restart
+        app.tpl_combo.set("(□ + 3) × 2")
+        self.button("Apply Template").invoke()
+        self.assertIn("Template placed in Row 1", self.said())
+        paths = [pth for kind, _t, pth in app._cards(0) if kind == "box"]
+        self.assertEqual(len(paths), 3)                                  # the empty box, the 3 and the 2
+        empty = [pth for kind, t, pth in app._cards(0) if kind == "box" and not t]
+        self.assertEqual(len(empty), 1)
+        app.rows[0]["sel"] = empty[0]
+        for ch in NewPhysicsCalculatorTests._keys(4):
+            app._key(ch)
+        app._equals()
+        self.assertIn("= 14", self.said().replace("  ", " "))             # (4 + 3) x 2
+
+    def test_a_template_can_use_any_operator_and_is_filled_in_the_boxes(self):
+        app = self.app
+        self.type_math("Time dilation(1, □)")
+        self.button("Save Template").invoke()
+        self.button("Apply Template").invoke()
+        empty = [pth for kind, t, pth in app._cards(0) if kind == "box" and not t]
+        app.rows[0]["sel"] = empty[0]
+        for ch in NewPhysicsCalculatorTests._keys(179875474.8):
+            app._key(ch)
+        app._equals()
+        self.assertIn("1.25", self.said())
+
+    def test_several_templates_and_no_duplicates(self):
+        app = self.app
+        for text in ("□ + □", "sqrt(□)", "□ + □"):
+            self.type_math(text)
+            self.button("Save Template").invoke()
+        self.assertEqual(app.saved_templates, ["□ + □", "sqrt(□)"])
+        self.assertEqual(list(app.tpl_combo.cget("values")), ["□ + □", "sqrt(□)"])
+
+    def test_apply_with_nothing_picked(self):
+        self.button("Apply Template").invoke()
+        self.assertIn("No template picked", self.said())
+
+    def test_template_nests_into_the_selected_box(self):
+        """Like an operator from the Operators list: a second template goes into the selected box."""
+        app = self.app
+        self.type_math("□ × 10")
+        self.button("Save Template").invoke()
+        self.button("Apply Template").invoke()
+        first_box = [pth for kind, t, pth in app._cards(0) if kind == "box"][0]
+        app.rows[0]["sel"] = first_box
+        self.type_math("sqrt(□)")
+        self.button("Save Template").invoke()
+        self.button("Apply Template").invoke()
+        shown = " ".join(t if t else "□" for _k, t, _p in app._cards(0))
+        self.assertIn("√", shown)
+        self.assertIn("10", shown)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

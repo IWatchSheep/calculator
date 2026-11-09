@@ -16,7 +16,7 @@ from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, 
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component
-from operator_row_math import advanced_input, multirow_specs, row_tree
+from operator_row_math import advanced_input, multirow_specs, row_tree, template_math
 
 
 MATH_OPS = [
@@ -258,11 +258,8 @@ class CalculatorGUI(tk.Tk):
         bar.pack(fill="x", padx=8, pady=(8, 4))
         tk.Label(bar, text="Smart Token Expression Builder (Math Templates)",
                  font=("Segoe UI", 10, "bold"), bg="#f0f4f4").pack(side="left", padx=(8, 12))
-        btn(bar, "Calculate (e)", BLUE).pack(side="left", padx=3)
         btn(bar, "Clear (C)", RED, command=self._clear_all).pack(side="left", padx=3)
         btn(bar, "Next Row (↓)", GREEN, command=lambda: self._next_row()).pack(side="left", padx=3)
-        btn(bar, "+ Add Description Col", PURPLE).pack(side="left", padx=3)
-        btn(bar, "Delete Selected Col", ORANGE).pack(side="left", padx=3)
 
     def _build_target_bar(self):
         f = tk.Frame(self, bg="white", highlightbackground="#c0c0c0", highlightthickness=1)
@@ -701,12 +698,12 @@ class CalculatorGUI(tk.Tk):
         if getattr(self, "op_popup", None) is not None and t is not None:
             t.configure(text="Operators → Row %d  (drag to move)" % (self.op_target + 1))
 
-    def _place_operator_row(self, key):
-        """Put the operator's math into the target row.
+    def _place_operator_row(self, key, node=None):
+        """Put the operator's math into the target row.  node = a ready-made tree (a template) instead of key.
         Empty row 1: the operator with its boxes.  Later rows: just the operator (the operands are the
         rows above).  Row 1 that already has math: the operator EXPANDS the selected number (or the first
         number if none is selected) into that operator's math, so it nests."""
-        spec = multirow_specs.get(key)
+        spec = None if node is not None else multirow_specs.get(key)
         if spec is not None:
             self._apply_template(key, spec)
             return
@@ -714,7 +711,7 @@ class CalculatorGUI(tk.Tk):
         row = self.rows[i]
         if row["is_result"]:
             self._reset_row(i)
-        new = row_tree.new_node(key)
+        new = node if node is not None else row_tree.new_node(key)
         boxes = [c[2] for c in self._cards(i) if c[0] == "box"]
         if (i == 0 or row["mode"] == "full") and row["node"] is not None and boxes:
             path = row["sel"] if row["sel"] in boxes else boxes[0]
@@ -726,7 +723,12 @@ class CalculatorGUI(tk.Tk):
         self._render_row(i)
         self._refresh_adv_target()
         mod = new["mod"]
-        if mod.CALC in ("ready", "advanced"):
+        if node is not None:
+            n = template_math.empty_boxes(new)
+            self._say("Template placed in Row %d:  %s\n%s" % (i + 1, template_math.describe(new),
+                      "Fill the %d empty square box%s (click one, then use the number pad), then press =."
+                      % (n, "" if n == 1 else "es") if n else "Nothing to fill in: press ="))
+        elif mod.CALC in ("ready", "advanced"):
             how = "number pad" if mod.CALC == "ready" else "number pad / Advanced Input"
             self._say("%s: fill the boxes in order -> %s  (%s), then press =." % (mod.NAME, ", ".join(mod.INPUTS), how))
         else:
@@ -764,6 +766,71 @@ class CalculatorGUI(tk.Tk):
         self._say("%s needs %d rows.\n%s\nJoined with %s. Fill the boxes in every row, then press =."
                   % (name, need, steps, " ".join(spec["joins"])))
         self._refresh_adv_target()
+
+    # ---------- mathematical templates (typed math saved for later) ----------
+    def _tpl_build(self, text):
+        """The operator tree for typed math, or None (after telling the user what is wrong)."""
+        try:
+            return template_math.parse_math(text)
+        except ValueError as e:
+            self._say("Template: %s" % e)
+            return None
+
+    def _tpl_preview(self):
+        """Preview Posted: show how the typed math would be put into the target row."""
+        text = self.tpl_entry.get().strip()
+        node = self._tpl_build(text)
+        if node is None:
+            return
+        n = template_math.empty_boxes(node)
+        self._say("Preview - this will be posted in Row %d:\n  %s\n%s"
+                  % (self.op_target + 1, template_math.describe(node),
+                     "%d empty square box%s to fill in." % (n, "" if n == 1 else "es") if n
+                     else "No empty boxes: it can be calculated straight away."))
+
+    def _tpl_equals(self):
+        """=  next to the text box: calculate the typed math (it must have no empty boxes)."""
+        text = self.tpl_entry.get().strip()
+        node = self._tpl_build(text)
+        if node is None:
+            return
+        try:
+            value = row_tree.evaluate(node)
+        except ValueError as e:
+            self._say("Template: %s  (%s)" % (e, template_math.describe(node)))
+            return
+        self._say("%s  =  %s" % (template_math.describe(node), row_tree.fmt(value)))
+
+    def _tpl_save(self):
+        """Save Template: keep the typed math so it shows up in the Apply Template list."""
+        text = self.tpl_entry.get().strip()
+        node = self._tpl_build(text)
+        if node is None:
+            return
+        if text in self.saved_templates:
+            self._say("Template already saved: %s" % text)
+        else:
+            self.saved_templates.append(text)
+            try:
+                template_math.save_templates(self.template_path, self.saved_templates)
+                note = "It is kept for next time too."
+            except OSError as e:
+                note = "(Could not write %s: %s. It will be forgotten when the window closes.)" % (
+                    os.path.basename(self.template_path), e)
+            self.tpl_combo.configure(values=self.saved_templates)
+            self._say("Saved template: %s\nPick it in the list and press Apply Template. %s" % (text, note))
+        self.tpl_combo.set(text)
+
+    def _tpl_apply(self):
+        """Apply Template: put the chosen template into the target row, like an operator from Operators."""
+        text = self.tpl_combo.get().strip()
+        if not text:
+            self._say("No template picked. Type some math in the text box, press Save Template, "
+                      "then pick it in the list.")
+            return
+        node = self._tpl_build(text)
+        if node is not None:
+            self._place_operator_row(None, node=node)
 
     # ---------- advanced input popup ----------
     def _selected_box(self):
@@ -1202,14 +1269,19 @@ class CalculatorGUI(tk.Tk):
         tpl.pack(fill="x", ipadx=4, ipady=4)
         r1 = tk.Frame(tpl, bg="#f0f4f4")
         r1.pack(anchor="w", padx=4, pady=2)
-        ttk.Combobox(r1, values=["0"], width=14).pack(side="left")
-        btn(r1, "Apply Template", "#cfe0f7", fg=BLUE).pack(side="left", padx=4)
+        self.template_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_templates.json")
+        self.saved_templates = template_math.load_templates(self.template_path)
+        self.tpl_combo = ttk.Combobox(r1, values=self.saved_templates, width=30, state="readonly")
+        self.tpl_combo.pack(side="left")
+        btn(r1, "Apply Template", "#cfe0f7", fg=BLUE, command=self._tpl_apply).pack(side="left", padx=4)
         r2 = tk.Frame(tpl, bg="#f0f4f4")
         r2.pack(anchor="w", padx=4, pady=2)
-        tk.Entry(r2, width=12).pack(side="left")
-        btn(r2, "=", "#e0e0e0", fg="black").pack(side="left", padx=2)
-        btn(r2, "Preview Posted", "#fbe4cf", fg="#c05000").pack(side="left", padx=2)
-        btn(r2, "Save Template", "#e8e8e8", fg="black").pack(side="left", padx=2)
+        self.tpl_entry = tk.Entry(r2, width=26)
+        self.tpl_entry.pack(side="left")
+        self.tpl_equals_btn = btn(r2, "=", "#e0e0e0", fg="black", command=self._tpl_equals)
+        self.tpl_equals_btn.pack(side="left", padx=2)
+        btn(r2, "Preview Posted", "#fbe4cf", fg="#c05000", command=self._tpl_preview).pack(side="left", padx=2)
+        btn(r2, "Save Template", "#e8e8e8", fg="black", command=self._tpl_save).pack(side="left", padx=2)
 
         desc = tk.LabelFrame(mid, text="Descriptive Columns Console (Col 2 & 3)", fg=PURPLE,
                              font=("Segoe UI", 8, "bold"), bg="#f0f4f4")

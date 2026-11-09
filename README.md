@@ -17,6 +17,7 @@ appears. Every operator comes with a picture of its formula.
 - **Rows and joins:** results from several rows can be combined with `+ − × ÷ = ≠ < > ≤ ≥`.
 - **Operators inside operators:** put an operator into the box of another one.
 - **Advanced Input** for things a number pad cannot type: lists, matrices, functions, sets and graphs.
+- **Templates:** type your own math once, save it, and put it into a row whenever you want it.
 - **Multi-row operators** (for example Stokes' theorem) that add the rows they need for you.
 - **Safe function input:** typed functions such as `x**2 + 3*x` are checked against a small whitelist
   (no `eval` on raw text), so `__import__('os')` and similar are rejected.
@@ -93,11 +94,39 @@ The full list, with each formula and whether it calculates, is in
 | Keypad (bottom left) | `0–9` and `.` type into the selected box. `±` flips the sign. `EE` starts a power of ten, so `1.5 EE ± 3` is `1.5e-3`. `Backspace` deletes. `Next Row (↓)` moves to the next row, adding one if needed. `=` calculates. `C` (or the toolbar's Clear (C)) clears everything and starts again. |
 | Join keys | `+ − × ÷ = ≠ < > ≤ ≥` combine the result of a row with the rows above it. |
 | Operators pop-up | Search and pick an operator. It shows the formula picture and the keys it uses. Drag it by its title bar. |
+| Mathematical Templates | Type math, preview it, save it, and apply it to a row (see below). |
 | Advanced Input | A pop-up for values that need more than a number (see below). |
 | Results area | Shows what was calculated, for example `Row 1: Time dilation( 1 , 179875474.8 )` and `= 1.25`. |
 
 **Nesting.** If Row 1 already holds an operator, picking another operator puts it into the
 selected box, so the result of one feeds the next.
+
+**Templates.** The *Mathematical Templates* panel keeps math you use often:
+
+1. Type some math in the text box, for example `(□ + 3) × 2` or `Time dilation(1, □)`.
+2. **Preview Posted** shows how it will look in the row and how many empty boxes it has.
+3. **Save Template** adds it to the list. Templates are saved in `saved_templates.json` next to
+   `main.py`, so they are still there next time. The file is yours alone and is not part of the repository.
+4. Pick it in the list and press **Apply Template**. It goes into the target row just like an operator
+   from the Operators pop-up (inside the selected box if the row already has math). Fill the empty boxes
+   and press `=`.
+
+The small `=` beside the text box calculates the typed math straight away when it has no empty boxes.
+
+What you can type:
+
+| You type | Meaning |
+|---|---|
+| `3`, `2.5`, `.5`, `1.5e-3` | numbers |
+| `□`, `?`, or a bare letter such as `x` | an empty box to fill in later (each one is its own box) |
+| `+ − × ÷ ^ %` (or `* / -`) | the arithmetic operators; `^` binds tightest, then `× ÷ %`, then `+ −` |
+| `( ... )` | grouping |
+| `sqrt(16)`, `Square root(16)`, `sin(pi / 2)` | any operator in the library, by name or short name (`sqrt`, `sin`, `ln`, `abs`, `gcd`, ...), with its inputs in brackets |
+| `Time dilation(1, □)` | operators with several inputs: separate them with commas |
+| `pi`, `e` | the constants |
+
+A mistake gives a plain message in the results area, for example `Time dilation needs 2 input(s) but was
+given 1.` and nothing is saved.
 
 **Advanced Input** lets a box take a list (`1, 2, 3`), a matrix (`1 2; 3 4`), a function of x
 (`x**2 + 3*x`), a yes/no test (`x > 2`), a set, a list of edges, a graph (`A: B, C; B: C; C: A`), a
