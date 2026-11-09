@@ -2241,6 +2241,44 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 1, 6))
 
+    def test_class_ratio_question_must_say_originally(self):
+        base = "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3. "
+        # the question that says originally (or at first / to begin with) stays 44
+        for q in ("How many students were there originally?", "How many students were there at first?", "How many students were there to begin with?", "Originally, how many students were there?"):
+            self.assertEqual(answers(base + q), values(44), q)
+        # the class now has 12 + 32 + 4 = 48 students; "now" is not the original total
+        self.assertIsNone(answers(base + "How many students are there now?"))
+        self.assertIsNone(answers("Originally there were some. After 4 more girls join, the ratio becomes 1:3. How many students are there now?"))
+        self.assertIsNone(answers("The ratio of boys to girls in a class is 3:8. Originally there were some students. After 4 more girls join, the ratio becomes 1:3. How many students are there now?"))
+        # two questions make the problem ask two things
+        self.assertIsNone(answers(base + "How many students were there originally? How many are there now?"))
+        self.assertIsNone(answers(base + "How many are there now? How many students were there originally?"))
+        self.assertIsNone(answers(base + "How many students were there originally, and how many are there now?"))
+
+    def test_pipes_the_drain_must_be_open_too(self):
+        base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
+        # everything open, the drain included: 5/2 hours
+        for q in ("With all three open, how long does it take to fill the pool?", "With all three running, how long does it take to fill the pool?",
+                  "All three are open. How long does it take to fill the pool?", "With everything open, how long does it take to fill the pool?",
+                  "The pipes and the drain are all open. How long does it take to fill the pool?", "The pipes and the drain are open together. How long does it take to fill the pool?",
+                  "With both pipes and the drain open, how long does it take to fill the pool?", "All open, how long does it take to fill the pool?",
+                  "How long does it take to fill the pool with all three open?"):
+            self.assertEqual(answers(base + q), values(Fraction(5, 2)), q)
+        # "The pipes work together" does not open the drain: the two pipes alone take 1 / (1/4 + 1/5) = 20/9 hours, a different problem
+        self.assertEqual(Fraction(1) / (Fraction(1, 4) + Fraction(1, 5)), Fraction(20, 9))
+        for q in ("The pipes work together. How long does it take to fill the pool?", "The pipes work together at the same time. How long does it take to fill the pool?",
+                  "Both pipes are open. How long does it take to fill the pool?", "Both pipes are open at the same time. How long does it take to fill the pool?",
+                  "Both pipes work at once. How long does it take to fill the pool?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_class_ratio_and_pipes_neighbours_set(self):
+        """Set 40: neighbours of the batch-37 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_40 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (fortieth set, neighbours of the batch-37 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (3, 0, 4))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

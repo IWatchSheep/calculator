@@ -1001,3 +1001,17 @@ Measured:
   Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these three shapes).
   Fresh set 39 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 6 required declines: 6 of 6; 0 wrong.  The declined one is a safe miss, not fixed: "How many animals were there originally?" ("animals" is not one of the nouns for a total of students).
   143 word-solver and number-puzzle tests pass.
+
+Batch 37: nearby wordings of class_ratio_after_join and pipes_and_drain (fixes only, no new family)
+==============================================================
+class_ratio_after_join: the question that asks "how many" has to be the one that says "originally".  The old check looked for "originally" anywhere in the problem.  "Originally there were some. After 4 more girls join, the ratio becomes 1:3. How many students are there now?" was answered 44 (the class is
+  12 + 32 + 4 = 48 students now), and "How many students were there originally? How many are there now?" was 44 as well.  Now EXACTLY ONE sentence may ask "how many", that sentence must say originally / at first / to begin with / in the beginning, and it may not say now / currently / today / afterwards / after that / finally / at the end.
+  "How many students were there originally?", "... at first?", "... to begin with?" and "Originally, how many students were there?" stay 44; "How many students are there now?", the two-question forms (in either order) and "..., and how many are there now?" decline.
+pipes_and_drain: the drain must be open too.  "The pipes work together. How long does it take to fill the pool?" was answered 5/2, but that sentence does not open the drain: the two pipes alone take 1 / (1/4 + 1/5) = 20/9 hours (a test checks it), a different problem.  The old cue accepted a bare "together", "at the same
+  time" and "at once".  Now the text must say everything is open, the drain included: "all three open / running / working / together", "all open", "all of them", "with all three", "with everything open", "the pipes and the drain ... open / running / together", or "both pipes and the drain".  These stay 5/2: "With all three open", "With all three
+  running", "All three are open.", "With everything open", "The pipes and the drain are all open", "... are open together", "With both pipes and the drain open", "All open,", and "... with all three open" at the end.  These decline: "The pipes work together.", "... at the same time", "Both pipes are open.", "Both pipes work at once."
+Checks (test_word_solver.py): the three new test methods above; the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 40 (7 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong.
+  146 word-solver and number-puzzle tests pass.

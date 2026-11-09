@@ -2917,8 +2917,13 @@ def class_ratio_after_join(problem):
     if k <= 0 or B.denominator != 1 or G.denominator != 1 or B <= 0 or G <= 0:
         return None                                              # the counts have to be positive whole numbers
     # the question asks for the ORIGINAL total
-    qm = re.search(r"\bhow many (?:of the )?([a-z]+)", t)
-    if not qm or qm.group(1) not in ("students", "pupils", "children", "people", "members", "kids", "learners") or not re.search(r"\b(?:originally|at first|to begin with|in the beginning)\b", t):
+    # exactly ONE sentence asks "how many", and THAT sentence says originally / at first: "Originally there were some ... How many students are there now?" asks the total now,
+    # and a second question ("How many are there now?") makes the problem ask two things
+    asking = [x for x in re.split(r"[.?!]", t) if re.search(r"\bhow many\b", x)]
+    if len(asking) != 1 or not re.search(r"\b(?:originally|at first|to begin with|in the beginning)\b", asking[0]) or re.search(r"\b(?:now|currently|today|afterwards|after that|finally|at the end)\b", asking[0]):
+        return None
+    qm = re.search(r"\bhow many (?:of the )?([a-z]+)", asking[0])
+    if not qm or qm.group(1) not in ("students", "pupils", "children", "people", "members", "kids", "learners"):
         return None                                              # the TOTAL at the start, not the boys or the girls, and not the total afterwards
     total = B + G
     return Result("class_ratio_after_join", [total], eq,
@@ -2990,7 +2995,10 @@ def pipes_and_drain(problem):
     if not fills or not drains or min(fills + drains) <= 0:
         return None
     # the question: with everything open, how long to FILL the pool
-    if not re.search(r"\b(?:all (?:three |of them |the )?(?:open|running|on)|all open|together|at the same time|at once)\b", t):
+    # everything open, THE DRAIN INCLUDED: "all three open", "all open", "with everything open", "the pipes and the drain open".  A bare "The pipes work together" /
+    # "both" / "at the same time" does not open the drain (the two pipes alone are a different problem).
+    if not re.search(r"\ball (?:three |of them |the )?(?:are )?(?:open|running|on|working|together)\b|\bwith all (?:three|of them|the (?:pipes|taps) and the (?:drain|leak|outlet))\b|\bwith everything open\b|"
+                     r"\b(?:pipes|taps) and the (?:drain|leak|outlet)\b[^.?!]*\b(?:open|running|together|on|working)\b|\bboth (?:pipes|taps) and the (?:drain|leak|outlet)\b", t):
         return None
     if not re.search(r"\bhow long\b[^.?!]*\bfill\b", t) or re.search(r"\bhow long\b[^.?!]*\bempty\b", t):
         return None
