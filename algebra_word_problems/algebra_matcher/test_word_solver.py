@@ -69,6 +69,10 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Working together they take 5 hours. How long do they take together?"))
         self.assertIsNone(answers("Working together, two gardeners weed a park in 6 hours. One alone would need 10 hours. How long would the other need alone?"))
         self.assertIsNone(answers("A tap fills a tank in 5 hours but a leak empties it in 8 hours. How long to fill it with both going?"))
+        # spelled multipliers of the workers or their rates (found by Grok); "Two machines ..." as the shape of the problem stays
+        self.assertIsNone(answers("Ann can wash a car in 20 minutes and Bea can wash it in 30 minutes. How long will two such pairs take working together?"))
+        self.assertIsNone(answers("Tom paints a fence alone in 6 hours, Sue in 3. If two teams like them team up, how long does it take?"))
+        self.assertEqual(answers("Two machines finish an order in 8 hours and 12 hours respectively. How long will it take them together?"), values(Fraction(24, 5)))
         # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"
         self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"))
 
@@ -79,6 +83,9 @@ class Families(unittest.TestCase):
         # the question asks for the AFTER value, or the known amount is a saving: never answer
         self.assertIsNone(answers("A shirt costs $40 and is 25% off. What is the sale price?"))
         self.assertIsNone(answers("A shirt is 25% off, saving $10. What was the original price?"))
+        # a number written as a word multiplies the thing asked about ("two coats"): decline (found by Grok)
+        self.assertIsNone(answers("After a 15% discount, two coats cost $170. What was the original price of one?"))
+        self.assertIsNone(answers("Prices fell 15% and a coat now costs $170. What did two coats cost before?"))
         # "service charge" (two words) is a rise; the bare word "charge" is not
         self.assertEqual(answers("The bill including a 12% service charge was $224. What was the bill before the charge?"), values(200))
         self.assertIsNone(answers("A bill of $90 includes a $10 service charge. What was it before the service charge?"))
@@ -191,15 +198,19 @@ class DevelopmentWordingsLater(unittest.TestCase):
 
 
 class FreshWordings(unittest.TestCase):
-    """8 wordings written AFTER the spelled-number rule and run once, untuned (fresh_word_problems_4.py):
-    4 with an answer, 4 that must be declined.  Declining is safe; a wrong answer is a failure."""
+    """8 wordings written AFTER the spelled-number rules for percent_change and work_together and run once, untuned
+    (fresh_word_problems_5.py): 4 with an answer, 4 that must be declined.  A wrong answer is a failure."""
 
     def test_fresh(self):
-        from fresh_word_problems_4 import FRESH
+        from fresh_word_problems_5 import FRESH
         solved, declined, required = score(FRESH)
-        print("  fresh wordings (fourth set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+        print("  fresh wordings (fifth set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (3, 1, 4))
+        self.assertEqual((solved, declined, required), (4, 0, 4))
+
+    def test_fourth_set_is_now_a_development_set(self):
+        from fresh_word_problems_4 import FRESH
+        self.assertEqual(score(FRESH), (3, 1, 4))
 
 
 if __name__ == "__main__":

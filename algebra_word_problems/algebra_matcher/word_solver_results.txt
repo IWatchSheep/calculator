@@ -108,3 +108,24 @@ Fourth fresh set (fresh_word_problems_4.py, 8 wordings written after change 2, r
   4 with an answer: 3 solved, 1 declined (a "pump" - pumps are deliberately rejected).  4 required declines: 4 of 4.  0 wrong.
 
 Still open: the same "spelled number" hole may exist in the other four families (not seen there, not changed).
+
+Batch 4: spelled numbers in percent_change and work_together (found by Grok)
+============================================================================
+Four wrong answers (each now a regression test):
+  "After a 15% discount, two coats cost $170. What was the original price of one?"        returned 200, true 100
+  "Prices fell 15% and a coat now costs $170. What did two coats cost before?"            returned 200, true 400
+  "...Ann ... 20 minutes ... Bea ... 30 minutes. How long will two such pairs ...?"      returned 12, true 6
+  "Tom paints a fence alone in 6 hours, Sue in 3. If two teams like them team up, ...?"  returned 2, true 1
+Changes (word_solver.py):
+  * percent_change declines when a number is written as a word (two ... ten, twice, double, triple, half, another, second).
+  * work_together declines on a spelled multiplier of the workers ("two such pairs", "two teams", "three crews", "such",
+    "like them", "identical") or a changed rate ("twice", "double", "triple", "half").  "Two machines finish an order in
+    8 hours and 12 hours" keeps working: there "two" is the shape of the problem, not a multiplier.
+  * sum_difference and consecutive were left alone on purpose ("the sum of two numbers", "cut into two pieces" use
+    "two" as the shape of the problem; those 9 generated problems are answered correctly).
+  * the ordinal "second" is a spelled number, the unit "seconds" is not (word boundary).
+Measured:
+  1,000 generated problems: claims 79 -> 79, none lost, wrong 0.
+  Fifth fresh set (fresh_word_problems_5.py, 8 wordings written after the change, run once, untuned):
+      4 with an answer: 4 solved, 0 declined.  4 required declines: 4 of 4.  0 wrong.
+  Fourth set (fresh_word_problems_4.py) is a development set again; its score is unchanged (3 solved, 1 declined, 4/4).

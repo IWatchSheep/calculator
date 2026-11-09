@@ -184,6 +184,11 @@ def consecutive(problem):
 # 3. two workers, separate times -> together
 # ---------------------------------------------------------------------------------------------------------
 _TIME_UNIT = r"(hours?|hrs?|minutes?|mins?|days?|weeks?)"
+# a number written as a word: "two coats", "twice", "another" (the ordinal "second" is not the unit "seconds")
+_SPELLED = r"\b(?:two|three|four|five|six|seven|eight|nine|ten|twice|double|triple|half|another|second)\b"
+# workers multiplied or rates changed: "two teams", "three such pairs", "twice as fast", "half the time"
+_SPELLED_REPEAT = (r"\b(?:two|three|four|five|six|seven|eight|nine|ten)\s+(?:such\s+|identical\s+|similar\s+|more\s+)?(?:pairs?|teams?|crews?|groups?|sets?|copies)\b"
+                   r"|\b(?:twice|double|triple|half)\b")
 _TOGETHER = r"\b(together|both|team(?:s|ed)? up|combined|at the same time|jointly)\b"
 _ONE_WORKER = r"\b(alone|the other|each other|one of them)\b"
 
@@ -200,6 +205,9 @@ def work_together(problem):
         return None
     # "alone" in the setup is fine ("Tom paints a fence alone in 6 hours"). Decline only when the
     # question itself asks for one worker's time, or when one rate is a drain rather than a worker.
+    # "two such pairs", "two teams like them", "twice as fast": the workers are multiplied or their rates changed
+    if re.search(_SPELLED_REPEAT, t) or re.search(r"\b(?:such|identical|like them|just like)\b", t):
+        return None
     questions = [x for x in re.split(r"(?<=[.!?])\s+", t) if x.strip().endswith("?")]
     if len(questions) != 1 or not re.search(_TOGETHER, questions[0]) or re.search(_ONE_WORKER, questions[0]):
         return None
@@ -242,6 +250,9 @@ def percent_change(problem):
     t = clean(problem)
     nums = digit_numbers(problem)
     if len(nums) != 2 or t.count("%") != 1:
+        return None
+    # "two coats cost $170": a number written as a word multiplies the thing asked about, so decline
+    if re.search(_SPELLED, t):
         return None
     pct = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
     other = [n for n in nums if n not in pct]
