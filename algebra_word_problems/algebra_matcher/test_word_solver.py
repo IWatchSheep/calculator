@@ -2426,6 +2426,24 @@ class FreshWordings(unittest.TestCase):
         from fresh_word_problems_46 import FRESH
         self.assertEqual(score(FRESH), (3, 0, 6))
 
+    def test_pipes_the_question_ends_once_it_names_what_is_filled(self):
+        """Extra water said in a phrase the batch-42 list did not hold still got through: "How long does it take to fill the tank during a storm / under a downpour / amid the rain?"
+        was answered 12/5.  Once the question has named the tank, the pool or the tub, it has to END (only up / completely / the / empty ... may follow); the "with all three open" phrase is
+        taken out before this check, so "... fill the tank with all three open?" still answers."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours. "
+        for q in ("All three are open. How long does it take to fill the tank?", "With all three open, how long does it take to fill the tank?",
+                  "How long does it take to fill the tank with all three open?", "All three are open. How long does it take to fill it?"):
+            self.assertEqual(answers(base + q), values(Fraction(12, 5)), q)
+        for q in ("All three are open. How long does it take to fill the tank during a storm?", "All three are open. How long does it take to fill the tank under a downpour?",
+                  "All three are open. How long does it take to fill the tank amid the rain?", "All three are open. How long does it take to fill the tank overnight?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_question_end_set(self):
+        """Set 47 (9 wordings) was written after the batch-43 fix and run once, untuned: 2 solved, 1 declined (safe: "fill the EMPTY pool" is declined by the older rule against a
+        question that asks to empty), 6 required declines, 0 wrong."""
+        from fresh_word_problems_47 import FRESH
+        self.assertEqual(score(FRESH), (2, 1, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

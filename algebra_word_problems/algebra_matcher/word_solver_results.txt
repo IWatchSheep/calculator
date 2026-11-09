@@ -1089,3 +1089,18 @@ Measured:
   1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 46 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   158 word-solver and number-puzzle tests pass.
+
+Batch 43: once the pipes question has named the thing being filled it has to end (pipes_and_drain; fix only, no new family)
+==============================================================
+pipes_and_drain: the batch-42 list of words that may not hang on the question was still a list, and extra water said in a phrase outside it got through and was answered 12/5 (wrong):
+  "How long does it take to fill the tank during a storm?"  /  "... under a downpour?"  /  "... amid the rain?"
+  The fix is a general rule: with the "all open" phrase already taken out ("with all three open" is the three devices, not extra water), what follows "fill" in the question may only be
+  the object and nothing after it.  Once a vessel is named (tank, pool, tub, bathtub, cistern, basin, reservoir, barrel, drum, bucket, vat, trough, pond, container, bath, sink, pot) only
+  small ending words may follow (up, it, the, a, empty, whole, entire, completely, fully, one, all, swimming, water, storage, big, large, small); if no vessel is named ("fill it") the whole tail has to be those words.
+  Unchanged: "How long does it take to fill the tank?", "With all three open, how long does it take to fill the tank?", "How long does it take to fill the tank with all three open?" and "... fill it?" all still answer 12/5.
+Checks (test_word_solver.py): test_pipes_the_question_ends_once_it_names_what_is_filled and test_pipes_question_end_set; the earlier tests still pass.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 47 (9 wordings, neighbours of this fix, written after the fix was finished, run once, untuned): 3 with an answer: 2 solved, 1 declined (safe: "With everything open, how long does it take to fill the EMPTY pool?" was already declined
+  before this batch by the rule against a question that asks to empty); 6 required declines: 6 of 6; 0 wrong.
+  160 word-solver and number-puzzle tests pass.

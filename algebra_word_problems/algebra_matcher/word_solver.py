@@ -2975,6 +2975,8 @@ _PIPE_FILL_WORD = re.compile(r"\b(?:pipe|fills?|inlet|tap|faucet|hose)\b")
 # what may stay in the "everything is open" statement once the phrase is taken out, and the words that hang another clause on the question
 _PIPE_FILLER = {"if", "when", "with", "then", "together", "now", "at", "the", "same", "time", "once", "all", "both", "are", "is", "be"}
 _PIPE_HANG_ON = {"if", "when", "while", "as", "with", "and", "also", "too", "but", "since", "because", "once", "after", "before", "until", "plus", "besides", "even", "still", "in", "through", "from", "into", "by"}
+_PIPE_VESSEL = {"tank", "pool", "tub", "bathtub", "cistern", "basin", "reservoir", "barrel", "drum", "bucket", "vat", "trough", "pond", "container", "bath", "sink", "pot"}
+_PIPE_ENDING = {"up", "it", "them", "the", "a", "an", "this", "that", "empty", "whole", "entire", "completely", "fully", "entirely", "one", "all", "swimming", "water", "storage", "big", "large", "small"}
 _PIPE_DRAIN_WORD = re.compile(r"\b(?:drain|drains|empties|empty|leak\w*|outlet)\b")
 
 
@@ -3031,6 +3033,14 @@ def pipes_and_drain(problem):
                 return None
             if q and set(re.findall(r"[a-z']+", opened[q.start():])) & _PIPE_HANG_ON:
                 return None
+            if q:
+                # once the question has named the thing being filled it has to END ("... fill the tank during a storm / under a downpour / amid the rain" is something else going on)
+                fm = re.search(r"\bfill\b(.*)$", opened[q.start():], flags=re.S)
+                if fm:
+                    tail = re.findall(r"[a-z']+", fm.group(1))
+                    named = [k for k, w in enumerate(tail) if w in _PIPE_VESSEL]
+                    if (set(tail[named[0] + 1:]) if named else set(tail)) - _PIPE_ENDING:
+                        return None
         if _PIPE_DRAIN_WORD.search(sent) and not _PIPE_IN.search(sent):
             # a sentence about the drain that is not the clause giving its time: it may only be the "everything is open" phrase itself, and nothing else about the drain may
             # remain once that phrase is taken out ("The drain is covered.", "The drain is pinched.", "All three are open and the drain is full of leaves.")
