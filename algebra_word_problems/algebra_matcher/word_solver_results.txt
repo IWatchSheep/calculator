@@ -846,3 +846,20 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 30 (10 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
   114 word-solver and number-puzzle tests pass.
+
+Batch 28: a comparison word that is not a comparison of the two sides (rectangle_from_perimeter_area; fixes only, no new family)
+==============================================================
+rectangle_from_perimeter_area: "more", "less", "longer", "shorter" (and larger, greater, wider, narrower ...) were read as "this side is the longer / shorter one" and the rest of the sentence was ignored.  Now a comparison must compare the two SIDES and then end:
+  subject (length, width, it, one) + is + [the] relation word + optional "side / one / dimension" + optional "than [the | its] length / width / other side", followed by the end of the statement (a full stop, comma, "and", "but", "so" ...).
+  Anything else declines:  "What is its length? It is shorter than a foot." was 2; "The length is longer than a mile. What is its length?" was 18; "What is its width? It is more interesting than the length." was 18; "What is its length? It is less obvious than
+  the width." was 2; "What is its length? One is less certain than the width." was 2.  They all decline, and so do "shorter than 3 ft", "shorter than the width of a door", "longer than a tennis court", "more beautiful than the width", and a bare "It is shorter." /
+  "It is longer." (shorter than what?).  Every comparison word anywhere in the statements must sit inside a valid comparison, otherwise the problem declines.
+  These stay: "It is more than the width" 18, "It is shorter than the width" 2, "the length is less than the width" 2, "the width is more than the length" 18, "it is the longer side" 18, "the longer one is the width" 18, "shorter than the other side" 2,
+  "the longer side is the length" 18 and "Find its length and width" (both).
+Added while checking: a statement and its question in ONE sentence ("The length is shorter than the width, so what is its length?") returned 18 and 2: the statement sat inside the question and "length" and "width" both counted as asked.  The question
+  is now cut at so / then / therefore / ; and the part before is a statement: that sentence gives 2 (length), "... so what is its width?" gives 18, and "... so find its length and width" returns both (2, 18).
+Checks (test_word_solver.py): the three new test methods above; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 31 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
+  117 word-solver and number-puzzle tests pass.

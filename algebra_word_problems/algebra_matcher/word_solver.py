@@ -2586,8 +2586,10 @@ _RECT_UNIT = {"feet": "ft", "foot": "ft", "meters": "m", "metres": "m", "meter":
               "yards": "yd", "yard": "yd", "miles": "mi", "mile": "mi", "kilometers": "km", "kilometres": "km"}
 _RECT_LONG = r"(?:longer|larger|greater|bigger|wider|broader|more|longest|largest|greatest|widest)"
 _RECT_SHORT = r"(?:shorter|smaller|lesser|narrower|less|shortest|smallest|least|narrowest)"
-_RECT_REL = re.compile(r"\b(length|width|it|one)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?(?:\s+than\s+(?:the\s+)?(length|width))?\b")
-_RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension|one)\s+(?:is|being)\s+(?:the\s+)?(length|width)\b")
+_RECT_BOUNDARY = r"(?=\s*(?:$|[,;.:?!]|\b(?:and|but|while|so|then|if|when)\b))"
+_RECT_REL = re.compile(r"\b(length|width|it|one)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?"
+                       r"(?:\s+than\s+(?:the\s+|its\s+)?(length|width|other(?:\s+(?:side|one|dimension))?))?" + _RECT_BOUNDARY)
+_RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension|one)\s+(?:is|being)\s+(?:the\s+)?(length|width)" + _RECT_BOUNDARY)
 
 
 def _rect_length_is_longer(text, asked=None):
@@ -2595,6 +2597,8 @@ def _rect_length_is_longer(text, asked=None):
     found = []
     for m in _RECT_REL.finditer(text):
         dim, rel, other = m.group(1), m.group(2), m.group(3)
+        if not text[m.end(2):m.end()].strip():
+            return "bad"                                             # "It is shorter." with nothing to compare
         if dim in ("it", "one"):                                     # "It is shorter than the width": "it" is the side the question asks for
             if asked is None:
                 return "bad"
@@ -2604,6 +2608,11 @@ def _rect_length_is_longer(text, asked=None):
         found.append((dim, bool(re.match(_RECT_LONG, rel))))
     for m in _RECT_SIDE.finditer(text):
         found.append((m.group(2), bool(re.match(_RECT_LONG, m.group(1)))))
+    # a comparison word that is NOT part of a comparison of the two sides ("shorter than a foot", "more interesting than the length") is not about this rectangle: decline
+    spans = [m.span() for m in _RECT_REL.finditer(text)] + [m.span() for m in _RECT_SIDE.finditer(text)]
+    for w in re.finditer(r"\b(?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\b", text):
+        if not any(a <= w.start() < b for a, b in spans):
+            return "bad"
     if not found:
         return None
     verdicts = {(longer if dim == "length" else not longer) for dim, longer in found}
@@ -2633,6 +2642,10 @@ def rectangle_from_perimeter_area(problem):
     # a condition inside the question ("... if the length is shorter than the width") is a STATEMENT, not part of what is asked
     cm = re.search(r"\b(?:if|when|given that|since|because|assuming|provided)\b", q) if q else None
     q_main, cond = (q[:cm.start()], q[cm.end():]) if cm else (q, "")
+    q_parts = re.split(r"(?:,\s*)?\b(?:so|then|therefore)\b|;", q_main) if q_main else [q_main]
+    if len(q_parts) > 1:
+        cond = cond + " . " + " . ".join(q_parts[:-1])
+        q_main = q_parts[-1]
     if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q_main):
         return None
     q = q_main
@@ -2640,7 +2653,7 @@ def rectangle_from_perimeter_area(problem):
     asks_both = bool(re.search(r"\b(?:sides|dimensions)\b", q)) or (asks_len and asks_wid)
     if not (asks_len or asks_wid or asks_both):
         return None
-    others = " ".join([x for x in sents if x is not q_orig] + [cond])
+    others = " . ".join([x for x in sents if x is not q_orig] + [cond])           # the " . " keeps the end of each statement visible
     asked_side = "length" if (asks_len and not asks_wid and not asks_both) else ("width" if (asks_wid and not asks_len and not asks_both) else None)
     length_longer = _rect_length_is_longer(others, asked_side)
     if length_longer == "bad":

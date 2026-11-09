@@ -1805,6 +1805,47 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 0, 5))
 
+    def test_rectangle_comparison_word_must_compare_the_two_sides(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # comparisons of the two sides stay as they are
+        for q, want in (("What is its length? It is more than the width.", 18), ("What is its width? It is more than the length.", 18),
+                        ("What is its length? It is shorter than the width.", 2), ("The length is less than the width. What is its length?", 2),
+                        ("The width is more than the length. What is its width?", 18), ("What is its width? It is the longer side.", 18),
+                        ("The longer one is the width. What is its width?", 18), ("What is its length? It is shorter than the other side.", 2),
+                        ("What is its width? It is less than the length.", 2), ("The longer side is the length. What is its length?", 18)):
+            self.assertEqual(answers(base + q), values(want), q)
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        self.assertEqual(answers(base + "What is its length?"), values(18))
+        # a comparison with anything else is not a comparison of the sides: decline
+        for q in ("What is its length? It is shorter than a foot.", "The length is longer than a mile. What is its length?",
+                  "What is its width? It is more interesting than the length.", "What is its length? It is less obvious than the width.",
+                  "What is its length? One is less certain than the width.", "What is its length? It is shorter than 3 ft.",
+                  "What is its length? It is shorter than the width of a door.", "What is its width? It is longer than a tennis court.",
+                  "What is its length? It is more beautiful than the width.",
+                  "What is its length? It is shorter.", "What is its length? It is longer.",
+                  "The width is the smaller of the two sides in a garden. What is its width?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_rectangle_statement_and_question_in_one_sentence(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # the part before "so / then / therefore / ;" is a statement; naming the width in it does not ask for both sides
+        self.assertEqual(answers(base + "The length is shorter than the width, so what is its length?"), values(2))
+        self.assertEqual(answers(base + "The width is shorter than the length, so what is its width?"), values(2))
+        self.assertEqual(answers(base + "The length is shorter than the width, so what is its width?"), values(18))
+        self.assertEqual(answers(base + "The length is shorter than the width; what is its length?"), values(2))
+        r = WS.solve(base + "The length is shorter than the width, so find its length and width.")
+        self.assertEqual(r.values, [Fraction(2), Fraction(18)])             # both sides asked: the length is the shorter one
+        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)
+        self.assertEqual(r.values[0] * r.values[1], 36)
+
+    def test_comparison_word_set(self):
+        """Set 31: neighbours of the batch-28 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_31 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-first set, neighbours of the batch-28 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 0, 5))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
