@@ -1,0 +1,307 @@
+"""Build the operator key catalog for the Rust port.
+
+Run from the project root:   python operator_keys/make_operator_keys.py
+Writes (next to this script): operator_keys.json, operator_keys.tsv, rust_key_mismatch_map.json
+
+Everything is read from the real files, nothing is typed by hand:
+  - operators_one_operator_per_file/<group>/<subgroup>/<name>/<name>.py   (NAME, SYMBOL, CATEGORY, SUBCATEGORY, FORMULA, compute)
+  - operator_row_math/<same path>/<name>.py                               (INPUTS, KINDS, CALC: what each box in the row is)
+  - tests/test_operators.py CASES                                          (hand-checked examples: args -> expected)
+"""
+import difflib
+import importlib.util
+import inspect
+import json
+import math
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+OPS = os.path.join(ROOT, "operators_one_operator_per_file")
+ROWS = os.path.join(ROOT, "operator_row_math")
+OUT = os.path.dirname(os.path.abspath(__file__))
+
+
+def load(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def jsonable(v):
+    """Return v if it survives JSON exactly, otherwise None (functions, sets, inf, nan, tuples are skipped)."""
+    if isinstance(v, bool) or v is None or isinstance(v, str):
+        return v
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
+        return v if math.isfinite(v) else None
+    if isinstance(v, list):
+        out = [jsonable(x) for x in v]
+        return out if all(o is not None or x is None for o, x in zip(out, v)) else None
+    return None
+
+
+def signature(fn):
+    params, required, varargs = [], 0, False
+    for p in inspect.signature(fn).parameters.values():
+        if p.kind == p.VAR_KEYWORD:
+            continue                              # **kwargs: never filled by the row boxes
+        if p.kind == p.VAR_POSITIONAL:
+            varargs = True
+            params.append({"name": p.name, "kind": "varargs"})
+            continue
+        has_default = p.default is not p.empty
+        entry = {"name": p.name, "kind": "optional" if has_default else "required"}
+        if has_default:
+            d = jsonable(p.default)
+            entry["default"] = d if d is not None or p.default is None else repr(p.default)
+        params.append(entry)
+        required += not has_default
+    return params, required, varargs
+
+
+def read_examples():
+    try:
+        from tests import test_operators as T
+    except Exception as e:                       # the catalog is still useful without examples
+        print("note: could not import tests (%s); examples left empty" % e)
+        return {}
+    prefix = {}
+    ex = {}
+    for key, args, expected in T.CASES:
+        key = key.rstrip("/")
+        a, e = jsonable(list(args)), jsonable(expected)
+        if a is None or (e is None and expected is not None):
+            continue                              # arguments or result not plain JSON (lambda, set, tuple ...)
+        ex.setdefault(key, []).append({"args": a, "expected": e})
+    return ex
+
+
+def is_num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def token(v):
+    """One result in the form the Rust parity test reads: number, true/false or re+imj (complex). None = not representable."""
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if is_num(v):
+        return repr(v) if math.isfinite(v) else None
+    if isinstance(v, complex):
+        if not (math.isfinite(v.real) and math.isfinite(v.imag)):
+            return None
+        return "%r%s%rj" % (v.real, "-" if math.copysign(1, v.imag) < 0 else "+", abs(v.imag))
+    return None
+
+
+def result_tokens(v):
+    """The result as the text after the second tab: one token, or two numbers for a pair. None = not representable."""
+    if isinstance(v, (tuple, list)) and len(v) == 2 and all(is_num(x) and math.isfinite(x) for x in v):
+        return repr(v[0]) + " " + repr(v[1])
+    return token(v)
+
+
+def arg_token(v):
+    """Arguments reach Rust as numbers; Python booleans become 1 / 0 (the logic operators read them as true / false)."""
+    if isinstance(v, bool):
+        return "1" if v else "0"
+    return repr(v) if is_num(v) and math.isfinite(v) else None
+
+
+def write_parity(rows):
+    """rust_calculator/tests/parity_examples.tsv: key <TAB> args (space separated) <TAB> expected.
+
+    Written: every argument a number or a boolean (1 / 0) and the result a number, a pair of numbers, true/false or a
+    complex number.  The Rust test reads this file, so the Python examples stay the single source of truth.
+    """
+    path = os.path.join(ROOT, "rust_calculator", "tests", "parity_examples.tsv")
+    if not os.path.isdir(os.path.dirname(path)):
+        return
+    n = 0
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("# key<TAB>args<TAB>expected  (generated by operator_keys/make_operator_keys.py from tests/test_operators.py CASES)\n")
+        for r in rows:
+            if r["status"] != "Ready":
+                continue
+            for e in r["examples"]:
+                at = [arg_token(v) for v in e["args"]]
+                exp = result_tokens(e["expected"])
+                if None in at or exp is None:
+                    continue
+                fh.write("%s\t%s\t%s\n" % (r["key"], " ".join(at), exp))
+                n += 1
+    print("parity examples written:", n)
+
+
+def write_differential(rows):
+    """rust_calculator/tests/parity_differential.tsv: the REAL Python compute() run on a fixed grid of inputs.
+
+    key <TAB> args <TAB> "ERR" (Python raised) or the result (number, pair, true/false, re+imj complex).  The Rust test
+    must agree on every line, including which inputs are errors.  Only operators whose boxes are all numbers are
+    included; list and matrix results are skipped.
+    """
+    import random
+
+    path = os.path.join(ROOT, "rust_calculator", "tests", "parity_differential.tsv")
+    if not os.path.isdir(os.path.dirname(path)):
+        return
+    rng = random.Random(20261109)
+    pool = [-3, -1, 0, 1, 2, 3, 5, 10, 0.5, 2.5, 0.25, 7.5, 100]
+    lines = 0
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("# key<TAB>args<TAB>ERR|result   (Python compute() on a fixed grid; generated by operator_keys/make_operator_keys.py)\n")
+        for r in rows:
+            if r["status"] != "Ready" or not r["inputs"] or set(r["input_kinds"]) != {"number"} or r["varargs"]:
+                continue
+            group, sub, leaf = r["key"].split("/")
+            mod = load(os.path.join(OPS, group, sub, leaf, leaf + ".py"), "diff_" + leaf)
+            k = len(r["inputs"])
+            tries = [tuple(e["args"][:k]) for e in r["examples"]
+                     if len(e["args"]) >= k and all(arg_token(v) for v in e["args"][:k])]
+            tries += [tuple(rng.choice(pool) for _ in range(k)) for _ in range(40)]
+            seen = set()
+            for args in tries:
+                if args in seen or len(seen) >= 45:
+                    continue
+                seen.add(args)
+                try:
+                    out = mod.compute(*args)
+                except Exception:
+                    out = "ERR"
+                if is_num(out) and isinstance(out, int) and abs(out) > 10 ** 15:
+                    continue                      # Python's unbounded integers: a decimal number cannot hold these exactly
+                if out != "ERR":
+                    if is_num(out) and math.isnan(out):
+                        out = "ERR"
+                    else:
+                        out = result_tokens(out)  # inf, lists, matrices ... -> None -> skipped
+                if out is None:
+                    continue
+                fh.write("%s\t%s\t%s\n" % (r["key"], " ".join(arg_token(v) for v in args), out))
+                lines += 1
+    print("differential cases written:", lines)
+
+
+def main():
+    examples = read_examples()
+    rows = []
+    for group in sorted(os.listdir(OPS)):
+        gp = os.path.join(OPS, group)
+        if not os.path.isdir(gp) or group.startswith(("_", ".")):
+            continue
+        for sub in sorted(os.listdir(gp)):
+            sp = os.path.join(gp, sub)
+            if not os.path.isdir(sp) or sub.startswith(("_", ".")):
+                continue
+            for op in sorted(os.listdir(sp)):
+                f = os.path.join(sp, op, op + ".py")
+                if not os.path.isfile(f):
+                    continue
+                key = "%s/%s/%s" % (group, sub, op)
+                m = load(f, "op_" + op)
+                doc = m.__doc__ or ""
+                st = re.search(r"^Status\s*:\s*(.*)$", doc, re.M)
+                ready = bool(st and st.group(1).startswith("ready"))
+                row = {
+                    "key": key, "name": m.NAME, "symbol": m.SYMBOL,
+                    "category": m.CATEGORY, "subcategory": m.SUBCATEGORY, "formula": m.FORMULA,
+                    "status": "Ready" if ready else "Reference",
+                }
+                rf = os.path.join(ROWS, group, sub, op, op + ".py")
+                if os.path.isfile(rf):
+                    r = load(rf, "row_" + op)
+                    row["inputs"] = list(getattr(r, "INPUTS", []))
+                    row["input_kinds"] = list(getattr(r, "KINDS", []))
+                    row["row_calc"] = getattr(r, "CALC", "")
+                    row["pattern"] = getattr(r, "PATTERN", "")
+                else:
+                    row["inputs"], row["input_kinds"], row["row_calc"] = [], [], ""
+                    row["pattern"] = ""
+                if hasattr(m, "compute"):
+                    params, required, varargs = signature(m.compute)
+                    row["compute_signature"] = "compute(%s)" % ", ".join(
+                        ("*" + p["name"]) if p["kind"] == "varargs" else
+                        (p["name"] + "=" + str(p.get("default")) if p["kind"] == "optional" else p["name"]) for p in params)
+                    row["compute_params"] = params
+                    row["required_args"] = required
+                    row["max_args"] = None if varargs else len(params)     # None = any number (varargs)
+                    row["varargs"] = varargs
+                else:
+                    row["compute_signature"] = None
+                    row["compute_params"], row["required_args"], row["max_args"], row["varargs"] = [], 0, 0, False
+                # arity = number of boxes in the row UI (this is what the row passes positionally to compute)
+                row["arity"] = len(row["inputs"]) if row["inputs"] else row["required_args"]
+                row["examples"] = examples.get(key, [])
+                rows.append(row)
+
+    keys = {r["key"] for r in rows}
+    assert len(keys) == len(rows), "duplicate keys"
+
+    with open(os.path.join(OUT, "operator_keys.json"), "w", encoding="utf-8") as fh:
+        json.dump({"count": len(rows), "ready": sum(r["status"] == "Ready" for r in rows),
+                   "reference": sum(r["status"] == "Reference" for r in rows), "operators": rows},
+                  fh, ensure_ascii=False, indent=1)
+
+    write_parity(rows)
+    write_differential(rows)
+
+    cols = ["key", "name", "symbol", "category", "subcategory", "formula", "status", "arity", "max_args",
+            "inputs", "compute_signature"]
+    with open(os.path.join(OUT, "operator_keys.tsv"), "w", encoding="utf-8", newline="") as fh:
+        fh.write("\t".join(cols) + "\n")
+        for r in rows:
+            vals = []
+            for c in cols:
+                v = r[c]
+                v = ",".join(v) if isinstance(v, list) else ("" if v is None else str(v))
+                vals.append(v.replace("\t", " ").replace("\n", " "))
+            fh.write("\t".join(vals) + "\n")
+
+    # ---- mismatch map: keys used by the Rust port that do not exist in Python -> best Python key
+    rust = set()
+    src = os.path.join(ROOT, "rust_calculator", "src")
+    for dp, _, fs in os.walk(src):
+        for fn in fs:
+            if fn.endswith(".rs"):
+                rust |= set(re.findall(r'"((?:math|physics|geometry)/[a-z0-9_/]+)"', open(os.path.join(dp, fn), encoding="utf-8").read()))
+    by_leaf = {}
+    for k in keys:
+        by_leaf.setdefault(k.rsplit("/", 1)[1], []).append(k)
+    leaves = list(by_leaf)
+    mismatch, same = {}, []
+    for k in sorted(rust):
+        if k in keys:
+            same.append(k)
+            continue
+        leaf = k.rsplit("/", 1)[1]
+        cand = by_leaf.get(leaf)
+        how = "same name, different path"
+        if not cand:
+            # Python spells possessives with an underscore: ohms_law -> ohm_s_law
+            cand = by_leaf.get(re.sub(r"s_", "_s_", leaf, count=1))
+            how = "possessive spelling"
+        if not cand:
+            cand = [r["key"] for r in rows if r["symbol"] == leaf and r["key"].split("/")[0] == k.split("/")[0]]
+            how = "same symbol (gcd, lcm, e ...)"
+        if not cand:
+            near = difflib.get_close_matches(leaf, leaves, n=3, cutoff=0.6)
+            cand = [c for n in near for c in by_leaf[n]]
+            how = "closest name - CHECK BY HAND"
+        mismatch[k] = {"python_key": cand[0] if cand else None, "how": how,
+                       "other_candidates": cand[1:] if cand else []}
+    with open(os.path.join(OUT, "rust_key_mismatch_map.json"), "w", encoding="utf-8") as fh:
+        json.dump({"rust_keys_found": len(rust), "already_correct": len(same), "to_rename": len(mismatch),
+                   "map": mismatch}, fh, ensure_ascii=False, indent=1)
+
+    print("operators:", len(rows), " ready:", sum(r["status"] == "Ready" for r in rows),
+          " reference:", sum(r["status"] == "Reference" for r in rows),
+          " with examples:", sum(bool(r["examples"]) for r in rows), " examples:", sum(len(r["examples"]) for r in rows))
+    print("rust keys:", len(rust), " correct:", len(same), " to rename:", len(mismatch))
+
+
+if __name__ == "__main__":
+    main()
