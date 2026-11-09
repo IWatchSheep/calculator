@@ -1548,6 +1548,72 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 0, 6))
 
+    def test_pages_days_are_the_time_to_finish(self):
+        # the day count must be the time allowed to FINISH the book: "to finish in 6 days" and "within 5 days" stay
+        self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
+        self.assertEqual(answers("A 100-page book has 20 pages already read. How many pages a day must be read to finish within 5 days?"), values(16))
+        self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish the book in 6 days?"), values(53))
+        # a day count that is something else (she leaves in 6 days, the library closes in 10 days) is not the time to finish
+        self.assertIsNone(answers("A 331-page book has 13 pages already read. She leaves in 6 days. How many pages a day must be read to finish?"))
+        self.assertIsNone(answers("In 10 days the library closes. A 100-page book has 20 pages already read. How many pages a day must be read?"))
+        self.assertIsNone(answers("A 240-page book has 40 pages already read. The exam is in 8 days. How many pages a day must be read to finish?"))
+        self.assertIsNone(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish before 6 days?"))
+
+    def test_opposite_angles_question_must_ask_for_the_angle(self):
+        base = "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. "
+        self.assertEqual(answers(base + "Find the angle."), values(80))
+        self.assertEqual(answers(base + "Find each angle."), values(80))
+        self.assertEqual(answers(base + "Find x."), values(38))
+        self.assertEqual(answers(base + "Find x and the angle."), values(38, 80))
+        self.assertEqual(answers(base + "Find the larger angle."), values(80))                 # the two opposite angles are the same
+        # a complement, a supplement, a difference, a sum, a half: not the angle itself (10, 100 and 0 are the right answers to those)
+        for q in ("Find the complement of the angle.", "Find the supplement of the angle.", "Find the difference of the opposite angles.",
+                  "Find the sum of the opposite angles.", "Find half of the angle.", "Find twice the angle."):
+            self.assertIsNone(answers(base + q), q)
+        # a quadrilateral, a cyclic quadrilateral, an inscribed angle and a circle follow another rule (cyclic opposite angles add to 180)
+        for text in ("In a cyclic quadrilateral, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "In a quadrilateral, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "An inscribed angle in a circle: opposite angles are (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "In a circle, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "Two vertical angles measure (2x + 4)° and (5x − 110)°. Find the angle."):
+            self.assertIsNone(answers(text), text)
+        # a parallelogram keeps its opposite angles equal: 80 is right
+        self.assertEqual(answers("In a parallelogram, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle."), values(80))
+
+    def test_rectangle_question_and_squared_area(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        self.assertEqual(answers(base + "Find its sides."), values(2, 18))
+        self.assertEqual(answers(base + "What are its dimensions?"), values(2, 18))
+        # the length is the longer side and the width the shorter
+        self.assertEqual(answers(base + "What is its length?"), values(18))
+        self.assertEqual(answers(base + "What is its width?"), values(2))
+        self.assertEqual(answers(base + "Find the length."), values(18))
+        self.assertEqual(answers(base + "Find the width."), values(2))
+        r = WS.solve(base + "Find its length and width.")
+        self.assertEqual(r.values, [Fraction(18), Fraction(2)])
+        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)             # both sides still fit the perimeter and the area
+        self.assertEqual(r.values[0] * r.values[1], 36)
+        # a sum, difference or product of the sides is not the sides (20, 16 and 36 are the right answers to those)
+        for q in ("Find the sum of its length and width.", "Find the difference of its length and width.", "Find the product of its length and width.",
+                  "Find the ratio of its length to its width.", "Find its diagonal."):
+            self.assertIsNone(answers(base + q), q)
+        # the area has to be marked squared: ft^2, ft², sq ft and square ft stay; a bare "36 ft" does not
+        for mark in ("ft²", "ft^2", "sq ft", "square ft"):
+            self.assertEqual(answers("A rectangle has a perimeter of 40 ft and an area of 36 %s. Find its length and width." % mark), values(2, 18), mark)
+        self.assertEqual(answers("A rectangle has a perimeter of 40 feet and an area of 36 square feet. Find its length and width."), values(2, 18))
+        self.assertIsNone(answers("A rectangle has a perimeter of 40 ft and an area of 36 ft. Find its length and width."))
+        self.assertIsNone(answers("A rectangle has a perimeter of 40 m and an area of 36 m. Find its length and width."))
+        self.assertIsNone(answers("A square has a perimeter of 40 ft and an area of 100 ft². Find its length and width."))
+
+    def test_neighbours_of_the_fixes_set(self):
+        """Set 27: neighbours of the wordings fixed in this batch, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_27 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-seventh set, neighbours of the fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 0, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

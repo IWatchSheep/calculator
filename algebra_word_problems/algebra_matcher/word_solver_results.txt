@@ -765,3 +765,24 @@ Measured:
   Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these shapes).
   Fresh set 26 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   99 word-solver and number-puzzle tests pass.
+
+Batch 24: wrong numbers from nearby wordings of pages_per_day, opposite_angles_equal and rectangle_from_perimeter_area (fixes only, no new family)
+==============================================================
+pages_per_day: the day count must be the time allowed to FINISH the book.  "A 331-page book has 13 pages already read. She leaves in 6 days. How many pages a day must be read to finish?" was answered 53, and "In 10 days the
+  library closes. A 100-page book has 20 pages already read. How many pages a day must be read?" was answered 8; neither number of days is the time to finish.  The deadline is now read only from "finish [the book] in | within | over
+  N days" (up to three words between "finish" and "in").  "To finish in 6 days" stays 53, "to finish within 5 days" stays 16, and "to finish the book in 6 days" stays 53; "before" no longer counts.
+opposite_angles_equal: the question must ask for the angle (or x) itself.  "Find the angle", "Find each angle", "Find x", "Find x and the angle" and "Find the larger angle" stay as they were (80, 38, both, 80).  These were answered 80 and now
+  decline: "Find the complement of the angle" (the complement is 10), "Find the supplement" (100), "Find the difference of the opposite angles" (0), and by the same rule the sum, half and twice.  A quadrilateral, a cyclic
+  quadrilateral, an inscribed angle and a circle also decline: opposite angles of a cyclic quadrilateral add to 180, they are not equal.  A parallelogram stays (its opposite angles are equal, so 80 is right).  "Two vertical angles measure ..."
+  still declines, as asked: the generated-answer check compares only the angle on that line, so claiming both x and the angle there would look wrong.
+rectangle_from_perimeter_area: the question decides what is returned.  "Find its length and width", "its sides" and "its dimensions" return both (18 and 2, and a test still checks 2 x 18 + 2 x 2 = 40 and 18 x 2 = 36); "What is its length?" and "Find the length"
+  return the longer side, 18; "What is its width?" and "Find the width" return the shorter, 2.  These were answered 18 and 2 and now decline: the sum (20), the difference (16), the product (36) and the ratio of the length and width, and the diagonal.
+  The area must be marked squared: ft^2, m^2, the superscript 2, "sq ft" and "square ft / feet" stay answered (the "^2" is no longer counted as a stray number), and a bare "an area of 36 ft" declines.  Units are compared after
+  normalising feet / ft, meters / m and so on.
+Checks (test_word_solver.py): the three new test methods above; spelled counts ("twice" declines in the angle question), each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no
+  module-level name defined twice (the new name is _RECT_UNIT).
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost: every generated pages, opposite-angles and rectangle problem is still claimed), wrong 0.
+  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 27 (11 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
+  103 word-solver and number-puzzle tests pass.

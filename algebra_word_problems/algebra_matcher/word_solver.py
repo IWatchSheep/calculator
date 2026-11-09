@@ -2471,7 +2471,7 @@ _GROW_STMT2 = re.compile(
 # ---------------------------------------------------------------------------------------------------------
 _PAGES_TOTAL = re.compile(r"\b(\d+)-pages?\b|\b(?:book|novel|report|packet|manual)\s+(?:has|of|with)\s+(\d+)\s+pages\b")
 _PAGES_READ = re.compile(r"\b(\d+)\s+pages?\s+(?:already\s+)?(?:read|finished|done|completed|written|typed)\b")
-_PAGES_DAYS = re.compile(r"\b(?:in|within|over|before)\s+(\d+)\s+(days?|weeks?|nights?)\b")
+_PAGES_DAYS = re.compile(r"\bfinish(?:ing|ed)?(?:\s+[a-z]+){0,3}?\s+(?:in|within|over)\s+(\d+)\s+(days?|weeks?|nights?)\b")   # "to finish in 6 days": the time allowed to finish
 _PAGES_OTHER = re.compile(r"\b(?:more than|less than|twice|double|half|each day she|already read twice|skip\w*|except|weekend\w*|at most|at least)\b|%|\$")
 
 
@@ -2504,7 +2504,8 @@ def pages_per_day(problem):
 # 48. opposite (vertical) angles are equal:   a1 x + b1 = a2 x + b2      (the generator's "Where two lines cross, opposite angles are (2x + 4)° and (5x - 110)°")
 # ---------------------------------------------------------------------------------------------------------
 _OPPANG_EXPR = re.compile(r"\(\s*(\d*)\s*x\s*([+-])\s*(\d+(?:\.\d+)?)\s*\)\s*(?:°|degrees?)?")
-_OPPANG_OTHER = re.compile(r"\b(?:adjacent|supplementary|complementary|linear pair|straight line|add to|adds to|sum|total|together|triangle|parallel)\b")
+_OPPANG_OTHER = re.compile(r"\b(?:adjacent|supplementary|complementary|complements?|supplements?|linear pair|straight line|add to|adds to|sum|total|together|triangle|parallel lines|"
+                           r"difference|product|ratio|half|double|twice|bisect\w*|quadrilateral|cyclic|inscribed|circle|arc|chord|polygon)\b")
 
 
 def opposite_angles_equal(problem):
@@ -2550,11 +2551,14 @@ def opposite_angles_equal(problem):
 # 49. a rectangle from its perimeter and its area:   l + w = P / 2,  l w = A      (the generator's "A rectangle has a perimeter of 40 ft and an area of 36 ft^2")
 # ---------------------------------------------------------------------------------------------------------
 _RECT_PERIM = re.compile(r"\bperimeter of\s+(\d+(?:\.\d+)?)\s*([a-z]+)\b")
-_RECT_AREA = re.compile(r"\barea of\s+(\d+(?:\.\d+)?)\s*(?:square |sq\.? )?([a-z]+)(?:²|\^2|2)?")
-_RECT_OTHER = re.compile(r"\b(?:square|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
+_RECT_AREA = re.compile(r"\barea of\s+(\d+(?:\.\d+)?)\s*(?:(square|sq\.?)\s+)?([a-z]+)(²|\^2|2)?")      # the unit is marked squared: ft^2, ft2, sq ft, square ft
+_RECT_UNIT = {"feet": "ft", "foot": "ft", "meters": "m", "metres": "m", "meter": "m", "metre": "m", "centimeters": "cm", "centimetres": "cm", "inches": "in", "inch": "in",
+              "yards": "yd", "yard": "yd", "miles": "mi", "mile": "mi", "kilometers": "km", "kilometres": "km"}
+_RECT_OTHER = re.compile(r"\b(?:square(?! (?:feet|foot|ft|meters?|metres?|m|cm|centimeters?|centimetres?|inch(?:es)?|in|yards?|yd|miles?|mi|km|kilometers?)\b)|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
 
 
 def rectangle_from_perimeter_area(problem):
+    problem = re.sub(r"\^\s*2\b", "²", problem)              # "ft^2" is a squared mark, not a number
     t = clean(problem)
     nums = digit_numbers(problem)
     if len(nums) != 2 or _CHANGES_EQUATION.search(t) or _RECT_OTHER.search(t) or re.search(_SPELLED_ANY, t):
@@ -2562,9 +2566,18 @@ def rectangle_from_perimeter_area(problem):
     if not re.search(r"\brectangle\b", t):
         return None
     pm, am = _RECT_PERIM.search(t), _RECT_AREA.search(t)
-    if not pm or not am or pm.group(2) != am.group(2):
+    if not pm or not am or _RECT_UNIT.get(pm.group(2), pm.group(2)) != _RECT_UNIT.get(am.group(3), am.group(3)):
         return None                                              # the area's unit is the perimeter's unit squared
-    if not re.search(r"\bfind\b[^.?!]*\b(?:length|width|sides|dimensions)\b|\bwhat (?:are|is)\b[^.?!]*\b(?:length|width|dimensions|sides)\b", t):
+    if not (am.group(2) or am.group(4)):
+        return None                                              # "an area of 36 ft" is not marked squared
+    # the question: both sides, only the length (the longer side), or only the width (the shorter); a sum / difference / product of them is a different question
+    sents = [x for x in re.split(r"[.?!]\s*", t) if x.strip()]
+    q = next((x for x in reversed(sents) if re.search(r"\b(?:find|what|determine|give|name)\b", x)), None)
+    if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q):
+        return None
+    asks_len, asks_wid = bool(re.search(r"\blength\b", q)), bool(re.search(r"\bwidth\b", q))
+    asks_both = bool(re.search(r"\b(?:sides|dimensions)\b", q)) or (asks_len and asks_wid)
+    if not (asks_len or asks_wid or asks_both):
         return None
     P, A = Fraction(pm.group(1)), Fraction(am.group(1))
     if P <= 0 or A <= 0:
@@ -2583,7 +2596,8 @@ def rectangle_from_perimeter_area(problem):
     if w <= 0:
         return None
     unit = pm.group(2)
-    return Result("rectangle_from_perimeter_area", [l, w], "l + w = %s;  l w = %s" % (show(s), show(A)),
+    vals = [l, w] if asks_both else ([l] if asks_len else [w])             # length is the longer side, width the shorter
+    return Result("rectangle_from_perimeter_area", vals, "l + w = %s;  l w = %s" % (show(s), show(A)),
                   "l + w = %s and l w = %s, so the sides are the roots of z^2 - %sz + %s = 0: l = %s and w = %s %s" % (
                       show(s), show(A), show(s), show(A), show_exact(l), show_exact(w), unit))
 
