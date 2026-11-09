@@ -63,6 +63,10 @@ class Families(unittest.TestCase):
         # "alone" describes the separate times; the question asks for the time together
         self.assertEqual(answers("Tom paints a fence alone in 6 hours, Sue in 3. If they team up, how long does it take?"), values(2))
         self.assertIsNone(answers("Tara and Joe together mow a lawn in 4 hours. Tara alone takes 6 hours. How long would Joe take alone?"))
+        # the combined time is already in the setup, so the question's "together" must not make it a separate worker
+        self.assertIsNone(answers("Tara and Joe together mow a lawn in 4 hours. Tara alone takes 6 hours. How long do they take working together?"))
+        self.assertIsNone(answers("Working together, Ann and Bob finish a job in 4 hours. Ann takes 6 hours alone. How long will it take them working together?"))
+        self.assertIsNone(answers("Working together they take 5 hours. How long do they take together?"))
         self.assertIsNone(answers("Working together, two gardeners weed a park in 6 hours. One alone would need 10 hours. How long would the other need alone?"))
         self.assertIsNone(answers("A tap fills a tank in 5 hours but a leak empties it in 8 hours. How long to fill it with both going?"))
         # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"

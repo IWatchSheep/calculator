@@ -203,6 +203,10 @@ def work_together(problem):
     questions = [x for x in re.split(r"(?<=[.!?])\s+", t) if x.strip().endswith("?")]
     if len(questions) != 1 or not re.search(_TOGETHER, questions[0]) or re.search(_ONE_WORKER, questions[0]):
         return None
+    # a together-word BEFORE the question means the setup already gives the combined time (or says the workers
+    # team up); then one of the two numbers is not a separate worker's time, so decline
+    if re.search(_TOGETHER, t[:t.index(questions[0])]):
+        return None
     if re.search(r"\b(?:drain|leak|empt|plug|overflow)\w*|\bout of\b", t) or "%" in t or "$" in problem:
         return None
     units = []
