@@ -301,3 +301,42 @@ Measured:
   The declined one is "A 40 lb blend worth $7 a pound is made from $6 a pound coffee and $10 a pound coffee": nothing like "to make" comes before
   the weight and it is not followed by "of a blend".  A safe miss, not fixed.
   34 word-solver and number-puzzle tests pass (new: test_price_blend, test_price_with_for_each, test_price_blend_set).
+
+Batch 10: three families in one commit: savings_equal, average_needed, heads_and_feet
+==============================================================
+savings_equal  (generator "savings"):  a + ra*w = b + rb*w.  "I have $200 and save $15 a week. My sister has $350 and saves $5 a week.
+  When will we have the same?" is 15 weeks.  Answers only when there are exactly two statements "<who> has $a [saved] and saves|adds $r a|each|per week"
+  (same unit, two different people), four numbers all in those statements, and the question asks WHEN / how many weeks they are the same / equal.
+  Declines: one saver, equal rates, a time that is negative, zero or not whole, a question for an amount of money ("how much"), a spelled number,
+  and "each / for each / apiece / per / piece" right after a STARTING amount ("$200 each").  (The rate is followed by "each week" by design, so the
+  each-after-a-price rule is applied to the starting amounts, the totals, not to the rates.)  Reading: "w = number of weeks: 200 + 15w = 350 + 5w,
+  so w = 15 weeks (each will have $425)".
+average_needed  (generator "average_needed"):  (s1 + ... + sk + x) / (k + 1) = target.  "My test marks are 70, 85 and 90. What do I need on the
+  fourth test to average 85?" is 95.  Every listed score is a role; the target is the number after "to average / an average of / average of /
+  to bring my average up to"; a stated count ("on 5 tests", "on three tests") and an ordinal ("the fourth test") must equal k and k + 1, otherwise decline.
+  Declines: weighted / worth / counts / double / twice, drop / lowest / highest / best, at least / at most, %, $, "out of", a total or sum, median / mode,
+  a second "average" in the text, fewer than two scores, a score no test can reach (x < 0, or x > 100 when everything is out of 100).
+  Exact fractions: an average of 85.5 on 70, 85, 91 gives x = 96 and fractions stay fractions.
+heads_and_feet  (generator "heads_legs"):  h + s = H,  2h + 4s = L.  "30 heads and 84 feet. Hens and sheep. How many sheep?" is 18 hens and 12 sheep.
+  The animal words are read only to tell the 2-footed one (hen, chicken, duck, goose ...) from the 4-footed one (cow, sheep, pig, goat, horse ...).
+  Exactly one of each is needed, "N heads" (or animals) and "N legs / feet" are the only two numbers, and the question asks how many (not legs / heads).
+  Declines: a third animal, people / farmer / child, insects and spiders, bicycles, cars and wheels, "two-legged", a count that is not whole or not positive.
+  Coins, boats and three-item systems stay out, as asked.
+Checks on each family (all in test_word_solver.py):
+  * spelled two / three / twice / double / half decline unless the word is the count of tests the equation uses ("on three tests" with three scores);
+  * each / for each / a piece / apiece / per after a price decline (savings starting amounts);  such / of the year / for part of / of the time decline;
+  * values are exact fractions, and the readings show the exact numbers;
+  * no control characters: a new test reads every .py file here and fails on any byte below 32 except tab, newline and carriage return.
+Measured:
+  1,000 generated problems: claims 102 -> 112, wrong 0.  The 10 new claims, each equal to the stored answer:
+    average_needed 0011 (99), 0013 (90), 0014 (98), 0016 (78), 0018 (85) = every "needed on the next test" problem;
+    savings_equal 0848 (16 weeks), 0850 (12), 0853 (56), 0855 (22) = every "have the same amount" savings problem
+      (the other 5 "same amount" problems are "gives ... they have the same amount", a different template, left declined);
+    heads_and_feet 0920 (27 chickens and 21 pigs) = the only chickens-and-pigs problem (the others use spiders, bicycles, motorcycles: declined).
+  Hand-written problems claimed by the family solver: 20 -> 23, all match the hand-calculated answers:
+    "30 heads and 84 feet ... hens and sheep" 18 and 12;  "My test marks are 70, 85 and 90 ... fourth test to average 85" 95;
+    "I have $200 and save $15 a week ... same" 15 weeks.
+  Fresh set 12 (13 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 4 solved, 2 declined;
+  7 required declines: 7 of 7; 0 wrong.  The two declined: "brings my average up to 75" (the pattern knows "to bring my average up to", not
+  "brings my average up to") and "Counting heads gives 20 and counting feet gives 56" (no "20 heads").  Safe misses, not fixed.
+  39 word-solver and number-puzzle tests pass.

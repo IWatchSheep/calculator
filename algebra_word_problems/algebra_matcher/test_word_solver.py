@@ -34,6 +34,9 @@ HAND_ANSWERS = {
     "$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?": [4000, 4000],
     "An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each.": [Fraction(1, 2), Fraction(4, 5)],
     "Coffee worth $6 a pound is mixed with coffee worth $10 a pound to make 40 lb worth $7 a pound. How much of each?": [10, 30],
+    "I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?": [15],
+    "My test marks are 70, 85 and 90. What do I need on the fourth test to average 85?": [95],
+    "On a farm there are some hens and some sheep. Altogether I count 30 heads and 84 feet. How many sheep?": [12, 18],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -249,6 +252,8 @@ class GroundTruth(unittest.TestCase):
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\$[\d,.]+ at \d+(?:\.\d+)?%", text):                # an interest answer: compare the dollars, not the rates
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
+        if re.search(r"^\d+ (?:weeks|months|days) \(each will have", text):      # a savings answer: compare the time, not the amount each has
+            return [Fraction(re.match(r"\d+", text).group())]
         if re.search(r"\d\s?(?:lb|kg) at \$", text):                           # a price-blend answer: compare the weights, not the prices
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
@@ -384,6 +389,92 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (eleventh set, price blends): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 1, 3))
+
+    def test_savings_equal(self):
+        self.assertEqual(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"), values(15))
+        self.assertEqual(answers("Elena has $160 saved and adds $20 each week. Ben has $360 saved and adds $10 each week. After how many weeks will they have the same amount?"), values(20))
+        r = WS.solve("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?")
+        self.assertIn("200 + 15w = 350 + 5w", r.reading)
+        self.assertIn("15 weeks (each will have $425)", r.reading)
+        # one saver, equal rates, a negative or zero or fractional time, a question for an amount of money
+        self.assertIsNone(answers("I have $200 and save $15 a week. When will I have $350?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $15 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $100 and save $10 a week. My sister has $400 and saves $20 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $200 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $4 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. How much will each have when we have the same?"))
+        # a spelled number, "each / for each / apiece" after a starting amount, and the words that change the equation decline
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same? Assume two weeks of holiday."))
+        self.assertIsNone(answers("I have $200 each and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 for each and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 apiece and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week for part of the year. My sister has $350 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. Such savings! When will we have the same?"))
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week, but only half of the time. When will we have the same?"))
+
+    def test_average_needed(self):
+        self.assertEqual(answers("My test marks are 70, 85 and 90. What do I need on the fourth test to average 85?"), values(95))
+        self.assertEqual(answers("Ava scored 87, 71, 73, 89, 97 on 5 tests. What score is needed on the next test to average 86?"), values(99))
+        self.assertEqual(answers("Ava scored 70, 85 and 90 on three tests. What score does she need on the next test to average 85?"), values(95))
+        r = WS.solve("My test marks are 70, 85 and 90. What do I need on the fourth test to average 85?")
+        self.assertIn("(70 + 85 + 90 + x) / 4 = 85", r.reading)
+        # a fraction stays exact: 4 * 85.5 - 245 = 97
+        self.assertEqual(answers("My test marks are 70, 85 and 90. What do I need on the fourth test to average 85.5?"), values(97))
+        self.assertEqual(answers("My test marks are 70, 85 and 91. What do I need on the fourth test to average 85.5?"), values(96))
+        r = WS.solve("My test marks are 70, 85 and 91. What do I need on the fourth test to average 85.5?")
+        self.assertIn("x = 96", r.reading)
+        # a stated count or ordinal that does not match the scores, a spelled number that changes the answer
+        self.assertIsNone(answers("My test marks are 70, 85 and 90 on 4 tests. What do I need on the next test to average 85?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90 on four tests. What score does she need on the next test to average 85?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90 on two tests. What score does she need on the next test to average 85?"))
+        self.assertIsNone(answers("My test marks are 70, 85 and 90. What do I need on the fifth test to average 85?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90, and the last test is worth twice as much. What score does she need on the next test to average 85?"))
+        # weighted averages, "drop the lowest", at least, a score no test can reach, a single score, a stated total, part of the year
+        self.assertIsNone(answers("Ava scored 70, 85 and 90. What does she need on the next test to average 85 if the lowest is dropped?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90 and the final is worth 40%. What does she need on the final to average 85?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90. What does she need on the next test to average 85 at least?"))
+        self.assertIsNone(answers("Ava scored 70 and 90. What does she need on the next test to average 100?"))
+        self.assertIsNone(answers("Ava scored 70 on a test. What does she need on the next test to average 85?"))
+        self.assertIsNone(answers("Ava scored 70, 85 and 90 for part of the year. What does she need on the next test to average 85?"))
+        self.assertIsNone(answers("My average is 80 on 3 tests. My test marks are 70, 85 and 90. What do I need on the next test to average 85?"))
+
+    def test_heads_and_feet(self):
+        self.assertEqual(answers("30 heads and 84 feet. Hens and sheep. How many sheep?"), values(12, 18))
+        self.assertEqual(answers("A farm has chickens and pigs. There are 48 heads and 138 legs. How many of each are there?"), values(21, 27))
+        r = WS.solve("A farm has hens and sheep. There are 30 heads and 84 feet. How many of each are there?")
+        self.assertEqual(r.values, [Fraction(18), Fraction(12)])
+        self.assertIn("h + s = 30 and 2h + 4s = 84", r.reading)
+        self.assertIn("h = 18 and s = 12", r.reading)
+        # a third animal, people, insects, vehicles, a count that is not whole or not positive, a question that asks for legs
+        self.assertIsNone(answers("A farm has hens, sheep and goats. There are 30 heads and 84 feet. How many sheep are there?"))
+        self.assertIsNone(answers("A farm has hens and spiders. There are 30 heads and 84 legs. How many hens are there?"))
+        self.assertIsNone(answers("A farm has farmers and sheep. There are 30 heads and 84 legs. How many sheep are there?"))
+        self.assertIsNone(answers("A farm has bicycles and cars. There are 30 heads and 84 wheels. How many cars are there?"))
+        self.assertIsNone(answers("A farm has hens and sheep. There are 30 heads and 85 legs. How many sheep are there?"))
+        self.assertIsNone(answers("A farm has hens and sheep. There are 30 heads and 60 legs. How many sheep are there?"))
+        self.assertIsNone(answers("A farm has hens and sheep. There are 30 heads and 84 legs. How many legs do the hens have?"))
+        self.assertIsNone(answers("A farm has two kinds of animals, hens and sheep. There are 30 heads and 84 legs. How many sheep are there?"))
+        self.assertIsNone(answers("A farm has hens and sheep. There are 30 heads and 84 legs, such that sheep are 4-legged. How many of each are there?"))
+        self.assertIsNone(answers("A farm has hens and sheep. There are 30 heads and 84 legs for part of the year. How many of each are there?"))
+
+    def test_three_families_set(self):
+        """Set 12: wordings for savings_equal, average_needed and heads_and_feet, written after all three were finished and run once, untuned.
+        Two answers are declined (safe misses): "brings my average up to 75" and "counting heads gives 20 and counting feet gives 56"."""
+        from fresh_word_problems_12 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twelfth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 2, 7))
+
+    def test_no_control_characters_in_the_python_files(self):
+        """A backspace once got into a regular expression ("\\b" stored as a control character): every .py file here must be clean."""
+        import glob
+        import os
+        here = os.path.dirname(os.path.abspath(__file__))
+        for path in glob.glob(os.path.join(here, "*.py")):
+            data = open(path, "rb").read()
+            bad = sorted({b for b in data if b < 32 and b not in (9, 10, 13)})
+            self.assertEqual(bad, [], os.path.basename(path))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

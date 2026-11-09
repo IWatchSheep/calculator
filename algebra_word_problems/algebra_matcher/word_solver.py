@@ -602,8 +602,205 @@ def price_blend(problem):
                       unit, show(p1), show(T), show(p2), eq, show_exact(x1), unit, show(p1), show_exact(x2), unit, show(p2)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# Words that change the equation of any of the three families below: they decline
+# ---------------------------------------------------------------------------------------------------------
+_SPELLED_ANY = r"\b(?:two|three|four|five|six|seven|eight|nine|ten|twice|double|doubles|triple|half|halves|thrice)\b"
+_CHANGES_EQUATION = re.compile(r"\b(?:such|of the year|for part of|of the time|part of the time|some of the time)\b")
+_EACH_AFTER = re.compile(r"\s*(?:(?:for|a)\s+)?(?:each|apiece|per|piece)\b")
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 10. two savers, same total:   a + ra*w = b + rb*w      (the generator's "savings")
+# ---------------------------------------------------------------------------------------------------------
+_SAVE_STMT = re.compile(
+    r"(?<![\w$])(?P<who>i|[a-z]+(?:\s[a-z]+)?)\s+(?:has|have|had|starts?|started)(?:\s+with)?\s+\$(?P<a>\d+(?:\.\d+)?)"
+    r"(?:\s+(?:saved|in savings|in the bank|in (?:her|his|their|my) account))?\s*(?:,|and|but)?\s*(?:and\s+)?"
+    r"(?:saves?|adds?|puts? away|deposits?)\s+\$(?P<r>\d+(?:\.\d+)?)\s+(?:a|each|per|every)\s+(?P<u>week|month|day)\b")
+
+
+def savings_equal(problem):
+    t = clean(problem)
+    found = list(_SAVE_STMT.finditer(t))
+    if len(found) != 2 or len(digit_numbers(problem)) != 4 or _CHANGES_EQUATION.search(t):
+        return None
+    # the starting amounts are totals: "$200 each" / "$200 apiece" would change the equation (the rates are followed by "a week" by design)
+    if any(_EACH_AFTER.match(t[m.end("a"):]) for m in found):
+        return None
+    m1, m2 = found
+    if m1.group("who") == m2.group("who") or m1.group("u") != m2.group("u"):
+        return None
+    rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
+    if re.search(r"\d", rest) or re.search(_SPELLED_ANY, rest):
+        return None
+    # the question asks WHEN they are equal, not an amount of money
+    if not re.search(r"\b(?:when|how (?:many|long)|after how)\b", rest) or not re.search(r"\b(?:same|equal|even|as much)\b", rest):
+        return None
+    if re.search(r"\bhow much\b|\bwhat amount\b|\bhow many dollars\b", rest):
+        return None
+    a, b = Fraction(m1.group("a")), Fraction(m2.group("a"))
+    ra, rb = Fraction(m1.group("r")), Fraction(m2.group("r"))
+    if ra == rb:
+        return None
+    w = (b - a) / (ra - rb)
+    if w <= 0 or w.denominator != 1:
+        return None
+    unit = m1.group("u")
+    each = a + ra * w
+    eq = "%s + %sw = %s + %sw" % (show(a), show(ra), show(b), show(rb))
+    return Result("savings_equal", [w], eq,
+                  "w = number of %ss: %s, so w = %s %ss (each will have $%s)" % (unit, eq, show_exact(w), unit, show_exact(each)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 11. the score needed on the next test for a target average:   (s1 + ... + sk + x) / (k + 1) = target   ("average_needed")
+# ---------------------------------------------------------------------------------------------------------
+_ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6, "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10}
+_TEST_NOUN = r"(?:tests?|exams?|quizzes|quiz|games?|papers?|assignments?|rounds?|scores|marks|grades)"
+_AVG_OTHER = re.compile(r"\b(?:weighted|weights?|worth|counts?|counted|drop\w*|lowest|highest|best|worst|discard\w*|ignor\w*|curve\w*|bonus|extra|credit|"
+                        r"replac\w*|median|mode|total|sum|at least|at most|minimum|maximum|no less|no more|passing|pass|out of|each)\b|%|\$")
+_AVG_WORD = re.compile(r"\baverag\w*|\bmean\b|\bavg\b")
+_AVG_TARGET = re.compile(r"\b(?:to average|to be averaging|an average of|the average of|average of|average score of|mean of|to bring (?:my|the|our|her|his) average (?:up )?to|"
+                         r"to raise (?:my|the|our|her|his) average to|average at)\s+(\d+(?:\.\d+)?)\b(?!\s*,|\s+and\s+\d)")
+
+
+def average_needed(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if _AVG_OTHER.search(t) or len(_AVG_WORD.findall(t)) != 1:
+        return None
+    tm = list(_AVG_TARGET.finditer(t))
+    if len(tm) != 1:
+        return None
+    tstart, tend = tm[0].start(1), tm[0].end(1)
+    target_n = [n for n in nums if n[2] <= tstart < n[3] or n[2] == tstart]
+    if len(target_n) != 1 or target_n[0][3] != tend:
+        return None
+    target = target_n[0]
+    # a stated count of tests ("on 5 tests", "after four tests") is not a score; it must agree with the scores listed
+    counts = []
+    for n in nums:
+        if n is target:
+            continue
+        if re.match(r"\s+" + _TEST_NOUN + r"\b", t[n[3]:]) and re.search(r"\b(?:on|in|after|over|across|from)\s+(?:the\s+|my\s+|her\s+|his\s+|these\s+|those\s+|all\s+)?(?:first\s+)?$", t[:n[2]].rstrip() + " "):
+            counts.append(n)
+    if len(counts) > 1:
+        return None
+    scores = [n for n in nums if n is not target and n not in counts]
+    k = len(scores)
+    if k < 2:
+        return None
+    if counts and counts[0][0] != k:
+        return None
+    work = t
+    word_counts = list(re.finditer(r"\b(two|three|four|five|six|seven|eight|nine|ten)\s+" + _TEST_NOUN + r"\b", work))
+    if len(word_counts) > 1 or (word_counts and counts):
+        return None
+    if word_counts:
+        if _COUNT_WORDS[word_counts[0].group(1)] != k:
+            return None
+        work = work[:word_counts[0].start()] + " " + work[word_counts[0].end():]
+    if re.search(_SPELLED_ANY, work) or _CHANGES_EQUATION.search(work):
+        return None
+    # ordinals: only "the fourth test" naming the unknown score, and it must be number k + 1
+    ords = re.findall(r"\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b", work)
+    if ords:
+        if len(ords) != 1 or not re.search(r"\b" + ords[0] + r"\s+" + _TEST_NOUN + r"\b", work) or _ORDINALS[ords[0]] != k + 1:
+            return None
+    # the question asks for the score on the next / last / final / (k+1)th test
+    if not re.search(r"\b(?:what|which|how (?:many )?(?:points|marks|high|well))\b", work):
+        return None
+    if not re.search(r"\b(?:need|needed|must|should|have to|has to|require|required|get|score|make|earn|take)\b", work):
+        return None
+    if not (ords or re.search(r"\b(?:next|last|final|another|one more)\b", work)):
+        return None
+    total = sum((n[0] for n in scores), Fraction(0))
+    x = target[0] * (k + 1) - total
+    if x < 0:
+        return None
+    if all(n[0] <= 100 for n in nums) and x > 100:
+        return None
+    listed = " + ".join(show(n[0]) for n in scores)
+    eq = "(%s + x) / %d = %s" % (listed, k + 1, show(target[0]))
+    return Result("average_needed", [x], eq,
+                  "x = the next score: %s, so %s + x = %s and x = %s" % (eq, show(total), show(target[0] * (k + 1)), show_exact(x)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 12. heads and feet of a two-legged and a four-legged animal:   h + s = H,  2h + 4s = L      (the generator's "heads_legs")
+# ---------------------------------------------------------------------------------------------------------
+_TWO_LEGGED = {"hen", "chicken", "duck", "goose", "geese", "turkey", "rooster", "bird", "ostrich", "pigeon", "swan", "peacock", "parrot",
+               "penguin", "flamingo", "chick", "duckling", "gosling", "emu"}
+_FOUR_LEGGED = {"cow", "sheep", "pig", "goat", "horse", "dog", "cat", "rabbit", "donkey", "lamb", "calf", "calves", "bull", "ox", "oxen",
+                "deer", "mule", "pony", "llama", "camel", "elephant", "tiger", "lion", "puppy", "kitten", "piglet", "foal", "hog"}
+_OTHER_CREATURE = {"spider", "beetle", "insect", "bug", "ant", "fly", "flie", "snake", "fish", "octopus", "centipede", "millipede", "cricket",
+                   "ladybug", "bee", "butterfly", "person", "people", "man", "men", "woman", "women", "human", "child", "children", "kid", "boy",
+                   "girl", "farmer", "bicycle", "tricycle", "car", "truck", "wheel", "motorcycle", "table", "stool", "chair", "tripod", "alien",
+                   "worm", "monkey", "ape", "frog", "turtle", "lizard", "crab", "scorpion", "mite", "tick", "ostriches"}
+
+
+def _animal_stem(w):
+    if w in _TWO_LEGGED or w in _FOUR_LEGGED or w in _OTHER_CREATURE or w in ("sheep", "geese", "oxen", "calves"):
+        return w
+    if w.endswith("ies"):
+        return w[:-3] + "y"
+    if w.endswith("es") and w[:-2] in (_TWO_LEGGED | _FOUR_LEGGED | _OTHER_CREATURE):
+        return w[:-2]
+    if w.endswith("s"):
+        return w[:-1]
+    return w
+
+
+def heads_and_feet(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t):
+        return None
+    if re.search(_SPELLED_ANY, t) or re.search(r"\blegged\b|\b(?:wings?|tails?|horns?|arms?|wheels?)\b", t):
+        return None
+    heads = [n for n in nums if re.match(r"\s+(?:heads|animals|creatures)\b", t[n[3]:])]
+    legs = [n for n in nums if re.match(r"\s+(?:legs|feet)\b", t[n[3]:])]
+    if len(heads) != 1 or len(legs) != 1 or heads[0] is legs[0]:
+        return None
+    # one two-legged animal and one four-legged animal, nothing else with legs
+    words = re.findall(r"[a-z]+", t)
+    stems = []
+    shown = {}
+    for w in words:
+        s = _animal_stem(w)
+        if s in _TWO_LEGGED or s in _FOUR_LEGGED or s in _OTHER_CREATURE:
+            if s not in stems:
+                stems.append(s)
+                shown[s] = w
+    if len(stems) != 2:
+        return None
+    two = [s for s in stems if s in _TWO_LEGGED]
+    four = [s for s in stems if s in _FOUR_LEGGED]
+    if len(two) != 1 or len(four) != 1:
+        return None
+    # the question asks how many of the animals, not for legs or heads
+    q = t.rfind("how many")
+    if q == -1:
+        return None
+    tail = t[q:]
+    if re.search(r"\b(?:legs|feet|heads|total|altogether|more|fewer|less)\b", tail):
+        return None
+    if not re.search(r"\b(?:" + "|".join(map(re.escape, [shown[two[0]], shown[four[0]]])) + r"|each|animals|are there|of them)\b", tail):
+        return None
+    H, L = heads[0][0], legs[0][0]
+    s_count = (L - 2 * H) / 2
+    h_count = H - s_count
+    if s_count <= 0 or h_count <= 0 or s_count.denominator != 1 or h_count.denominator != 1:
+        return None
+    n2, n4 = shown[two[0]], shown[four[0]]
+    eq = "h + s = %s;  2h + 4s = %s" % (show(H), show(L))
+    return Result("heads_and_feet", [h_count, s_count], eq,
+                  "h = number of %s (2 feet), s = number of %s (4 feet): h + s = %s and 2h + 4s = %s, so h = %s and s = %s" % (
+                      n2, n4, show(H), show(L), show_exact(h_count), show_exact(s_count)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
-            two_purchases, price_blend]
+            two_purchases, price_blend, savings_equal, average_needed, heads_and_feet]
 
 
 def solve(problem):
