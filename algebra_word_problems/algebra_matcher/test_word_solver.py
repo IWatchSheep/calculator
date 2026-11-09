@@ -72,6 +72,9 @@ class Families(unittest.TestCase):
         # spelled multipliers of the workers or their rates (found by Grok); "Two machines ..." as the shape of the problem stays
         self.assertIsNone(answers("Ann can wash a car in 20 minutes and Bea can wash it in 30 minutes. How long will two such pairs take working together?"))
         self.assertIsNone(answers("Tom paints a fence alone in 6 hours, Sue in 3. If two teams like them team up, how long does it take?"))
+        self.assertIsNone(answers("Ann can wash a car in 20 minutes and Bea can wash it in 30 minutes. How long will both pairs take working together?"))
+        # the bare word "both" must keep working
+        self.assertEqual(answers("One printer finishes a job in 4 hours and another in 12 hours. Running both, how long does the job take?"), values(3))
         self.assertEqual(answers("Two machines finish an order in 8 hours and 12 hours respectively. How long will it take them together?"), values(Fraction(24, 5)))
         # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"
         self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"))
@@ -86,6 +89,10 @@ class Families(unittest.TestCase):
         # a number written as a word multiplies the thing asked about ("two coats"): decline (found by Grok)
         self.assertIsNone(answers("After a 15% discount, two coats cost $170. What was the original price of one?"))
         self.assertIsNone(answers("Prices fell 15% and a coat now costs $170. What did two coats cost before?"))
+        # counts hidden in words: "both coats", "a pair of phones", "a couple of coats" (found by Grok)
+        self.assertIsNone(answers("After a 15% discount, both coats cost $170. What was the original price of one?"))
+        self.assertIsNone(answers("Prices rose 20% and a pair of phones now costs $360. What did one cost before?"))
+        self.assertIsNone(answers("Prices rose 20% and a couple of phones now cost $360. What did one cost before?"))
         # "service charge" (two words) is a rise; the bare word "charge" is not
         self.assertEqual(answers("The bill including a 12% service charge was $224. What was the bill before the charge?"), values(200))
         self.assertIsNone(answers("A bill of $90 includes a $10 service charge. What was it before the service charge?"))

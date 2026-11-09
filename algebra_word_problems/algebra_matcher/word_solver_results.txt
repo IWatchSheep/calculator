@@ -129,3 +129,15 @@ Measured:
   Fifth fresh set (fresh_word_problems_5.py, 8 wordings written after the change, run once, untuned):
       4 with an answer: 4 solved, 0 declined.  4 required declines: 4 of 4.  0 wrong.
   Fourth set (fresh_word_problems_4.py) is a development set again; its score is unchanged (3 solved, 1 declined, 4/4).
+
+Batch 5: counts hidden in words (found by Grok)
+================================================
+Wrong answers (each is now a regression test):
+  "After a 15% discount, both coats cost $170. What was the original price of one?"        returned 200, true 100
+  "Prices rose 20% and a pair of phones now costs $360. What did one cost before?"          returned 300, true 150
+  "Prices rose 20% and a couple of phones now cost $360. What did one cost before?"         same miss
+  "...Ann ... 20 minutes ... Bea ... 30 minutes. How long will both pairs take working together?"   returned 12, true 6
+Changes: percent_change also declines on both / pair(s) / couple; work_together also declines on "both pairs / teams /
+crews / groups / sets" but NOT on the bare word "both" ("Running both, how long does the job take?" still returns 3).
+Measured: 1,000 generated problems: claims 79, none lost, wrong 0.  All 12 word-solver tests and 12 number-puzzle tests pass.
+No new fresh set was written for this patch (it was a patch of three named sentences); fresh_word_problems_5.py keeps its score.
