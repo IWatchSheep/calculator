@@ -965,3 +965,17 @@ Measured:
   1,000 generated problems: claims 323 -> 323 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 37 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
   136 word-solver and number-puzzle tests pass.
+
+Batch 35: two more wordings of two_candles_equal (fix only, no new family)
+==============================================================
+two_candles_equal, "the same height as ...": "When will they be the same height as the table?" was answered 9/2 hours.  The candles match EACH OTHER after 9/2 hours, at 4 cm; the table's height is not given.  After "same height" (or "equal height") an "as / to / with" phrase must name the other candle and
+  end there: "each other", "one another", "the other", "the other candle", "the other one".  So "When will they be the same height as each other?" and "... as one another?", "When will one be the same height as the other?", "... as the other candle?" and "... to each other?" stay 9/2, while "as the table",
+  "as a door", "as the bookshelf", "How long until they are the same height as the table?" and "as each other and the table" / "as each other and the wall" (a third thing after "each other") decline.
+two_candles_equal, another sentence that asks: "Find the age of the room. One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. When will they be the same height?" was answered 9/2.  A request without a question word is a question too: the other sentences (with the candle
+  statements cut out) may not contain find / determine / calculate / compute / give / state / name / tell / list / solve / show, besides the question words of the last batch.  "Find the age of the room.", "Determine the room's age.", "Calculate the cost.", "Tell me the time.", "Determine the height of the room.", "Find the price of the candles.", and "Find the age of the room."
+  placed after the statements all decline.  A sentence that asks nothing ("The room is old.", "It is dark.", "The power went out.") is harmless and the answer stays 9/2.  "Find when they will be the same height." as the ONE question stays 9/2.
+Checks (test_word_solver.py): the three new test methods above; the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 323 -> 323 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 38 (7 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong.
+  139 word-solver and number-puzzle tests pass.

@@ -2801,8 +2801,13 @@ def two_candles_equal(problem):
     question = remainders[asks[0]]
     others = [x for i, x in enumerate(remainders) if i != asks[0]]
     # (a statement sentence that carries "when they are the same height" is such a candidate too: then the real question, "How old is the room?", is another sentence that asks)
-    if any(re.search(r"\b(?:when|how|what|why|who|where|which|will|would)\b|\bsame height\b|\bequal height\b", x) for x in others):
+    # (a request without a question word is a question too: "Find the age of the room.")
+    if any(re.search(r"\b(?:when|how|what|why|who|where|which|will|would|find|determine|calculate|compute|give|state|name|tell|list|solve|show)\b|\bsame height\b|\bequal height\b", x) for x in others):
         return None
+    # "the same height as ..." has to compare the two candles with each other: "as the table" is another object, whose height is not given
+    for cm in re.finditer(r"\b(?:same|equal) height\s+(?:as|to|with)\b(.*)$", question):
+        if not re.match(r"\s*(?:each other|one another|the other(?:\s+(?:candle|one))?)\s*$", cm.group(1)):
+            return None                                              # ... and nothing more after it ("each other and the table" names a third thing)
     if re.search(r"\bhow (?:tall|high|old)\b|\bwhat (?:height|size)\b|\bhow much\b", question):
         return None
     a, ra, b, rb = Fraction(m1.group(1)), Fraction(m1.group(3)), Fraction(m2.group(1)), Fraction(m2.group(3))

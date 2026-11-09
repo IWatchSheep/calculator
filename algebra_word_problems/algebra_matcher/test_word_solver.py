@@ -2133,6 +2133,41 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 0, 5))
 
+    def test_candles_same_height_as_what(self):
+        c = "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. "
+        # the candles matched with each other: 9/2 hours, at 4 cm
+        for q in ("When will they be the same height?", "When will they be the same height as each other?", "When will they be the same height as one another?",
+                  "When will one be the same height as the other?", "When will they be the same height as the other candle?", "When will they be the same height to each other?"):
+            self.assertEqual(answers(c + q), values(Fraction(9, 2)), q)
+        r = WS.solve(c + "When will they be the same height as each other?")
+        self.assertIn("t = 9/2 hours (both candles are still 4 cm tall)", r.reading)
+        # the same height as the table (a door, the bookshelf, the wall ...): the other height is not given, so it declines, and so does a third thing added after "each other"
+        for q in ("When will they be the same height as the table?", "When will they be the same height as a door?", "How long until they are the same height as the table?",
+                  "When will they be the same height as each other and the table?", "When will they be the same height as the bookshelf?",
+                  "When will they be the same height as each other and the wall?"):
+            self.assertIsNone(answers(c + q), q)
+
+    def test_candles_second_sentence_that_asks(self):
+        c = "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. "
+        # a request without a question word is a question too: another sentence that asks its own question declines
+        for pre in ("Find the age of the room. ", "Determine the room's age. ", "Calculate the cost. ", "Tell me the time. ", "Find when they will be the same height. ",
+                    "Determine the height of the room. ", "Find the price of the candles. "):
+            self.assertIsNone(answers(pre + c + "When will they be the same height?"), pre)
+        self.assertIsNone(answers(c + "Find the age of the room. When will they be the same height?"))
+        # a sentence that asks nothing is harmless
+        for pre in ("The room is old. ", "It is dark. "):
+            self.assertEqual(answers(pre + c + "When will they be the same height?"), values(Fraction(9, 2)), pre)
+        # "Find when ..." as the ONE question stays answered
+        self.assertEqual(answers(c + "Find when they will be the same height."), values(Fraction(9, 2)))
+
+    def test_candles_as_what_set(self):
+        """Set 38: neighbours of the batch-35 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_38 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-eighth set, neighbours of the batch-35 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (3, 0, 4))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
