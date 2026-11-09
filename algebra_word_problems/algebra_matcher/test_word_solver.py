@@ -2387,6 +2387,24 @@ class FreshWordings(unittest.TestCase):
         self.assertEqual(s43, (2, 0, 5))
         self.assertEqual(s44, (2, 0, 7))
 
+    def test_pipes_the_time_clause_ends_the_sentence_and_nothing_else_goes_on(self):
+        """"A drain empties it in 12 hours and is pinched." and "... and is full of leaves." were answered 12/5, and so was "Water also leaves through a crack." (another way out
+        with no rate).  The time clause has to END its sentence, and a sentence that gives no time, asks nothing and does not open the devices declines the problem."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours"
+        ask = " How long does it take to fill the tank?"
+        self.assertEqual(answers(base + ". All three are open." + ask), values(Fraction(12, 5)))             # the time clause ends there
+        self.assertEqual(answers(base + ". With all three open, how long does it take to fill the tank?"), values(Fraction(12, 5)))
+        for q in (base + " and is pinched. All three are open." + ask, base + " and is full of leaves. All three are open." + ask,
+                  base + ", and it is old. All three are open." + ask,
+                  base + ". All three are open. Water also leaves through a crack." + ask, base + ". Water also leaves through a crack. All three are open." + ask,
+                  base + ". All three are open. Rain also falls in." + ask):
+            self.assertIsNone(answers(q), q)
+
+    def test_pipes_time_clause_set(self):
+        """Set 45 (9 wordings) was written after the batch-41 fixes and run once, untuned: 2 solved, 7 required declines, 0 wrong."""
+        from fresh_word_problems_45 import FRESH
+        self.assertEqual(score(FRESH), (2, 0, 7))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

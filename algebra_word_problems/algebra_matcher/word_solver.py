@@ -3006,6 +3006,16 @@ def pipes_and_drain(problem):
     # ... and nothing in the problem may turn something off or negate it
     cue_phrase = re.compile(devices + r"\s+(?:(?:are|is|being|stay|stays|remain|remains)\s+)?(?:all\s+)?" + state + r"\b")
     for sent in re.split(r"[.?!]", t):
+        if not sent.strip():
+            continue
+        times = list(_PIPE_IN.finditer(sent))
+        if times:
+            # the time clause has to END the sentence: "A drain empties it in 12 hours and is pinched." / "... and is full of leaves." say more about the device
+            if sent[times[-1].end():].strip(" ,;"):
+                return None
+        elif not re.search(r"\bhow long\b", sent) and not cue_phrase.search(sent) and not re.search(r"(?:^|\bwith\s+)\s*all " + state + r"\b", sent):
+            # a sentence that gives no time, asks nothing and does not open the devices is something else going on ("Water also leaves through a crack.": another way out)
+            return None
         if _PIPE_DRAIN_WORD.search(sent) and not _PIPE_IN.search(sent):
             # a sentence about the drain that is not the clause giving its time: it may only be the "everything is open" phrase itself, and nothing else about the drain may
             # remain once that phrase is taken out ("The drain is covered.", "The drain is pinched.", "All three are open and the drain is full of leaves.")

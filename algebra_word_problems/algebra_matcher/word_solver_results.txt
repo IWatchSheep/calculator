@@ -1059,3 +1059,17 @@ Measured:
   Fresh set 43 (7 wordings, neighbours of the sealed / pool fixes): first run 2 solved, 4 required declines correct and 1 WRONG ("the drain is covered"); after the general rule 2 solved, 5 required declines, 0 wrong (development set).
   Fresh set 44 (9 wordings, written after the general rule, run once, untuned): 2 with an answer: 2 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
   154 word-solver and number-puzzle tests pass.
+
+Batch 41: the time clause has to end its sentence, and nothing else may go on in a sentence of its own (pipes_and_drain; fix only, no new family)
+==============================================================
+pipes_and_drain: "A drain empties it in 12 hours and is pinched. All three are open." and "... and is full of leaves. ..." were answered 12/5 (wrong): the drain's sentence gave its time, so the batch-40 rule
+  about "other sentences that talk about the drain" skipped it, and what came after the time inside that sentence was never read.  "All three are open. Water also leaves through a crack." was answered 12/5 too: the crack is
+  another way out and no rate is given.
+  The fix is two general rules, not word lists:  (1) in a sentence that gives a time ("in N hours"), nothing but spaces, commas and semicolons may follow the LAST time clause;  (2) a sentence that gives no time, does not ask
+  "how long" and does not say the devices are open is something else going on in the problem, so the problem declines.
+  Unchanged: "A drain empties it in 12 hours. All three are open. How long does it take to fill the tank?" stays 12/5, and so does "... With all three open, how long ...".
+Checks (test_word_solver.py): test_pipes_the_time_clause_ends_the_sentence_and_nothing_else_goes_on and test_pipes_time_clause_set; the earlier tests still pass.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 45 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 2 with an answer: 2 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
+  156 word-solver and number-puzzle tests pass.
