@@ -2650,25 +2650,40 @@ def rectangle_from_perimeter_area(problem):
     #   "What is its length, which is shorter than the width?"   ->  asks the length;  statement "length is shorter than the width"
     #   "Find the length, the shorter side." / "What is its width, the longer one?"  ->  asks that side; statement "length is the shorter side"
     #   (the comma is optional: "What is its length which is shorter than the width?" is the same question)
-    wm = re.search(r"\b(length|width)\s*,?\s*(?:which|that)\s+(?:is|are)\s+(.*)$", q_main)
+    # "the length of the shorter side" / "the width of the longer side": the word after "of the" names the side, the word in front of "of" does not switch them
+    named_kind = None
+    om = re.search(r"\b(?:length|width)\s+of\s+the\s+(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension)\b(?=\s*(?:,|$))", q_main)
+    if om:
+        named_kind = "long" if re.match(_RECT_LONG, om.group(1)) else "short"
+        q_main = q_main[:om.start()] + " " + q_main[om.end():]
+    # a clause hanging on the side just named is a statement about THAT side (it may sit in the middle: ", the shorter side, and its width"):
+    #   "What is its length, which is shorter than the width?"   ->  asks the length;  statement "length is shorter than the width"
+    #   "Find the length, the shorter side." / "What is its width, the longer one?"  ->  asks that side; statement "length is the shorter side"
+    #   (the comma is optional: "What is its length which is shorter than the width?" is the same question)
+    wm = re.search(r"\b(length|width)\s*,?\s*(?:which|that)\s+(?:is|are)\s+([^,]*?)(?=\s*(?:,|$))", q_main)
+    clause_kind = "which"
+    if not wm:
+        wm = re.search(r"\b(length|width)\s*,?\s*(?:the\s+)?((?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension))(?=\s*(?:,|$))", q_main)
+        clause_kind = "apposition"
     if wm:
-        cond = cond + " . " + wm.group(1) + " is " + wm.group(2)
-        q_main = q_main[:wm.end(1)]
-    else:
-        wm = re.search(r"\b(length|width)\s*,?\s*(?:the\s+)?((?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension))\s*$", q_main)
-        if wm:
-            cond = cond + " . " + wm.group(1) + " is the " + wm.group(2)
-            q_main = q_main[:wm.end(1)]
-    # when BOTH sides are asked, a "which is ..." or "the longer side" after them does not say which of the two it describes ("length and width, the longer side" vs
-    # "width and length, the longer side" would give opposite answers for the same words): decline
-    if wm and re.search(r"\blength\b", q_main) and re.search(r"\bwidth\b", q_main):
-        return None
+        before = q_main[:wm.end(1)]
+        cond = cond + " . " + wm.group(1) + (" is " if clause_kind == "which" else " is the ") + wm.group(2)
+        q_main = q_main[:wm.end(1)] + q_main[wm.end():]
+        # when BOTH sides are named before the clause, it does not say which of the two it describes ("length and width, the longer side" vs
+        # "width and length, the longer side" would give opposite answers for the same words): decline
+        if re.search(r"\blength\b", before) and re.search(r"\bwidth\b", before):
+            return None
     if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q_main):
+        return None
+    # a comparison word left in the question that is not part of a recognised clause ("the longer side of the rectangle") does not end on the comparison: decline
+    if re.search(r"\b(?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\b", q_main):
         return None
     q = q_main
     asks_len, asks_wid = bool(re.search(r"\blength\b", q)), bool(re.search(r"\bwidth\b", q))
     asks_both = bool(re.search(r"\b(?:sides|dimensions)\b", q)) or (asks_len and asks_wid)
-    if not (asks_len or asks_wid or asks_both):
+    if named_kind and (asks_len or asks_wid or asks_both):
+        return None                                                  # the named side AND a length / width: unclear
+    if not (asks_len or asks_wid or asks_both or named_kind):
         return None
     others = " . ".join([x for x in sents if x is not q_orig] + [cond])           # the " . " keeps the end of each statement visible
     asked_side = "length" if (asks_len and not asks_wid and not asks_both) else ("width" if (asks_wid and not asks_len and not asks_both) else None)
@@ -2696,7 +2711,10 @@ def rectangle_from_perimeter_area(problem):
         length, width = w, l                                         # the problem says the length is the shorter side
     else:
         length, width = l, w                                         # unless it says otherwise, the length is the longer side
-    vals = [length, width] if asks_both else ([length] if asks_len else [width])
+    if named_kind:
+        vals = [l] if named_kind == "long" else [w]                  # "the length of the shorter side" is the shorter side, 2
+    else:
+        vals = [length, width] if asks_both else ([length] if asks_len else [width])
     return Result("rectangle_from_perimeter_area", vals, "l + w = %s;  l w = %s" % (show(s), show(A)),
                   "l + w = %s and l w = %s, so the sides are the roots of z^2 - %sz + %s = 0: l = %s and w = %s %s" % (
                       show(s), show(A), show(s), show(A), show_exact(l), show_exact(w), unit))

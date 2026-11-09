@@ -893,3 +893,19 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 33 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong.
   122 word-solver and number-puzzle tests pass.
+
+Batch 31: "of the shorter side", a phrase that does not end on the comparison, and a clause in the middle of the question (rectangle_from_perimeter_area; fixes only, no new family)
+==============================================================
+rectangle_from_perimeter_area, "of the shorter side": the word after "of the" names the side, the word in front of "of" does not switch them.  "Find the length of the shorter side." was 18 and "What is the width of the longer side?" was 2; they are 2 and 18 (the shorter and the longer side).
+  Also "the length of the longer side" 18, "the width of the shorter side" 2, "the length of the shorter one" 2 and "the length of the narrower one" 2.  Asking the named side together with a length or width ("Find the length of the shorter side and the width") is unclear and declines.
+rectangle_from_perimeter_area, a phrase that does not end on the comparison: the apposition and the "which is" clause must be followed by a comma or the end of the question.  "What is its width, the longer side of the rectangle?" was 2: the apposition did not match, the comparison word stayed in
+  the question, and the usual side was used.  Now any comparison word left in the question after the recognised clauses are cut out makes the problem decline, so "the longer side of the rectangle", "the longer side of the lot", "the shorter side of the plot",
+  "the length of the shorter side of the rectangle", "the width of the longer side of the garden" and a bare "What is the longer side?" all decline.
+rectangle_from_perimeter_area, a clause in the middle: "What is its length, the shorter side, and its width?" was 18 and 2.  The clause may now sit anywhere before a comma, so the statement "length is the shorter side" is cut out and kept: the pair is the length 2 and the width 18.  Likewise "Find the length, the
+  shorter side, and the width.", "What is its width, the longer side, and its length?" and "What is its length, which is shorter than the width, and its width?" (all the pair 2 and 18, as [length, width]).  The rule from batch 30 stays: when BOTH sides are named BEFORE the clause it declines
+  ("Find its length and width, the longer side").  Two statements in one question ("What is its length, the shorter side, and its width, the longer side?") are more than one clause can handle and decline.
+Checks (test_word_solver.py): the three new test methods above; the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 34 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 3 required declines: 3 of 3; 0 wrong.
+  125 word-solver and number-puzzle tests pass.
