@@ -50,3 +50,38 @@ What this does NOT show
   * Coverage is small: the solver claims 74 of the 1,000 generated problems (7.4%); with the number reader, 102 (10%).
     The other types still depend on the matcher alone.
   * All wordings (generated, hand-written, fresh) come from the same author as the solver.
+
+Batch 2: three cue gaps (service charge, "how far", the noun "machine")
+=======================================================================
+Changes (word_solver.py only):
+  1. _UP gets the phrase "service charge" (not the bare word "charge").
+  2. the question pattern gets "far":  how (much|many|long|far)
+  3. "machines?" removed from _REJECT_PROP (workers, men, pipes, taps, pumps stay).
+  Also earlier today (Grok's edit and the together-word rule): answers stay exact fractions; a work problem whose
+  setup already says "together" is declined.
+
+Required cases (all now in test_word_solver.py):
+  "...12% service charge was $224. What was the bill before the charge?"                  -> 200
+  "A bill of $90 includes a $10 service charge. What was it before the service charge?"   -> declines (no % number)
+  "A shirt is 25% off, saving $10. What was the original price?"                           -> declines
+  "A train travels 150 km in 2 hours. At that rate, how far does it go in 5 hours?"         -> 375
+  "A car goes 60 mph for 3 hours then 40 mph for 2 hours. How far does it go in all?"       -> declines
+  "A machine makes 240 bolts in 8 hours. How many bolts does it make in 20 hours?"         -> 600
+  "If 6 workers build a wall in 12 days, how long would 9 workers take?"                   -> declines
+  (The bolts problem was NOT a missing cue: "makes" was already a cue; the noun "machine" was in the reject list.)
+
+Measured:
+  generated problems (1,000):  claims 74 -> 79, wrong 0, none lost.  The 5 new claims are all "Direct variation"
+      spring problems ("Stretch varies directly with force. How far will it stretch under ... N?"), e.g. 2.5 cm under
+      20 N -> 5 cm, 6 cm under 12 N -> 45/2 (stored 22.5 cm); every answer equals the stored answer.
+      The service-charge and machine wordings do not occur in the generated set, so they added no claims there.
+  first fresh set (33):  now a DEVELOPMENT set (it found these gaps): all 21 with an answer solved, all 12 required
+      declines still decline.
+  SECOND fresh set (fresh_word_problems_2.py, 27 wordings written after the edits, run once, untuned):
+      21 with an answer: 18 solved, 3 declined (safe), 0 wrong.   6 required declines: 6 of 6 declined.
+      The 3 declined are new gaps, all missing cue words for the rate family:
+          "A bus covers 210 miles in 6 hours. How far does it go in 9 hours?"       ("covers")
+          "A press stamps 90 plates in 15 minutes. How many ... in 40 minutes?"     ("stamps")
+          "A printer prints 48 pages in 3 minutes. How many ... in 10 minutes?"     ("prints")
+      They were NOT fixed after the run.
+  The stored answer stays the exact fraction; the reading carries the nearest-cent text for money.

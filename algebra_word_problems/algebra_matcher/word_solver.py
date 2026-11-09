@@ -233,7 +233,7 @@ def work_together(problem):
 # ---------------------------------------------------------------------------------------------------------
 # 4. a price after a percent change
 # ---------------------------------------------------------------------------------------------------------
-_UP = r"\b(raise|raised|markup|marked up|marks up|mark up|increase|increased|went up|goes up|rose|risen|tax|tip|gratuity|adds|added|surcharge|inflation)\b"
+_UP = r"\b(raise|raised|markup|marked up|marks up|mark up|increase|increased|went up|goes up|rose|risen|tax|tip|gratuity|adds|added|surcharge|service charge|inflation)\b"
 _DOWN = r"\b(discount|discounted|off|marked down|mark down|reduced|reduction|decrease|decreased|dropped|fell|cheaper|sale)\b"
 _ASK_BEFORE = r"\b(before|original|old|wholesale|without|initial|earlier|itself|what did (?:the )?(?:store|shop|company|owner|dealer|\w+) (?:pay|spend)|what was the cost)\b"
 
@@ -271,7 +271,7 @@ def percent_change(problem):
 # ---------------------------------------------------------------------------------------------------------
 # 5. direct proportion with three numbers
 # ---------------------------------------------------------------------------------------------------------
-_REJECT_PROP = re.compile(r"\b(inverse|inversely|workers?|men|machines?|pipes?|taps?|pumps?|faster|slower|speeds?|km/h|kmh|mph|kph|ratio|average|mean|angle|degrees?|scale|map|similar|shadow|tall|height)\b|%|:")
+_REJECT_PROP = re.compile(r"\b(inverse|inversely|workers?|men|pipes?|taps?|pumps?|faster|slower|speeds?|km/h|kmh|mph|kph|ratio|average|mean|angle|degrees?|scale|map|similar|shadow|tall|height)\b|%|:")
 
 
 def unit_after(t, end):
@@ -288,7 +288,7 @@ def proportion(problem):
     nums = digit_numbers(problem)
     if len(nums) != 3 or _REJECT_PROP.search(t):
         return None
-    q = re.search(r"\bhow (?:much|many|long)\b", t)
+    q = re.search(r"\bhow (?:much|many|long|far)\b", t)
     if not q:
         return None
     # roles by position: the known pair comes BEFORE the question, the quantity asked about comes AFTER it

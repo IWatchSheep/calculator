@@ -79,11 +79,18 @@ class Families(unittest.TestCase):
         # the question asks for the AFTER value, or the known amount is a saving: never answer
         self.assertIsNone(answers("A shirt costs $40 and is 25% off. What is the sale price?"))
         self.assertIsNone(answers("A shirt is 25% off, saving $10. What was the original price?"))
+        # "service charge" (two words) is a rise; the bare word "charge" is not
+        self.assertEqual(answers("The bill including a 12% service charge was $224. What was the bill before the charge?"), values(200))
+        self.assertIsNone(answers("A bill of $90 includes a $10 service charge. What was it before the service charge?"))
         self.assertIsNone(answers("After a 20% discount and a 5% tax, a TV costs $400. What was the original price?"))
 
     def test_proportion(self):
         self.assertEqual(answers("If 5 pens cost $12.50, how much do 12 pens cost?"), values(30))
         self.assertEqual(answers("A car travels 480 miles on 15 gallons of gas. At this rate, how many gallons are needed for 736 miles?"), values(Fraction(736, 32)))
+        # "how far" is a question word; "machine" is a noun, not a reason to decline (workers still are)
+        self.assertEqual(answers("A train travels 150 km in 2 hours. At that rate, how far does it go in 5 hours?"), values(375))
+        self.assertEqual(answers("A machine makes 240 bolts in 8 hours. How many bolts does it make in 20 hours?"), values(600))
+        self.assertIsNone(answers("A car goes 60 mph for 3 hours then 40 mph for 2 hours. How far does it go in all?"))
         self.assertIsNone(answers("If 6 workers build a wall in 12 days, how long would 9 workers take?"))
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
         self.assertIsNone(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"))
@@ -139,24 +146,43 @@ class HandSets(unittest.TestCase):
         self.assertEqual(claimed, len(HAND_ANSWERS))
 
 
-class FreshWordings(unittest.TestCase):
-    def test_fresh(self):
+def score(table):
+    """(solved, declined, required declines, wrong-or-unexpected) for a table of (problem, answers-or-None)."""
+    solved = declined = required = 0
+    for text, want in table:
+        got = answers(text)
+        if want is None:
+            assert got is None, "should decline: " + text
+            required += 1
+        elif got is None:
+            declined += 1
+        else:
+            assert got == values(*want), text
+            solved += 1
+    return solved, declined, required
+
+
+class DevelopmentWordings(unittest.TestCase):
+    """The first 33 fresh wordings.  They found the three cue gaps that were then fixed, so they are now a
+    development set: every one with an answer must be solved and every required decline must still decline."""
+
+    def test_development(self):
         from fresh_word_problems import FRESH
-        right = declined = 0
-        for text, want in FRESH:
-            got = answers(text)
-            if want is None:
-                self.assertIsNone(got, "should decline: " + text)
-                right += 1
-            elif got is None:
-                declined += 1
-            else:
-                self.assertEqual(got, values(*want), text)
-                right += 1
-        with_answer = sum(1 for _t, w in FRESH if w is not None)
-        print("  fresh wordings: %d of %d right (%d of the %d with an answer solved, %d declined, 0 wrong)" % (
-            right, len(FRESH), with_answer - declined, with_answer, declined))
-        self.assertEqual(declined, 3)
+        solved, declined, required = score(FRESH)
+        print("  development wordings (first fresh set): %d solved, %d declined, %d required declines correct" % (solved, declined, required))
+        self.assertEqual((solved, declined, required), (21, 0, 12))
+
+
+class FreshWordings(unittest.TestCase):
+    """27 new wordings written AFTER the three cue changes and run once, untuned (fresh_word_problems_2.py):
+    21 with an answer, 6 that must be declined.  Declining is safe; a wrong answer is a failure."""
+
+    def test_fresh(self):
+        from fresh_word_problems_2 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (second set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (18, 3, 6))
 
 
 if __name__ == "__main__":
