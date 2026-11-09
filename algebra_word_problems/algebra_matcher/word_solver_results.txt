@@ -829,3 +829,20 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 29 (11 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
   111 word-solver and number-puzzle tests pass.
+
+Batch 27: more wrong numbers from nearby wordings of pages_per_day and rectangle_from_perimeter_area (fixes only, no new family)
+==============================================================
+pages_per_day: "finishing" counts as "finish", and another deadline is not dropped.  "She must finish the book in 6 days. How many pages a day must be read?" stays 40/3, and so do "to finish", "to finish it", "to finish reading the book" and
+  "while finishing the book".  "... while finishing the chapter?" was 40/3 and now declines (the chapter is not the book).  "to finish it today?" and "to finish it by tomorrow?" were 40/3: the earlier fix cut the words at "by" / "before" / "today" /
+  "tomorrow" / "tonight" and used the 6 days anyway.  Only the day count itself ("in / within / over 6 days") ends the words about the book now, and the words AFTER the day count are checked as well, so "finish it in 6 days by tomorrow" and
+  "finish it in 8 days by Friday" decline too; "today", "tomorrow", "tonight", "by" and "before" are a deadline of their own.
+rectangle_from_perimeter_area: a comparison whose subject is "it" or "one" uses the side the question asks for.  "What is its length? It is shorter than the width." is 2 (was 18); "It is less than the width. What is its length?" is 2 (was 18); "What is its
+  width? It is the longer side." is 18 (was 2); "The longer one is the width. What is its width?" is 18 (was 2); "The shorter one is the length" is 2 and "The longer one is the length. What is its width?" is 2.  Inside the question the same works
+  ("What is its length if it is shorter than the width?" is 2).  The side "it" means is the one the question names; when both sides are asked ("Find its length and width. It is shorter than the width.") or "it" is compared with itself ("What is its width?
+  It is shorter than the width.") nothing says which side it is and the problem declines.  Statements that earlier batches handled are unchanged.  Added while checking: "the same as", "equal to", "as long as" and "as wide as" decline (a 40 ft / 36 sq ft rectangle
+  does not have equal sides; before this, "What is its length? It is the same as the width." was answered 18).
+Checks (test_word_solver.py): the three new test methods above; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 30 (10 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
+  114 word-solver and number-puzzle tests pass.

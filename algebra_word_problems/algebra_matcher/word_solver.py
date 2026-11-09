@@ -2499,13 +2499,17 @@ def pages_per_day(problem):
     if any(w not in allowed for w in dm.group(1).split()):
         return None
     # every "finish ..." in the problem (the question too) has to name this book: "to finish the chapter?" asks about another job
-    for fm in re.finditer(r"\bfinish\b", t):
+    for fm in re.finditer(r"\bfinish(?:ing)?\b", t):
         after = re.split(r"[.?!]", t[fm.end():])[0]
         words = re.findall(r"[a-z]+", after)
-        for stop in ("in", "within", "over", "by", "before", "after", "today", "tomorrow", "tonight"):
+        for stop in ("in", "within", "over"):                       # the day count itself ("in 6 days") ends the words about the book ...
             if stop in words:
-                words = words[:words.index(stop)]
-        if any(w not in allowed for w in words):
+                i = words.index(stop)
+                tail = words[i + 1:]
+                if tail and tail[0] in ("day", "days", "week", "weeks", "night", "nights"):
+                    tail = tail[1:]
+                words = words[:i] + tail                            # ... and whatever follows it must be about the book too ("by tomorrow" is another deadline)
+        if any(w not in allowed for w in words):                    # "by tomorrow", "today", "before Friday" are a deadline of their own: decline
             return None
     unit = dm.group(3).rstrip("s")
     # the question asks for pages per (day / week / night), in the unit of the deadline
@@ -2582,15 +2586,19 @@ _RECT_UNIT = {"feet": "ft", "foot": "ft", "meters": "m", "metres": "m", "meter":
               "yards": "yd", "yard": "yd", "miles": "mi", "mile": "mi", "kilometers": "km", "kilometres": "km"}
 _RECT_LONG = r"(?:longer|larger|greater|bigger|wider|broader|more|longest|largest|greatest|widest)"
 _RECT_SHORT = r"(?:shorter|smaller|lesser|narrower|less|shortest|smallest|least|narrowest)"
-_RECT_REL = re.compile(r"\b(length|width)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?(?:\s+than\s+(?:the\s+)?(length|width))?\b")
-_RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension)\s+(?:is|being)\s+(?:the\s+)?(length|width)\b")
+_RECT_REL = re.compile(r"\b(length|width|it|one)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?(?:\s+than\s+(?:the\s+)?(length|width))?\b")
+_RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension|one)\s+(?:is|being)\s+(?:the\s+)?(length|width)\b")
 
 
-def _rect_length_is_longer(text):
+def _rect_length_is_longer(text, asked=None):
     """True / False when the problem says which of length and width is the longer side, None when it does not, "bad" when it contradicts itself or is unclear."""
     found = []
     for m in _RECT_REL.finditer(text):
         dim, rel, other = m.group(1), m.group(2), m.group(3)
+        if dim in ("it", "one"):                                     # "It is shorter than the width": "it" is the side the question asks for
+            if asked is None:
+                return "bad"
+            dim = asked
         if other is not None and other == dim:
             return "bad"
         found.append((dim, bool(re.match(_RECT_LONG, rel))))
@@ -2602,7 +2610,7 @@ def _rect_length_is_longer(text):
     return verdicts.pop() if len(verdicts) == 1 else "bad"
 
 
-_RECT_OTHER = re.compile(r"\b(?:square(?! (?:feet|foot|ft|meters?|metres?|m|cm|centimeters?|centimetres?|inch(?:es)?|in|yards?|yd|miles?|mi|km|kilometers?)\b)|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
+_RECT_OTHER = re.compile(r"\b(?:same as|equal to|equals?|as long as|as wide as|square(?! (?:feet|foot|ft|meters?|metres?|m|cm|centimeters?|centimetres?|inch(?:es)?|in|yards?|yd|miles?|mi|km|kilometers?)\b)|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
 
 
 def rectangle_from_perimeter_area(problem):
@@ -2633,7 +2641,8 @@ def rectangle_from_perimeter_area(problem):
     if not (asks_len or asks_wid or asks_both):
         return None
     others = " ".join([x for x in sents if x is not q_orig] + [cond])
-    length_longer = _rect_length_is_longer(others)
+    asked_side = "length" if (asks_len and not asks_wid and not asks_both) else ("width" if (asks_wid and not asks_len and not asks_both) else None)
+    length_longer = _rect_length_is_longer(others, asked_side)
     if length_longer == "bad":
         return None
     P, A = Fraction(pm.group(1)), Fraction(am.group(1))

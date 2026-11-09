@@ -1755,6 +1755,56 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 0, 5))
 
+    def test_pages_finishing_and_other_deadlines(self):
+        book = "A 100-page book has 20 pages already read. She must finish the book in 6 days. "
+        # the forms that stay answered: 80 pages over 6 days is 40/3
+        for q in ("How many pages a day must be read?", "How many pages a day must be read to finish?", "How many pages a day must be read to finish it?",
+                  "How many pages a day must be read to finish reading the book?", "How many pages a day must be read while finishing the book?"):
+            self.assertEqual(answers(book + q), values(Fraction(40, 3)), q)
+        self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
+        # "finishing" counts as "finish": the chapter is not the book
+        self.assertIsNone(answers(book + "How many pages a day must be read while finishing the chapter?"))
+        # today / tomorrow / tonight (and by / before ...) are a deadline of their own, and are not dropped to use the 6 days
+        for q in ("How many pages a day must be read to finish it today?", "How many pages a day must be read to finish it by tomorrow?",
+                  "How many pages a day must be read to finish it tonight?", "How many pages a day must be read to finish before Friday?"):
+            self.assertIsNone(answers(book + q), q)
+        # the words after the day count are checked too
+        self.assertIsNone(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish it in 6 days by tomorrow?"))
+        self.assertIsNone(answers("A 240-page book has 40 pages already read. How many pages a day must be read to finish it in 8 days by Friday?"))
+
+    def test_rectangle_comparison_with_it_or_one_as_subject(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # the statements that already worked stay
+        self.assertEqual(answers(base + "The length is less than the width. What is its length?"), values(2))
+        self.assertEqual(answers(base + "The width is more than the length. What is its width?"), values(18))
+        self.assertEqual(answers(base + "What is its length if the length is shorter than the width?"), values(2))
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        # "it" and "one" are the side the question asks for
+        self.assertEqual(answers(base + "What is its length? It is shorter than the width."), values(2))
+        self.assertEqual(answers(base + "It is less than the width. What is its length?"), values(2))
+        self.assertEqual(answers(base + "What is its width? It is the longer side."), values(18))
+        self.assertEqual(answers(base + "The longer one is the width. What is its width?"), values(18))
+        self.assertEqual(answers(base + "The shorter one is the length. What is its length?"), values(2))
+        self.assertEqual(answers(base + "The longer one is the length. What is its width?"), values(2))
+        self.assertEqual(answers(base + "What is its length if it is shorter than the width?"), values(2))
+        self.assertEqual(answers(base + "What is its width if it is longer than the length?"), values(18))
+        self.assertEqual(answers(base + "What is its width? It is the narrower side."), values(2))
+        # when both sides are asked, or the pronoun compares the side with itself, nothing says which side "it" is: decline
+        self.assertIsNone(answers(base + "Find its length and width. It is shorter than the width."))
+        self.assertIsNone(answers(base + "It is shorter than the width. Find its length and width."))
+        self.assertIsNone(answers(base + "What is its width? It is shorter than the width."))
+        # "the same as" / "equal to" says the sides are equal, which a 40 / 36 rectangle is not
+        self.assertIsNone(answers(base + "What is its length? It is the same as the width."))
+        self.assertIsNone(answers(base + "What is its length? It is equal to the width."))
+
+    def test_finishing_and_it_set(self):
+        """Set 30: neighbours of the batch-27 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_30 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirtieth set, neighbours of the batch-27 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 0, 5))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
