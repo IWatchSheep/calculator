@@ -922,6 +922,79 @@ class FreshWordings(unittest.TestCase):
         self.assertEqual(s17, (6, 1, 7))
         self.assertEqual(s18, (3, 3, 3))
 
+    def test_two_scores(self):
+        self.assertEqual(answers("A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?"), values(12, 28))
+        self.assertEqual(answers("A basketball team scored 92 points from 40 field goals, all two-pointers and three-pointers. How many of each?"), values(12, 28))
+        self.assertEqual(answers("A football team scored 48 points from 8 scores, all 7-point touchdowns (with extra point) and 3-point field goals. How many of each?"), values(2, 6))
+        r = WS.solve("A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?")
+        self.assertEqual(r.values, [Fraction(28), Fraction(12)])           # twos first, then threes
+        self.assertIn("x + y = 40 and 2x + 3y = 92", r.reading)
+        self.assertIn("x = 28 and y = 12", r.reading)
+        # a third point value, free throws, equal values, not whole or not positive counts, no "all", a spelled number, part of the season, a question for something else
+        for text in ("A basketball team scored 92 points from 40 field goals, all 2-pointers, 3-pointers and free throws. How many of each?",
+                     "A basketball team scored 92 points from 40 field goals, all 1-pointers, 2-pointers and 3-pointers. How many of each?",
+                     "A basketball team scored 92 points from 40 field goals, all 2-pointers and 2-pointers. How many of each?",
+                     "A basketball team scored 80 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?",
+                     "A basketball team scored 70 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?",
+                     "A team scored 50 points from 8 scores, all 7-point touchdowns and 3-point field goals. How many of each?",
+                     "A basketball team scored 92 points from 40 field goals, 2-pointers and 3-pointers. How many of each?",
+                     "A basketball team scored twice 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?",
+                     "A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers, for part of the season. How many of each?",
+                     "A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many points per shot?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_two_discounts(self):
+        self.assertEqual(answers("A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. What was the original price?"), values(860))
+        self.assertEqual(answers("A jacket is 30% off. Then a coupon takes an extra 20% off the discounted price. It now costs $168. What was the original price?"), values(300))
+        r = WS.solve("A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. What was the original price?")
+        self.assertIn("0.6 x 0.9 x p = 464.4", r.reading)
+        # the answer stays exact: a price that is not a whole number of cents is an exact fraction, never a rounded decimal
+        r = WS.solve("A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.41. What was the original price?")
+        self.assertEqual(r.values, [Fraction(46441, 54)])
+        self.assertIn("46441/54", r.reading)
+        # both cuts off the ORIGINAL price (an additive 50%, a different equation), no "sale price", a question for the savings, tax, a total, a percent over 100,
+        # a spelled number, part of the year
+        for text in ("A coat is marked 40% off, and then an extra 10% is taken off the original price. The final price is $464.40. What was the original price?",
+                     "A coat is marked 40% off and an extra 10% is taken off. The final price is $464.40. What was the original price?",
+                     "A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. How much did you save?",
+                     "A coat is marked 40% off, and then an extra 10% is taken off the sale price, plus 5% tax. The final price is $464.40. What was the original price?",
+                     "A coat is marked 40% off, and then an extra 10% is taken off the sale price. Both cuts together give a final price of $464.40. What was the original price?",
+                     "A coat is marked 140% off, and then an extra 10% is taken off the sale price. The final price is $464.40. What was the original price?",
+                     "A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. What was the original price of two coats?",
+                     "A coat is marked 40% off, and then an extra 10% is taken off the sale price for part of the year. The final price is $464.40. What was the original price?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_triangle_ratio(self):
+        self.assertEqual(answers("The angles of a triangle are in the ratio 3:5:7. Find each angle."), values(36, 60, 84))
+        self.assertEqual(answers("The angles of a triangle are in the ratio 2:3:4. What are the angles?"), values(40, 60, 80))
+        r = WS.solve("The angles of a triangle are in the ratio 3:5:7. Find each angle.")
+        self.assertEqual(r.values, [Fraction(36), Fraction(60), Fraction(84)])
+        self.assertEqual(sum(r.values), 180)                                # the three angles always add to 180
+        self.assertIn("15 parts in all, so one part is 180/15 = 12", r.reading)
+        r = WS.solve("The angles of a triangle are in the ratio 1:1:5. Find each angle.")
+        self.assertEqual(r.values, [Fraction(180, 7), Fraction(180, 7), Fraction(900, 7)])     # exact fractions
+        self.assertEqual(sum(r.values), 180)
+        # two parts, four parts, a decimal or zero part, only the largest, a right triangle, another number, spelled parts, part of the time
+        for text in ("The angles of a triangle are in the ratio 3:5. Find each angle.",
+                     "The angles of a triangle are in the ratio 3:5:7:9. Find each angle.",
+                     "The angles of a triangle are in the ratio 2.5:3:4. Find each angle.",
+                     "The angles of a triangle are in the ratio 3:5:0. Find each angle.",
+                     "The angles of a triangle are in the ratio 3:5:7. Find the largest angle.",
+                     "The angles of a right triangle are in the ratio 3:5:7. Find each angle.",
+                     "The angles of a triangle are in the ratio 3:5:7 and one side is 12 cm. Find each angle.",
+                     "The angles of a triangle are in the ratio three to five to seven. Find each angle.",
+                     "The angles of a triangle are in the ratio 3:5:7 for part of the time. Find each angle."):
+            self.assertIsNone(answers(text), text)
+
+    def test_scores_discounts_triangles_set(self):
+        """Set 19: wordings for two_scores, two_discounts and triangle_ratio, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "In a triangle the three angles are in the ratio ..." is not one of the angles-of-a-triangle phrases."""
+        from fresh_word_problems_19 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (nineteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 1, 7))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

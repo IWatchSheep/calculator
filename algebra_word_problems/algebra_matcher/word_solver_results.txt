@@ -534,3 +534,32 @@ Measured:
   Hand-written problems claimed by the family solver: 36 -> 37, all match the hand-calculated answers:
     "Town X has 50,000 people and gains 1,000 a year; Town Y has 80,000 and loses 500 a year. When are they equal?" 20 years.
   63 word-solver and number-puzzle tests pass.
+
+Batch 16: three more families from the generated file in one commit: two_scores, two_discounts, triangle_ratio
+==============================================================
+two_scores  (generator "basketball" and "football" scores):  x + y = N,  a x + b y = P.  "A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers.
+  How many of each?" is 28 twos and 12 threes (values in the order the point values are named).  Needs exactly two point values ("2-pointers", "7-point touchdowns", or spelled
+  "two-pointers"), the words all / only / just, one "<P> points" and one "from|on|with <N> <noun>", and a question for each (or a kind of score).  Both counts must be positive whole
+  numbers.  Declines: a third point value (1-, 2- and 3-pointers), free throws / fouls / safeties / penalties / conversions / bonus, equal values, a count that is not whole or not positive
+  (50 points from 8 scores of 7 and 3 gives 1.5; 70 points from 40 baskets of 2 and 3 gives -10), no "all", a spelled number other than the point values, "such", "part of", a question for
+  something else ("points per shot").  "(with extra point)" in the football wording is allowed.
+two_discounts  (generator "an extra b% is taken off the sale price"):  (1 - a)(1 - b) p = F.  "A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is
+  $464.40. What was the original price?" is $860 (0.6 x 0.9 x p = 464.4).  The first cut is "a% off" (or marked down / reduced by), the second is an extra / additional / further cut taken off the
+  SALE (discounted / reduced / new / marked-down) price, after "then" / "next" / "on top", the money is introduced by "final price" / "now costs" / "pays", and the question asks for the
+  original price.  Exact: a final price of $464.41 gives the exact fraction 46441/54 (860.0185 to the nearest cent), never a rounded decimal.  Declines: an extra cut taken off the ORIGINAL
+  price (additive, a different equation), no "sale price" wording, a question for the savings, tax / tip / both / together, a percent of 100 or more, a spelled number, "part of".
+triangle_ratio  (generator "angles of a triangle are in the ratio a:b:c"):  the angles are 180 a/s, 180 b/s, 180 c/s with s = a + b + c, so they always add to 180.  "The angles of a triangle
+  are in the ratio 3:5:7. Find each angle." is 36, 60 and 84 degrees (15 parts, 180/15 = 12).  The ratio must be three whole numbers above zero; exact fractions are kept (1:1:5 gives
+  180/7, 180/7 and 900/7).  Declines: two or four parts, a decimal or zero part, a question for only the largest or smallest angle, a right / isosceles / equilateral triangle, another number
+  in the problem, spelled parts ("three to five to seven"), "part of".
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a price (none of these three has a price per item), such / of the year / for part of / of the time, exact
+  fractions in values and readings (46441/54, 180/7), no control characters, and no module-level name defined twice (passes; the names here are _SCORE_*, _DISC2_*, _TRI_*).
+Measured:
+  1,000 generated problems: claims 192 -> 206, wrong 0.  The 14 new claims, each equal to the stored answer:
+    two_scores 0882 (28 and 12), 0905 (20 and 3), 0919 (29 and 1), 0939 (8 and 10), 0948 (5 and 12) = every generated basketball problem (the generated file has no football-scores problem);
+    two_discounts 0612 ($860), 0638 ($730), 0648 ($790), 0665 ($400), 0669 ($680) = every generated "extra % taken off the sale price" problem;
+    triangle_ratio 0237 (36, 60, 84), 0247 (50, 60, 70), 0258 (24, 72, 84), 0266 (30, 45, 105) = every generated "angles of a triangle in the ratio" problem.
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 19 (13 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 7 required declines: 7 of 7; 0 wrong.  The declined one:
+  "In a triangle the three angles are in the ratio 1:2:3" is not one of the angles-of-a-triangle phrases (a safe miss, not fixed).
+  67 word-solver and number-puzzle tests pass.

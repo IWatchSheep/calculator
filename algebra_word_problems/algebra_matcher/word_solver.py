@@ -1565,12 +1565,131 @@ def add_to_blend(problem):
     return Result("add_to_blend", [x], eq, "x = %s added: %s, so x = %s %s" % (unit, eq, show_exact(x), unit))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 28. two kinds of score:   x + y = N,  a x + b y = P      (the generator's "basketball" and "football" scores)
+# ---------------------------------------------------------------------------------------------------------
+_SCORE_KIND = re.compile(r"\b(?:(\d+)|(two|three|four|five|six|seven))-(?:pointers?|points?)\b")
+_SCORE_TOTAL = re.compile(r"(?<![\w-])(\d+)\s+points?\b")
+_SCORE_COUNT = re.compile(r"\b(?:from|on|with|in)\s+(\d+)\s+[a-z]+(?:\s+[a-z]+)?")
+_SCORE_OTHER = re.compile(r"\b(?:free throws?|fouls?|safety|safeties|penalt\w*|conversions?|bonus\w*|overtime|other|rest|some)\b")
+
+
+def two_scores(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or _SCORE_OTHER.search(t.replace("(with extra point)", " ")):
+        return None
+    if not re.search(r"\b(?:all|only|just|nothing but)\b", t):
+        return None
+    kinds = list(_SCORE_KIND.finditer(t))
+    values = []
+    for m in kinds:
+        v = Fraction(m.group(1)) if m.group(1) else Fraction(_SMALL[m.group(2)])
+        values.append(v)
+    if len(values) != 2 or values[0] == values[1] or min(values) < 1:
+        return None
+    tot, cnt = list(_SCORE_TOTAL.finditer(t)), list(_SCORE_COUNT.finditer(t))
+    if len(tot) != 1 or len(cnt) != 1:
+        return None
+    work = _SCORE_KIND.sub(" ", t.replace("(with extra point)", " "))
+    if re.search(_SPELLED_ANY, work):
+        return None
+    digit_kinds = sum(1 for m in kinds if m.group(1))
+    if len(nums) != 2 + digit_kinds:
+        return None
+    P, N = Fraction(tot[0].group(1)), Fraction(cnt[0].group(1))
+    if P == N or tot[0].start(1) == cnt[0].start(1):
+        return None
+    # the question asks how many of each (or names a kind of score)
+    q = t.rfind("how many")
+    if q == -1 or not (re.search(r"\beach\b", t[q:]) or _SCORE_KIND.search(t[q:])):
+        return None
+    a, b = values
+    y = (P - a * N) / (b - a)
+    x = N - y
+    if x <= 0 or y <= 0 or x.denominator != 1 or y.denominator != 1:
+        return None
+    e1, e2 = "x + y = %s" % show(N), "%sx + %sy = %s" % (show(a), show(b), show(P))
+    return Result("two_scores", [x, y], "%s;  %s" % (e1, e2),
+                  "x = number of %s-point scores, y = number of %s-point scores: %s and %s, so x = %s and y = %s" % (
+                      show(a), show(b), e1, e2, show_exact(x), show_exact(y)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 29. two discounts, one after the other:   (1 - a)(1 - b) p = F     (the generator's "coat ... an extra b% is taken off the sale price")
+# ---------------------------------------------------------------------------------------------------------
+_DISC2_FINAL = re.compile(r"\b(?:final (?:price|cost)|now (?:costs?|sells? for|is)|pays?|paid|ends? up|after both)\b")
+_DISC2_ORIGINAL_Q = re.compile(r"\b(?:what|how much)\b[^.?!]*\b(?:original|regular|list|starting|before)\b")
+_DISC2_OTHER = re.compile(r"\b(?:tax|tip|both|combined|together|add up|adds up|total discount|save|saved|savings)\b")
+
+
+def two_discounts(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or t.count("%") != 2 or _CHANGES_EQUATION.search(t) or _DISC2_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    money = [n for n in nums if n[1]]
+    pcts = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
+    if len(money) != 1 or len(pcts) != 2:
+        return None
+    p1, p2 = pcts
+    # the first cut: "40% off" / "marked down 40%"; the second: an extra / additional / further cut taken off the SALE (reduced) price, not the original
+    if not (re.match(r"\s*%\s*(?:off|discount)\b", t[p1[3]:]) or re.search(r"\b(?:marked down|reduced|discounted)(?: by)?\s*$", t[:p1[2]].rstrip())):
+        return None
+    if not re.search(r"\b(?:extra|additional|further|another)\s*$", " ".join(t[:p2[2]].split()[-2:])) or not re.search(r"\b(?:then|after that|next|on top)\b", t):
+        return None
+    clause = re.split(r"[.?!]", t[p2[3]:])[0]
+    if not re.search(r"\b(?:sale|discounted|reduced|new|marked-down|marked down|lower)\s+price\b", clause) or re.search(r"\b(?:original|regular|list|first)\b", clause):
+        return None
+    if not _DISC2_FINAL.search(t) or not _DISC2_ORIGINAL_Q.search(t):
+        return None
+    a, b, F = p1[0] / 100, p2[0] / 100, money[0][0]
+    if not (0 < a < 1 and 0 < b < 1) or F <= 0:
+        return None
+    price = F / ((1 - a) * (1 - b))
+    eq = "%s x %s x p = %s" % (show(1 - a), show(1 - b), show(F))
+    return Result("two_discounts", [price], eq,
+                  "p = original price; the second cut is taken off the sale price: %s, so p = %s" % (eq, show_answer(price, True)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 30. angles of a triangle in a ratio of three whole numbers      (the generator's "angles of a triangle are in the ratio a:b:c")
+# ---------------------------------------------------------------------------------------------------------
+_TRI_RATIO = re.compile(r"(?<![\d.:])(\d+)\s*:\s*(\d+)\s*:\s*(\d+)(?!\d|\.\d|:)")
+_TRI_OTHER = re.compile(r"\b(?:right|isosceles|equilateral|exterior|outside|largest|smallest|biggest|difference|sum of two|quadrilateral|polygon|pentagon|hexagon|"
+                        r"one angle|another|degrees more|more than|less than|twice|double)\b")
+
+
+def triangle_ratio(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or _TRI_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    if not re.search(r"\bangles of a triangle\b|\btriangle'?s? angles\b|\bthree angles of a triangle\b", t) or not re.search(r"\bratio\b", t):
+        return None
+    rm = list(_TRI_RATIO.finditer(t))
+    if len(rm) != 1:
+        return None
+    parts = [Fraction(g) for g in rm[0].groups()]
+    if min(parts) < 1:
+        return None
+    # the question asks for every angle
+    if not re.search(r"\b(?:find|what (?:are|is)|determine|give|name)\b[^.?!]*\b(?:each angle|the angles|all (?:three )?angles|every angle|each of the angles)\b", t):
+        return None
+    total = sum(parts)
+    angles = [Fraction(180) * p / total for p in parts]
+    return Result("triangle_ratio", angles, "%sk + %sk + %sk = 180" % tuple(show(p) for p in parts),
+                  "%s parts in all, so one part is 180/%s = %s: %s" % (
+                      show(total), show(total), show_exact(Fraction(180) / total), ", ".join("%s degrees" % show_exact(a) for a in angles)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
             still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth,
-            fixed_plus_rate, two_changing_equal, add_to_blend]
+            fixed_plus_rate, two_changing_equal, add_to_blend,
+            two_scores, two_discounts, triangle_ratio]
 
 
 def solve(problem):
