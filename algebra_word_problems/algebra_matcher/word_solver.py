@@ -2873,6 +2873,137 @@ def transversal_equal_angles(problem):
                   "%s angles are equal: %s, so x = %s and each angle is %s degrees" % (kinds[0], eq, show_exact(x), show_exact(angle)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 53. a class ratio after more students join:   b k / (g k + n) = p / q      (the generator's "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3.")
+# ---------------------------------------------------------------------------------------------------------
+_JOIN_RATIO = re.compile(r"\bratio of ([a-z]+) to ([a-z]+)(?: [a-z ]*?)? is (\d+)\s*:\s*(\d+)")
+_JOIN_AFTER = re.compile(r"\bafter (\d+) more ([a-z]+) (?:join|joins|joined|arrive|arrives|arrived|enrol|enroll|enrolls|enrolled)\b")
+_JOIN_NEW = re.compile(r"\b(?:the )?ratio (?:becomes|changes to|is then|is now|will be|then is)\s+(\d+)\s*:\s*(\d+)")
+_JOIN_OTHER = re.compile(r"\b(?:leave|leaves|left|drop out|dropped out|transfer\w*|absent|twice|half|double|total of|altogether|together|each)\b|%|\$")
+
+
+def class_ratio_after_join(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 5 or _CHANGES_EQUATION.search(t) or _JOIN_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    rm, am, nm = _JOIN_RATIO.search(t), _JOIN_AFTER.search(t), _JOIN_NEW.search(t)
+    if not rm or not am or not nm or len(re.findall(r"\bratio of\b", t)) != 1:
+        return None                                              # one "ratio of X to Y", read in that order both times
+    X, Y = rm.group(1), rm.group(2)
+    b, g = Fraction(rm.group(3)), Fraction(rm.group(4))
+    n, joined = Fraction(am.group(1)), am.group(2)
+    p, q = Fraction(nm.group(1)), Fraction(nm.group(2))
+    if X == Y or min(b, g, n, p, q) <= 0:
+        return None
+    # the newcomers join the group the sentence names
+    if joined == Y:
+        # b k / (g k + n) = p / q
+        denom = b * q - g * p
+        if denom == 0:
+            return None
+        k = n * p / denom
+        eq = "%sk / (%sk + %s) = %s/%s" % (show(b), show(g), show(n), show(p), show(q))
+    elif joined == X:
+        # (b k + n) / (g k) = p / q
+        denom = p * g - q * b
+        if denom == 0:
+            return None
+        k = q * n / denom
+        eq = "(%sk + %s) / %sk = %s/%s" % (show(b), show(n), show(g), show(p), show(q))
+    else:
+        return None
+    B, G = b * k, g * k
+    if k <= 0 or B.denominator != 1 or G.denominator != 1 or B <= 0 or G <= 0:
+        return None                                              # the counts have to be positive whole numbers
+    # the question asks for the ORIGINAL total
+    qm = re.search(r"\bhow many (?:of the )?([a-z]+)", t)
+    if not qm or qm.group(1) not in ("students", "pupils", "children", "people", "members", "kids", "learners") or not re.search(r"\b(?:originally|at first|to begin with|in the beginning)\b", t):
+        return None                                              # the TOTAL at the start, not the boys or the girls, and not the total afterwards
+    total = B + G
+    return Result("class_ratio_after_join", [total], eq,
+                  "%s, so k = %s: %s %s and %s %s at first, %s in all" % (eq, show_exact(k), show_exact(B), X, show_exact(G), Y, show_exact(total)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 54. v = u + a t:   how long to go from u to v at acceleration a      (the generator's "Using v = u + at, how long does it take an object to go from 0 m/s to 30 m/s with acceleration 5 m/s²?")
+# ---------------------------------------------------------------------------------------------------------
+_KIN_FROM = re.compile(r"\bfrom\s+(\d+(?:\.\d+)?)\s*([a-z]+)/([a-z]+)\s+to\s+(\d+(?:\.\d+)?)\s*([a-z]+)/([a-z]+)")
+_KIN_ACC = re.compile(r"\bacceleration(?: of)?\s+(\d+(?:\.\d+)?)\s*([a-z]+)/([a-z]+)(?:²|\^2)")
+_KIN_TIME_NAME = {"s": "second", "h": "hour", "min": "minute", "hr": "hour"}
+
+
+def kinematics_time(problem):
+    problem = re.sub(r"\^\s*2\b", "²", problem)
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, t) or re.search(r"\b(?:deceleration|decelerat\w*|slows?|brakes?|braking|stops?|then)\b|%|\$", t):
+        return None
+    fm, am = _KIN_FROM.search(t), _KIN_ACC.search(t)
+    if not fm or not am:
+        return None
+    u, v, a = Fraction(fm.group(1)), Fraction(fm.group(4)), Fraction(am.group(1))
+    # one system of units: the speeds and the acceleration are all (distance)/(time) with (distance)/(time)^2
+    if not (fm.group(2) == fm.group(5) == am.group(2) and fm.group(3) == fm.group(6) == am.group(3)):
+        return None
+    tname = _KIN_TIME_NAME.get(fm.group(3))
+    if tname is None:
+        return None
+    # the question asks how long, in the time unit of the speeds
+    qm = re.search(r"\bhow (?:long|many (seconds|hours|minutes)|much time)\b", t)
+    if not qm or (qm.group(1) and {"seconds": "second", "hours": "hour", "minutes": "minute"}[qm.group(1)] != tname):
+        return None
+    if a <= 0:
+        return None                                              # an acceleration of 0 never reaches a different speed
+    tt = (v - u) / a
+    if tt <= 0:
+        return None
+    eq = "%s + %st = %s" % (show(u), show(a), show(v))
+    return Result("kinematics_time", [tt], eq, "%s, so t = (%s - %s) / %s = %s %s%s" % (eq, show(v), show(u), show(a), show_exact(tt), tname, "" if tt == 1 else "s"))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 55. pipes that fill and a drain that empties:   1/a + 1/b - 1/c per hour      (the generator's "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours")
+# ---------------------------------------------------------------------------------------------------------
+_PIPE_IN = re.compile(r"\bin\s+(\d+(?:\.\d+)?)\s+(hours?|minutes?|days?)\b")
+_PIPE_FILL_WORD = re.compile(r"\b(?:pipe|fills?|inlet|tap|faucet|hose)\b")
+_PIPE_DRAIN_WORD = re.compile(r"\b(?:drain|drains|empties|empty|leak\w*|outlet)\b")
+
+
+def pipes_and_drain(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    occ = list(_PIPE_IN.finditer(t))
+    if len(occ) < 3 or len(nums) != len(occ) or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, re.sub(r"\ball three\b", " ", t)) or re.search(r"\b(?:then|after|alone|only|closed|shut|half|twice|%)\b|\$", t):
+        return None
+    if len({m.group(2).rstrip("s") for m in occ}) != 1:
+        return None                                              # one unit of time
+    fills, drains = [], []
+    prev = 0
+    for m in occ:
+        seg = t[prev:m.start()]
+        prev = m.end()
+        is_drain, is_fill = bool(_PIPE_DRAIN_WORD.search(seg)), bool(_PIPE_FILL_WORD.search(seg))
+        if is_drain == is_fill:
+            return None                                          # a clause that says both, or neither, is not safe to read
+        (drains if is_drain else fills).append(Fraction(m.group(1)))
+    if not fills or not drains or min(fills + drains) <= 0:
+        return None
+    # the question: with everything open, how long to FILL the pool
+    if not re.search(r"\b(?:all (?:three |of them |the )?(?:open|running|on)|all open|together|at the same time|at once)\b", t):
+        return None
+    if not re.search(r"\bhow long\b[^.?!]*\bfill\b", t) or re.search(r"\bhow long\b[^.?!]*\bempty\b", t):
+        return None
+    rate = sum((Fraction(1) / f for f in fills), Fraction(0)) - sum((Fraction(1) / d for d in drains), Fraction(0))
+    if rate <= 0:
+        return None                                              # the drain keeps up with the pipes: the pool never fills
+    tt = 1 / rate
+    unit = occ[0].group(2).rstrip("s")
+    eq = " + ".join("1/%s" % show(f) for f in fills) + "".join(" - 1/%s" % show(d) for d in drains)
+    return Result("pipes_and_drain", [tt], eq + " = " + show_exact(rate),
+                  "%s = %s of the pool per %s, so it takes 1 / %s = %s %ss" % (eq, show_exact(rate), unit, show_exact(rate), show_exact(tt), unit))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2887,7 +3018,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             line_from_two_points, election_margin, wind_same_time,
             base_plus_extra_over_time, distance_speed_time,
             pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
-            temperature_whole_hours, two_candles_equal, transversal_equal_angles]
+            temperature_whole_hours, two_candles_equal, transversal_equal_angles,
+            class_ratio_after_join, kinematics_time, pipes_and_drain]
 
 
 def solve(problem):

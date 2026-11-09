@@ -2168,6 +2168,79 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (3, 0, 4))
 
+    def test_class_ratio_after_join(self):
+        r_ = "The ratio of boys to girls in a class is %s. After %s more %s join, the ratio becomes %s. %s"
+        q = "How many students were there originally?"
+        self.assertEqual(answers(r_ % ("3:8", "4", "girls", "1:3", q)), values(44))
+        self.assertEqual(answers(r_ % ("6:3", "6", "girls", "8:5", q)), values(72))
+        self.assertEqual(answers(r_ % ("5:4", "2", "girls", "7:6", q)), values(63))
+        res = WS.solve(r_ % ("3:8", "4", "girls", "1:3", q))
+        self.assertIn("3k / (8k + 4) = 1/3", res.reading)
+        self.assertIn("k = 4: 12 boys and 32 girls at first, 44 in all", res.reading)
+        # the 4 girls joined the girls: with 12 boys and 32 girls the new ratio really is 1:3
+        self.assertEqual(Fraction(12) / (Fraction(32) + 4), Fraction(1, 3))
+        self.assertEqual(answers(r_ % ("3:4", "6", "girls", "1:2", q)), values(21))                      # 9 boys and 12 girls
+        self.assertEqual(answers(r_ % ("3:8", "5", "girls", "1:3", q)), values(55))
+        # boys joining are added to the boys: (b k + n) / (g k) = p / q
+        self.assertEqual(answers("The ratio of boys to girls in a class is 2:3. After 4 more boys join, the ratio becomes 1:1. How many students were there originally?"), values(20))
+        # the newcomers are not the named groups, the ratio does not change or gives no positive whole counts, a question for boys or for the total now, leaving, reversed order, part of the year
+        for text in (r_ % ("3:8", "4", "dogs", "1:3", q), r_ % ("3:8", "4", "boys", "1:3", q), r_ % ("3:8", "4", "girls", "3:8", q), r_ % ("3:8", "4", "girls", "1:2", q),
+                     r_ % ("3:8", "4", "girls", "1:3", "How many boys were there originally?"), r_ % ("3:8", "4", "girls", "1:3", "How many students are there now?"),
+                     r_ % ("3:8", "4", "girls", "1:3", "How many students were there originally for part of the year?"),
+                     "The ratio of boys to girls in a class is 3:8. After 4 more girls leave, the ratio becomes 1:3. How many students were there originally?",
+                     "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio of girls to boys becomes 3:1. How many students were there originally?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_kinematics_time(self):
+        k = "Using v = u + at, how long does it take an object to go from %s to %s with acceleration %s?"
+        self.assertEqual(answers(k % ("0 m/s", "30 m/s", "5 m/s²")), values(6))
+        self.assertEqual(answers(k % ("7 m/s", "11 m/s", "4 m/s²")), values(1))
+        self.assertEqual(answers(k % ("5 m/s", "21 m/s", "2 m/s²")), values(8))
+        self.assertEqual(answers(k % ("0 m/s", "30 m/s", "5 m/s^2")), values(6))
+        self.assertEqual(answers(k % ("0 ft/s", "30 ft/s", "5 ft/s²")), values(6))
+        self.assertEqual(answers(k % ("0 km/h", "30 km/h", "5 km/h²")), values(6))                    # one system of units: hours here
+        res = WS.solve(k % ("0 m/s", "30 m/s", "5 m/s²"))
+        self.assertIn("0 + 5t = 30", res.reading)
+        self.assertIn("t = (30 - 0) / 5 = 6 seconds", res.reading)
+        res = WS.solve(k % ("0 m/s", "31 m/s", "5 m/s²"))
+        self.assertEqual(res.values, [Fraction(31, 5)])                                                    # exact
+        # an acceleration of 0, a speed that goes down (a negative time), speed and acceleration in different systems, another time unit, a different question
+        for args in (("0 m/s", "30 m/s", "0 m/s²"), ("30 m/s", "0 m/s", "5 m/s²"), ("7 m/s", "7 m/s", "5 m/s²"), ("0 m/s", "30 m/s", "5 km/h²"),
+                     ("0 km/h", "30 km/h", "5 m/s²"), ("0 m/s", "30 km/h", "5 m/s²")):
+            self.assertIsNone(answers(k % args), args)
+        self.assertIsNone(answers("Using v = u + at, how many minutes does it take an object to go from 0 m/s to 30 m/s with acceleration 5 m/s²?"))
+        self.assertIsNone(answers("Using v = u + at, how fast is an object after 5 seconds from 0 m/s with acceleration 5 m/s²?"))
+
+    def test_pipes_and_drain(self):
+        p = "Pipe A fills a pool in %s hours, pipe B in %s hours, and a drain empties it in %s hours. %s"
+        q = "With all three open, how long does it take to fill the pool?"
+        self.assertEqual(answers(p % ("4", "5", "20", q)), values(Fraction(5, 2)))
+        self.assertEqual(answers(p % ("4", "5", "10", q)), values(Fraction(20, 7)))
+        self.assertEqual(answers(p % ("4", "20", "5", q)), values(10))
+        res = WS.solve(p % ("4", "5", "20", q))
+        self.assertIn("1/4 + 1/5 - 1/20 = 2/5 of the pool per hour", res.reading)                         # the drain's rate is subtracted
+        self.assertIn("1 / 2/5 = 5/2 hours", res.reading)
+        self.assertEqual(Fraction(1, 4) + Fraction(1, 5) - Fraction(1, 20), Fraction(2, 5))
+        self.assertEqual(answers("Tap A fills a tub in 10 minutes, tap B in 15 minutes, and a leak empties it in 30 minutes. With all three open, how long does it take to fill the tub?"), values(Fraction(15, 2)))
+        # the three together do not fill the pool (the drain keeps up), the pool is asked to EMPTY, the question does not say all open, mixed units, only some open, part of the year
+        for text in (p % ("4", "5", "2", q), p % ("6", "3", "2", q),
+                     p % ("4", "5", "20", "With all three open, how long does it take to empty the pool?"),
+                     p % ("4", "5", "20", "How long does it take to fill the pool?"),
+                     p % ("4", "5", "20", "With pipe A open, how long does it take to fill the pool?"),
+                     p % ("4", "5", "20", "With all three open, how long does it take to fill the pool for part of the year?"),
+                     "Pipe A fills a pool in 4 hours, pipe B in 5 minutes, and a drain empties it in 20 hours. With all three open, how long does it take to fill the pool?",
+                     "Pipe A fills a pool in 4 hours and a drain empties it in 20 hours. With both open, how long does it take to fill the pool?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_ratio_kinematics_pipes_set(self):
+        """Set 39: wordings for class_ratio_after_join, kinematics_time and pipes_and_drain, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "animals" is not one of the nouns for a total of students."""
+        from fresh_word_problems_39 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-ninth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 1, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

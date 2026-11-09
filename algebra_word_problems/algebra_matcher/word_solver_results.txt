@@ -979,3 +979,25 @@ Measured:
   1,000 generated problems: claims 323 -> 323 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 38 (7 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong.
   139 word-solver and number-puzzle tests pass.
+
+Batch 36: a class ratio after more students join, v = u + at, pipes and a drain
+==============================================================
+class_ratio_after_join  (generator "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3. How many students were there originally?"):  b k / (g k + n) = p / q when the newcomers join the second group (the girls), (b k + n) / (g k) = p / q when they join
+  the first.  The answer is 44: k = 4, 12 boys and 32 girls (the reading says so, and a test checks 12 / (32 + 4) = 1/3).  The newcomers are added to the group the sentence NAMES; both ratios are read in the order of the single "ratio of X to Y"; the question asks the ORIGINAL total of students (pupils, children, people,
+  members, kids).  Both counts b k and g k must be positive whole numbers.  Also 6:3 and 6 girls to 8:5 is 72, 3:4 and 6 girls to 1:2 is 21, and boys joining 2:3 to 1:1 is 20.  Declines: newcomers that are not one of the two groups (dogs), the ratio not changing (3:8 to 3:8) or giving a negative k or counts that are not whole (3:8 to 1:2),
+  a question for the boys or for the total now, "leave", a reversed second ratio ("the ratio of girls to boys becomes 3:1"), "part of the year".
+kinematics_time  (generator "Using v = u + at, how long does it take an object to go from 0 m/s to 30 m/s with acceleration 5 m/s²?"):  u + a t = v, so t = (v - u) / a.  6 seconds (0 + 5t = 30).  The two speeds and the acceleration must be one system: m/s with m/s², ft/s with ft/s², km/h with km/h² (the time unit is
+  the denominator: seconds, or hours for km/h); "m/s^2" is accepted as the squared mark.  Exact: 31 m/s is 31/5 seconds.  Declines: an acceleration of 0, a speed that goes DOWN (a negative time), no change in speed, speeds in m/s with an acceleration in km/h², km/h with m/s², "30 km/h" mixed with "m/s", a question in another unit
+  (minutes), a question for the speed after some seconds, deceleration / braking.
+pipes_and_drain  (generator "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. With all three open, how long does it take to fill the pool?"):  1/a + 1/b - 1/c of the pool per hour; the drain is the one that empties, so its rate is SUBTRACTED.  5/2 hours (1/4 + 1/5 - 1/20 = 2/5 per hour; a test
+  checks that sum).  Each "in N <unit>" clause is classified by its own words: pipe / fills / tap / faucet / hose is a filler, drain / empties / leak / outlet is a drain (a clause that says both or neither declines); at least one of each, one unit of time (hours, minutes or days).  The text must say all open / all three open / together / at the
+  same time, and the question must ask how long to FILL.  Declines: the three together do not fill the pool (the drain keeps up: 4, 5 and 2 hours; 6, 3 and 2 hours), the question asks how long to EMPTY, the question does not say all are open, only some are open, mixed units, "part of the year".
+Checks (test_word_solver.py): the four new test methods above; the earlier tests still pass; spelled counts ("all three" is the one allowed), each / apiece / per, such / of the year / for part of / of the time, exact fractions (31/5, 5/2, 20/7), no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 323 -> 337, wrong 0.  The 14 new claims, each equal to the stored answer:
+    class_ratio_after_join 0779 (44), 0789 (72), 0795 (98), 0801 (18), 0807 (63) = every generated "ratio of boys to girls ... more girls join" problem;
+    kinematics_time 0179 (6 seconds), 0191 (1), 0197 (8), 0202 (9), 0209 (8) = every generated "Using v = u + at" problem;
+    pipes_and_drain 0966 (5/2 = 2.5 hours), 0977 (5/2), 0981 (15/2 = 7.5), 0994 (6) = every generated "Pipe A fills a pool ... a drain empties it" problem.
+  Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 39 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 6 required declines: 6 of 6; 0 wrong.  The declined one is a safe miss, not fixed: "How many animals were there originally?" ("animals" is not one of the nouns for a total of students).
+  143 word-solver and number-puzzle tests pass.
