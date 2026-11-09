@@ -22,7 +22,7 @@ FRESH = [
     ("If 4 apples cost $3, how much do 14 apples cost?", [Fraction(21, 2)]),
     ("A garden hose uses 30 litres in 4 minutes. How many litres does it use in 10 minutes?", [75]),
     ("A recipe uses 3 eggs for 12 muffins. How many eggs for 20 muffins?", [5]),
-    ("A car goes 50 mph for 2 hours. How far does it go?", None),
+    ("A car goes 50 mph for 2 hours. How far does it go?", [100]),   # was a required decline until the distance_speed_time family
     ("If 8 workers paint a house in 6 days, how many days for 12 workers?", None),
     # ---- sum and difference, consecutive, work together
     ("The sum of two numbers is 64 and their difference is 10. Find the numbers.", [27, 37]),

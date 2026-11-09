@@ -711,3 +711,33 @@ Measured:
   Fresh set 24 (11 wordings, written after all of it was finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 5 required declines: 5 of 5; 0 wrong.  The declined one is a safe miss, not fixed:
   "In a race between two people" is not one of the "two <candidates>" phrases.
   91 word-solver and number-puzzle tests pass.
+
+Batch 22: measured heights until equal, an allowance plus extra work, distance / speed / time
+==============================================================
+two_changing_equal (extended):  "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height?" is 15/2 weeks (13 + 3t = 28 + t).  A second statement form,
+  "<who> is <n> <unit> tall|long|heavy and grows|shrinks <c> <unit> a|per week|day|year", is read the same way (one unit of measure throughout: cm, m, inches, ft, kg, lb).  Because the thing measured is a
+  continuous quantity, an exact positive FRACTION of a week is a fine answer; people and dollars ("Town A has 18,000 people ... grows by ...") still need a whole number of years (63,001 still declines).  One may
+  shrink (28 cm tall and shrinks 1 cm a week gives 15/4).  Declines as before: a negative time (the taller grows faster, or the shorter grows slower), equal growth, mixed units (inches and cm), a
+  different time unit, a question for the HEIGHT ("How tall will they be when they are the same height?" was caught while writing this batch: the word "when" let it through, and "how tall / heavy / high /
+  big" and "what height / weight" now decline), twice, "part of the year".
+base_plus_extra_over_time  (generator "gets $a allowance a week plus $c for each extra chore. Over w weeks that came to $T"):  w a + c n = T.  "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that
+  came to $120. How many extra chores were done?" is 10 (8 x 10 + 4n = 120): the TOTAL number of extra chores.  The allowance is "$a allowance|pay|salary|wage a|per week|month|day|year", the extra is "$c for each extra
+  <thing>", the period is "over|for|in|during w <same unit>", and the total is introduced by came to / totaled / earned / received / made / paid.  The question must ask how many of the SAME thing.  Declines: a question for
+  money, a total that is not above the allowance ($80 for 8 weeks at $10), a count that is not whole ($121), another period unit (8 months), another noun (dishes), "each" after the total, a fee, twice, "part of the year".
+distance_speed_time  (generator "Using distance = speed x time, how long does it take to travel 160 km at 40 km/h?"):  D = S t, answered for the quantity the question asks.  "How long does it take to travel 160 km at 40 km/h?"
+  is 4 hours; "How far does a car go in 4 hours at 40 km/h?" is 160 km; "A cyclist travels 160 km in 4 hours. How fast is the cyclist?" is 40 km/h.  Exactly two of speed (hourly units: mph, km/h, kph ...), distance (miles
+  or km) and time (hours) are given and the third is asked.  The distance unit must match the speed unit (160 km at 40 mph declines), and a time in minutes does not match an hourly speed.  Exact: 490 km at 50 km/h is 49/5 hours.
+  Declines: a zero speed, three quantities, two legs ("then ..."), only one quantity given, the wrong quantity asked ("how fast" with the speed given), a spelled number, "part of the day", acceleration, a round trip.
+Two expectations changed, with notes in the tests and data files: "A car goes 50 mph for 2 hours. How far does it go?" was a required decline in fresh set 2 and is now answered, 100 (fresh set 2 scores 22 / 0 / 5);
+  fresh set 18 scored 3 solved, 3 declined, 3 required declines when written; its safe miss "Plant A is 30 cm tall and grows 4 cm a week ..." is now solved (20 weeks), so it scores 4 / 2 / 3.
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings (15/2, 49/5), no control characters, no
+  module-level name defined twice (the new names are _EXTRA_*, _DST_*, _GROW_STMT2, _GROW_UNIT).
+Measured:
+  1,000 generated problems: claims 282 -> 295, wrong 0.  The 13 new claims, each equal to the stored answer:
+    two_changing_equal (measured) 0483 (7.5 weeks = 15/2), 0491 (10), 0502 (36), 0520 (20) = every generated "Plant A is ... cm tall" problem;
+    base_plus_extra_over_time 0424 (10), 0435 (4), 0450 (4), 0465 (10), 0473 (8) = every generated allowance-and-extra-chores problem;
+    distance_speed_time 0178 (4 hours), 0186 (49/5 = 9.8), 0194 (126/5 = 25.2), 0205 (66/5 = 13.2) = every "Using distance = speed x time, how long does it take to travel ..." problem.
+  Hand-written problems claimed by the family solver: 37 -> 38, matching the hand-calculated answer: "Using d = rt, how long does a 210 km trip take at 70 km/h?" 3 hours.
+  Fresh set 25 (12 wordings, written after all three were finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 5 required declines: 5 of 5; 0 wrong.  The declined one is a safe miss, not fixed:
+  "For 3 months the total was $76" ("the total was" is not one of the total cues).
+  95 word-solver and number-puzzle tests pass.

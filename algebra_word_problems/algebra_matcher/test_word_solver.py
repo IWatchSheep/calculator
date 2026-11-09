@@ -51,6 +51,7 @@ HAND_ANSWERS = {
     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph along the same road. When does the car catch the cyclist?": [1],
     "An investment of bacteria... a yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?": [8],
     "Town X has 50,000 people and gains 1,000 a year; Town Y has 80,000 and loses 500 a year. When are they equal?": [20],
+    "Using d = rt, how long does a 210 km trip take at 70 km/h?": [3],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -351,7 +352,7 @@ class DevelopmentWordingsLater(unittest.TestCase):
     def test_second_and_third_sets(self):
         from fresh_word_problems_2 import FRESH as F2
         from fresh_word_problems_3 import FRESH as F3
-        self.assertEqual(score(F2), (21, 0, 6))      # it scored 18 solved / 3 declined before the cue verbs were added
+        self.assertEqual(score(F2), (22, 0, 5))      # it scored 18 solved / 3 declined before the cue verbs were added; "A car goes 50 mph for 2 hours" became an answer (100) with distance_speed_time
         self.assertEqual(score(F3), (9, 1, 5))       # it had 1 WRONG answer (two printers) before the spelled-number rule
 
 
@@ -923,7 +924,8 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (eighteenth set, written after the fix): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (s18[0], s18[0] + s18[1], s18[1], s18[2], s18[2]))
         self.assertEqual(s17, (6, 1, 7))
-        self.assertEqual(s18, (3, 3, 3))
+        # (3, 3, 3) when written; "Plant A is 30 cm tall and grows 4 cm a week ..." was a safe miss and is now solved (20 weeks) by the measured-things statement: (4, 2, 3)
+        self.assertEqual(s18, (4, 2, 3))
 
     def test_two_scores(self):
         self.assertEqual(answers("A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?"), values(12, 28))
@@ -1393,6 +1395,83 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (twenty-fourth set, question unit and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 1, 5))
+
+    def test_measured_heights_until_equal(self):
+        self.assertEqual(answers("Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height?"), values(Fraction(15, 2)))
+        self.assertEqual(answers("Plant A is 15 cm tall and grows 3 cm a week. Plant B is 35 cm tall and grows 2 cm a week. After how many weeks will they be the same height?"), values(20))
+        self.assertEqual(answers("Plant A is 7 cm tall and grows 2 cm a week. Plant B is 25 cm tall and grows 1.5 cm a week. After how many weeks will they be the same height?"), values(36))
+        r = WS.solve("Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height?")
+        self.assertEqual(r.values, [Fraction(15, 2)])
+        self.assertIn("13 + 3 t = 28 + 1 t", r.reading)
+        self.assertIn("t = 15/2 weeks", r.reading)                          # an exact fraction of a week
+        r = WS.solve("Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and shrinks 1 cm a week. After how many weeks will they be the same height?")
+        self.assertEqual(r.values, [Fraction(15, 4)])                       # one may shrink
+        # people and dollars are still whole numbers only (a fraction of a person), a negative time, equal growth, mixed units, a question for the height
+        self.assertIsNone(answers("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,001 and shrinks by 500 a year. In how many years are they equal?"))
+        for text in ("Plant A is 28 cm tall and grows 3 cm a week. Plant B is 13 cm tall and grows 1 cm a week. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 1 cm a week. Plant B is 28 cm tall and grows 3 cm a week. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 3 cm a week. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 inches tall and grows 1 cm a week. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a month. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. How tall will they be when they are the same height?",
+                     "Plant A is 13 cm tall and grows twice 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height?",
+                     "Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week for part of the year. After how many weeks will they be the same height?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_base_plus_extra_over_time(self):
+        self.assertEqual(answers("Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How many extra chores were done?"), values(10))
+        self.assertEqual(answers("Zane gets $10 allowance a week plus $3 for each extra chore. Over 8 weeks that came to $92. How many extra chores were done?"), values(4))
+        r = WS.solve("Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How many extra chores were done?")
+        self.assertEqual(r.values, [Fraction(10)])                          # the TOTAL number of extra chores
+        self.assertIn("8 x 10 + 4n = 120", r.reading)
+        # money asked for, a total that is not above the allowance, not a whole number of chores, another period, another noun, "each" after the total, a fee, twice, part of the year
+        for text in ("Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How much money did the chores earn?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $80. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $70. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $121. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 months that came to $120. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How many extra dishes were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120 each. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120, less a 5% fee. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus twice $4 for each extra chore. Over 8 weeks that came to $120. How many extra chores were done?",
+                     "Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120 for part of the year. How many extra chores were done?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_distance_speed_time(self):
+        self.assertEqual(answers("How long does it take to travel 160 km at 40 km/h?"), values(4))
+        self.assertEqual(answers("Using distance = speed × time, how long does it take to travel 490 km at 50 km/h?"), values(Fraction(49, 5)))
+        self.assertEqual(answers("How far does a car go in 4 hours at 40 km/h?"), values(160))
+        self.assertEqual(answers("A cyclist travels 160 km in 4 hours. How fast is the cyclist?"), values(40))
+        self.assertEqual(answers("How long does it take to travel 160 miles at 40 mph?"), values(4))
+        r = WS.solve("How long does it take to travel 160 km at 40 km/h?")
+        self.assertIn("160 = 40t, so t = 4 hours", r.reading)
+        r = WS.solve("How far does a car go in 4 hours at 40 km/h?")
+        self.assertIn("d = 40 x 4, so d = 160 km", r.reading)
+        r = WS.solve("A cyclist travels 160 km in 4 hours. How fast is the cyclist?")
+        self.assertIn("s = 40 km/h", r.reading)
+        # the distance unit does not match the speed unit, a zero speed, a third quantity, two legs, only one quantity given, a time in minutes, a spelled number,
+        # a question for the wrong quantity, part of the day
+        for text in ("How long does it take to travel 160 km at 40 mph?",
+                     "How long does it take to travel 160 miles at 40 km/h?",
+                     "How long does it take to travel 160 km at 0 km/h?",
+                     "How long does it take to travel 160 km at 40 km/h in 3 hours?",
+                     "How long does it take to travel 160 km at 40 km/h and then 20 km at 10 km/h?",
+                     "How far does a car go in 4 hours?",
+                     "How long does it take to travel 160 km?",
+                     "How far does a car travel in 30 minutes at 40 km/h?",
+                     "How long does it take to travel two hundred km at 40 km/h?",
+                     "How fast does a car go in 4 hours at 40 km/h?",
+                     "How long does it take to travel 160 km at 40 km/h for part of the day?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_heights_chores_distance_set(self):
+        """Set 25: wordings for the three families added together, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "the total was $76" is not one of the total cues (came to / received / earned / made ...)."""
+        from fresh_word_problems_25 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-fifth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 1, 5))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

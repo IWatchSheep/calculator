@@ -1496,12 +1496,18 @@ _GROW_FALL = re.compile(r"shrink|decreas|fall|drop|lose|declin")
 def two_changing_equal(problem):
     t = clean(problem)
     found = list(_GROW_STMT.finditer(t))
+    measured = False
+    if not found:
+        found = list(_GROW_STMT2.finditer(t))                   # "is 13 cm tall and grows 3 cm a week": a continuous quantity
+        measured = True
     nums = digit_numbers(problem)
     if len(found) != 2 or len(nums) != 4 or _CHANGES_EQUATION.search(t) or "%" in t:
         return None
     m1, m2 = found
     if m1.group("who") == m2.group("who") or m1.group("u") != m2.group("u"):
         return None
+    if measured and not (m1.group("au") == m1.group("cu") == m2.group("au") == m2.group("cu")):
+        return None                                              # one unit of measure throughout
     if len({n[1] for n in nums}) != 1:
         return None                                              # all money or none
     rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
@@ -1511,8 +1517,8 @@ def two_changing_equal(problem):
     # the question asks for the TIME they are equal, not an amount
     if not re.search(r"\b(?:when|how long|how many (?:years|months|weeks|days|hours|decades)|after how many)\b", rest) or not re.search(r"\b(?:equal|same)\b", rest):
         return None
-    if re.search(r"\bhow much\b|\bhow many (?:people|residents|dollars|items)\b|\bwhat (?:will|is|would)\b", rest):
-        return None
+    if re.search(r"\bhow much\b|\bhow many (?:people|residents|dollars|items)\b|\bwhat (?:will|is|would)\b|\bhow (?:tall|heavy|high|big|deep|wide)\b|\bwhat (?:height|weight|size|length)\b", rest):
+        return None                                              # a question for the HEIGHT / amount, not the time they are equal
 
     def val(s):
         return Fraction(s.lstrip("$"))
@@ -1522,7 +1528,7 @@ def two_changing_equal(problem):
     if ca == cb:
         return None
     tt = (b - a) / (ca - cb)
-    if tt <= 0 or tt.denominator != 1:
+    if tt <= 0 or (tt.denominator != 1 and not measured):
         return None
     sa = "+ %s" % show(ca) if ca >= 0 else "- %s" % show(-ca)
     sb = "+ %s" % show(cb) if cb >= 0 else "- %s" % show(-cb)
@@ -2339,6 +2345,127 @@ def wind_same_time(problem):
                   "%s, so %s(p - %s) = %s(p + %s) and p = %s %s" % (eq, show(a), show(w), show(b), show(w), show_exact(p), "mph" if d1 == "mi" else "km/h"))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 45. an allowance plus extra chores over some weeks:   w a + c n = T      (the generator's "gets $a allowance a week plus $c for each extra chore. Over w weeks ...")
+# ---------------------------------------------------------------------------------------------------------
+_EXTRA_BASE = re.compile(r"\$(\d+(?:\.\d+)?)\s+(?:allowance|pay|salary|wage|stipend|base pay)\s+(?:a|per|each|every)\s+(week|month|day|year)\b")
+_EXTRA_RATE = re.compile(r"\$(\d+(?:\.\d+)?)\s+(?:for|per)\s+(?:each|every)\s+(?:extra|additional)\s+([a-z]+)\b")
+_EXTRA_PERIOD = re.compile(r"\b(?:over|for|in|during)\s+(\d+(?:\.\d+)?)\s+(weeks?|months?|days?|years?)\b")
+_EXTRA_TOTAL_BEFORE = re.compile(r"\b(?:came to|comes to|totaled|totalled|total of|earned|received|got|made|paid|add(?:ed)? up to|adds up to)\s*$")
+_EXTRA_OTHER = re.compile(r"\b(?:tax|bonus|deduct\w*|fine|fines|lost|missed|half|twice|each week they|average)\b|%")
+
+
+def base_plus_extra_over_time(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 4 or _CHANGES_EQUATION.search(t) or _EXTRA_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    bm, rm, pm = _EXTRA_BASE.search(t), _EXTRA_RATE.search(t), _EXTRA_PERIOD.search(t)
+    if not bm or not rm or not pm:
+        return None
+    a, c, w = Fraction(bm.group(1)), Fraction(rm.group(1)), Fraction(pm.group(1))
+    if _stem_unit(pm.group(2)) != _stem_unit(bm.group(2)):
+        return None
+    used = [bm.start(1), rm.start(1), pm.start(1)]
+    rest = [n for n in nums if not any(n[2] <= u < n[3] for u in used)]
+    if len(rest) != 1 or not rest[0][1]:
+        return None
+    T = rest[0]
+    if not _EXTRA_TOTAL_BEFORE.search(t[:T[2]].rstrip()) or _EACH_AFTER.match(t[T[3]:]):
+        return None
+    # the question asks how many extra <things> (the same noun as "each extra chore"), not an amount of money
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow\b", s)), None)
+    if q is None or re.search(r"\bhow much\b|\btotal\b|\bper\b", q):
+        return None
+    qm = re.search(r"\bhow many (?:extra |additional )?([a-z]+)", q)
+    if not qm or _stem_unit(qm.group(1)) != _stem_unit(rm.group(2)):
+        return None
+    if c <= 0 or a < 0 or w <= 0 or T[0] <= a * w:
+        return None                                              # nothing above the base pay means no extra work
+    n = (T[0] - a * w) / c
+    if n <= 0 or n.denominator != 1:
+        return None
+    eq = "%s x %s + %sn = %s" % (show(w), show(a), show(c), show(T[0]))
+    return Result("base_plus_extra_over_time", [n], eq, "n = number of extra %ss: %s, so n = (%s - %s) / %s = %s" % (
+        _stem_unit(rm.group(2)), eq, show(T[0]), show(a * w), show(c), show_exact(n)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 46. distance, speed and time:   D = S t, the one the question asks for      (the generator's "Using distance = speed x time, how long does it take to travel 160 km at 40 km/h?")
+# ---------------------------------------------------------------------------------------------------------
+_DST_DIST = re.compile(NUM + r"\s*(miles?|mi|kilometers?|kilometres?|km)\b(?![/\w])")
+_DST_TIME = re.compile(NUM + r"\s*(hours?|hrs?|h)(?![\w/])")
+_DST_OTHER = re.compile(r"\b(?:then|after that|back|return\w*|round trip|each way|stops?|rests?|breaks?|also|another|faster than|slower than|twice|acceleration|"
+                        r"average speed|against|with the|current|wind|stream)\b|%|\$|²")
+
+
+def distance_speed_time(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or _CHANGES_EQUATION.search(t) or _DST_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    sp = list(_SPEED.finditer(t))
+    spans = [(m.start(), m.end()) for m in sp]
+    dist = [m for m in _DST_DIST.finditer(t) if not any(s <= m.start() < e for s, e in spans)]
+    tim = [m for m in _DST_TIME.finditer(t) if not any(s <= m.start() < e for s, e in spans)]
+    given = {"speed": sp, "distance": dist, "time": tim}
+    present = [k for k, v in given.items() if len(v) == 1]
+    if len(present) != 2 or any(len(v) > 1 for v in given.values()) or sum(len(v) for v in given.values()) != 2:
+        return None
+    # the question asks for the third quantity
+    q = t.rfind("how ")
+    if q == -1:
+        q = t.rfind("what ")
+    if q == -1:
+        return None
+    tail = t[q:]
+    asks_time = bool(re.search(r"\bhow long\b|\bhow (?:many|much) (?:hours?|time)\b|\bwhat time\b", tail))
+    asks_dist = bool(re.search(r"\bhow far\b|\bwhat distance\b|\bhow many (?:miles|kilometers|kilometres|km)\b", tail))
+    asks_speed = bool(re.search(r"\bhow fast\b|\bwhat (?:speed|rate)\b|\bwhat is the speed\b|\bhow many (?:mph|km/h)\b", tail))
+    if sum([asks_time, asks_dist, asks_speed]) != 1:
+        return None
+    missing = [k for k in ("speed", "distance", "time") if k not in present]
+    if len(missing) != 1 or not {"time": asks_time, "distance": asks_dist, "speed": asks_speed}[missing[0]]:
+        return None
+    vals = {}
+    if sp:
+        vals["S"] = Fraction(sp[0].group(1))
+        sgroup = _speed_group(sp[0].group(2))
+    if dist:
+        vals["D"] = Fraction(dist[0].group(1))
+        dgroup = _dist_group(dist[0].group(2))
+    if tim:
+        vals["T"] = Fraction(tim[0].group(1))
+    if sp and dist and sgroup != dgroup:
+        return None                                              # the distance unit and the speed unit have to match
+    unit_d = ("miles" if sgroup == "mi" else "km") if sp else ("miles" if dgroup == "mi" else "km")
+    unit_s = "mph" if (sp and sgroup == "mi") or (not sp and dgroup == "mi") else "km/h"
+    if any(v <= 0 for v in vals.values()):
+        return None
+    if missing[0] == "time":
+        res = vals["D"] / vals["S"]
+        eq = "%s = %st" % (show(vals["D"]), show(vals["S"]))
+        text = "%s, so t = %s hour%s" % (eq, show_exact(res), "" if res == 1 else "s")
+    elif missing[0] == "distance":
+        res = vals["S"] * vals["T"]
+        eq = "d = %s x %s" % (show(vals["S"]), show(vals["T"]))
+        text = "%s, so d = %s %s" % (eq, show_exact(res), unit_d)
+    else:
+        res = vals["D"] / vals["T"]
+        eq = "%s = s x %s" % (show(vals["D"]), show(vals["T"]))
+        text = "%s, so s = %s %s" % (eq, show_exact(res), unit_s)
+    return Result("distance_speed_time", [res], eq, text)
+
+
+# a measured thing for family 26 (two_changing_equal): "Plant A is 13 cm tall and grows 3 cm a week" (a continuous quantity, so a fraction of a week is a fine answer)
+_GROW_UNIT = r"(?:cm|mm|m|meters?|metres?|inch(?:es)?|in|ft|feet|foot|kg|lbs?|pounds?)"
+_GROW_STMT2 = re.compile(
+    r"(?<![\w$])(?P<who>[a-z]+(?:\s[a-z]+)?)\s+(?:is|are|measures)\s+(?P<a>\d+(?:\.\d+)?)\s*(?P<au>" + _GROW_UNIT + r")(?:\s+(?:tall|long|high|heavy|deep|wide))?(?:,|\s+and|\s+but)?\s+(?:and\s+)?"
+    r"(?P<v>grows?|gains?|shrinks?|loses?|drops?|falls?|rises?|increases?|decreases?)(?:\s+by)?\s+(?P<c>\d+(?:\.\d+)?)\s*(?P<cu>" + _GROW_UNIT + r")\s+(?:a|per|each|every)\s+"
+    r"(?P<u>year|month|week|day|hour|decade)\b")
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2350,7 +2477,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             percent_change_between, ages_later_multiple, shared_fixed_cost,
             two_rates_one_pile, least_for_profit,
             two_priced_items, plan_with_included, most_that_fits,
-            line_from_two_points, election_margin, wind_same_time]
+            line_from_two_points, election_margin, wind_same_time,
+            base_plus_extra_over_time, distance_speed_time]
 
 
 def solve(problem):
