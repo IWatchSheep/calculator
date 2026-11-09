@@ -992,6 +992,46 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         e = self._calculate("physics/physics/de_broglie_wavelength", (9.1093837015e-31, 1e6))
         self.assertAlmostEqual(e / 7.2737e-10, 1, places=3)
 
+    def _buttons(self):
+        import tkinter as tk
+        found, stack = [], [self.app]
+        while stack:
+            w = stack.pop()
+            stack.extend(w.winfo_children())
+            if isinstance(w, tk.Button):
+                found.append(w)
+        return found
+
+    def test_c_key_and_clear_button_reset_everything(self):
+        from operator_row_math import row_tree
+        app = self.app
+        clear_buttons = [b for b in self._buttons() if b.cget("text") in ("C", "Clear (C)")]
+        self.assertEqual(len(clear_buttons), 2)                   # the keypad C and the toolbar Clear (C)
+        for button in clear_buttons:
+            app._reset_row(0)
+            app._place_operator_row("physics/physics/time_dilation")
+            self._type_into_boxes([1, 179875474.8])
+            app._equals()
+            self.assertIn("1.25", app.results.get("1.0", "end"))
+            app._set_join(1, "+")                                  # leave a join symbol behind as well
+            button.invoke()
+            for row in app.rows:
+                self.assertEqual(row["node"]["key"], "_number")
+                self.assertEqual(row["node"]["slots"], [""])
+                self.assertFalse(row["is_result"])
+                self.assertIsNone(row["join"])
+            self.assertIsNone(app.template)
+            self.assertEqual(app.op_target, 0)
+            self.assertIn("Cleared", app.results.get("1.0", "end"))
+            self.assertEqual(row_tree.fmt(0), "0")
+
+    def test_keypad_has_only_working_keys(self):
+        texts = {b.cget("text") for b in self._buttons()}
+        self.assertNotIn("Next Col (→)", texts)
+        self.assertNotIn("Next Number (—)", texts)
+        for key in list("0123456789.") + ["±", "EE", "Backspace", "Next Row (↓)", "=", "C", "Operators"]:
+            self.assertIn(key, texts)
+
     def test_window_reports_errors_nicely(self):
         app = self.app
         app._reset_row(0)

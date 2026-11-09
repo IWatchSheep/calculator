@@ -259,7 +259,7 @@ class CalculatorGUI(tk.Tk):
         tk.Label(bar, text="Smart Token Expression Builder (Math Templates)",
                  font=("Segoe UI", 10, "bold"), bg="#f0f4f4").pack(side="left", padx=(8, 12))
         btn(bar, "Calculate (e)", BLUE).pack(side="left", padx=3)
-        btn(bar, "Clear (C)", RED).pack(side="left", padx=3)
+        btn(bar, "Clear (C)", RED, command=self._clear_all).pack(side="left", padx=3)
         btn(bar, "Next Row (↓)", GREEN, command=lambda: self._next_row()).pack(side="left", padx=3)
         btn(bar, "+ Add Description Col", PURPLE).pack(side="left", padx=3)
         btn(bar, "Delete Selected Col", ORANGE).pack(side="left", padx=3)
@@ -418,6 +418,19 @@ class CalculatorGUI(tk.Tk):
                 self._reset_row(k)
             else:
                 self._set_result(k)
+
+    def _clear_all(self):
+        """C / Clear: back to the start. Every row empty, no join symbols, no multi-row operator, results cleared."""
+        self.template = None
+        for k, row in enumerate(self.rows):
+            row["mode"] = "full"
+            self._reset_row(k)
+        self._set_target_row(0)
+        self._select_only(0, (0,))
+        self._render_row(0)
+        self.target_label.configure(text="Selected Target: Row 1 | Addend 1 | Col 1: Number ('o')")
+        self._refresh_adv_target()
+        self._say("Cleared. Click a square box and type a number, or open Operators.")
 
     def _clear_row_math(self, i):
         """Remove the math to the left of the = sign in row i (back to one empty square box)."""
@@ -1139,8 +1152,8 @@ class CalculatorGUI(tk.Tk):
         keys = [
             [("(", PALE_BLUE, "black"), (")", PALE_BLUE, "black"), ("C", RED, "white"), ("Operators", PALE_BLUE, "black")],
             [("7", "#e8e8e8", "black"), ("8", "#e8e8e8", "black"), ("9", "#e8e8e8", "black"), ("Next Row (↓)", "#e8e8e8", "black")],
-            [("4", "#e8e8e8", "black"), ("5", "#e8e8e8", "black"), ("6", "#e8e8e8", "black"), ("Next Col (→)", "#e8e8e8", "black")],
-            [("1", "#e8e8e8", "black"), ("2", "#e8e8e8", "black"), ("3", "#e8e8e8", "black"), ("Next Number (—)", GREEN, "white")],
+            [("4", "#e8e8e8", "black"), ("5", "#e8e8e8", "black"), ("6", "#e8e8e8", "black")],
+            [("1", "#e8e8e8", "black"), ("2", "#e8e8e8", "black"), ("3", "#e8e8e8", "black")],
             [("0", "#e8e8e8", "black"), (".", "#e8e8e8", "black"), ("Backspace", "#e8e8e8", "black"), ("=", GREEN, "white")],
             [("±", "#e8e8e8", "black"), ("EE", "#e8e8e8", "black")],      # minus sign, power of ten (1e-34)
         ]
@@ -1158,8 +1171,11 @@ class CalculatorGUI(tk.Tk):
                     b.configure(command=lambda: self._next_row())
                 elif t == "Backspace":
                     b.configure(command=lambda: self._key("⌫"))
+                elif t == "C":
+                    b.configure(command=self._clear_all)
                 elif t == "=":
                     b.configure(command=self._equals)
+                    b.grid(row=2, column=3, rowspan=3, sticky="nsew", padx=2, pady=2)      # tall = key
 
         # Advanced Input: lists, matrices, functions, sets, graphs
         joinf = tk.Frame(pad, bg="#f0f4f4")
