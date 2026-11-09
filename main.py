@@ -10,6 +10,7 @@ except ImportError:          # pictures need Pillow (pip install pillow)
     Image = ImageTk = None
 
 OPS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_one_operator_per_file")
+WORD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_one_algebra_word_problem_per_file")
 
 from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, PALE_ORANGE,  # noqa: F401
                        PURPLE, RED, btn)
@@ -1261,6 +1262,44 @@ class CalculatorGUI(tk.Tk):
         self.results.pack(fill="x", padx=8, pady=2)
 
     # ---------- operators popup ----------
+    def _word_catalog(self):
+        """The 1,000 algebra word problems, loaded once from INDEX.md."""
+        if getattr(self, "_word_catalog_items", None) is None:
+            import algebra_word_problem_catalog as catalog
+            self._word_catalog_items = catalog.load_catalog(os.path.join(WORD_DIR, "INDEX.md"))
+        return self._word_catalog_items
+
+    def _show_word_diagram(self, item):
+        """Open the problem's diagram. Clicking another problem uses the same window."""
+        import algebra_word_problem_catalog as catalog
+        path = catalog.diagram_path(WORD_DIR, item)
+        win = getattr(self, "_word_diagram", None)
+        if win is None or not win.winfo_exists():
+            win = tk.Toplevel(self)
+            win.configure(bg="white")
+            self._word_diagram = win
+            self._word_diagram_heading = tk.Label(win, bg="white", fg=BLUE, justify="left",
+                                                  font=("Segoe UI", 11, "bold"))
+            self._word_diagram_heading.pack(anchor="w", padx=12, pady=(10, 2))
+            self._word_diagram_text = tk.Label(win, bg="white", fg="black", justify="left",
+                                               wraplength=880, font=("Segoe UI", 10))
+            self._word_diagram_text.pack(anchor="w", padx=12, pady=(0, 8))
+            self._word_diagram_pic = tk.Label(win, bg="white")
+            self._word_diagram_pic.pack(padx=12, pady=(0, 12))
+        win.title("%s  %s" % (item["id"], item["category"]))
+        self._word_diagram_heading.configure(text="%s    %s    %s" % (item["id"], item["category"], item["status"]))
+        self._word_diagram_text.configure(text=item["problem"])
+        if Image is None or not os.path.isfile(path):
+            self._word_photo = None
+            self._word_diagram_pic.configure(image="", text="The diagram file is not in the folder.")
+        else:
+            img = Image.open(path)
+            img.thumbnail((960, 480))
+            self._word_photo = ImageTk.PhotoImage(img)
+            self._word_diagram_pic.configure(image=self._word_photo, text="")
+        win.deiconify()
+        win.lift()
+
     def _toggle_operators(self):
         if getattr(self, "op_popup", None) is not None:
             self.op_popup.destroy()
@@ -1310,6 +1349,12 @@ class CalculatorGUI(tk.Tk):
         canvas.grid(row=2, column=0)
         vbar.grid(row=2, column=1, sticky="ns")
         hbar.grid(row=3, column=0, sticky="ew")
+        # the algebra word problems replace this list while that view is open
+        word_list = tk.Listbox(outer, width=62, height=24, bg="white", fg="black",
+                               font=("Segoe UI", 9), activestyle="dotbox",
+                               exportselection=False, highlightthickness=0, bd=0)
+        self._op_mode = "operators"
+        self._op_word_rows = []
 
         # picture of the selected operator (from its folder in operators_one_operator_per_file)
         prev = tk.Frame(outer, bg="white", height=175)
@@ -1354,15 +1399,80 @@ class CalculatorGUI(tk.Tk):
         canvas.create_window((0, 0), window=inner, anchor="nw")
         sections = [("MATH", "#d6e6fa", MATH_OPS), ("GEOMETRY", "#d8f0d8", GEOMETRY_OPS),
                     ("PHYSICS", "#fbe4cf", PHYSICS_OPS)]
+        back = tk.Button(sbar, text="← Operators", bg="#333333", fg="white", relief="flat",
+                         font=("Segoe UI", 8, "bold"), command=lambda: show_operators())
 
         def wheel(e):
             canvas.yview_scroll(-1 * (e.delta // 120), "units")
 
+        def show_operators():
+            self._op_mode = "operators"
+            title.configure(text="Operators → Row %d  (drag to move)" % (self.op_target + 1))
+            back.pack_forget()
+            word_list.grid_remove()
+            canvas.grid(row=2, column=0)
+            hbar.grid(row=3, column=0, sticky="ew")
+            vbar.configure(command=canvas.yview)
+            canvas.configure(yscrollcommand=vbar.set)
+            populate()
+
+        def show_words():
+            self._op_mode = "words"
+            title.configure(text="Algebra word problems")
+            back.pack(side="left", padx=(0, 6))
+            canvas.grid_remove()
+            hbar.grid_remove()
+            word_list.grid(row=2, column=0, sticky="nsew")
+            vbar.configure(command=word_list.yview)
+            word_list.configure(yscrollcommand=vbar.set)
+            populate()
+
+        def on_word(_event=None):
+            sel = word_list.curselection()
+            if not sel:
+                return
+            item = self._op_word_rows[sel[0]]
+            if item is None:
+                return
+            prev_title.configure(text="%s   %s   [%s]" % (item["id"], item["category"], item["status"]))
+            self._show_word_diagram(item)
+
+        word_list.bind("<<ListboxSelect>>", on_word)
+
         def populate(*_):
+            q = query.get().strip().lower()
+            if self._op_mode == "words":
+                word_list.delete(0, "end")
+                self._op_word_rows = []
+                category = None
+                any_problem = False
+                for item in self._word_catalog():
+                    blob = (item["id"] + " " + item["problem"] + " " + item["category"]).lower()
+                    if q and q not in blob:
+                        continue
+                    if item["category"] != category:
+                        category = item["category"]
+                        word_list.insert("end", category)
+                        word_list.itemconfig("end", fg=BLUE)
+                        self._op_word_rows.append(None)
+                    label = "%s   %s" % (item["id"], item["problem"])
+                    if len(label) > 72:
+                        label = label[:69] + "..."
+                    word_list.insert("end", "    " + label)
+                    word_list.itemconfig("end", fg="#2a6a20" if item["status"] == "Ready" else "#555555")
+                    self._op_word_rows.append(item)
+                    any_problem = True
+                if not any_problem:
+                    word_list.insert("end", "No matching problems")
+                    self._op_word_rows.append(None)
+                return
             for w in inner.winfo_children():
                 w.destroy()
-            q = query.get().strip().lower()
             shown = 0
+            if not q or any(part in "algebra word problems" for part in q.split()):
+                btn(inner, "Algebra word problems", "#fff3c4", fg="black", anchor="w", width=48,
+                    font=("Segoe UI", 9, "bold"), command=show_words).pack(anchor="w", pady=(4, 2))
+                shown += 1
             for sec, color, ops in sections:
                 # keep a sub-heading only if something under it matches
                 items, pending = [], None
