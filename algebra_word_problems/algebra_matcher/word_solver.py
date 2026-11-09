@@ -2977,6 +2977,7 @@ _PIPE_FILLER = {"if", "when", "with", "then", "together", "now", "at", "the", "s
 _PIPE_HANG_ON = {"if", "when", "while", "as", "with", "and", "also", "too", "but", "since", "because", "once", "after", "before", "until", "plus", "besides", "even", "still", "in", "through", "from", "into", "by"}
 _PIPE_VESSEL = {"tank", "pool", "tub", "bathtub", "cistern", "basin", "reservoir", "barrel", "drum", "bucket", "vat", "trough", "pond", "container", "bath", "sink", "pot"}
 _PIPE_ENDING = {"up", "it", "them", "the", "a", "an", "this", "that", "empty", "whole", "entire", "completely", "fully", "entirely", "one", "all", "swimming", "water", "storage", "big", "large", "small"}
+_PIPE_ASK = {"how", "long", "does", "do", "did", "will", "would", "should", "can", "could", "it", "they", "them", "take", "takes", "to", "for", "the", "a", "an", "this", "that", "all", "up", "empty", "whole", "entire", "tank", "pool", "tub", "bathtub", "cistern", "basin", "reservoir", "barrel", "drum", "bucket", "vat", "trough", "pond", "container", "bath", "sink", "pot"}
 _PIPE_DRAIN_WORD = re.compile(r"\b(?:drain|drains|empties|empty|leak\w*|outlet)\b")
 
 
@@ -3037,6 +3038,10 @@ def pipes_and_drain(problem):
                 # once the question has named the thing being filled it has to END ("... fill the tank during a storm / under a downpour / amid the rain" is something else going on)
                 fm = re.search(r"\bfill\b(.*)$", opened[q.start():], flags=re.S)
                 if fm:
+                    # ... and so does the way in: between "how long" and "fill" only the plain question words may stand ("How long does it take to fill", "How long will it take for the tank to fill"),
+                    # not a storm named on the way ("How long does it take during a storm to fill the pool?", "How long, during a storm, does it take to fill the pool?")
+                    if set(re.findall(r"[a-z']+", opened[q.start():q.start() + fm.start()])) - _PIPE_ASK:
+                        return None
                     tail = re.findall(r"[a-z']+", fm.group(1))
                     named = [k for k, w in enumerate(tail) if w in _PIPE_VESSEL]
                     if (set(tail[named[0] + 1:]) if named else set(tail)) - _PIPE_ENDING:

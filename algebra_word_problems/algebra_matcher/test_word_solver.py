@@ -2444,6 +2444,21 @@ class FreshWordings(unittest.TestCase):
         from fresh_word_problems_47 import FRESH
         self.assertEqual(score(FRESH), (2, 1, 6))
 
+    def test_pipes_the_question_words_before_fill_are_the_plain_ones(self):
+        """A storm named BEFORE "fill" still got the plain answer: "How long does it take during a storm to fill the pool?" and "How long, during a storm, does it take to fill the pool?"
+        were answered 6.  Between "how long" and "fill" only the plain question words may stand (does / will / it / take / to / for / the / the vessel ...); the open phrase is taken out first."""
+        base = "Pipe A fills a pool in 4 hours, pipe B in 12 hours, and a drain empties it in 6 hours. "
+        for q in ("All three are open. How long does it take to fill the pool?", "How long does it take to fill the pool with all three open?",
+                  "All three are open. How long does it take to fill it?", "All three are open. How long will it take for the pool to fill?"):
+            self.assertEqual(answers(base + q), values(Fraction(6)), q)
+        for q in ("All three are open. How long does it take during a storm to fill the pool?", "All three are open. How long, during a storm, does it take to fill the pool?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_question_words_set(self):
+        """Set 48 (9 wordings) was written after the batch-44 fix and run once, untuned: 3 solved, 6 required declines, 0 wrong."""
+        from fresh_word_problems_48 import FRESH
+        self.assertEqual(score(FRESH), (3, 0, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
