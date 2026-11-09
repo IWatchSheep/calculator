@@ -2753,7 +2753,7 @@ def temperature_whole_hours(problem):
         return None
     inclusive = bool(_TEMP_INCLUSIVE.search(t[:limit[0].start()].rstrip()))
     # the question asks for whole HOURS of staying at (or above) the limit
-    if not re.search(r"\bhow many (?:whole |full )?hours\b", t):
+    if not re.search(r"\bhow many (?:whole|full) hours\b", t):
         return None
     T0, r, L = Fraction(start[0].group(1)), Fraction(rate[0].group(1)), Fraction(limit[0].group(1))
     if r <= 0:
@@ -2789,10 +2789,21 @@ def two_candles_equal(problem):
     rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
     if re.search(r"\d", rest):
         return None
-    # the question asks for the TIME they are the same height, not the height
-    if not re.search(r"\b(?:when|how long|after how many (?:hours|minutes|days))\b", rest) or not re.search(r"\bsame height\b|\bequal height\b|\bsame size\b|\bequally tall\b", rest):
+    # the LAST sentence (with the two statements cut out of it) is the question, and it must ask the TIME they are the same height.  Any other sentence, with the
+    # statements cut out, may not ask anything: "... burns 4 cm per hour when they are the same height. How old is the room?" and
+    # "They were the same height yesterday. When will the power return?" are not questions about when the candles meet.
+    sentences = [x for x in re.split(r"[.?!]", t) if x.strip()]
+    remainders = [_CANDLE_STMT.sub(" ", x) for x in sentences]
+    asks = [i for i, x in enumerate(remainders)
+            if re.search(r"\b(?:when|how long|after how many (?:hours|minutes|days))\b", x) and re.search(r"\bsame height\b|\bequal height\b|\bsame size\b|\bequally tall\b", x)]
+    if len(asks) != 1:
         return None
-    if re.search(r"\bhow (?:tall|high)\b|\bwhat (?:height|size)\b|\bhow much\b", rest):
+    question = remainders[asks[0]]
+    others = [x for i, x in enumerate(remainders) if i != asks[0]]
+    # (a statement sentence that carries "when they are the same height" is such a candidate too: then the real question, "How old is the room?", is another sentence that asks)
+    if any(re.search(r"\b(?:when|how|what|why|who|where|which|will|would)\b|\bsame height\b|\bequal height\b", x) for x in others):
+        return None
+    if re.search(r"\bhow (?:tall|high|old)\b|\bwhat (?:height|size)\b|\bhow much\b", question):
         return None
     a, ra, b, rb = Fraction(m1.group(1)), Fraction(m1.group(3)), Fraction(m2.group(1)), Fraction(m2.group(3))
     if ra <= 0 or rb <= 0 or ra == rb:

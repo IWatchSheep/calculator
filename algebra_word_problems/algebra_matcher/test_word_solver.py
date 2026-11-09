@@ -2098,6 +2098,41 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 0, 6))
 
+    def test_temperature_needs_whole_or_full_hours(self):
+        t = "The temperature is 26°F and falling 3°F per hour. For how many %s will it stay at or above 1°F?"
+        # "whole hours" and "full hours" are 8; plain "how many hours" would be the continuous 25/3 hours, which is not a whole number of hours: decline
+        self.assertEqual(answers(t % "whole hours"), values(8))
+        self.assertEqual(answers(t % "full hours"), values(8))
+        for w in ("hours", "complete hours", "hours in a row"):
+            self.assertIsNone(answers(t % w), w)
+        self.assertEqual(answers("The temperature is 30°F and falling 4°F per hour. For how many full hours will it stay at or above 5°F?"), values(6))
+        self.assertIsNone(answers("The temperature is 30°F and falling 4°F per hour. For how many hours will it stay at or above 5°F?"))
+
+    def test_candle_question_must_be_about_the_candles(self):
+        c = "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. "
+        # the time question about the candles stays 9/2 hours, in each form
+        for q in ("When will they be the same height?", "How long until they are the same height?", "After how many hours will they be the same height?"):
+            self.assertEqual(answers(c + q), values(Fraction(9, 2)), q)
+        self.assertEqual(answers("When will they be the same height? One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour."), values(Fraction(9, 2)))
+        self.assertEqual(answers("One candle is 13 cm tall and burns 2 cm per hour, and another is 22 cm tall and burns 4 cm per hour. When will they be the same height?"), values(Fraction(9, 2)))
+        self.assertEqual(answers("One candle is 13 cm tall and burns 2 cm per hour, another is 22 cm tall and burns 4 cm per hour; when will they be the same height?"), values(Fraction(9, 2)))
+        # a different question after the statements declines, even when "when they are the same height" is tucked into a statement
+        self.assertIsNone(answers("One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour when they are the same height. How old is the room?"))
+        self.assertIsNone(answers(c + "They were the same height yesterday. When will the power return?"))
+        self.assertIsNone(answers(c + "They were the same height yesterday. When will they be the same height?"))      # a second mention of "same height" is another event
+        self.assertIsNone(answers(c + "How old is the room?"))
+        self.assertIsNone(answers(c + "When will the power return?"))
+        self.assertIsNone(answers(c + "When will they burn out?"))
+        self.assertIsNone(answers(c + "How tall will they be when they are the same height?"))
+
+    def test_temperature_and_candle_neighbours_set(self):
+        """Set 37: neighbours of the batch-34 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_37 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-seventh set, neighbours of the batch-34 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 0, 5))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

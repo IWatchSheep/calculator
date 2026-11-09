@@ -950,3 +950,18 @@ Measured:
   Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these three shapes).
   Fresh set 36 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong; nothing raised.
   133 word-solver and number-puzzle tests pass.
+
+Batch 34: nearby wordings of temperature_whole_hours and two_candles_equal (fixes only, no new family)
+==============================================================
+temperature_whole_hours: the question must say "whole" (or "full") hours.  "For how many hours will it stay at or above 1°F?" was answered 8, but without "whole" the time at or above 1°F is the continuous 25/3 hours, so it declines (and so do "complete hours" and
+  "hours in a row").  "For how many whole hours ..." and "... full hours ..." stay 8 (26°F falling 3°F per hour, limit 1°F), and "full hours" works on another problem too (30°F falling 4°F per hour, limit 5°F: 6).
+two_candles_equal: the time question has to be the question about the candles.  The old check looked for "when" and "same height" anywhere outside the two statements.  "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour when they are the same height.
+  How old is the room?" and "... They were the same height yesterday. When will the power return?" were answered 9/2 hours; both decline.  Now the problem is cut into sentences, the two statements are cut out of each, and EXACTLY ONE sentence may ask the time and name "same height"; every other
+  sentence, with its statements cut out, may not ask anything (when / how / what / why / who / where / which / will / would) or mention "same height".  So the statement sentence that carries "when they are the same height" counts as the question candidate and the real question ("How old
+  is the room?") is another sentence that asks: decline.  "They were the same height yesterday. When will they be the same height?" declines (the second mention is another event).  These stay 9/2: "When will they be the same height?", "How long until they are the same height?", "After how many hours will they be the
+  same height?", the question FIRST ("When will they be the same height? One candle ... Another ..."), "..., and another is 22 cm tall ..." and the one-sentence form joined by a semicolon.
+Checks (test_word_solver.py): the three new test methods above; the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 323 -> 323 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 37 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
+  136 word-solver and number-puzzle tests pass.
