@@ -2340,6 +2340,53 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (3, 0, 6))
 
+    def test_pipes_sealed_capped_plugged_and_the_all_that_is_not_the_devices(self):
+        base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
+        ask = " How long does it take to fill the pool?"
+        # the forms that stay answered: 5/2 hours, including a bare "All open," at the start of the question and "With all open"
+        for q in ("All open, how long does it take to fill the pool?", "With all open, how long does it take to fill the pool?", "All open." + ask,
+                  "With all three open, how long does it take to fill the pool?", "All three are open." + ask, "All three are running." + ask,
+                  "With all of them open, how long does it take to fill the pool?", "The pipes and the drain are open." + ask,
+                  "With both pipes and the drain open, how long does it take to fill the pool?", "How long does it take to fill the pool with all three open?"):
+            self.assertEqual(answers(base + q), values(Fraction(5, 2)), q)
+        # a sealed, capped, plugged (covered, locked, bolted, disabled ...) drain is shut
+        for q in ("All three are open but the drain is sealed." + ask, "All three are open but the drain is capped." + ask, "All three are open but the drain is plugged." + ask,
+                  "All three are open but the drain is covered." + ask, "All three are open but the drain is bolted." + ask, "All three are locked." + ask, "All three are disabled." + ask):
+            self.assertIsNone(answers(base + q), q)
+        # that "all open" is the pool, not the three devices: it has to start the sentence (or follow "with") and end there
+        for q in ("The pool, all open to swimmers, is in use." + ask, "The pool, all open, is in use." + ask, "The pool is all open to swimmers." + ask,
+                  "All open to swimmers." + ask, "With all open to swimmers, how long does it take to fill the pool?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_nothing_else_may_be_said_about_the_drain(self):
+        """Fresh set 43 found a real hole: "All three are open but the drain is covered." was answered 12/5.  A list of shut-words is whack-a-mole, so the rule is general now:
+        a contrast word (but / however / although / though / yet / unless / except) declines, and any sentence that talks about the drain without giving its time may only be
+        the "everything is open" phrase itself, with nothing else about the drain left in it."""
+        base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
+        ask = " How long does it take to fill the pool?"
+        for q in ("All three are open. The drain is covered." + ask, "All three are open, however the drain is plugged." + ask, "All three are open although the drain is half shut." + ask,
+                  "All three are open. The drain is pinched." + ask, "All three are open. The outlet is jammed." + ask, "All three are open. The drain has a lid." + ask,
+                  "All three are open yet the drain does not work." + ask, "The drain is covered. All three are open." + ask, "All three are open and the drain is full of leaves." + ask,
+                  "All three are open and the drain is silted up." + ask, "All three are open. The drain has a grate on it." + ask, "All three are open. The leak is pinched shut." + ask,
+                  "All three are open though the drain is jammed." + ask, "The outlet is small. All three are open." + ask):
+            self.assertIsNone(answers(base + q), q)
+        # the phrase itself still carries the drain's name: "the pipes and the drain are open", "with both pipes and the drain open"
+        self.assertEqual(answers(base + "The pipes and the drain are open." + ask), values(Fraction(5, 2)))
+        self.assertEqual(answers(base + "With both pipes and the drain open, how long does it take to fill the pool?"), values(Fraction(5, 2)))
+        self.assertEqual(answers(base + "All the pipes and the drain are running." + ask), values(Fraction(5, 2)))
+
+    def test_drain_state_sets(self):
+        """Fresh set 43 (7 wordings) found one WRONG answer ("the drain is covered") before the general rule, so it is a development set: 2 solved, 5 required declines now.
+        Set 44 (9 wordings) was written after the general rule and run once, untuned: 2 solved, 7 required declines, 0 wrong."""
+        from fresh_word_problems_43 import FRESH as F43
+        from fresh_word_problems_44 import FRESH as F44
+        s43, s44 = score(F43), score(F44)
+        print("  development wordings (forty-third set, found one wrong answer, now fixed): %d solved, %d declined, %d required declines correct" % s43)
+        print("  fresh wordings (forty-fourth set, written after the general rule): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (s44[0], s44[0] + s44[1], s44[1], s44[2], s44[2]))
+        self.assertEqual(s43, (2, 0, 5))
+        self.assertEqual(s44, (2, 0, 7))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

@@ -3001,10 +3001,17 @@ def pipes_and_drain(problem):
     devices = r"(?:all three|all of them|everything|(?:both |all )?(?:the )?(?:pipes|taps) and (?:the )?(?:drain|leak|outlet))"
     state = r"(?:open|opened|running|working|flowing)"
     if not (re.search(devices + r"\s+(?:(?:are|is|being|stay|stays|remain|remains)\s+)?(?:all\s+)?" + state + r"\b", t)
-            or re.search(r"(?:^|[.,;?!]\s*|\bwith\s+)all " + state + r"\b", t)):
-        return None
+            or re.search(r"(?:^|[.?!]\s*|\bwith\s+)all " + state + r"\b(?=\s*(?:[,.;?!]|$|\b(?:how|what|then|and)\b))", t)):
+        return None                                              # a bare "all open" starts the sentence (or follows "with") and ENDS there: "The pool, all open to swimmers, ..." is not it
     # ... and nothing in the problem may turn something off or negate it
-    if re.search(r"\b(?:not|no|never|neither|nor|except|without|off|stopped|stops?|broken|blocked|clogged|jammed|out of order)\b|n't\b", t):
+    cue_phrase = re.compile(devices + r"\s+(?:(?:are|is|being|stay|stays|remain|remains)\s+)?(?:all\s+)?" + state + r"\b")
+    for sent in re.split(r"[.?!]", t):
+        if _PIPE_DRAIN_WORD.search(sent) and not _PIPE_IN.search(sent):
+            # a sentence about the drain that is not the clause giving its time: it may only be the "everything is open" phrase itself, and nothing else about the drain may
+            # remain once that phrase is taken out ("The drain is covered.", "The drain is pinched.", "All three are open and the drain is full of leaves.")
+            if not cue_phrase.search(sent) or _PIPE_DRAIN_WORD.search(cue_phrase.sub(" ", sent)):
+                return None
+    if re.search(r"\b(?:not|no|never|neither|nor|except|without|off|stopped|stops?|broken|blocked|clogged|jammed|out of order|sealed|capped|plugged|stoppered|corked|locked|bolted|disabled|inactive|covered|but|however|although|though|yet|unless)\b|n't\b", t):
         return None                                              # "The pipes are all together" / "The lights are all on" say nothing about the drain
     if not re.search(r"\bhow long\b[^.?!]*\bfill\b", t) or re.search(r"\bhow long\b[^.?!]*\bempty\b", t):
         return None

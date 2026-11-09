@@ -1043,3 +1043,19 @@ Measured:
   1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 42 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   151 word-solver and number-puzzle tests pass.
+
+Batch 40: a sealed, capped or plugged drain, an "all open" that is the pool, and a general rule for anything else said about the drain (pipes_and_drain; fixes only, no new family)
+==============================================================
+pipes_and_drain, shut words: "All three are open but the drain is sealed. How long does it take to fill the pool?" was answered 5/2 hours.  A sealed drain is shut; "capped" and "plugged" are the same.  They decline, and so do the other ways of shutting it: stoppered, corked, locked, bolted, disabled, inactive, covered.
+pipes_and_drain, "all open": "The pool, all open to swimmers, is in use. How long does it take to fill the pool?" was answered 5/2: that "all open" is the pool, not the three devices.  A bare "all open / running / working" now has to START the sentence (or follow "with") and END there (a comma, a full stop, the end, or "how / what / then / and" next).  It no
+  longer counts after a comma that follows a noun.  "All open, how long does it take to fill the pool?", "With all open, ...", "All open." (and "All open how long ...") stay 5/2; "The pool, all open to swimmers, is in use.", "The pool, all open, is in use.", "The pool is all open to swimmers.", "All open to swimmers." and "With all open to swimmers, ..." decline.
+A FINDING OF THE FRESH SET: fresh set 43 (7 wordings, written after the batch-40 fixes as first asked, run once) found a real hole: "All three are open but the drain is covered." was answered 12/5 (wrong).  A list of shut-words is whack-a-mole ("covered" was not on it), so the rule is now general:
+  (1) a contrast word anywhere (but / however / although / though / yet / unless / except) declines;  (2) any sentence that talks about the drain (drain / leak / outlet / empties) without giving its time ("in N hours") may only be the "everything is open" phrase itself, and once that phrase is taken out of it NO drain word may remain:
+  "The drain is covered.", "The drain is pinched.", "The outlet is jammed.", "The drain has a lid.", "The drain has a grate on it.", "The leak is pinched shut.", "The outlet is small." (even said first), "All three are open and the drain is full of leaves." and "... and the drain is silted up." all decline.  The phrase that carries the drain's name
+  as part of the devices still works: "The pipes and the drain are open.", "With both pipes and the drain open, ...", "All the pipes and the drain are running." stay 5/2.  So set 43 is now a DEVELOPMENT set (2 solved, 5 required declines, 0 wrong after the rule) and set 44 was written after the general rule and run once, untuned.
+Checks (test_word_solver.py): the three new test methods above (the shut words and the pool, the general rule, the two sets); the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 43 (7 wordings, neighbours of the sealed / pool fixes): first run 2 solved, 4 required declines correct and 1 WRONG ("the drain is covered"); after the general rule 2 solved, 5 required declines, 0 wrong (development set).
+  Fresh set 44 (9 wordings, written after the general rule, run once, untuned): 2 with an answer: 2 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
+  154 word-solver and number-puzzle tests pass.
