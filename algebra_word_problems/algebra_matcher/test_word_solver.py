@@ -43,6 +43,8 @@ HAND_ANSWERS = {
     "Two hikers start 18 km apart and walk toward each other at 4 km/h and 5 km/h. When do they meet?": [2],
     "The product of two consecutive odd numbers is 143. Find them.": [11, 13],
     "You have $45. A movie costs $9 per ticket. What is the greatest number of tickets you can buy?": [5],
+    "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water?": [6],
+    "The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What are the numbers?": [8, 10, 12],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -654,6 +656,103 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (fourteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (8, 1, 7))
+
+    def test_or_is_a_choice_not_a_fee(self):
+        # "entry tickets at $12 OR snacks at $4": the snacks alone are 15 (4n <= 60); the $12 is not a fee that must be paid
+        self.assertIsNone(answers("You have $60. You can buy entry tickets at $12 or snacks at $4 each. What is the greatest number of snacks you can buy?"))
+        self.assertIsNone(answers("You have $60. You can buy tickets at $12 or snacks at $4 each. How many snacks can you afford?"))
+        # "and there is a $12 entry fee" is a fee, and still answers
+        self.assertEqual(answers("You can spend no more than $60. Tickets cost $4 each and there is a $12 entry fee. What is the greatest number of tickets?"), values(12))
+
+    def test_still_water_current(self):
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. What is my rowing speed in still water?"), values(9))
+        self.assertEqual(answers("Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. How fast is the current?"), values(3))
+        self.assertEqual(answers("A boat travels 34 km downstream in 2 hours and 35 km upstream in 5 hours. Find the speed of the boat in still water and the speed of the current."), values(5, 12))
+        r = WS.solve("Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. What is my rowing speed in still water?")
+        self.assertEqual(r.values, [Fraction(9)])                       # only the one the question asks for
+        self.assertIn("downstream speed = 12, upstream speed = 6", r.reading)
+        self.assertIn("still water b = 9", r.reading)
+        r = WS.solve("A boat goes 20 km upstream in 2 hours and 30 km downstream in 2 hours. What is the speed of the boat in still water?")
+        self.assertEqual(r.values, [Fraction(25, 2)])                   # an exact fraction, and either order of the two legs
+        self.assertIn("b = 25/2", r.reading)
+        # equal speeds (no current), an upstream trip that is faster, mixed units, the speed against the current, a time, a spelled number
+        for text in ("Rowing with the current I cover 24 km in 2 hours, but against it only 24 km in 2 hours. What is my rowing speed in still water?",
+                     "Rowing with the current I cover 12 km in 2 hours, but against it 24 km in 2 hours. What is my rowing speed in still water?",
+                     "Rowing with the current I cover 24 km in 2 hours, but against it only 12 miles in 2 hours. What is my rowing speed in still water?",
+                     "Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. What is my rowing speed against the current?",
+                     "Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. How long does the trip take?",
+                     "Rowing with the current I cover 24 km in two hours, but against it only 12 km in 2 hours. What is my rowing speed in still water?",
+                     "Rowing with the current I cover 24 km in 2 hours, and with the current again 12 km in 2 hours. What is my rowing speed in still water?",
+                     "Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours. What is my rowing speed in still water, half the time?",
+                     "Rowing with the current I cover 24 km in 2 hours, but against it only 12 km in 2 hours for part of the year. What is my rowing speed in still water?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_ratio_split(self):
+        self.assertEqual(answers("Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water?"), values(6))
+        self.assertEqual(answers("Water is mixed into concentrate in the ratio 5:1. How much water for 6 litres of concentrate?"), values(30))
+        self.assertEqual(answers("A shade of green uses blue and yellow paint in the ratio 3:4. If 6 L of blue is used, how much yellow is needed?"), values(8))
+        self.assertEqual(answers("The ratio of sand to cement is 3:1. If I use 24 kg of sand, how much cement do I need?"), values(8))
+        r = WS.solve("Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water?")
+        self.assertIn("water : concentrate = 5 : 1", r.reading)
+        r = WS.solve("A shade of green uses blue and yellow paint in the ratio 3:5. If 6 L of blue is used, how much yellow is needed?")
+        self.assertEqual(r.values, [Fraction(10)])
+        r = WS.solve("A shade of green uses blue and yellow paint in the ratio 4:3. If 6 L of blue is used, how much yellow is needed?")
+        self.assertEqual(r.values, [Fraction(9, 2)])                    # exact, never 4.5 rounded
+        self.assertIn("9/2 l", r.reading)
+        # a ratio that is not two whole numbers, a question that does not name the missing substance, a total, a different substance, spelled numbers
+        for text in ("Water is mixed into concentrate in the ratio 2.5:1. How much concentrate for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:0. How much concentrate for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much is needed for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much of each for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much water for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of oil?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water in total?",
+                     "Water is mixed into concentrate in the ratio 5:1 and then twice as much. How much concentrate for 30 litres of water?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water if two bottles are used?",
+                     "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water for part of the year?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_three_numbers(self):
+        self.assertEqual(answers("The sum of three numbers is 30. The first two add to 18 and the last two add to 20."), values(8, 10, 12))
+        self.assertEqual(answers("The sum of three numbers is 30. The first two add to 18 and the last two add to 20. Find the numbers."), values(8, 10, 12))
+        self.assertEqual(answers("The sum of three numbers is 30. The first and third add to 22 and the last two add to 20. What are the numbers?"), values(8, 10, 12))
+        r = WS.solve("The sum of three numbers is 30. The first two add to 18 and the last two add to 20.")
+        self.assertEqual(r.values, [Fraction(10), Fraction(8), Fraction(12)])           # in order: first, second, third
+        self.assertIn("x + y + z = 30, x + y = 18, y + z = 20", r.reading)
+        self.assertIn("x = 10, y = 8, z = 12", r.reading)
+        r = WS.solve("The sum of three numbers is 31. The first two add to 18 and the last two add to 20.")
+        self.assertEqual(r.values, [Fraction(11), Fraction(7), Fraction(13)])
+        # a fourth number, a product, a question for something else, only one pair, the same pair twice, a spelled number
+        for text in ("The sum of three numbers is 30. The first two add to 18 and the last two add to 20 and their product is 960.",
+                     "The sum of three numbers is 30. The first two add to 18, the last two add to 20 and the first is 10.",
+                     "The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What is their product?",
+                     "The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What is the largest?",
+                     "The sum of three numbers is 30. The first two add to 18. Find the numbers.",
+                     "The sum of three numbers is 30. The first two add to 18 and the first two add to 18. Find the numbers.",
+                     "The sum of four numbers is 30. The first two add to 18 and the last two add to 20.",
+                     "The sum of three numbers is 30. The first two add to 18 and the last two add to 20, and one is twice another.",
+                     "The sum of three numbers is 30. The first two add to 18 and the last two add to 20 for part of the year. Find the numbers."):
+            self.assertIsNone(answers(text), text)
+
+    def test_no_name_is_defined_twice_in_the_solver(self):
+        """The 'still water' family once reused the names _UP and _DOWN that percent_change already used, and every percent problem was
+        silently declined (22 generated claims became 0).  No module-level name may be assigned twice in word_solver.py."""
+        import collections
+        import os
+        here = os.path.dirname(os.path.abspath(__file__))
+        text = open(os.path.join(here, "word_solver.py"), encoding="utf-8").read()
+        names = re.findall(r"^([A-Za-z_]\w*)\s*=", text, flags=re.M) + re.findall(r"^def ([A-Za-z_]\w*)\(", text, flags=re.M)
+        twice = sorted(n for n, c in collections.Counter(names).items() if c > 1)
+        self.assertEqual(twice, [])
+
+    def test_boat_ratio_numbers_set(self):
+        """Set 15: wordings for still_water_current, ratio_split and three_numbers, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "goes 45 miles with the current in 3 hours" has words between the distance and "in 3 hours"."""
+        from fresh_word_problems_15 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (fifteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (7, 1, 7))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

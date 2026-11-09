@@ -421,3 +421,43 @@ Measured:
   7 required declines: 7 of 7; 0 wrong.  The declined one: "Two whole numbers that follow each other multiply to 168..." ("follow each other" is
   not one of the next-to-each-other phrases): a safe miss, not fixed.
   49 word-solver and number-puzzle tests pass.
+
+Batch 13: the "or" fix and three families in one commit: still_water_current, ratio_split, three_numbers
+==============================================================
+Fix (most_you_can_buy): "You have $60. You can buy entry tickets at $12 or snacks at $4 each. What is the greatest number of snacks you can buy?" was
+  answered 12: the "entry" word made $12 a fee.  "Or" is a choice, not a fee that must be paid; snacks alone are 15 (4n <= 60).  Two money
+  amounts joined by "or" / "either" now decline.  "... and there is a $12 entry fee" is a fee and still answers 12.
+still_water_current  (generator "boat"):  b + c = D1/T1 (downstream),  b - c = D2/T2 (upstream).  "Rowing with the current I cover 24 km in 2 hours,
+  but against it only 12 km in 2 hours. What is my rowing speed in still water?" is 9 (downstream 12, upstream 6, current 3).  Each leg is
+  "<distance> <unit> [downstream|upstream] in <n> hours"; the direction of each leg is read from its own clause (downstream / with the current /
+  upstream / against the current / against it), one of each.  The answer is ONLY what the question asks (still water, the current, or both:
+  "Find the speed of the boat in still water and the speed of the current" gives both).  Declines: equal speeds (no current), an "upstream" trip that is
+  faster, two legs in the same direction, mixed units, a question for the speed against / with the current or a time, wind / air / return trips, a spelled
+  number ("in two hours"), minutes.  Exact fractions: 20 km up and 30 km down, 2 hours each, still water is 25/2.
+ratio_split  (generator "paint ratio"):  a : b with an amount of the first or second substance known.  "Water is mixed into concentrate in the ratio 5:1.
+  How much concentrate for 30 litres of water?" is 6.  The two substances are read in the order named ("X is mixed into / with Y in the ratio",
+  "X and Y [paint] in the ratio", "the ratio of X to Y is"), the known amount is the "<n> <unit> of <substance>", and the question must name the
+  OTHER substance (not "how much is needed", not "of each", not the known one).  Declines: a ratio that is not two whole numbers (2.5:1, 5:0), total /
+  altogether / in all, times as / more / less, a spelled number, "such", "part of".
+three_numbers  (a total and two pair sums only):  x + y + z = S plus two of x + y, y + z, x + z.  "The sum of three numbers is 30. The first two add to 18
+  and the last two add to 20." is 10, 8 and 12 (in the order first, second, third).  Pairs may be "the first two", "the last two", "the first and
+  second", "the second and third", "the first and third / last".  Exactly three digit numbers, no product / times / twice / difference / average, a question (if
+  there is one) must ask for the numbers, not for one of them or for a product.  Declines: a fourth number, only one pair, the same pair twice, "four numbers".
+  The generator has no template in this exact form, so it adds no generated claims.
+A bug found by the test suite while building these: the boat family reused the names _UP and _DOWN that percent_change already used, and every percent
+  problem was silently declined (22 generated claims went to 0, caught by test_percent_change, test_fresh and the development sets).  The names were renamed
+  (_UPSTREAM, _DOWNSTREAM) and a new test fails if any module-level name in word_solver.py is assigned or defined twice.
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total (no prices in these three), such / of the year / for part of / of the
+  time, exact fractions in values and readings (25/2, 9/2), no control characters (the test that reads every .py file passes).
+Measured:
+  1,000 generated problems: claims 141 -> 151, wrong 0.  The 10 new claims, each equal to the stored answer:
+    still_water_current 0086 (12 and 5), 0088 (11 and 8), 0090 (17 and 12), 0093 (30 and 15), 0094 (14 and 6) = every generated "boat" problem
+      (the other generated "current" problems are the plane-and-wind template, a different structure, declined);
+    ratio_split 0693 (9), 0701 (20), 0708 (40), 0717 (20), 0720 (24) = every generated "shade of green ... ratio a:b" problem.
+  Hand-written problems claimed by the family solver: 29 -> 31, all match the hand-calculated answers:
+    "Water is mixed into concentrate in the ratio 5:1. How much concentrate for 30 litres of water?" 6;
+    "The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What are the numbers?" 8, 10, 12.
+  Fresh set 15 (15 wordings, written after all three families were finished, run once, untuned): 8 with an answer: 7 solved, 1 declined;
+  7 required declines: 7 of 7; 0 wrong.  The declined one: "A motorboat goes 45 miles with the current in 3 hours and 20 miles against the
+  current in 2 hours" (words between the distance and "in 3 hours"): a safe miss, not fixed.
+  55 word-solver and number-puzzle tests pass.

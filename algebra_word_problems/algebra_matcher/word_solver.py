@@ -1070,6 +1070,9 @@ def most_you_can_buy(problem):
         or re.search(r"\bhow many\b.*\bcan be (?:bought|purchased)\b", tail)
     if not asks_most or not re.search(r"\b(?:buy|bought|afford|purchase\w*|get|number|many)\b", tail):
         return None
+    # "tickets at $12 or snacks at $4": two money amounts joined by "or" are a CHOICE, not a fee that must be paid
+    if any(re.search(r"\bor\b|\beither\b", t[a[3]:b[2]]) for a, b in zip(nums, nums[1:])):
+        return None
     roles = {"fee": [], "unit": [], "budget": []}
     for n in nums:
         before, after = t[:n[2]].rstrip(), t[n[3]:]
@@ -1100,10 +1103,186 @@ def most_you_can_buy(problem):
                       eq, show_exact((B - f) / c), show_exact(Fraction(n)), show_exact((n + 1) * c + f), show_exact(B)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 19. still water and current:   b + c = D1/T1 (downstream),  b - c = D2/T2 (upstream)      (the generator's "boat")
+# ---------------------------------------------------------------------------------------------------------
+_LEG = re.compile(NUM + r"\s*(km|kilometers?|kilometres?|miles?|mi|meters?|metres?)\b(?:\s+(?:downstream|upstream))?\s+in\s+" + NUM + r"\s*(?:hours?|hrs?)\b")
+_DOWNSTREAM = re.compile(r"\b(?:downstream|with the (?:current|stream|flow)|down the river|down river)\b")
+_UPSTREAM = re.compile(r"\b(?:upstream|against the (?:current|stream|flow)|against it|up the river|up river)\b")
+
+
+def still_water_current(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or len(digit_numbers(problem)) != 4:
+        return None
+    if re.search(_SPELLED_ANY, t) or re.search(r"\b(?:wind|air|plane|return\w*|back|round trip|stops?|rests?|drift\w*|minutes?|seconds?|lake|pond)\b", t):
+        return None
+    legs = list(_LEG.finditer(t))
+    if len(legs) != 2 or legs[0].group(2)[:2] != legs[1].group(2)[:2]:
+        return None
+    segs = [t[:legs[0].end()], t[legs[0].end():legs[1].end()]]
+    kinds = []
+    for seg in segs:
+        d, u = bool(_DOWNSTREAM.search(seg)), bool(_UPSTREAM.search(seg))
+        if d == u:
+            return None
+        kinds.append("down" if d else "up")
+    if kinds[0] == kinds[1]:
+        return None
+    speeds = {}
+    for leg, kind in zip(legs, kinds):
+        D, T = Fraction(leg.group(1)), Fraction(leg.group(3))
+        if D <= 0 or T <= 0:
+            return None
+        speeds[kind] = D / T
+    vd, vu = speeds["down"], speeds["up"]
+    if vu <= 0 or vd <= vu:
+        return None                                            # equal speeds (no current) or the "upstream" trip faster: decline
+    b, c = (vd + vu) / 2, (vd - vu) / 2
+    # what is asked: the speed in still water, the speed of the current, or both
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = sents[-1]
+    if re.search(r"\b(?:against|with the|downstream|upstream|how long|how far|how many)\b", q):
+        return None
+    want_b = bool(re.search(r"still water|speed of the (?:boat|canoe|rower|swimmer|kayak)|\b(?:boat|rowing|paddling|swimming)\s+speed\b", q))
+    want_c = bool(re.search(r"\b(?:current|stream|flow)\b", q)) and bool(re.search(r"\bspeed|\brate|how fast", q))
+    if not (want_b or want_c):
+        return None
+    unit = legs[0].group(2)
+    vals, parts = [], []
+    if want_b:
+        vals.append(b)
+        parts.append("still water b = %s" % show_exact(b))
+    if want_c:
+        vals.append(c)
+        parts.append("current c = %s" % show_exact(c))
+    eq = "b + c = %s;  b - c = %s" % (show_exact(vd), show_exact(vu))
+    return Result("still_water_current", vals, eq,
+                  "downstream speed = %s, upstream speed = %s (%s per hour): %s, so %s" % (show_exact(vd), show_exact(vu), unit, eq, " and ".join(parts)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 20. a ratio split between two named substances, one amount known:   a : b  with  x of the first   (the generator's "paint ratio")
+# ---------------------------------------------------------------------------------------------------------
+_RATIO = re.compile(r"(?<![\d.])(\d+)\s*:\s*(\d+)(?!\d|\.\d)")
+_NAME = r"([a-z]+)"
+_RATIO_NAMES = [
+    # "Water is mixed into concentrate in the ratio 5:1."
+    re.compile(r"\b" + _NAME + r" (?:is|are) (?:mixed|combined|blended|added|stirred|poured|diluted) (?:into|with|to|in) (?:the )?" + _NAME + r" in (?:the )?ratio"),
+    # "A shade of green uses blue and yellow paint in the ratio 3:4."
+    re.compile(r"\b" + _NAME + r" and " + _NAME + r"(?: [a-z]+)? (?:are )?(?:mixed |used |combined |blended )?in (?:the )?ratio"),
+    # "The ratio of sand to cement is 3:1."
+    re.compile(r"\bratio of " + _NAME + r" to " + _NAME + r"\b"),
+]
+_RATIO_OTHER = re.compile(r"\b(?:total|altogether|in all|whole|together|combined amount|times as|more|less|extra|remove\w*|dilut\w*|each|per|cost|price)\b|%|\$")
+
+
+def ratio_split(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, t) or _RATIO_OTHER.search(t):
+        return None
+    rm = list(_RATIO.finditer(t))
+    if len(rm) != 1:
+        return None
+    ra, rb = Fraction(rm[0].group(1)), Fraction(rm[0].group(2))
+    if ra <= 0 or rb <= 0:
+        return None
+    pair = None
+    for pat in _RATIO_NAMES:
+        m = pat.search(t)
+        if m:
+            if pair is not None and pair != (m.group(1), m.group(2)):
+                return None
+            pair = (m.group(1), m.group(2))
+    if pair is None or pair[0] == pair[1]:
+        return None
+    x, y = pair
+    # the known amount is attached to one of the two substances: "30 litres of water", "6 L of blue"
+    amount_n = [n for n in nums if not (n[3] > rm[0].start() and n[2] < rm[0].end())]      # the numbers that are not part of the ratio
+    if len(amount_n) != 1 or amount_n[0][1]:
+        return None
+    am = re.match(r"\s*([a-z]+)\s+of\s+(?:the\s+)?" + _NAME + r"\b", t[amount_n[0][3]:])
+    if not am or am.group(2) not in (x, y):
+        return None
+    known, missing = am.group(2), (y if am.group(2) == x else x)
+    # the question must name the missing substance
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    qs = [s for s in sents if re.search(r"\bhow (?:much|many)\b", s)]
+    if len(qs) != 1:
+        return None
+    asked = re.sub(r"[\d.]+\s*[a-z]*\s+of\s+(?:the\s+)?" + known + r"\b", " ", qs[0])       # the known amount may be repeated in the question
+    if not re.search(r"\b" + missing + r"\b", asked) or re.search(r"\b" + known + r"\b", asked):
+        return None
+    k_part, m_part = (ra, rb) if known == x else (rb, ra)
+    amount = amount_n[0][0]
+    result = amount * m_part / k_part
+    unit = am.group(1)
+    return Result("ratio_split", [result], "%s : %s = %s : %s" % (x, y, show(ra), show(rb)),
+                  "%s : %s = %s : %s, so %s = %s x %s/%s = %s %s" % (
+                      x, y, show(ra), show(rb), missing, show(amount), show(m_part), show(k_part), show_exact(result), unit))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 21. three numbers from their total and two pair sums:   x + y + z = S, plus two of x + y, y + z, x + z
+# ---------------------------------------------------------------------------------------------------------
+_TOTAL3 = re.compile(r"\b(?:the )?sum of (?:the )?three (?:numbers|integers) (?:is|equals|=) " + NUM + r"|\bthree (?:numbers|integers) (?:add|sum|total|add up|sum up)(?: up)?(?: to| of)? " + NUM
+                     + r"|\bthree (?:numbers|integers) have a sum of " + NUM)
+_PAIR_WORDS = r"(?:the first two|the last two|the first and (?:the )?second|the second and (?:the )?third|the first and (?:the )?(?:third|last)|the second and (?:the )?first)"
+_PAIR3 = re.compile(r"(" + _PAIR_WORDS + r")(?: numbers)?\s+(?:add|adds|sum|total|totals|make|makes|equal|equals|have a sum of|is|are)(?: up)?(?: to| of)?\s+" + NUM)
+_PAIR_INDEX = {"the first two": (0, 1), "the last two": (1, 2), "the first and second": (0, 1), "the first and the second": (0, 1),
+               "the second and third": (1, 2), "the second and the third": (1, 2), "the first and third": (0, 2), "the first and the third": (0, 2),
+               "the first and last": (0, 2), "the first and the last": (0, 2), "the second and first": (0, 1), "the second and the first": (0, 1)}
+
+
+def three_numbers(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t):
+        return None
+    if re.search(r"\b(?:product|times|twice|double|triple|half|difference|more than|less than|greater|smaller|larger|average|mean|consecutive|ratio|square\w*|each other)\b", t):
+        return None
+    if re.search(_SPELLED_ANY, re.sub(r"\bthree (?:numbers|integers)\b|\bthe (?:first|last) two\b", " ", t)):
+        return None
+    tot = list(_TOTAL3.finditer(t))
+    pairs = list(_PAIR3.finditer(t))
+    if len(tot) != 1 or len(pairs) != 2:
+        return None
+    S = Fraction(next(g for g in tot[0].groups() if g))
+    idx = [_PAIR_INDEX[p.group(1)] for p in pairs]
+    if len({frozenset(i) for i in idx}) != 2:
+        return None
+    vals = [Fraction(p.group(2)) for p in pairs]
+    # every number in digits is the total or one of the two pair sums
+    if len(nums) != 3:
+        return None
+    known = {}
+    for (i, j), v in zip(idx, vals):
+        k = ({0, 1, 2} - {i, j}).pop()                    # the number left out of the pair
+        known[k] = S - v
+    if len(known) != 2:
+        return None
+    rest = ({0, 1, 2} - set(known)).pop()
+    known[rest] = S - sum(known.values())
+    out = [known[0], known[1], known[2]]
+    # a question, if there is one, must ask for the numbers
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    for s in sents:
+        if re.search(r"\b(?:what|which|how|find|determine|name|list)\b", s) and not re.search(r"\b(?:what are|find|which|determine|name|list)\b.*\b(?:numbers|integers|them)\b|\bwhat are (?:they|the numbers)\b", s):
+            return None
+    names = ["x", "y", "z"]
+    facts = ["x + y + z = %s" % show(S)]
+    for (i, j), v in zip(idx, vals):
+        facts.append("%s + %s = %s" % (names[i], names[j], show(v)))
+    return Result("three_numbers", out, ";  ".join(facts),
+                  "%s, so x = %s, y = %s, z = %s" % (", ".join(facts), show_exact(out[0]), show_exact(out[1]), show_exact(out[2])))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
-            toward_each_other, consecutive_product, most_you_can_buy]
+            toward_each_other, consecutive_product, most_you_can_buy,
+            still_water_current, ratio_split, three_numbers]
 
 
 def solve(problem):
