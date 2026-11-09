@@ -2637,7 +2637,9 @@ def rectangle_from_perimeter_area(problem):
         return None                                              # "an area of 36 ft" is not marked squared
     # the question: both sides, only the length (the longer side), or only the width (the shorter); a sum / difference / product of them is a different question
     sents = [x for x in re.split(r"[.?!]\s*", t) if x.strip()]
-    q = next((x for x in reversed(sents) if re.search(r"\b(?:find|what|determine|give|name)\b", x)), None)
+    q = next((x for x in reversed(sents) if re.search(r"\b(?:find|what|determine|give|name|calculate|compute|state|list|work out|how (?:long|wide|big|tall))\b", x)), None)
+    if q is None:
+        return None                                                  # no question the solver recognises ("The sides please."): decline, never raise
     q_orig = q
     # a condition inside the question ("... if the length is shorter than the width") is a STATEMENT, not part of what is asked
     cm = re.search(r"\b(?:if|when|given that|since|because|assuming|provided)\b", q) if q else None
@@ -2652,7 +2654,7 @@ def rectangle_from_perimeter_area(problem):
     #   (the comma is optional: "What is its length which is shorter than the width?" is the same question)
     # "the length of the shorter side" / "the width of the longer side": the word after "of the" names the side, the word in front of "of" does not switch them
     named_kind = None
-    om = re.search(r"\b(?:length|width)\s+of\s+the\s+(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension)\b(?=\s*(?:,|$))", q_main)
+    om = re.search(r"\b(?:(?:length|width)\s+of|how\s+(?:long|wide|big|tall)\s+(?:is|are))\s+the\s+(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension)\b(?=\s*(?:,|$))", q_main)
     if om:
         named_kind = "long" if re.match(_RECT_LONG, om.group(1)) else "short"
         q_main = q_main[:om.start()] + " " + q_main[om.end():]

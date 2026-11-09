@@ -909,3 +909,19 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 34 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 3 required declines: 3 of 3; 0 wrong.
   125 word-solver and number-puzzle tests pass.
+
+Batch 32: a rectangle question that does not say "find" or "what" crashed the solver (rectangle_from_perimeter_area; fix only, no new family)
+==============================================================
+The crash: rectangle_from_perimeter_area looked for the question sentence with find / what / determine / give / name; with none of them (a sentence like "How long is the shorter side?", "Calculate the sides." or "The sides please.") the question was None and the next
+  regular-expression call raised TypeError.  solve() only swallows ZeroDivisionError, ValueError, KeyError and IndexError, so the TypeError reached the caller.  "How long is the shorter side?", "How wide is the longer side?", "How long is the longer side?", "How wide is the shorter side?",
+  "Calculate the sides." and "The sides please." all raised.
+The fix: (1) no question sentence at all now returns None immediately (decline, never raise); (2) the question sentence is also found by calculate / compute / state / list / work out / how long / how wide / how big / how tall; (3) "How long|wide|big|tall is|are the longer|shorter side|one" is
+  the same question as "the length of the shorter side": "How long is the shorter side?" is 2, "How wide is the longer side?" is 18, "How long is the longer side?" is 18, "How wide is the shorter side?" is 2.  "Calculate the sides.", "Compute its length and width.", "Please give the sides." and "List the dimensions."
+  return both (2 and 18).  "The sides please.", "Sides?", "How long is it?", "How wide is it?", "How many sides does it have?", "How long is the side?", "How long is the shorter side of the lot?", "Tell me the sides." and a problem with no question at all decline; none raises.
+A guard against the whole class (test_no_family_ever_raises): every family is called DIRECTLY (not through solve(), which hides four kinds of error) on the hand-written problems, every fresh set (510 problems) and ten cut-up versions of each (no question, no first sentence, half the text, no digits, upper case, empty ...):
+  about 244,000 calls, none raises; the same check over all 1,000 generated problems and their variants (about 568,000 calls) was run by hand and none raised either.  The new test fails on the previous version (it raises TypeError on "How long is the shorter side?").
+Checks (test_word_solver.py): the three new test methods above (the questions, the no-raise guard, the set); the earlier tests still pass; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 35 (8 wordings, neighbours of this crash, written after the fix was finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong; nothing raised.
+  128 word-solver and number-puzzle tests pass (the suite takes about 8 seconds now: the no-raise guard is most of it).

@@ -1961,6 +1961,57 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 0, 3))
 
+    def test_rectangle_question_without_find_or_what(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # these raised TypeError (there was no "find" or "what" sentence, so the question was None); they are answered now
+        for q, want in (("How long is the shorter side?", (2,)), ("How wide is the longer side?", (18,)), ("How long is the longer side?", (18,)),
+                        ("How wide is the shorter side?", (2,)), ("Calculate the sides.", (2, 18)), ("Compute its length and width.", (2, 18)),
+                        ("Please give the sides.", (2, 18)), ("List the dimensions.", (2, 18))):
+            self.assertEqual(answers(base + q), values(*want), q)
+        # a question the solver does not recognise declines; it must not raise
+        for q in ("The sides please.", "Sides?", "How long is it?", "How wide is it?", "How many sides does it have?", "How long is the side?",
+                  "How long is the shorter side of the lot?", "How long is the shorter side, and how wide is the longer side?", "Tell me the sides.", "The rectangle.", ""):
+            self.assertIsNone(answers(base + q), q)
+        for text in ("A rectangle has a perimeter of 40 ft and an area of 36 ft².", "A rectangle has a perimeter of 40 ft and an area of 36 ft²", "", " ", "How long is the shorter side?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_no_family_ever_raises(self):
+        """solve() swallows ZeroDivisionError, ValueError, KeyError and IndexError, so a TypeError (a None where a string was expected) escaped it and crashed the caller.
+        Every family is called DIRECTLY (not through solve) on the hand-written problems, every fresh set, and cut-up versions of them (the question removed, the first
+        sentence removed, half the text, no digits, upper case): none may raise."""
+        import glob
+        import importlib
+        import os
+        import algebra_matcher as AM
+
+        def variants(text):
+            sents = [x for x in re.split(r"(?<=[.?!])\s+", text.strip()) if x]
+            out = {text, text.replace("?", "").replace(".", ""), text.upper(), text[: len(text) // 2], text[len(text) // 2:], "", re.sub(r"\d", "", text), text.replace(",", "")}
+            if len(sents) > 1:
+                out.update((" ".join(sents[:-1]), " ".join(sents[1:]), sents[-1], sents[0]))
+            return out
+        here = os.path.dirname(os.path.abspath(__file__))
+        problems = [t for t, _ in AM.HAND_TEST + AM.FRESH_TEST]
+        for path in sorted(glob.glob(os.path.join(here, "fresh_word_problems*.py"))):
+            problems += [p for p, _ in importlib.import_module(os.path.basename(path)[:-3]).FRESH]
+        raised = []
+        for p in problems:
+            for v in variants(p):
+                for fam in WS.FAMILIES:
+                    try:
+                        fam(v)
+                    except Exception as e:                                         # any error at all, not only the four solve() swallows
+                        raised.append((fam.__name__, type(e).__name__, v[:80]))
+        self.assertEqual(raised[:5], [])
+
+    def test_question_without_find_set(self):
+        """Set 35: neighbours of the batch-32 crash, written after the fix was finished and run once, untuned."""
+        from fresh_word_problems_35 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-fifth set, neighbours of the batch-32 crash): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 0, 4))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
