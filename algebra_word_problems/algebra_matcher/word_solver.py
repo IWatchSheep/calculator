@@ -2649,15 +2649,20 @@ def rectangle_from_perimeter_area(problem):
     # a clause hanging on the side just named is a statement about THAT side, not a question about the other:
     #   "What is its length, which is shorter than the width?"   ->  asks the length;  statement "length is shorter than the width"
     #   "Find the length, the shorter side." / "What is its width, the longer one?"  ->  asks that side; statement "length is the shorter side"
-    wm = re.search(r"\b(length|width)\s*,\s*(?:which|that)\s+(?:is|are)\s+(.*)$", q_main)
+    #   (the comma is optional: "What is its length which is shorter than the width?" is the same question)
+    wm = re.search(r"\b(length|width)\s*,?\s*(?:which|that)\s+(?:is|are)\s+(.*)$", q_main)
     if wm:
         cond = cond + " . " + wm.group(1) + " is " + wm.group(2)
         q_main = q_main[:wm.end(1)]
     else:
-        wm = re.search(r"\b(length|width)\s*,\s*(?:the\s+)?((?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension))\s*$", q_main)
+        wm = re.search(r"\b(length|width)\s*,?\s*(?:the\s+)?((?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension))\s*$", q_main)
         if wm:
             cond = cond + " . " + wm.group(1) + " is the " + wm.group(2)
             q_main = q_main[:wm.end(1)]
+    # when BOTH sides are asked, a "which is ..." or "the longer side" after them does not say which of the two it describes ("length and width, the longer side" vs
+    # "width and length, the longer side" would give opposite answers for the same words): decline
+    if wm and re.search(r"\blength\b", q_main) and re.search(r"\bwidth\b", q_main):
+        return None
     if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q_main):
         return None
     q = q_main

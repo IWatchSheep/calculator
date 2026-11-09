@@ -1868,11 +1868,9 @@ class FreshWordings(unittest.TestCase):
                   "What is its width, the longer side of the two?", "What is its width, which is longer than a bus?",
                   "Find its length, which is the shorter side of the lot.", "What is its length, which is shorter than the length?"):
             self.assertIsNone(answers(base + q), q)
-        # asking both sides with a clause on the last one named: the width is the longer side, so the length is 2
-        r = WS.solve(base + "Find its length and width, the longer side.")
-        self.assertEqual(r.values, [Fraction(2), Fraction(18)])
-        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)
-        self.assertEqual(r.values[0] * r.values[1], 36)
+        # asking both sides with a phrase after them ("Find its length and width, the longer side.") was read as a statement about the last side named; it declines
+        # now (see test_rectangle_both_sides_with_a_trailing_phrase_declines), because the same words give opposite answers when the two names are swapped
+        self.assertIsNone(answers(base + "Find its length and width, the longer side."))
 
     def test_clause_on_the_named_side_set(self):
         """Set 32: neighbours of the batch-29 fixes, written after the fixes were finished and run once, untuned."""
@@ -1881,6 +1879,45 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (thirty-second set, neighbours of the batch-29 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 0, 3))
+
+    def test_rectangle_both_sides_with_a_trailing_phrase_declines(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # with no phrase after it, "Find its length and width" still returns both
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        self.assertEqual(answers(base + "Find its width and length."), values(2, 18))
+        # a phrase after BOTH sides does not say which of the two it describes: "length and width, the longer side" and "width and length, the longer side" would
+        # give opposite answers for the same words, so every one of these declines
+        for q in ("Find its length and width, the longer side.", "Find its width and length, the longer side.",
+                  "Find its length and width, which is the longer side.", "Find its width and length, which is the longer side.",
+                  "Find its width and length which is the shorter side.", "Find its length and width the longer one.",
+                  "Find its length and width the shorter one.", "Find its length and width, the shorter one."):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_rectangle_clause_without_a_comma(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # the comma is optional: the same four sentences as the batch-29 ones, without it
+        for q, want in (("What is its length which is shorter than the width?", 2), ("Find its width which is the longer side.", 18),
+                        ("Find the length the shorter side.", 2), ("What is its width the longer one?", 18),
+                        ("What is its length which is the longer side?", 18), ("Find its width the shorter one.", 2),
+                        ("What is its length that is the shorter side?", 2), ("Find the length which is less than the width.", 2),
+                        ("What is its width which is the narrower side?", 2)):
+            self.assertEqual(answers(base + q), values(want), q)
+        # and the same words with a comma still agree
+        for q, want in (("What is its length, which is shorter than the width?", 2), ("Find its width, which is the longer side.", 18),
+                        ("Find the length, the shorter side.", 2), ("What is its width, the longer one?", 18)):
+            self.assertEqual(answers(base + q), values(want), q)
+        # a clause that is not a comparison of the two sides declines, with or without the comma
+        for q in ("What is its length which is shorter than a foot?", "What is its width which is shorter than the width?",
+                  "What is its width which is the longer side of the lot?", "What is its length which is shorter than a house?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_comma_less_clause_set(self):
+        """Set 33: neighbours of the batch-30 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_33 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-third set, neighbours of the batch-30 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 0, 4))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
