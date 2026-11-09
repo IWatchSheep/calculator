@@ -141,3 +141,34 @@ Changes: percent_change also declines on both / pair(s) / couple; work_together 
 crews / groups / sets" but NOT on the bare word "both" ("Running both, how long does the job take?" still returns 3).
 Measured: 1,000 generated problems: claims 79, none lost, wrong 0.  All 12 word-solver tests and 12 number-puzzle tests pass.
 No new fresh set was written for this patch (it was a patch of three named sentences); fresh_word_problems_5.py keeps its score.
+
+Batch 6: two solutions mixed to a target percent (mixture and x_alloy)
+=======================================================================
+New family two_solution_mix:  p1*x + p2*(T - x) = target*T.   Answers only when
+  * there are exactly four numbers: three percents and one amount with a unit (L, mL, kg, g, oz, lb, gallons ...),
+  * the amount is introduced by make / get / need / obtain / produce / want / total,
+  * the target percent follows the amount within six words, and lies strictly between the two source percents,
+  * nothing else changes the equation: no water, pure, evaporate, boil, drain, replace, remove, dilute, add/added,
+    price/cost/worth/selling/per pound/$, "times as", twice/double/triple/half, "as much", ratio, more/less than,
+    or a spelled count of three or more.
+  "How much of the 10% do you use?" repeats a source percent to say which amount is asked for; that repeat is not
+  counted as a new number.  The stored amounts are exact fractions; the reading shows the equation, e.g.
+  "0.25x + 0.5(100 - x) = 0.39(100)".
+Required hand-written checks: 20 L of 30% acid from 10% and 50% -> 10 and 10;  30 oz of 40% syrup from 20% and 50%
+  -> 10 oz of the 20% and 20 oz of the 50%.  Both pass (and are in HAND_ANSWERS).
+Debugging notes: (1) the first version rejected "another" ("One alloy is 25% ... and another is 75% ...") through the shared
+  spelled-number list: all five alloy problems were missed (4 of 9 claimed); the mixture family now allows "two" and
+  "another" as the shape of the problem.  (2) the acid problem has a fifth number (the repeated "the 10%") and a
+  '%' character count that included it; fixed as described above.
+Measured:
+  1,000 generated problems: claims 79 -> 88; the 9 new claims are exactly the 9 two-solution problems
+  (4 "How many liters of a p1% ... must be mixed with a p2% ..." + 5 "One alloy is ... and another is ...");
+  every amount equals the stored answer, wrong 0.
+  Not claimed, on purpose: the price-per-pound blends ("weighted_avg"), water / pure additions, drains.
+  The hand-written problems claimed by the family solver: 14 -> 16, all 16 match the hand-calculated answers.
+  Fresh set 6 (10 wordings, written after the family, run once, untuned): 4 of 4 solved, 6 of 6 required declines, 0 wrong.
+      Its 6 declines repeat sentences in the unit tests, so only its 4 answers are an independent check.
+  Fresh set 7 (5 extra wordings, none in the unit tests, run once): 2 of 2 solved, 3 of 3 required declines, 0 wrong.
+  Pipeline on the 100 hand-written problems (number reader, five families + mixtures, then the matcher), right first / in top 3:
+      set A (60, tuned on): 48 -> 53 / 58 -> 60      set B (40): 29 -> 35 / 36 -> 40  (B top-1 87.5%)
+      The families were chosen because of these sets' misses, so these two sets are no longer a clean test.

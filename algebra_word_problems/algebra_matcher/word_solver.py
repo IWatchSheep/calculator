@@ -336,7 +336,69 @@ def proportion(problem):
 
 
 # ---------------------------------------------------------------------------------------------------------
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion]
+# ---------------------------------------------------------------------------------------------------------
+# 6. two solutions with different percents mixed to a target percent
+#    p1*x + p2*(T - x) = target*T      (the generator's "mixture" and "x_alloy")
+# ---------------------------------------------------------------------------------------------------------
+_AMOUNT_UNIT = (r"(?:liters?|litres?|l|ml|milliliters?|millilitres?|kg|kilograms?|g|grams?|oz|ounces?|lbs?|pounds?|"
+                r"gallons?|quarts?|cups?)")
+# anything that is a different mixing shape (adding water or pure stuff, evaporating, draining, replacing, price per pound)
+_MIX_OTHER = re.compile(r"\b(?:water|pure|evaporat\w*|boil\w*|drain\w*|replac\w*|remov\w*|dilut\w*|add|adds|added|adding|"
+                        r"price|priced|cost|costs|per pound|per lb|worth|selling)\b|/lb|\$")
+_MIX_EXTRA = re.compile(r"\b(?:times as|twice|double|triple|half|as much|ratio|more than|less than|each of the)\b")
+_MIX_MAKE = re.compile(r"\b(?:make|makes|making|get|gets|need|needs|needed|obtain|produce|produces|want|wants|total|of the mixture)\b")
+
+
+def two_solution_mix(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    # "How much of the 10% do you use?" repeats a source percent to say which amount is asked for: it is not a new number
+    q = t.rfind("how ")
+    if q != -1:
+        for n in list(nums):
+            if n[2] > q and t[n[3]:n[3] + 1] == "%" and re.search(r"\bthe\s*$", t[:n[2]]) and any(m is not n and m[0] == n[0] and m[2] < q for m in nums):
+                nums.remove(n)
+    if len(nums) != 4 or "$" in problem:
+        return None
+    # "two solutions" / "another alloy" are the shape of this problem; a bigger spelled count (three batches ...) is not
+    if _MIX_OTHER.search(t) or _MIX_EXTRA.search(t) or re.search(r"(?:three|four|five|six|seven|eight|nine|ten)", t):
+        return None
+    if not re.search(r"\b(?:mix\w*|combin\w*|blend\w*|alloy\w*|solutions?|make|use)\b", t):
+        return None
+    if not re.search(r"\bhow (?:much|many)\b", t):
+        return None
+    pct = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
+    amt = [n for n in nums if n not in pct]
+    if len(pct) != 3 or len(amt) != 1:
+        return None
+    T, a_start, a_end = amt[0][0], amt[0][2], amt[0][3]
+    # the amount must be followed by a unit, and introduced by "make / get / need ..." (the total wanted)
+    um = re.match(r"\s*(" + _AMOUNT_UNIT + r")\b", t[a_end:])
+    if not um or not _MIX_MAKE.search(" ".join(t[:a_start].split()[-3:])):
+        return None
+    # the target is the percent that comes right after the amount (within six words)
+    after = [n for n in pct if n[2] >= a_end]
+    if not after:
+        return None
+    target_n = min(after, key=lambda n: n[2])
+    if len(t[a_end:target_n[2]].split()) > 6:
+        return None
+    sources = [n for n in pct if n is not target_n]
+    p1, p2, tg = sources[0][0], sources[1][0], target_n[0]
+    if p1 == p2 or not (min(p1, p2) < tg < max(p1, p2)) or T <= 0:
+        return None
+    x1 = T * (tg - p2) / (p1 - p2)
+    x2 = T - x1
+    if x1 <= 0 or x2 <= 0:
+        return None
+    unit = um.group(1)
+    eq = "%sx + %s(%s - x) = %s(%s)" % (show(p1 / 100), show(p2 / 100), show(T), show(tg / 100), show(T))
+    return Result("two_solution_mix", [x1, x2], eq,
+                  "x = amount of the %s%% solution, %s - x of the %s%%: %s, so x = %s %s of the %s%% and %s %s of the %s%%" % (
+                      show(p1), show(T), show(p2), eq, show(x1), unit, show(p1), show(x2), unit, show(p2)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix]
 
 
 def solve(problem):

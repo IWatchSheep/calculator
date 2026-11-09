@@ -30,6 +30,8 @@ HAND_ANSWERS = {
     "A TV is marked down 25% to $450. What was the original price?": [600],
     "Rent went up 5% to $1,260 a month. What was the old rent?": [1200],
     "If 3 kg of apples cost $7.50, how much do 8 kg cost?": [20],
+    "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
+    "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
 
 
@@ -116,6 +118,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
         self.assertIsNone(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"))
 
+    def test_two_solution_mix(self):
+        self.assertEqual(answers("How many liters of a 25% juice drink must be mixed with a 50% juice drink to make 100 liters of a 39% juice drink?"), values(44, 56))
+        self.assertEqual(answers("One alloy is 10% silver and another is 50% silver. How many kilograms of each are needed to make 20 kg of an alloy that is 16% silver?"), values(3, 17))
+        self.assertEqual(answers("You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?"), values(10, 10))
+        self.assertEqual(answers("How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?"), values(10, 20))
+        # other mixing shapes: water, pure, evaporate, drain, replace, price per pound, adding to an existing amount
+        self.assertIsNone(answers("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?"))
+        self.assertIsNone(answers("How many liters of water must be added to 10 liters of a 40% solution to make it 25%?"))
+        self.assertIsNone(answers("How many liters of a 20% solution must be added to 10 liters of a 50% solution to make a 40% solution?"))
+        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?"))
+        self.assertIsNone(answers("A 12-litre bucket of 60% paint thinner is diluted with water down to 40%. How much water is added?"))
+        # the target is not between the two sources, the percents are not all there, or a ratio is given
+        self.assertIsNone(answers("How many liters of a 10% solution and a 30% solution make 10 liters of a 40% solution?"))
+        self.assertIsNone(answers("Mixing 5 liters of a 20% solution with 5 liters of a 40% solution gives what percent?"))
+        self.assertIsNone(answers("A 30% solution and a 60% solution make 12 liters of 50% solution, with three times as much of the stronger one. How much of each?"))
+
     def test_every_number_needs_a_role(self):
         # one extra number the patterns do not use -> decline, whatever the rest says
         self.assertIsNone(answers("The sum of two numbers is 90 and their difference is 14. Find the numbers between 1 and 100."))
@@ -125,6 +143,8 @@ class Families(unittest.TestCase):
 class GroundTruth(unittest.TestCase):
     @staticmethod
     def numbers_of(text):
+        if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
+            return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
         text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
         return sorted(Fraction(x) for x in re.findall(r"-?\d+(?:\.\d+)?(?:/\d+)?", text))
@@ -214,6 +234,17 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (fifth set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 0, 4))
+
+    def test_mixture_sets(self):
+        """Sets 6 and 7 were written after the two-solution mixture family and run once, untuned.  Set 6's declines
+        repeat sentences in the unit tests (so only its 4 answers are an independent check); set 7 is fully independent."""
+        from fresh_word_problems_6 import FRESH as F6
+        from fresh_word_problems_7 import FRESH as F7
+        s6, s7 = score(F6), score(F7)
+        print("  fresh wordings (sixth set, mixtures): %d of 4 solved, %d of 6 required declines correct, 0 wrong" % (s6[0], s6[2]))
+        print("  fresh wordings (seventh set, mixtures): %d of 2 solved, %d of 3 required declines correct, 0 wrong" % (s7[0], s7[2]))
+        self.assertEqual(s6, (4, 0, 6))
+        self.assertEqual(s7, (2, 0, 3))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
