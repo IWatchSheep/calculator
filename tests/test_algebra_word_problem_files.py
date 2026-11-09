@@ -79,6 +79,19 @@ class Rows(unittest.TestCase):
             self.assertTrue(callable(r.place))
 
 
+class Catalog(unittest.TestCase):
+    def test_the_index_lists_every_problem_and_its_diagram(self):
+        import algebra_word_problem_catalog as catalog
+        items = catalog.load_catalog(os.path.join(LIB, "INDEX.md"))
+        self.assertEqual(len(items), 1000)
+        self.assertEqual(len({i["category"] for i in items}), 55)
+        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 365)
+        savings = next(i for i in items if i["key"] == "savings/0848")
+        self.assertIn("Ben has $150", savings["problem"])
+        self.assertEqual(savings["id"], "0848")
+        self.assertTrue(os.path.isfile(catalog.diagram_path(LIB, savings)))
+
+
 class Computing(unittest.TestCase):
     def test_ready_problems_compute_with_their_stored_numbers(self):
         ready = 0
