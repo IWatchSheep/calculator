@@ -181,6 +181,17 @@ class Families(unittest.TestCase):
         r = WS.solve("An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each.")
         self.assertIn("1x + 1y = 1.3", r.reading)
         self.assertIn("2x + 3y = 3.4", r.reading)
+        # a price followed by "each" is the price of ONE item, not the total of the purchase (found by Grok)
+        self.assertIsNone(answers("2 apples and 3 pears cost $5 each. 4 apples and 1 pear cost $6. Find the price of one of each."))
+        self.assertIsNone(answers("2 apples and 3 pears cost $5 apiece. 4 apples and 1 pear cost $6. Find the price of one of each."))
+        self.assertIsNone(answers("2 apples and 3 pears cost $5 per piece. 4 apples and 1 pear cost $6. Find the price of one of each."))
+        # plural forms: "passes" and "pass" are the same item, and the reading keeps the words as written
+        self.assertEqual(answers("3 adult passes and 2 student passes cost $62. 1 adult pass and 4 student passes cost $54. Find the price of one of each."), values(10, 14))
+        r = WS.solve("5 burgers and 1 fries cost $55.30. 4 burgers and 2 fries cost $54.50. Find the price of one of each.")
+        self.assertIn("'fries'", r.reading)
+        self.assertNotIn("frie'", r.reading)
+        self.assertEqual(WS._singular("passes"), WS._singular("pass"))
+        self.assertEqual(WS._singular("sandwiches"), WS._singular("sandwich"))
         # "two such" is not a count of items; a count with no role, three items, one statement, other items, dependent equations
         self.assertIsNone(answers("An apple and a pear cost $1.30. Two such apples and three pears cost $3.40. Find the price of each."))
         self.assertIsNone(answers("An apple and a pear cost $1.30. Twice as many apples and three pears cost $3.40. Find the price of each."))
@@ -318,13 +329,16 @@ class FreshWordings(unittest.TestCase):
         self.assertEqual((solved, declined, required), (4, 1, 4))
 
     def test_two_purchase_set(self):
-        """Set 9: two-purchase wordings written after the family and run once, untuned.  The one declined answer is
-        "adult passes / adult pass": the plural-stripping turns "passes" into "passe" and "pass" into "pas" (a known gap)."""
-        from fresh_word_problems_9 import FRESH
-        solved, declined, required = score(FRESH)
-        print("  fresh wordings (ninth set, two purchases): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+        """Set 9 was written after the two-purchase family and run once, untuned: 3 solved, 1 declined ("adult passes /
+        adult pass": the plural stripping made "passe" and "pas").  After the plural fix it is a development set and all 4 solve.
+        Set 10 was written after the plural fix and the "each / apiece / per" rule and run once, untuned."""
+        from fresh_word_problems_9 import FRESH as F9
+        from fresh_word_problems_10 import FRESH as F10
+        self.assertEqual(score(F9), (4, 0, 4))
+        solved, declined, required = score(F10)
+        print("  fresh wordings (tenth set, two purchases): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (3, 1, 4))
+        self.assertEqual((solved, declined, required), (5, 0, 2))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

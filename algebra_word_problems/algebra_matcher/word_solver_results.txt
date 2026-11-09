@@ -255,3 +255,18 @@ Measured:
   Not fixed (a known gap; declining is safe).
   Pipeline on the 100 hand-written problems (reader, families, matcher), right first / in top 3:
       set A 53/60, 60/60 (unchanged);   set B 35/40 -> 36/40, 40/40.
+
+Batch 8 patch: "each" after a price, and plural forms (found by Grok)
+==============================================================
+  * "2 apples and 3 pears cost $5 each. 4 apples and 1 pear cost $6. Find the price of one of each." was answered
+    13/10 and 4/5: the "$5 each" is the price of ONE item, but the solver used 5 as the total of the five pieces.
+    Fixed: a price followed by each / apiece / per declines.  (Regression tests for each, apiece and per.)
+  * The plural trim removed every trailing "s": "fries" became "frie" in the reading of generated problem 0884, and
+    "passes" / "pass" became "passe" / "pas", so the adult-pass problem declined.  Now "ss" words keep their s, "-es"
+    after s / x / z / ch / sh is dropped (passes -> pass, boxes -> box, sandwiches -> sandwich), "-ies" becomes "-y"
+    (fries -> fry), and the reading shows the item words as written: "x = price of one 'burgers', y = price of one 'fries'".
+    The singular form is used only to tell that two statements name the same items.
+  * The adult-pass problem now solves (10 and 14); fresh set 9 is a development set (4 solved, 0 declined, 4/4 declines).
+Measured: 1,000 generated problems: claims 97, wrong 0; 19 word-solver tests and 12 number-puzzle tests pass.
+  Fresh set 10 (7 wordings, written after the patch, run once, untuned): 5 with an answer: 5 solved, 0 declined;
+  2 required declines: 2 of 2 (one of them repeats a sentence in the unit tests); 0 wrong.

@@ -472,14 +472,27 @@ def _count(word):
     return int(word) if word.isdigit() else _COUNT_WORDS[word]
 
 
+def _singular_word(w):
+    if len(w) > 4 and w.endswith("ies"):
+        return w[:-3] + "y"
+    if len(w) > 4 and w.endswith(("sses", "xes", "zes", "ches", "shes")):
+        return w[:-2]
+    if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+        return w[:-1]
+    return w
+
+
 def _singular(phrase):
-    return " ".join(re.sub(r"(?<=[a-z])s$", "", w) if len(w) > 3 else w for w in phrase.split())
+    """Only used to tell that "passes" and "pass" (or "pears" and "pear") name the same item; the reading keeps the words as written."""
+    return " ".join(_singular_word(w) for w in phrase.split())
 
 
 def two_purchases(problem):
     t = clean(problem).replace("$", "")
     found = list(_PURCHASE.finditer(t))
     if len(found) != 2 or re.search(r"\bsuch\b", t):
+        return None
+    if any(re.match(r"\s*(?:each|apiece|per)\b", t[m.end():]) for m in found):
         return None
     rows = []
     digit_counts = 0
@@ -515,9 +528,10 @@ def two_purchases(problem):
         return None
     eq1 = "%sx + %sy = %s" % (a, b, show(T1))
     eq2 = "%sx + %sy = %s" % (c, d, show(T2))
+    first = found[0].groups()
     return Result("two_purchases", [x, y], "%s;  %s" % (eq1, eq2),
-                  "x = price of one %s, y = price of one %s: %s and %s, so x = %s and y = %s" % (
-                      n1, n2, eq1, eq2, show_exact(x), show_exact(y)))
+                  "x = price of one '%s', y = price of one '%s': %s and %s, so x = %s and y = %s" % (
+                      first[1], first[3], eq1, eq2, show_exact(x), show_exact(y)))
 
 
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
