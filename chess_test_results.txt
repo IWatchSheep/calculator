@@ -1,0 +1,501 @@
+FORMING CHESS TEST RESULTS
+Run on 2026-11-09 for the project in C:\Users\I_wat\PycharmProjects\calculator
+Chess program tested: forming_chess-main (Rust, forming_chess 0.2.0, built with rustc 1.99.1 / cargo 1.99.1)
+Why it was tested: to learn whether its ideas (archive of past games, four lists, 20 strategy templates) can help
+pick the right algebra word problem from the text a user types in the template box.
+
+CONTENTS
+  1. Summary of the results
+  2. Unit tests (cargo test)
+  3. King and pawn against king: solved, and checked against an independent solution
+  4. The 20 strategies, found with the archives
+  5. Lists 3 and 4 built from archives (examples)
+  6. The algebra word problem file and a matching experiment
+  7. What I learned, and how the archive and the four lists could pick the algebra problem
+  8. How to run all of this again
+  Raw program output is kept in chess_experiments\raw_outputs\ next to this file.
+
+====================================================================================================
+1. SUMMARY OF THE RESULTS
+====================================================================================================
+
+ - Unit tests: all 37 tests in the chess project pass (26 index/drill/proof tests, 7 Lists 1-2 tests, 4 move
+   generation tests). 12 seconds including the build.
+ - King and pawn against king (KPK) is SOLVED. 1,400,000 drill games (self-play) classified all 165,676 distinct
+   KPK positions: 111,282 are wins for the pawn side, 54,394 are draws, 0 are unproven.
+ - That result was checked against a separate, plain retrograde solution of the endgame: every proven win and every
+   proven draw agrees (0 wrong). The program's own tests also contain this check at a smaller size.
+ - Longest forced win in KPK: 54 individual moves (plies), which is 27 full moves. The program's "win in N" counts
+   individual moves (plies): "win in 13" means 7 full moves. N is the distance of the line the program found, not
+   always the shortest win: 80,595 of the 111,282 wins have a longer stored distance than the shortest possible.
+ - Replaying 1,989 proven wins spread over the whole endgame: all 1,989 ended in promotion after exactly the stored
+   number of plies (0 off by even one).
+ - The 20 strategies: all 20 were found in the archives. KPK drill games (19.8 million archived moves) show 13 of
+   the 20; 8 famous full games add the rest. With the flags the archive stores (the mover's), 19 of 20 reach the
+   COMPLETION stage; the 20th (Opposite-Side Castling Attack) completes only on the other side's flags in one game.
+ - Lists 3 and 4 work as the rules say: from an empty archive every move is "never tried"; from 8 stored games the
+   starting position already ranks e4 (played 5 times, 5 wins) ahead of d4, Nf3 and f3; List 4 shows only exchanges
+   that really happened (for example Bxf3 Qxf3 dxe5: gain 420, loss 330, net 90).
+ - Algebra file: 1,000 problems, 55 categories, 327 distinct wordings (numbers masked). A simple word-matching
+   test finds the right category 99% of the time when the same wording is in the archive, but only about 50% of the
+   time for a brand-new wording (equation shape: 92% and 22%). Match confidence is informative: the most confident
+   quarter of matches were right about 93% of the time on known types.
+ - Conclusion: the chess program's design (normalized key + archive index + proof by an independent check + four
+   lists) transfers to the algebra operator. Its code does not, and the matching accuracy for new wordings must
+   come from good cue features and a growing archive, not from the chess ideas alone. See part 7.
+
+====================================================================================================
+2. UNIT TESTS (cargo test --release)
+====================================================================================================
+Build: 4.8 s. Tests: 12.2 s in total. Result: 37 passed, 0 failed.
+
+  test closing_rule_proves_a_circle_a_draw ... ok
+  test empty_index_start_lists ... ok
+  test a_short_index_line_is_an_error_not_a_panic ... ok
+  test bank_selection_changes_counts_not_proofs ... ok
+  test draw_by_rule_counts_but_proves_nothing ... ok
+  test captured_pawn_is_a_draw_and_proves_the_lone_king_position ... ok
+  test list3_order_for_the_lone_king_is_reversed ... ok
+  test middlegame_key_is_exact_and_never_similar ... ok
+  test list3_order_for_the_pawn_side ... ok
+  test one_bad_move_leaves_the_whole_game_out ... ok
+  test promotion_goals ... ok
+  test replaying_a_position_updates_one_entry ... ok
+  test list4_shows_what_was_played ... ok
+  test similar_rows_are_labeled_and_never_used_as_proof ... ok
+  test pawn_side_needs_one_win_lone_king_needs_every_move ... ok
+  test proof_flows_back_to_positions_from_earlier_games ... ok
+  test scores_come_from_one_games_pair ... ok
+  test a_bad_game_is_skipped_and_later_games_still_merge ... ok
+  test an_unreadable_index_is_rebuilt_from_the_games ... ok
+  test a_cut_off_line_is_dropped_and_the_game_is_stopped ... ok
+  test stopped_and_killed_games ... ok
+  test king_and_pawn_counts_and_mirror_share_an_entry ... ok
+  test stalemating_and_capturable_promotions_are_draws ... ok
+  test drill_starts_and_seed ... ok
+  test drill_writes_compact_records_and_rebuilds_the_same_index ... ok
+  test drill_proofs_are_correct_against_a_retrograde_solution ... ok
+  test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.22s
+  test capture_examples_from_step_14_3 ... ok
+  test central_pawn_break_completes_from_the_turn_window ... ok
+  test list1_never_uses_45_or_75 ... ok
+  test promotion_template ... ok
+  test starting_list1_is_taking_the_center_and_king_shelter_at_30 ... ok
+  test list2_only_on_the_evaluated_players_turn ... ok
+  test history_files_keep_five_turns_with_full_listings ... ok
+  test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+  test endgame_and_promotion_positions ... ok
+  test kiwipete ... ok
+  test start_position_counts ... ok
+  test start_position_depth_5 ... ok
+  test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+====================================================================================================
+3. KING AND PAWN AGAINST KING (KPK): THE SOLUTION
+====================================================================================================
+
+How it was run
+  forming_chess --dir <folder> drill 1 1400000      play both sides of 1,400,000 seeded KPK games, store them, learn
+  verify_kpk 1400000                                 solve KPK separately by plain retrograde search, compare
+  chess_probe kpk <folder> <fen>...                  (my test program) read the solved index, print lines, check distances
+Started 01:03:26, drill finished 01:44:03 (40.6 min while other tests were running on the same machine).
+Disk used by the archive: 649 MB (the position index alone is 194 MB). The README measured 16 minutes on a 2-core
+machine; here the drill and the independent check ran side by side with my other tests.
+
+The drill, in the program's own words
+  10000 games: 25944 positions, 8924 proven wins, 631 proven draws
+  50000 games: 62714 positions, 31929 proven wins, 3100 proven draws
+  100000 games: 116558 positions, 49944 proven wins, 8114 proven draws
+  200000 games: 175928 positions, 84713 proven wins, 19063 proven draws
+  500000 games: 176325 positions, 109810 proven wins, 35627 proven draws
+  1000000 games: 176531 positions, 118347 proven wins, 38739 proven draws
+  1250000 games: 176598 positions, 118871 proven wins, 56824 proven draws
+  1350000 games: 176601 positions, 119390 proven wins, 56840 proven draws
+  1400000 games: 176601 positions, 119390 proven wins, 56840 proven draws
+  Done: 1400000 games (942414 pawn-side wins, 390949 draws at a goal, 66637 draws by rule).
+  Index: 176601 positions, 119390 proven wins, 56840 proven draws.
+
+  Note: the "positions / proven" figures above count every stored position, including the 10,925 positions that
+  come after a promotion (king and queen/rook against king). The KPK-only figures are below.
+  Seeing a position is not the same as proving it: all positions had been seen by about 200,000 games, but the
+  draws were only proven much later (36,000 draws at 1,000,000 games, 54,000 at 1,250,000) because a draw needs
+  every move tried and the closing rule to fire. Most wins were proven by 500,000 games.
+
+The independent check (verify_kpk)
+  true: 165676 positions, 111282 wins for the pawn side, 54394 draws
+  after 1400000 drill games: proven wins correct 111282, proven draws correct 54394, wrong 0, win distances longer than best 80595
+
+The solved index, read by my test program (chess_probe kpk)
+index loaded: 176601 stored positions, 0 games merged. notes: []
+king and pawn against king, positions in the index: 165676
+  proven wins for the pawn side: 111282   proven draws: 54394   not proven: 0   longest forced win: 54 moves
+
+position 3k4/8/3K4/3P4/8/8/8/8 w - - 0 1
+  PROVEN WIN for the pawn side in 13 moves
+  best play: 1. Kc6 Ke7 2. d6+ Ke6 3. Kc7 Kd5 4. Kd7 Kc4 5. Ke7 Kb3 6. d7 Ka2 7. d8=Q    -> white-wins
+
+position 7k/8/7K/7P/8/8/8/8 w - - 0 1
+  PROVEN DRAW
+  best play: 1. Kg5 Kh7 2. h6 Kh8 3. Kh5 Kh7 4. Kh4 Kxh6    -> draw
+
+position 8/8/8/3p4/3k4/8/8/3K4 b - - 0 1
+  PROVEN WIN for the pawn side in 17 moves
+  best play: 1... Kc3 2. Ke2 d4 3. Kd1 Kd3 4. Ke1 Kc2 5. Ke2 d3+ 6. Ke1 d2+ 7. Kf1 Kd3 8. Kg1 Ke2 9. Kg2 d1=Q    -> black-wins
+
+position 4k3/8/4K3/4P3/8/8/8/8 w - - 0 1
+  PROVEN WIN for the pawn side in 13 moves
+  best play: 1. Kf6 Kd7 2. e6+ Kd6 3. Kf7 Ke5 4. Ke7 Kf4 5. Kd7 Kg3 6. e7 Kh2 7. e8=Q    -> white-wins
+
+position 8/8/8/4k3/4P3/4K3/8/8 w - - 0 1
+  PROVEN DRAW
+  best play: 1. Kf2 Kf4 2. Kg1 Kg4 3. Kh1 Kh4 4. Kg2 Kg4 5. Kg1 Kh4 6. Kf1 Kg4 7. Ke2 Kf4 8. Kd3 Ke5 9. Ke2 Kf4 10. Kd3 Ke5 11. Ke2 Kf4 12. Kd3 Ke5 13. Ke2 Kf4 14. Kd3 Ke5 15. Ke2 Kf4 16. Kd3 Ke5 17. Ke2 Kf4 18. Kd3 Ke5 19. Ke2 Kf4 20. Kd3 Ke5 21. Ke2 Kf4 22. Kd3 Ke5 23. Ke2 Kf4 24. Kd3 Ke5 25. Ke2 Kf4 26. Kd3 Ke5 27. Ke2 Kf4 28. Kd3 Ke5 29. Ke2 Kf4 30. Kd3 Ke5 
+
+position 8/8/8/8/4k3/8/4P3/4K3 w - - 0 1
+  PROVEN DRAW
+  best play: 1. Kf1 Ke3 2. Kg1 Kxe2    -> draw
+
+position 8/8/8/8/4k3/8/4P3/4K3 b - - 0 1
+  PROVEN DRAW
+  best play: 1... Ke3 2. Kd1 Kf4 3. Kd2 Ke4 4. e3 Kf5 5. Kd3 Ke5 6. e4 Kf6 7. Ke2 Kg5 8. Kf1 Kh4 9. Kf2 Kg5 10. Ke3 Kf6 11. Ke2 Kg5 12. Kf1 Kh4 13. Kf2 Kg5 14. Ke3 Kf6 15. Ke2 Kg5 16. Kf1 Kh4 17. Kf2 Kg5 18. Ke3 Kf6 19. Ke2 Kg5 20. Kf1 Kh4 21. Kf2 Kg5 22. Ke3 Kf6 23. Ke2 Kg5 24. Kf1 Kh4 25. Kf2 Kg5 26. Ke3 Kf6 27. Ke2 Kg5 28. Kf1 Kh4 29. Kf2 Kg5 30. Ke3 Kf6 31. Ke2 
+
+distance check on 1989 proven wins sampled across the whole endgame:
+  pawn side won by promotion after exactly the stored number of plies: 1989   one ply more than stored (the promoting move): 0
+  won, but a different number of moves: 0 (largest gap 0)   did not end in a win: 0   did not finish in 300 plies: 0
+
+What the lines show
+  - White king on d6 in front of its pawn on d5, Black king on d8: a proven win in 13 plies, i.e. 7 full moves (the
+    README's kpk-win). The program's "win in N" always counts individual moves (plies).
+  - h-pawn with the lone king in the h8 corner: a proven draw (the README's kpk-draw), the pawn side cannot win.
+  - King in front of the pawn: with the king blocking the pawn on e4 the position is a proven draw.
+  - The same method works for Black as the pawn side (position 3 above: a proven win in 17 plies, 9 full moves).
+
+====================================================================================================
+4. THE 20 STRATEGIES, FOUND WITH THE ARCHIVES
+====================================================================================================
+
+The 20 templates (rules.txt, Step 14.4). Each has three stages: foundation (flag 1), progress (flag 2),
+completion (flag 4). Every archived move stores the mover's 20 flags, for example "9=3,19=7" means Passed-Pawn
+Advance has foundation+progress and Promotion has all three.
+
+   1 Central Pawn Occupation      6 Opposite-Side Castling Attack   11 Isolated-Pawn Attack     16 Discovered Attack
+   2 Central Pawn Break           7 Fianchetto                      12 Backward-Pawn Pressure   17 Fork
+   3 Kingside Pawn Storm          8 Open-File Control               13 Knight Outpost           18 Skewer
+   4 Queenside Minority Attack    9 Seventh-Rank Invasion           14 Bishop Pair              19 Major-Piece Battery
+   5 King Shelter                10 Passed-Pawn Advance             15 Pin                      20 Promotion
+
+Archives used
+  A. KPK drill archive: 1,400,000 games, 19,798,921 moves (king and pawn against king only).
+  B. Famous games archive: 8 full games written by me in standard notation, replayed by the program's own move
+     rules (every move legal, 0 problems) and stored in a general-bank archive in the program's own format:
+     Opera Game, Immortal Game, Evergreen Game, Game of the Century, Scholar's Mate, Fool's Mate, a Queen's Gambit
+     Declined main line, and a Sicilian Najdorf with opposite-side castling (276 archived moves).
+  The two archives together: 1,400,008 games, 19,799,197 moves.
+
+Result, archives A + B together (stage counts are archived positions; g: = number of games in which it occurred)
+  archive files read: 9   moves read: 19799197
+  results: white wins 942419  black wins 2  draws 457587  other 0
+  == Strategy flags found in the archive <scratch>/chess_out/game_files/ai_learning/games + <scratch>/chess_out/famous_archive/ai_learning/games ==
+  games: 1400008   positions with flags counted: 19412721
+   #  strategy                         foundation     progress   completion     g:found    g:prog   g:compl   best stage
+   1  Central Pawn Occupation             2427761       286011            5      312471    108383         1   COMPLETION
+   2  Central Pawn Break                      147           17           40           8         6         6   COMPLETION
+   3  Kingside Pawn Storm                      38          104            4           5         5         1   COMPLETION
+   4  Queenside Minority Attack                65      6458965            9           6    905762         3   COMPLETION
+   5  King Shelter                         841397       841363           42      450597    450596         4   COMPLETION
+   6  Opposite-Side Castling Attack       1368836       928285            0      387368    322774         0   progress
+   7  Fianchetto                           127673           36           20       52085         2         2   COMPLETION
+   8  Open-File Control                    946317       946228       946162      946108    946108    946106   COMPLETION
+   9  Seventh-Rank Invasion                946317       946153           17      946108    946107         5   COMPLETION
+  10  Passed-Pawn Advance                 9085992      8229558       635766     1241746   1132187    286654   COMPLETION
+  11  Isolated-Pawn Attack                9380083       587292       527843     1254400    391808    360133   COMPLETION
+  12  Backward-Pawn Pressure                   67           29           29           6         5         5   COMPLETION
+  13  Knight Outpost                      4824164           21            2      969653         3         1   COMPLETION
+  14  Bishop Pair                              50          548           34           5       375         2   COMPLETION
+  15  Pin                                     138          127           57           8         8         5   COMPLETION
+  16  Discovered Attack                      4759         4711         4679        4657      4655      4654   COMPLETION
+  17  Fork                                    215           24           11           8         6         5   COMPLETION
+  18  Skewer                                   67           45            2           7         6         1   COMPLETION
+  19  Major-Piece Battery                     113           99            8           8         8         1   COMPLETION
+  20  Promotion                           7232268      6091932      3909832     1030711    942559    888479   COMPLETION
+  strategies seen at least once: 20 of 20
+
+Where each strategy was found
+  Only in full games (not in KPK): 2 Central Pawn Break, 3 Kingside Pawn Storm, 12 Backward-Pawn Pressure,
+  15 Pin, 17 Fork, 18 Skewer, 19 Major-Piece Battery.
+  Also in KPK drill games: 1, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 16 and 20 (13 strategies in all; Promotion
+  reaches completion 3,909,832 times there).
+  Opposite-Side Castling Attack (6): found at foundation and progress in the archive; it reaches completion only
+  on the NON-moving side's flags (Sicilian game, ply 33, a result the archive does not store because it keeps the
+  mover's flags only). Counting both sides in the famous games, all 20 reach completion except Promotion, which
+  those games never reach, and Promotion is completed in the KPK games.
+
+Famous games alone, both sides counted (the program's template flags after every ply)
+  == Strategy flags of BOTH sides after each ply ==
+  games: 8   positions with flags counted: 552
+   #  strategy                         foundation     progress   completion     g:found    g:prog   g:compl   best stage
+   1  Central Pawn Occupation                 433          273            9           8         8         1   COMPLETION
+   2  Central Pawn Break                      303           33           79           8         6         6   COMPLETION
+   3  Kingside Pawn Storm                      72          202            8           5         5         1   COMPLETION
+   4  Queenside Minority Attack               133          215           16           6         6         3   COMPLETION
+   5  King Shelter                            450          375           79           8         7         4   COMPLETION
+   6  Opposite-Side Castling Attack            38           44            1           2         2         1   COMPLETION
+   7  Fianchetto                              101           72           40           3         2         2   COMPLETION
+   8  Open-File Control                       431          251          114           7         6         4   COMPLETION
+   9  Seventh-Rank Invasion                   431           94           29           7         5         5   COMPLETION
+  10  Passed-Pawn Advance                      84           47           11           5         4         1   COMPLETION
+  11  Isolated-Pawn Attack                    157          112           38           5         5         5   COMPLETION
+  12  Backward-Pawn Pressure                  138           60           60           6         6         6   COMPLETION
+  13  Knight Outpost                          180           41            4           5         3         1   COMPLETION
+  14  Bishop Pair                              97          350           67           5         7         2   COMPLETION
+  15  Pin                                     273          250          116           8         8         6   COMPLETION
+  16  Discovered Attack                       216          114           50           8         5         5   COMPLETION
+  17  Fork                                    402           38           14           8         6         5   COMPLETION
+  18  Skewer                                  130           83            2           7         6         1   COMPLETION
+  19  Major-Piece Battery                     220          192           16           8         8         1   COMPLETION
+  20  Promotion                               125           30            0           6         1         0   progress
+  strategies seen at least once: 20 of 20
+
+  First completion of each strategy in those games (game and ply):
+  first completion of #1 Central Pawn Occupation: Game_of_the_Century_Byrne_Fischer_1956 ply 15 (White) e4
+  first completion of #2 Central Pawn Break: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+  first completion of #3 Kingside Pawn Storm: Sicilian_Najdorf_opposite_castling_storm ply 27 (White) f4
+  first completion of #4 Queenside Minority Attack: Immortal_Game_Anderssen_1851 ply 34 (Black) Qxb2
+  first completion of #5 King Shelter: Evergreen_Game_Anderssen_1852 ply 13 (White) O-O
+  first completion of #6 Opposite-Side Castling Attack: Sicilian_Najdorf_opposite_castling_storm ply 33 (Black side)
+  first completion of #7 Fianchetto: Evergreen_Game_Anderssen_1852 ply 40 (Black) Nxe7
+  first completion of #8 Open-File Control: Opera_Game_Morphy_1858 ply 10 (Black) dxe5
+  first completion of #9 Seventh-Rank Invasion: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+  first completion of #10 Passed-Pawn Advance: Evergreen_Game_Anderssen_1852 ply 18 (Black) Qg6
+  first completion of #11 Isolated-Pawn Attack: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+  first completion of #12 Backward-Pawn Pressure: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+  first completion of #13 Knight Outpost: Immortal_Game_Anderssen_1851 ply 33 (White) Nd5
+  first completion of #14 Bishop Pair: Opera_Game_Morphy_1858 ply 10 (White side)
+  first completion of #15 Pin: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+  first completion of #16 Discovered Attack: Opera_Game_Morphy_1858 ply 6 (White side)
+  first completion of #17 Fork: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+  first completion of #18 Skewer: Opera_Game_Morphy_1858 ply 31 (White) Qb8+
+  first completion of #19 Major-Piece Battery: Sicilian_Najdorf_opposite_castling_storm ply 19 (White) O-O-O
+
+Not done: I did not write one hand-made test position per strategy. The archives already show every strategy.
+
+====================================================================================================
+5. LISTS 3 AND 4 BUILT FROM ARCHIVES (examples, from the program's own console)
+====================================================================================================
+
+Example 1. Empty archive, standard start (List 1 uses only the present game, Lists 3 and 4 need the archive)
+  List 1 - Forming strategies for White:   30 Central Pawn Occupation,  30 King Shelter
+  List 2 - Captures: none
+  List 3 - every one of the 20 legal moves "never tried"
+  List 4 - empty
+
+Example 2. After storing the 8 famous games (269 positions, 268 tried moves): List 3 at the standard start
+  e4       tried  played 5 W5 D0 L0     strategies: Central Pawn Occupation 60, King Shelter 45
+  Nf3      tried  played 1 W0 D0 L1     strategies: King Shelter 60, Central Pawn Occupation 30
+  d4       tried  played 1 W0 D1 L0     strategies: Central Pawn Occupation 60, King Shelter 30
+  f3       tried  played 1 W0 D0 L1     strategies: Kingside Pawn Storm 60, Central Pawn Occupation 30, King Shelter 30
+  (the other 16 moves: never tried)   No row is proof: this is a middlegame-type position, so there are no
+  proofs and no "similar" rows, exactly as rules.txt says.
+
+Example 3. A position inside a game (Opera Game after 4. dxe5, Black to move), same archive
+  List 3:  Bxf3  tried  played 1 W0 D0 L1
+           strategies: Discovered Attack 100, Central Pawn Break 75, Pin 60, Central Pawn Occupation 45,
+           Open-File Control 45, Backward-Pawn Pressure 30, Bishop Pair 30, Fork 30, King Shelter 30,
+           Seventh-Rank Invasion 30        (all other moves: never tried)
+  List 4:  Bxf3  reply Qxf3  next dxe5  played 1  gain 420  loss 330  net 90
+           This is what past games really did within one full turn, not a guessed exchange.
+  The 75 and 45 scores come from one game's own pair of stages (rules.txt Step 12), never from mixing games.
+
+Example 4. The solved KPK archive (1,400,000 games), preset kpk-win, White to move
+  List 1:  60 Passed-Pawn Advance,  30 Central Pawn Occupation,  30 Knight Outpost,  30 Promotion
+  List 3 ("proven win in N" counts individual moves, plies):
+           Kc6  proven win in 13   played 52    W52 D0 L0
+           Ke6  proven win in 15   played 1771  W1771 D0 L0
+           Kc5  proven draw        played 1     W0 D1 L0
+           Ke5  proven draw        played 1     W1 D0 L0
+  The last row is a reminder that counts are not proof: one past game won after Ke5, yet the position is a proven draw.
+  Preset kpk-draw:  Kg5 proven draw (played 129, all draws),  Kg6 proven draw (played 2).
+  Preset kpk-black: Kc3 proven win in 17,  Kd3 proven win in 19,  Ke3 never tried (a won position needs only one
+  tried winning move),  the other moves proven draws.
+
+====================================================================================================
+6. THE ALGEBRA WORD PROBLEM FILE AND A MATCHING EXPERIMENT
+====================================================================================================
+
+Files in the project folder (written by Claude, not yet in the repository):
+  algebra_word_problems.txt                    1,000 problems with worked solutions
+  algebra_word_problems_note_from_claude.txt   a description of that file
+
+The file
+  - Entry layout: "#0001 [Category]" / Problem / Let / Equation / Solve / Answer, entries separated by a line of dashes.
+  - 1,000 problems, 55 categories, 216 problem types (as stated in the note), at most 5 problems per type.
+  - 22.9 words per problem on average (6 to 51), 3.17 numbers per problem on average (1 to 10).
+  - Masking the numbers gives 479 distinct sentences; masking names too gives 327 distinct wordings and 180 distinct
+    equation shapes.
+  - The note says all 1,000 answers were checked by substituting them back into their equations.
+
+The experiment (algebra_match_experiment.py): how well does plain word matching find the type of a problem?
+  Method: numbers -> #, names -> <name>, drop common words, one-word and two-word features, TF-IDF cosine nearest
+  neighbour. "Leave one wording out" removes every problem with the same wording before the match is made, so the
+  matcher must handle a wording it has never stored.
+
+  problems: 1000  categories: 55  distinct wordings: 327  distinct equation shapes: 180
+  
+  A) same wording may be in the archive (leave one out)
+     category right: 99.1%   equation shape right: 92.0%
+  
+  B) the exact wording is NOT in the archive (leave one wording out)
+     category right (best match): 50.4%   in the best 3: 52.2%
+     equation shape right (best match): 22.3%   in the best 3: 23.8%
+     most confident  25% of the matches: category right 85.6%, shape right 53.2%  (score >= 0.57)
+     most confident  50% of the matches: category right 69.8%, shape right 32.2%  (score >= 0.35)
+     most confident  75% of the matches: category right 54.7%, shape right 23.9%  (score >= 0.22)
+     most confident 100% of the matches: category right 50.4%, shape right 22.3%  (score >= 0.02)
+  
+  C) new wording + 15%% of the words dropped + different numbers
+     category right: 49.0%   equation shape right: 21.6%
+  
+  D) most common wrong category matches under B (true -> matched):
+     Linear cost                  -> Break-even                   28 of 60
+     Number puzzle                -> Percent                      11 of 42
+     Geometry (quadratic)         -> Geometry (area)              10 of 32
+     Linear cost                  -> Direct variation             10 of 60
+     Linear model                 -> Formula                      10 of 52
+     Rational equation            -> Current / wind               10 of 36
+     Geometry (area)              -> Geometry (quadratic)         9 of 18
+     System of equations          -> Proportion                   9 of 68
+  
+  numbers per problem: avg 3.08; problems with >=5 numbers: 74
+  
+  B2) leave one wording out, split by whether the archive still holds that problem TYPE (category + equation shape)
+     type still in the archive (a new wording of a known type): 455 problems
+     type NOT in the archive (never seen): 545 problems
+     for the known-type group: category right 59.6%, equation shape right 47.9%, both right 47.9%
+     most confident  25% (score >= 0.70): type right 92.9%
+     most confident  50% (score >= 0.32): type right 73.1%
+     most confident  75% (score >= 0.20): type right 52.8%
+     most confident 100% (score >= 0.04): type right 47.9%
+
+How to read it
+  - If the same wording is already in the archive the match is almost always right (A).
+  - For a wording the archive has never seen it is right about half the time for the category and about a fifth of
+    the time for the exact equation shape (B, C). C shows the result barely changes with new numbers and 15% of the
+    words dropped: the numbers are not what the matcher uses.
+  - In this file 545 of the 1,000 problems belong to a type that has only ONE wording, so "a type the archive has
+    never seen" is common here (B2). For the 455 problems whose type the archive still holds, the best match has
+    both category and equation shape right 47.9% of the time, and 92.9% in the most confident quarter (score 0.70+).
+  - Caution: this file is generated from templates, so these numbers are a baseline for the file, not a measure of
+    how real textbook problems or a user's own wording would behave.
+
+====================================================================================================
+7. WHAT I LEARNED, AND HOW THE ARCHIVE AND THE FOUR LISTS COULD PICK THE ALGEBRA PROBLEM
+====================================================================================================
+
+7.1 What the chess program does (facts from the code, the rules and the tests)
+  - rules/rules.txt is the specification and the README explains the behavior. Nothing is looked ahead.
+  - List 1 and List 2 use only the present game: the last five turns and the 20 pre-made templates. A strategy is
+    listed when its foundation, progress or completion is met (scores 30 / 60 / 100). List 2 prices the captures
+    those strategies allow, net of the cost of losing the capturing piece.
+  - List 3 and List 4 use only past games, through a position index: one entry per distinct position, with the
+    legal moves, how often each was played, the wins/draws/losses, and per strategy the stage pairs one game
+    produced. List 3 has one row per legal move: proven win in N, proven draw, tried before (with counts), or never
+    tried. List 4 shows the captures and promotions past games really made after that move.
+  - A position key is normalized (color flipped, board mirrored) so equivalent positions share one entry: 331,352
+    KPK positions become 165,676.
+  - "Proven" comes from bookkeeping, not from counts: a backward update through the stored moves plus a closing rule
+    for draws. The program never calls a position proven because it won often. The independent retrograde solution
+    confirmed that 0 of 165,676 proofs are wrong.
+  - Similar positions are only used for KPK, are labeled "similar", and are never proof. In ordinary middlegames the
+    lists show only exact past positions.
+  - The drill plays both sides, tries never-tried moves first, and needs about 1.3 million games to prove the whole
+    endgame. Positions are all seen far earlier than they are proven.
+  - The archive saves 20 strategy flags for every move, so the archive is also a record of which strategies occurred.
+  - Weakness found: the stored "win in N" is not always the shortest win (72% of KPK wins have a longer stored
+    distance than the shortest). The win/draw answer is exact; the distance is a bound.
+
+7.2 How each piece maps onto algebra word problems (a proposal, not built)
+  Chess program                          Algebra word problem operator
+  ------------------------------------   ---------------------------------------------------------------------------
+  position                               the user's text
+  the five-turn window                   the sentences read so far
+  normalized position key                normalized wording: numbers -> #, names -> <name>, units and words
+                                         standardized. One archive entry per distinct normalized wording
+                                         (the file has 327, not 1,000)
+  20 strategy templates                  about 20 problem families (age, percent, motion, work, mixture, geometry,
+                                         number puzzles, ratio, interest, break-even, systems, inequality ...), each
+                                         with foundation (cue words present), progress (the needed kinds of
+                                         quantities present) and completion (every box can be filled, the question
+                                         is recognised). The file's 55 categories are the starting point.
+  List 1 (present game only)             families forming in this text, scored 30 / 60 / 100
+  List 2 (captures, net value)           which number goes in which box: candidate assignments scored by gain
+                                         (unit and nearby words agree) minus the cost of a wrong assignment
+  List 3 (archive lookup per move)       one row per candidate family/equation: proven (a stored match whose answer
+                                         passed the substitution check and was confirmed), tried (counts: confirmed,
+                                         corrected, rejected), never tried; a "similar" row for a new wording, never
+                                         shown as proof
+  List 4 (what really happened next)     what past users really changed after that match (picked another family,
+                                         swapped two numbers), not a guess
+  proof / retrograde check               solve the equation and substitute the answer back. The problem file already
+                                         has this for all 1,000 answers; no answer is "proven" without it
+  drill (self-play)                      generate problems from the 216 types, try every candidate family, keep what
+                                         verifies, so the archive grows before any user types anything
+  banks (general / drill)                a bank for the 1,000 supplied problems and a bank for matches the user
+                                         confirmed, so counts can be read separately
+
+  Suggested flow when text is pasted from the template box:
+    1. Split the text deterministically into word boxes and number boxes (numbers with their units/percent/dollar
+       signs). This needs no archive and no guessing, and is what the row will show.
+    2. Normalize it and look it up in the archive. An exact wording gives an answer straight away (99% / 92% in the
+       experiment above).
+    3. If not found, build List 1 from cue features and List 3 "similar" rows from the nearest stored wording.
+       Show the best match only when its score is high (0.70 and up was right about 93% of the time on known
+       types); otherwise show the best 3 and ask the user, as the chess program asks again on a bad promotion answer.
+    4. Fill the boxes using the matched problem's equation, solve it, substitute back. Only a verified match is
+       stored as proven; the user's confirm / correct is what feeds counts and List 4.
+
+7.3 What the chess ideas do NOT give us
+  - Matching accuracy. Chess positions repeat exactly (165,676 KPK positions, all seen within 200,000 games). Word
+    problems do not; rules.txt itself says that where positions rarely repeat, the lists show only exact past
+    positions and nothing is proven. The weak spot is the step from a new wording to the right family, and the
+    experiment shows plain word similarity is not enough there (about 50% category for a new wording).
+  - A closed space. KPK could be solved because it is finite. Language is not, so the archive can only grow in
+    coverage; it can never be "solved".
+  - Reusable code. The program is Rust and built around chess positions. What transfers is the design, and I would
+    write the algebra version in Python inside the calculator.
+  - The numbers inside the equation. Some equation numbers are derived from the problem's numbers (for example 55%
+    boys gives 0.45n, 10% up then 25% down gives 1.1 x 0.75). The file gives finished equations but not the
+    generator that built them, so each type needs its own small formula, or a symbolic solver, to take a user's new
+    numbers to a correct equation.
+
+7.4 Decisions for you before I build anything
+  1. Scope of a first version. My suggestion: (a) the deterministic text/number box split, (b) exact-wording
+     lookup plus nearest-wording "similar" rows with a confidence threshold, (c) fill the boxes and solve by
+     substituting into the matched problem's equation, with substitution check, for the types where that works.
+  2. The 20 families. Do you want families fixed by hand from the 55 categories, or learned from the file?
+  3. Where the archive lives: a file like saved_templates.json for the user's confirmed matches, plus the 1,000
+     supplied problems as the starting bank.
+  4. Whether the two text files (and this chess_experiments folder) should go into the repository.
+
+
+====================================================================================================
+8. HOW TO RUN ALL OF THIS AGAIN
+====================================================================================================
+
+All commands from C:\Users\I_wat\PycharmProjects\calculator (Windows, Rust installed). The big archive is NOT
+kept in the project (649 MB); step 2 rebuilds it. Use a folder outside the project for --dir.
+
+  1. cd forming_chess-main
+     set CARGO_TARGET_DIR=<some folder outside the project>       (keeps build files out of the project)
+     cargo test --release                                          37 tests, about 12 s
+  2. cargo build --release
+     cargo run --release -- --dir <folder> drill 1 1400000         solve KPK (about 40 min on this machine)
+     cargo run --release --example verify_kpk -- 1400000           independent check (about 40 min)
+  3. Tools of mine, in chess_experiments\chess_probe  (cargo build --release there):
+       chess_probe archive <games_dir> [<games_dir2> ...]          strategy flags found in archived games
+       chess_probe sans chess_experiments\famous_games.txt <out_dir>   replay the famous games into an archive
+       chess_probe kpk <folder> <fen> ...                          solution lines + distance check on a solved index
+       chess_probe positions <file>                                check hand-made positions (not used above)
+     forming_chess --dir <out_dir> rebuild-index                   builds the index from an archive of games
+     (the program asks "save this game?" after every new/load/preset: answer n)
+  4. python chess_experiments\algebra_match_experiment.py          the algebra matching experiment (about 15 s)
+
+Files: chess_experiments\raw_outputs\ holds the unedited output of every run above.

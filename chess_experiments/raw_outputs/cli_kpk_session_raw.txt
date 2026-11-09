@@ -1,0 +1,145 @@
+Commands:
+  e2 (any square)        select a piece, see its legal moves, enter a destination, confirm with Y or N
+  lists [w|b]            List 1 and List 2
+  list3                  List 3 for the side to move (from past games)
+  list4                  List 4 for those moves (from past games)
+  bank [name|all]        choose which bank's counts Lists 3 and 4 show
+  strategies             the 20 templates;  strategy <n>  one template in full
+  status                 stored positions, proven positions and banks
+  archive                saved games
+  new | load <fen> | presets | preset <id>
+  resign | draw | board | moves | fen | help | quit
+
+Save this game's information to the permanent AI learning files?
+Y — Yes
+N — No
+> This game will not be saved.
+
+8 r n b q k b n r 
+7 p p p p p p p p 
+6 . . . . . . . . 
+5 . . . . . . . . 
+4 . . . . . . . . 
+3 . . . . . . . . 
+2 P P P P P P P P 
+1 R N B Q K B N R 
+  a b c d e f g h
+
+White to move.
+
+> 
+Save this game's information to the permanent AI learning files?
+Y — Yes
+N — No
+> This game will not be saved.
+
+8 . . . k . . . . 
+7 . . . . . . . . 
+6 . . . K . . . . 
+5 . . . P . . . . 
+4 . . . . . . . . 
+3 . . . . . . . . 
+2 . . . . . . . . 
+1 . . . . . . . . 
+  a b c d e f g h
+
+White to move.
+
+> 
+List 1 — Forming strategies for White (present game only)
+   60  Partially developed  Passed-Pawn Advance
+   30  Beginning to form    Central Pawn Occupation
+   30  Beginning to form    Knight Outpost
+   30  Beginning to form    Promotion
+
+List 2 — Captures for those strategies
+  (none)
+
+> 
+List 3 — Past games after each legal move (all banks, kpk)
+  Counts are for the pawn side (or the rook side). The pawn side is to move.
+  Kc6      proven win in 13  played 52 W52 D0 L0
+           strategies: Passed-Pawn Advance 75, Promotion 45, Central Pawn Occupation 30, Knight Outpost 30
+  Ke6      proven win in 15  played 1771 W1771 D0 L0
+           strategies: Passed-Pawn Advance 60, Central Pawn Occupation 30, Knight Outpost 30, Promotion 30
+  Kc5      proven draw  played 1 W0 D1 L0
+           strategies: Passed-Pawn Advance 60, Central Pawn Occupation 30, Knight Outpost 30, Promotion 30
+  Ke5      proven draw  played 1 W1 D0 L0
+           strategies: Passed-Pawn Advance 75, Promotion 45, Central Pawn Occupation 30, Knight Outpost 30
+
+> 
+List 4 — Captures and promotions that past games played after each move (all banks)
+  (none)
+
+> 
+Save this game's information to the permanent AI learning files?
+Y — Yes
+N — No
+> This game will not be saved.
+
+8 . . . . . . . k 
+7 . . . . . . . . 
+6 . . . . . . . K 
+5 . . . . . . . P 
+4 . . . . . . . . 
+3 . . . . . . . . 
+2 . . . . . . . . 
+1 . . . . . . . . 
+  a b c d e f g h
+
+White to move.
+
+> 
+List 1 — Forming strategies for White (present game only)
+   60  Partially developed  Passed-Pawn Advance
+   30  Beginning to form    Kingside Pawn Storm
+   30  Beginning to form    Knight Outpost
+   30  Beginning to form    Promotion
+
+List 2 — Captures for those strategies
+  (none)
+
+> 
+List 3 — Past games after each legal move (all banks, kpk)
+  Counts are for the pawn side (or the rook side). The pawn side is to move.
+  Kg5      proven draw  played 129 W0 D129 L0
+           strategies: Passed-Pawn Advance 75, Promotion 45, Knight Outpost 30, Queenside Minority Attack 30
+  Kg6      proven draw  played 2 W0 D2 L0
+           strategies: Passed-Pawn Advance 60, Promotion 30, Queenside Minority Attack 30
+
+> 
+Save this game's information to the permanent AI learning files?
+Y — Yes
+N — No
+> This game will not be saved.
+
+8 . . . . . . . . 
+7 . . . . . . . . 
+6 . . . . . . . . 
+5 . . . p . . . . 
+4 . . . k . . . . 
+3 . . . . . . . . 
+2 . . . . . . . . 
+1 . . . K . . . . 
+  a b c d e f g h
+
+Black to move.
+
+> 
+List 3 — Past games after each legal move (all banks, kpk)
+  Counts are for the pawn side (or the rook side). The pawn side is to move.
+  Kc3      proven win in 17  played 5 W5 D0 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+  Kd3      proven win in 19  played 4 W4 D0 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+  Ke3      never tried
+  Kc4      proven draw  played 2 W0 D2 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+  Ke4      proven draw  played 1 W0 D1 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+  Kc5      proven draw  played 1 W0 D1 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+  Ke5      proven draw  played 1 W0 D1 L0
+           strategies: Central Pawn Occupation 60, Passed-Pawn Advance 60, Knight Outpost 30
+
+> 

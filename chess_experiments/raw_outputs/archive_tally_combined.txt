@@ -1,0 +1,26 @@
+archive files read: 9   moves read: 19799197
+results: white wins 942419  black wins 2  draws 457587  other 0
+== Strategy flags found in the archive C:/Users/I_wat/AppData/Local/Temp/claude/216202eb0742512b/eacf4de0-24d9-46f9-b95a-e5b053005d1a/scratchpad/chess_out/game_files/ai_learning/games + C:/Users/I_wat/AppData/Local/Temp/claude/216202eb0742512b/eacf4de0-24d9-46f9-b95a-e5b053005d1a/scratchpad/chess_out/famous_archive/ai_learning/games ==
+games: 1400008   positions with flags counted: 19412721
+ #  strategy                         foundation     progress   completion     g:found    g:prog   g:compl   best stage
+ 1  Central Pawn Occupation             2427761       286011            5      312471    108383         1   COMPLETION
+ 2  Central Pawn Break                      147           17           40           8         6         6   COMPLETION
+ 3  Kingside Pawn Storm                      38          104            4           5         5         1   COMPLETION
+ 4  Queenside Minority Attack                65      6458965            9           6    905762         3   COMPLETION
+ 5  King Shelter                         841397       841363           42      450597    450596         4   COMPLETION
+ 6  Opposite-Side Castling Attack       1368836       928285            0      387368    322774         0   progress
+ 7  Fianchetto                           127673           36           20       52085         2         2   COMPLETION
+ 8  Open-File Control                    946317       946228       946162      946108    946108    946106   COMPLETION
+ 9  Seventh-Rank Invasion                946317       946153           17      946108    946107         5   COMPLETION
+10  Passed-Pawn Advance                 9085992      8229558       635766     1241746   1132187    286654   COMPLETION
+11  Isolated-Pawn Attack                9380083       587292       527843     1254400    391808    360133   COMPLETION
+12  Backward-Pawn Pressure                   67           29           29           6         5         5   COMPLETION
+13  Knight Outpost                      4824164           21            2      969653         3         1   COMPLETION
+14  Bishop Pair                              50          548           34           5       375         2   COMPLETION
+15  Pin                                     138          127           57           8         8         5   COMPLETION
+16  Discovered Attack                      4759         4711         4679        4657      4655      4654   COMPLETION
+17  Fork                                    215           24           11           8         6         5   COMPLETION
+18  Skewer                                   67           45            2           7         6         1   COMPLETION
+19  Major-Piece Battery                     113           99            8           8         8         1   COMPLETION
+20  Promotion                           7232268      6091932      3909832     1030711    942559    888479   COMPLETION
+strategies seen at least once: 20 of 20

@@ -1,0 +1,36 @@
+problems: 1000  categories: 55  distinct wordings: 327  distinct equation shapes: 180
+
+A) same wording may be in the archive (leave one out)
+   category right: 99.1%   equation shape right: 92.0%
+
+B) the exact wording is NOT in the archive (leave one wording out)
+   category right (best match): 50.4%   in the best 3: 52.2%
+   equation shape right (best match): 22.3%   in the best 3: 23.8%
+   most confident  25% of the matches: category right 85.6%, shape right 53.2%  (score >= 0.57)
+   most confident  50% of the matches: category right 69.8%, shape right 32.2%  (score >= 0.35)
+   most confident  75% of the matches: category right 54.7%, shape right 23.9%  (score >= 0.22)
+   most confident 100% of the matches: category right 50.4%, shape right 22.3%  (score >= 0.02)
+
+C) new wording + 15%% of the words dropped + different numbers
+   category right: 49.0%   equation shape right: 21.6%
+
+D) most common wrong category matches under B (true -> matched):
+   Linear cost                  -> Break-even                   28 of 60
+   Number puzzle                -> Percent                      11 of 42
+   Geometry (quadratic)         -> Geometry (area)              10 of 32
+   Linear cost                  -> Direct variation             10 of 60
+   Linear model                 -> Formula                      10 of 52
+   Rational equation            -> Current / wind               10 of 36
+   Geometry (area)              -> Geometry (quadratic)         9 of 18
+   System of equations          -> Proportion                   9 of 68
+
+numbers per problem: avg 3.08; problems with >=5 numbers: 74
+
+B2) leave one wording out, split by whether the archive still holds that problem TYPE (category + equation shape)
+   type still in the archive (a new wording of a known type): 455 problems
+   type NOT in the archive (never seen): 545 problems
+   for the known-type group: category right 59.6%, equation shape right 47.9%, both right 47.9%
+   most confident  25% (score >= 0.70): type right 92.9%
+   most confident  50% (score >= 0.32): type right 73.1%
+   most confident  75% (score >= 0.20): type right 52.8%
+   most confident 100% (score >= 0.04): type right 47.9%

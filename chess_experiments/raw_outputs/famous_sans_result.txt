@@ -1,0 +1,116 @@
+played Opera_Game_Morphy_1858       33 plies  result 1-0
+played Immortal_Game_Anderssen_1851 45 plies  result 1-0
+played Evergreen_Game_Anderssen_1852 47 plies  result 1-0
+played Game_of_the_Century_Byrne_Fischer_1956 82 plies  result 0-1
+played Scholars_Mate                7 plies  result 1-0
+played Fools_Mate                   4 plies  result 0-1
+played Queens_Gambit_Declined_main_line 24 plies  result 1/2-1/2
+played Sicilian_Najdorf_opposite_castling_storm 34 plies  result 1-0
+problems: 0
+== Strategy flags of the MOVER after each ply (what the program stores in the archive) ==
+games: 8   positions with flags counted: 276
+ #  strategy                         foundation     progress   completion     g:found    g:prog   g:compl   best stage
+ 1  Central Pawn Occupation                 217          140            5           8         8         1   COMPLETION
+ 2  Central Pawn Break                      147           17           40           8         6         6   COMPLETION
+ 3  Kingside Pawn Storm                      38          104            4           5         5         1   COMPLETION
+ 4  Queenside Minority Attack                65          114            9           6         6         3   COMPLETION
+ 5  King Shelter                            224          190           42           8         7         4   COMPLETION
+ 6  Opposite-Side Castling Attack            19           22            0           2         2         0   progress
+ 7  Fianchetto                               51           36           20           3         2         2   COMPLETION
+ 8  Open-File Control                       215          126           60           6         6         4   COMPLETION
+ 9  Seventh-Rank Invasion                   215           51           17           6         5         5   COMPLETION
+10  Passed-Pawn Advance                      44           25            6           5         4         1   COMPLETION
+11  Isolated-Pawn Attack                     80           57           19           5         5         5   COMPLETION
+12  Backward-Pawn Pressure                   67           29           29           6         5         5   COMPLETION
+13  Knight Outpost                           91           21            2           5         3         1   COMPLETION
+14  Bishop Pair                              50          180           34           5         7         2   COMPLETION
+15  Pin                                     138          127           57           8         8         5   COMPLETION
+16  Discovered Attack                       109           61           29           7         5         4   COMPLETION
+17  Fork                                    215           24           11           8         6         5   COMPLETION
+18  Skewer                                   67           45            2           7         6         1   COMPLETION
+19  Major-Piece Battery                     113           99            8           8         8         1   COMPLETION
+20  Promotion                                67           16            0           6         1         0   progress
+strategies seen at least once: 20 of 20
+== Strategy flags of BOTH sides after each ply ==
+games: 8   positions with flags counted: 552
+ #  strategy                         foundation     progress   completion     g:found    g:prog   g:compl   best stage
+ 1  Central Pawn Occupation                 433          273            9           8         8         1   COMPLETION
+ 2  Central Pawn Break                      303           33           79           8         6         6   COMPLETION
+ 3  Kingside Pawn Storm                      72          202            8           5         5         1   COMPLETION
+ 4  Queenside Minority Attack               133          215           16           6         6         3   COMPLETION
+ 5  King Shelter                            450          375           79           8         7         4   COMPLETION
+ 6  Opposite-Side Castling Attack            38           44            1           2         2         1   COMPLETION
+ 7  Fianchetto                              101           72           40           3         2         2   COMPLETION
+ 8  Open-File Control                       431          251          114           7         6         4   COMPLETION
+ 9  Seventh-Rank Invasion                   431           94           29           7         5         5   COMPLETION
+10  Passed-Pawn Advance                      84           47           11           5         4         1   COMPLETION
+11  Isolated-Pawn Attack                    157          112           38           5         5         5   COMPLETION
+12  Backward-Pawn Pressure                  138           60           60           6         6         6   COMPLETION
+13  Knight Outpost                          180           41            4           5         3         1   COMPLETION
+14  Bishop Pair                              97          350           67           5         7         2   COMPLETION
+15  Pin                                     273          250          116           8         8         6   COMPLETION
+16  Discovered Attack                       216          114           50           8         5         5   COMPLETION
+17  Fork                                    402           38           14           8         6         5   COMPLETION
+18  Skewer                                  130           83            2           7         6         1   COMPLETION
+19  Major-Piece Battery                     220          192           16           8         8         1   COMPLETION
+20  Promotion                               125           30            0           6         1         0   progress
+strategies seen at least once: 20 of 20
+   first foundation of #1 Central Pawn Occupation: Opera_Game_Morphy_1858 ply 1 (White) e4
+   first progress of #1 Central Pawn Occupation: Opera_Game_Morphy_1858 ply 1 (White) e4
+   first completion of #1 Central Pawn Occupation: Game_of_the_Century_Byrne_Fischer_1956 ply 15 (White) e4
+   first foundation of #2 Central Pawn Break: Opera_Game_Morphy_1858 ply 1 (Black side)
+   first progress of #2 Central Pawn Break: Opera_Game_Morphy_1858 ply 5 (White) d4
+   first completion of #2 Central Pawn Break: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first foundation of #3 Kingside Pawn Storm: Immortal_Game_Anderssen_1851 ply 3 (White) f4
+   first progress of #3 Kingside Pawn Storm: Immortal_Game_Anderssen_1851 ply 3 (White) f4
+   first completion of #3 Kingside Pawn Storm: Sicilian_Najdorf_opposite_castling_storm ply 27 (White) f4
+   first foundation of #4 Queenside Minority Attack: Opera_Game_Morphy_1858 ply 19 (Black side)
+   first progress of #4 Queenside Minority Attack: Opera_Game_Morphy_1858 ply 16 (Black) c6
+   first completion of #4 Queenside Minority Attack: Immortal_Game_Anderssen_1851 ply 34 (Black) Qxb2
+   first foundation of #5 King Shelter: Opera_Game_Morphy_1858 ply 1 (White) e4
+   first progress of #5 King Shelter: Opera_Game_Morphy_1858 ply 3 (White) Nf3
+   first completion of #5 King Shelter: Evergreen_Game_Anderssen_1852 ply 13 (White) O-O
+   first foundation of #6 Opposite-Side Castling Attack: Game_of_the_Century_Byrne_Fischer_1956 ply 77 (White) Kc1
+   first progress of #6 Opposite-Side Castling Attack: Game_of_the_Century_Byrne_Fischer_1956 ply 77 (White) Kc1
+   first completion of #6 Opposite-Side Castling Attack: Sicilian_Najdorf_opposite_castling_storm ply 33 (Black side)
+   first foundation of #7 Fianchetto: Evergreen_Game_Anderssen_1852 ply 28 (Black) Bb7
+   first progress of #7 Fianchetto: Evergreen_Game_Anderssen_1852 ply 28 (Black) Bb7
+   first completion of #7 Fianchetto: Evergreen_Game_Anderssen_1852 ply 40 (Black) Nxe7
+   first foundation of #8 Open-File Control: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first progress of #8 Open-File Control: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first completion of #8 Open-File Control: Opera_Game_Morphy_1858 ply 10 (Black) dxe5
+   first foundation of #9 Seventh-Rank Invasion: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first progress of #9 Seventh-Rank Invasion: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+   first completion of #9 Seventh-Rank Invasion: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+   first foundation of #10 Passed-Pawn Advance: Opera_Game_Morphy_1858 ply 21 (White) Bxb5+
+   first progress of #10 Passed-Pawn Advance: Immortal_Game_Anderssen_1851 ply 19 (Black side)
+   first completion of #10 Passed-Pawn Advance: Evergreen_Game_Anderssen_1852 ply 18 (Black) Qg6
+   first foundation of #11 Isolated-Pawn Attack: Opera_Game_Morphy_1858 ply 19 (White) Nxb5
+   first progress of #11 Isolated-Pawn Attack: Opera_Game_Morphy_1858 ply 19 (White) Nxb5
+   first completion of #11 Isolated-Pawn Attack: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+   first foundation of #12 Backward-Pawn Pressure: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first progress of #12 Backward-Pawn Pressure: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first completion of #12 Backward-Pawn Pressure: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first foundation of #13 Knight Outpost: Opera_Game_Morphy_1858 ply 20 (White side)
+   first progress of #13 Knight Outpost: Immortal_Game_Anderssen_1851 ply 31 (White) Nc3
+   first completion of #13 Knight Outpost: Immortal_Game_Anderssen_1851 ply 33 (White) Nd5
+   first foundation of #14 Bishop Pair: Opera_Game_Morphy_1858 ply 9 (White) Qxf3
+   first progress of #14 Bishop Pair: Opera_Game_Morphy_1858 ply 6 (Black) Bg4
+   first completion of #14 Bishop Pair: Opera_Game_Morphy_1858 ply 10 (White side)
+   first foundation of #15 Pin: Opera_Game_Morphy_1858 ply 6 (Black) Bg4
+   first progress of #15 Pin: Opera_Game_Morphy_1858 ply 6 (Black) Bg4
+   first completion of #15 Pin: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first foundation of #16 Discovered Attack: Opera_Game_Morphy_1858 ply 6 (White side)
+   first progress of #16 Discovered Attack: Opera_Game_Morphy_1858 ply 6 (White side)
+   first completion of #16 Discovered Attack: Opera_Game_Morphy_1858 ply 6 (White side)
+   first foundation of #17 Fork: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first progress of #17 Fork: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+   first completion of #17 Fork: Opera_Game_Morphy_1858 ply 25 (White) Rxd7
+   first foundation of #18 Skewer: Opera_Game_Morphy_1858 ply 12 (White side)
+   first progress of #18 Skewer: Opera_Game_Morphy_1858 ply 12 (White side)
+   first completion of #18 Skewer: Opera_Game_Morphy_1858 ply 31 (White) Qb8+
+   first foundation of #19 Major-Piece Battery: Opera_Game_Morphy_1858 ply 23 (White) O-O-O
+   first progress of #19 Major-Piece Battery: Opera_Game_Morphy_1858 ply 23 (White) O-O-O
+   first completion of #19 Major-Piece Battery: Sicilian_Najdorf_opposite_castling_storm ply 19 (White) O-O-O
+   first foundation of #20 Promotion: Opera_Game_Morphy_1858 ply 7 (White) dxe5
+   first progress of #20 Promotion: Evergreen_Game_Anderssen_1852 ply 14 (Black) d3

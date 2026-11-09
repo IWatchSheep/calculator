@@ -1,0 +1,2 @@
+true: 165676 positions, 111282 wins for the pawn side, 54394 draws
+after 1400000 drill games: proven wins correct 111282, proven draws correct 54394, wrong 0, win distances longer than best 80595

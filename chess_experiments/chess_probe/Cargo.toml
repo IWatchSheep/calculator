@@ -1,0 +1,10 @@
+[package]
+name = "chess_probe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+forming_chess = { path = "C:/Users/I_wat/PycharmProjects/calculator/forming_chess-main" }
+
+[profile.release]
+opt-level = 3
