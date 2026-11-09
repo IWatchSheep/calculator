@@ -31,7 +31,9 @@ def approx(actual, expected, tol=1e-6):
     if isinstance(expected, (int, float, complex)) and isinstance(actual, (int, float, complex)):
         if actual == expected:
             return True
-        return abs(actual - expected) <= tol * max(1.0, abs(expected))
+        if expected == 0:                      # nothing to scale by: small absolute slack
+            return abs(actual) <= 1e-9
+        return abs(actual - expected) <= tol * abs(expected)
     if isinstance(expected, dict):
         return (isinstance(actual, dict) and set(actual) == set(expected)
                 and all(approx(actual[k], expected[k], tol) for k in expected))
@@ -54,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 458)
+        self.assertEqual(len(self.ops), 507)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -85,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 458)
+        self.assertEqual(len(status), 507)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -474,6 +476,125 @@ CASES += [
     (TP + "basis_of_topology", (_TOPO, [set(), {1}, {1, 2}]), True), (TP + "cauchy_sequence", ([1, 1.1, 1.01, 1.001], 0.5), 0),
 ]
 
+# new physics operators: magnetism, fluid dynamics, quantum mechanics, optics, relativity
+CASES += [
+    # ---- Magnetism
+    (PH + "magnetic_force_on_charge", (2, 3, 4, PI / 2), 24),
+    (PH + "magnetic_force_on_charge", (2, 3, 4, PI / 6), 12),
+    (PH + "magnetic_force_on_charge", (2, 3, 4, 0), 0),
+    (PH + "magnetic_force_on_wire", (2, 3, 4, PI / 2), 24),
+    (PH + "magnetic_force_on_wire", (2, 3, 4, PI / 6), 12),
+    (PH + "magnetic_field_straight_wire", (1, 1), 2e-7),
+    (PH + "magnetic_field_straight_wire", (10, 0.5), 4e-6),
+    (PH + "magnetic_field_solenoid", (1000, 2), 8 * PI * 1e-4),
+    (PH + "magnetic_field_solenoid", (0, 5), 0),
+    (PH + "magnetic_flux", (2, 3, 0), 6),
+    (PH + "magnetic_flux", (2, 3, PI / 3), 3),
+    (PH + "magnetic_flux", (2, 3, PI / 2), 0),
+    (PH + "faradays_law", (10, 0.5, 2), -2.5),
+    (PH + "faradays_law", (1, -4, 2), 2),
+    (PH + "self_induced_emf", (2, 3, 0.5), -12),
+    (PH + "self_induced_emf", (0.1, -5, 0.01), 50),
+    (PH + "inductor_energy", (2, 3), 9),
+    (PH + "inductor_energy", (0.5, 4), 4),
+    (PH + "cyclotron_radius", (2, 3, 1, 4), 1.5),
+    (PH + "cyclotron_radius", (2, 3, -1, 4), 1.5),
+    (PH + "motional_emf", (0.5, 2, 3), 3),
+    (PH + "motional_emf", (0, 2, 3), 0),
+    # ---- Fluid dynamics
+    (PH + "buoyant_force", (1000, 0.002), 19.62),
+    (PH + "buoyant_force", (1000, 0), 0),
+    (PH + "hydrostatic_pressure", (1000, 10), 98100),
+    (PH + "hydrostatic_pressure", (1000, 0), 0),
+    (PH + "continuity_equation", (2, 3, 1.5), 4),
+    (PH + "continuity_equation", (1, 5, 1), 5),
+    (PH + "bernoulli_equation", (100000, 2, 0, 4, 1, 1000), 84190),
+    (PH + "bernoulli_equation", (5, 1, 0, 1, 0, 1000), 5),
+    (PH + "reynolds_number", (1000, 2, 0.1, 0.001), 200000),
+    (PH + "reynolds_number", (1000, 0, 0.1, 0.001), 0),
+    (PH + "poiseuille_flow", (0.01, 1000, 0.001, 1), PI * 1.25e-3),
+    (PH + "poiseuille_flow", (0.02, 1000, 0.001, 1), PI * 20e-3),
+    (PH + "torricelli_speed", (5,), math.sqrt(98.1)),
+    (PH + "torricelli_speed", (0,), 0),
+    (PH + "stokes_drag", (0.001, 0.01, 2), 6 * PI * 0.001 * 0.01 * 2),
+    (PH + "stokes_drag", (0.001, 0.01, 0), 0),
+    (PH + "volume_flow_rate", (0.5, 4), 2),
+    (PH + "volume_flow_rate", (0.5, 0), 0),
+    (PH + "hydraulic_press", (100, 0.01, 0.5), 5000),
+    (PH + "hydraulic_press", (10, 1, 1), 10),
+    # ---- Quantum mechanics
+    (PH + "photon_energy", (1e15,), 6.62607015e-19),
+    (PH + "photon_energy", (0,), 0),
+    (PH + "photon_momentum", (500e-9,), 1.32521403e-27),
+    (PH + "photon_momentum", (1,), 6.62607015e-34),
+    (PH + "de_broglie_wavelength", (1, 1), 6.62607015e-34),
+    (PH + "de_broglie_wavelength", (2, 3), 6.62607015e-34 / 6),
+    (PH + "heisenberg_uncertainty", (1e-10,), 1.054571817e-34 / 2e-10),
+    (PH + "heisenberg_uncertainty", (1,), 1.054571817e-34 / 2),
+    (PH + "photoelectric_effect", (1e15, 3e-19), 3.62607015e-19),
+    (PH + "photoelectric_effect", (1e14, 3e-19), 0),
+    (PH + "bohr_energy_level", (1,), -13.605693122994),
+    (PH + "bohr_energy_level", (2,), -13.605693122994 / 4),
+    (PH + "bohr_energy_level", (1, 2), -54.422772491976),
+    (PH + "rydberg_formula", (1, 2), 4 / (3 * 10973731.568160)),
+    (PH + "rydberg_formula", (2, 3), 36 / (5 * 10973731.568160)),
+    (PH + "particle_in_a_box", (2, 1, 1), 6.62607015e-34 ** 2 / 2),
+    (PH + "particle_in_a_box", (1, 2, 1), 6.62607015e-34 ** 2 / 16),
+    (PH + "quantum_harmonic_oscillator", (0, 2), 1.054571817e-34),
+    (PH + "quantum_harmonic_oscillator", (2, 2), 5 * 1.054571817e-34),
+    (PH + "compton_shift", (PI / 2,), 2.42631023867e-12),
+    (PH + "compton_shift", (PI,), 2 * 2.42631023867e-12),
+    (PH + "compton_shift", (0,), 0),
+    # ---- Optics
+    (PH + "thin_lens_equation", (10, 30), 15),
+    (PH + "thin_lens_equation", (10, 20), 20),
+    (PH + "thin_lens_equation", (10, 5), -10),
+    (PH + "lens_magnification", (15, 30), -0.5),
+    (PH + "lens_magnification", (-10, 5), 2),
+    (PH + "lensmakers_equation", (1.5, 0.2, -0.2), 0.2),
+    (PH + "lensmakers_equation", (1.5, 0.1, math.inf), 0.2),
+    (PH + "critical_angle", (1.5, 1), math.asin(2 / 3)),
+    (PH + "critical_angle", (2, 1), PI / 6),
+    (PH + "brewster_angle", (1, 1), PI / 4),
+    (PH + "brewster_angle", (1, 1.5), math.atan(1.5)),
+    (PH + "double_slit_fringe_spacing", (500e-9, 2, 1e-3), 1e-3),
+    (PH + "double_slit_fringe_spacing", (600e-9, 1, 1e-3), 6e-4),
+    (PH + "diffraction_grating", (1, 500e-9, 2e-6), math.asin(0.25)),
+    (PH + "diffraction_grating", (2, 500e-9, 1e-6), PI / 2),
+    (PH + "diffraction_grating", (0, 500e-9, 1e-6), 0),
+    (PH + "malus_law", (100, PI / 3), 25),
+    (PH + "malus_law", (100, 0), 100),
+    (PH + "malus_law", (100, PI / 2), 0),
+    (PH + "refractive_index", (2e8,), 299792458 / 2e8),
+    (PH + "refractive_index", (299792458,), 1),
+    # ---- Relativity
+    (PH + "lorentz_factor", (0.6, 1), 1.25),
+    (PH + "lorentz_factor", (0.8, 1), 5 / 3),
+    (PH + "lorentz_factor", (0, 1), 1),
+    (PH + "lorentz_factor", (0.6 * 299792458,), 1.25),
+    (PH + "time_dilation", (1, 0.6, 1), 1.25),
+    (PH + "time_dilation", (10, 0.8, 1), 50 / 3),
+    (PH + "length_contraction", (100, 0.8, 1), 60),
+    (PH + "length_contraction", (100, 0, 1), 100),
+    (PH + "relativistic_momentum", (2, 0.6, 1), 1.5),
+    (PH + "relativistic_momentum", (1, 0, 1), 0),
+    (PH + "relativistic_kinetic_energy", (1, 0.6, 1), 0.25),
+    (PH + "relativistic_kinetic_energy", (2, 0.8, 1), 2 * (5 / 3 - 1)),
+    (PH + "energy_momentum_relation", (3, 4, 1), 5),
+    (PH + "energy_momentum_relation", (0, 2, 1), 2),
+    (PH + "energy_momentum_relation", (1, 0, 1), 1),
+    (PH + "relativistic_velocity_addition", (0.5, 0.5, 1), 0.8),
+    (PH + "relativistic_velocity_addition", (1, 0.5, 1), 1),
+    (PH + "relativistic_velocity_addition", (0, 0.3, 1), 0.3),
+    (PH + "relativistic_doppler", (100, 0.6, 1), 50),
+    (PH + "relativistic_doppler", (100, -0.6, 1), 200),
+    (PH + "relativistic_doppler", (100, 0, 1), 100),
+    (PH + "schwarzschild_radius", (1, 1, 1), 2),
+    (PH + "schwarzschild_radius", (1.989e30,), 2 * 6.674e-11 * 1.989e30 / 299792458 ** 2),
+    (PH + "gravitational_time_dilation", (100, 1, 4, 1, 1), 100 * math.sqrt(0.5)),
+    (PH + "gravitational_time_dilation", (100, 0, 4, 1, 1), 100),
+]
+
 # operators whose result order is not defined (compare after sorting)
 UNORDERED = {AL + "quadratic_formula", TD + "characteristic_equation", LA + "eigenvalues"}
 
@@ -679,6 +800,170 @@ class GuiSmokeTest(unittest.TestCase):
             app.update()
         finally:
             app.destroy()
+
+
+# --------------------------------------------------------------------------- 6. new physics: row modules + calculator
+NEW_PHYSICS = [
+    'magnetic_force_on_charge', 'magnetic_force_on_wire', 'magnetic_field_straight_wire',
+    'magnetic_field_solenoid', 'magnetic_flux', 'faradays_law',
+    'self_induced_emf', 'inductor_energy', 'cyclotron_radius',
+    'motional_emf', 'buoyant_force', 'hydrostatic_pressure',
+    'continuity_equation', 'bernoulli_equation', 'reynolds_number',
+    'poiseuille_flow', 'torricelli_speed', 'stokes_drag',
+    'volume_flow_rate', 'hydraulic_press', 'photon_energy',
+    'photon_momentum', 'de_broglie_wavelength', 'heisenberg_uncertainty',
+    'photoelectric_effect', 'bohr_energy_level', 'rydberg_formula',
+    'particle_in_a_box', 'quantum_harmonic_oscillator', 'compton_shift',
+    'thin_lens_equation', 'lens_magnification', 'lensmakers_equation',
+    'critical_angle', 'brewster_angle', 'double_slit_fringe_spacing',
+    'diffraction_grating', 'malus_law', 'refractive_index',
+    'lorentz_factor', 'time_dilation', 'length_contraction',
+    'relativistic_momentum', 'relativistic_kinetic_energy', 'energy_momentum_relation',
+    'relativistic_velocity_addition', 'relativistic_doppler', 'schwarzschild_radius',
+    'gravitational_time_dilation',
+]
+
+
+def _required_inputs(key):
+    """Number of boxes the calculator shows for an operator = compute() parameters without a default."""
+    import inspect
+    return sum(1 for p in inspect.signature(get(key).compute).parameters.values() if p.default is p.empty)
+
+
+class NewPhysicsRowTests(unittest.TestCase):
+    """Row modules for the 49 magnetism / fluid / quantum / optics / relativity operators."""
+
+    @classmethod
+    def setUpClass(cls):
+        import inspect
+        import operator_links
+        import operator_row_math
+        cls.links, cls.rows, cls.inspect = operator_links.LINKS, operator_row_math, inspect
+
+    def test_row_module_matches_compute_signature(self):
+        for n in NEW_PHYSICS:
+            key = "physics/physics/" + n
+            row = self.rows.get(key)
+            params = [p.name for p in self.inspect.signature(get(key).compute).parameters.values()
+                      if p.default is p.empty]
+            boxes = sum(1 for kind, _ in row.LEFT if kind == "box")
+            self.assertEqual(row.INPUTS, params, n)
+            self.assertEqual(len(row.KINDS), len(params), n)
+            self.assertEqual(boxes, len(params), n)
+            self.assertEqual((row.KEY, row.CALC), (key, "ready"), n)
+            self.assertTrue(any(k == "box" for k, _ in row.RIGHT), n)
+
+    def test_every_operator_has_a_calculator_button(self):
+        import main
+        buttons = set(main.PHYSICS_OPS)
+        linked = {k: v for (sec, label), v in self.links.items() if sec == "PHYSICS_OPS" for k in [label]}
+        for n in NEW_PHYSICS:
+            labels = [lab for lab, v in linked.items() if v == "physics/physics/" + n]
+            self.assertEqual(len(labels), 1, n)
+            self.assertIn(labels[0], buttons, n)
+
+    def test_row_tree_evaluates_like_compute(self):
+        """Fill the boxes exactly as the window does and compare with compute()."""
+        from operator_row_math import row_tree
+        for key, args, expected in CASES:
+            n = key.split("/")[-1]
+            if not key.startswith(PH) or n not in NEW_PHYSICS or len(args) != _required_inputs(key):
+                continue
+            node = row_tree.new_node(key)
+            self.assertEqual(len(node["slots"]), len(args), key)
+            node["slots"] = [repr(a) for a in args]
+            self.assertTrue(approx(row_tree.evaluate(node), expected, 1e-6), f"{key}{args}")
+
+
+class NewPhysicsCalculatorTests(unittest.TestCase):
+    """Drive the real calculator window: pick the operator, type the numbers on the keypad, press =."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            import tkinter
+            import main
+            cls.app = main.CalculatorGUI()
+            cls.app.update()
+        except (ImportError, tkinter.TclError) as exc:
+            raise unittest.SkipTest(f"no GUI available: {exc}")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.destroy()
+
+    @staticmethod
+    def _typed(x):
+        """Text a person can type on the keypad (digits and a dot only), or None if impossible."""
+        from decimal import Decimal
+        if isinstance(x, bool) or not isinstance(x, (int, float)) or x < 0:
+            return None
+        text = format(Decimal(repr(x)), "f")
+        return text.rstrip("0").rstrip(".") if "." in text else text
+
+    def _type_into_boxes(self, args):
+        """Click each square box of Row 1 in turn (left to right) and type its number on the keypad."""
+        app = self.app
+        paths = [p for kind, _t, p in app._cards(0) if kind == "box"]
+        self.assertEqual(len(paths), len(args), "the row has a different number of boxes than the call")
+        for path, a in zip(paths, args):
+            app.rows[0]["sel"] = path
+            for ch in self._typed(a):
+                app._key(ch)
+
+    def _calculate(self, key, args):
+        app = self.app
+        app._reset_row(0)
+        app.op_target = 0
+        app._place_operator_row(key)
+        self._type_into_boxes(args)
+        app._equals()
+        said = app.results.get("1.0", "end")
+        m = re.search(r"=\s+(\S+)\s+\(printed", said)
+        self.assertIsNotNone(m, f"{key}: no result in the window, it said: {said!r}")
+        return float(m.group(1))
+
+    def test_every_new_operator_works_in_the_window(self):
+        done = set()
+        for key, args, expected in CASES:
+            n = key.split("/")[-1]
+            if not key.startswith(PH) or n not in NEW_PHYSICS or n in done or len(args) != _required_inputs(key):
+                continue
+            if any(self._typed(a) is None for a in args) or isinstance(expected, bool):
+                continue
+            got = self._calculate(key, args)
+            self.assertTrue(approx(got, expected, 1e-8), f"{key}{args}: window gave {got}, expected {expected}")
+            done.add(n)
+        # relativity operators: their stored cases use c = 1, so use real speeds with the default c
+        c = 299792458.0
+        extra = [
+            ("lorentz_factor", (0.6 * c,), 1.25),
+            ("time_dilation", (1, 0.6 * c), 1.25),
+            ("length_contraction", (100, 0.8 * c), 60),
+            ("relativistic_momentum", (2, 0.6 * c), 2 * 0.6 * c * 1.25),
+            ("relativistic_kinetic_energy", (1, 0.6 * c), 0.25 * c * c),
+            ("energy_momentum_relation", (1, 0), c * c),
+            ("relativistic_velocity_addition", (0.5 * c, 0.5 * c), 0.8 * c),
+            ("relativistic_doppler", (100, 0.6 * c), 50),
+            ("gravitational_time_dilation", (1000, 1.989e30, 6.957e8),
+             1000 * math.sqrt(1 - 2 * 6.674e-11 * 1.989e30 / (6.957e8 * c * c))),
+        ]
+        for n, args, expected in extra:
+            key = PH + n
+            got = self._calculate(key, args)
+            self.assertTrue(approx(got, expected, 1e-8), f"{key}{args}: window gave {got}, expected {expected}")
+            done.add(n)
+        missing = sorted(set(NEW_PHYSICS) - done)
+        self.assertEqual(missing, [], f"not exercised in the window: {missing}")
+
+    def test_window_reports_errors_nicely(self):
+        app = self.app
+        app._reset_row(0)
+        app._place_operator_row("physics/physics/lorentz_factor")
+        self._type_into_boxes([300000000])                          # faster than light (c = 299 792 458 m/s)
+        app._equals()
+        said = app.results.get("1.0", "end")
+        self.assertIn("speed must be less than the speed of light", said)
 
 
 if __name__ == "__main__":

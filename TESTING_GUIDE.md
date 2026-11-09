@@ -15,16 +15,16 @@ python tests/test_operators.py NumericTests.test_000_math.arithmetic.addition   
 Use the project's `.venv` Python if Pillow is not installed globally. Without Pillow one test is
 skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test is skipped.
 
-**Last full run (author's machine, Python 3.15, Windows): 535 tests, all passed.**
+**Last full run (author's machine, Python 3.15, Windows): 650 tests, all passed (the full run now takes about a minute because it drives the real window).**
 
 ## 2. What the project contains
 
 | Thing | Count | Where |
 |---|---|---|
-| Operators | 458 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
-| "Ready" operators (`compute()` calculates) | 397 | marked `Ready` in `operators_one_operator_per_file/INDEX.md` |
+| Operators | 507 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
+| "Ready" operators (`compute()` calculates) | 446 | marked `Ready` in `operators_one_operator_per_file/INDEX.md` |
 | "Reference" operators (formula only) | 61 | marked `Reference`; `compute()` raises `NotImplementedError` |
-| Row modules (GUI placement of each operator) | 458 | `operator_row_math/` |
+| Row modules (GUI placement of each operator) | 507 | `operator_row_math/` |
 | Button-to-operator links | — | `operator_links.py` |
 | Input parser (typed text → Python values) | — | `operator_row_math/advanced_input.py` |
 
@@ -35,12 +35,14 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 
 | Group | Tests | What it proves |
 |---|---|---|
-| `StructureTests` | 9 | All 458 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
-| `NumericTests` | 494 | `compute()` returns a hand-calculated answer for known inputs. All 397 Ready operators are covered, most with 2+ cases |
+| `StructureTests` | 9 | All 507 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
+| `NumericTests` | 604 | `compute()` returns a hand-calculated answer for known inputs. All 446 Ready operators are covered, most with 2+ cases |
 | `ErrorTests` | 9 | Bad input raises a clear exception (`ZeroDivisionError`, `ValueError`, …) instead of returning a wrong number |
 | `IdentityTests` | 18 | Operators agree with each other: sin²+cos²=1, exp/ln inverse, M·M⁻¹=I, Pascal's rule, gcd·lcm=ab, A·v=λ·v, RK4 ≈ e, … |
 | `InputParserTests` | 4 | Typed text becomes the right Python value; unsafe function text (`__import__`, `x.__class__`, `open(...)`, `exec`) is rejected |
 | `GuiSmokeTest` | 1 | `main.CalculatorGUI()` builds, updates and closes |
+| `NewPhysicsRowTests` | 3 | The 49 magnetism / fluid / quantum / optics / relativity operators: row module boxes match `compute()` arguments, every operator has a calculator button, row evaluation equals `compute()` |
+| `NewPhysicsCalculatorTests` | 2 | Drives the real window for all 49 new operators: pick the operator, type the numbers on the keypad, press `=`, compare with the hand-calculated answer; errors are shown as readable messages |
 
 ## 4. How another AI should verify (do not just trust the suite)
 

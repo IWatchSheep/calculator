@@ -36,6 +36,6 @@ Run the automated test suite (standard library only):
 
    python tests/test_operators.py
 
-It checks all 458 operators: 397 working operators against hand-calculated answers, plus structure, error handling, input parsing and a GUI smoke test. See TESTING_GUIDE.md for how to verify the calculator independently, including a manual GUI checklist.
+It checks all 507 operators: 446 working operators against hand-calculated answers, plus structure, error handling, input parsing, and the real calculator window for the newer physics operators (magnetism, fluid dynamics, quantum mechanics, optics, relativity). See TESTING_GUIDE.md for how to verify the calculator independently, including a manual GUI checklist.
 
 Numerical results are checked to about 1e-6 and the GUI is only smoke-tested automatically, so independent verification is still welcome.

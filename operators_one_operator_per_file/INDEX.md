@@ -561,3 +561,52 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Capacitance | Q = CV | Q = C V | Ready | `physics/physics/capacitance/` |
 | Resistors in series | R₁+R₂+… | R_total = R₁ + R₂ + … | Ready | `physics/physics/resistors_in_series/` |
 | Resistors in parallel | 1/R = Σ 1/Rᵢ | 1 / R_total = 1/R₁ + 1/R₂ + … | Ready | `physics/physics/resistors_in_parallel/` |
+| Magnetic force on a moving charge | F = qvB sin θ | F = q v B sin θ   (θ = angle between v and B, radians) | Ready | `physics/physics/magnetic_force_on_charge/` |
+| Magnetic force on a current-carrying wire | F = BIL sin θ | F = B I L sin θ   (θ = angle between wire and B, radians) | Ready | `physics/physics/magnetic_force_on_wire/` |
+| Magnetic field of a straight wire | B = μ₀I/2πr | B = μ₀ I / (2π r)   (μ₀ = 4π×10⁻⁷ T·m/A) | Ready | `physics/physics/magnetic_field_straight_wire/` |
+| Magnetic field inside a solenoid | B = μ₀nI | B = μ₀ n I   (n = turns per metre, μ₀ = 4π×10⁻⁷ T·m/A) | Ready | `physics/physics/magnetic_field_solenoid/` |
+| Magnetic flux | Φ = BA cos θ | Φ = B A cos θ   (θ = angle between B and the surface normal, radians) | Ready | `physics/physics/magnetic_flux/` |
+| Faraday's law of induction | ε = −N ΔΦ/Δt | ε = −N ΔΦ / Δt | Ready | `physics/physics/faradays_law/` |
+| Self-induced emf of an inductor | ε = −L ΔI/Δt | ε = −L ΔI / Δt | Ready | `physics/physics/self_induced_emf/` |
+| Energy stored in an inductor | U = ½LI² | U = ½ L I² | Ready | `physics/physics/inductor_energy/` |
+| Cyclotron radius of a charged particle | r = mv/(\|q\|B) | r = m v / (\|q\| B)   (charge moving perpendicular to B) | Ready | `physics/physics/cyclotron_radius/` |
+| Motional emf | ε = BLv | ε = B L v   (rod of length L moving at speed v across B) | Ready | `physics/physics/motional_emf/` |
+| Buoyant force (Archimedes' principle) | F = ρgV | F = ρ g V   (g = 9.81 m/s²) | Ready | `physics/physics/buoyant_force/` |
+| Hydrostatic pressure | P = ρgh | P = ρ g h   (pressure due to the fluid alone, g = 9.81 m/s²) | Ready | `physics/physics/hydrostatic_pressure/` |
+| Continuity equation | A₁v₁ = A₂v₂ | v₂ = A₁ v₁ / A₂   (incompressible fluid) | Ready | `physics/physics/continuity_equation/` |
+| Bernoulli's equation | P + ½ρv² + ρgh = const | P₂ = P₁ + ½ρ(v₁² − v₂²) + ρg(h₁ − h₂)   (g = 9.81 m/s²) | Ready | `physics/physics/bernoulli_equation/` |
+| Reynolds number | Re = ρvL/μ | Re = ρ v L / μ   (μ = dynamic viscosity) | Ready | `physics/physics/reynolds_number/` |
+| Poiseuille's law (flow in a pipe) | Q = πr⁴ΔP/8μL | Q = π r⁴ ΔP / (8 μ L)   (laminar flow in a round pipe) | Ready | `physics/physics/poiseuille_flow/` |
+| Torricelli's law | v = √(2gh) | v = √(2 g h)   (g = 9.81 m/s²) | Ready | `physics/physics/torricelli_speed/` |
+| Stokes' drag force | F = 6πμrv | F = 6π μ r v   (small sphere, slow flow) | Ready | `physics/physics/stokes_drag/` |
+| Volume flow rate | Q = Av | Q = A v | Ready | `physics/physics/volume_flow_rate/` |
+| Hydraulic press (Pascal's principle) | F₂ = F₁A₂/A₁ | F₂ = F₁ A₂ / A₁   (pressure is the same everywhere in the fluid) | Ready | `physics/physics/hydraulic_press/` |
+| Photon energy (Planck's relation) | E = hf | E = h f   (h = 6.62607015×10⁻³⁴ J·s) | Ready | `physics/physics/photon_energy/` |
+| Photon momentum | p = h/λ | p = h / λ   (h = 6.62607015×10⁻³⁴ J·s) | Ready | `physics/physics/photon_momentum/` |
+| de Broglie wavelength | λ = h/mv | λ = h / (m v)   (h = 6.62607015×10⁻³⁴ J·s, non-relativistic) | Ready | `physics/physics/de_broglie_wavelength/` |
+| Heisenberg uncertainty principle | Δx·Δp ≥ ħ/2 | Δp ≥ ħ / (2 Δx)   (returns the smallest possible Δp) | Ready | `physics/physics/heisenberg_uncertainty/` |
+| Photoelectric effect | K = hf − φ | K_max = h f − φ   (0 if h f < φ: no electrons are ejected) | Ready | `physics/physics/photoelectric_effect/` |
+| Bohr energy level (hydrogen-like atom) | Eₙ = −13.6 Z²/n² eV | Eₙ = −13.605693 eV × Z² / n²   (energy in electron-volts) | Ready | `physics/physics/bohr_energy_level/` |
+| Rydberg formula | 1/λ = RZ²(1/n₁² − 1/n₂²) | λ = 1 / ( R Z² (1/n₁² − 1/n₂²) )   (n₂ > n₁, R = 1.0973731568×10⁷ /m) | Ready | `physics/physics/rydberg_formula/` |
+| Particle in a box (energy levels) | Eₙ = n²h²/8mL² | Eₙ = n² h² / (8 m L²)   (h = 6.62607015×10⁻³⁴ J·s) | Ready | `physics/physics/particle_in_a_box/` |
+| Quantum harmonic oscillator | Eₙ = ħω(n + ½) | Eₙ = ħ ω (n + ½)   (ω in rad/s) | Ready | `physics/physics/quantum_harmonic_oscillator/` |
+| Compton wavelength shift | Δλ = (h/mc)(1 − cos θ) | Δλ = h / (m c) × (1 − cos θ)   (scattering off an electron by default) | Ready | `physics/physics/compton_shift/` |
+| Thin lens equation | 1/f = 1/dₒ + 1/dᵢ | dᵢ = 1 / (1/f − 1/dₒ)   (returns the image distance, real-is-positive) | Ready | `physics/physics/thin_lens_equation/` |
+| Lens magnification | m = −dᵢ/dₒ | m = −dᵢ / dₒ   (negative m means an inverted image) | Ready | `physics/physics/lens_magnification/` |
+| Lensmaker's equation | 1/f = (n−1)(1/R₁ − 1/R₂) | f = 1 / ( (n − 1)(1/R₁ − 1/R₂) )   (thin lens in air) | Ready | `physics/physics/lensmakers_equation/` |
+| Critical angle (total internal reflection) | θc = arcsin(n₂/n₁) | θc = arcsin(n₂ / n₁)   (n₁ > n₂, angle in radians) | Ready | `physics/physics/critical_angle/` |
+| Brewster's angle | θB = arctan(n₂/n₁) | θB = arctan(n₂ / n₁)   (angle in radians) | Ready | `physics/physics/brewster_angle/` |
+| Double-slit fringe spacing | Δy = λL/d | Δy = λ L / d   (small angles) | Ready | `physics/physics/double_slit_fringe_spacing/` |
+| Diffraction grating | d sin θ = mλ | θ = arcsin(m λ / d)   (angle in radians) | Ready | `physics/physics/diffraction_grating/` |
+| Malus's law | I = I₀cos²θ | I = I₀ cos²θ   (θ = angle between polariser axes, radians) | Ready | `physics/physics/malus_law/` |
+| Refractive index | n = c/v | n = c / v   (c = 299 792 458 m/s) | Ready | `physics/physics/refractive_index/` |
+| Lorentz factor | γ = 1/√(1 − v²/c²) | γ = 1 / √(1 − v²/c²)   (|v| < c) | Ready | `physics/physics/lorentz_factor/` |
+| Time dilation | Δt = γΔt₀ | Δt = Δt₀ / √(1 − v²/c²)   (Δt₀ = time measured by the moving clock) | Ready | `physics/physics/time_dilation/` |
+| Length contraction | L = L₀/γ | L = L₀ √(1 − v²/c²)   (L₀ = length at rest) | Ready | `physics/physics/length_contraction/` |
+| Relativistic momentum | p = γmv | p = m v / √(1 − v²/c²) | Ready | `physics/physics/relativistic_momentum/` |
+| Relativistic kinetic energy | K = (γ − 1)mc² | K = (γ − 1) m c²   (γ = 1/√(1 − v²/c²)) | Ready | `physics/physics/relativistic_kinetic_energy/` |
+| Energy-momentum relation | E² = (pc)² + (mc²)² | E = √( (p c)² + (m c²)² )   (total energy) | Ready | `physics/physics/energy_momentum_relation/` |
+| Relativistic velocity addition | u′ = (u + v)/(1 + uv/c²) | w = (u + v) / (1 + u v / c²) | Ready | `physics/physics/relativistic_velocity_addition/` |
+| Relativistic Doppler effect | f = f₀√((1−β)/(1+β)) | f = f₀ √( (1 − β)/(1 + β) ),  β = v/c   (v > 0 receding, v < 0 approaching) | Ready | `physics/physics/relativistic_doppler/` |
+| Schwarzschild radius | rₛ = 2GM/c² | rₛ = 2 G M / c²   (G = 6.674×10⁻¹¹ N·m²/kg²) | Ready | `physics/physics/schwarzschild_radius/` |
+| Gravitational time dilation | Δt₀ = Δt√(1 − rₛ/r) | Δt₀ = Δt √(1 − 2GM/(r c²))   (clock at distance r from mass M, r > rₛ) | Ready | `physics/physics/gravitational_time_dilation/` |
