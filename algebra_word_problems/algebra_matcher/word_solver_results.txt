@@ -807,3 +807,25 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 28 (13 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 7 with an answer: 7 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   107 word-solver and number-puzzle tests pass.
+
+Batch 26: more wrong numbers from nearby wordings of pages_per_day, opposite_angles_equal and rectangle_from_perimeter_area (fixes only, no new family)
+==============================================================
+pages_per_day: every "finish ..." in the problem, the question included, has to name this book.  "She must finish the book in 6 days. How many pages a day must be read?" stays 40/3 (80 pages over 6 days), and so do "... to finish?",
+  "... to finish it?" and "... to finish reading the book?"; "finish the story" on a novel and "finish the report" on a report stay.  These were answered 40/3 and 53 and now decline: "She must finish the book in 6 days. How many pages a day must be
+  read to finish the chapter?" and "How many pages a day must be read to finish the chapter? She must finish the book in 6 days." (the chapter is not the book), and likewise "finish the homework", "finish the lab report" and a story on a report.
+  The words after each "finish" (up to "in / within / over / by / before / after" or the end of the sentence) must all be function words or the book's own noun.
+opposite_angles_equal: "form a straight angle" is a statement, not a question: it says the two angles ADD UP to 180 (or to 90 for a right angle).  "Where two lines cross, the opposite angles form a straight angle: (2x + 0) and (x + 90). Find the angle."
+  was answered 180, but each angle there is 180, so the two add to 360 and the statement is false; it now declines, and so does any "form a(n) acute / obtuse / right / straight / reflex angle".  The 180 example moved onto the question: "Where two lines
+  cross, opposite angles are (2x + 0) and (x + 90). Find the straight angle." is 180 (and the old test line was changed to it, with a note).  Named kinds in the QUESTION are as before: "Find the acute / obtuse / right angle" is answered only when
+  the angle is that kind (80, 98, and 90 for 2x = x + 45).
+rectangle_from_perimeter_area: "less" and "more" (and wider / broader / narrower) are comparisons too.  "The length is less than the width. What is its length?" is 2 (was 18); "The width is more than the length. What is its width?" is 18 (was 2);
+  "The width is the wider side" is 18 and "the length is the narrower side" is 2.  A statement inside the question counts and does not turn the question into "both": the question is cut at if / when / given that / since / because / assuming / provided; the part
+  after is a statement, the part before is what is asked.  "What is its length if the length is shorter than the width?" is 2 (was 18 and 2), "What is its width if ..." is 18, "What is its length when the width is the longer side?" is 2, and "Find its length
+  and width if the length is shorter than the width" still returns both (2 and 18).  With no statement the length stays 18 and the width 2.  A sum asked with a condition ("What is the sum of its length and width if ...") and a comparison of a side with itself
+  still decline.
+Checks (test_word_solver.py): the four new test methods above; the earlier test that expected the straight-angle STATEMENT to give 180 was changed to the question form; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact
+  fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 29 (11 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
+  111 word-solver and number-puzzle tests pass.

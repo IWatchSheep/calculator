@@ -1653,7 +1653,8 @@ class FreshWordings(unittest.TestCase):
         self.assertIsNone(answers("Where two lines cross, the opposite angles form a straight angle: (2x + 4)° and (5x − 110)°. Find the angle."))
         self.assertIsNone(answers("Where two lines cross, the opposite angles form a right angle: (4x + 10)° and (6x − 20)°. Find x."))
         # and a straight or right angle is answered when it really is one: 2x = x + 90 gives x = 90 and an angle of 180; 2x = x + 45 gives 90
-        self.assertEqual(answers("Where two lines cross, the opposite angles form a straight angle: (2x + 0)° and (x + 90)°. Find the angle."), values(180))
+        # (the 180 example moved onto the question: "form a straight angle" is a statement that the two add up to 180, see test_opposite_angles_form_is_a_statement)
+        self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 0)° and (x + 90)°. Find the straight angle."), values(180))
         self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 0)° and (x + 45)°. Find the right angle."), values(90))
 
     def test_rectangle_uses_the_problems_own_statement_of_the_longer_side(self):
@@ -1685,6 +1686,74 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (twenty-eighth set, neighbours of the batch-25 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (7, 0, 6))
+
+    def test_pages_question_may_not_name_another_job(self):
+        book = "A 100-page book has 20 pages already read. "
+        # the forms that stay answered: 80 pages over 6 days is 40/3
+        for tail in ("She must finish the book in 6 days. How many pages a day must be read?",
+                     "She must finish the book in 6 days. How many pages a day must be read to finish?",
+                     "She must finish the book in 6 days. How many pages a day must be read to finish it?",
+                     "She must finish the book in 6 days. How many pages a day must be read to finish reading the book?"):
+            self.assertEqual(answers(book + tail), values(Fraction(40, 3)), tail)
+        self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
+        self.assertEqual(answers("A 100-page novel has 20 pages already read. She must finish the story in 6 days. How many pages a day must be read?"), values(Fraction(40, 3)))
+        self.assertEqual(answers("A 100-page report has 20 pages already read. She must finish the report in 6 days. How many pages a day must be read?"), values(Fraction(40, 3)))
+        # the question (or any sentence) naming a different job declines: the chapter is not the book
+        self.assertIsNone(answers(book + "She must finish the book in 6 days. How many pages a day must be read to finish the chapter?"))
+        self.assertIsNone(answers(book + "How many pages a day must be read to finish the chapter? She must finish the book in 6 days."))
+        self.assertIsNone(answers(book + "She must finish the book in 6 days. How many pages a day must be read to finish the homework?"))
+        self.assertIsNone(answers("A 100-page report has 20 pages already read. She must finish the story in 6 days. How many pages a day must be read?"))
+
+    def test_opposite_angles_form_is_a_statement(self):
+        # "form a straight angle" says the two angles ADD UP to 180; here each angle is 180, so the statement is false and the problem declines
+        self.assertIsNone(answers("Where two lines cross, the opposite angles form a straight angle: (2x + 0)° and (x + 90)°. Find the angle."))
+        self.assertIsNone(answers("Where two lines cross, the opposite angles form a right angle: (4x + 10)° and (6x − 20)°. Find x."))
+        self.assertIsNone(answers("Where two lines cross, the opposite angles form an obtuse angle: (2x + 4)° and (5x − 110)°. Find the angle."))
+        # the 180 example lives on the question: "Find the straight angle"
+        d = "Where two lines cross, opposite angles are (2x + 0)° and (x + 90)°. "
+        self.assertEqual(answers(d + "Find the straight angle."), values(180))
+        self.assertEqual(answers(d + "Find the angle."), values(180))
+        self.assertIsNone(answers(d + "Find the right angle."))                                      # 180 is not 90
+        e = "Where two lines cross, opposite angles are (2x + 0)° and (x + 45)°. "
+        self.assertEqual(answers(e + "Find the right angle."), values(90))
+        self.assertIsNone(answers(e + "Find the straight angle."))
+        f = "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. "
+        self.assertEqual(answers(f + "Find the acute angle."), values(80))
+        self.assertIsNone(answers(f + "Find the obtuse angle."))
+
+    def test_rectangle_more_less_wider_and_a_condition_in_the_question(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # no statement: the length is the longer side
+        self.assertEqual(answers(base + "What is its length?"), values(18))
+        self.assertEqual(answers(base + "What is its width?"), values(2))
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        # less / more / wider / narrower are comparisons too
+        self.assertEqual(answers(base + "The length is less than the width. What is its length?"), values(2))
+        self.assertEqual(answers(base + "The width is more than the length. What is its width?"), values(18))
+        self.assertEqual(answers(base + "The width is the wider side. What is its width?"), values(18))
+        self.assertEqual(answers(base + "The length is the narrower side. What is its length?"), values(2))
+        # a statement inside the question counts, and naming the other side there does not ask for both
+        self.assertEqual(answers(base + "What is its length if the length is shorter than the width?"), values(2))
+        self.assertEqual(answers(base + "What is its width if the length is shorter than the width?"), values(18))
+        self.assertEqual(answers(base + "What is its length when the width is the longer side?"), values(2))
+        self.assertEqual(answers(base + "What is its length if the length is longer than the width?"), values(18))
+        r = WS.solve(base + "Find its length and width if the length is shorter than the width.")
+        self.assertEqual(r.values, [Fraction(2), Fraction(18)])             # both sides asked: both returned
+        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)
+        self.assertEqual(r.values[0] * r.values[1], 36)
+        r = WS.solve(base + "Find its length and width.")
+        self.assertEqual(r.values, [Fraction(18), Fraction(2)])
+        # a sum asked with a condition still declines
+        self.assertIsNone(answers(base + "What is the sum of its length and width if the length is shorter than the width?"))
+        self.assertIsNone(answers(base + "What is its length if the length is less than the length?"))
+
+    def test_neighbours_of_batch_26_set(self):
+        """Set 29: neighbours of the batch-26 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_29 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-ninth set, neighbours of the batch-26 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 0, 5))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

@@ -2498,6 +2498,15 @@ def pages_per_day(problem):
     allowed = _PAGES_FUNCTION | (_PAGES_BOOKISH if noun in _PAGES_BOOKISH else set()) | {noun}
     if any(w not in allowed for w in dm.group(1).split()):
         return None
+    # every "finish ..." in the problem (the question too) has to name this book: "to finish the chapter?" asks about another job
+    for fm in re.finditer(r"\bfinish\b", t):
+        after = re.split(r"[.?!]", t[fm.end():])[0]
+        words = re.findall(r"[a-z]+", after)
+        for stop in ("in", "within", "over", "by", "before", "after", "today", "tomorrow", "tonight"):
+            if stop in words:
+                words = words[:words.index(stop)]
+        if any(w not in allowed for w in words):
+            return None
     unit = dm.group(3).rstrip("s")
     # the question asks for pages per (day / week / night), in the unit of the deadline
     sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
@@ -2543,6 +2552,8 @@ def opposite_angles_equal(problem):
     angle = a1 * x + b1
     if not (0 < angle <= 180):
         return None
+    if re.search(r"\bforms?\s+(?:an?\s+)?(?:acute|obtuse|right|straight|reflex)\s+angle", t):
+        return None                                              # "the opposite angles form a straight angle" means the two ADD UP to 180
     # a named kind ("the acute angle", "a straight angle") is answered only when the angle IS that kind
     kind_ok = {"acute": 0 < angle < 90, "obtuse": 90 < angle < 180, "right": angle == 90, "straight": angle == 180, "reflex": False}
     if any(not kind_ok[k] for k in re.findall(r"\b(acute|obtuse|right|straight|reflex)\s+angles?\b", t)):
@@ -2569,8 +2580,8 @@ _RECT_PERIM = re.compile(r"\bperimeter of\s+(\d+(?:\.\d+)?)\s*([a-z]+)\b")
 _RECT_AREA = re.compile(r"\barea of\s+(\d+(?:\.\d+)?)\s*(?:(square|sq\.?)\s+)?([a-z]+)(²|\^2|2)?")      # the unit is marked squared: ft^2, ft2, sq ft, square ft
 _RECT_UNIT = {"feet": "ft", "foot": "ft", "meters": "m", "metres": "m", "meter": "m", "metre": "m", "centimeters": "cm", "centimetres": "cm", "inches": "in", "inch": "in",
               "yards": "yd", "yard": "yd", "miles": "mi", "mile": "mi", "kilometers": "km", "kilometres": "km"}
-_RECT_LONG = r"(?:longer|larger|greater|bigger|longest|largest|greatest)"
-_RECT_SHORT = r"(?:shorter|smaller|lesser|shortest|smallest|least)"
+_RECT_LONG = r"(?:longer|larger|greater|bigger|wider|broader|more|longest|largest|greatest|widest)"
+_RECT_SHORT = r"(?:shorter|smaller|lesser|narrower|less|shortest|smallest|least|narrowest)"
 _RECT_REL = re.compile(r"\b(length|width)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?(?:\s+than\s+(?:the\s+)?(length|width))?\b")
 _RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension)\s+(?:is|being)\s+(?:the\s+)?(length|width)\b")
 
@@ -2610,13 +2621,18 @@ def rectangle_from_perimeter_area(problem):
     # the question: both sides, only the length (the longer side), or only the width (the shorter); a sum / difference / product of them is a different question
     sents = [x for x in re.split(r"[.?!]\s*", t) if x.strip()]
     q = next((x for x in reversed(sents) if re.search(r"\b(?:find|what|determine|give|name)\b", x)), None)
-    if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q):
+    q_orig = q
+    # a condition inside the question ("... if the length is shorter than the width") is a STATEMENT, not part of what is asked
+    cm = re.search(r"\b(?:if|when|given that|since|because|assuming|provided)\b", q) if q else None
+    q_main, cond = (q[:cm.start()], q[cm.end():]) if cm else (q, "")
+    if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q_main):
         return None
+    q = q_main
     asks_len, asks_wid = bool(re.search(r"\blength\b", q)), bool(re.search(r"\bwidth\b", q))
     asks_both = bool(re.search(r"\b(?:sides|dimensions)\b", q)) or (asks_len and asks_wid)
     if not (asks_len or asks_wid or asks_both):
         return None
-    others = " ".join(x for x in sents if x is not q)
+    others = " ".join([x for x in sents if x is not q_orig] + [cond])
     length_longer = _rect_length_is_longer(others)
     if length_longer == "bad":
         return None
