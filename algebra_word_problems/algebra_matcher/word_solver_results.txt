@@ -228,3 +228,30 @@ Change: the interest family declines on "such" and "of the year".  I also added 
   meaning as the second sentence; no test or generated problem uses them).
 "After one year" does not contain "of the year", so the five generated problems are still answered.
 Measured: 1,000 generated problems: claims 93, wrong 0; 17 word-solver tests and 12 number-puzzle tests pass; fresh set 8 unchanged.
+
+Batch 8: two purchases of the same two items (the generator's "two_items")
+==========================================================================
+New family two_purchases:  a*x + b*y = T1,  c*x + d*y = T2, asking for the price of one of each.
+  The counts are the roles, INCLUDING counts written as words: "An apple and a pear cost $1.30. Two apples and three
+  pears cost $3.40." is one apple + one pear, then two apples + three pears (prices 1/2 and 4/5, i.e. $0.50 and $0.80).
+  Counts accepted: digits, a, an, one, two ... ten.  It answers only when
+  * exactly two statements of the form "<count> <item> and <count> <item> cost <price>" are found, naming the same
+    two items (in either order in the second statement),
+  * every number written in digits is a count or a price of those statements (a leftover number declines),
+  * what remains after the two statements only asks for the prices ("Find the price of one of each" / "How much does
+    each cost?") - no digits, no spelled count, no "such", twice, double, half, pair, both, couple,
+  * the equations are independent (a*d - b*c != 0) and both prices are positive.
+  Prices are exact fractions; the reading shows both equations and the exact prices:
+  "x = price of one apple, y = price of one pear: 1x + 1y = 1.3 and 2x + 3y = 3.4, so x = 1/2 and y = 4/5".
+  Left for later (as asked): heads and legs, coins, digits, boats, three-item systems.
+Measured:
+  1,000 generated problems: claims 93 -> 97.  The 4 new claims are the 4 "Find the price of one of each" problems
+  (ids 0884, 0908, 0921, 0929: burgers/fries, coffees/muffins, notebooks/pens x2); every price equals the stored answer
+  (e.g. 221/20 and 213/20 = $11.05 and $10.65); wrong 0.  Generated two-purchase problems: 4, claimed 4.
+  Hand-written problems claimed by the family solver: 18 -> 19 ("An apple and a pear cost $1.30 ...", 1/2 and 4/5), all 19 match.
+  Fresh set 9 (8 wordings, written after the family, run once, untuned): 4 with an answer: 3 solved, 1 declined; 4 required
+  declines: 4 of 4; 0 wrong.  The declined one is "3 adult passes and 2 student passes ... 1 adult pass and 4 student passes":
+  the plural stripping turns "passes" into "passe" and "pass" into "pas", so the two statements do not name the same items.
+  Not fixed (a known gap; declining is safe).
+  Pipeline on the 100 hand-written problems (reader, families, matcher), right first / in top 3:
+      set A 53/60, 60/60 (unchanged);   set B 35/40 -> 36/40, 40/40.

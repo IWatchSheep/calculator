@@ -32,6 +32,7 @@ HAND_ANSWERS = {
     "If 3 kg of apples cost $7.50, how much do 8 kg cost?": [20],
     "I put some money in an account at 3% and the rest at 5%, $10,000 total. I earned $420 in interest in a year. How much was at 5%?": [4000, 6000],
     "$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?": [4000, 4000],
+    "An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each.": [Fraction(1, 2), Fraction(4, 5)],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -170,6 +171,27 @@ class Families(unittest.TestCase):
         # the interest is not between the two possible extremes: no split can give it
         self.assertIsNone(answers("Leo invests $10,000, part at 3% and the rest at 5%. After one year the interest is $900. How much was invested at each rate?"))
 
+    def test_two_purchases(self):
+        # the counts are the roles, including counts written as words
+        self.assertEqual(answers("An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each."), values(Fraction(1, 2), Fraction(4, 5)))
+        self.assertEqual(answers("Three pens and one notebook cost $6.50. One pen and two notebooks cost $5.25. Find the price of each."), values(Fraction(31, 20), Fraction(37, 20)))
+        self.assertEqual(answers("4 apples and 2 oranges cost $5.00. 6 apples and 1 oranges cost $6.50. Find the price of one of each."), values(1, Fraction(1, 2)))
+        # the second purchase names the items the other way round
+        self.assertEqual(answers("2 apples and 1 pear cost $2.00. 1 pear and 3 apples cost $2.70. Find the price of each."), values(Fraction(3, 5), Fraction(7, 10)))
+        r = WS.solve("An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each.")
+        self.assertIn("1x + 1y = 1.3", r.reading)
+        self.assertIn("2x + 3y = 3.4", r.reading)
+        # "two such" is not a count of items; a count with no role, three items, one statement, other items, dependent equations
+        self.assertIsNone(answers("An apple and a pear cost $1.30. Two such apples and three pears cost $3.40. Find the price of each."))
+        self.assertIsNone(answers("An apple and a pear cost $1.30. Twice as many apples and three pears cost $3.40. Find the price of each."))
+        self.assertIsNone(answers("An apple and a pear cost $1.30. Two apples and three pears cost $3.40. I have $10. Find the price of each."))
+        self.assertIsNone(answers("Three apples and two pears cost $4.20. Find the price of each."))
+        self.assertIsNone(answers("One apple and one pear cost $1.30. Two plums and three pears cost $3.40. Find the price of each."))
+        self.assertIsNone(answers("Two pens and a pad cost $5.00. Four pens and two pads cost $10.00. Find the price of each."))
+        self.assertIsNone(answers("An apple and a pear cost $1.30. Two apples and three pears cost $0.50. Find the price of each."))
+        # a different system: coins / heads and legs / a total count are not two purchases
+        self.assertIsNone(answers("Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pens?"))
+
     def test_every_number_needs_a_role(self):
         # one extra number the patterns do not use -> decline, whatever the rest says
         self.assertIsNone(answers("The sum of two numbers is 90 and their difference is 14. Find the numbers between 1 and 100."))
@@ -179,6 +201,8 @@ class Families(unittest.TestCase):
 class GroundTruth(unittest.TestCase):
     @staticmethod
     def numbers_of(text):
+        if re.search(r"\$[\d,.]+ each", text):                                   # two prices: compare the dollars
+            return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\$[\d,.]+ at \d+(?:\.\d+)?%", text):                # an interest answer: compare the dollars, not the rates
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
@@ -292,6 +316,15 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (eighth set, interest): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 1, 4))
+
+    def test_two_purchase_set(self):
+        """Set 9: two-purchase wordings written after the family and run once, untuned.  The one declined answer is
+        "adult passes / adult pass": the plural-stripping turns "passes" into "passe" and "pass" into "pas" (a known gap)."""
+        from fresh_word_problems_9 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (ninth set, two purchases): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (3, 1, 4))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

@@ -458,7 +458,70 @@ def two_rate_interest(problem):
                       show(r1), show(T), show(r2), eq, show_exact(x1), show(r1), show_exact(x2), show(r2)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest]
+# ---------------------------------------------------------------------------------------------------------
+# 8. two purchases of the same two items:   a*x + b*y = T1,   c*x + d*y = T2     (the generator's "two_items")
+# ---------------------------------------------------------------------------------------------------------
+_COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+_CNT = r"(?:\d+|" + "|".join(_COUNT_WORDS) + r")"
+_ITEM = r"[a-z]+(?:\s[a-z]+)?"
+_PURCHASE = re.compile(r"(?<![\w.])(" + _CNT + r")\s+(" + _ITEM + r")\s+and\s+(" + _CNT + r")\s+(" + _ITEM + r")\s+"
+                       r"(?:cost|costs|come to|comes to|total|totals)\s+(\d+(?:\.\d+)?)")
+
+
+def _count(word):
+    return int(word) if word.isdigit() else _COUNT_WORDS[word]
+
+
+def _singular(phrase):
+    return " ".join(re.sub(r"(?<=[a-z])s$", "", w) if len(w) > 3 else w for w in phrase.split())
+
+
+def two_purchases(problem):
+    t = clean(problem).replace("$", "")
+    found = list(_PURCHASE.finditer(t))
+    if len(found) != 2 or re.search(r"\bsuch\b", t):
+        return None
+    rows = []
+    digit_counts = 0
+    for m in found:
+        c1, i1, c2, i2, price = m.groups()
+        digit_counts += c1.isdigit() + c2.isdigit()
+        rows.append((_count(c1), _singular(i1), _count(c2), _singular(i2), Fraction(price)))
+    # every number written in digits must be a count or a price of these two statements
+    if len(digit_numbers(problem)) != digit_counts + 2:
+        return None
+    (a, n1, b, n2, T1), (c, m1, d, m2, T2) = rows
+    if n1 == n2:
+        return None
+    if (m1, m2) == (n2, n1):                    # the second purchase names the items the other way round
+        c, d = d, c
+        m1, m2 = m2, m1
+    if (m1, m2) != (n1, n2):
+        return None
+    # what is left after the two statements may only ask for the prices ("Find the price of one of each.")
+    rest = t
+    for m in reversed(found):
+        rest = rest[:m.start()] + " " + rest[m.end():]
+    if re.search(r"\d", rest) or re.search(_SPELLED, rest) or re.search(_GROUPED, rest):
+        return None
+    if not re.search(r"\b(?:price|cost)\b", rest) or not re.search(r"\beach\b|\bone of\b|\bper\b", rest):
+        return None
+    det = a * d - b * c
+    if det == 0 or min(a, b, c, d) <= 0:
+        return None
+    x = (T1 * d - b * T2) / det
+    y = (a * T2 - c * T1) / det
+    if x <= 0 or y <= 0:
+        return None
+    eq1 = "%sx + %sy = %s" % (a, b, show(T1))
+    eq2 = "%sx + %sy = %s" % (c, d, show(T2))
+    return Result("two_purchases", [x, y], "%s;  %s" % (eq1, eq2),
+                  "x = price of one %s, y = price of one %s: %s and %s, so x = %s and y = %s" % (
+                      n1, n2, eq1, eq2, show_exact(x), show_exact(y)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
+            two_purchases]
 
 
 def solve(problem):
