@@ -2920,7 +2920,7 @@ def class_ratio_after_join(problem):
     # exactly ONE sentence asks "how many", and THAT sentence says originally / at first: "Originally there were some ... How many students are there now?" asks the total now,
     # and a second question ("How many are there now?") makes the problem ask two things
     asking = [x for x in re.split(r"[.?!]", t) if re.search(r"\bhow many\b", x)]
-    if len(asking) != 1 or not re.search(r"\b(?:originally|at first|to begin with|in the beginning)\b", asking[0]) or re.search(r"\b(?:now|currently|today|afterwards|after that|finally|at the end)\b", asking[0]):
+    if len(asking) != 1 or len(re.findall(r"\bhow many\b", t)) != 1 or not re.search(r"\b(?:originally|at first|to begin with|in the beginning)\b", asking[0]) or re.search(r"\b(?:now|currently|today|afterwards|after that|finally|at the end)\b", asking[0]):
         return None
     qm = re.search(r"\bhow many (?:of the )?([a-z]+)", asking[0])
     if not qm or qm.group(1) not in ("students", "pupils", "children", "people", "members", "kids", "learners"):
@@ -2997,9 +2997,10 @@ def pipes_and_drain(problem):
     # the question: with everything open, how long to FILL the pool
     # everything open, THE DRAIN INCLUDED: "all three open", "all open", "with everything open", "the pipes and the drain open".  A bare "The pipes work together" /
     # "both" / "at the same time" does not open the drain (the two pipes alone are a different problem).
-    if not re.search(r"\ball (?:three |of them |the )?(?:are )?(?:open|running|on|working|together)\b|\bwith all (?:three|of them|the (?:pipes|taps) and the (?:drain|leak|outlet))\b|\bwith everything open\b|"
-                     r"\b(?:pipes|taps) and the (?:drain|leak|outlet)\b[^.?!]*\b(?:open|running|together|on|working)\b|\bboth (?:pipes|taps) and the (?:drain|leak|outlet)\b", t):
-        return None
+    if not re.search(r"\ball three\b|\ball of them\b|\bwith everything (?:open|running|on)\b|(?:^|[.,;?!]\s*|\bwith\s+)all (?:open|running|working)\b|"
+                     r"\b(?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b[^.?!]*\b(?:open|running|together|on|working)\b|\bboth (?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b|"
+                     r"\ball (?:the )?(?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b", t):
+        return None                                              # "The pipes are all together" / "The lights are all on" say nothing about the drain
     if not re.search(r"\bhow long\b[^.?!]*\bfill\b", t) or re.search(r"\bhow long\b[^.?!]*\bempty\b", t):
         return None
     rate = sum((Fraction(1) / f for f in fills), Fraction(0)) - sum((Fraction(1) / d for d in drains), Fraction(0))

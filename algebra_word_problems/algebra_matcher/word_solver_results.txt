@@ -1015,3 +1015,17 @@ Measured:
   1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 40 (7 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong.
   146 word-solver and number-puzzle tests pass.
+
+Batch 38: two loose phrases in pipes_and_drain and class_ratio_after_join (fixes only, no new family)
+==============================================================
+pipes_and_drain, "all": the batch-37 cue accepted "all together", "all on" and "all open" said of anything.  "The pipes are all together. How long does it take to fill the pool?" was answered 5/2 (the drain is not open; the two pipes alone take 20/9 hours) and "The lights are all on. How long does it take
+  to fill the pool?" was answered 5/2 as well.  The "all" now has to be the three devices (or the pipes AND the drain): "all three" (open / running / on / together), "all of them", "with everything open / running / on", "all open / running / working" at the start of a sentence or after "with" or a comma, "the pipes (taps) and the drain
+  (leak, outlet) ... open / running / together / on", "both pipes and the drain", "all the pipes and the drain".  Declined: "The pipes are all together.", "The lights are all on.", "The taps are all together.", "The lamps are all on.", "The pipes are all open." (no drain), "The pipes work together.", a bare "All on." and "Everything is on."
+  (the last two have no devices named).  Still 5/2: "With all three open", "All three are open.", "All of them are open.", "With everything open", "The pipes and the drain are open" (and "... all open"), "All open,", "... with all three open".
+class_ratio_after_join, a second "how many": "How many students were there originally and how many boys?" was answered 44; the boys were 12 and the question asks for them too.  The whole problem may now contain only ONE "how many" (the batch-37 check was one question SENTENCE): "..., and how many boys were there?", "... and how many girls?",
+  "How many students were there originally? How many boys?" and "How many boys and girls were there originally?" all decline, and so does "How many were there originally?" (no noun for the total).  "How many students were there originally?" stays 44.
+Checks (test_word_solver.py): the three new test methods above; the earlier tests still pass; spelled counts ("all three" is the one allowed), each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 41 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
+  149 word-solver and number-puzzle tests pass.

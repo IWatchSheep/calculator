@@ -2279,6 +2279,39 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (3, 0, 4))
 
+    def test_pipes_all_must_be_the_three_devices(self):
+        base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
+        # "all" that is the pipes and the drain: 5/2 hours
+        for q in ("With all three open, how long does it take to fill the pool?", "The pipes and the drain are open. How long does it take to fill the pool?",
+                  "The pipes and the drain are all open. How long does it take to fill the pool?", "All three are open. How long does it take to fill the pool?",
+                  "All of them are open. How long does it take to fill the pool?", "With everything open, how long does it take to fill the pool?",
+                  "All open, how long does it take to fill the pool?", "How long does it take to fill the pool with all three open?"):
+            self.assertEqual(answers(base + q), values(Fraction(5, 2)), q)
+        # "all together" or "all on" said of something else opens nothing: the two pipes alone take 20/9 hours, and the lights do not open the drain
+        self.assertEqual(Fraction(1) / (Fraction(1, 4) + Fraction(1, 5)), Fraction(20, 9))
+        for q in ("The pipes are all together. How long does it take to fill the pool?", "The lights are all on. How long does it take to fill the pool?",
+                  "The pipes are all open. How long does it take to fill the pool?", "The pipes work together. How long does it take to fill the pool?",
+                  "All on. How long does it take to fill the pool?", "Everything is on. How long does it take to fill the pool?",
+                  "The taps are all together. How long does it take to fill the pool?", "The lamps are all on. How long does it take to fill the pool?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_class_ratio_one_how_many(self):
+        base = "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3. "
+        self.assertEqual(answers(base + "How many students were there originally?"), values(44))
+        # the boys were 12: a second "how many" in the same sentence asks for them too, so the problem asks two things
+        for q in ("How many students were there originally and how many boys?", "How many students were there originally, and how many boys were there?",
+                  "How many students were there originally and how many girls?", "How many students were there originally? How many boys?",
+                  "How many boys and girls were there originally?", "How many were there originally?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_all_and_second_how_many_set(self):
+        """Set 41: neighbours of the batch-38 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_41 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (forty-first set, neighbours of the batch-38 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (3, 0, 5))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
