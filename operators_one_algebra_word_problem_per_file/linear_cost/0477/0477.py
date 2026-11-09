@@ -6,7 +6,7 @@ Equation: 4n − 10 = 10
 Solve   : 4n = 20 → n = 5
 Answer  : 5 bags of chips
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: price_minus_coupon answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4n − 10 = 10'
 SOLVE = '4n = 20 → n = 5'
 ANSWER = '5 bags of chips'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'price_minus_coupon'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Bags of chips cost ${0} each. With a ${1} coupon, Wren paid ${2}. How many bags of chips were bought?'
 NUMBERS = ['4.00', '10', '10.00']

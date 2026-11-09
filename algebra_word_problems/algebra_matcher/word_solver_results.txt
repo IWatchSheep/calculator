@@ -1118,3 +1118,20 @@ Measured:
   Fresh set 48 (9 wordings, neighbours of this fix, written after the fix was finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   (The set's first run stopped on my own arithmetic: 1/3 + 1/6 - 1/9 = 7/18, so 18/7 hours, not 18/5; the fixture was corrected, no solver change.)
   162 word-solver and number-puzzle tests pass.
+
+Batch 45: three new families (percent_spent_left, price_minus_coupon, complementary_supplementary)
+==============================================================
+percent_spent_left: "Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck?" is $1120 (the $280 is the 25% not spent, x = 280 / 25%).  The same reading covers
+  "After using 75% of the fuel in a tank, 280 liters remain. How much fuel was there at first?" (1120 liters).  Each sentence is matched whole (nothing else may be said); the thing asked for must
+  be the thing the percent was taken of; the percent is above 0 and below 100 and the amount left is positive.
+price_minus_coupon: "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?" is 14 (3.5n - 3 = 46).  All three amounts are money, the question names the same
+  item, the count is a positive whole number, and a coupon larger than the amount paid declines.
+complementary_supplementary: "Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles." is 17 and 73 (x + (5x - 12) = 90).  Supplementary adds to 180, "more than" adds
+  to the multiple and "less than" subtracts, both angles are positive, and both come back (the other angle first, then the one described, as the generator lists them).
+Checks (test_word_solver.py): test_percent_spent_left, test_price_minus_coupon, test_complementary_and_supplementary_angles and test_percent_coupon_angle_set.
+Measured:
+  1,000 generated problems: claims 337 -> 349 (percent_spent_left 4, price_minus_coupon 4 of 5, complementary_supplementary 4 of 4), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 49 (15 wordings, written after the families were finished, run once, untuned): 7 with an answer: 6 solved, 1 declined (safe: "an allowance", the pattern lists a / the / his / her / their /
+  my / our); 8 required declines: 8 of 8; 0 wrong.  (One item was first written as a required decline by my own mistake: x + (2x - 100) = 90 gives 190/3 and 80/3, both positive, so the solver's answer
+  was right and the fixture was corrected; no solver change.)
+  166 word-solver and number-puzzle tests pass.

@@ -173,7 +173,7 @@ Besides the 507 operators the project is getting a second library: **1,000 algeb
 | **The problems** | `algebra_word_problems/algebra_word_problems.txt` | The 1,000 generated problems in 55 categories: Problem / Let / Equation / Solve / Answer. The ground truth. |
 | **One problem per file** | `operators_one_algebra_word_problem_per_file/<category>/<id>/` | `<id>.py` (the problem, its steps and its answer, plus `compute(...)`) and `<id>.jpg` (a diagram of the problem). `INDEX.md` lists all 1,000. |
 | **How a problem goes into a row** | `operator_row_math_for_algebra_word_problems/<category>/<id>/<id>.py` | The row of cards for the calculator, in the same style as `operator_row_math/`. |
-| **The solver** | `algebra_word_problems/algebra_matcher/word_solver.py` | 55 families that solve problems straight from their wording. Standard library only. `number_puzzle.py` answers a smaller set of number puzzles. |
+| **The solver** | `algebra_word_problems/algebra_matcher/word_solver.py` | 58 families that solve problems straight from their wording. Standard library only. `number_puzzle.py` answers a smaller set of number puzzles. |
 
 Keys look like `savings/0848` (category folder, then the four-digit problem number).
 
@@ -185,7 +185,7 @@ Keys look like `savings/0848` (category folder, then the four-digit problem numb
 - `TEMPLATE` and `NUMBERS`: the problem text with every number replaced by `{0}`, `{1}` ... and the numbers as written, in order;
 - `compute(*numbers)`: puts your numbers into the template and asks the solver. With no arguments it uses the stored numbers.
 
-A problem is **Ready** when a solver answers it (365 of the 1,000: 337 by `word_solver`, 28 by `number_puzzle`) and **Reference** when only the text and its steps are stored (635). Calling `compute()` on a Reference problem raises `NotImplementedError`. Calling it with numbers the solver will not accept raises `ValueError`. It never guesses.
+A problem is **Ready** when a solver answers it (377 of the 1,000: 349 by `word_solver`, 28 by `number_puzzle`) and **Reference** when only the text and its steps are stored (623). Calling `compute()` on a Reference problem raises `NotImplementedError`. Calling it with numbers the solver will not accept raises `ValueError`. It never guesses.
 
 **The row file** lays the problem out as one row: `Savings 0848(□, □, □, □) = □`. There is one small box for every number in the problem, in the order they appear in the text, labelled `number 1`, `number 2`, and so on. The answer lands in the single box right of `=`. The file defines `PATTERN`, `CALC` (`ready` or `reference`), `INPUTS`, `DEFAULTS`, `KINDS`, `LEFT`, `RIGHT` and `place(parent, stacked=False)`, which builds the row with the same `build_row` the operator rows use. Try one: `python operator_row_math_for_algebra_word_problems/preview.py savings/0848`.
 
@@ -228,7 +228,7 @@ Read these at the start of every session. Update them every time a batch is fini
 
 ### What is left
 
-- **The solver covers 337 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 635 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
+- **The solver covers 349 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 623 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
 - **The operator is not built.** Text pasted in the Templates box should be split into word boxes and number boxes, matched to a family, and answered with the reading the solver already produces. When no family is sure, it falls back to the trained matcher. The open window decisions are in `algebra_word_problems/chess_test_results.txt`, section 7.4.
 - The row files are laid out. Nothing in the window places a row yet, and = does not call `compute()`. A problem can be opened from Operators only to see its diagram.
 
@@ -282,5 +282,5 @@ The algebra word problem folders have their own tests:
 python tests/test_algebra_word_problem_files.py
 ```
 
-They check all 1,000 problem folders (file, picture, row), that each file holds the stored text, and that `compute()` works for the 365 problems a solver answers.
+They check all 1,000 problem folders (file, picture, row), that each file holds the stored text, and that `compute()` works for the 377 problems a solver answers.
 The solver itself is tested from `algebra_word_problems/algebra_matcher/` with `python -m unittest test_word_solver test_number_puzzle`.

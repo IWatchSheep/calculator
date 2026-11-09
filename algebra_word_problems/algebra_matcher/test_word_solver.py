@@ -2459,6 +2459,39 @@ class FreshWordings(unittest.TestCase):
         from fresh_word_problems_48 import FRESH
         self.assertEqual(score(FRESH), (3, 0, 6))
 
+    def test_percent_spent_left(self):
+        """"Yara spent 75% of a paycheck on rent and had $280 left" is $1120 (the $280 is the 25% not spent); the same for fuel.  The percent is above 0 and below 100, the amount left is positive,
+        and a second amount, a different question word or a changed noun declines."""
+        self.assertEqual(answers("Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck?"), values(1120))
+        self.assertEqual(answers("After using 75% of the fuel in a tank, 280 liters remain. How much fuel was there at first?"), values(1120))
+        for bad in ("Yara spent 100% of a paycheck on rent and had $280 left. How much was the paycheck?", "Yara spent 0% of a paycheck on rent and had $280 left. How much was the paycheck?",
+                    "Yara spent 75% of a paycheck on rent and had $0 left. How much was the paycheck?", "Yara spent 75% of a paycheck on rent and $20 on food and had $280 left. How much was the paycheck?",
+                    "Yara spent 75% of a paycheck on rent and had $280 left. How much was the rent?", "After using 75% of the fuel in a tank, 280 liters remain. How much was used?"):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_price_minus_coupon(self):
+        """"Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00" is 14 (3.5n - 3 = 46).  The count is a positive whole number and a coupon larger than the amount paid declines."""
+        self.assertEqual(answers("Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?"), values(14))
+        self.assertEqual(answers("Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought?"), values(3))
+        for bad in ("Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?", "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $47.00. How many notebooks were bought?",
+                    "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many pens were bought?"):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_complementary_and_supplementary_angles(self):
+        """"Two angles are complementary. One angle is 12 less than 5 times the other." is 17 and 73; supplementary angles add to 180; "more than" adds and "less than" subtracts; both are positive."""
+        self.assertEqual(answers("Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles."), values(17, 73))
+        self.assertEqual(answers("Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles."), values(31, 149))
+        self.assertEqual(answers("Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles."), values(14, 76))
+        for bad in ("Two angles are complementary. One angle is 120 more than 4 times the other. Find both angles.", "Two angles are complementary. One angle is 12 less than 5 times the other. Find the smaller angle.",
+                    "Two angles are complementary. One angle is 12 less than 5 times the other, and the third is 4. Find both angles."):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_percent_coupon_angle_set(self):
+        """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 6 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 8 required declines,
+        0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected."""
+        from fresh_word_problems_49 import FRESH
+        self.assertEqual(score(FRESH), (6, 1, 8))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

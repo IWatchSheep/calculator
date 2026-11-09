@@ -3065,6 +3065,83 @@ def pipes_and_drain(problem):
                   "%s = %s of the pool per %s, so it takes 1 / %s = %s %ss" % (eq, show_exact(rate), unit, show_exact(rate), show_exact(tt), unit))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 56. a percent spent, with money or fuel left:   x - p% x = left      (the generator's "Yara spent 75% of a paycheck on rent and had $280 left")
+# ---------------------------------------------------------------------------------------------------------
+_SPENT_AT_FIRST = r"(?: at first| originally| to begin with)?"
+_SPENT_MONEY = re.compile(r"^[a-z]+ spent " + NUM + r"% of (?:a|the|his|her|their|my|our) ([a-z]+)(?: on [a-z]+)? and (?:had|has|have) \$" + NUM + r" left\. how much was the \2" + _SPENT_AT_FIRST + r"\?$")
+_SPENT_FUEL = re.compile(r"^after (?:using|burning) " + NUM + r"% of the ([a-z]+) in (?:a|the) ([a-z]+), " + NUM + r" (?:liters?|litres?|gallons?) (?:remain|remains|remained|are left|were left)\. how much \2 was there" + _SPENT_AT_FIRST + r"\?$")
+
+
+def percent_spent_left(problem):
+    t = clean(problem).strip()
+    if n_numbers(problem) != 2 or t.count("%") != 1:
+        return None
+    m = _SPENT_MONEY.match(t)
+    if m:
+        pct, left, what = fr(m.group(1)), fr(m.group(3)), "money"
+    else:
+        m = _SPENT_FUEL.match(t)
+        if not m:
+            return None
+        pct, left, what = fr(m.group(1)), fr(m.group(4)), m.group(2)
+    if not (0 < pct < 100) or left <= 0:
+        return None
+    x = left * 100 / (100 - pct)
+    eq = "x - %s%% of x = %s" % (show(pct), show(left))
+    return Result("percent_spent_left", [x], eq,
+                  "%s%% was not spent, so x = %s / %s%% = %s" % (show_exact(100 - pct), show(left), show_exact(100 - pct), show_exact(x)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 57. a price times a count, minus a coupon:   p n - c = paid      (the generator's "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00")
+# ---------------------------------------------------------------------------------------------------------
+_COUPON = re.compile(r"^([a-z]+(?: [a-z]+){0,3}) cost \$" + NUM + r" each\. with a \$" + NUM + r" coupon, [a-z]+ paid \$" + NUM + r"\. how many \1 were bought\?$")
+
+
+def price_minus_coupon(problem):
+    t = clean(problem).strip()
+    m = _COUPON.match(t)
+    if not m or n_numbers(problem) != 3:
+        return None
+    price, coupon, paid = fr(m.group(2)), fr(m.group(3)), fr(m.group(4))
+    if price <= 0 or coupon <= 0 or paid <= 0 or coupon > paid:
+        return None
+    n = (paid + coupon) / price
+    if n.denominator != 1 or n <= 0:
+        return None
+    eq = "%sn - %s = %s" % (show(price), show(coupon), show(paid))
+    return Result("price_minus_coupon", [n], eq, "%s, so %sn = %s and n = %s" % (eq, show(price), show(paid + coupon), show_exact(n)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 58. complementary and supplementary angles:   x + (k x +- c) = 90 or 180      (the generator's "Two angles are complementary. One angle is 12 less than 5 times the other.")
+# ---------------------------------------------------------------------------------------------------------
+_COMPSUPP = re.compile(r"^two angles are (complementary|supplementary)\. one angle is (?:" + NUM + r" (more|less) than )?" + NUM +
+                       r" times the other(?: angle)?\. (?:find (?:both|the two) angles\.?|what are (?:both|the two) angles\?)$")
+
+
+def complementary_supplementary(problem):
+    t = clean(problem).strip()
+    m = _COMPSUPP.match(t)
+    if not m:
+        return None
+    if n_numbers(problem) != (2 if m.group(2) else 1):
+        return None
+    total = Fraction(90 if m.group(1) == "complementary" else 180)
+    c = (fr(m.group(2)) * (1 if m.group(3) == "more" else -1)) if m.group(2) else Fraction(0)
+    k = fr(m.group(4))
+    if k <= 0:
+        return None
+    x = (total - c) / (k + 1)
+    other = k * x + c
+    if x <= 0 or other <= 0:
+        return None
+    eq = "x + (%sx %s %s) = %s" % (show(k), "-" if c < 0 else "+", show(abs(c)), show(total))
+    return Result("complementary_supplementary", [x, other], eq,
+                  "%s, so %sx = %s and x = %s; the other angle is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -3080,7 +3157,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             base_plus_extra_over_time, distance_speed_time,
             pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
             temperature_whole_hours, two_candles_equal, transversal_equal_angles,
-            class_ratio_after_join, kinematics_time, pipes_and_drain]
+            class_ratio_after_join, kinematics_time, pipes_and_drain,
+            percent_spent_left, price_minus_coupon, complementary_supplementary]
 
 
 def solve(problem):

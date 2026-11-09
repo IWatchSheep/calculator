@@ -1,7 +1,7 @@
 ALGEBRA WORD PROBLEMS: WHAT IS DONE, WHAT IS TO DO, AND HOW TO KEEP THIS FILE CURRENT
 =======================================================================================
 File: algebra_word_problems_status.txt, in the main project folder (C:\Users\I_wat\PycharmProjects\calculator).
-Last updated by Claude after Batch 44 (the commit that follows b154819; the algebra word problem folders, the README section and the Operators diagram list are already on GitHub), 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
+Last updated by Claude after Batch 45 (the commit that follows bb7e45f), 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
 
 
 NOTE TO THE NEXT CLAUDE  (read this first)
@@ -16,7 +16,7 @@ The user asked that THIS FILE be kept current every time an algebra word problem
   2b. REGENERATE THE TWO FOLDERS (new in this version; see section 7): from the project folder run
          .venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py
       then  python tests/test_algebra_word_problem_files.py .  Each problem file records which solver answers it (Ready / Reference), so a family you just added only shows up as Ready after this step.
-      The test expects the Ready count (365 = 337 word_solver + 28 number_puzzle); change that number in tests/test_algebra_word_problem_files.py when the claim count changes, and the 365 in the README.
+      The test expects the Ready count (377 = 349 word_solver + 28 number_puzzle); change that number in tests/test_algebra_word_problem_files.py when the claim count changes, and the 365 in the README.
   3. In section 3 (THE NUMBERS) change the numbers and the "last commit" line.
   4. In section 4 (DONE) add ONE line for the batch: "Batch N (date): what it did; families added or fixed; new claim count".  The long write-up of the batch goes into
          algebra_word_problems/algebra_matcher/word_solver_results.txt   (a new "Batch N: ..." section at the end, same style as the earlier ones)
@@ -49,7 +49,7 @@ sanity check.  Anything else returns None (a "decline"), so the trained matcher 
   algebra_matcher/test_word_solver.py       the tests: unit tests per family, the generated-problem ground truth, the hand-written answers (HAND_ANSWERS), the fresh sets, the no-raise guard.
   algebra_matcher/test_number_puzzle.py     the older tests (load_problems() lives here).
   algebra_matcher/fresh_word_problems*.py   44 "fresh sets": wordings written AFTER a family was finished, run ONCE, never tuned on.  Format: FRESH = [(problem, [answers]) or (problem, None) = must decline].
-  algebra_matcher/word_solver_results.txt   the long write-up of every batch (Batch 2 ... Batch 44): what was built, what was fixed and why, the measured numbers.
+  algebra_matcher/word_solver_results.txt   the long write-up of every batch (Batch 2 ... Batch 45): what was built, what was fixed and why, the measured numbers.
   algebra_matcher/todo_report.py            prints the unclaimed wording shapes and the counts (used for the appendix of THIS file).
   algebra_matcher/note_from_claude.txt      an old conversation note (the matcher design).
   ../operators_one_algebra_word_problem_per_file/ and ../operator_row_math_for_algebra_word_problems/   the generated problem files, diagrams and rows (section 7).
@@ -57,16 +57,16 @@ sanity check.  Anything else returns None (a "decline"), so the trained matcher 
 Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittest test_word_solver test_number_puzzle   (about 11 seconds).
 
 
-3. THE NUMBERS   (as of Batch 44)
+3. THE NUMBERS   (as of Batch 45)
 -------------------------------------------------
-  families in word_solver.FAMILIES:               55
-  generated problems claimed by the solver:       337 of 1,000, WRONG: 0
-  generated problems still unclaimed:             663   (235 distinct wording shapes, listed in the appendix)
+  families in word_solver.FAMILIES:               58
+  generated problems claimed by the solver:       349 of 1,000, WRONG: 0
+  generated problems still unclaimed:             651   (230 distinct wording shapes, listed in the appendix)
   hand-written problems answered:                 38 by the word solver (HAND_ANSWERS, all match the hand-calculated answers) + 3 by the number-puzzle reader = 41 of the 100;
                                                   the trained matcher's first guess covers the rest
-  tests:                                          162 word-solver and number-puzzle tests, all pass
-  fresh sets:                                     48 files (fresh_word_problems.py ... fresh_word_problems_48.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
-  git:                                            branch main, last commit before Batch 44 is b154819 (Batch 44 is the next commit), pushed to https://github.com/IWatchSheep/calculator
+  tests:                                          166 word-solver and number-puzzle tests, all pass
+  fresh sets:                                     49 files (fresh_word_problems.py ... fresh_word_problems_49.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
+  git:                                            branch main, last commit before Batch 45 is bb7e45f (Batch 45 is the next commit), pushed to https://github.com/IWatchSheep/calculator
 
 
 4. DONE   (one line per batch; the long text is in word_solver_results.txt)
@@ -112,6 +112,8 @@ Batches (Batch 1 was the five-family solver and its tests; numbers in brackets a
                Fresh set 47: 2 solved, 1 safe decline, 6 declines, 0 wrong.   [337]
   Batch 44     FIX ONLY (pipes_and_drain): the words between "how long" and "fill" may only be the plain question words ("... take during a storm to fill the pool" declines).
                Fresh set 48: 3 solved, 6 declines, 0 wrong.   [337]
+  Batch 45     NEW FAMILIES percent_spent_left ("spent 75% of a paycheck ... $280 left", fuel left), price_minus_coupon (3.5n - 3 = 46), complementary_supplementary (x + (5x - 12) = 90).
+               Fresh set 49: 6 solved, 1 safe decline ("an allowance"), 8 declines, 0 wrong.   [349]
 
 All 55 families (the FAMILIES list, in the order the solver tries them):
   sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest, two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
@@ -131,7 +133,7 @@ Known SAFE MISSES (the solver declines on purpose; not bugs, listed so nobody "f
 
 5. TO DO
 --------
-A. MORE GENERATED TEMPLATES (the main list).  663 of the 1,000 generated problems are still unclaimed; they fall into 235 distinct wording shapes (the appendix lists every one with its category, how many problems use it, the
+A. MORE GENERATED TEMPLATES (the main list).  651 of the 1,000 generated problems are still unclaimed; they fall into 230 distinct wording shapes (the appendix lists every one with its category, how many problems use it, the
    first id and an example).  The biggest groups by category: Number puzzle 42, System of equations 34, Geometry (quadratic) 28, Linear cost 27, Percent 27, Rational equation 27, Break-even 24, Geometry (angles) 24, Inequality 24,
    Ratio 24, Work rate 24, Formula 23, Linear model 23, Quadratic 21, Mixture 20, Geometry (area) 18.  The user and Grok choose the next three families in each job ("Paste this to Claude ..."); when no job is waiting, pick from the appendix.
    Note: the matcher can recognise many of these types, but the SOLVER only answers when every number has a role; "Number puzzle" shapes are mostly handled by number_puzzle.py (it answers some before word_solver is tried).
@@ -188,7 +190,7 @@ The user asked for the 1,000 generated problems to be put into their own files, 
   tests/test_algebra_word_problem_files.py                                          6 tests: 1,000 folders / files / pictures / rows, stored text, compute() for all 365 Ready problems, your own numbers, errors.
   README.md                                                                          a new section "Algebra word problems (work in progress)" with a NOTE TO GROK, the four pieces, the Python use, HOW A PROBLEM TRAVELS (text -> solver family -> generated file and diagram -> row ->
                                                                                       checks -> status file), what is left, and six QUESTIONS FOR REVIEW; plus rows in the "Project files" table and a line in "Testing".
-Status of the 1,000: 365 Ready (337 word_solver, 28 number_puzzle), 635 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
+Status of the 1,000: 377 Ready (349 word_solver, 28 number_puzzle), 623 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
 OPEN: Grok was asked (in the README) to review the section and amend it; the six questions are the decisions still open (row shape and labels by role, several answers in one result box, the diagram, the 24 MB of pictures,
 folder naming by category, how a declined compute() should look in a row).  When Grok has amended the README, read it again before changing the folders: it may change the generator's output.
 NOT DONE: nothing in main.py loads these rows yet; the operator (paste text -> solver -> row) is not built (section 5 C).
@@ -197,24 +199,24 @@ Order of work agreed with the user on 2026-11-09: (1) README written and sent to
 
 APPENDIX: UNCLAIMED WORDING SHAPES   (regenerate with: python todo_report.py)
 ==============================================================================
-generated problems: 1000   claimed by the word solver: 337   unclaimed: 663   distinct unclaimed wording shapes: 235   families: 55
+generated problems: 1000   claimed by the word solver: 349   unclaimed: 651   distinct unclaimed wording shapes: 230   families: 58
 (the number of WRONG claims is checked by test_word_solver.py: GroundTruth.test_never_wrong_on_generated_problems, it must stay 0)
 
 UNCLAIMED BY CATEGORY (problems):
    42  Number puzzle
    34  System of equations
    28  Geometry (quadratic)
-   27  Linear cost
-   27  Percent
    27  Rational equation
    24  Break-even
-   24  Geometry (angles)
    24  Inequality
    24  Ratio
    24  Work rate
    23  Formula
+   23  Linear cost
    23  Linear model
+   23  Percent
    21  Quadratic
+   20  Geometry (angles)
    20  Mixture
    18  Geometry (area)
    15  Simple interest
@@ -313,15 +315,12 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Geometry (angles) | 5 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angl
   Geometry (angles) | 5 | 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. F
   Geometry (angles) | 3 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles.
-  Geometry (angles) | 2 | 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles.
-  Geometry (angles) | 1 | 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles.
   Geometry (angles) | 1 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles.
   Geometry (angles) | 1 | 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B?
   Geometry (angles) | 1 | 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure.
   Geometry (angles) | 1 | 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B?
   Geometry (angles) | 1 | 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles.
   Geometry (angles) | 1 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles.
-  Geometry (angles) | 1 | 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles.
   Geometry (angles) | 1 | 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B?
   Geometry (area) | 5 | 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length.
   Geometry (area) | 5 | 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height.
@@ -364,8 +363,7 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Linear cost | 4 | 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled?
   Linear cost | 4 | 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours 
   Linear cost | 4 | 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven?
-  Linear cost | 3 | 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?
-  Linear cost | 2 | 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought?
+  Linear cost | 1 | 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?
   Linear model | 5 | 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the th
   Linear model | 5 | 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%?
   Linear model | 4 | 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to rea
@@ -398,7 +396,6 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Number puzzle | 1 | 0610 | 9 times a number, decreased by 11, is 205. Find the number.
   Percent | 5 | 0623 | 9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip?
   Percent | 5 | 0625 | A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price?
-  Percent | 4 | 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck?
   Percent | 4 | 0621 | 3 is 30% of what number?
   Percent | 4 | 0624 | 20% of the students in a club are boys. There are 136 girls. How many students are in the club?
   Percent | 3 | 0620 | What percent of 95 is 114?

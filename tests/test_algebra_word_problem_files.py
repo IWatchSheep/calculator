@@ -85,7 +85,7 @@ class Catalog(unittest.TestCase):
         items = catalog.load_catalog(os.path.join(LIB, "INDEX.md"))
         self.assertEqual(len(items), 1000)
         self.assertEqual(len({i["category"] for i in items}), 55)
-        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 365)
+        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 377)
         savings = next(i for i in items if i["key"] == "savings/0848")
         self.assertIn("Ben has $150", savings["problem"])
         self.assertEqual(savings["id"], "0848")
@@ -109,7 +109,7 @@ class Computing(unittest.TestCase):
                 self.assertEqual(expected.family, m.FAMILY, key)
                 got = answer if isinstance(answer, list) else [answer]
                 self.assertEqual(got, [float(v) if v.denominator != 1 else int(v) for v in expected.values], key)
-        self.assertEqual(ready, 365)                                           # 337 word_solver + 28 number_puzzle
+        self.assertEqual(ready, 377)                                           # 349 word_solver + 28 number_puzzle
 
     def test_your_own_numbers(self):
         self.assertEqual(library.get("savings/0848").compute(), 16)

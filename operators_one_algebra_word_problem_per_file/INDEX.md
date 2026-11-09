@@ -4,7 +4,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 **Ready** = a solver answers it today (`compute(...)` works); **Reference** = the problem and its steps are stored, no solver answers it yet.
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 
-1000 problems: 365 ready (337 word_solver, 28 number_puzzle), 635 reference.
+1000 problems: 377 ready (349 word_solver, 28 number_puzzle), 623 reference.
 
 ## Age
 
@@ -349,7 +349,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0237 | The angles of a triangle are in the ratio 3:5:7. Find each angle. | 36°, 60°, 84° | Ready | triangle_ratio | `geometry_angles/0237/` |
 | 0238 | Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle. | x = 38; each angle is 80° | Ready | opposite_angles_equal | `geometry_angles/0238/` |
 | 0239 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle. | x = 25; each angle is 74° | Ready | transversal_equal_angles | `geometry_angles/0239/` |
-| 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles. | 17° and 73° | Reference |  | `geometry_angles/0240/` |
+| 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles. | 17° and 73° | Ready | complementary_supplementary | `geometry_angles/0240/` |
 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles. | x = 22; the angles are 117° and 63° | Reference |  | `geometry_angles/0241/` |
 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles. | 54°, 54°, 72° | Reference |  | `geometry_angles/0242/` |
 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angles. | 21°, 63°, 96° | Reference |  | `geometry_angles/0243/` |
@@ -358,7 +358,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0246 | In an isosceles triangle, the vertex angle is 72° more than each base angle. Find all three angles. | 36°, 36°, 108° | Reference |  | `geometry_angles/0246/` |
 | 0247 | The angles of a triangle are in the ratio 5:6:7. Find each angle. | 50°, 60°, 70° | Ready | triangle_ratio | `geometry_angles/0247/` |
 | 0248 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (4x + 8)° and (2x + 76)°. Find x and the angle. | x = 34; each angle is 144° | Ready | transversal_equal_angles | `geometry_angles/0248/` |
-| 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles. | 14° and 76° | Reference |  | `geometry_angles/0249/` |
+| 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles. | 14° and 76° | Ready | complementary_supplementary | `geometry_angles/0249/` |
 | 0250 | An exterior angle of a triangle measures (1x + 55)°. The two remote interior angles measure (1x + 18)° and (2x − 5)°. Find x and the exterior angle. | x = 21; exterior angle = 76° | Reference |  | `geometry_angles/0250/` |
 | 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B? | x = 26; the angles are 24° and 156° | Reference |  | `geometry_angles/0251/` |
 | 0252 | Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. Find the angle. | x = 36; each angle is 98° | Ready | opposite_angles_equal | `geometry_angles/0252/` |
@@ -368,11 +368,11 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles. | 64°, 64°, 52° | Reference |  | `geometry_angles/0256/` |
 | 0257 | Two parallel lines are cut by a transversal. A pair of corresponding angles measure (4x + 4)° and (6x − 54)°. Find x and the angle. | x = 29; each angle is 120° | Ready | transversal_equal_angles | `geometry_angles/0257/` |
 | 0258 | The angles of a triangle are in the ratio 2:6:7. Find each angle. | 24°, 72°, 84° | Ready | triangle_ratio | `geometry_angles/0258/` |
-| 0259 | Two angles are complementary. One angle is 15 more than 4 times the other. Find both angles. | 15° and 75° | Reference |  | `geometry_angles/0259/` |
+| 0259 | Two angles are complementary. One angle is 15 more than 4 times the other. Find both angles. | 15° and 75° | Ready | complementary_supplementary | `geometry_angles/0259/` |
 | 0260 | An exterior angle of a triangle measures (3x + 4)°. The two remote interior angles measure (1x + 15)° and (3x − 34)°. Find x and the exterior angle. | x = 23; exterior angle = 73° | Reference |  | `geometry_angles/0260/` |
 | 0261 | An exterior angle of a triangle measures (7x + 38)°. The two remote interior angles measure (4x + 15)° and (5x − 3)°. Find x and the exterior angle. | x = 13; exterior angle = 129° | Reference |  | `geometry_angles/0261/` |
 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles. | x = 33; the angles are 117° and 63° | Reference |  | `geometry_angles/0262/` |
-| 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles. | 31° and 149° | Reference |  | `geometry_angles/0263/` |
+| 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles. | 31° and 149° | Ready | complementary_supplementary | `geometry_angles/0263/` |
 | 0264 | In an isosceles triangle, the vertex angle is 60° more than each base angle. Find all three angles. | 40°, 40°, 100° | Reference |  | `geometry_angles/0264/` |
 | 0265 | Where two lines cross, opposite angles are (6x + 7)° and (3x + 31)°. Find the angle. | x = 8; each angle is 55° | Ready | opposite_angles_equal | `geometry_angles/0265/` |
 | 0266 | The angles of a triangle are in the ratio 2:3:7. Find each angle. | 30°, 45°, 105° | Ready | triangle_ratio | `geometry_angles/0266/` |
@@ -589,7 +589,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0422 | Yara works two jobs paying $16/h and $22/h. Last month 61 hours were worked in total, earning $1156. How many hours were worked at the $16 job? | 31 hours at $16, 30 hours at $22 | Ready | two_prices_known_count | `linear_cost/0422/` |
 | 0423 | A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much data was used? | 13 GB | Ready | plan_with_included | `linear_cost/0423/` |
 | 0424 | Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How many extra chores were done? | 10 chores | Ready | base_plus_extra_over_time | `linear_cost/0424/` |
-| 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought? | 14 notebooks | Reference |  | `linear_cost/0425/` |
+| 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought? | 14 notebooks | Ready | price_minus_coupon | `linear_cost/0425/` |
 | 0426 | A plumber charges a $80 call-out fee plus $85 per hour. The bill was $250.00. How long did the job take? | 2 hours | Ready | fixed_plus_rate | `linear_cost/0426/` |
 | 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled? | 1 game | Reference |  | `linear_cost/0427/` |
 | 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used? | 940 kWh | Reference |  | `linear_cost/0428/` |
@@ -605,7 +605,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0438 | A rental car costs $35 per day plus $0.50 per mile. A 4-day rental cost $385.00. How many miles were driven? | 490 miles | Reference |  | `linear_cost/0438/` |
 | 0439 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $17.50. How many hours did they park? | 10 hours | Reference |  | `linear_cost/0439/` |
 | 0440 | A taxi charges $3.00 plus $1.75 per mile. A ride costs $25.75. How many miles was the ride? | 13 miles | Ready | fixed_plus_rate | `linear_cost/0440/` |
-| 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought? | 3 bags of chips | Reference |  | `linear_cost/0441/` |
+| 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought? | 3 bags of chips | Ready | price_minus_coupon | `linear_cost/0441/` |
 | 0442 | Pablo earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $832.00. How many overtime hours were worked? | 8 overtime hours (48 hours total) | Reference |  | `linear_cost/0442/` |
 | 0443 | A gym charges a $100 joining fee and $15 per month. Caleb has paid $145 in total. How many months has Caleb been a member? | 3 months | Ready | fixed_plus_rate | `linear_cost/0443/` |
 | 0444 | A phone plan costs $50 a month and includes 10 GB of data. Each extra GB costs $5. The bill was $65. How much data was used? | 13 GB | Ready | plan_with_included | `linear_cost/0444/` |
@@ -623,7 +623,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0456 | A gym charges a $50 joining fee and $25 per month. Uma has paid $325 in total. How many months has Uma been a member? | 11 months | Ready | fixed_plus_rate | `linear_cost/0456/` |
 | 0457 | A taxi charges $4.00 plus $2.50 per mile. A ride costs $49.00. How many miles was the ride? | 18 miles | Ready | fixed_plus_rate | `linear_cost/0457/` |
 | 0458 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $20.50. How many hours did they park? | 12 hours | Reference |  | `linear_cost/0458/` |
-| 0459 | Notebooks cost $3.50 each. With a $2 coupon, Dev paid $33.00. How many notebooks were bought? | 10 notebooks | Reference |  | `linear_cost/0459/` |
+| 0459 | Notebooks cost $3.50 each. With a $2 coupon, Dev paid $33.00. How many notebooks were bought? | 10 notebooks | Ready | price_minus_coupon | `linear_cost/0459/` |
 | 0460 | A phone plan costs $30 a month and includes 15 GB of data. Each extra GB costs $5. The bill was $40. How much data was used? | 17 GB | Ready | plan_with_included | `linear_cost/0460/` |
 | 0461 | A taxi charges $4.00 plus $1.50 per mile. A ride costs $16.00. How many miles was the ride? | 8 miles | Ready | fixed_plus_rate | `linear_cost/0461/` |
 | 0462 | Bowling costs $7.00 per game plus $4.00 for shoe rental. Wren spent $39.00. How many games were bowled? | 5 games | Reference |  | `linear_cost/0462/` |
@@ -641,7 +641,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0474 | Pablo works two jobs paying $14/h and $16/h. Last month 53 hours were worked in total, earning $796. How many hours were worked at the $14 job? | 26 hours at $14, 27 hours at $16 | Ready | two_prices_known_count | `linear_cost/0474/` |
 | 0475 | Jamal earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $808.00. How many overtime hours were worked? | 7 overtime hours (47 hours total) | Reference |  | `linear_cost/0475/` |
 | 0476 | A gym charges a $99 joining fee and $15 per month. Dana has paid $219 in total. How many months has Dana been a member? | 8 months | Ready | fixed_plus_rate | `linear_cost/0476/` |
-| 0477 | Bags of chips cost $4.00 each. With a $10 coupon, Wren paid $10.00. How many bags of chips were bought? | 5 bags of chips | Reference |  | `linear_cost/0477/` |
+| 0477 | Bags of chips cost $4.00 each. With a $10 coupon, Wren paid $10.00. How many bags of chips were bought? | 5 bags of chips | Ready | price_minus_coupon | `linear_cost/0477/` |
 | 0478 | A taxi charges $4.00 plus $2.00 per mile. A ride costs $10.00. How many miles was the ride? | 3 miles | Ready | fixed_plus_rate | `linear_cost/0478/` |
 | 0479 | An electric bill is $12 per month plus $0.18 per kWh. This month's bill is $157.80. How many kWh were used? | 810 kWh | Reference |  | `linear_cost/0479/` |
 
@@ -802,7 +802,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0615 | After adding a 20% tip, a dinner bill came to $195.18. What was the bill before the tip? | $162.65 | Ready | percent_change | `percent/0615/` |
 | 0616 | In a two-candidate election, the winner got 58% of the votes and won by 3392 votes. How many votes were cast? | 21,200 votes | Ready | election_margin | `percent/0616/` |
 | 0617 | After a 2% raise, Mateo's salary is $77,520.00. What was the salary before the raise? | $76,000.00 | Ready | percent_change | `percent/0617/` |
-| 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck? | $1120 | Reference |  | `percent/0618/` |
+| 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck? | $1120 | Ready | percent_spent_left | `percent/0618/` |
 | 0619 | The total cost of an item including 7.5% sales tax is $46.87. What was the price before tax? | $43.60 | Ready | percent_change | `percent/0619/` |
 | 0620 | What percent of 95 is 114? | 120% | Reference |  | `percent/0620/` |
 | 0621 | 3 is 30% of what number? | 10 | Reference |  | `percent/0621/` |
@@ -813,7 +813,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0626 | After adding a 25% tip, a dinner bill came to $246.85. What was the bill before the tip? | $197.48 | Ready | percent_change | `percent/0626/` |
 | 0627 | In a two-candidate election, the winner got 60% of the votes and won by 1360 votes. How many votes were cast? | 6,800 votes | Ready | election_margin | `percent/0627/` |
 | 0628 | 60% of the students in a club are boys. There are 116 girls. How many students are in the club? | 290 students | Reference |  | `percent/0628/` |
-| 0629 | Rhea spent 40% of a paycheck on rent and had $192 left. How much was the paycheck? | $320 | Reference |  | `percent/0629/` |
+| 0629 | Rhea spent 40% of a paycheck on rent and had $192 left. How much was the paycheck? | $320 | Ready | percent_spent_left | `percent/0629/` |
 | 0630 | 21 is 12% of what number? | 175 | Reference |  | `percent/0630/` |
 | 0631 | After a 2% raise, Kira's salary is $55,080.00. What was the salary before the raise? | $54,000.00 | Ready | percent_change | `percent/0631/` |
 | 0632 | What percent of 70 is 28? | 40% | Reference |  | `percent/0632/` |
@@ -834,7 +834,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0647 | A test has 40 questions. Pablo scored 95%. How many questions were answered correctly? | 38 questions | Ready | percent_of_count | `percent/0647/` |
 | 0648 | A coat is marked 50% off, and then an extra 25% is taken off the sale price. The final price is $296.25. What was the original price? | $790.00 | Ready | two_discounts | `percent/0648/` |
 | 0649 | A town's population changed from 2000 to 1200. What was the percent change? | -40% (decrease) | Ready | percent_change_between | `percent/0649/` |
-| 0650 | Kira spent 60% of a paycheck on rent and had $424 left. How much was the paycheck? | $1060 | Reference |  | `percent/0650/` |
+| 0650 | Kira spent 60% of a paycheck on rent and had $424 left. How much was the paycheck? | $1060 | Ready | percent_spent_left | `percent/0650/` |
 | 0651 | After a 10% discount, a coffee maker costs $22.50. What was the original price? | $25.00 | Ready | percent_change | `percent/0651/` |
 | 0652 | 9 friends split a restaurant bill equally, including a 20% tip. Each paid $94.80. What was the bill before the tip? | $711.00 | Reference |  | `percent/0652/` |
 | 0653 | A group paid $243.95 for lunch, which included a 25% tip. How much was the meal itself? | $195.16 | Ready | percent_change | `percent/0653/` |
@@ -850,7 +850,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0663 | After a 5% raise, Hiro's salary is $93,450.00. What was the salary before the raise? | $89,000.00 | Ready | percent_change | `percent/0663/` |
 | 0664 | 7 friends split a restaurant bill equally, including a 15% tip. Each paid $51.75. What was the bill before the tip? | $315.00 | Reference |  | `percent/0664/` |
 | 0665 | A coat is marked 25% off, and then an extra 20% is taken off the sale price. The final price is $240.00. What was the original price? | $400.00 | Ready | two_discounts | `percent/0665/` |
-| 0666 | Mateo spent 25% of a paycheck on rent and had $435 left. How much was the paycheck? | $580 | Reference |  | `percent/0666/` |
+| 0666 | Mateo spent 25% of a paycheck on rent and had $435 left. How much was the paycheck? | $580 | Ready | percent_spent_left | `percent/0666/` |
 | 0667 | In a two-candidate election, the winner got 56% of the votes and won by 4200 votes. How many votes were cast? | 35,000 votes | Ready | election_margin | `percent/0667/` |
 | 0668 | What percent of 15 is 6? | 40% | Reference |  | `percent/0668/` |
 | 0669 | A coat is marked 25% off, and then an extra 10% is taken off the sale price. The final price is $459.00. What was the original price? | $680.00 | Ready | two_discounts | `percent/0669/` |
