@@ -925,3 +925,28 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 35 (8 wordings, neighbours of this crash, written after the fix was finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 4 required declines: 4 of 4; 0 wrong; nothing raised.
   128 word-solver and number-puzzle tests pass (the suite takes about 8 seconds now: the no-raise guard is most of it).
+
+Batch 33: a falling temperature in whole hours, two candles burning down, parallel lines and a transversal
+==============================================================
+temperature_whole_hours  (generator "The temperature is 26°F and falling 3°F per hour. For how many whole hours will it stay at or above 1°F?"):  T0 - r h >= L, the greatest whole h.  The answer is 8: after 8 hours it is 2°F (still at or above 1), after 9 hours it is -1°F.  The reading shows both
+  (26 - 3h >= 1, so h <= 25/3 and the most whole hours is 8 (after 8 hours it is 2°F, after 9 it is -1°F)).  "At or above" (and "at least") INCLUDES the limit and "above" does not: 25°F falling 3°F per hour lands exactly on 1°F at hour 8, so "at or above 1" is 8 and "above 1" is 7;
+  with no landing on the limit both give the same answer (26: 8 and 8).  Negative limits work (16°F falling 3°F per hour: at or above -8 is 8, above -8 is 7).  Exactly three temperatures in one scale (°F or °C), the start after "is / starts at / now", the rate after falling / dropping / decreasing / cooling and "per hour",
+  the limit after at or above / at least / above, and a question for "how many (whole) hours".  Declines: a rising temperature, "at or below" / "below", a limit above the start or equal to it (no whole hour: the result must be at least 1), a zero rate, mixed scales (F and C), another unit asked (minutes), a question for the
+  temperature after some hours, "part of the night".
+two_candles_equal  (generator "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. When will they be the same height?"):  a - ra t = b - rb t.  The answer is 9/2 hours, an exact fraction, and both candles are still above 0 at that time (4 cm tall; the reading says so, and a test checks that the
+  two heights are equal and positive).  Either candle may come first.  Declines: "How tall will they be when they are the same height?" (the answer is the time), "When will they burn out?", a candle that would burn out before they meet (6 cm at 3 per hour and 24 cm at 9 per hour: t = 3, the first is at -3), both reaching exactly 0 when they meet
+  (10 cm at 5 and 12 cm at 6), equal rates, a meeting in the past (13 cm at 2 per hour and 10 cm at 4 per hour would have met 1.5 hours ago), "part of the night", mixed units.
+transversal_equal_angles  (generator "Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle."):  corresponding, alternate interior and alternate exterior angles are EQUAL: 2x + 24 = 1x + 49, x = 25, each angle 74.  "Two parallel lines" is the
+  shape of the problem and is allowed.  "Find x and the angle" returns BOTH numbers (25, 74); "Find the angle" returns the angle alone; "Find x" returns x alone.  Each angle must be above 0 and at most 180.  Same-side (consecutive / co-interior) interior angles ADD to 180, they are not equal: they decline (the generated "Find both angles" same-side template stays
+  declined, as asked).  Also declined: equal slopes, an angle over 180 or not positive, "Find both angles", a sum asked, and lines that are not said to be parallel.
+The checker: the stored answer "x = 25; each angle is 74°" was compared by keeping only the angle (written for "Find the angle." on opposite angles).  numbers_of now also gets the problem text: "Find x and the angle" expects BOTH numbers (25 and 74), "Find x" expects x, anything else (and no problem text) keeps the angle alone, so every earlier
+  opposite-angle problem is checked as before.  A test (test_checker_expects_x_and_the_angle_when_both_are_asked) covers the three cases.
+Checks (test_word_solver.py): spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions (9/2, 25/3), no control characters, no module-level name defined twice, and the no-raise guard over every family (it now also runs the new families on every fresh set).
+Measured:
+  1,000 generated problems: claims 308 -> 323, wrong 0.  The 15 new claims, each equal to the stored answer:
+    transversal_equal_angles 0239 (x 25, angle 74), 0248 (34, 144), 0257 (29, 120), 0268 (17, 83), 0273 (32, 65) = every generated "alternate / corresponding angles ... Find x and the angle" problem;
+    temperature_whole_hours 0361 (8), 0368 (3), 0377 (1), 0392 (8, a limit of -8), 0395 (9) = every generated "stay at or above" problem;
+    two_candles_equal 0485 (9/2 = 4.5 hours), 0498 (4), 0507 (14), 0516 (3), 0529 (3) = every generated two-candles problem.
+  Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 36 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong; nothing raised.
+  133 word-solver and number-puzzle tests pass.

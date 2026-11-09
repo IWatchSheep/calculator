@@ -264,7 +264,7 @@ class Families(unittest.TestCase):
 
 class GroundTruth(unittest.TestCase):
     @staticmethod
-    def numbers_of(text):
+    def numbers_of(text, problem=None):
         if re.search(r"\$[\d,.]+ each", text):                                   # two prices: compare the dollars
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\$[\d,.]+ at \d+(?:\.\d+)?%", text):                # an interest answer: compare the dollars, not the rates
@@ -275,8 +275,14 @@ class GroundTruth(unittest.TestCase):
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
         if len(re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text)) == 2:         # "9 at 55c, 21 at 70c" / "31 hours at $16, 30 hours at $22": compare the counts, not the prices
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text))
-        if re.match(r"x = -?\d+; each angle is ", text):                                  # "x = 38; each angle is 80 degrees": the question asked for the angle
-            return [Fraction(re.search(r"each angle is (\d+(?:\.\d+)?)", text).group(1))]
+        am = re.match(r"x = (-?\d+(?:\.\d+)?); each angle is (\d+(?:\.\d+)?)", text)
+        if am:                                                        # "x = 38; each angle is 80 degrees": compare what the QUESTION asked for
+            ask = (problem or "").lower()
+            if re.search(r"\bfind x and the angle\b", ask):
+                return sorted([Fraction(am.group(1)), Fraction(am.group(2))])                  # "Find x and the angle": both numbers
+            if re.search(r"\bfind x\b", ask):
+                return [Fraction(am.group(1))]                                                 # "Find x": x alone
+            return [Fraction(am.group(2))]                                                     # "Find the angle" (or no problem text): the angle alone
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
@@ -294,7 +300,7 @@ class GroundTruth(unittest.TestCase):
                 continue
             claimed += 1
             fam[r.family] = fam.get(r.family, 0) + 1
-            got, want = sorted(Fraction(v) for v in r.values), self.numbers_of(p["answer"])
+            got, want = sorted(Fraction(v) for v in r.values), self.numbers_of(p["answer"], p["problem"])
             if not (len(got) == len(want) and all(abs(a - b) <= Fraction(1, 200) for a, b in zip(got, want))):
                 wrong.append((r.family, p["problem"], [float(v) for v in got], p["answer"]))
         print("\n  generated problems: %d, claimed %d %s, wrong %d" % (len(problems), claimed, dict(sorted(fam.items())), len(wrong)))
@@ -2011,6 +2017,86 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (thirty-fifth set, neighbours of the batch-32 crash): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 0, 4))
+
+    def test_temperature_whole_hours(self):
+        t = "The temperature is %s°F and %s %s°F per hour. For how many whole hours will it stay %s %s°F?"
+        self.assertEqual(answers(t % ("26", "falling", "3", "at or above", "1")), values(8))
+        self.assertEqual(answers(t % ("15", "falling", "2", "at or above", "8")), values(3))
+        self.assertEqual(answers(t % ("16", "falling", "3", "at or above", "-8")), values(8))                 # a negative limit
+        r = WS.solve(t % ("26", "falling", "3", "at or above", "1"))
+        self.assertEqual(r.values, [Fraction(8)])
+        self.assertIn("26 - 3h >= 1", r.reading)
+        self.assertIn("after 8 hours it is 2°F, after 9 it is -1°F", r.reading)                       # 8 hours is still at or above 1, 9 is not
+        for h, T0, rate, L in ((8, 26, 3, 1), (3, 15, 2, 8), (1, 29, 4, 22), (8, 16, 3, -8)):                  # the answer is the LAST whole hour at or above the limit
+            self.assertGreaterEqual(T0 - rate * h, L)
+            self.assertLess(T0 - rate * (h + 1), L)
+        # "at or above" includes the limit and "above" does not: 25 - 3 * 8 = 1 lands exactly on 1 at hour 8
+        self.assertEqual(answers(t % ("25", "falling", "3", "at or above", "1")), values(8))
+        self.assertEqual(answers(t % ("25", "falling", "3", "above", "1")), values(7))
+        self.assertEqual(answers(t % ("16", "falling", "3", "above", "-8")), values(7))
+        self.assertEqual(answers(t % ("26", "falling", "3", "above", "1")), values(8))                        # no whole-hour landing on 1: same answer
+        # a rising temperature, "at or below" / "below", a limit above the start or equal to it, a zero rate, another scale, another unit asked, no question for hours
+        for args in (("26", "rising", "3", "at or above", "1"), ("26", "falling", "3", "at or below", "1"), ("26", "falling", "3", "below", "1"),
+                     ("26", "falling", "3", "at or above", "30"), ("1", "falling", "3", "at or above", "1"), ("26", "falling", "0", "at or above", "1")):
+            self.assertIsNone(answers(t % args), args)
+        self.assertIsNone(answers("The temperature is 26°F and falling 3°C per hour. For how many whole hours will it stay at or above 1°F?"))
+        self.assertIsNone(answers("The temperature is 26°F and falling 3°F per hour. For how many minutes will it stay at or above 1°F?"))
+        self.assertIsNone(answers("The temperature is 26°F and falling 3°F per hour. What will it be after 4 hours?"))
+        self.assertIsNone(answers("The temperature is 26°F and falling 3°F per hour for part of the night. For how many whole hours will it stay at or above 1°F?"))
+
+    def test_two_candles_equal(self):
+        c = "One candle is %s cm tall and burns %s cm per hour. Another is %s cm tall and burns %s cm per hour. %s"
+        self.assertEqual(answers(c % ("13", "2", "22", "4", "When will they be the same height?")), values(Fraction(9, 2)))
+        self.assertEqual(answers(c % ("30", "1.5", "38", "3.5", "When will they be the same height?")), values(4))
+        self.assertEqual(answers(c % ("22", "4", "13", "2", "When will they be the same height?")), values(Fraction(9, 2)))          # either candle first
+        r = WS.solve(c % ("13", "2", "22", "4", "When will they be the same height?"))
+        self.assertIn("13 - 2t = 22 - 4t", r.reading)
+        self.assertIn("t = 9/2 hours", r.reading)
+        self.assertEqual(Fraction(13) - 2 * r.values[0], Fraction(22) - 4 * r.values[0])                                      # the heights really are equal ...
+        self.assertGreater(Fraction(13) - 2 * r.values[0], 0)                                                                 # ... and still above 0
+        # the answer is the time: a question for the height declines; one that would burn out first declines; equal rates, no meeting in the future
+        for args in (("13", "2", "22", "4", "How tall will they be when they are the same height?"), ("13", "2", "22", "4", "When will they burn out?"),
+                     ("6", "3", "24", "9", "When will they be the same height?"), ("4", "2", "20", "8", "When will they be the same height?"),
+                     ("10", "5", "12", "6", "When will they be the same height?"),        # both reach 0 exactly when they meet: not above 0
+                     ("13", "2", "20", "2", "When will they be the same height?"), ("13", "2", "10", "4", "When will they be the same height?"),
+                     ("13", "4", "22", "2", "When will they be the same height?"),
+                     ("13", "2", "22", "4", "How long until they are the same height for part of the night?")):
+            self.assertIsNone(answers(c % args), args)
+
+    def test_transversal_equal_angles(self):
+        x = "Two parallel lines are cut by a transversal. A pair of %s angles measure (%s)° and (%s)°. %s"
+        self.assertEqual(answers(x % ("alternate exterior", "2x + 24", "1x + 49", "Find x and the angle.")), values(25, 74))
+        self.assertEqual(answers(x % ("corresponding", "4x + 4", "6x − 54", "Find x and the angle.")), values(29, 120))
+        self.assertEqual(answers(x % ("alternate interior", "2x + 24", "1x + 49", "Find the angle.")), values(74))           # "Find the angle" returns the angle alone
+        self.assertEqual(answers(x % ("alternate interior", "2x + 24", "1x + 49", "Find x.")), values(25))
+        r = WS.solve(x % ("alternate exterior", "2x + 24", "1x + 49", "Find x and the angle."))
+        self.assertEqual(r.values, [Fraction(25), Fraction(74)])                                                              # x first, then the angle
+        self.assertIn("2x + 24 = 1x + 49", r.reading)
+        self.assertIn("x = 25 and each angle is 74 degrees", r.reading)
+        # same-side (consecutive) interior angles ADD to 180, they are not equal: decline.  Also equal slopes, an angle over 180 or not positive, "both angles", a sum asked
+        for args in (("same-side interior", "2x + 24", "1x + 49", "Find x and the angle."), ("consecutive interior", "2x + 24", "1x + 49", "Find x and the angle."),
+                     ("alternate exterior", "2x + 24", "2x + 49", "Find x and the angle."), ("alternate exterior", "2x + 100", "1x + 200", "Find x and the angle."),
+                     ("alternate exterior", "2x + 24", "1x - 100", "Find x and the angle."), ("alternate exterior", "2x + 24", "1x + 49", "Find both angles."),
+                     ("alternate exterior", "2x + 24", "1x + 49", "Find the sum of the angles.")):
+            self.assertIsNone(answers(x % args), args)
+        self.assertIsNone(answers("A transversal cuts two lines. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle."))   # the lines are not parallel
+
+    def test_checker_expects_x_and_the_angle_when_both_are_asked(self):
+        """The stored answer "x = 25; each angle is 74 degrees" is compared by the checker: for "Find the angle." it keeps only the angle; for "Find x and the angle."
+        it keeps both numbers; for "Find x." only x."""
+        stored = "x = 25; each angle is 74°"
+        self.assertEqual(GroundTruth.numbers_of(stored, "Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle."), values(25, 74))
+        self.assertEqual(GroundTruth.numbers_of(stored, "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle."), values(74))
+        self.assertEqual(GroundTruth.numbers_of(stored, "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find x."), values(25))
+        self.assertEqual(GroundTruth.numbers_of(stored), values(74))                                                          # no problem text: the old behaviour
+
+    def test_temperature_candles_transversal_set(self):
+        """Set 36: wordings for temperature_whole_hours, two_candles_equal and transversal_equal_angles, written after all three were finished and run once, untuned."""
+        from fresh_word_problems_36 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-sixth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 0, 6))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

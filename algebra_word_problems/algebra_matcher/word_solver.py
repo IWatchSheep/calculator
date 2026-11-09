@@ -2722,6 +2722,141 @@ def rectangle_from_perimeter_area(problem):
                       show(s), show(A), show(s), show(A), show_exact(l), show_exact(w), unit))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 50. a falling temperature, in whole hours:   T0 - r h >= L  (or > L)      (the generator's "The temperature is 26°F and falling 3°F per hour. For how many whole hours will it stay at or above 1°F?")
+# ---------------------------------------------------------------------------------------------------------
+_TEMP_VAL = re.compile(r"(-?\d+(?:\.\d+)?)\s*°\s*([fc])\b")
+_TEMP_FALL = re.compile(r"\b(?:falling|dropping|decreasing|cooling|falls|drops|decreases|cools|going down)\s*(?:by\s+)?$")
+_TEMP_INCLUSIVE = re.compile(r"\b(?:at or above|at least|no lower than|not below|or above)\s*$")
+_TEMP_STRICT = re.compile(r"\b(?:above|over|higher than|warmer than)\s*$")
+_TEMP_OTHER = re.compile(r"\b(?:rising|climbing|warming|increasing|rises|climbs|warms|increases|going up|below|at or below|under|colder than|no higher than|at most)\b")
+
+
+def temperature_whole_hours(problem):
+    t = clean(problem)
+    vals = list(_TEMP_VAL.finditer(t))
+    if len(vals) != 3 or len(digit_numbers(problem)) != 3 or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, t) or "$" in t or "%" in t:
+        return None
+    if len({v.group(2) for v in vals}) != 1:
+        return None                                              # one temperature scale throughout
+    # a rising temperature (or an "at or below" limit) is a different problem: decline.  "at or below" is checked on the limit phrase, "below" never appears in "at or above"
+    if _TEMP_OTHER.search(re.sub(r"\bat or above\b", " ", t)):
+        return None
+    rate = [v for v in vals if _TEMP_FALL.search(t[:v.start()].rstrip())]
+    limit = [v for v in vals if _TEMP_INCLUSIVE.search(t[:v.start()].rstrip()) or _TEMP_STRICT.search(t[:v.start()].rstrip())]
+    if len(rate) != 1 or len(limit) != 1 or rate[0] is limit[0]:
+        return None
+    start = [v for v in vals if v is not rate[0] and v is not limit[0]]
+    if len(start) != 1 or not re.search(r"\b(?:is|starts at|begins at|reads|now|currently)\s*$", t[:start[0].start()].rstrip()):
+        return None
+    if not re.match(r"\s*(?:per|an|each|every|a)\s+hour\b", t[rate[0].end():]):
+        return None
+    inclusive = bool(_TEMP_INCLUSIVE.search(t[:limit[0].start()].rstrip()))
+    # the question asks for whole HOURS of staying at (or above) the limit
+    if not re.search(r"\bhow many (?:whole |full )?hours\b", t):
+        return None
+    T0, r, L = Fraction(start[0].group(1)), Fraction(rate[0].group(1)), Fraction(limit[0].group(1))
+    if r <= 0:
+        return None
+    q = (T0 - L) / r
+    floor_q = q.numerator // q.denominator
+    h = floor_q if inclusive else -((-q.numerator) // q.denominator) - 1      # "above" does not include landing exactly on the limit
+    if h < 1:
+        return None
+    unit = "°" + start[0].group(2).upper()
+    cmp_ = ">=" if inclusive else ">"
+    eq = "%s - %sh %s %s" % (show(T0), show(r), cmp_, show(L))
+    return Result("temperature_whole_hours", [Fraction(h)], eq,
+                  "%s, so h %s %s and the most whole hours is %d (after %d hours it is %s%s, after %d it is %s%s)" % (
+                      eq, "<=" if inclusive else "<", show_exact(q), h, h, show_exact(T0 - r * h), unit, h + 1, show_exact(T0 - r * (h + 1)), unit))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 51. two candles burning down until they are the same height:   a - ra t = b - rb t      (the generator's "One candle is 13 cm tall and burns 2 cm per hour. Another ...")
+# ---------------------------------------------------------------------------------------------------------
+_CANDLE_UNIT = r"(?:cm|mm|m|inch(?:es)?|in)"
+_CANDLE_STMT = re.compile(r"\bis\s+(\d+(?:\.\d+)?)\s*(" + _CANDLE_UNIT + r")\s+tall\s+and\s+burns\s+(\d+(?:\.\d+)?)\s*(" + _CANDLE_UNIT + r")\s+(?:per|an|each|every|a)\s+(hour|minute|day)\b")
+
+
+def two_candles_equal(problem):
+    t = clean(problem)
+    found = list(_CANDLE_STMT.finditer(t))
+    if len(found) != 2 or len(digit_numbers(problem)) != 4 or not re.search(r"\bcandles?\b", t) or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, re.sub(r"\btwo candles\b", " ", t)):
+        return None
+    m1, m2 = found
+    if not (m1.group(2) == m1.group(4) == m2.group(2) == m2.group(4)) or m1.group(5) != m2.group(5):
+        return None                                              # one unit of length and one unit of time
+    rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
+    if re.search(r"\d", rest):
+        return None
+    # the question asks for the TIME they are the same height, not the height
+    if not re.search(r"\b(?:when|how long|after how many (?:hours|minutes|days))\b", rest) or not re.search(r"\bsame height\b|\bequal height\b|\bsame size\b|\bequally tall\b", rest):
+        return None
+    if re.search(r"\bhow (?:tall|high)\b|\bwhat (?:height|size)\b|\bhow much\b", rest):
+        return None
+    a, ra, b, rb = Fraction(m1.group(1)), Fraction(m1.group(3)), Fraction(m2.group(1)), Fraction(m2.group(3))
+    if ra <= 0 or rb <= 0 or ra == rb:
+        return None
+    tt = (a - b) / (ra - rb)
+    if tt <= 0:
+        return None
+    height = a - ra * tt
+    if height <= 0:
+        return None                                              # one would burn out before they meet
+    unit = m1.group(5)
+    eq = "%s - %st = %s - %st" % (show(a), show(ra), show(b), show(rb))
+    return Result("two_candles_equal", [tt], eq, "t = %ss: %s, so t = %s %ss (both candles are still %s %s tall)" % (unit, eq, show_exact(tt), unit, show_exact(height), m1.group(2)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 52. parallel lines and a transversal: corresponding / alternate interior / alternate exterior angles are equal      (the generator's "A pair of alternate exterior angles measure ...")
+# ---------------------------------------------------------------------------------------------------------
+_TRANS_KIND = re.compile(r"\b(corresponding|alternate interior|alternate exterior)\s+angles\b")
+_TRANS_OTHER = re.compile(r"\b(?:same[- ]side|consecutive|co-?interior|supplementary|complementary|adjacent|linear pair|straight line|add to|adds to|sum|total|together|triangle|"
+                          r"difference|product|ratio|half|double|twice|bisect\w*|quadrilateral|cyclic|inscribed|circle|arc|chord|polygon|exterior angle of)\b")
+
+
+def transversal_equal_angles(problem):
+    t = clean(problem)
+    if _CHANGES_EQUATION.search(t) or _TRANS_OTHER.search(t) or re.search(_SPELLED_ANY, re.sub(r"\btwo parallel lines\b", " ", t)):
+        return None
+    if not re.search(r"\bparallel lines\b", t) or not re.search(r"\btransversal\b", t):
+        return None
+    kinds = _TRANS_KIND.findall(t)
+    if len(kinds) != 1:
+        return None                                              # the equal pairs only; same-side interior angles ADD to 180 and decline
+    ex = list(_OPPANG_EXPR.finditer(t))
+    if len(ex) != 2:
+        return None
+    rest = t[:ex[0].start()] + " " + t[ex[0].end():ex[1].start()] + " " + t[ex[1].end():]
+    if re.search(r"\d", rest):
+        return None
+    coefs = []
+    for m in ex:
+        a = Fraction(m.group(1)) if m.group(1) else Fraction(1)
+        b = Fraction(m.group(3)) * (1 if m.group(2) == "+" else -1)
+        coefs.append((a, b))
+    (a1, b1), (a2, b2) = coefs
+    if a1 == a2:
+        return None
+    x = (b2 - b1) / (a1 - a2)
+    angle = a1 * x + b1
+    if not (0 < angle <= 180):
+        return None
+    q = max(t.rfind("find"), t.rfind("what"), t.rfind("how"))
+    if q == -1:
+        return None
+    tail = t[q:]
+    asks_angle = bool(re.search(r"\bangles?\b", tail)) and not re.search(r"\bboth angles\b", tail)
+    asks_x = bool(re.search(r"\bx\b", tail))
+    if not (asks_angle or asks_x):
+        return None
+    vals = ([x] if asks_x else []) + ([angle] if asks_angle else [])
+    eq = "%sx %s %s = %sx %s %s" % (show(a1), "+" if b1 >= 0 else "-", show(abs(b1)), show(a2), "+" if b2 >= 0 else "-", show(abs(b2)))
+    return Result("transversal_equal_angles", vals, eq,
+                  "%s angles are equal: %s, so x = %s and each angle is %s degrees" % (kinds[0], eq, show_exact(x), show_exact(angle)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2735,7 +2870,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             two_priced_items, plan_with_included, most_that_fits,
             line_from_two_points, election_margin, wind_same_time,
             base_plus_extra_over_time, distance_speed_time,
-            pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area]
+            pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
+            temperature_whole_hours, two_candles_equal, transversal_equal_angles]
 
 
 def solve(problem):
