@@ -1085,6 +1085,82 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 0, 7))
 
+    def test_percent_of_count_needs_a_score(self):
+        # "65% of the students passed" is a percent of the STUDENTS, not a score on the questions
+        self.assertIsNone(answers("A test has 20 questions. 65% of the students passed. How many questions were answered correctly?"))
+        self.assertIsNone(answers("A test has 20 questions. 65% of them were hard. How many questions were answered correctly?"))
+        self.assertEqual(answers("A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?"), values(13))
+        self.assertEqual(answers("A test has 20 questions. Jamal got 65%. How many questions were answered correctly?"), values(13))
+        self.assertEqual(answers("A test has 20 questions. Jamal earned 65%. How many questions were answered correctly?"), values(13))
+
+    def test_percent_change_between(self):
+        self.assertEqual(answers("A town's population changed from 2,500 to 4,000. What was the percent change?"), values(60))
+        self.assertEqual(answers("A town's population changed from 2000 to 1200. What was the percent change?"), values(-40))     # a fall is negative
+        self.assertEqual(answers("A price went from $20 to $23. What is the percent change?"), values(15))
+        r = WS.solve("A town's population changed from 2,500 to 4,000. What was the percent change?")
+        self.assertIn("(4000 - 2500) / 2500 x 100 = 60 percent", r.reading)
+        r = WS.solve("A price went from $30 to $31. By what percent did it change?")
+        self.assertEqual(r.values, [Fraction(10, 3)])                     # exact, never 3.3333
+        self.assertIn("10/3 percent", r.reading)
+        # the new amount asked for, a starting amount of zero, no change, "increase" / "decrease" worded, a percent in the problem, another number, a spelled number, per year
+        for text in ("A town's population changed from 2,500 to 4,000. What is the new population?",
+                     "A town's population changed from 0 to 4,000. What was the percent change?",
+                     "A town's population changed from 2,500 to 2,500. What was the percent change?",
+                     "A town's population changed from 2,500 to 4,000. What was the percent increase?",
+                     "A town's population changed from 25% to 40%. What was the percent change?",
+                     "A town's population changed from 2,500 to 4,000 in 5 years. What was the percent change?",
+                     "A town's population changed from two thousand to 4,000. What was the percent change?",
+                     "A town's population changed from 2,500 to 4,000. What was the percent change per year?",
+                     "A town's population changed from 2,500 to 4,000 for part of the year. What was the percent change?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_ages_later_multiple(self):
+        self.assertEqual(answers("Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is each now?"), values(15, 75))
+        self.assertEqual(answers("Kira is 4 times as old as Ava. In 8 years, Kira will be 2 times as old as Ava. How old is each now?"), values(4, 16))
+        r = WS.solve("Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is each now?")
+        self.assertEqual(r.values, [Fraction(75), Fraction(15)])
+        self.assertIn("j = 5e;  j + 5 = 4(e + 5)", r.reading)
+        self.assertIn("e = 15 and j = 75", r.reading)
+        # equal multiples, an age that is not whole or not positive, "years ago", a third person, the roles swapped, twice, an extra number, a question for someone else
+        for text in ("Jade is 5 times as old as Emeka. In 5 years, Jade will be 5 times as old as Emeka. How old is each now?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 6 times as old as Emeka. How old is each now?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 1 times as old as Emeka. How old is each now?",
+                     "Jade is 5 times as old as Emeka. 5 years ago, Jade was 4 times as old as Emeka. How old is each now?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka, and Sam is 3 times as old as Jade. How old is each now?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Emeka will be 4 times as old as Jade. How old is each now?",
+                     "Jade is twice as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is each now?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is each now? Their mother is 40.",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is Jade's sister?",
+                     "Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka for part of the year. How old is each now?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_shared_fixed_cost(self):
+        self.assertEqual(answers("A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total. How many students?"), values(20))
+        self.assertEqual(answers("A field trip costs $350 for the bus plus $15 admission per student. The bus cost is shared equally, and each student pays $32.50 in total. How many students went?"), values(20))
+        r = WS.solve("A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total. How many students?")
+        self.assertIn("350/n + 15 = 32.5", r.reading)
+        self.assertIn("n = 350 / 35/2 = 20", r.reading)                    # exact: 32.5 - 15 = 35/2
+        # a question for the cost per student, each pays only the admission or less, a count that is not whole, another unit asked, tax,
+        # "each" after the bus cost, part of the year, an extra person
+        for text in ("A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total. How much does the bus cost per student?",
+                     "A field trip costs $350 for the bus plus $15 admission per student. Each student pays $15 in total. How many students?",
+                     "A field trip costs $350 for the bus plus $15 admission per student. Each student pays $33 in total. How many students?",
+                     "A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total. How many buses?",
+                     "A field trip costs $350 for the bus plus $15 admission per student plus 5% tax. Each student pays $32.50 in total. How many students?",
+                     "A field trip costs $350 each for the bus plus $15 admission per student. Each student pays $32.50 in total. How many students?",
+                     "A field trip costs $350 for the bus plus $15 admission per student for part of the year. Each student pays $32.50 in total. How many students?",
+                     "A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total and two chaperones come. How many students?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_change_ages_shared_set(self):
+        """Set 21: wordings for percent_change_between, ages_later_multiple and shared_fixed_cost, written after all three were finished and run once, untuned.
+        Two answers are declined (safe misses): "twice as old" is a spelled number, and "per ticket" does not match "people"."""
+        from fresh_word_problems_21 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-first set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 2, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

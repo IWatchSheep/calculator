@@ -594,3 +594,34 @@ Measured:
   Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these three shapes).
   Fresh set 20 (13 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
   72 word-solver and number-puzzle tests pass.
+
+Batch 18: the "score" fix and three families in one commit: percent_change_between, ages_later_multiple, shared_fixed_cost
+==============================================================
+Fix (percent_of_count): "A test has 20 questions. 65% of the students passed. How many questions were answered correctly?" was answered 13, but the 65% is of the STUDENTS.  The percent must now be a score,
+  written "scored 65%", "got 65%", "earned 65%", "made 65%" or "a score of 65%"; a bare "65% of ..." declines.
+percent_change_between  (generator "A town's population changed from ... to ..."):  (new - old) / old x 100.  "A town's population changed from 2,500 to 4,000. What was the percent change?" is 60;
+  from 2,000 to 1,200 is -40 (a fall is negative).  Exactly two amounts in "from <old> [noun] to <new>" (both dollars or both plain), and a question that asks for the percent change
+  ("what was the percent change", "by what percent did it change").  The text is read after clean() has turned the word "percent" into "%", so the question is matched on "% change".  Exact: from $30
+  to $31 is 10/3 percent.  Declines: a question for the new amount, a starting amount of zero, no change, "increase" / "decrease" worded questions (the sign convention is not stated), percents in
+  the problem ("from 25% to 40%" are points), another number ("in 5 years"), a spelled number, "per year", "part of the year".
+ages_later_multiple  (generator "X is k times as old as Y. In y years, X will be m times as old as Y"):  j = k e and j + y = m (e + y), so e = y (m - 1) / (k - m).  "Jade is 5 times as old as Emeka. In 5 years,
+  Jade will be 4 times as old as Emeka. How old is each now?" is 75 and 15.  Two people only, the same subject in both sentences, "in y years" (not "ago"), digits for k, y and m, a question for each
+  age.  Both ages must be positive whole numbers (in 4 years, 5 then 4 times gives 60 and 12; in 6 years gives 90 and 18).  Declines: equal multiples, a multiple of 1 (age 0), a third person, the subject
+  swapped in the second sentence, "years ago", "twice" and other spelled numbers, an extra number, a question about someone else, "part of".
+shared_fixed_cost  (generator "A field trip costs $B for the bus plus $f admission per student"):  B / n + f = E.  "A field trip costs $350 for the bus plus $15 admission per student. Each student pays $32.50 in total.
+  How many students?" is 20 (the optional sentence "The bus cost is shared equally" is allowed).  Three dollar amounts: the shared cost (followed by "for" / "plus"), the per-student fee ("per <unit>"),
+  and the amount each pays (a sentence with each / every and "pays / paid / costs").  The question must ask how many of the fee's unit.  Declines: a question for the cost per student, "how much", each
+  paying the fee or less, a count that is not whole (350 / 18 students), another unit asked, tax / percent / chaperones / teachers / free / first, "each" right after the shared cost, a spelled
+  number, "part of the year".
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings (10/3 percent, 35/2),
+  no control characters, no module-level name defined twice (the names here are _PCHG_*, _AGEM, _SHARED_*).
+Measured:
+  1,000 generated problems: claims 226 -> 240, wrong 0.  The 14 new claims, each equal to the stored answer:
+    percent_change_between 0614 (+60), 0634 (+25), 0649 (-40), 0655 (-40), 0674 (+80) = every generated "population changed from ... to ..." problem;
+    ages_later_multiple 0885 (75 and 15), 0904 (90 and 18), 0924 (30 and 6), 0931 (16 and 4), 0944 (30 and 6) = every generated "k times as old ... In y years ... m times as old" problem
+      (the generated "sum of their ages" age problems are a different statement, left declined);
+    shared_fixed_cost 0812 (20), 0820 (44), 0830 (50), 0836 (20) = every generated "field trip ... bus plus admission" problem.
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 21 (12 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 4 solved, 2 declined; 6 required declines: 6 of 6; 0 wrong.  The two declined are safe
+  misses, not fixed: "twice as old" is a spelled number, and "$5 per ticket" does not match the question "how many people".
+  77 word-solver and number-puzzle tests pass.

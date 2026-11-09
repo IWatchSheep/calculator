@@ -1821,7 +1821,8 @@ def percent_of_count(problem):
     if not cm:
         return None
     # "scored 65%" / "got 65%" / "made 65%": the percent is the score on the count; the question asks how many were correct
-    if not re.search(r"\b(?:scored|score|got|earned|answered)\b|%\s*of\b", t):
+    # the percent must be a SCORE on the count ("scored 65%", "got 65%"); a bare "65% of the students passed" is a percent of something else
+    if not re.search(r"\b(?:scored|score of|got|earned|made|scoring)\s+(?:an?\s+|only\s+|about\s+|a score of\s+)?$", t[:pct[0][2]].rstrip() + " "):
         return None
     q = t.rfind("how many")
     if q == -1 or not re.search(r"\b(?:correct\w*|right|passed|made|scored|earned|got)\b", t[q:]) or re.search(r"\bwhat percent\b|\bhow much\b", t):
@@ -1836,6 +1837,113 @@ def percent_of_count(problem):
     return Result("percent_of_count", [result], eq, "%s, so %s answered correctly" % (eq, show_exact(result)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 34. percent change from one amount to another:   (new - old) / old x 100      (the generator's "A town's population changed from ... to ...")
+# ---------------------------------------------------------------------------------------------------------
+_PCHG_FROM_TO = re.compile(r"\bfrom\s+\$?(\d+(?:\.\d+)?)(?:\s+[a-z]+)?\s+to\s+\$?(\d+(?:\.\d+)?)\b")
+# clean() turns the word "percent" into "%", so the question is read as "the % change"
+_PCHG_ASK = re.compile(r"\bby what %[^.?!]*\bchange|%\s*change\b|\bchange in %|\bwhat %[^.?!]*\bchange|\bpercentage change\b")
+_PCHG_OTHER = re.compile(r"\b(?:increase\w*|decrease\w*|new|how many|how much|compound\w*|average|each year|per year|annual\w*|monthly|total|difference)\b")
+
+
+def percent_change_between(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or _CHANGES_EQUATION.search(t) or t.count("%") != 1 or re.search(_SPELLED_ANY, t) or len({n[1] for n in nums}) != 1:
+        return None
+    if any(t[n[3]:n[3] + 2].strip().startswith("%") for n in nums):
+        return None                                              # "from 20% to 25%" is points, not an amount
+    m = _PCHG_FROM_TO.search(t)
+    if not m:
+        return None
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if "%" in s), None)
+    if q is None or not _PCHG_ASK.search(q) or _PCHG_OTHER.search(q):
+        return None
+    old, new = Fraction(m.group(1)), Fraction(m.group(2))
+    if old <= 0 or new < 0 or old == new:
+        return None
+    pct = (new - old) / old * 100
+    eq = "(%s - %s) / %s x 100" % (show(new), show(old), show(old))
+    return Result("percent_change_between", [pct], eq, "%s = %s percent (a fall is negative)" % (eq, show_exact(pct)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 35. ages with a later multiple:   j = k e,   j + y = m (e + y)      (the generator's "X is k times as old as Y. In y years, X will be m times as old as Y")
+# ---------------------------------------------------------------------------------------------------------
+_AGEM = re.compile(r"(?P<a>[a-z]+(?: [a-z]+)?) is (?P<k>\d+) times as old as (?P<b>[a-z]+(?: [a-z]+)?)\.\s*in (?P<y>\d+) years?,\s*(?P=a) will be (?P<m>\d+) times as old as (?P=b)\b")
+
+
+def ages_later_multiple(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or re.search(_SPELLED_ANY, t) or re.search(r"\b(?:ago|sum|difference|together|older than|younger than)\b", t):
+        return None
+    m = _AGEM.search(t)
+    if not m or m.group("a") == m.group("b"):
+        return None
+    rest = t[:m.start()] + " " + t[m.end():]
+    if re.search(r"\d", rest) or not re.search(r"\bhow old (?:is each|are they|are (?:both|the two))\b|\bfind (?:each|their|both) (?:age|of their ages)", rest):
+        return None
+    k, y, mm = Fraction(m.group("k")), Fraction(m.group("y")), Fraction(m.group("m"))
+    if k == mm or k <= 0 or mm <= 0 or y <= 0:
+        return None
+    e = y * (mm - 1) / (k - mm)
+    j = k * e
+    if e <= 0 or j <= 0 or e.denominator != 1 or j.denominator != 1:
+        return None
+    eq = "j = %se;  j + %s = %s(e + %s)" % (show(k), show(y), show(mm), show(y))
+    return Result("ages_later_multiple", [j, e], eq,
+                  "j = %s's age, e = %s's age: %s, so e = %s and j = %s" % (m.group("a"), m.group("b"), eq, show_exact(e), show_exact(j)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 36. a shared fixed cost plus a fee each:   B / n + f = E      (the generator's "A field trip costs $B for the bus plus $f admission per student")
+# ---------------------------------------------------------------------------------------------------------
+_SHARED_RATE = re.compile(r"\s*(?:[a-z]+\s+){0,2}per\s+([a-z]+)")
+_SHARED_OTHER = re.compile(r"\b(?:tax|discount\w*|tip|free|first|extra|additional|chaperone\w*|teachers?|unequally|only)\b|%")
+
+
+def shared_fixed_cost(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or not all(n[1] for n in nums) or _CHANGES_EQUATION.search(t) or _SHARED_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    rated = [(n, _SHARED_RATE.match(t[n[3]:])) for n in nums]
+    rated = [(n, m) for n, m in rated if m]
+    if len(rated) != 1:
+        return None
+    rate_n, rate_m = rated[0]
+    others = [n for n in nums if n is not rate_n]
+    B, E = others[0], others[1]
+    if not (B[2] < E[2]):
+        return None
+    # the shared cost is followed by "for / plus"; the amount each person pays is introduced by "pays / paid / costs" in a sentence that says each / every
+    if not re.match(r"\s*(?:for|plus|\+|to)\b", t[B[3]:]) or _EACH_AFTER.match(t[B[3]:]):
+        return None
+    sent_start = max(t.rfind(".", 0, E[2]), t.rfind("?", 0, E[2]), t.rfind("!", 0, E[2])) + 1
+    before = t[sent_start:E[2]].rstrip()
+    if not re.search(r"\b(?:pays?|paid|costs?|owes?)(?: a total of)?$", before) or not re.search(r"\b(?:each|every)\b", before):
+        return None
+    unit = _stem_unit(rate_m.group(1))
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow\b", s)), None)
+    if q is None or re.search(r"\bhow much\b|\bper\b|\bcost\b", q):
+        return None
+    qm = re.search(r"\bhow many ([a-z]+)", q)
+    if not qm or _stem_unit(qm.group(1)) != unit:
+        return None
+    bus, fee, each = B[0], rate_n[0], E[0]
+    if bus <= 0 or fee < 0 or each <= fee:
+        return None
+    n = bus / (each - fee)
+    if n <= 0 or n.denominator != 1:
+        return None
+    eq = "%s/n + %s = %s" % (show(bus), show(fee), show(each))
+    return Result("shared_fixed_cost", [n], eq,
+                  "n = number of %ss: %s, so n = %s / %s = %s" % (unit, eq, show(bus), show_exact(each - fee), show_exact(n)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -1843,7 +1951,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth,
             fixed_plus_rate, two_changing_equal, add_to_blend,
             two_scores, two_discounts, triangle_ratio,
-            two_prices_known_count, drain_or_fill, percent_of_count]
+            two_prices_known_count, drain_or_fill, percent_of_count,
+            percent_change_between, ages_later_multiple, shared_fixed_cost]
 
 
 def solve(problem):
