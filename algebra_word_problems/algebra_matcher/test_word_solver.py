@@ -50,6 +50,7 @@ HAND_ANSWERS = {
     "A radioactive sample halves every 5 years. When does 160 g become 20 g?": [15],
     "A cyclist leaves at noon going 12 mph. A car leaves the same place at 2 pm going 36 mph along the same road. When does the car catch the cyclist?": [1],
     "An investment of bacteria... a yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?": [8],
+    "Town X has 50,000 people and gains 1,000 a year; Town Y has 80,000 and loses 500 a year. When are they equal?": [20],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -834,6 +835,92 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (sixteenth set, h / clock / growth): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (8, 0, 7))
+
+    def test_fixed_plus_rate(self):
+        self.assertEqual(answers("A venue charges $100 plus $15 per guest. The total was $865. How many guests came?"), values(51))
+        self.assertEqual(answers("A taxi charges $3 plus $2 per mile, the ride cost $19. How many miles was the ride?"), values(8))
+        self.assertEqual(answers("A taxi charges $3.50 plus $1.50 per mile. A ride costs $39.50. How many miles was the ride?"), values(24))
+        self.assertEqual(answers("A gym charges a $20 joining fee and $15 per month. Ana has paid $155 in total. How many months has Ana been a member?"), values(9))
+        self.assertEqual(answers("A plumber charges a $60 call-out fee plus $45 per hour. The bill was $150. How long did the job take?"), values(2))
+        r = WS.solve("A venue charges $100 plus $15 per guest. The total was $865. How many guests came?")
+        self.assertIn("100 + 15n = 865", r.reading)
+        self.assertIn("n = 51 guests", r.reading)
+        # a continuous unit may be a fraction, exactly: 80 / 45 hours
+        r = WS.solve("A plumber charges a $60 call-out fee plus $45 per hour. The bill was $140. How long did the job take?")
+        self.assertEqual(r.values, [Fraction(16, 9)])
+        self.assertIn("16/9 hours", r.reading)
+        # a question for the total or a price, a count that is not whole, not positive, a total below the fixed cost, "each" after a total or the fixed cost,
+        # a discount, a different unit asked, a spelled number, part of the year, a first-hour or additional-hour rule
+        for text in ("A venue charges $100 plus $15 per guest. The total was $865. What was the total for 10 guests?",
+                     "A venue charges $100 plus $15 per guest. The total was $865. What is the total cost?",
+                     "A venue charges $100 plus $15 per guest. The total was $865. How much per guest?",
+                     "A venue charges $100 plus $15 per guest. The total was $860. How many guests came?",
+                     "A venue charges $100 plus $15 per guest. The total was $50. How many guests came?",
+                     "A venue charges $100 plus $15 per guest. The total was $100. How many guests came?",
+                     "A venue charges $100 plus $15 per guest. The total was $865 each. How many guests came?",
+                     "A venue charges $100 each plus $15 per guest. The total was $865. How many guests came?",
+                     "A venue charges $100 plus $15 per guest. The total was $865, with a 10% discount. How many guests came?",
+                     "A venue charges $100 plus $15 per guest for part of the year. The total was $865. How many guests came?",
+                     "A venue charges $100 plus $15 per guest. The total was $865. How many tickets were sold?",
+                     "A venue charges $100 plus twice $15 per guest. The total was $865. How many guests came?",
+                     "A parking garage charges $5 for the first hour and $2 for each additional hour. A driver paid $13. How many hours did they park?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_two_changing_equal(self):
+        self.assertEqual(answers("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. In how many years are they equal?"), values(18))
+        self.assertEqual(answers("Town A has 18,000 people and grows by 2000 a year. Town B has 63,000 people and shrinks by 500 a year. In how many years will they be equal?"), values(18))
+        self.assertEqual(answers("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and grows by 500 a year. In how many years are they equal?"), values(30))
+        r = WS.solve("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. In how many years are they equal?")
+        self.assertIn("18000 + 2000 t = 63000 - 500 t", r.reading)
+        self.assertIn("t = 18 years", r.reading)
+        # a negative time, equal changes, a time that is not whole, mixed units, a population asked for, a percent, a spelled number, part of the time
+        for text in ("Town A has 63,000 people and grows by 2,000 a year. Town B has 18,000 and shrinks by 500 a year. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 500 a year. Town B has 63,000 and grows by 500 a year. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,001 and shrinks by 500 a year. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a month. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. What will the population be when they are equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. How many people will each have when they are equal?",
+                     "Town A has 18,000 people and grows by 2% a year. Town B has 63,000 and shrinks by 500 a year. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by twice 500 a year. In how many years are they equal?",
+                     "Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year for part of the time. In how many years are they equal?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_add_to_blend(self):
+        self.assertEqual(answers("How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $9 a pound?"), values(14))
+        self.assertEqual(answers("How many pounds of coffee worth $10/lb must be added to 14 lb of coffee worth $8/lb to make a mix worth $9/lb?"), values(14))
+        r = WS.solve("How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $9 a pound?")
+        self.assertIn("8(14) + 10x = 9(14 + x)", r.reading)
+        self.assertIn("x = 14 lb", r.reading)
+        r = WS.solve("How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $9.50 a pound?")
+        self.assertEqual(r.values, [Fraction(42)])                       # 14 * 1.5 / 0.5
+        r = WS.solve("How many pounds of coffee worth $10 a pound must be added to 7 lb of coffee worth $8 a pound to make a mix worth $8.50 a pound?")
+        self.assertEqual(r.values, [Fraction(7, 3)])                     # an exact fraction
+        self.assertIn("7/3 lb", r.reading)
+        # the price blend of two coffees to a total weight stays on the price_blend family
+        self.assertEqual(WS.solve("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?").family, "price_blend")
+        # a blend price not strictly between the two, equal prices, different units, water, a spelled number (found by fresh set 17), part of the year
+        for text in ("How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $12 a pound?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $10 a pound?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $7 a pound?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $10 a pound to make a mix worth $9 a pound?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 kg of coffee worth $8 a pound to make a mix worth $9 a pound?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $9 a pound, with water?",
+                     "How many pounds of tea at $5 a pound must be added to 6 lb of tea at $9 a pound to make a blend priced at $7 a pound if two pounds spill?",
+                     "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $9 a pound for part of the year?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_fixed_changing_blend_sets(self):
+        """Fresh set 17 (14 wordings, written after the three families were finished, run once, untuned) found one WRONG answer: "... if two pounds spill"
+        was answered 6 because add_to_blend did not decline a spelled "two".  That is fixed (every spelled number now declines there), so set 17 is a
+        development set: 6 solved, 1 declined (safe), 6 of 6 required declines.  Set 18 (9 wordings) was written after that fix and run once, untuned."""
+        from fresh_word_problems_17 import FRESH as F17
+        from fresh_word_problems_18 import FRESH as F18
+        s17, s18 = score(F17), score(F18)
+        print("  development wordings (seventeenth set, found one wrong answer, now fixed): %d solved, %d declined, %d required declines correct" % s17)
+        print("  fresh wordings (eighteenth set, written after the fix): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (s18[0], s18[0] + s18[1], s18[1], s18[2], s18[2]))
+        self.assertEqual(s17, (6, 1, 7))
+        self.assertEqual(s18, (3, 3, 3))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

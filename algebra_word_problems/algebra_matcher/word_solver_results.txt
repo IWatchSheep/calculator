@@ -496,3 +496,41 @@ Measured:
     at 2 pm going 36 mph along the same road. When does the car catch the cyclist?" 1 hour;  "... a yeast culture triples every 2 hours, starting at 10 cells. When does it reach 810?" 8.
   Fresh set 16 (15 wordings, written after everything was finished, run once, untuned): 8 with an answer: 8 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
   59 word-solver and number-puzzle tests pass.
+
+Batch 15: three families from the generated file in one commit: fixed_plus_rate, two_changing_equal, add_to_blend
+==============================================================
+fixed_plus_rate  (generator "venue", "taxi", "gym", "plumber"):  F + r n = T.  "A venue charges $100 plus $15 per guest. The total was $865. How many guests came?" is 51;
+  "A taxi charges $3 plus $2 per mile, the ride cost $19" is 8 miles.  Exactly three amounts, all dollars, in the order fixed cost, rate ("per <unit>"), total;
+  the fixed cost is followed by "plus", "and" or a fee word ("a $20 joining fee and", "a $60 call-out fee plus"); the total is introduced by "the total was", "the ride
+  cost", "has paid", "the bill was" or followed by "in total".  The question must ask how many of the rate's unit (guests, miles, months; "how long" for a time unit).
+  Declines: a question for the total or a price ("how much", "total"), a count that is not whole (a unit like guest, month), zero or negative, a total at or below the fixed
+  cost, "each / apiece / per" right after the fixed cost or the total ("$865 each"), discount / tax / tip / percent / coupon / free, "first" or "additional" rules
+  (the parking-garage template), a spelled number, "such", "part of".  A continuous unit (hour, mile, km, pound ...) may be an exact fraction: $60 + $45 per hour, $140
+  is 16/9 hours.  (As with savings, "per" after the PRICE OF ONE is the role there, and after a total it declines.)
+two_changing_equal  (generator "Town A ... grows by ... Town B ... shrinks by ..."):  a + ca t = b + cb t, where shrinking is a negative rate.  "Town A has 18,000 people and grows by
+  2,000 a year. Town B has 63,000 and shrinks by 500 a year. In how many years are they equal?" is 18.  One may shrink, both may grow.  Two statements "<who> has <n> [things]
+  and grows|gains|increases|shrinks|loses|drops|... by <c> a|per|each <unit>", the same unit, all four numbers dollars or none; the question asks WHEN / how many <unit>
+  with equal / same.  Declines: a negative time (the one that starts higher also grows faster), equal changes, a time that is not whole, mixed units (a year and a month),
+  a question for a population, "how many people", a percent, a spelled number, "part of".
+add_to_blend  (generator "must be added to ... worth"):  p1 a + p2 x = t (a + x).  "How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound
+  to make a mix worth $9 a pound?" is 14 lb.  Prices may be "$10 a pound", "$10/lb", "$10 per kilogram"; all four units must agree.  The blend price must lie STRICTLY between
+  the two prices (12, 10 and 7 here decline), the existing amount is positive, the answer positive (exact fraction: 7 lb at $8, $8.50 blend, $10 added is 7/3 lb).  The
+  "make 40 lb from two coffees" problems stay on price_blend (a test checks the family name).  Declines: water, pure, remove, evaporate, replace, profit, a percent, and any
+  spelled number.
+Fresh set 17 (14 wordings, written after the three families were finished, run once, untuned) found ONE WRONG ANSWER: "How many pounds of tea at $5 a pound must be added to 6 lb of tea
+  at $9 a pound to make a blend priced at $7 a pound if two pounds spill?" was answered 6; "two pounds spill" changes the equation.  add_to_blend declined three and above but not a
+  spelled "two".  Fixed: any spelled number (two ... ten, twice, double, half) declines in add_to_blend.  Set 17 is therefore a DEVELOPMENT set: 6 solved, 1 declined, 7 of 7 required
+  declines, 0 wrong after the fix.  Fresh set 18 (9 wordings) was written after the fix, run once, untuned: 6 with an answer: 3 solved, 3 declined; 3 required declines: 3 of 3; 0 wrong.
+  The three declined are safe misses, not fixed: "people" does not match the unit "person"; "Plant A is 30 cm tall and grows by ..." (is ... tall) is not a "has ... and grows" statement;
+  "liters" is not one of the price-blend units (lb, kg, oz).
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and
+  readings (16/9 hours, 7/3 lb), no control characters, and no module-level name defined twice (passes; the names here are _FIXED_*, _GROW_*, _ADDMIX_*).
+Measured:
+  1,000 generated problems: claims 165 -> 192, wrong 0.  The 27 new claims, each equal to the stored answer:
+    fixed_plus_rate 0420 (51 guests), 0421 (14 months), 0426 (2 hours), 0430 (24 miles), 0434 (23), 0437 (4 hours), 0440 (13 miles), 0443 (3 months), 0446 (7/2 = 3.5 hours),
+      0449 (88), 0456 (11 months), 0457 (18 miles), 0461 (8 miles), 0467 (2 hours), 0469 (3 months), 0470 (78), 0476 (8 months), 0478 (3 miles);
+    two_changing_equal 0480 (18 years), 0501 (22), 0511 (5), 0518 (10), 0531 (22);
+    add_to_blend 0532 (14 lb), 0540 (10 lb), 0555 (12 lb), 0558 (12 lb)  (the other "must be added" problems are water and antifreeze templates, a different equation, declined).
+  Hand-written problems claimed by the family solver: 36 -> 37, all match the hand-calculated answers:
+    "Town X has 50,000 people and gains 1,000 a year; Town Y has 80,000 and loses 500 a year. When are they equal?" 20 years.
+  63 word-solver and number-puzzle tests pass.

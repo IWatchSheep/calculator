@@ -1421,11 +1421,156 @@ def periodic_growth(problem):
                   "%s, so %d periods of %s %ss: t = %s %ss" % (step, k, show_exact(period), unit, show_exact(total), unit))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 25. a fixed cost plus a rate:   F + r n = T      (the generator's "venue", "taxi", "gym", "plumber")
+# ---------------------------------------------------------------------------------------------------------
+_FIXED_RATE_AFTER = re.compile(r"\s*(?:per|a|an|each|every|/)\s*([a-z]+)")
+_FIXED_TOTAL_BEFORE = re.compile(r"(?:\btotal(?: cost| bill)?(?: was| is| came to| comes to)?|\b(?:bill|fare|ride|trip|cost|costs|price|invoice|job)(?: was| is| came to| comes to| costs?| totaled| totalled)?|"
+                                 r"\b(?:paid|spent|owes?|owed|charged|billed|came to|comes to))\s*(?:a total of\s+)?$")
+_FIXED_OTHER = re.compile(r"\b(?:discount\w*|tax|tip|percent|coupon\w*|free|waived|first|additional|extra|minimum|maximum|at least|at most|between|rest|remaining|balance)\b|%")
+_FIXED_CONTINUOUS = {"hour", "minute", "mile", "km", "kilometer", "kilometre", "meter", "metre", "foot", "feet", "pound", "lb", "kg", "gallon", "liter", "litre"}
+_FIXED_TIME_UNITS = {"hour", "minute", "day", "week", "month", "year"}
+
+
+def _stem_unit(w):
+    w = w.lower()
+    if w.endswith("ies"):
+        return w[:-3] + "y"
+    if w.endswith("s") and not w.endswith("ss") and w not in ("lbs",):
+        return w[:-1]
+    return "lb" if w == "lbs" else w
+
+
+def fixed_plus_rate(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or not all(n[1] for n in nums) or _CHANGES_EQUATION.search(t) or _FIXED_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    rates = [(n, _FIXED_RATE_AFTER.match(t[n[3]:])) for n in nums]
+    rates = [(n, m) for n, m in rates if m]
+    if len(rates) != 1:
+        return None
+    rate_n, rate_m = rates[0]
+    others = [n for n in nums if n is not rate_n]
+    F, T = others[0], others[1]
+    if not (F[2] < rate_n[2] < T[2]):
+        return None                                           # the order is: fixed cost, then the rate, then the total
+    # the fixed cost is followed by "plus" or a fee word; the total is introduced by a word like "total was / the ride cost / has paid"
+    after_f = " ".join(t[F[3]:].split()[:3])
+    if not re.search(r"\b(?:plus|fee|and)\b|\+", after_f):
+        return None
+    if not (_FIXED_TOTAL_BEFORE.search(t[:T[2]].rstrip()) or re.match(r"\s*(?:in total|altogether)\b", t[T[3]:])):
+        return None
+    if _EACH_AFTER.match(t[F[3]:]) or _EACH_AFTER.match(t[T[3]:]):
+        return None
+    unit = _stem_unit(rate_m.group(1))
+    # the question asks how many of the unit (or how long, for a time unit), not the total
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow\b", s)), None)
+    if q is None or re.search(r"\bhow much\b|\btotal\b", q):
+        return None
+    qm = re.search(r"\bhow many ([a-z]+)", q)
+    ok = bool(qm and _stem_unit(qm.group(1)) == unit) or (bool(re.search(r"\bhow long\b", q)) and unit in _FIXED_TIME_UNITS)
+    if not ok:
+        return None
+    f, r, total = F[0], rate_n[0], T[0]
+    if r <= 0 or f < 0 or total <= f:
+        return None
+    n = (total - f) / r
+    if n <= 0 or (n.denominator != 1 and unit not in _FIXED_CONTINUOUS):
+        return None
+    eq = "%s + %sn = %s" % (show(f), show(r), show(total))
+    return Result("fixed_plus_rate", [n], eq, "n = number of %ss: %s, so n = %s %s%s" % (unit, eq, show_exact(n), unit, "" if n == 1 else "s"))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 26. two amounts changing at constant rates until equal:   a + ca t = b + cb t      (the generator's "Town A ... grows by ... Town B ... shrinks by")
+# ---------------------------------------------------------------------------------------------------------
+_GROW_STMT = re.compile(
+    r"(?<![\w$])(?P<who>[a-z]+(?:\s[a-z]+)?)\s+(?:has|had|have|starts? with|started with|begins? with)\s+(?P<a>\$?\d+(?:\.\d+)?)(?:\s+[a-z]+)?(?:,|\s+and|\s+but)?\s+(?:and\s+)?"
+    r"(?P<v>grows?|increases?|rises?|gains?|shrinks?|decreases?|falls?|drops?|loses?|declines?)(?:\s+by)?\s+(?P<c>\$?\d+(?:\.\d+)?)(?:\s+[a-z]+)?\s+(?:a|per|each|every)\s+"
+    r"(?P<u>year|month|week|day|hour|decade)\b")
+_GROW_FALL = re.compile(r"shrink|decreas|fall|drop|lose|declin")
+
+
+def two_changing_equal(problem):
+    t = clean(problem)
+    found = list(_GROW_STMT.finditer(t))
+    nums = digit_numbers(problem)
+    if len(found) != 2 or len(nums) != 4 or _CHANGES_EQUATION.search(t) or "%" in t:
+        return None
+    m1, m2 = found
+    if m1.group("who") == m2.group("who") or m1.group("u") != m2.group("u"):
+        return None
+    if len({n[1] for n in nums}) != 1:
+        return None                                              # all money or none
+    rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
+    if re.search(r"\d", rest) or re.search(_SPELLED_ANY, rest):
+        return None
+    unit = m1.group("u")
+    # the question asks for the TIME they are equal, not an amount
+    if not re.search(r"\b(?:when|how long|how many (?:years|months|weeks|days|hours|decades)|after how many)\b", rest) or not re.search(r"\b(?:equal|same)\b", rest):
+        return None
+    if re.search(r"\bhow much\b|\bhow many (?:people|residents|dollars|items)\b|\bwhat (?:will|is|would)\b", rest):
+        return None
+
+    def val(s):
+        return Fraction(s.lstrip("$"))
+    a, b = val(m1.group("a")), val(m2.group("a"))
+    ca = -val(m1.group("c")) if _GROW_FALL.match(m1.group("v")) else val(m1.group("c"))
+    cb = -val(m2.group("c")) if _GROW_FALL.match(m2.group("v")) else val(m2.group("c"))
+    if ca == cb:
+        return None
+    tt = (b - a) / (ca - cb)
+    if tt <= 0 or tt.denominator != 1:
+        return None
+    sa = "+ %s" % show(ca) if ca >= 0 else "- %s" % show(-ca)
+    sb = "+ %s" % show(cb) if cb >= 0 else "- %s" % show(-cb)
+    eq = "%s %s t = %s %s t" % (show(a), sa, show(b), sb)
+    return Result("two_changing_equal", [tt], eq, "t = number of %ss: %s, so t = %s %ss" % (unit, eq, show_exact(tt), unit))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 27. adding to an amount you already have, to reach a blend price:   p1 a + p2 x = t (a + x)      (the generator's "must be added to ... worth")
+# ---------------------------------------------------------------------------------------------------------
+_ADDMIX_UNIT = r"(?:lb|lbs|pounds?|kg|kilograms?|oz|ounces?)"
+_ADDMIX_PRICE = r"\$(\d+(?:\.\d+)?)\s*(?:/\s*|per\s+|a\s+)(" + _ADDMIX_UNIT + r")\b"
+_ADDMIX = re.compile(
+    r"how (?:many|much)\s+(?:(?:" + _ADDMIX_UNIT + r")\s+of\s+)?(?:[a-z]+(?:\s[a-z]+)?\s+)?(?:worth|at|priced at|costing|that costs?|selling for)\s+" + _ADDMIX_PRICE
+    + r"\s+must be added to\s+(\d+(?:\.\d+)?)\s*(" + _ADDMIX_UNIT + r")\s+of\s+(?:[a-z]+(?:\s[a-z]+)?\s+)?(?:worth|at|priced at|costing|that costs?|selling for)\s+" + _ADDMIX_PRICE
+    + r"\s+to\s+(?:make|get|obtain|produce)\s+(?:an?\s+)?(?:mix|blend|mixture)?\s*(?:that is\s+)?(?:worth|priced at|selling for|at)\s+" + _ADDMIX_PRICE)
+_ADDMIX_OTHER = re.compile(r"\b(?:water|pure|evaporat\w*|remov\w*|replac\w*|profit|loss|discount\w*|tax|times as|twice|double|triple|half|as much|ratio|more than|less than|"
+                           r"three|four|five|six|seven|eight|nine|ten|another)\b|%")
+
+
+def add_to_blend(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 4 or _CHANGES_EQUATION.search(t) or _ADDMIX_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None                                  # a spelled "two pounds spill" / "twice" changes the equation: found by fresh set 17
+    m = _ADDMIX.search(t)
+    if not m:
+        return None
+    p2, u1, a, u2, p1, u3, tg, u4 = m.groups()
+    if len({_UNIT_NAMES[u] for u in (u1, u2, u3, u4)}) != 1:
+        return None
+    p2, a, p1, tg = Fraction(p2), Fraction(a), Fraction(p1), Fraction(tg)
+    if a <= 0 or p1 == p2 or not (min(p1, p2) < tg < max(p1, p2)):
+        return None                                                # the blend price must lie strictly between the two prices
+    x = a * (tg - p1) / (p2 - tg)
+    if x <= 0:
+        return None
+    unit = _UNIT_NAMES[u2]
+    eq = "%s(%s) + %sx = %s(%s + x)" % (show(p1), show(a), show(p2), show(tg), show(a))
+    return Result("add_to_blend", [x], eq, "x = %s added: %s, so x = %s %s" % (unit, eq, show_exact(x), unit))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
-            still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth]
+            still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth,
+            fixed_plus_rate, two_changing_equal, add_to_blend]
 
 
 def solve(problem):
