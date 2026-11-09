@@ -58,6 +58,10 @@ _TOKEN = re.compile(r"""\s*(?:
 _INDEX = None
 
 
+class IncompleteMath(ValueError):
+    """The math is not wrong, just not finished yet (so a guide can say 'keep typing')."""
+
+
 def _norm(text):
     return re.sub(r"[^a-z0-9]", "", text.lower().replace("’", "'"))
 
@@ -137,7 +141,7 @@ class _Parser:
 
     def parse(self):
         if not self.toks:
-            raise ValueError("Type some math first.")
+            raise IncompleteMath("Type some math first.")
         value = self.expr()
         if self.peek()[0] is not None:
             kind, val = self.peek()
@@ -146,7 +150,7 @@ class _Parser:
                                  % (val, "2", val))
             raise ValueError("Unexpected %r." % val)
         if isinstance(value, tuple):
-            raise ValueError("A template needs at least one operator, for example (□ + 3) × 2.")
+            raise IncompleteMath("A template needs at least one operator, for example (□ + 3) × 2.")
         return value
 
     def expr(self):
@@ -197,7 +201,7 @@ class _Parser:
             self.i += 1
             inner = self.expr()
             if not self.accept(")"):
-                raise ValueError("A bracket ( is never closed.")
+                raise IncompleteMath("A bracket ( is never closed.")
             return inner
         if kind == "word":
             words = []
@@ -213,7 +217,7 @@ class _Parser:
                 return self.make(key)                              # a constant such as pi
             return ("box", "")                                     # any other bare letter is an empty box
         if val is None:
-            raise ValueError("The math ends too soon: something is missing at the end.")
+            raise IncompleteMath("The math ends too soon: something is missing at the end.")
         raise ValueError("Unexpected %r." % val)
 
     def call(self, name):
@@ -264,15 +268,31 @@ def empty_boxes(node):
 
 
 # ---------------------------------------------------------------- saved templates (a small JSON file)
-def load_templates(path):
+def load_data(path):
+    """(saved templates, hide the how-to guide?) from the file.  A missing or damaged file gives ([], False)."""
     try:
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-        return [t for t in data if isinstance(t, str) and t.strip()]
-    except (OSError, ValueError, TypeError):
-        return []
+    except (OSError, ValueError):
+        return [], False
+    hide = False
+    if isinstance(data, dict):
+        hide = bool(data.get("hide_guide", False))
+        data = data.get("templates", [])
+    if not isinstance(data, list):
+        return [], hide
+    return [t for t in data if isinstance(t, str) and t.strip()], hide
+
+
+def save_data(path, templates, hide_guide=False):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"templates": list(templates), "hide_guide": bool(hide_guide)}, f, ensure_ascii=False, indent=2)
+
+
+def load_templates(path):
+    return load_data(path)[0]
 
 
 def save_templates(path, templates):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(list(templates), f, ensure_ascii=False, indent=2)
+    """Save the templates and keep the 'hide the guide' choice that is already in the file."""
+    save_data(path, templates, load_data(path)[1])

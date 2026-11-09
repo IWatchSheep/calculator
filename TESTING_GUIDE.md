@@ -15,7 +15,7 @@ python tests/test_operators.py NumericTests.test_000_math.arithmetic.addition   
 Use the project's `.venv` Python if Pillow is not installed globally. Without Pillow one test is
 skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test is skipped.
 
-**Last full run (author's machine, Python 3.15, Windows): 672 tests, all passed (the full run now takes about a minute because it drives the real window).**
+**Last full run (author's machine, Python 3.15, Windows): 682 tests, all passed (the full run now takes about a minute because it drives the real window).**
 
 ## 2. What the project contains
 
@@ -43,8 +43,8 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 | `GuiSmokeTest` | 1 | `main.CalculatorGUI()` builds, updates and closes |
 | `NewPhysicsRowTests` | 3 | The 49 magnetism / fluid / quantum / optics / relativity operators: row module boxes match `compute()` arguments, every operator has a calculator button, row evaluation equals `compute()` |
 | `NewPhysicsCalculatorTests` | 6 | Drives the real window for all 49 new operators: pick the operator, type the numbers on the keypad (including the `±` and `EE` keys for negative and tiny values), press `=`, compare with the hand-calculated answer; checks the `±`/`EE` key rules, the `C` / Clear button and that every keypad key is a working one; errors are shown as readable messages |
-| `TemplateMathTests` | 9 | The typed-math parser behind the Templates panel: precedence and brackets, operators by name and short name, every alias, empty boxes, readable error messages, unsafe text rejected, the saved-templates file |
-| `TemplatePanelTests` | 9 | The Templates panel in the real window: Preview Posted, `=`, Save Template (list + file), Apply Template into the row, filling the boxes and calculating, duplicates, nothing picked, nesting; the three removed toolbar buttons are gone |
+| `TemplateMathTests` | 10 | The typed-math parser behind the Templates panel: precedence and brackets, operators by name and short name, every alias, empty boxes, readable error messages, unsafe text rejected, the saved-templates file |
+| `TemplatePanelTests` | 18 | The Templates panel in the real window: Preview Posted puts the math in the row and a new preview replaces the old one, Save Template (list + file), Apply Template, the whole journey to a calculated answer, duplicates, nothing picked, nesting; the step-by-step guide pop-up (opens once when you start typing, follows your progress with ticks, "keep typing" vs red errors, Got it / ? / Don't show this again remembered, fully on screen and clear of the text box and buttons); the three removed toolbar buttons are gone |
 
 ## 4. How another AI should verify (do not just trust the suite)
 
@@ -99,7 +99,8 @@ Run `python main.py`, then for each item note pass/fail:
 
 - [ ] Window opens; layout matches `picture_of_gui/gui_template.png`
 - [ ] Number pad: type `12 + 7 =` → `19`; `7 ÷ 0` shows an error and does not crash
-- [ ] Templates: type `(□ + 3) × 2`, press **Preview Posted** (shows the row and `1 empty square box`), **Save Template**, pick it in the list, **Apply Template**, fill the box, `=`
+- [ ] Templates: start typing `(? + 3) × 2` in the text box: the guide pop-up opens (four cards, step 1 turns green with `✓ Understood`); press **Preview Posted** (the math appears in Row 1, step 2 turns green), **Save Template** (step 3), pick it in the list and press **Apply Template** (step 4), fill the box, keypad `=`
+- [ ] The guide pop-up is fully on screen, does not cover the text box, list or buttons, and **Got it**, the **?** button and *Don't show this again* work
 - [ ] Templates: close and reopen the calculator; the saved template is still in the list. Bad math (`sqrt(`) shows a message and is not saved
 - [ ] `C` key and the toolbar `Clear (C)` button: every row goes back to one empty box, join symbols disappear, the results area says "Cleared"
 - [ ] `±` key: flips a box between `5` and `-5`; after `EE` it flips the exponent's sign

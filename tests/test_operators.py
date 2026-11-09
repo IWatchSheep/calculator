@@ -1122,12 +1122,24 @@ class TemplateMathTests(unittest.TestCase):
                 f.write("this is not json")
             self.assertEqual(self.tm.load_templates(path), [])                     # damaged file
             with open(path, "w", encoding="utf-8") as f:
-                f.write('["ok", 5, "", null, "also ok"]')
+                f.write('["ok", 5, "", null, "also ok"]')                          # the first file format: a bare list
             self.assertEqual(self.tm.load_templates(path), ["ok", "also ok"])
+            self.assertEqual(self.tm.load_data(path), (["ok", "also ok"], False))
+
+    def test_guide_choice_is_saved_with_the_templates(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "saved_templates.json")
+            self.tm.save_data(path, ["a + b"], hide_guide=True)
+            self.assertEqual(self.tm.load_data(path), (["a + b"], True))
+            self.tm.save_templates(path, ["a + b", "sqrt(x)"])                      # keeps the choice
+            self.assertEqual(self.tm.load_data(path), (["a + b", "sqrt(x)"], True))
 
 
 class TemplatePanelTests(unittest.TestCase):
-    """The Mathematical Templates panel in the real window: type, Preview, Save, Apply, calculate."""
+    """The Mathematical Templates panel in the real window:
+    type -> Preview Posted (shows it in the row) -> Save Template -> pick it in the list -> Apply Template,
+    with a step-by-step guide pop-up that opens when you start typing."""
 
     @classmethod
     def setUpClass(cls):
@@ -1147,21 +1159,34 @@ class TemplatePanelTests(unittest.TestCase):
         import tempfile
         self.folder = tempfile.TemporaryDirectory()
         app = self.app
+        app.update()
+        app._tpl_close_guide()
+        app.update()                                               # lets Tk finish closing the old guide
         app.template_path = os.path.join(self.folder.name, "saved_templates.json")   # never touch the real file
-        app.saved_templates = []
+        app.saved_templates, app.tpl_hide_guide = [], False
         app.tpl_combo.configure(values=[])
         app.tpl_combo.set("")
+        app.tpl_entry.delete(0, "end")
+        app._tpl_was_empty, app._tpl_last_text = True, ""
         app._clear_all()
 
     def tearDown(self):
+        self.app.update()
+        self.app._tpl_close_guide()
+        self.app.update()
         self.folder.cleanup()
 
-    def button(self, text):
-        import tkinter as tk
-        stack = [self.app]
+    def widgets(self, root=None):
+        stack, out = [root or self.app], []
         while stack:
             w = stack.pop()
             stack.extend(w.winfo_children())
+            out.append(w)
+        return out
+
+    def button(self, text, root=None):
+        import tkinter as tk
+        for w in self.widgets(root):
             if isinstance(w, tk.Button) and w.cget("text") == text:
                 return w
         self.fail(f"no button {text!r}")
@@ -1170,71 +1195,110 @@ class TemplatePanelTests(unittest.TestCase):
         return self.app.results.get("1.0", "end")
 
     def type_math(self, text):
+        """Type into the text box the way a person does: the text changes, then a key is released."""
         self.app.tpl_entry.delete(0, "end")
         self.app.tpl_entry.insert(0, text)
+        self.app._tpl_typed()
 
+    def row_text(self, i=0):
+        return " ".join(t if t else "\u25a1" for _k, t, _p in self.app._cards(i))
+
+    def guide_text(self):
+        import tkinter as tk
+        return " ".join(str(w.cget("text")) for w in self.widgets(self.app.tpl_guide) if isinstance(w, tk.Label))
+
+    # ---- the buttons
     def test_the_three_unused_toolbar_buttons_are_gone(self):
         import tkinter as tk
-        texts = set()
-        stack = [self.app]
-        while stack:
-            w = stack.pop()
-            stack.extend(w.winfo_children())
-            if isinstance(w, tk.Button):
-                texts.add(w.cget("text"))
+        texts = {w.cget("text") for w in self.widgets() if isinstance(w, tk.Button)}
         for gone in ("Calculate (e)", "+ Add Description Col", "Delete Selected Col"):
             self.assertNotIn(gone, texts)
-        for kept in ("Clear (C)", "Next Row (↓)", "Apply Template", "Save Template", "Preview Posted"):
+        for kept in ("Clear (C)", "Next Row (\u2193)", "Apply Template", "Save Template", "Preview Posted", "?"):
             self.assertIn(kept, texts)
 
-    def test_preview_posted(self):
-        self.type_math("(□ + 3) * 2")
+    def test_the_equals_beside_the_text_box_is_only_a_sign(self):
+        import tkinter as tk
+        panel = self.widgets(self.app.tpl_panel)
+        self.assertEqual([w for w in panel if isinstance(w, tk.Button) and w.cget("text") == "="], [])
+        self.assertTrue(any(isinstance(w, tk.Label) and w.cget("text") == "=" for w in panel))
+
+    # ---- Preview Posted
+    def test_preview_posted_puts_the_math_in_the_row(self):
+        self.type_math("(\u25a1 + 3) * 2")
         self.button("Preview Posted").invoke()
-        self.assertIn("(□ + 3) × 2", self.said())
-        self.assertIn("1 empty square box", self.said())
-        self.assertIn("Row 1", self.said())
+        self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")           # the row now holds the template
+        self.assertIn("Preview - posted in Row 1", self.said())
+        self.assertIn("(\u25a1 + 3) \u00d7 2", self.said())
+        self.assertIn("Save Template", self.said())
 
-    def test_equals_next_to_the_text_box_calculates(self):
-        self.type_math("(2 + 3) * 4")
-        self.app.tpl_equals_btn.invoke()
-        self.assertIn("= 20", self.said().replace("  ", " "))
-        self.type_math("x + 1")
-        self.app.tpl_equals_btn.invoke()
-        self.assertIn("Fill every square box", self.said())
+    def test_a_new_preview_replaces_the_old_one(self):
+        self.type_math("\u25a1 \u00d7 10")
+        self.button("Preview Posted").invoke()
+        self.assertIn("10", self.row_text())
+        self.type_math("sqrt(\u25a1)")
+        self.button("Preview Posted").invoke()
+        shown = self.row_text()
+        self.assertIn("\u221a", shown)
+        self.assertNotIn("10", shown)                              # the first preview was taken out first
 
-    def test_bad_math_is_explained_and_not_saved(self):
+    def test_preview_leaves_other_work_alone_and_clear_forgets_it(self):
+        app = self.app
+        self.type_math("\u25a1 + \u25a1")
+        self.button("Preview Posted").invoke()
+        first, second = [pth for k, t, pth in app._cards(0) if k == "box"][:2]
+        app.rows[0]["sel"] = first
+        app._key("7")                                              # the user starts using the previewed row
+        app.rows[0]["sel"] = second
+        self.type_math("sqrt(\u25a1)")
+        self.button("Preview Posted").invoke()                     # goes into the selected box; must not wipe the 7
+        self.assertIn("7", self.row_text())
+        self.assertIn("\u221a", self.row_text())
+        app._clear_all()
+        self.assertEqual(self.row_text(), "\u25a1")
+        self.assertIsNone(app._tpl_preview_state)
+
+    def test_bad_math_is_explained_and_nothing_is_posted_or_saved(self):
         self.type_math("sqrt(")
+        self.button("Preview Posted").invoke()
+        self.assertIn("Template:", self.said())
+        self.assertEqual(self.row_text(), "\u25a1")
         self.button("Save Template").invoke()
         self.assertEqual(self.app.saved_templates, [])
-        self.assertIn("Template:", self.said())
         self.assertFalse(os.path.exists(self.app.template_path))
 
-    def test_save_then_apply_then_calculate(self):
+    # ---- Save Template and Apply Template
+    def test_the_whole_journey(self):
+        """type -> preview -> save -> pick from the list -> apply -> fill the box -> calculate"""
         app = self.app
-        self.type_math("(□ + 3) × 2")
+        self.type_math("(\u25a1 + 3) \u00d7 2")
+        self.button("Preview Posted").invoke()
         self.button("Save Template").invoke()
-        self.assertEqual(app.saved_templates, ["(□ + 3) × 2"])
-        self.assertIn("(□ + 3) × 2", app.tpl_combo.cget("values"))
-        self.assertEqual(app.tpl_combo.get(), "(□ + 3) × 2")
-        self.assertEqual(os.path.exists(app.template_path), True)
+        self.assertEqual(app.saved_templates, ["(\u25a1 + 3) \u00d7 2"])
+        self.assertIn("(\u25a1 + 3) \u00d7 2", app.tpl_combo.cget("values"))
         from operator_row_math import template_math
-        self.assertEqual(template_math.load_templates(app.template_path), ["(□ + 3) × 2"])   # survives a restart
-        app.tpl_combo.set("(□ + 3) × 2")
+        self.assertEqual(template_math.load_templates(app.template_path), ["(\u25a1 + 3) \u00d7 2"])
+        app._clear_all()                                           # later: start with an empty row
+        app.tpl_combo.set("(\u25a1 + 3) \u00d7 2")
         self.button("Apply Template").invoke()
-        self.assertIn("Template placed in Row 1", self.said())
-        paths = [pth for kind, _t, pth in app._cards(0) if kind == "box"]
-        self.assertEqual(len(paths), 3)                                  # the empty box, the 3 and the 2
+        self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
         empty = [pth for kind, t, pth in app._cards(0) if kind == "box" and not t]
         self.assertEqual(len(empty), 1)
         app.rows[0]["sel"] = empty[0]
         for ch in NewPhysicsCalculatorTests._keys(4):
             app._key(ch)
         app._equals()
-        self.assertIn("= 14", self.said().replace("  ", " "))             # (4 + 3) x 2
+        self.assertIn("= 14", self.said().replace("  ", " "))      # (4 + 3) x 2
 
-    def test_a_template_can_use_any_operator_and_is_filled_in_the_boxes(self):
+    def test_apply_replaces_the_preview_instead_of_nesting_in_it(self):
+        self.type_math("\u25a1 \u00d7 10")
+        self.button("Preview Posted").invoke()
+        self.button("Save Template").invoke()
+        self.button("Apply Template").invoke()                     # same template, picked from the list
+        self.assertEqual(self.row_text().count("10"), 1)
+
+    def test_a_template_can_use_any_operator(self):
         app = self.app
-        self.type_math("Time dilation(1, □)")
+        self.type_math("Time dilation(1, x)")
         self.button("Save Template").invoke()
         self.button("Apply Template").invoke()
         empty = [pth for kind, t, pth in app._cards(0) if kind == "box" and not t]
@@ -1246,30 +1310,127 @@ class TemplatePanelTests(unittest.TestCase):
 
     def test_several_templates_and_no_duplicates(self):
         app = self.app
-        for text in ("□ + □", "sqrt(□)", "□ + □"):
+        for text in ("x + y", "sqrt(x)", "x + y"):
             self.type_math(text)
             self.button("Save Template").invoke()
-        self.assertEqual(app.saved_templates, ["□ + □", "sqrt(□)"])
-        self.assertEqual(list(app.tpl_combo.cget("values")), ["□ + □", "sqrt(□)"])
+        self.assertEqual(app.saved_templates, ["x + y", "sqrt(x)"])
+        self.assertEqual(list(app.tpl_combo.cget("values")), ["x + y", "sqrt(x)"])
 
-    def test_apply_with_nothing_picked(self):
+    def test_apply_with_nothing_picked_says_what_to_do(self):
         self.button("Apply Template").invoke()
-        self.assertIn("No template picked", self.said())
+        self.assertIn("No template picked yet", self.said())
+        self.assertIn("Preview Posted", self.said())
 
-    def test_template_nests_into_the_selected_box(self):
-        """Like an operator from the Operators list: a second template goes into the selected box."""
+    def test_a_template_nests_into_the_selected_box(self):
         app = self.app
-        self.type_math("□ × 10")
+        self.type_math("\u25a1 \u00d7 10")
         self.button("Save Template").invoke()
         self.button("Apply Template").invoke()
-        first_box = [pth for kind, t, pth in app._cards(0) if kind == "box"][0]
-        app.rows[0]["sel"] = first_box
-        self.type_math("sqrt(□)")
+        app.rows[0]["sel"] = [pth for kind, t, pth in app._cards(0) if kind == "box"][0]
+        self.type_math("sqrt(\u25a1)")
         self.button("Save Template").invoke()
         self.button("Apply Template").invoke()
-        shown = " ".join(t if t else "□" for _k, t, _p in app._cards(0))
-        self.assertIn("√", shown)
+        shown = self.row_text()
+        self.assertIn("\u221a", shown)
         self.assertIn("10", shown)
+
+    # ---- the how-to guide pop-up
+    def test_guide_opens_when_you_start_typing_and_lists_the_four_steps(self):
+        app = self.app
+        self.assertIsNone(app.tpl_guide)
+        self.assertTrue(app.tpl_entry.bind("<KeyRelease>"))        # typing in the text box calls the guide
+        self.type_math("x")
+        self.assertIsNotNone(app.tpl_guide)
+        text = self.guide_text()
+        for words in ("Type your math", "Preview Posted", "Save Template", "Apply Template"):
+            self.assertIn(words, text)
+        self.button("Got it", app.tpl_guide)
+        self.assertEqual(sum(1 for w in self.widgets(app.tpl_guide) if w.winfo_class() == "Checkbutton"), 1)
+
+    def test_guide_is_fully_on_screen_and_does_not_cover_the_template_buttons(self):
+        app = self.app
+        self.type_math("x")
+        app.update()
+        win = app.tpl_guide
+        x, y, w, h = win.winfo_rootx(), win.winfo_rooty(), win.winfo_width(), win.winfo_height()
+        sw, sh = app.winfo_screenwidth(), app.winfo_screenheight()
+        if sw >= w and sh >= h + 60:                                   # only when the screen is big enough at all
+            self.assertGreaterEqual(x, 0)
+            self.assertGreaterEqual(y, 0)
+            self.assertLessEqual(x + w, sw)
+            self.assertLessEqual(y + h, sh)                            # the Got it button is reachable
+        for name in ("Preview Posted", "Save Template", "Apply Template"):
+            b = self.button(name)
+            bx, by, bw, bh = b.winfo_rootx(), b.winfo_rooty(), b.winfo_width(), b.winfo_height()
+            overlap = bx < x + w and x < bx + bw and by < y + h and y < by + bh
+            self.assertFalse(overlap, f"the guide covers the {name} button")
+        text_box = app.tpl_entry
+        ex, ey, ew, eh = text_box.winfo_rootx(), text_box.winfo_rooty(), text_box.winfo_width(), text_box.winfo_height()
+        self.assertFalse(ex < x + w and x < ex + ew and ey < y + h and y < ey + eh, "the guide covers the text box")
+
+    def test_guide_does_not_open_for_an_empty_box_and_opens_once(self):
+        app = self.app
+        self.type_math("")
+        self.assertIsNone(app.tpl_guide)
+        self.type_math("x")
+        first = app.tpl_guide
+        self.type_math("x + 1")
+        self.assertIs(app.tpl_guide, first)                        # one pop-up, not one per key
+
+    def test_guide_follows_your_progress(self):
+        app = self.app
+        self.type_math("sqrt(")
+        self.assertEqual(app._tpl_progress(), (False, False, False, False))
+        self.assertIn("keep typing", self.guide_text())                 # unfinished: a gentle hint, not an error
+        self.assertNotIn("\u2717", self.guide_text())
+        self.type_math("foo(2)")
+        self.assertIn("\u2717 There is no operator called", self.guide_text())   # a real mistake: shown in red
+        self.type_math("sqrt(x) + 4")
+        self.assertEqual(app._tpl_progress(), (True, False, False, False))
+        self.assertIn("\u2713 Understood", self.guide_text())
+        self.button("Preview Posted").invoke()
+        self.assertEqual(app._tpl_progress(), (True, True, False, False))
+        self.button("Save Template").invoke()
+        self.assertEqual(app._tpl_progress(), (True, True, True, False))
+        self.button("Apply Template").invoke()
+        self.assertEqual(app._tpl_progress(), (True, True, True, True))
+        ticks = [w.cget("text") for w in self.widgets(app.tpl_guide) if w.winfo_class() == "Label"
+                 and w.cget("text") == "\u2713"]
+        self.assertEqual(len(ticks), 4)                            # every step ticked
+        self.type_math("sqrt(x) + 5")                              # new text: back to step 2
+        self.assertEqual(app._tpl_progress(), (True, False, False, False))
+
+    def test_guide_got_it_closes_it_and_the_question_mark_reopens_it(self):
+        app = self.app
+        self.type_math("x")
+        self.button("Got it", app.tpl_guide).invoke()
+        self.assertIsNone(app.tpl_guide)
+        app.update()
+        self.type_math("")
+        self.type_math("x")                                        # typing again from empty shows it again
+        self.assertIsNotNone(app.tpl_guide)
+        app.update()
+        app._tpl_close_guide()
+        app.update()
+        self.button("?").invoke()
+        self.assertIsNotNone(app.tpl_guide)
+
+    def test_dont_show_again_is_remembered(self):
+        from operator_row_math import template_math
+        app = self.app
+        self.type_math("x")
+        check = next(w for w in self.widgets(app.tpl_guide) if w.winfo_class() == "Checkbutton")
+        check.invoke()
+        self.assertTrue(app.tpl_hide_guide)
+        self.assertEqual(template_math.load_data(app.template_path)[1], True)     # kept for next time
+        app.update()
+        app._tpl_close_guide()
+        app.update()
+        self.type_math("")
+        self.type_math("x + 1")
+        self.assertIsNone(app.tpl_guide)                           # no pop-up any more
+        self.button("?").invoke()                                  # but ? still opens it
+        self.assertIsNotNone(app.tpl_guide)
 
 
 if __name__ == "__main__":

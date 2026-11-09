@@ -238,6 +238,15 @@ def operator_keys(key):
     return out[:5] or [sym or "?"]
 
 
+def _copy_node(node):
+    """A copy of a row's operator tree (the operator modules themselves are shared, not copied)."""
+    if not isinstance(node, dict) or "mod" not in node:
+        return dict(node) if isinstance(node, dict) else node
+    out = dict(node)
+    out["slots"] = [_copy_node(slot) for slot in node["slots"]]
+    return out
+
+
 class CalculatorGUI(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -419,6 +428,7 @@ class CalculatorGUI(tk.Tk):
     def _clear_all(self):
         """C / Clear: back to the start. Every row empty, no join symbols, no multi-row operator, results cleared."""
         self.template = None
+        self._tpl_preview_state, self._tpl_previewed, self._tpl_applied = None, None, False
         for k, row in enumerate(self.rows):
             row["mode"] = "full"
             self._reset_row(k)
@@ -768,6 +778,22 @@ class CalculatorGUI(tk.Tk):
         self._refresh_adv_target()
 
     # ---------- mathematical templates (typed math saved for later) ----------
+    # The steps:  1 type math   2 Preview Posted   3 Save Template   4 pick it in the list + Apply Template
+    GUIDE_STEPS = [
+        ("Type your math in the text box",
+         "Use ? or a letter such as x for a box you will fill in later. Examples:   (? + 3) × 2     "
+         "sqrt(x) + 4     Time dilation(1, x)"),
+        ("Press  Preview Posted",
+         "Your math appears in Row %d, just like an operator from the Operators list, so you can see it. "
+         "You can change the text and preview again."),
+        ("Like it?  Press  Save Template",
+         "It is kept on this computer, so it will be there next time too. "
+         "Not happy? Change the text and press Preview Posted again."),
+        ("Use it whenever you want",
+         "Pick it in the list next to Apply Template, then press Apply Template. It goes into the row. "
+         "Then fill the empty boxes and press the keypad = key."),
+    ]
+
     def _tpl_build(self, text):
         """The operator tree for typed math, or None (after telling the user what is wrong)."""
         try:
@@ -776,61 +802,251 @@ class CalculatorGUI(tk.Tk):
             self._say("Template: %s" % e)
             return None
 
-    def _tpl_preview(self):
-        """Preview Posted: show how the typed math would be put into the target row."""
-        text = self.tpl_entry.get().strip()
-        node = self._tpl_build(text)
-        if node is None:
-            return
-        n = template_math.empty_boxes(node)
-        self._say("Preview - this will be posted in Row %d:\n  %s\n%s"
-                  % (self.op_target + 1, template_math.describe(node),
-                     "%d empty square box%s to fill in." % (n, "" if n == 1 else "es") if n
-                     else "No empty boxes: it can be calculated straight away."))
-
-    def _tpl_equals(self):
-        """=  next to the text box: calculate the typed math (it must have no empty boxes)."""
-        text = self.tpl_entry.get().strip()
-        node = self._tpl_build(text)
-        if node is None:
-            return
+    def _tpl_write_file(self):
+        """Save the templates and the guide choice.  Returns None, or the reason it could not be written."""
         try:
-            value = row_tree.evaluate(node)
-        except ValueError as e:
-            self._say("Template: %s  (%s)" % (e, template_math.describe(node)))
+            template_math.save_data(self.template_path, self.saved_templates, self.tpl_hide_guide)
+        except OSError as e:
+            return str(e)
+        return None
+
+    def _tpl_progress(self):
+        """(typed OK, previewed, saved, applied) for what is in the text box right now."""
+        text = self.tpl_entry.get().strip()
+        try:
+            template_math.parse_math(text)
+            ok = True
+        except ValueError:
+            ok = False
+        return (ok, ok and self._tpl_previewed == text, ok and text in self.saved_templates,
+                ok and self._tpl_applied and self.tpl_combo.get().strip() == text)
+
+    def _tpl_typed(self):
+        """Called after every key typed in the template text box."""
+        text = self.tpl_entry.get().strip()
+        if text != getattr(self, "_tpl_last_text", ""):
+            self._tpl_last_text = text
+            self._tpl_applied = False
+        if text and self._tpl_was_empty and not self.tpl_hide_guide and self.tpl_guide is None:
+            self._tpl_show_guide()
+        self._tpl_was_empty = not text
+        self._tpl_guide_refresh()
+
+    def _tpl_show_guide(self):
+        """The how-to pop-up: the four steps side by side, the one you are on highlighted."""
+        if self.tpl_guide is not None:
+            self.tpl_guide.lift()
+            self._tpl_guide_refresh()
             return
-        self._say("%s  =  %s" % (template_math.describe(node), row_tree.fmt(value)))
+        bg = "#f6f1e0"
+        win = tk.Toplevel(self, bg=bg)
+        win.title("Make your own template - 4 steps")
+        win.transient(self)
+        win.resizable(False, False)
+        win.protocol("WM_DELETE_WINDOW", self._tpl_close_guide)
+        self.tpl_guide = win
+        tk.Label(win, text="Making your own template", font=("Segoe UI", 13, "bold"), bg=bg,
+                 fg="#4a2a6a").pack(anchor="w", padx=14, pady=(10, 0))
+        tk.Label(win, text="Follow the steps in order, left to right. The step you are on is yellow, "
+                           "finished steps are green with a tick.", font=("Segoe UI", 9), bg=bg, fg="#555555",
+                 wraplength=900, justify="left").pack(anchor="w", padx=14, pady=(0, 4))
+        row = tk.Frame(win, bg=bg)
+        row.pack(fill="both", padx=8)
+        self._tpl_step_boxes = []
+        for n, (title, detail) in enumerate(self.GUIDE_STEPS, start=1):
+            row.grid_columnconfigure(n - 1, weight=1, uniform="step")
+            f = tk.Frame(row, bg="white", highlightthickness=2)
+            f.grid(row=0, column=n - 1, sticky="nsew", padx=5, pady=4)
+            badge = tk.Label(f, text=str(n), font=("Segoe UI", 18, "bold"), bg="white")
+            badge.pack(anchor="w", padx=10, pady=(6, 0))
+            head = tk.Label(f, text=title, font=("Segoe UI", 10, "bold"), anchor="w", justify="left",
+                            wraplength=215, bg="white")
+            head.pack(anchor="w", padx=10)
+            body = tk.Label(f, text=detail, font=("Segoe UI", 9), anchor="w", justify="left", wraplength=215,
+                            bg="white")
+            body.pack(anchor="w", padx=10, pady=(2, 0))
+            extra = tk.Label(f, text="", font=("Segoe UI", 9, "bold"), anchor="w", justify="left",
+                             wraplength=215, bg="white")
+            extra.pack(anchor="w", padx=10, pady=(4, 8))
+            self._tpl_step_boxes.append((f, badge, head, body, extra, detail))
+        foot = tk.Frame(win, bg=bg)
+        foot.pack(fill="x", padx=14, pady=(2, 10))
+        hide_var = tk.BooleanVar(value=self.tpl_hide_guide)
+        win.hide_var = hide_var               # the window keeps its own variable alive
+        tk.Checkbutton(foot, text="Don't show this again  (the ? button opens it any time)", bg=bg,
+                       variable=hide_var, font=("Segoe UI", 9),
+                       command=lambda v=hide_var: self._tpl_hide_changed(v)).pack(side="left")
+        btn(foot, "Got it", "#6a3aa0", command=self._tpl_close_guide, width=8).pack(side="right")
+        self._tpl_guide_refresh()
+        self._tpl_place_guide(win)
+
+    def _tpl_place_guide(self, win):
+        """Put the guide fully on screen and clear of the whole Templates panel (text box, list and buttons).
+        Tries: right of the panel, right of the calculator, above / below the panel, left of the calculator."""
+        win.update_idletasks()
+        w, h = win.winfo_reqwidth() + 16, win.winfo_reqheight() + 40   # plus the title bar and borders Windows adds
+        sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
+        top_limit, bottom_limit = 0, sh - 60                      # leave room for the taskbar
+        ax, aw = self.winfo_rootx(), self.winfo_width()
+        panel = self.tpl_panel
+        px, py, pw, ph = panel.winfo_rootx(), panel.winfo_rooty(), panel.winfo_width(), panel.winfo_height()
+        side_y = py - 10
+        # first choice: right of the Templates panel (over the mostly empty inspector area)
+        candidates = [(px + pw + 8, side_y), (ax + aw + 8, side_y), (px, py - h - 8), (px, py + ph + 8),
+                      (ax - w - 8, side_y), (px - w - 8, side_y)]
+
+        def fits(x, y):
+            return x >= 0 and y >= top_limit and x + w <= sw and y + h <= bottom_limit
+
+        def clear_of_panel(x, y):
+            m = 6
+            return x + w + m <= px or px + pw + m <= x or y + h + m <= py or py + ph + m <= y
+
+        for x, y in candidates:
+            y = max(top_limit, min(y, bottom_limit - h))           # sideways positions may slide up or down
+            if fits(x, y) and clear_of_panel(x, y):
+                break
+        else:                                                      # nowhere is clear: top-right corner
+            x, y = max(0, sw - w - 10), top_limit
+        win.geometry("+%d+%d" % (x, y))
+
+    def _tpl_hide_changed(self, var):
+        self.tpl_hide_guide = bool(var.get())
+        self._tpl_write_file()
+
+    def _tpl_close_guide(self):
+        """Hide the guide now and destroy it on the next turn of Tk's event loop (destroying a window in the
+        same breath as rebuilding the rows can crash Tk)."""
+        win, self.tpl_guide = self.tpl_guide, None
+        if win is not None:
+            win.withdraw()
+            self.after(0, lambda w=win: self._tpl_destroy_window(w))
+
+    @staticmethod
+    def _tpl_destroy_window(win):
+        try:
+            win.destroy()
+        except tk.TclError:
+            pass
+        win.hide_var = None                   # let go of the Tk variable while Tk is still running
+
+    def destroy(self):
+        win, self.tpl_guide = getattr(self, "tpl_guide", None), None
+        if win is not None:
+            try:
+                self.update()
+                self._tpl_destroy_window(win)
+            except tk.TclError:
+                pass
+        super().destroy()
+
+    def _tpl_guide_refresh(self):
+        """Colour the steps: done = green with a tick, the one to do now = yellow, the rest = plain."""
+        if self.tpl_guide is None:
+            return
+        done = self._tpl_progress()
+        current = next((k for k, d in enumerate(done) if not d), None)
+        text = self.tpl_entry.get().strip()
+        for k, (frame, badge, head, body, extra, detail) in enumerate(self._tpl_step_boxes):
+            if done[k]:
+                bg, edge, mark = "#dff3dc", "#5aa85a", "✓"
+            elif k == current:
+                bg, edge, mark = "#fff3c4", "#e0a000", str(k + 1)
+            else:
+                bg, edge, mark = "white", "#d0d0d0", str(k + 1)
+            frame.configure(bg=bg, highlightbackground=edge, highlightcolor=edge)
+            for w in (badge, head, body, extra):
+                w.configure(bg=bg)
+            badge.configure(text=mark, fg="#2a6a20" if done[k] else "#333333")
+            body.configure(text=detail % (self.op_target + 1) if "%d" in detail else detail)
+            extra.configure(text="")
+        extra = self._tpl_step_boxes[0][4]
+        if not text:
+            extra.configure(text="Nothing typed yet.", fg="#777777")
+        else:
+            try:
+                node = template_math.parse_math(text)
+                n = template_math.empty_boxes(node)
+                extra.configure(text="✓ Understood:  %s   (%d empty box%s)"
+                                     % (template_math.describe(node), n, "" if n == 1 else "es"), fg="#2a6a20")
+            except template_math.IncompleteMath as e:
+                extra.configure(text="… keep typing.  %s" % e, fg="#777777")
+            except ValueError as e:
+                extra.configure(text="✗ %s" % e, fg="#b03010")
+
+    def _tpl_restore_preview(self):
+        """Take the last preview out of its row again (only if nothing has been changed in that row since)."""
+        state, self._tpl_preview_state = self._tpl_preview_state, None
+        if not state or state["row"] >= len(self.rows):
+            return
+        i = state["row"]
+        if tuple(t for _k, t, _p in self._cards(i)) != state["shown"]:
+            return                                    # the row was edited since: leave the user's work alone
+        row = self.rows[i]
+        row["node"] = state["snapshot"]
+        row["sel"], row["is_result"] = None, False
+        self._invalidate()
+        self._render_row(i)
+
+    def _tpl_preview(self):
+        """Preview Posted: put the typed math into the target row so it can be seen (and tried out)."""
+        text = self.tpl_entry.get().strip()
+        node = self._tpl_build(text)
+        if node is None:
+            self._tpl_guide_refresh()
+            return
+        self._tpl_restore_preview()                   # a new preview replaces the previous one
+        i = self.op_target
+        snapshot = _copy_node(self.rows[i]["node"]) if not self.rows[i]["is_result"] else None
+        self._place_operator_row(None, node=node)
+        if snapshot is None:
+            snapshot = row_tree.new_node("_number")
+        self._tpl_preview_state = {"row": i, "snapshot": snapshot,
+                                   "shown": tuple(t for _k, t, _p in self._cards(i))}
+        self._tpl_previewed = text
+        n = template_math.empty_boxes(node)
+        self._say("Preview - posted in Row %d:\n  %s\n%s\nLike it? Press Save Template. "
+                  "Not right? Change the text and press Preview Posted again."
+                  % (i + 1, template_math.describe(node),
+                     "%d empty square box%s to fill in." % (n, "" if n == 1 else "es") if n
+                     else "No empty boxes, so press the keypad = key to calculate it."))
+        self._tpl_guide_refresh()
 
     def _tpl_save(self):
         """Save Template: keep the typed math so it shows up in the Apply Template list."""
         text = self.tpl_entry.get().strip()
         node = self._tpl_build(text)
         if node is None:
+            self._tpl_guide_refresh()
             return
         if text in self.saved_templates:
-            self._say("Template already saved: %s" % text)
+            self._say("Already saved: %s\nPick it in the list next to Apply Template." % text)
         else:
             self.saved_templates.append(text)
-            try:
-                template_math.save_templates(self.template_path, self.saved_templates)
-                note = "It is kept for next time too."
-            except OSError as e:
-                note = "(Could not write %s: %s. It will be forgotten when the window closes.)" % (
-                    os.path.basename(self.template_path), e)
+            problem = self._tpl_write_file()
+            note = ("It is kept for next time too." if problem is None else
+                    "(Could not write %s: %s. It will be forgotten when the window closes.)"
+                    % (os.path.basename(self.template_path), problem))
             self.tpl_combo.configure(values=self.saved_templates)
-            self._say("Saved template: %s\nPick it in the list and press Apply Template. %s" % (text, note))
+            self._say("Saved template: %s\nPick it in the list next to Apply Template and press Apply Template "
+                      "whenever you want it in a row. %s" % (text, note))
         self.tpl_combo.set(text)
+        self._tpl_guide_refresh()
 
     def _tpl_apply(self):
         """Apply Template: put the chosen template into the target row, like an operator from Operators."""
         text = self.tpl_combo.get().strip()
         if not text:
-            self._say("No template picked. Type some math in the text box, press Save Template, "
-                      "then pick it in the list.")
+            self._say("No template picked yet. Type some math in the text box, press Preview Posted, "
+                      "then Save Template, then pick it in this list.")
             return
         node = self._tpl_build(text)
-        if node is not None:
-            self._place_operator_row(None, node=node)
+        if node is None:
+            return
+        self._tpl_restore_preview()                   # replace the preview instead of nesting inside it
+        self._place_operator_row(None, node=node)
+        self._tpl_applied = True
+        self._tpl_guide_refresh()
 
     # ---------- advanced input popup ----------
     def _selected_box(self):
@@ -1269,17 +1485,25 @@ class CalculatorGUI(tk.Tk):
         tpl.pack(fill="x", ipadx=4, ipady=4)
         r1 = tk.Frame(tpl, bg="#f0f4f4")
         r1.pack(anchor="w", padx=4, pady=2)
+        self.tpl_panel = tpl
         self.template_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_templates.json")
-        self.saved_templates = template_math.load_templates(self.template_path)
-        self.tpl_combo = ttk.Combobox(r1, values=self.saved_templates, width=30, state="readonly")
+        self.saved_templates, self.tpl_hide_guide = template_math.load_data(self.template_path)
+        self.tpl_guide = None                 # the how-to pop-up, while it is open
+        self._tpl_previewed = None            # the text that Preview Posted last put in a row
+        self._tpl_preview_state = None        # what to put back when the preview is replaced
+        self._tpl_applied = False
+        self._tpl_was_empty = True
+        self.tpl_combo = ttk.Combobox(r1, values=self.saved_templates, width=26, state="readonly")
         self.tpl_combo.pack(side="left")
         btn(r1, "Apply Template", "#cfe0f7", fg=BLUE, command=self._tpl_apply).pack(side="left", padx=4)
+        btn(r1, "?", "#fff3c4", fg="#7a5a00", width=2,
+            command=lambda: self._tpl_show_guide()).pack(side="left", padx=2)          # opens the how-to guide
         r2 = tk.Frame(tpl, bg="#f0f4f4")
         r2.pack(anchor="w", padx=4, pady=2)
         self.tpl_entry = tk.Entry(r2, width=26)
         self.tpl_entry.pack(side="left")
-        self.tpl_equals_btn = btn(r2, "=", "#e0e0e0", fg="black", command=self._tpl_equals)
-        self.tpl_equals_btn.pack(side="left", padx=2)
+        self.tpl_entry.bind("<KeyRelease>", lambda e: self._tpl_typed())
+        tk.Label(r2, text="=", bg="#f0f4f4", font=("Segoe UI", 11, "bold")).pack(side="left", padx=4)
         btn(r2, "Preview Posted", "#fbe4cf", fg="#c05000", command=self._tpl_preview).pack(side="left", padx=2)
         btn(r2, "Save Template", "#e8e8e8", fg="black", command=self._tpl_save).pack(side="left", padx=2)
 

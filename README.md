@@ -101,17 +101,23 @@ The full list, with each formula and whether it calculates, is in
 **Nesting.** If Row 1 already holds an operator, picking another operator puts it into the
 selected box, so the result of one feeds the next.
 
-**Templates.** The *Mathematical Templates* panel keeps math you use often:
+**Templates.** The *Mathematical Templates* panel keeps math you use often. There are four steps, and a
+guide pop-up walks you through them the first time you start typing in the text box:
 
-1. Type some math in the text box, for example `(□ + 3) × 2` or `Time dilation(1, □)`.
-2. **Preview Posted** shows how it will look in the row and how many empty boxes it has.
-3. **Save Template** adds it to the list. Templates are saved in `saved_templates.json` next to
-   `main.py`, so they are still there next time. The file is yours alone and is not part of the repository.
-4. Pick it in the list and press **Apply Template**. It goes into the target row just like an operator
-   from the Operators pop-up (inside the selected box if the row already has math). Fill the empty boxes
-   and press `=`.
+1. **Type your math** in the text box, for example `(? + 3) × 2` or `Time dilation(1, x)`.
+2. Press **Preview Posted**. Your math is put into the target row, just like an operator from the Operators
+   pop-up, so you can see it. Change the text and press it again to replace the preview.
+3. Like it? Press **Save Template**. It is added to the list and saved in `saved_templates.json` next to
+   `main.py`, so it is still there next time. The file is yours alone and is not part of the repository.
+4. Whenever you want it: pick it in the list next to **Apply Template** and press **Apply Template**. It goes
+   into the target row (inside the selected box if the row already has math). Fill the empty boxes and press `=`
+   on the keypad.
 
-The small `=` beside the text box calculates the typed math straight away when it has no empty boxes.
+**The guide pop-up** shows the four steps side by side. The step you are on is yellow, finished steps are green
+with a tick, and under step 1 it tells you live whether your math is understood (`✓ Understood: (□ + 3) × 2
+(1 empty box)`), still unfinished (`… keep typing`) or wrong (`✗ There is no operator called 'foo'`). Tick
+*Don't show this again* to stop it opening; the **?** button beside Apply Template opens it any time. The small
+`=` between the text box and Preview Posted is only a sign that the math in the box is what gets previewed.
 
 What you can type:
 
