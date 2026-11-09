@@ -1,0 +1,563 @@
+# Operator index
+
+One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>.jpg` (diagram drawn with small square boxes).
+**Ready** = `compute()` works today; **Reference** = formula/definition only.
+
+
+## Math / Arithmetic
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Addition | + | a + b | Ready | `math/arithmetic/addition/` |
+| Subtraction | − | a − b | Ready | `math/arithmetic/subtraction/` |
+| Multiplication | × | a × b | Ready | `math/arithmetic/multiplication/` |
+| Division | ÷ | a ÷ b | Ready | `math/arithmetic/division/` |
+| Modulo | % | a mod b = a − b·⌊a/b⌋  (remainder of a ÷ b) | Ready | `math/arithmetic/modulo/` |
+| Fraction | a/b | numerator / denominator | Ready | `math/arithmetic/fraction/` |
+| Absolute value | \|x\| | \|x\| = x if x ≥ 0, otherwise −x | Ready | `math/arithmetic/absolute_value/` |
+| Negate | ± | −x  (flip the sign) | Ready | `math/arithmetic/negate/` |
+| Reciprocal | 1/x | 1/x | Ready | `math/arithmetic/reciprocal/` |
+| Round down | floor | ⌊x⌋ = greatest integer ≤ x | Ready | `math/arithmetic/round_down/` |
+| Round up | ceil | ⌈x⌉ = smallest integer ≥ x | Ready | `math/arithmetic/round_up/` |
+| Round nearest | round | round(x) = nearest integer to x | Ready | `math/arithmetic/round_nearest/` |
+| Minimum | min | min(a, b, …) = smallest value | Ready | `math/arithmetic/minimum/` |
+| Maximum | max | max(a, b, …) = largest value | Ready | `math/arithmetic/maximum/` |
+
+## Math / Algebra
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Power | ^ | aᵇ | Ready | `math/algebra/power/` |
+| Square | x² | x² = x · x | Ready | `math/algebra/square/` |
+| Cube | x³ | x³ = x · x · x | Ready | `math/algebra/cube/` |
+| Square root | √ | √x  (y such that y² = x) | Ready | `math/algebra/square_root/` |
+| Nth root | ⁿ√ | ⁿ√x = x^(1/n) | Ready | `math/algebra/nth_root/` |
+| Cube root | ∛ | ∛x  (y such that y³ = x) | Ready | `math/algebra/cube_root/` |
+| Exponential | eˣ | eˣ | Ready | `math/algebra/exponential/` |
+| Power of ten | 10ˣ | 10ˣ | Ready | `math/algebra/power_of_ten/` |
+| Log base 10 | log | log₁₀(x) | Ready | `math/algebra/log_base_10/` |
+| Natural log | ln | ln(x) = logₑ(x) | Ready | `math/algebra/natural_log/` |
+| Log any base | logₐ | logₐ(x) = ln(x) / ln(a) | Ready | `math/algebra/log_any_base/` |
+| Quadratic formula | ax²+bx+c=0 | x = (−b ± √(b² − 4ac)) / 2a | Ready | `math/algebra/quadratic_formula/` |
+| Discriminant | Δ | Δ = b² − 4ac  (>0: two real roots, 0: one, <0: complex) | Ready | `math/algebra/discriminant/` |
+| Factor | factor | Rewrite a polynomial as a product of lower-degree polynomials, e.g. x² − 1 = (x − 1)(x + 1) | Ready | `math/algebra/factor/` |
+| Expand | expand | Multiply out products, e.g. (x + 1)(x − 1) = x² − 1 | Ready | `math/algebra/expand/` |
+| Simplify | simplify | Rewrite an expression in an equivalent, shorter or standard form | Ready | `math/algebra/simplify/` |
+| Solve for x | solve | Find the value(s) of x that make an equation true | Ready | `math/algebra/solve_for_x/` |
+| Solve system of equations | system | Find values satisfying several equations at once; for linear systems solve Ax = b | Ready | `math/algebra/solve_system_of_equations/` |
+| Binomial theorem | (a+b)ⁿ | (a + b)ⁿ = Σₖ C(n,k) · aⁿ⁻ᵏ · bᵏ | Ready | `math/algebra/binomial_theorem/` |
+| Difference of squares | a²−b² | a² − b² = (a − b)(a + b)  (returns the two factors) | Ready | `math/algebra/difference_of_squares/` |
+| Slope-intercept form | y = mx + b | y = m·x + b | Ready | `math/algebra/slope_intercept_form/` |
+| Arithmetic sequence | aₙ | aₙ = a₁ + (n − 1)d | Ready | `math/algebra/arithmetic_sequence/` |
+| Geometric sequence | aₙ | aₙ = a₁ · rⁿ⁻¹ | Ready | `math/algebra/geometric_sequence/` |
+| Arithmetic series sum | Sₙ | Sₙ = n/2 · (2a₁ + (n − 1)d) | Ready | `math/algebra/arithmetic_series_sum/` |
+| Geometric series sum | Sₙ | Sₙ = a₁(1 − rⁿ) / (1 − r)   (r ≠ 1) | Ready | `math/algebra/geometric_series_sum/` |
+| Complex number | a + bi | z = a + bi | Ready | `math/algebra/complex_number/` |
+| Imaginary unit | i | i² = −1 | Ready | `math/algebra/imaginary_unit/` |
+| Modulus of complex number | \|z\| | \|a + bi\| = √(a² + b²) | Ready | `math/algebra/modulus_of_complex_number/` |
+| Complex conjugate | z̄ | conj(a + bi) = a − bi | Ready | `math/algebra/complex_conjugate/` |
+
+## Math / Trigonometry
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Sine | sin | sin θ = opposite / hypotenuse   (θ in radians) | Ready | `math/trigonometry/sine/` |
+| Cosine | cos | cos θ = adjacent / hypotenuse   (θ in radians) | Ready | `math/trigonometry/cosine/` |
+| Tangent | tan | tan θ = sin θ / cos θ | Ready | `math/trigonometry/tangent/` |
+| Cosecant | csc | csc θ = 1 / sin θ | Ready | `math/trigonometry/cosecant/` |
+| Secant | sec | sec θ = 1 / cos θ | Ready | `math/trigonometry/secant/` |
+| Cotangent | cot | cot θ = cos θ / sin θ | Ready | `math/trigonometry/cotangent/` |
+| Inverse sine | asin | θ = arcsin(x),  −1 ≤ x ≤ 1 | Ready | `math/trigonometry/inverse_sine/` |
+| Inverse cosine | acos | θ = arccos(x),  −1 ≤ x ≤ 1 | Ready | `math/trigonometry/inverse_cosine/` |
+| Inverse tangent | atan | θ = arctan(x) | Ready | `math/trigonometry/inverse_tangent/` |
+| Two-argument arctangent | atan2 | atan2(y, x) = angle of the point (x, y) from the +x axis | Ready | `math/trigonometry/two_argument_arctangent/` |
+| Hyperbolic sine | sinh | sinh x = (eˣ − e⁻ˣ) / 2 | Ready | `math/trigonometry/hyperbolic_sine/` |
+| Hyperbolic cosine | cosh | cosh x = (eˣ + e⁻ˣ) / 2 | Ready | `math/trigonometry/hyperbolic_cosine/` |
+| Hyperbolic tangent | tanh | tanh x = sinh x / cosh x | Ready | `math/trigonometry/hyperbolic_tangent/` |
+| Inverse hyperbolic sine | asinh | asinh x = ln(x + √(x² + 1)) | Ready | `math/trigonometry/inverse_hyperbolic_sine/` |
+| Inverse hyperbolic cosine | acosh | acosh x = ln(x + √(x² − 1)),  x ≥ 1 | Ready | `math/trigonometry/inverse_hyperbolic_cosine/` |
+| Inverse hyperbolic tangent | atanh | atanh x = ½ ln((1 + x)/(1 − x)),  \|x\| < 1 | Ready | `math/trigonometry/inverse_hyperbolic_tangent/` |
+| Pythagorean identity | sin²θ+cos²θ=1 | sin²θ + cos²θ = 1  (function returns the left side, always 1) | Ready | `math/trigonometry/pythagorean_identity/` |
+| Double angle | sin 2θ | sin 2θ = 2 sin θ cos θ | Ready | `math/trigonometry/double_angle/` |
+| Half angle | sin θ/2 | sin(θ/2) = √((1 − cos θ) / 2)   (for θ/2 in the first two quadrants) | Ready | `math/trigonometry/half_angle/` |
+| Angle sum | sin(a+b) | sin(a + b) = sin a cos b + cos a sin b | Ready | `math/trigonometry/angle_sum/` |
+| Degrees to radians | deg→rad | radians = degrees × π / 180 | Ready | `math/trigonometry/degrees_to_radians/` |
+| Radians to degrees | rad→deg | degrees = radians × 180 / π | Ready | `math/trigonometry/radians_to_degrees/` |
+
+## Math / Calculus
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Limit | lim | lim_{x→a} f(x) = L  means f(x) gets arbitrarily close to L as x gets close to a | Ready | `math/calculus/limit/` |
+| Derivative | d/dx | f′(x) = lim_{h→0} (f(x+h) − f(x−h)) / 2h   (numerical central difference) | Ready | `math/calculus/derivative/` |
+| Partial derivative | ∂/∂x | ∂f/∂xᵢ ≈ (f(…xᵢ+h…) − f(…xᵢ−h…)) / 2h   (point is a list, i is the variable index) | Ready | `math/calculus/partial_derivative/` |
+| Second partial derivative | ∂²/∂x² | ∂²f/∂xᵢ² ≈ (f(…xᵢ+h…) − 2f(…) + f(…xᵢ−h…)) / h²   (point is a list, i is the variable index) | Ready | `math/calculus/second_partial_derivative/` |
+| Second derivative | d²/dx² | f″(x) ≈ (f(x+h) − 2f(x) + f(x−h)) / h² | Ready | `math/calculus/second_derivative/` |
+| Indefinite integral | ∫ | ∫ f(x) dx = F(x) + C   where F′(x) = f(x) | Ready | `math/calculus/indefinite_integral/` |
+| Definite integral | ∫ₐᵇ | ∫ₐᵇ f(x) dx   (numerical: Simpson's rule with n subintervals) | Ready | `math/calculus/definite_integral/` |
+| Double integral | ∬ | ∬_R f(x, y) dA = ∫∫ f(x, y) dy dx over a region R | Ready | `math/calculus/double_integral/` |
+| Triple integral | ∭ | ∭_V f(x, y, z) dV = ∫∫∫ f(x, y, z) dz dy dx over a volume V | Ready | `math/calculus/triple_integral/` |
+| Line integral | ∮ | ∮_C F · dr = ∫ₐᵇ F(r(t)) · r′(t) dt   (∮ when C is a closed curve) | Ready | `math/calculus/line_integral/` |
+| Gradient | ∇ | ∇f = (∂f/∂x₁, …, ∂f/∂xₙ)   (numerical) | Ready | `math/calculus/gradient/` |
+| Divergence | ∇· | ∇·F = ∂Fx/∂x + ∂Fy/∂y + ∂Fz/∂z | Ready | `math/calculus/divergence/` |
+| Curl | ∇× | ∇×F = (∂Fz/∂y − ∂Fy/∂z, ∂Fx/∂z − ∂Fz/∂x, ∂Fy/∂x − ∂Fx/∂y) | Ready | `math/calculus/curl/` |
+| Laplacian | Δ | Δf = ∂²f/∂x² + ∂²f/∂y² + ∂²f/∂z² | Ready | `math/calculus/laplacian/` |
+| Chain rule | (f∘g)′ | (f∘g)′(x) = f′(g(x)) · g′(x) | Ready | `math/calculus/chain_rule/` |
+| Product rule | (fg)′ | (f·g)′ = f′g + fg′ | Ready | `math/calculus/product_rule/` |
+| Quotient rule | (f/g)′ | (f/g)′ = (f′g − fg′) / g² | Ready | `math/calculus/quotient_rule/` |
+| L'Hopital's rule | L'H | If lim f/g is 0/0 or ∞/∞ then lim f/g = lim f′/g′  (when that limit exists) | Ready | `math/calculus/l_hopital_s_rule/` |
+| Taylor series | Σ f⁽ⁿ⁾(a)/n! | f(x) ≈ Σₙ f⁽ⁿ⁾(a)/n! · (x − a)ⁿ   (derivs = [f(a), f′(a), f″(a), …]) | Ready | `math/calculus/taylor_series/` |
+| Maclaurin series | Σ f⁽ⁿ⁾(0)/n! | f(x) ≈ Σₙ f⁽ⁿ⁾(0)/n! · xⁿ   (Taylor series about 0) | Ready | `math/calculus/maclaurin_series/` |
+| Summation | Σ | Σ aᵢ = a₁ + a₂ + … + aₙ | Ready | `math/calculus/summation/` |
+| Product | ∏ | ∏ aᵢ = a₁ · a₂ · … · aₙ | Ready | `math/calculus/product/` |
+| Infinity | ∞ | ∞ = value larger than any real number | Ready | `math/calculus/infinity/` |
+| Differential equation | dy/dx = f(x,y) | An equation relating a function to its derivatives; see the Euler / Runge–Kutta operators to solve numerically | Ready | `math/calculus/differential_equation/` |
+
+## Math / Linear algebra
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Matrix add | A + B | (A + B)ᵢⱼ = Aᵢⱼ + Bᵢⱼ | Ready | `math/linear_algebra/matrix_add/` |
+| Matrix subtract | A − B | (A − B)ᵢⱼ = Aᵢⱼ − Bᵢⱼ | Ready | `math/linear_algebra/matrix_subtract/` |
+| Matrix multiply | A·B | (AB)ᵢⱼ = Σₖ Aᵢₖ · Bₖⱼ | Ready | `math/linear_algebra/matrix_multiply/` |
+| Scalar multiply | kA | (kA)ᵢⱼ = k · Aᵢⱼ | Ready | `math/linear_algebra/scalar_multiply/` |
+| Transpose | Aᵀ | (Aᵀ)ᵢⱼ = Aⱼᵢ | Ready | `math/linear_algebra/transpose/` |
+| Determinant | det(A) | det(A) = Σⱼ (−1)ʲ · A₀ⱼ · det(minor₀ⱼ)   (cofactor expansion along row 0) | Ready | `math/linear_algebra/determinant/` |
+| Matrix inverse | A⁻¹ | A·A⁻¹ = I   (Gauss–Jordan elimination) | Ready | `math/linear_algebra/matrix_inverse/` |
+| Trace | tr(A) | tr(A) = Σᵢ Aᵢᵢ  (sum of the diagonal) | Ready | `math/linear_algebra/trace/` |
+| Matrix rank | rank(A) | rank(A) = number of linearly independent rows (pivots after elimination) | Ready | `math/linear_algebra/matrix_rank/` |
+| Identity matrix | I | Iᵢⱼ = 1 if i = j else 0 | Ready | `math/linear_algebra/identity_matrix/` |
+| Row reduce (RREF) | RREF | Reduced row echelon form via Gauss–Jordan elimination | Ready | `math/linear_algebra/row_reduce_rref/` |
+| Eigenvalues | λ | det(A − λI) = 0   (closed form for a 2×2 matrix: λ = (tr ± √(tr² − 4·det)) / 2) | Ready | `math/linear_algebra/eigenvalues/` |
+| Eigenvectors | v | A·v = λ·v  — solve (A − λI)v = 0 for v ≠ 0 for each eigenvalue λ | Ready | `math/linear_algebra/eigenvectors/` |
+| Characteristic polynomial | p(λ) | p(λ) = det(A − λI);  for 2×2: λ² − tr(A)·λ + det(A)  (returns [1, −tr, det]) | Ready | `math/linear_algebra/characteristic_polynomial/` |
+| Dot product | a·b | a·b = Σ aᵢbᵢ = \|a\|\|b\|cos θ | Ready | `math/linear_algebra/dot_product/` |
+| Cross product | a×b | a × b = (a₂b₃ − a₃b₂, a₃b₁ − a₁b₃, a₁b₂ − a₂b₁)   (3D vectors) | Ready | `math/linear_algebra/cross_product/` |
+| Vector magnitude | ‖v‖ | ‖v‖ = √(v₁² + v₂² + …) | Ready | `math/linear_algebra/vector_magnitude/` |
+| Unit vector | v̂ | v̂ = v / ‖v‖ | Ready | `math/linear_algebra/unit_vector/` |
+| Vector projection | proj_b a | proj_b(a) = (a·b / b·b) · b | Ready | `math/linear_algebra/vector_projection/` |
+| Norm | ‖v‖ₚ | ‖v‖ₚ = (Σ \|vᵢ\|ᵖ)^(1/p) | Ready | `math/linear_algebra/norm/` |
+| Null space | null(A) | null(A) = { x : A·x = 0 } | Ready | `math/linear_algebra/null_space/` |
+| Column space | col(A) | col(A) = span of the columns of A = { A·x : x } | Ready | `math/linear_algebra/column_space/` |
+| LU decomposition | A = LU | A = L·U with L lower-triangular and U upper-triangular | Ready | `math/linear_algebra/lu_decomposition/` |
+| QR decomposition | A = QR | A = Q·R with Q orthogonal (QᵀQ = I) and R upper-triangular | Ready | `math/linear_algebra/qr_decomposition/` |
+| Singular value decomposition | SVD | A = U·Σ·Vᵀ with U, V orthogonal and Σ diagonal of singular values | Ready | `math/linear_algebra/singular_value_decomposition/` |
+| Solve Ax = b | Ax = b | Solve the linear system A·x = b  (Gaussian elimination with partial pivoting) | Ready | `math/linear_algebra/solve_ax_b/` |
+
+## Math / Statistics and probability
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Mean | x̄ | mean = Σxᵢ / n | Ready | `math/statistics_and_probability/mean/` |
+| Median | median | middle value of the sorted data (average of the two middle values if n is even) | Ready | `math/statistics_and_probability/median/` |
+| Mode | mode | most frequent value | Ready | `math/statistics_and_probability/mode/` |
+| Range | range | range = max − min | Ready | `math/statistics_and_probability/range/` |
+| Variance | σ² | σ² = Σ(xᵢ − μ)² / n   (population) | Ready | `math/statistics_and_probability/variance/` |
+| Standard deviation | σ | σ = √(σ²)   (population) | Ready | `math/statistics_and_probability/standard_deviation/` |
+| Sample variance | s² | s² = Σ(xᵢ − x̄)² / (n − 1) | Ready | `math/statistics_and_probability/sample_variance/` |
+| Sample standard deviation | s | s = √(s²) | Ready | `math/statistics_and_probability/sample_standard_deviation/` |
+| Z-score | z | z = (x − μ) / σ | Ready | `math/statistics_and_probability/z_score/` |
+| Covariance | cov(X,Y) | cov(X,Y) = Σ(xᵢ − x̄)(yᵢ − ȳ) / (n − 1) | Ready | `math/statistics_and_probability/covariance/` |
+| Correlation | r | r = cov(X,Y) / (sₓ · s_y) | Ready | `math/statistics_and_probability/correlation/` |
+| Linear regression | y = mx + b | least-squares line; returns (slope, intercept) | Ready | `math/statistics_and_probability/linear_regression/` |
+| Quartiles | Q1 Q2 Q3 | values that split sorted data into four equal parts | Ready | `math/statistics_and_probability/quartiles/` |
+| Interquartile range | IQR | IQR = Q3 − Q1 | Ready | `math/statistics_and_probability/interquartile_range/` |
+| Percentile | Pₖ | value below which k percent of the data fall (k = 1 … 99) | Ready | `math/statistics_and_probability/percentile/` |
+| Probability | P(A) | P(A) = favorable outcomes / total outcomes | Ready | `math/statistics_and_probability/probability/` |
+| Conditional probability | P(A\|B) | P(A\|B) = P(A ∩ B) / P(B) | Ready | `math/statistics_and_probability/conditional_probability/` |
+| Bayes' theorem | P(A\|B) | P(A\|B) = P(B\|A) · P(A) / P(B) | Ready | `math/statistics_and_probability/bayes_theorem/` |
+| Expected value | E[X] | E[X] = Σ xᵢ · pᵢ | Ready | `math/statistics_and_probability/expected_value/` |
+| Variance of random variable | Var(X) | Var(X) = E[X²] − (E[X])² | Ready | `math/statistics_and_probability/variance_of_random_variable/` |
+| Normal distribution | N(μ, σ²) | f(x) = e^(−(x−μ)² / 2σ²) / (σ√(2π))   (probability density) | Ready | `math/statistics_and_probability/normal_distribution/` |
+| Binomial distribution | B(n, p) | P(X = k) = C(n,k) · pᵏ · (1−p)ⁿ⁻ᵏ | Ready | `math/statistics_and_probability/binomial_distribution/` |
+| Poisson distribution | Pois(λ) | P(X = k) = λᵏ · e^(−λ) / k! | Ready | `math/statistics_and_probability/poisson_distribution/` |
+| Uniform distribution | U(a, b) | f(x) = 1 / (b − a) for a ≤ x ≤ b, else 0 | Ready | `math/statistics_and_probability/uniform_distribution/` |
+| Exponential distribution | Exp(λ) | f(x) = λ · e^(−λx) for x ≥ 0 | Ready | `math/statistics_and_probability/exponential_distribution/` |
+| Confidence interval | CI | x̄ ± z · s / √n   (z = 1.96 for 95%) | Ready | `math/statistics_and_probability/confidence_interval/` |
+| t-test statistic | t | t = (x̄ − μ₀) / (s / √n)   (one-sample) | Ready | `math/statistics_and_probability/t_test_statistic/` |
+| Chi-square statistic | χ² | χ² = Σ (Oᵢ − Eᵢ)² / Eᵢ | Ready | `math/statistics_and_probability/chi_square_statistic/` |
+| p-value | p | probability, assuming the null hypothesis is true, of a result at least as extreme as the one observed | Ready | `math/statistics_and_probability/p_value/` |
+
+## Math / Discrete and number theory
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Factorial | n! | n! = n · (n−1) · … · 2 · 1 | Ready | `math/discrete_and_number_theory/factorial/` |
+| Combinations | nCr | C(n, r) = n! / (r! (n − r)!) | Ready | `math/discrete_and_number_theory/combinations/` |
+| Permutations | nPr | P(n, r) = n! / (n − r)! | Ready | `math/discrete_and_number_theory/permutations/` |
+| Greatest common divisor | gcd | largest integer dividing both a and b | Ready | `math/discrete_and_number_theory/greatest_common_divisor/` |
+| Least common multiple | lcm | lcm(a, b) = \|a·b\| / gcd(a, b) | Ready | `math/discrete_and_number_theory/least_common_multiple/` |
+| Modular arithmetic | a mod m | a ≡ r (mod m) where r = a − m·⌊a/m⌋ | Ready | `math/discrete_and_number_theory/modular_arithmetic/` |
+| Prime check | prime? | n is prime if n > 1 and has no divisor other than 1 and n | Ready | `math/discrete_and_number_theory/prime_check/` |
+| Prime factorization | n = p₁·p₂·… | every integer > 1 is a product of primes | Ready | `math/discrete_and_number_theory/prime_factorization/` |
+| Fibonacci | Fₙ | F₀ = 0, F₁ = 1, Fₙ = Fₙ₋₁ + Fₙ₋₂ | Ready | `math/discrete_and_number_theory/fibonacci/` |
+| Euler's totient | φ(n) | φ(n) = number of integers in 1…n that are coprime to n = n · ∏(1 − 1/p) | Ready | `math/discrete_and_number_theory/euler_s_totient/` |
+| Pigeonhole principle | ⌈n/m⌉ | Putting n items in m boxes forces some box to hold at least ⌈n/m⌉ items | Ready | `math/discrete_and_number_theory/pigeonhole_principle/` |
+| Inclusion-exclusion | \|A∪B\| | \|A ∪ B\| = \|A\| + \|B\| − \|A ∩ B\| | Ready | `math/discrete_and_number_theory/inclusion_exclusion/` |
+
+## Math / Logic and sets
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| AND | ∧ | A ∧ B is true only when both are true | Ready | `math/logic_and_sets/and/` |
+| OR | ∨ | A ∨ B is true when at least one is true | Ready | `math/logic_and_sets/or/` |
+| NOT | ¬ | ¬A is true when A is false | Ready | `math/logic_and_sets/not/` |
+| XOR | ⊕ | A ⊕ B is true when exactly one is true | Ready | `math/logic_and_sets/xor/` |
+| Implies | → | A → B is false only when A is true and B is false  (¬A ∨ B) | Ready | `math/logic_and_sets/implies/` |
+| If and only if | ↔ | A ↔ B is true when A and B have the same truth value | Ready | `math/logic_and_sets/if_and_only_if/` |
+| For all | ∀ | ∀x ∈ D: P(x)  — P holds for every x in D | Ready | `math/logic_and_sets/for_all/` |
+| There exists | ∃ | ∃x ∈ D: P(x)  — P holds for at least one x in D | Ready | `math/logic_and_sets/there_exists/` |
+| Element of | ∈ | x ∈ S  — x is a member of S | Ready | `math/logic_and_sets/element_of/` |
+| Not element of | ∉ | x ∉ S  — x is not a member of S | Ready | `math/logic_and_sets/not_element_of/` |
+| Proper subset | ⊂ | A ⊂ B  — every element of A is in B and A ≠ B | Ready | `math/logic_and_sets/proper_subset/` |
+| Subset or equal | ⊆ | A ⊆ B  — every element of A is in B | Ready | `math/logic_and_sets/subset_or_equal/` |
+| Union | ∪ | A ∪ B = elements in A or B (or both) | Ready | `math/logic_and_sets/union/` |
+| Intersection | ∩ | A ∩ B = elements in both A and B | Ready | `math/logic_and_sets/intersection/` |
+| Empty set | ∅ | ∅ = the set with no elements | Ready | `math/logic_and_sets/empty_set/` |
+| Set difference | A − B | A − B = elements of A that are not in B | Ready | `math/logic_and_sets/set_difference/` |
+| Complement | Aᶜ | Aᶜ = elements of the universal set U not in A | Ready | `math/logic_and_sets/complement/` |
+| Cardinality | \|A\| | \|A\| = number of elements in A | Ready | `math/logic_and_sets/cardinality/` |
+
+## Math / Abstract algebra
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Group | (G, ∘) | A set G with an operation ∘ that is closed, associative, has an identity e, and every element has an inverse | Ready | `math/abstract_algebra/group/` |
+| Subgroup | H ≤ G | A subset H of G that is itself a group under the same operation | Ready | `math/abstract_algebra/subgroup/` |
+| Normal subgroup | N ◁ G | A subgroup N with gNg⁻¹ = N for every g in G | Ready | `math/abstract_algebra/normal_subgroup/` |
+| Quotient group order | G/N | \|G/N\| = \|G\| / \|N\| | Ready | `math/abstract_algebra/quotient_group_order/` |
+| Order of group | \|G\| | \|G\| = number of elements of G | Ready | `math/abstract_algebra/order_of_group/` |
+| Order of element | ord(g) | smallest k > 0 with gᵏ = e   (op = the group operation) | Ready | `math/abstract_algebra/order_of_element/` |
+| Cyclic group | ⟨g⟩ | A group generated by a single element g: {…, g⁻¹, e, g, g², …} | Ready | `math/abstract_algebra/cyclic_group/` |
+| Coset | gH | gH = { g∘h : h ∈ H } | Ready | `math/abstract_algebra/coset/` |
+| Homomorphism | φ: G → H | A map with φ(a∘b) = φ(a)∘φ(b) | Ready | `math/abstract_algebra/homomorphism/` |
+| Isomorphism | ≅ | A bijective homomorphism; G ≅ H means G and H have the same structure | Ready | `math/abstract_algebra/isomorphism/` |
+| Kernel | ker φ | ker φ = { g ∈ G : φ(g) = e_H } | Ready | `math/abstract_algebra/kernel/` |
+| Image | im φ | im φ = { φ(g) : g ∈ G } | Ready | `math/abstract_algebra/image/` |
+| Direct product | G × H | G × H = { (g, h) : g ∈ G, h ∈ H } | Ready | `math/abstract_algebra/direct_product/` |
+| Symmetric group order | Sₙ | \|Sₙ\| = n!   (all permutations of n objects) | Ready | `math/abstract_algebra/symmetric_group_order/` |
+| Alternating group order | Aₙ | \|Aₙ\| = n!/2   (even permutations, n ≥ 2) | Ready | `math/abstract_algebra/alternating_group_order/` |
+| Ring | (R, +, ·) | A set with addition (an abelian group) and associative multiplication that distributes over addition | Reference | `math/abstract_algebra/ring/` |
+| Ideal | I ◁ R | A subring I with r·i and i·r in I for all r ∈ R, i ∈ I | Reference | `math/abstract_algebra/ideal/` |
+| Field | F | A commutative ring where every non-zero element has a multiplicative inverse | Ready | `math/abstract_algebra/field/` |
+| Integral domain | ID | A commutative ring with 1 ≠ 0 and no zero divisors | Ready | `math/abstract_algebra/integral_domain/` |
+| Polynomial ring | R[x] | All polynomials a₀ + a₁x + … + aₙxⁿ with coefficients in R | Reference | `math/abstract_algebra/polynomial_ring/` |
+| Field extension | K/F | A field K that contains F as a subfield; [K:F] = dimension of K as an F-vector space | Reference | `math/abstract_algebra/field_extension/` |
+| Galois group | Gal(K/F) | The group of automorphisms of K that fix F | Reference | `math/abstract_algebra/galois_group/` |
+| Module | M | Like a vector space but over a ring R instead of a field | Reference | `math/abstract_algebra/module/` |
+| Vector space | V | A set with vector addition and scalar multiplication over a field satisfying the vector space axioms | Reference | `math/abstract_algebra/vector_space/` |
+| Basis | {e₁, …, eₙ} | A linearly independent set that spans the vector space | Ready | `math/abstract_algebra/basis/` |
+| Dimension | dim V | The number of vectors in any basis of V | Ready | `math/abstract_algebra/dimension/` |
+| Tensor product | ⊗ | (a ⊗ b) = (a₁b₁, a₁b₂, …, aₘbₙ)   (Kronecker product of two vectors) | Ready | `math/abstract_algebra/tensor_product/` |
+| Direct sum | ⊕ | A ⊕ B = { (a, b) : a ∈ A, b ∈ B } with component-wise operations; dim(A ⊕ B) = dim A + dim B | Reference | `math/abstract_algebra/direct_sum/` |
+
+## Math / Topology
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Open set | U | A set U in a topology τ  (a member of τ) | Ready | `math/topology/open_set/` |
+| Closed set | F | A set whose complement is open | Ready | `math/topology/closed_set/` |
+| Closure | Ā | Smallest closed set containing A | Ready | `math/topology/closure/` |
+| Interior | A° | Largest open set contained in A | Ready | `math/topology/interior/` |
+| Boundary | ∂A | ∂A = Ā − A° | Ready | `math/topology/boundary/` |
+| Neighborhood | N(x) | A set containing an open set that contains x | Ready | `math/topology/neighborhood/` |
+| Basis of topology | ℬ | A collection of open sets such that every open set is a union of members of ℬ | Ready | `math/topology/basis_of_topology/` |
+| Subspace topology | τ_A | τ_A = { U ∩ A : U ∈ τ } | Ready | `math/topology/subspace_topology/` |
+| Product topology | X × Y | Topology generated by open rectangles U × V | Reference | `math/topology/product_topology/` |
+| Continuous map | f: X → Y | f is continuous if the preimage of every open set is open | Reference | `math/topology/continuous_map/` |
+| Homeomorphism | ≈ | A continuous bijection with continuous inverse | Reference | `math/topology/homeomorphism/` |
+| Compact | compact | Every open cover has a finite subcover | Reference | `math/topology/compact/` |
+| Connected | connected | Cannot be split into two disjoint non-empty open sets | Ready | `math/topology/connected/` |
+| Path-connected | path-connected | Any two points are joined by a continuous path | Reference | `math/topology/path_connected/` |
+| Hausdorff | T₂ | Any two distinct points have disjoint open neighborhoods | Ready | `math/topology/hausdorff/` |
+| Metric space distance | d(x, y) | d(x, y) = √Σ(xᵢ − yᵢ)²   (Euclidean metric) | Ready | `math/topology/metric_space_distance/` |
+| Open ball | B(x, r) | B(x, r) = { y : d(x, y) < r };  returns True if y is in the ball | Ready | `math/topology/open_ball/` |
+| Cauchy sequence | (xₙ) | For every ε > 0 there is N with d(xₘ, xₙ) < ε for all m, n > N | Ready | `math/topology/cauchy_sequence/` |
+| Complete space | complete | Every Cauchy sequence converges | Reference | `math/topology/complete_space/` |
+| Fundamental group | π₁(X) | The group of loops at a base point, up to homotopy | Reference | `math/topology/fundamental_group/` |
+| Homology | Hₙ(X) | Hₙ = ker ∂ₙ / im ∂ₙ₊₁ | Reference | `math/topology/homology/` |
+| Cohomology | Hⁿ(X) | Dual to homology: Hⁿ = ker δⁿ / im δⁿ⁻¹ | Reference | `math/topology/cohomology/` |
+| Euler characteristic | χ | χ = V − E + F   (vertices − edges + faces) | Ready | `math/topology/euler_characteristic/` |
+| Homotopy | ≃ | A continuous deformation of one map into another | Reference | `math/topology/homotopy/` |
+| Covering space | p: X̃ → X | A map where every point has a neighborhood evenly covered by p | Reference | `math/topology/covering_space/` |
+| Manifold | M | A space that locally looks like ℝⁿ | Reference | `math/topology/manifold/` |
+
+## Math / Real analysis
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Supremum | sup | least upper bound of a set (for a finite set, the maximum) | Ready | `math/real_analysis/supremum/` |
+| Infimum | inf | greatest lower bound of a set (for a finite set, the minimum) | Ready | `math/real_analysis/infimum/` |
+| Limit superior | lim sup | lim sup aₙ = lim_{n→∞} sup{ aₖ : k ≥ n } | Ready | `math/real_analysis/limit_superior/` |
+| Limit inferior | lim inf | lim inf aₙ = lim_{n→∞} inf{ aₖ : k ≥ n } | Ready | `math/real_analysis/limit_inferior/` |
+| Convergence | → | aₙ → L if for every ε > 0 there is N with \|aₙ − L\| < ε for all n > N | Ready | `math/real_analysis/convergence/` |
+| Uniform convergence | fₙ ⇉ f | sup_x \|fₙ(x) − f(x)\| → 0 as n → ∞ | Reference | `math/real_analysis/uniform_convergence/` |
+| Series convergence test | Σ aₙ | Σ aₙ converges if its partial sums converge; use the ratio/root/comparison/integral tests | Ready | `math/real_analysis/series_convergence_test/` |
+| Ratio test | L = \|aₙ₊₁/aₙ\| | L = lim \|aₙ₊₁ / aₙ\|;  converges if L < 1, diverges if L > 1 | Ready | `math/real_analysis/ratio_test/` |
+| Root test | L = ⁿ√\|aₙ\| | L = lim ⁿ√\|aₙ\|;  converges if L < 1, diverges if L > 1 | Ready | `math/real_analysis/root_test/` |
+| Comparison test | aₙ ≤ bₙ | If 0 ≤ aₙ ≤ bₙ and Σbₙ converges then Σaₙ converges | Ready | `math/real_analysis/comparison_test/` |
+| Integral test | ∫ vs Σ | For positive decreasing f, Σ f(n) and ∫ f(x) dx converge or diverge together | Ready | `math/real_analysis/integral_test/` |
+| Alternating series test | Σ (−1)ⁿ aₙ | Converges if aₙ decreases to 0 | Ready | `math/real_analysis/alternating_series_test/` |
+| Radius of convergence | R | R = 1 / L  where L = lim \|aₙ₊₁ / aₙ\| | Ready | `math/real_analysis/radius_of_convergence/` |
+| Epsilon-delta continuity | ε–δ | f is continuous at a if ∀ε>0 ∃δ>0: \|x − a\| < δ ⇒ \|f(x) − f(a)\| < ε | Ready | `math/real_analysis/epsilon_delta_continuity/` |
+| Uniform continuity | unif. cont. | ∀ε>0 ∃δ>0 (independent of x): \|x − y\| < δ ⇒ \|f(x) − f(y)\| < ε | Reference | `math/real_analysis/uniform_continuity/` |
+| Lipschitz ratio | K | \|f(x) − f(y)\| ≤ K \|x − y\|;  this returns \|f(x) − f(y)\| / \|x − y\| | Ready | `math/real_analysis/lipschitz_ratio/` |
+| Mean value theorem | f′(c) | f′(c) = (f(b) − f(a)) / (b − a) for some c in (a, b) | Ready | `math/real_analysis/mean_value_theorem/` |
+| Intermediate value theorem | IVT | If f is continuous on [a, b] then f takes every value between f(a) and f(b) | Ready | `math/real_analysis/intermediate_value_theorem/` |
+| Riemann sum | Σ f(xᵢ)Δx | Σ f(xᵢ) · Δx   (left endpoints, n subintervals) | Ready | `math/real_analysis/riemann_sum/` |
+| Riemann–Stieltjes sum | ∫ f dg | Σ f(xᵢ) · (g(xᵢ₊₁) − g(xᵢ)) | Ready | `math/real_analysis/riemannstieltjes_sum/` |
+| Measure | μ | A function assigning size to sets: μ(∅) = 0 and countably additive on disjoint sets | Ready | `math/real_analysis/measure/` |
+| Lebesgue integral | ∫ f dμ | Integral defined by approximating f with simple functions and measuring their level sets | Ready | `math/real_analysis/lebesgue_integral/` |
+| Sigma-algebra | σ-algebra | A collection of sets closed under complement and countable unions, containing the whole space | Reference | `math/real_analysis/sigma_algebra/` |
+| Outer measure | μ* | μ*(A) = inf { Σ μ(Iₖ) : A ⊆ ∪ Iₖ } | Ready | `math/real_analysis/outer_measure/` |
+| Almost everywhere | a.e. | A property holding except on a set of measure zero | Reference | `math/real_analysis/almost_everywhere/` |
+| Lp norm | ‖f‖ₚ | ‖f‖ₚ = (∫\|f\|ᵖ dx)^(1/p)   (numerical, Riemann sum) | Ready | `math/real_analysis/lp_norm/` |
+| Banach space | B | A complete normed vector space | Reference | `math/real_analysis/banach_space/` |
+| Hilbert space | H | A complete inner-product space | Reference | `math/real_analysis/hilbert_space/` |
+| Inner product | ⟨x, y⟩ | ⟨x, y⟩ = Σ xᵢyᵢ   (real vectors) | Ready | `math/real_analysis/inner_product/` |
+
+## Math / Complex analysis
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Real part | Re(z) | Re(a + bi) = a | Ready | `math/complex_analysis/real_part/` |
+| Imaginary part | Im(z) | Im(a + bi) = b | Ready | `math/complex_analysis/imaginary_part/` |
+| Argument | arg(z) | arg(a + bi) = atan2(b, a) | Ready | `math/complex_analysis/argument/` |
+| Euler's formula | e^(iθ) | e^(iθ) = cos θ + i sin θ | Ready | `math/complex_analysis/euler_s_formula/` |
+| De Moivre's theorem | (r e^(iθ))ⁿ | (r(cos θ + i sin θ))ⁿ = rⁿ(cos nθ + i sin nθ) | Ready | `math/complex_analysis/de_moivre_s_theorem/` |
+| Cauchy–Riemann equations | uₓ = v_y | f = u + iv is complex-differentiable only if ∂u/∂x = ∂v/∂y and ∂u/∂y = −∂v/∂x | Ready | `math/complex_analysis/cauchyriemann_equations/` |
+| Analytic function | holomorphic | A function complex-differentiable in a neighborhood of every point of its domain | Reference | `math/complex_analysis/analytic_function/` |
+| Contour integral | ∮ f(z) dz | ∮_C f(z) dz = ∫ f(γ(t)) γ′(t) dt | Ready | `math/complex_analysis/contour_integral/` |
+| Residue | Res(f, a) | The coefficient of 1/(z − a) in the Laurent series of f about a | Ready | `math/complex_analysis/residue/` |
+| Residue theorem | 2πi Σ Res | ∮_C f(z) dz = 2πi Σ Res(f, aₖ) over poles aₖ inside C | Ready | `math/complex_analysis/residue_theorem/` |
+| Laurent series | Σ aₙ (z−a)ⁿ | f(z) = Σ_{n=−∞}^{∞} aₙ (z − a)ⁿ | Reference | `math/complex_analysis/laurent_series/` |
+| Cauchy integral formula | f(a) | f(a) = (1 / 2πi) ∮ f(z) / (z − a) dz | Ready | `math/complex_analysis/cauchy_integral_formula/` |
+| Mobius transformation | (az+b)/(cz+d) | f(z) = (az + b) / (cz + d),  ad − bc ≠ 0 | Ready | `math/complex_analysis/mobius_transformation/` |
+| Conformal map | conformal | An angle-preserving map; any analytic function with f′ ≠ 0 is conformal | Reference | `math/complex_analysis/conformal_map/` |
+| Branch cut | branch cut | A curve removed from the complex plane so a multi-valued function (e.g. log, √) becomes single-valued | Reference | `math/complex_analysis/branch_cut/` |
+
+## Math / Transforms and differential equations
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Discrete Fourier transform | F{x} | Xₖ = Σₙ xₙ · e^(−2πi·kn/N) | Ready | `math/transforms_and_differential_equations/discrete_fourier_transform/` |
+| Inverse discrete Fourier transform | F⁻¹{X} | xₙ = (1/N) Σₖ Xₖ · e^(2πi·kn/N) | Ready | `math/transforms_and_differential_equations/inverse_discrete_fourier_transform/` |
+| Fourier series | Σ aₙcos + bₙsin | f(x) = a₀/2 + Σ (aₙ cos nx + bₙ sin nx),  aₙ = (1/π)∫f cos nx dx,  bₙ = (1/π)∫f sin nx dx | Ready | `math/transforms_and_differential_equations/fourier_series/` |
+| Laplace transform | L{f} | F(s) = ∫₀^∞ f(t) e^(−st) dt | Ready | `math/transforms_and_differential_equations/laplace_transform/` |
+| Inverse Laplace transform | L⁻¹{F} | f(t) = (1 / 2πi) ∫ F(s) e^(st) ds | Reference | `math/transforms_and_differential_equations/inverse_laplace_transform/` |
+| Z-transform | X(z) | X(z) = Σₙ x[n] · z⁻ⁿ | Ready | `math/transforms_and_differential_equations/z_transform/` |
+| Convolution | f ∗ g | (f ∗ g)[k] = Σⱼ f[j] · g[k − j] | Ready | `math/transforms_and_differential_equations/convolution/` |
+| Dirac delta | δ(x) | δ(x) = 0 for x ≠ 0 and ∫ δ(x) dx = 1 | Ready | `math/transforms_and_differential_equations/dirac_delta/` |
+| Heaviside step | H(x) | H(x) = 0 for x < 0, 1 for x > 0 (½ at 0) | Ready | `math/transforms_and_differential_equations/heaviside_step/` |
+| First-order ODE | y′ = f(x, y) | An ordinary differential equation involving only the first derivative | Ready | `math/transforms_and_differential_equations/first_order_ode/` |
+| Second-order ODE | y″ = f(x, y, y′) | An ordinary differential equation involving up to the second derivative | Ready | `math/transforms_and_differential_equations/second_order_ode/` |
+| Separable equation | dy/dx = g(x)h(y) | Rewrite as dy/h(y) = g(x) dx and integrate both sides | Ready | `math/transforms_and_differential_equations/separable_equation/` |
+| Integrating factor | μ(x) | For y′ + P(x)y = Q(x):  μ = e^(∫P dx),  (μy)′ = μQ | Ready | `math/transforms_and_differential_equations/integrating_factor/` |
+| Characteristic equation | ar² + br + c = 0 | For ay″ + by′ + cy = 0 try y = e^(rx) and solve the quadratic for r | Ready | `math/transforms_and_differential_equations/characteristic_equation/` |
+| Wronskian | W(f, g) | W(f, g) = f·g′ − g·f′   (f, g and their derivatives at a point) | Ready | `math/transforms_and_differential_equations/wronskian/` |
+| Variation of parameters | yₚ | Particular solution yₚ = −y₁∫(y₂ g / W) dx + y₂∫(y₁ g / W) dx | Ready | `math/transforms_and_differential_equations/variation_of_parameters/` |
+| Power series solution | y = Σ cₙ xⁿ | Substitute a power series into the ODE and solve for the coefficients cₙ | Reference | `math/transforms_and_differential_equations/power_series_solution/` |
+| Partial differential equation | PDE | An equation involving partial derivatives of a function of several variables | Reference | `math/transforms_and_differential_equations/partial_differential_equation/` |
+| Heat equation | uₜ = α uₓₓ | ∂u/∂t = α ∂²u/∂x² | Reference | `math/transforms_and_differential_equations/heat_equation/` |
+| Wave equation | uₜₜ = c² uₓₓ | ∂²u/∂t² = c² ∂²u/∂x² | Reference | `math/transforms_and_differential_equations/wave_equation/` |
+| Laplace's equation | ∇²u = 0 | ∂²u/∂x² + ∂²u/∂y² + ∂²u/∂z² = 0 | Reference | `math/transforms_and_differential_equations/laplace_s_equation/` |
+
+## Math / Graph theory and combinatorics
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Graph | G = (V, E) | A set of vertices V and a set of edges E joining pairs of vertices | Ready | `math/graph_theory_and_combinatorics/graph/` |
+| Vertex degree | deg(v) | deg(v) = number of edges at v   (graph = {vertex: [neighbors]}) | Ready | `math/graph_theory_and_combinatorics/vertex_degree/` |
+| Path | path | A sequence of distinct vertices where consecutive vertices are joined by edges | Ready | `math/graph_theory_and_combinatorics/path/` |
+| Cycle | cycle | A path that returns to its starting vertex | Ready | `math/graph_theory_and_combinatorics/cycle/` |
+| Tree | tree | A connected graph with no cycles; a tree on n vertices has n − 1 edges | Ready | `math/graph_theory_and_combinatorics/tree/` |
+| Spanning tree | T ⊆ G | A tree that contains every vertex of G | Ready | `math/graph_theory_and_combinatorics/spanning_tree/` |
+| Adjacency matrix | A | Aᵢⱼ = 1 if vertices i and j are joined (undirected), else 0 | Ready | `math/graph_theory_and_combinatorics/adjacency_matrix/` |
+| Shortest path (Dijkstra) | d(u, v) | Dijkstra's algorithm; graph = {node: [(neighbor, weight), …]}, returns {node: distance} | Ready | `math/graph_theory_and_combinatorics/shortest_path_dijkstra/` |
+| Chromatic number | χ(G) | The smallest number of colors needed to color vertices so adjacent vertices differ | Ready | `math/graph_theory_and_combinatorics/chromatic_number/` |
+| Planar graph | planar | Can be drawn in the plane without crossing edges; then E ≤ 3V − 6 (V ≥ 3) | Ready | `math/graph_theory_and_combinatorics/planar_graph/` |
+| Euler path | Euler path | A path using every edge exactly once; exists iff the graph is connected with 0 or 2 odd-degree vertices | Ready | `math/graph_theory_and_combinatorics/euler_path/` |
+| Hamiltonian path | Hamilton path | A path visiting every vertex exactly once | Ready | `math/graph_theory_and_combinatorics/hamiltonian_path/` |
+| Bipartite graph | bipartite | Vertices split into two sets with edges only between the sets (no odd cycles) | Ready | `math/graph_theory_and_combinatorics/bipartite_graph/` |
+| Max flow min cut | max-flow = min-cut | The maximum flow from source to sink equals the capacity of the minimum cut | Ready | `math/graph_theory_and_combinatorics/max_flow_min_cut/` |
+| Catalan number | Cₙ | Cₙ = C(2n, n) / (n + 1) | Ready | `math/graph_theory_and_combinatorics/catalan_number/` |
+| Stirling number (second kind) | S(n, k) | S(n, k) = (1/k!) Σⱼ (−1)ʲ C(k, j) (k − j)ⁿ | Ready | `math/graph_theory_and_combinatorics/stirling_number_second_kind/` |
+| Bell number | Bₙ | Bₙ = Σₖ S(n, k)   (number of partitions of an n-element set) | Ready | `math/graph_theory_and_combinatorics/bell_number/` |
+| Partition number | p(n) | p(n) = number of ways to write n as a sum of positive integers (order ignored) | Ready | `math/graph_theory_and_combinatorics/partition_number/` |
+| Generating function | G(x) | G(x) = Σ aₙ xⁿ  encodes the sequence a₀, a₁, a₂, … | Ready | `math/graph_theory_and_combinatorics/generating_function/` |
+| Recurrence relation | aₙ = f(aₙ₋₁, …) | Defines each term from earlier terms, e.g. Fibonacci Fₙ = Fₙ₋₁ + Fₙ₋₂ | Ready | `math/graph_theory_and_combinatorics/recurrence_relation/` |
+| Burnside's lemma | \|X/G\| | Number of orbits = (1/\|G\|) Σ_g \|Fix(g)\| | Ready | `math/graph_theory_and_combinatorics/burnside_s_lemma/` |
+
+## Math / Optimization and numerical methods
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Minimize | min f | Find x that makes f(x) as small as possible | Ready | `math/optimization_and_numerical_methods/minimize/` |
+| Maximize | max f | Find x that makes f(x) as large as possible (minimize −f) | Ready | `math/optimization_and_numerical_methods/maximize/` |
+| Lagrange multipliers | ∇f = λ∇g | Extrema of f subject to g = 0 occur where ∇f = λ ∇g | Ready | `math/optimization_and_numerical_methods/lagrange_multipliers/` |
+| Gradient descent | xₖ₊₁ = xₖ − η∇f | Repeat xₖ₊₁ = xₖ − η ∇f(xₖ) | Ready | `math/optimization_and_numerical_methods/gradient_descent/` |
+| Hessian | H | Hᵢⱼ = ∂²f / ∂xᵢ∂xⱼ  (matrix of second partial derivatives) | Ready | `math/optimization_and_numerical_methods/hessian/` |
+| Linear programming | LP | Maximize cᵀx subject to Ax ≤ b, x ≥ 0 | Ready | `math/optimization_and_numerical_methods/linear_programming/` |
+| Simplex method | simplex | Algorithm that walks along vertices of the feasible region to solve a linear program | Ready | `math/optimization_and_numerical_methods/simplex_method/` |
+| Convex function | convex | f(tx + (1−t)y) ≤ t·f(x) + (1−t)·f(y) for t in [0, 1] | Ready | `math/optimization_and_numerical_methods/convex_function/` |
+| KKT conditions | KKT | Necessary conditions for optimality under inequality constraints: stationarity, feasibility, complementary slackness | Reference | `math/optimization_and_numerical_methods/kkt_conditions/` |
+| Newton's method | xₙ₊₁ = xₙ − f/f′ | xₙ₊₁ = xₙ − f(xₙ) / f′(xₙ) | Ready | `math/optimization_and_numerical_methods/newton_s_method/` |
+| Bisection method | bisect | Repeatedly halve [a, b] keeping the half where f changes sign | Ready | `math/optimization_and_numerical_methods/bisection_method/` |
+| Secant method | secant | xₙ₊₁ = xₙ − f(xₙ)(xₙ − xₙ₋₁) / (f(xₙ) − f(xₙ₋₁)) | Ready | `math/optimization_and_numerical_methods/secant_method/` |
+| Fixed-point iteration | x = g(x) | xₙ₊₁ = g(xₙ) | Ready | `math/optimization_and_numerical_methods/fixed_point_iteration/` |
+| Euler's method | yₙ₊₁ = yₙ + h·f | yₙ₊₁ = yₙ + h · f(xₙ, yₙ)   (returns list of (x, y) points) | Ready | `math/optimization_and_numerical_methods/euler_s_method/` |
+| Runge-Kutta (RK4) | RK4 | yₙ₊₁ = yₙ + h/6 · (k₁ + 2k₂ + 2k₃ + k₄) | Ready | `math/optimization_and_numerical_methods/runge_kutta_rk4/` |
+| Trapezoid rule | T | ∫ₐᵇ f ≈ h · (f(a)/2 + Σ f(xᵢ) + f(b)/2),  h = (b − a)/n | Ready | `math/optimization_and_numerical_methods/trapezoid_rule/` |
+| Simpson's rule | S | ∫ₐᵇ f ≈ h/3 · (f₀ + 4f₁ + 2f₂ + … + fₙ),  n even | Ready | `math/optimization_and_numerical_methods/simpson_s_rule/` |
+| Lagrange interpolation | L(x) | L(x) = Σᵢ yᵢ ∏_{j≠i} (x − xⱼ) / (xᵢ − xⱼ) | Ready | `math/optimization_and_numerical_methods/lagrange_interpolation/` |
+| Newton interpolation | N(x) | N(x) = c₀ + c₁(x − x₀) + c₂(x − x₀)(x − x₁) + …  (divided differences) | Ready | `math/optimization_and_numerical_methods/newton_interpolation/` |
+| Spline | S(x) | A piecewise polynomial (often cubic) joined smoothly at knots | Ready | `math/optimization_and_numerical_methods/spline/` |
+| Least squares | min Σ(yᵢ − ŷᵢ)² | Best-fit line y = mx + b minimizing squared error; returns (slope, intercept) | Ready | `math/optimization_and_numerical_methods/least_squares/` |
+| Gaussian elimination | A\|b → U | Reduce [A \| b] to upper-triangular form, then back-substitute | Ready | `math/optimization_and_numerical_methods/gaussian_elimination/` |
+| Jacobi iteration | x⁽ᵏ⁺¹⁾ | xᵢ⁽ᵏ⁺¹⁾ = (bᵢ − Σ_{j≠i} Aᵢⱼ xⱼ⁽ᵏ⁾) / Aᵢᵢ | Ready | `math/optimization_and_numerical_methods/jacobi_iteration/` |
+| Gauss-Seidel iteration | x⁽ᵏ⁺¹⁾ | Like Jacobi but uses the newest values immediately | Ready | `math/optimization_and_numerical_methods/gauss_seidel_iteration/` |
+
+## Math / Differential geometry and tensors
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Tangent vector | v ∈ TₚM | The velocity vector of a curve through p on a manifold | Ready | `math/differential_geometry_and_tensors/tangent_vector/` |
+| Tangent space | TₚM | The vector space of all tangent vectors at p | Reference | `math/differential_geometry_and_tensors/tangent_space/` |
+| Differential form | ω | A smooth, antisymmetric, multilinear field that can be integrated over manifolds | Reference | `math/differential_geometry_and_tensors/differential_form/` |
+| Exterior derivative | d | d(f dx) = df ∧ dx,  d² = 0 | Reference | `math/differential_geometry_and_tensors/exterior_derivative/` |
+| Wedge product | ∧ | α ∧ β = −β ∧ α  (antisymmetric product of differential forms) | Ready | `math/differential_geometry_and_tensors/wedge_product/` |
+| Pullback | f* | (f*ω)(v) = ω(df(v)) | Reference | `math/differential_geometry_and_tensors/pullback/` |
+| Metric tensor | g | gᵢⱼ gives lengths and angles: ds² = gᵢⱼ dxⁱ dxʲ | Ready | `math/differential_geometry_and_tensors/metric_tensor/` |
+| Christoffel symbol | Γᵏᵢⱼ | Γᵏᵢⱼ = ½ gᵏˡ (∂ᵢgⱼˡ + ∂ⱼgᵢˡ − ∂ˡgᵢⱼ) | Reference | `math/differential_geometry_and_tensors/christoffel_symbol/` |
+| Riemann curvature | Rᵃᵦᵧδ | Measures how parallel transport around a small loop fails to return a vector unchanged | Reference | `math/differential_geometry_and_tensors/riemann_curvature/` |
+| Ricci tensor | Rᵢⱼ | Rᵢⱼ = Rᵏᵢₖⱼ  (contraction of the Riemann tensor) | Reference | `math/differential_geometry_and_tensors/ricci_tensor/` |
+| Gaussian curvature | K | K = κ₁ · κ₂  (product of the principal curvatures) | Ready | `math/differential_geometry_and_tensors/gaussian_curvature/` |
+| Geodesic | γ″ = 0 | A locally shortest path; ẍᵏ + Γᵏᵢⱼ ẋⁱ ẋʲ = 0 | Reference | `math/differential_geometry_and_tensors/geodesic/` |
+| Lie derivative | L_X | The rate of change of a tensor field along the flow of the vector field X | Reference | `math/differential_geometry_and_tensors/lie_derivative/` |
+| Lie bracket | [X, Y] | [X, Y] f = X(Y f) − Y(X f) | Ready | `math/differential_geometry_and_tensors/lie_bracket/` |
+| Stokes' theorem | ∫_M dω = ∫_∂M ω | The integral of dω over M equals the integral of ω over the boundary ∂M | Reference | `math/differential_geometry_and_tensors/stokes_theorem/` |
+| Tensor contraction | Tⁱᵢ | Sum over a paired upper and lower index, lowering the tensor's rank by 2 | Ready | `math/differential_geometry_and_tensors/tensor_contraction/` |
+
+## Math / Category theory and foundations
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Category | 𝒞 | Objects and morphisms with composition (associative) and identity morphisms | Reference | `math/category_theory_and_foundations/category/` |
+| Functor | F: 𝒞 → 𝒟 | A map between categories preserving composition and identities | Reference | `math/category_theory_and_foundations/functor/` |
+| Natural transformation | η: F ⇒ G | A family of morphisms ηₓ: F(X) → G(X) that commute with F(f) and G(f) | Reference | `math/category_theory_and_foundations/natural_transformation/` |
+| Morphism | f: A → B | An arrow from object A to object B in a category | Reference | `math/category_theory_and_foundations/morphism/` |
+| Product and coproduct | A × B, A ⊔ B | Universal objects with projections (product) or injections (coproduct) | Reference | `math/category_theory_and_foundations/product_and_coproduct/` |
+| Limit and colimit | lim, colim | Universal cone over (or cocone under) a diagram | Reference | `math/category_theory_and_foundations/limit_and_colimit/` |
+| Adjunction | F ⊣ G | Hom(F(A), B) ≅ Hom(A, G(B)) naturally | Reference | `math/category_theory_and_foundations/adjunction/` |
+| Aleph-null | ℵ₀ | The cardinality of the natural numbers | Reference | `math/category_theory_and_foundations/aleph_null/` |
+| Omega ordinal | ω | The first infinite ordinal, the order type of the natural numbers | Reference | `math/category_theory_and_foundations/omega_ordinal/` |
+| Axiom of choice | AC | Every collection of non-empty sets has a choice function | Ready | `math/category_theory_and_foundations/axiom_of_choice/` |
+| Zorn's lemma | Zorn | If every chain in a poset has an upper bound, then the poset has a maximal element | Reference | `math/category_theory_and_foundations/zorn_s_lemma/` |
+| Power set | 𝒫(A) | 𝒫(A) = set of all subsets of A;  \|𝒫(A)\| = 2^\|A\| | Ready | `math/category_theory_and_foundations/power_set/` |
+| Cartesian product | A × B | A × B = { (a, b) : a ∈ A, b ∈ B } | Ready | `math/category_theory_and_foundations/cartesian_product/` |
+| Function | f: A → B | A rule assigning to each element of A exactly one element of B | Ready | `math/category_theory_and_foundations/function/` |
+| Injective | one-to-one | f(x) = f(y) ⇒ x = y | Ready | `math/category_theory_and_foundations/injective/` |
+| Surjective | onto | every element of the codomain is f(x) for some x | Ready | `math/category_theory_and_foundations/surjective/` |
+| Bijective | one-to-one and onto | both injective and surjective | Ready | `math/category_theory_and_foundations/bijective/` |
+| Natural numbers | ℕ | {0, 1, 2, 3, …} (or {1, 2, 3, …}) | Ready | `math/category_theory_and_foundations/natural_numbers/` |
+| Integers | ℤ | {…, −2, −1, 0, 1, 2, …} | Ready | `math/category_theory_and_foundations/integers/` |
+| Rational numbers | ℚ | { p/q : p, q ∈ ℤ, q ≠ 0 } | Ready | `math/category_theory_and_foundations/rational_numbers/` |
+| Real numbers | ℝ | The complete ordered field: all rational and irrational numbers | Ready | `math/category_theory_and_foundations/real_numbers/` |
+| Complex numbers | ℂ | { a + bi : a, b ∈ ℝ } | Ready | `math/category_theory_and_foundations/complex_numbers/` |
+| Quaternions | ℍ | { a + bi + cj + dk } with i² = j² = k² = ijk = −1 | Ready | `math/category_theory_and_foundations/quaternions/` |
+
+## Math / Constants and relations
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Pi | π | π = circumference / diameter ≈ 3.14159265… | Ready | `math/constants_and_relations/pi/` |
+| Euler's number | e | e = lim (1 + 1/n)ⁿ ≈ 2.71828182… | Ready | `math/constants_and_relations/euler_s_number/` |
+| Golden ratio | φ | φ = (1 + √5) / 2 ≈ 1.6180339887… | Ready | `math/constants_and_relations/golden_ratio/` |
+| Euler-Mascheroni constant | γ | γ = lim (1 + 1/2 + … + 1/n − ln n) ≈ 0.5772156649 | Ready | `math/constants_and_relations/euler_mascheroni_constant/` |
+| Equals | = | a = b | Ready | `math/constants_and_relations/equals/` |
+| Not equal | ≠ | a ≠ b | Ready | `math/constants_and_relations/not_equal/` |
+| Approximately equal | ≈ | a ≈ b  (equal within a small tolerance) | Ready | `math/constants_and_relations/approximately_equal/` |
+| Less than | < | a < b | Ready | `math/constants_and_relations/less_than/` |
+| Greater than | > | a > b | Ready | `math/constants_and_relations/greater_than/` |
+| Less than or equal | ≤ | a ≤ b | Ready | `math/constants_and_relations/less_than_or_equal/` |
+| Greater than or equal | ≥ | a ≥ b | Ready | `math/constants_and_relations/greater_than_or_equal/` |
+| Proportional to | ∝ | y ∝ x  means y = k·x;  returns the constant k = y / x | Ready | `math/constants_and_relations/proportional_to/` |
+| Open bracket | ( | ( begins a group; what is inside is evaluated first | Reference | `math/constants_and_relations/open_bracket/` |
+| Close bracket | ) | ) ends a group opened by ( | Reference | `math/constants_and_relations/close_bracket/` |
+| Square brackets | [ ] | [ … ] group an expression, or denote a closed interval [a, b] / a list | Reference | `math/constants_and_relations/square_brackets/` |
+| Curly braces | { } | { … } denote a set or a group of terms | Reference | `math/constants_and_relations/curly_braces/` |
+
+## Geometry / Geometry
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Circle area | πr² | A = π r² | Ready | `geometry/geometry/circle_area/` |
+| Circle circumference | 2πr | C = 2 π r | Ready | `geometry/geometry/circle_circumference/` |
+| Arc length | rθ | s = r θ   (θ in radians) | Ready | `geometry/geometry/arc_length/` |
+| Sector area | ½r²θ | A = ½ r² θ   (θ in radians) | Ready | `geometry/geometry/sector_area/` |
+| Rectangle area | l×w | A = l · w | Ready | `geometry/geometry/rectangle_area/` |
+| Rectangle perimeter | 2(l+w) | P = 2(l + w) | Ready | `geometry/geometry/rectangle_perimeter/` |
+| Square area | s² | A = s² | Ready | `geometry/geometry/square_area/` |
+| Triangle area | ½bh | A = ½ · base · height | Ready | `geometry/geometry/triangle_area/` |
+| Heron's formula | √(s(s−a)(s−b)(s−c)) | A = √(s(s−a)(s−b)(s−c)),  s = (a + b + c)/2 | Ready | `geometry/geometry/heron_s_formula/` |
+| Pythagorean theorem | a²+b²=c² | c = √(a² + b²)   (hypotenuse of a right triangle) | Ready | `geometry/geometry/pythagorean_theorem/` |
+| Parallelogram area | bh | A = base · height | Ready | `geometry/geometry/parallelogram_area/` |
+| Trapezoid area | ½(a+b)h | A = ½ (a + b) h | Ready | `geometry/geometry/trapezoid_area/` |
+| Rhombus area | ½d₁d₂ | A = ½ d₁ d₂ | Ready | `geometry/geometry/rhombus_area/` |
+| Regular polygon area | ½·p·a | A = ½ · perimeter · apothem | Ready | `geometry/geometry/regular_polygon_area/` |
+| Polygon interior angle sum | (n−2)·180° | sum of interior angles = (n − 2) × 180° | Ready | `geometry/geometry/polygon_interior_angle_sum/` |
+| Cube volume | s³ | V = s³ | Ready | `geometry/geometry/cube_volume/` |
+| Cube surface area | 6s² | SA = 6 s² | Ready | `geometry/geometry/cube_surface_area/` |
+| Rectangular prism volume | lwh | V = l · w · h | Ready | `geometry/geometry/rectangular_prism_volume/` |
+| Rectangular prism surface area | 2(lw+lh+wh) | SA = 2(lw + lh + wh) | Ready | `geometry/geometry/rectangular_prism_surface_area/` |
+| Cylinder volume | πr²h | V = π r² h | Ready | `geometry/geometry/cylinder_volume/` |
+| Cylinder surface area | 2πr(r+h) | SA = 2 π r (r + h) | Ready | `geometry/geometry/cylinder_surface_area/` |
+| Cone volume | ⅓πr²h | V = ⅓ π r² h | Ready | `geometry/geometry/cone_volume/` |
+| Cone surface area | πr(r+l) | SA = π r (r + l),  l = slant height | Ready | `geometry/geometry/cone_surface_area/` |
+| Sphere volume | ⁴⁄₃πr³ | V = 4/3 π r³ | Ready | `geometry/geometry/sphere_volume/` |
+| Sphere surface area | 4πr² | SA = 4 π r² | Ready | `geometry/geometry/sphere_surface_area/` |
+| Pyramid volume | ⅓Bh | V = ⅓ · base area · height | Ready | `geometry/geometry/pyramid_volume/` |
+| Distance formula | √((x₂−x₁)²+(y₂−y₁)²) | d = √((x₂ − x₁)² + (y₂ − y₁)²) | Ready | `geometry/geometry/distance_formula/` |
+| Midpoint formula | ((x₁+x₂)/2, (y₁+y₂)/2) | M = ((x₁ + x₂)/2, (y₁ + y₂)/2) | Ready | `geometry/geometry/midpoint_formula/` |
+| Slope | (y₂−y₁)/(x₂−x₁) | m = (y₂ − y₁) / (x₂ − x₁) | Ready | `geometry/geometry/slope/` |
+| Law of sines | a/sin A = b/sin B | b = a · sin B / sin A   (angles in radians) | Ready | `geometry/geometry/law_of_sines/` |
+| Law of cosines | c²=a²+b²−2ab·cos C | c = √(a² + b² − 2ab cos C)   (C in radians) | Ready | `geometry/geometry/law_of_cosines/` |
+| Degrees to radians (Geometry) | deg→rad | radians = degrees × π / 180 | Ready | `geometry/geometry/degrees_to_radians_geometry/` |
+| Radians to degrees (Geometry) | rad→deg | degrees = radians × 180 / π | Ready | `geometry/geometry/radians_to_degrees_geometry/` |
+
+## Physics / Physics
+
+| Operator | Symbol | Formula | Status | Folder |
+|---|---|---|---|---|
+| Velocity | v = d/t | v = d / t | Ready | `physics/physics/velocity/` |
+| Acceleration | a = Δv/t | a = Δv / t | Ready | `physics/physics/acceleration/` |
+| Final velocity | v = u + at | v = u + a t | Ready | `physics/physics/final_velocity/` |
+| Displacement | s = ut + ½at² | s = u t + ½ a t² | Ready | `physics/physics/displacement/` |
+| Velocity squared | v² = u² + 2as | v = √(u² + 2 a s) | Ready | `physics/physics/velocity_squared/` |
+| Newton's second law | F = ma | F = m a | Ready | `physics/physics/newton_s_second_law/` |
+| Weight | W = mg | W = m g   (g = 9.81 m/s²) | Ready | `physics/physics/weight/` |
+| Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
+| Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
+| Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |
+| Power (Physics) | P = W/t | P = W / t | Ready | `physics/physics/power_physics/` |
+| Kinetic energy | ½mv² | KE = ½ m v² | Ready | `physics/physics/kinetic_energy/` |
+| Potential energy | mgh | PE = m g h | Ready | `physics/physics/potential_energy/` |
+| Pressure | P = F/A | P = F / A | Ready | `physics/physics/pressure/` |
+| Density | ρ = m/V | ρ = m / V | Ready | `physics/physics/density/` |
+| Hooke's law | F = −kx | F = −k x | Ready | `physics/physics/hooke_s_law/` |
+| Gravitation | F = G·m₁m₂/r² | F = G m₁ m₂ / r²   (G = 6.674×10⁻¹¹ N·m²/kg²) | Ready | `physics/physics/gravitation/` |
+| Centripetal acceleration | a = v²/r | a = v² / r | Ready | `physics/physics/centripetal_acceleration/` |
+| Torque | τ = rF·sin θ | τ = r F sin θ | Ready | `physics/physics/torque/` |
+| Pendulum period | T = 2π√(L/g) | T = 2π √(L / g) | Ready | `physics/physics/pendulum_period/` |
+| Frequency | f = 1/T | f = 1 / T | Ready | `physics/physics/frequency/` |
+| Wave speed | v = fλ | v = f λ | Ready | `physics/physics/wave_speed/` |
+| Snell's law | n₁sin θ₁ = n₂sin θ₂ | θ₂ = arcsin(n₁ sin θ₁ / n₂)   (angles in radians) | Ready | `physics/physics/snell_s_law/` |
+| Heat | Q = mcΔT | Q = m c ΔT | Ready | `physics/physics/heat/` |
+| Ideal gas law | PV = nRT | P = n R T / V   (R = 8.314 J/(mol·K)) | Ready | `physics/physics/ideal_gas_law/` |
+| Mass-energy equivalence | E = mc² | E = m c²   (c = 299 792 458 m/s) | Ready | `physics/physics/mass_energy_equivalence/` |
+| Ohm's law | V = IR | V = I R | Ready | `physics/physics/ohm_s_law/` |
+| Electric power | P = IV | P = I V | Ready | `physics/physics/electric_power/` |
+| Coulomb's law | F = k·q₁q₂/r² | F = k q₁ q₂ / r²   (k = 8.988×10⁹ N·m²/C²) | Ready | `physics/physics/coulomb_s_law/` |
+| Capacitance | Q = CV | Q = C V | Ready | `physics/physics/capacitance/` |
+| Resistors in series | R₁+R₂+… | R_total = R₁ + R₂ + … | Ready | `physics/physics/resistors_in_series/` |
+| Resistors in parallel | 1/R = Σ 1/Rᵢ | 1 / R_total = 1/R₁ + 1/R₂ + … | Ready | `physics/physics/resistors_in_parallel/` |
