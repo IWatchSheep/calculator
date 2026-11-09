@@ -863,3 +863,18 @@ Measured:
   1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 31 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 4 with an answer: 4 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
   117 word-solver and number-puzzle tests pass.
+
+Batch 29: a clause hanging on the side just named in the rectangle question (rectangle_from_perimeter_area; fixes only, no new family)
+==============================================================
+rectangle_from_perimeter_area: "What is its length, which is shorter than the width?" was 18 and 2, "Find its width, which is the longer side." was 2, "Find the length, the shorter side." was 18 and "What is its width, the longer one?" was 2.  The words after the comma were left in
+  the question, so the other side looked asked (18 and 2) or the usual "the length is the longer side" assumption was kept.  A "which / that is ..." clause, or an apposition ("the longer side", "the shorter side", "the longer one", "the shorter one", "the narrower side" ...)
+  after the side word is now a STATEMENT about the side just named: it is cut out of the question and added to the statements as "<side> is ...".  Results: "What is its length, which is shorter than the width?" 2; "Find its width, which is the longer side." 18; "Find the length, the shorter side." 2;
+  "What is its width, the longer one?" 18; "What is its length, which is the longer side?" 18; "Find its width, the shorter one." 2; "What is its length, which is the shorter side?" 2; "Find its width, which is the longer one." 18; "What is its width, the narrower side?" 2;
+  "Find the length, which is less than the width." 2.  The cut-out statement goes through the same check as any other (it must compare the two sides and then end), so "which is shorter than a foot", "which is more interesting than the length", a bare "which is shorter",
+  "which is less than the width" asked of the width, "the longer side of the two", "which is longer than a bus", "the shorter side of the lot" and "which is shorter than the length" all decline.  "So what is its length?" stays 2, "it is the longer side" stays 18, "Find its length and width"
+  still returns both, and "What is its length?" is still 18.  When both sides are asked with an apposition on the last one ("Find its length and width, the longer side."), the apposition is about the side just named, the width: the pair is the length 2 and the width 18.
+Checks (test_word_solver.py): the new test method above; spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice.
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 32 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 3 required declines: 3 of 3; 0 wrong.
+  119 word-solver and number-puzzle tests pass.

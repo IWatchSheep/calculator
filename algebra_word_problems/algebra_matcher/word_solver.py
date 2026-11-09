@@ -2646,6 +2646,18 @@ def rectangle_from_perimeter_area(problem):
     if len(q_parts) > 1:
         cond = cond + " . " + " . ".join(q_parts[:-1])
         q_main = q_parts[-1]
+    # a clause hanging on the side just named is a statement about THAT side, not a question about the other:
+    #   "What is its length, which is shorter than the width?"   ->  asks the length;  statement "length is shorter than the width"
+    #   "Find the length, the shorter side." / "What is its width, the longer one?"  ->  asks that side; statement "length is the shorter side"
+    wm = re.search(r"\b(length|width)\s*,\s*(?:which|that)\s+(?:is|are)\s+(.*)$", q_main)
+    if wm:
+        cond = cond + " . " + wm.group(1) + " is " + wm.group(2)
+        q_main = q_main[:wm.end(1)]
+    else:
+        wm = re.search(r"\b(length|width)\s*,\s*(?:the\s+)?((?:" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|one|dimension))\s*$", q_main)
+        if wm:
+            cond = cond + " . " + wm.group(1) + " is the " + wm.group(2)
+            q_main = q_main[:wm.end(1)]
     if q is None or re.search(r"\b(?:sum|difference|product|ratio|half|double|average|perimeter|area|per|more|less|larger than|longer than)\b", q_main):
         return None
     q = q_main

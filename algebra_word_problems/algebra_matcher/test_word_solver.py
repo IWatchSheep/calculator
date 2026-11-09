@@ -1846,6 +1846,42 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (4, 0, 5))
 
+    def test_rectangle_clause_hanging_on_the_side_just_named(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # the usual forms stay
+        self.assertEqual(answers(base + "The length is shorter than the width, so what is its length?"), values(2))
+        self.assertEqual(answers(base + "What is its width? It is the longer side."), values(18))
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        self.assertEqual(answers(base + "What is its length?"), values(18))
+        # a "which is ..." clause or an apposition says which side the NAMED side is; it does not ask for the other side
+        for q, want in (("What is its length, which is shorter than the width?", 2), ("Find its width, which is the longer side.", 18),
+                        ("Find the length, the shorter side.", 2), ("What is its width, the longer one?", 18),
+                        ("What is its length, which is the longer side?", 18), ("Find its width, the shorter one.", 2),
+                        ("What is its length, the shorter one?", 2), ("Find the length, which is the longer side.", 18),
+                        ("What is its length, which is the shorter side?", 2), ("Find its width, which is the longer one.", 18),
+                        ("What is its width, the narrower side?", 2), ("Find the length, which is less than the width.", 2),
+                        ("What is its length, the longer one?", 18)):
+            self.assertEqual(answers(base + q), values(want), q)
+        # the clause counts as a statement: when it is not a comparison of the two sides, or compares a side with itself, the problem declines
+        for q in ("What is its length, which is shorter than a foot?", "What is its width, which is more interesting than the length?",
+                  "What is its length, which is shorter?", "Find its width, which is less than the width.",
+                  "What is its width, the longer side of the two?", "What is its width, which is longer than a bus?",
+                  "Find its length, which is the shorter side of the lot.", "What is its length, which is shorter than the length?"):
+            self.assertIsNone(answers(base + q), q)
+        # asking both sides with a clause on the last one named: the width is the longer side, so the length is 2
+        r = WS.solve(base + "Find its length and width, the longer side.")
+        self.assertEqual(r.values, [Fraction(2), Fraction(18)])
+        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)
+        self.assertEqual(r.values[0] * r.values[1], 36)
+
+    def test_clause_on_the_named_side_set(self):
+        """Set 32: neighbours of the batch-29 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_32 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirty-second set, neighbours of the batch-29 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 0, 3))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
