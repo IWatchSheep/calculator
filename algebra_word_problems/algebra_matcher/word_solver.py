@@ -63,6 +63,24 @@ def show(v):
     return s
 
 
+def show_exact(v):
+    """The value as an exact fraction, never a rounded decimal."""
+    v = Fraction(v)
+    return str(v.numerator) if v.denominator == 1 else "%d/%d" % (v.numerator, v.denominator)
+
+
+def show_answer(v, money):
+    """Exact value for the reading. Money that is not a whole number of cents also shows the nearest cent."""
+    v = Fraction(v)
+    text = show_exact(v)
+    if not money:
+        return text
+    cents = Fraction(round(v * 100), 100)
+    if cents == v:
+        return text
+    return "%s (%s to the nearest cent)" % (text, show(cents))
+
+
 def solve_linear(lhs, rhs):
     """lhs = rhs where both are NP.Lin; the exact value of x, or None."""
     d = lhs.a - rhs.a
@@ -166,6 +184,13 @@ def consecutive(problem):
 # 3. two workers, separate times -> together
 # ---------------------------------------------------------------------------------------------------------
 _TIME_UNIT = r"(hours?|hrs?|minutes?|mins?|days?|weeks?)"
+_TOGETHER = r"\b(together|both|team(?:s|ed)? up|combined|at the same time|jointly)\b"
+_ONE_WORKER = r"\b(alone|the other|each other|one of them)\b"
+
+
+def _time_unit(word):
+    word = re.sub(r"s$", "", word)
+    return {"hr": "hour", "hour": "hour", "min": "minute", "minute": "minute", "day": "day", "week": "week"}.get(word, word)
 
 
 def work_together(problem):
@@ -173,28 +198,32 @@ def work_together(problem):
     nums = digit_numbers(problem)
     if len(nums) != 2:
         return None
-    if not re.search(r"\b(together|both|team(?:s|ed)? up|combined|at the same time|jointly)\b", t):
+    # "alone" in the setup is fine ("Tom paints a fence alone in 6 hours"). Decline only when the
+    # question itself asks for one worker's time, or when one rate is a drain rather than a worker.
+    questions = [x for x in re.split(r"(?<=[.!?])\s+", t) if x.strip().endswith("?")]
+    if len(questions) != 1 or not re.search(_TOGETHER, questions[0]) or re.search(_ONE_WORKER, questions[0]):
         return None
-    # a problem that mentions "alone" or "the other" gives the TOGETHER time or asks for one worker's time: not this family
-    if re.search(r"\b(?:drain|leak|empt|plug|overflow)\w*|\bout of\b|\balone\b|\bthe other\b|\beach other\b", t) or "%" in t or "$" in problem:
+    if re.search(r"\b(?:drain|leak|empt|plug|overflow)\w*|\bout of\b", t) or "%" in t or "$" in problem:
         return None
     units = []
-    for _v, _m, s, e in nums:
-        m = re.match(r"\s*" + _TIME_UNIT + r"\b", t[e:])
-        if not m:
+    for i, (_v, _money, _start, end) in enumerate(nums):
+        m = re.match(r"\s*" + _TIME_UNIT + r"\b", t[end:])
+        if m:
+            units.append(_time_unit(m.group(1)))
+        elif i == 1 and units and re.search(r"\bin\s+\d+(?:\.\d+)?$", t[:end]):
+            units.append(units[0])          # "in 6 hours, Sue in 3" — the second time keeps the first unit
+        else:
             return None
-        units.append(re.sub(r"s$", "", m.group(1)))
-    norm = lambda u: {"hr": "hour", "hour": "hour", "min": "minute", "minute": "minute", "day": "day", "week": "week"}.get(u, u)
-    if norm(units[0]) != norm(units[1]):
+    if units[0] != units[1]:
         return None
-    if not re.search(r"\bhow (?:long|many (?:hours|minutes|days|weeks)|much time)\b", t):
+    if not re.search(r"\bhow (?:long|many (?:hours|minutes|days|weeks)|much time)\b", questions[0]):
         return None
     a, b = nums[0][0], nums[1][0]
     if a <= 0 or b <= 0:
         return None
     tt = a * b / (a + b)
     return Result("work_together", [tt], "t/%s + t/%s = 1" % (show(a), show(b)),
-                  "one takes %s and the other %s %ss; together t/%s + t/%s = 1, so t = %s %ss" % (show(a), show(b), norm(units[0]), show(a), show(b), show(tt), norm(units[0])))
+                  "one takes %s and the other %s %ss; together t/%s + t/%s = 1, so t = %s %ss" % (show(a), show(b), units[0], show(a), show(b), show_exact(tt), units[0]))
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -228,11 +257,11 @@ def percent_change(problem):
     factor = Fraction(100 + (r if up else -r), 100)
     if factor <= 0:
         return None
-    x = P / factor
-    xr = Fraction(round(x * 100), 100)
+    x = P / factor                                 # exact; the nearest cent is only for the reading
     f = show(factor)
-    return Result("percent_change", [xr], "%sx = %s" % (f, show(P)),
-                  "%s%% %s the old value to give %s: %sx = %s, so x = %s" % (show(r), "added to" if up else "taken off", show(P), f, show(P), show(xr)))
+    money = other[0][1] or "$" in problem
+    return Result("percent_change", [x], "%sx = %s" % (f, show(P)),
+                  "%s%% %s the old value to give %s: %sx = %s, so x = %s" % (show(r), "added to" if up else "taken off", show(P), f, show(P), show_answer(x, money)))
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -307,7 +336,7 @@ def solve(problem):
 
 
 def answer_text(r):
-    return " and ".join(show(v) for v in r.values)
+    return " and ".join(show_exact(v) for v in r.values)
 
 
 if __name__ == "__main__":

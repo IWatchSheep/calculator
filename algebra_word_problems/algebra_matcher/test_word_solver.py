@@ -26,6 +26,7 @@ HAND_ANSWERS = {
     "A store buys a lamp and adds 40% to sell it for $70. What did the store pay?": [50],
     "Four odd numbers in a row sum to 96. List them.": [21, 23, 25, 27],
     "One printer finishes a job in 4 hours and another in 12 hours. Running both, how long does the job take?": [3],
+    "Tom paints a fence alone in 6 hours, Sue in 3. If they team up, how long does it take?": [2],
     "A TV is marked down 25% to $450. What was the original price?": [600],
     "Rent went up 5% to $1,260 a month. What was the old rent?": [1200],
     "If 3 kg of apples cost $7.50, how much do 8 kg cost?": [20],
@@ -59,6 +60,8 @@ class Families(unittest.TestCase):
 
     def test_work_together(self):
         self.assertEqual(answers("Elena can clean the house in 4 hours. Vera can do it in 6 hours. How long will it take them working together?"), values(Fraction(12, 5)))
+        # "alone" describes the separate times; the question asks for the time together
+        self.assertEqual(answers("Tom paints a fence alone in 6 hours, Sue in 3. If they team up, how long does it take?"), values(2))
         self.assertIsNone(answers("Tara and Joe together mow a lawn in 4 hours. Tara alone takes 6 hours. How long would Joe take alone?"))
         self.assertIsNone(answers("Working together, two gardeners weed a park in 6 hours. One alone would need 10 hours. How long would the other need alone?"))
         self.assertIsNone(answers("A tap fills a tank in 5 hours but a leak empties it in 8 hours. How long to fill it with both going?"))
