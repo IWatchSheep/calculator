@@ -162,7 +162,7 @@ Keys look like `math/<area>/<operator>`, `geometry/geometry/<operator>` and
 
 ## Algebra word problems (work in progress)
 
-Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. This part is **not wired into the calculator window yet**: the folders, the solver and the tests exist. The next step (see *What is left*) is the operator that takes pasted text and uses them.
+Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram. The row is not placed in the calculator yet, and = does not call `compute()`. The operator that takes pasted text is also not built. Both are under *What is left*.
 
 > Reviewed. The steps under *How a problem travels* and the decisions under *Decisions* are the ones to follow. A family answers only when its wording matches, every number has a role, and the answer passes its checks. Otherwise it declines. A decline is safe. A wrong number is a failure.
 
@@ -230,7 +230,7 @@ Read these at the start of every session. Update them every time a batch is fini
 
 - **The solver covers 337 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 635 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
 - **The operator is not built.** Text pasted in the Templates box should be split into word boxes and number boxes, matched to a family, and answered with the reading the solver already produces. When no family is sure, it falls back to the trained matcher. The open window decisions are in `algebra_word_problems/chess_test_results.txt`, section 7.4.
-- The row files are laid out, and nothing in the window loads them yet.
+- The row files are laid out. Nothing in the window places a row yet, and = does not call `compute()`. A problem can be opened from Operators only to see its diagram.
 
 ### Decisions
 
