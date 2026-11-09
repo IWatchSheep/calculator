@@ -1,0 +1,14 @@
+I'll combine the generator into one standalone script, check that it reproduces the exact same 1,000 problems, and send it as a text file.
+
+I've put the whole generator into `algebra_problem_generator.txt`, one standalone Python script of about 1,500 lines. I ran it on its own in an empty folder, and it rebuilt the exact same `algebra_word_problems.txt`, byte for byte.
+
+To run it, rename it to `.py`. It only needs Python 3.9 or newer, nothing to install:
+
+`python3 algebra_problem_generator.py [output_file]`
+
+What will help most with the hand-written part:
+- **One function per problem type (216 in all).** Each function shows the exact formula that turns the problem's numbers into its equation. For example, `m_class_percent` does "55% are boys" → (100 − 55)/100 = 0.45 → `0.45n = girls`. Searching for a category name like "Mixture" or "Percent" finds its functions.
+- **Answers are checked as they're made.** The helper functions `L`, `Q`, `RAT`, `S2` and `INEQ` plug each answer back into its equation before saving it, and throw away any numbers that don't work cleanly.
+- **The output is fixed but easy to change.** The random seed is fixed, so every run gives the same 1,000 problems. Changing the seed gives a new set. `TARGET` near the bottom sets how many to make.
+
+There's a short guide at the top of the file that explains how it's laid out. If they also want the separate script that re-checked all 1,000 answers, I can send that as a text file too.

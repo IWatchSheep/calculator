@@ -1,0 +1,61 @@
+Do the chess ideas help the algebra matcher?   (matcher: 216 types, trained on 69337 generated problems)
+Set A = 60 problems the matcher was tuned on (used only to choose the two weights).  Set B = 40 never-tuned problems (report only).
+
+Choosing the staged-number-fit weight on set A:
+  weight 0    top-1 48/60  top-3 58/60
+  weight 0.25 top-1 48/60  top-3 58/60
+  weight 0.5  top-1 47/60  top-3 58/60
+  weight 1    top-1 48/60  top-3 58/60
+  weight 2    top-1 48/60  top-3 58/60
+  weight 4    top-1 49/60  top-3 57/60
+  weight 8    top-1 48/60  top-3 53/60
+  chosen: 0  (best top-1 + top-3 on A; the smaller weight wins a tie)
+
+Choosing the archive weight on set A (each problem is tested against an archive of the OTHER 59):
+  weight 0    top-1 48/60  top-3 58/60
+  weight 0.25 top-1 48/60  top-3 58/60
+  weight 0.5  top-1 48/60  top-3 58/60
+  weight 1    top-1 48/60  top-3 58/60
+  weight 2    top-1 48/60  top-3 58/60
+  weight 4    top-1 48/60  top-3 58/60
+  weight 8    top-1 48/60  top-3 57/60
+  chosen: 0
+
+RESULT on the never-tuned set B (40 problems); the archive holds the 60 problems of set A:
+  1. plain matcher                               top-1  72.5%  top-3  90.0%  top-5  92.5%   confident picks: 18/19 right
+  2. + staged number fit (weight 0)              top-1  72.5%  top-3  90.0%  top-5  92.5%   confident picks: 18/19 right
+  3. + archive (weight 0)                        top-1  72.5%  top-3  90.0%  top-5  92.5%   confident picks: 18/19 right
+  4. + both                                      top-1  72.5%  top-3  90.0%  top-5  92.5%   confident picks: 18/19 right
+
+Same comparison on set A (set A was used to choose the weights, so this is NOT a fair test):
+  plain matcher                                  top-1  80.0%  top-3  96.7%  top-5  96.7%   confident picks: 29/31 right
+  + staged number fit                            top-1  80.0%  top-3  96.7%  top-5  96.7%   confident picks: 29/31 right
+  + archive (the other 59)                       top-1  80.0%  top-3  96.7%  top-5  96.7%   confident picks: 29/31 right
+
+Archive the other way round (archive = set B's 40, tested on set A's 60):
+  plain matcher                                  top-1  80.0%  top-3  96.7%  top-5  96.7%   confident picks: 29/31 right
+  + archive                                      top-1  80.0%  top-3  96.7%  top-5  96.7%   confident picks: 29/31 right
+
+All 100 problems, each against an archive of the other 99 (similar problems by the same author, so optimistic):
+  plain matcher                                  top-1  77.0%  top-3  94.0%  top-5  95.0%   confident picks: 47/50 right
+  + archive                                      top-1  77.0%  top-3  94.0%  top-5  95.0%   confident picks: 47/50 right
+  + staged number fit + archive                  top-1  77.0%  top-3  94.0%  top-5  95.0%   confident picks: 47/50 right
+
+For information only (NOT used to choose anything): every weight tried on set B, top-1 / top-3 of 40:
+  weight   staged number fit    archive of set A
+  0        29 / 36              29 / 36
+  0.25     29 / 36              28 / 36
+  0.5      30 / 37              28 / 36
+  1        31 / 37              28 / 36
+  2        31 / 39              29 / 36
+  4        31 / 38              28 / 36
+  8        31 / 37              27 / 36
+
+Mechanism check: archive that already contains each set-B problem (confirmed earlier), weight 4:
+  repeat wording answered from the archive       top-1  97.5%  top-3 100.0%  top-5 100.0%   confident picks: 34/34 right
+
+What happened to the plain matcher's misses in set B (rank of the right type, plain -> with both):
+  Five less than twice a number is 31. Find it.                           4 ->  4
+  One printer finishes a job in 4 hours and another in 12 hours. Running 12 -> 12
+  Rent went up 5% to $1,260 a month. What was the old rent?               6 ->  6
+  If 3 kg of apples cost $7.50, how much do 8 kg cost?                   19 -> 19

@@ -1,0 +1,65 @@
+claude in pycharm wrote: "- The weak spot stays. Matching a new wording to the right type is still the uncertain part, but the type's own templates give much better cues than the bare text file did. A low match score still means asking the user."
+
+claude replied:
+"
+Yes. You can't remove guessing completely, because people can word a problem in endless ways. But you can make it right much more often, and when it does have to fall back, it can show its reading instead of asking a question. Here are four ways, most useful first.
+
+**1. Try several types and keep the one that works.** Don't pick one type and hope. Take the top 3–5 candidate types, fit the problem's numbers into each type's equation, solve each one, and throw out results that make no sense:
+- The answer is negative or a fraction when it counts people, coins or tickets.
+- The equation can't be solved, or it doesn't use all the numbers in the problem.
+- The units don't match, like a "%" number placed where a speed should go.
+
+A wrong type usually gives a nonsense answer, so this filters out most mistakes. The generator already makes exactly these checks (that's what `L`, `Q`, `S2` and `INEQ` do), so the logic exists.
+
+**2. Train a small matcher on generated problems.** The generator can make as many labelled examples as you want: 100,000 problems, each tagged with its type, in thousands of wordings. Teaching a small text classifier to match a problem to its type from those examples is far more reliable than hand-written keyword rules. It can be tiny enough to ship inside the calculator and run offline. The more wordings each template has, the better it handles new phrasings, so adding more wording variants to the templates directly improves matching.
+
+**3. Use cues the text already gives.** These narrow the candidates cheaply before steps 1 and 2:
+- Units: mph, %, °, L, $.
+- Telling words: "together", "upstream", "consecutive", "ratio", "at least".
+- How many numbers the problem contains, and what it asks for ("how long", "how many of each", "find the angles").
+
+**4. Show what it understood instead of asking.** When it's still unsure, display its reading with the answer: "I read this as two pipes filling a tank: t/4 + t/6 = 1 → t = 2.4 hours." The user only steps in if that's wrong. It still involves the user, but it's quicker than a question, and most of the time they just read it and move on.
+
+If the calculator can go online, a language model could turn the wording straight into an equation and skip types altogether. For an offline, hard-coded calculator, 1 + 2 together are the real fix: the matcher suggests a few types, and solving each one weeds out the wrong ones.
+
+I can build the trickiest piece now: a script that turns the generator into a big set of labelled training problems, plus a test that measures how often a simple matcher picks the right type. That would give you a real accuracy number to improve against.
+"
+
+I wrote: "ok in python please."
+
+then claude made the algebra_matcher program
+
+then claude wrote:
+"
+I'll write it as one Python script that reads the generator, builds the training problems, trains a small matcher in plain Python (nothing to install, so it can ship with a calculator), and measures accuracy. To get an honest number, I'll also hand-write a test set in deliberately different wording, since problems from the generator itself would make the score look better than it is.
+
+On the 60 problems I tuned with: 80% first choice, 95% in the top 3. Now the honest check: 40 new problems written after tuning, which I won't adjust anything for.
+
+The matcher works. On problems worded in new ways, it picks the right problem type first about 72% of the time, and the right type is in its top 3 about 90% of the time. It's in `algebra_matcher.py`, plain Python with nothing to install, and `matcher_model.json` is the trained model (380 KB) that lets it predict without rebuilding.
+
+**Running it.** Put the script next to `algebra_problem_generator.txt` and run `python3 algebra_matcher.py all`. That makes about 69,000 labelled practice problems from the generator, trains the matcher and prints the scores; it takes about a minute. To try one problem: `python3 algebra_matcher.py predict "your problem"`.
+
+**What it does.**
+- It turns everyday wording into the words the templates use, through a synonym table you can edit ("triple" → three times, "in a row" → consecutive, "team up" → together).
+- It replaces numbers, money amounts, percents and names with placeholders, so only the wording matters.
+- It ranks all 216 types and gives each a confidence from 0 to 1.
+
+**The scores:**
+
+| Test | Right type first | In top 3 | In top 5 |
+|---|---|---|---|
+| Generator's own wording | 100% | 100% | 100% |
+| 60 new wordings I tuned with | 80% | 97% | 97% |
+| **40 new wordings never tuned on** | **72.5%** | **90%** | **92.5%** |
+
+The 100% only shows it learned the templates. The bold row is the real number. Before my changes, the top 5 caught 87% of the tuning set.
+
+**How the calculator should use it.** When confidence is 0.8 or higher, the first choice was right 94% of the time; that happened for about half the problems. Below 0.8, try the top 3–5 types: fit the numbers into each one's equation, and keep the first answer that makes sense (positive, a whole number when counting things, uses every number in the problem). Show the equation it used, so the user can spot a wrong reading. The script prints "confident" or "unsure" to match.
+
+**Limits:**
+- Both test sets were written by me, the same author as the templates. Wording from real users will probably score somewhat lower.
+- Some types have equations that differ only by a sign, such as two workers together versus one pipe filling while another drains. Both give a believable answer, so checking answers won't catch a wrong pick. I added a rule for the draining case: those types are only chosen when the problem mentions draining, leaking or emptying.
+- The biggest remaining gap is short number puzzles like "Five less than twice a number is 31". Those are better handled by a small parser that reads them directly ("less than" → subtract, "twice" → ×2) than by this matcher.
+
+To make it better over time, add phrasings you see in real use to the `SYNONYMS` table or to the templates, then run `all` again. The scores will show whether the change helped.
+"

@@ -1,0 +1,221 @@
+FORMING CHESS TEST RESULTS (Python port)
+Run on 2026-11-09 for the project in C:\Users\I_wat\PycharmProjects\calculator
+Chess program tested: python_version_of_rust_chess (Python 3 port of forming_chess-main / forming_chess 0.2.0)
+Why it was tested: same question as the Rust report (chess_test_results.txt one folder up): whether the archive /
+four lists / 20 templates design can help pick the right algebra word problem — and whether the Python port
+matches the Rust program.
+
+CONTENTS
+  1. Summary of the results
+  2. Unit tests (Python)
+  3. King and pawn against king: solve + independent check
+  4. The 20 strategies, found with the archives
+  5. Lists 3 and 4 built from archives (examples)
+  6. The algebra word problem file and a matching experiment
+  7. What I learned (Python vs Rust, and the algebra transfer)
+  8. How to run all of this again
+  Raw program output is kept in raw_outputs\ next to this file.
+
+====================================================================================================
+1. SUMMARY OF THE RESULTS
+====================================================================================================
+
+ - Unit tests: all 20 Python tests written for the port pass (7 Lists 1-2 / capture / history, 5 basic index/KPK,
+   6 extra index/proof/bank tests, 4 move-generation / perft). About 6.6 seconds.
+ - Correctness against the Rust binary (same machine, same day):
+     * Drill seed 1, first five starts: identical keys.
+     * Drill seed 1, 100 games: identical result counts (34 pawn-side wins, 4 draws at a goal, 62 draws by rule)
+       and an identical index (861 positions, 58 proven wins, 7 proven draws; every node key and status matched).
+     * Independent retrograde solution of KPK: identical to Rust verify_kpk —
+       165,676 positions, 111,282 wins for the pawn side, 54,394 draws.
+ - King and pawn against king (KPK) full drill (1,400,000 games) was started in this folder's game_files_kpk\.
+   Python steady-state speed after optimising the port is about 18 ms/game on this machine (~7–8 hours for
+   1.4M games), versus about 8 minutes for the Rust release build on this machine. The port is slower; the
+   answers match. (An earlier note of ~40 minutes mixed the drill with other work running at the same time.)
+   BEGIN_KPK_SECTION marks the live solve block; run `python finalize_report.py` after the drill finishes to
+   fill the proven counts, verify_kpk line, probe lines, strategy tally and List 3/4 examples from the archive.
+ - Algebra matching experiment: same file and method as the Rust report (see part 6); the chess language does
+   not change those numbers. The Python chess port does not replace the algebra matcher.
+
+====================================================================================================
+2. UNIT TESTS (Python)
+====================================================================================================
+About 6.6 s. Result: 20 passed, 0 failed.
+
+  tests/test_lists12.py
+    test_starting_list1 ... ok
+    test_list1_never_uses_45_or_75 ... ok
+    test_central_pawn_break_completes ... ok
+    test_promotion_template ... ok
+    test_capture_examples ... ok          (all 8 Step 14.3 examples)
+    test_list2_only_on_turn ... ok
+    test_history_files ... ok
+  tests/test_index_basic.py
+    test_empty_index_lists ... ok
+    test_kpk_key_set_sizes ... ok         (331352 / 165676)
+    test_mirror_shares_entry ... ok
+    test_promotion_goal_win_and_draw ... ok
+    test_hand_made_proof_rules ... ok
+  tests/test_index_more.py
+    test_middlegame_key_is_exact_and_never_similar ... ok
+    test_promotion_goals ... ok
+    test_drill_starts_and_seed ... ok
+    test_list3_order_pawn_side ... ok
+    test_bank_selection_changes_counts_not_proofs ... ok
+    test_short_index_line_is_an_error ... ok
+  tests/test_perft.py
+    test_start_position_counts ... ok     (depths 1-4)
+    test_kiwipete ... ok
+    test_endgame_and_promotion_positions ... ok
+    (depth 5: set PERFT5=1; matches 4,865,609)
+
+  Side-by-side with Rust cargo test --release on the same day: Rust lists12 (7) and perft (4) all ok; the Python
+  capture examples and start List 1 match those Rust tests exactly.
+
+====================================================================================================
+BEGIN_KPK_SECTION
+3. KING AND PAWN AGAINST KING (KPK): THE SOLUTION (Python)
+====================================================================================================
+
+How it is / was run
+  python main.py --dir game_files_kpk drill 1 1400000
+  python verify_kpk.py 0                         # retrograde truth only
+  python verify_kpk.py 1400000 game_files_kpk    # after the drill
+  python probe_kpk.py game_files_kpk
+  python finalize_report.py                      # refresh this section from raw_outputs\
+
+Independent retrograde solution (Python verify_kpk.py 0) — matches Rust verify_kpk:
+  true: 165676 positions, 111282 wins for the pawn side, 54394 draws  (68.4s)
+
+Correctness checkpoint before the long drill (Python vs Rust, seed 1, 100 games):
+  Done: 100 games (34 pawn-side wins, 4 draws at a goal, 62 draws by rule).
+  Index: 861 positions, 58 proven wins, 7 proven draws.
+  Index node keys + statuses: identical to the Rust run in %TEMP%\fc_rust_cmp.
+
+Long drill status (seed 1, continuing in game_files_kpk\; progress is appended to raw_outputs\drill_1400000.txt)
+  Recovered 7,000 games from the first partial run, then resumed.
+  Early resumed lines (this batch's own counter, not total games):
+    1000 games: 22984 positions, 7087 proven wins, 479 proven draws
+    5000 games: 26061 positions, 10189 proven wins, 689 proven draws
+  Steady rate on this machine after port optimisations: about 18 ms/game (~7–8 hours for 1.4M).
+  When the drill prints "Done: 1400000 games..." run:
+    python finalize_report.py
+  That writes verify / probe / strategy tally / list examples into raw_outputs\ and replaces this section.
+
+Expected end state (same as the Rust report, if the port stays correct through the full drill):
+  KPK-only: 165676 positions, 111282 proven wins, 54394 proven draws, 0 unproven, wrong 0 on verify_kpk.
+  Stored index also holds post-promotion KQK/KRK positions, so total stored nodes is larger than 165676.
+
+END_KPK_SECTION
+
+====================================================================================================
+4. THE 20 STRATEGIES, FOUND WITH THE ARCHIVES
+====================================================================================================
+
+The 20 templates are identical to the Rust port (strategies.py ← strategies.rs / rules.txt Step 14.4).
+
+   1 Central Pawn Occupation      6 Opposite-Side Castling Attack   11 Isolated-Pawn Attack     16 Discovered Attack
+   2 Central Pawn Break           7 Fianchetto                      12 Backward-Pawn Pressure   17 Fork
+   3 Kingside Pawn Storm          8 Open-File Control               13 Knight Outpost           18 Skewer
+   4 Queenside Minority Attack    9 Seventh-Rank Invasion           14 Bishop Pair              19 Major-Piece Battery
+   5 King Shelter                10 Passed-Pawn Advance             15 Pin                      20 Promotion
+
+For this Python report:
+  A. KPK drill archive in game_files_kpk\ (built by the long drill above).
+     After the drill finishes, `python tally_strategies.py game_files_kpk` writes raw_outputs\strategy_tally.txt
+     (same table shape as the Rust chess_probe archive tally). finalize_report.py pastes it into section 3.
+  B. Famous games: the Rust report used chess_experiments\famous_games.txt and chess_probe. Those tools are not
+     re-run here; the Python port's templates are the same code path, and the Rust report already showed all 20
+     strategies at completion when famous games are combined with KPK.
+
+KPK-only, the Rust report found 13 of 20 strategies in the drill archive; the Python tally after the full drill
+should agree on which templates fire (Promotion / Passed-Pawn Advance dominate).
+
+====================================================================================================
+5. LISTS 3 AND 4 BUILT FROM ARCHIVES (examples)
+====================================================================================================
+
+Example 1. Empty archive, standard start (checked in Python unit tests and list_examples.py)
+  List 1 - Forming strategies for White:   30 Central Pawn Occupation,  30 King Shelter
+  List 2 - Captures: none
+  List 3 - every one of the 20 legal moves "never tried"
+  List 4 - empty
+
+Example 2–4 (famous-game middlegame rows and solved KPK presets)
+  After the KPK drill finishes, `python list_examples.py game_files_kpk` prints List 1/3/4 for:
+    empty start, kpk-win, kpk-draw, kpk-black
+  Those lines are folded into section 3 by finalize_report.py. Expected shape (from the Rust report / identical
+  100-game checkpoint behaviour):
+    kpk-win:  Kc6 proven win in N ... ; draws / never-tried as the rules say
+    kpk-draw: Kg5 / Kg6 proven draw once the closing rule has fired
+    kpk-black: Kc3 proven win for the pawn side (Black), etc.
+
+====================================================================================================
+6. THE ALGEBRA WORD PROBLEM FILE AND A MATCHING EXPERIMENT
+====================================================================================================
+
+Unchanged from the Rust report (chess_test_results.txt in algebra_word_problems\). The matcher is
+chess_experiments\algebra_match_experiment.py; the problem file lives at
+algebra_word_problems\algebra_word_problems.txt (1,000 problems, 55 categories, 327 distinct wordings).
+
+Summary of that experiment (same numbers as the Rust report):
+  A) same wording may be in the archive: category 99.1%, equation shape 92.0%
+  B) exact wording NOT in the archive: category 50.4%, shape 22.3%; most confident 25% ~85.6% category
+  B2) known type, new wording: both category+shape 47.9%; most confident 25% type-right 92.9%
+
+The Python chess port does not change these figures. What transfers to algebra is still the design (normalized
+key, archive, proof-by-check, four lists), not the chess move generator.
+
+====================================================================================================
+7. WHAT I LEARNED (PYTHON VS RUST, AND THE ALGEBRA TRANSFER)
+====================================================================================================
+
+7.1 Python port fidelity
+  - board / strategies / exchange / evaluate / history / normalize / index / lists34 / archive / drill / main
+    are a line-faithful port of the Rust modules. No third-party chess library.
+  - On seed-1 / 100 drill games the entire position index matched Rust byte-for-key and status-for-status.
+  - verify_kpk retrograde truth matches Rust exactly (111282 / 54394).
+  - Move field `from` is `from_` in Python (keyword). Index file format remains FORMING-CHESS-INDEX 2.
+
+7.2 Speed
+  - Rust release drill: about 8 minutes for 1.4M games on this machine (~0.3 ms/game).
+  - Python after optimisations (early-out attacked_by, occupied-square move gen, skip castling fixups when
+    castling==0, cached KPK start list): about 18 ms/game on this machine.
+  - So a full 1.4M solve in Python is hours, not minutes. That is language/runtime cost, not a wrong proof.
+
+7.3 Algebra transfer (same proposal as the Rust report, part 7)
+  - Keep the four-list / archive / proof-by-substitution design; implement the algebra operator in Python inside
+    the calculator. Do not reuse the chess board code as a library for word problems.
+  - Exact-wording archive hits are strong; new wordings need better cues than plain TF-IDF alone.
+
+====================================================================================================
+8. HOW TO RUN ALL OF THIS AGAIN
+====================================================================================================
+
+All commands from
+  C:\Users\I_wat\PycharmProjects\calculator\algebra_word_problems\rust_chess\python_version_of_rust_chess
+(Windows, Python 3). The big archive under game_files_kpk\ is local working data (hundreds of MB); it is not
+meant for git.
+
+  1. Unit tests
+       python tests\test_lists12.py
+       python tests\test_index_basic.py
+       python tests\test_index_more.py
+       python tests\test_perft.py
+  2. Solve KPK (resume-safe via ai_learning\drill_progress.txt)
+       python main.py --dir game_files_kpk drill 1 1400000
+  3. Independent check + probe + tallies
+       python verify_kpk.py 0
+       python verify_kpk.py 1400000 game_files_kpk
+       python probe_kpk.py game_files_kpk
+       python tally_strategies.py game_files_kpk
+       python list_examples.py game_files_kpk
+       python finalize_report.py
+  4. Algebra matcher (from algebra_word_problems\)
+       python chess_experiments\algebra_match_experiment.py
+     (point the script at algebra_word_problems\algebra_word_problems.txt if the path inside it is stale)
+
+Compare with the Rust sibling:
+  ..\forming_chess-main\   and   ..\..\chess_test_results.txt
+
+Files: raw_outputs\ holds the unedited output of the runs above.

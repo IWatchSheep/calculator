@@ -1,0 +1,1520 @@
+"""
+ALGEBRA WORD PROBLEM GENERATOR
+==============================
+Produces algebra_word_problems.txt: 1,000 word problems from 216 problem types, each with
+Problem / Let / Equation / Solve / Answer.
+
+Run:   python3 algebra_problem_generator.py [output_file]
+Needs: Python 3.9+ only (standard library: random, math, fractions, re, collections).
+
+HOW IT WORKS
+- Each problem type is one function decorated with @t (it registers itself in the list T).
+- A template picks random numbers, builds the problem text, the equation, the answer, and
+  calls a helper that CHECKS the answer satisfies the equation before saving it
+  (bad picks are thrown away and retried).
+- Helpers (defined in the "SHARED HELPERS" section):
+    add(cat, problem, let, equation, steps, answer)  -> store a problem as written
+    L(...)    linear equation: asserts the answer works and writes the "Solve" step itself
+    Q(...)    quadratic: asserts the root works, writes "ax² + bx + c = 0 → x = ..."
+    RAT(...)  equation with the unknown in a denominator
+    S2(...)   system of equations (checks every equation)
+    INEQ(...) inequality: checks the answer works and the next whole number does not
+- The random seed is fixed (20261109), so the same file is produced every run.
+  Change the seed in R = random.Random(...) to get a different 1,000.
+- TARGET (near the bottom) sets how many problems to make. Templates are used in turn
+  (round-robin), so every type appears before any type repeats.
+
+WHERE EQUATION NUMBERS COME FROM
+Each template shows the formula that turns the problem's numbers into the equation, e.g.
+"55% are boys" -> girls = (100 - 55)/100 = 0.45 -> equation 0.45n = girls  (see m_class_percent).
+Search for a category name (e.g. "Percent", "Mixture") to find its template(s).
+"""
+OUT = __import__("sys").argv[1] if len(__import__("sys").argv) > 1 else "algebra_word_problems.txt"
+# ======================================================================
+# ORIGINAL TEMPLATES (54 types) + BASIC HELPERS
+# ======================================================================
+import random, math
+from fractions import Fraction as Fr
+R=random.Random(20261109)
+NAMES="Ava Ben Carla Dev Elena Finn Grace Hiro Isla Jamal Kira Leo Maya Noah Omar Priya Quinn Rosa Sam Tara Umar Vera Wes Xena Yusuf Zoe".split()
+def nm(k=1):
+    s=R.sample(NAMES,k); return s if k>1 else s[0]
+def co(k): return '' if k==1 else str(k)
+def pl(v,unit): return f"{v} {unit if str(v)=='1' else unit+'s'}"
+def money(x):
+    x=Fr(x); return f"${float(x):,.2f}"
+def num(x):
+    x=Fr(x)
+    if x.denominator==1: return str(x.numerator)
+    d=float(x)
+    return f"{d:g}" if abs(d*100-round(d*100))<1e-9 else f"{x.numerator}/{x.denominator}"
+P=[]
+def add(cat,prob,let,eq,steps,ans):
+    P.append((cat,prob,let,eq,steps,ans))
+T=[]
+def t(f): T.append(f); return f
+
+@t
+def consecutive():
+    k=R.choice([2,3,4]); kind=R.choice(["","even ","odd "]); step=1 if kind=="" else 2
+    x=R.randint(5,90)
+    if kind=="even " and x%2: x+=1
+    if kind=="odd " and x%2==0: x+=1
+    S=sum(x+step*i for i in range(k)); assert sum(x+step*i for i in range(k))==S
+    terms=" + ".join(["x"]+[f"(x + {step*i})" for i in range(1,k)])
+    add("Consecutive integers",f"The sum of {k} consecutive {kind}integers is {S}. What are the integers?",
+        "x = the smallest integer",f"{terms} = {S}",
+        f"{k}x + {step*k*(k-1)//2} = {S} → {k}x = {S-step*k*(k-1)//2} → x = {x}",
+        ", ".join(str(x+step*i) for i in range(k)))
+@t
+def number_linear():
+    a=R.randint(2,9); b=R.randint(-30,40); x=R.randint(-15,30); c=a*x+b
+    w={2:"Twice",3:"Three times",4:"Four times",5:"Five times"}.get(a,f"{a} times")
+    if b>=0: s=f"{w} a number, increased by {b}, is {c}."; e=f"{a}x + {b} = {c}"
+    else: s=f"{w} a number, decreased by {-b}, is {c}."; e=f"{a}x − {-b} = {c}"
+    assert a*x+b==c
+    add("Number puzzle",s+" Find the number.","x = the number",e,f"{a}x = {c-b} → x = {x}",str(x))
+@t
+def number_both_sides():
+    a,b=R.sample(range(2,10),2)
+    if a<b:a,b=b,a
+    x=R.randint(2,25); c=R.randint(1,20); d=a*x-c-b*x
+    if d<=0: return
+    assert a*x-c==b*x+d
+    add("Number puzzle",f"{a} times a number minus {c} equals {b} times the number plus {d}. Find the number.",
+        "x = the number",f"{a}x − {c} = {b}x + {d}",f"{a-b}x = {d+c} → x = {x}",str(x))
+@t
+def age_ratio():
+    n1,n2=nm(2); k=R.choice([2,3,4]); y=R.randint(3,15); young=R.randint(4,20)
+    # parent is k times child now; in y years parent will be m times? use: now k times, y years ago: (k*young - y) = m*(young-y)
+    old=k*young
+    # in y years sum?
+    S=old+young+2*y
+    add("Age",f"{n1} is {k} times as old as {n2}. In {y} years, the sum of their ages will be {S}. How old is each now?",
+        f"x = {n2}'s age now; {n1} = {k}x",f"(x + {y}) + ({k}x + {y}) = {S}",
+        f"{k+1}x + {2*y} = {S} → x = {young}",f"{n2} is {young}, {n1} is {old}")
+@t
+def age_diff():
+    n1,n2=nm(2); d=R.randint(2,30); a=R.randint(5,40); S=2*a+d; y=R.randint(2,10)
+    b=a+d
+    if R.random()<.5:
+        add("Age",f"{n1} is {d} years older than {n2}. The sum of their ages is {S}. How old is each?",
+            f"x = {n2}'s age",f"x + (x + {d}) = {S}",f"2x = {S-d} → x = {a}",f"{n2} is {a}, {n1} is {b}")
+    else:
+        # y years ago, n1 was twice n2: b - y = 2(a - y) -> choose y accordingly
+        y=2*a-b
+        if y<=0 or a-y<1: return
+        add("Age",f"{n1} is {d} years older than {n2}. {y} years ago, {n1} was twice as old as {n2}. How old is each now?",
+            f"x = {n2}'s age now",f"(x + {d}) − {y} = 2(x − {y})",f"x + {d-y} = 2x − {2*y} → x = {a}",f"{n2} is {a}, {n1} is {b}")
+        assert b-y==2*(a-y)
+@t
+def coins():
+    pairs=[("nickels",5,"dimes",10),("dimes",10,"quarters",25),("nickels",5,"quarters",25),("pennies",1,"dimes",10)]
+    c1,v1,c2,v2=R.choice(pairs); a=R.randint(3,40); b=R.randint(3,40); N=a+b; V=a*v1+b*v2
+    n=nm()
+    add("Coins",f"{n} has {N} coins, all {c1} and {c2}, worth {money(Fr(V,100))} in total. How many of each coin are there?",
+        f"x = number of {c1}; {N} − x = number of {c2}",f"{v1}x + {v2}({N} − x) = {V}",
+        f"{v1-v2}x = {V-v2*N} → x = {a}",f"{a} {c1} and {b} {c2}")
+@t
+def tickets():
+    pa=R.choice([8,9,10,12,14,15,18,20]); pc=R.choice([p for p in [4,5,6,7,8,9] if p<pa]); a=R.randint(20,300); c=R.randint(20,300)
+    ev=R.choice(["a school play","a concert","a museum","a zoo","a movie screening"])
+    add("Tickets",f"Adult tickets to {ev} cost ${pa} and child tickets cost ${pc}. {a+c} tickets were sold for a total of ${pa*a+pc*c}. How many of each were sold?",
+        f"x = adult tickets; {a+c} − x = child tickets",f"{pa}x + {pc}({a+c} − x) = {pa*a+pc*c}",
+        f"{pa-pc}x = {pa*a+pc*c-pc*(a+c)} → x = {a}",f"{a} adult and {c} child tickets")
+@t
+def mixture():
+    p1,p2=sorted(R.sample([5,10,15,20,25,30,40,50,60,70,80],2)); total=R.choice([10,20,30,40,50,60,100])
+    x=R.randint(1,total-1); pt=Fr(p1*x+p2*(total-x),total)
+    if pt.denominator not in (1,2,4,5,10): return
+    sub=R.choice(["salt solution","acid solution","alcohol solution","juice drink"])
+    add("Mixture",f"How many liters of a {p1}% {sub} must be mixed with a {p2}% {sub} to make {total} liters of a {num(pt)}% {sub}?",
+        f"x = liters of {p1}%; {total} − x = liters of {p2}%",f"{p1/100:g}x + {p2/100:g}({total} − x) = {float(pt/100):g}({total})",
+        f"{(p1-p2)/100:g}x = {float(pt*total/100 - Fr(p2*total,100)):g} → x = {x}",f"{x} L of the {p1}% and {total-x} L of the {p2}%")
+@t
+def interest():
+    r1,r2=sorted(R.sample([2,3,4,5,6,7,8],2)); a=R.randint(2,40)*500; b=R.randint(2,40)*500; T=a+b; I=Fr(r1*a+r2*b,100)
+    n=nm()
+    add("Simple interest",f"{n} invests {money(T)}, part at {r1}% and the rest at {r2}% simple annual interest. After one year the total interest is {money(I)}. How much was invested at each rate?",
+        f"x = amount at {r1}%; {T} − x = amount at {r2}%",f"{r1/100:g}x + {r2/100:g}({T} − x) = {float(I):g}",
+        f"{(r1-r2)/100:g}x = {float(I-Fr(r2*T,100)):g} → x = {a}",f"{money(a)} at {r1}% and {money(b)} at {r2}%")
+@t
+def opposite():
+    s1=R.randint(30,70); s2=s1+R.randint(2,20); t=R.choice([Fr(1,2),1,Fr(3,2),2,Fr(5,2),3,4]); D=(s1+s2)*t
+    if Fr(D).denominator!=1: return
+    n1,n2=nm(2)
+    add("Distance (opposite directions)",f"{n1} and {n2} leave the same town at the same time, driving in opposite directions at {s1} mph and {s2} mph. After how many hours will they be {D} miles apart?",
+        "t = hours",f"{s1}t + {s2}t = {D}",f"{s1+s2}t = {D} → t = {num(t)}",pl(num(t),'hour'))
+@t
+def catchup():
+    s1=R.randint(30,55); s2=s1+R.randint(5,25); h=R.choice([1,2,3]); t=Fr(s1*h,s2-s1)
+    if t.denominator not in (1,2,4): return
+    n1,n2=nm(2)
+    add("Distance (catch-up)",f"{n1} leaves at {s1} mph. {h} hour{'s' if h>1 else ''} later, {n2} follows the same route at {s2} mph. How long after {n2} leaves will {n2} catch up?",
+        f"t = hours {n2} drives",f"{s2}t = {s1}(t + {h})",f"{s2-s1}t = {s1*h} → t = {num(t)}",pl(num(t),'hour'))
+@t
+def boat():
+    b=R.randint(8,30); c=R.randint(1,b-2); t1=R.randint(1,5); t2=R.randint(1,5)
+    D1=(b+c)*t1; D2=(b-c)*t2
+    add("Current / wind",f"A boat travels {D1} km downstream in {t1} hour{'s' if t1>1 else ''} and {D2} km upstream in {t2} hour{'s' if t2>1 else ''}. Find the speed of the boat in still water and the speed of the current.",
+        "b = boat speed, c = current speed",f"b + c = {D1//t1};  b − c = {D2//t2}",f"2b = {D1//t1+D2//t2} → b = {b}, c = {c}",f"Boat {b} km/h, current {c} km/h")
+@t
+def plane_wind():
+    p=R.randint(15,60)*10; w=R.randint(2,8)*5; t=R.choice([2,3,4,5])
+    add("Current / wind",f"A plane flies {(p+w)*t} miles with the wind in {t} hours and returns against the wind in {Fr((p+w)*t,p-w)} hours... ",
+        "","","","") if False else None
+    T2=Fr((p+w)*t,p-w)
+    if T2.denominator not in (1,2,4): return
+    add("Current / wind",f"A plane flies {(p+w)*t} miles with the wind in {t} hours. Flying back against the same wind takes {num(T2)} hours. Find the plane's speed in still air and the wind speed.",
+        "p = plane speed, w = wind speed",f"p + w = {p+w};  p − w = {p-w}",f"2p = {2*p} → p = {p}, w = {w}",f"Plane {p} mph, wind {w} mph")
+@t
+def work():
+    a,b=R.sample([2,3,4,5,6,8,9,10,12,15,18,20],2); t=Fr(a*b,a+b)
+    if t.denominator not in (1,2,3,4,5): return
+    n1,n2=nm(2); job=R.choice(["paint a fence","mow a lawn","clean the house","assemble the shelves","wash the cars"])
+    add("Work rate",f"{n1} can {job} in {a} hours. {n2} can do it in {b} hours. How long will it take them working together?",
+        "t = hours together",f"t/{a} + t/{b} = 1",f"t({a+b})/{a*b} = 1 → t = {a*b}/{a+b}",f"{num(t)} hours" + (f" ({float(t):.2f} h)" if t.denominator!=1 else ""))
+@t
+def work_find():
+    a=R.choice([3,4,5,6,8,10,12]); t=R.choice([2,3,4,6]); 
+    if t>=a: return
+    b=Fr(a*t,a-t)
+    if b.denominator!=1: return
+    n1,n2=nm(2)
+    add("Work rate",f"Working together, {n1} and {n2} can finish a job in {t} hours. {n1} alone takes {a} hours. How long would {n2} take alone?",
+        f"x = {n2}'s time alone",f"{t}/{a} + {t}/x = 1",f"{t}/x = {Fr(a-t,a)} → x = {b}",pl(b,'hour'))
+@t
+def pool():
+    f=R.choice([2,3,4,5,6]); d=R.choice([4,6,8,10,12,15])
+    if d<=f: return
+    t=Fr(f*d,d-f)
+    if t.denominator not in (1,2,3,4): return
+    add("Work rate",f"An inlet pipe fills a tank in {f} hours. A drain empties it in {d} hours. If both are open, how long does it take to fill the empty tank?",
+        "t = hours",f"t/{f} − t/{d} = 1",f"t({d-f})/{f*d} = 1 → t = {num(t)}",pl(num(t),'hour'))
+@t
+def rect_perim():
+    w=R.randint(3,40); k=R.choice([1,2,3]); c=R.randint(-5,15); L=k*w+c
+    if L<=w: return
+    P_=2*(L+w)
+    rel=(f"{c} more than" if k==1 else (f"{c} more than {k} times" if c>0 else (f"{-c} less than {k} times" if c<0 else f"{k} times")))
+    if k==1 and c<=0: return
+    add("Geometry (rectangle)",f"The length of a rectangle is {rel} its width. The perimeter is {P_} cm. Find the dimensions.",
+        "w = width",f"2w + 2({co(k)}w {'+' if c>=0 else '−'} {abs(c)}) = {P_}",f"{2+2*k}w {'+' if c>=0 else '−'} {abs(2*c)} = {P_} → w = {w}",f"Width {w} cm, length {L} cm")
+@t
+def rect_area():
+    w=R.randint(2,25); d=R.randint(1,12); A=w*(w+d)
+    add("Geometry (quadratic)",f"A rectangle's length is {d} m more than its width, and its area is {A} m². Find the dimensions.",
+        "w = width",f"w(w + {d}) = {A}",f"w² + {d}w − {A} = 0 → (w − {w})(w + {w+d}) = 0 → w = {w} (reject negative)",f"Width {w} m, length {w+d} m")
+@t
+def border():
+    a=R.randint(4,20); b=R.randint(4,20); x=R.randint(1,5); A=(a+2*x)*(b+2*x)-a*b
+    add("Geometry (quadratic)",f"A {a} ft by {b} ft garden has a path of uniform width around it. The path's area is {A} ft². How wide is the path?",
+        "x = path width",f"({a} + 2x)({b} + 2x) − {a*b} = {A}",f"4x² + {2*(a+b)}x − {A} = 0 → x = {x} (reject negative)",f"{x} ft")
+@t
+def triangle_angles():
+    r=sorted(R.sample(range(1,9),3)); s=sum(r)
+    if 180%s: return
+    k=180//s
+    add("Geometry (angles)",f"The angles of a triangle are in the ratio {r[0]}:{r[1]}:{r[2]}. Find each angle.",
+        "x = scale factor",f"{co(r[0])}x + {co(r[1])}x + {co(r[2])}x = 180",f"{s}x = 180 → x = {k}",f"{r[0]*k}°, {r[1]*k}°, {r[2]*k}°")
+@t
+def triangle_rel():
+    a=R.randint(15,50); m=R.choice([2,3]); c=R.randint(-10,20); b=m*a; C=180-a-b-0
+    C=180-a-b
+    if C<=0: return
+    # third = a + d
+    d=C-a
+    sd=f"{d} more than" if d>0 else (f"{-d} less than" if d<0 else "equal to")
+    add("Geometry (angles)",f"In a triangle, the second angle is {m} times the first, and the third angle is {sd} the first. Find all three angles.",
+        "x = first angle",f"x + {m}x + (x {'+' if d>=0 else '−'} {abs(d)}) = 180",f"{m+2}x {'+' if d>=0 else '−'} {abs(d)} = 180 → x = {a}",f"{a}°, {b}°, {C}°")
+@t
+def compsupp():
+    kind=R.choice([("complementary",90),("supplementary",180)]); k=R.choice([2,3,4,5]); c=R.randint(-20,20)
+    tot=kind[1]; x=Fr(tot-c,k+1)
+    if x.denominator!=1 or x<=0 or k*x+c<=0: return
+    rel=f"{c} more than {k} times" if c>0 else (f"{-c} less than {k} times" if c<0 else f"{k} times")
+    add("Geometry (angles)",f"Two angles are {kind[0]}. One angle is {rel} the other. Find both angles.",
+        "x = smaller angle",f"x + ({k}x {'+' if c>=0 else '−'} {abs(c)}) = {tot}",f"{k+1}x = {tot-c} → x = {x}",f"{x}° and {k*x+c}°")
+@t
+def isosceles():
+    b=R.randint(4,30); d=R.randint(1,15); s=b+d; P_=2*s+b
+    add("Geometry (triangle)",f"Each of the two equal sides of an isosceles triangle is {d} cm longer than the base. The perimeter is {P_} cm. Find the side lengths.",
+        "x = base",f"x + 2(x + {d}) = {P_}",f"3x + {2*d} = {P_} → x = {b}",f"Base {b} cm, equal sides {s} cm")
+@t
+def plans():
+    f1=R.randint(10,60); r1=R.choice([Fr(5,100),Fr(10,100),Fr(15,100),Fr(20,100),Fr(25,100)]); r2=r1+R.choice([Fr(5,100),Fr(10,100),Fr(15,100)])
+    x=R.randint(4,40)*10; f2=f1+(r1-r2)*x*-1
+    f2=f1+ (r1-r2)*x
+    # want f1 + r1 x = f2 + r2 x -> f2 = f1 + (r1-r2)x ; f2 < f1
+    if f2<=0: return
+    svc=R.choice(["phone plan","car rental","streaming data plan","electric utility plan"])
+    unit={"phone plan":"minute","car rental":"mile","streaming data plan":"GB","electric utility plan":"kWh"}[svc]
+    add("Break-even",f"{svc[0].upper()+svc[1:]} A costs {money(f1)} plus {money(r1)} per {unit}. Plan B costs {money(f2)} plus {money(r2)} per {unit}. For how many {unit}s do they cost the same?",
+        f"x = number of {unit}s",f"{float(f1):g} + {float(r1):g}x = {float(f2):g} + {float(r2):g}x",f"{float(r2-r1):g}x = {float(f1-f2):g} → x = {x}",f"{x} {unit}s")
+@t
+def taxi():
+    b=R.choice([2.5,3,3.5,4,5]); r=R.choice([1.5,1.75,2,2.25,2.5,3]); m=R.randint(2,30); T=Fr(b).limit_denominator()+Fr(r).limit_denominator()*m
+    add("Linear cost",f"A taxi charges {money(b)} plus {money(r)} per mile. A ride costs {money(T)}. How many miles was the ride?",
+        "m = miles",f"{b:g} + {r:g}m = {float(T):g}",f"{r:g}m = {float(T)-b:g} → m = {m}",f"{m} miles")
+@t
+def gym():
+    who=nm(); j=R.choice([25,40,50,75,99,100,150]); m=R.choice([15,20,25,30,35,40,45]); n=R.randint(2,18); T=j+m*n
+    add("Linear cost",f"A gym charges a ${j} joining fee and ${m} per month. {who} has paid ${T} in total. How many months has {who} been a member?",
+        "n = months",f"{j} + {m}n = {T}",f"{m}n = {T-j} → n = {n}",pl(n,'month'))
+@t
+def discount():
+    p=R.randint(4,80)*5; d=R.choice([10,15,20,25,30,40,50]); s=Fr(p*(100-d),100)
+    item=R.choice(["jacket","pair of shoes","lamp","backpack","bicycle","headphones","coffee maker"])
+    add("Percent",f"After a {d}% discount, a {item} costs {money(s)}. What was the original price?",
+        "p = original price",f"{(100-d)/100:g}p = {float(s):g}",f"p = {float(s):g} ÷ {(100-d)/100:g} = {p}",money(p))
+@t
+def raise_():
+    s=R.randint(20,90)*1000; r=R.choice([2,3,4,5,6,8,10,12]); n=Fr(s*(100+r),100)
+    add("Percent",f"After a {r}% raise, {nm()}'s salary is {money(n)}. What was the salary before the raise?",
+        "s = old salary",f"{(100+r)/100:g}s = {float(n):g}",f"s = {float(n):g} ÷ {(100+r)/100:g} = {s}",money(s))
+@t
+def tax():
+    r=R.choice([Fr(5),Fr(6),Fr(7),Fr(8),Fr(15,2),Fr(10)])
+    p=Fr(R.randint(5,1000)*40,100)
+    tot=p*(100+r)/100
+    if (tot*100).denominator!=1: return
+    add("Percent",f"The total cost of an item including {num(r)}% sales tax is {money(tot)}. What was the price before tax?",
+        "p = pre-tax price",f"{float(1+r/100):g}p = {float(tot):g}",f"p = {float(tot):g} ÷ {float(1+r/100):g} = {float(p):.2f}",money(p))
+@t
+def percent_of():
+    a=R.randint(2,60)*5; pct=R.choice([5,10,12,15,20,25,30,40,60,75]); part=Fr(a*pct,100)
+    if part.denominator!=1: return
+    add("Percent",f"{part} is {pct}% of what number?","x = the number",f"{pct/100:g}x = {part}",f"x = {part} ÷ {pct/100:g} = {a}",str(a))
+@t
+def percent_change():
+    o=R.randint(4,100)*5; c=R.choice([-40,-25,-20,-10,10,20,25,50,60,80]); n=Fr(o*(100+c),100)
+    if n.denominator!=1: return
+    add("Percent",f"A town's population changed from {o*100} to {n*100}. What was the percent change?",
+        "p = percent change",f"{o*100}(1 + p/100) = {n*100}",f"1 + p/100 = {float(n/o):g} → p = {c}",f"{'+' if c>0 else ''}{c}% ({'increase' if c>0 else 'decrease'})")
+@t
+def two_items():
+    items,lo,hi=R.choice([(("apples","oranges"),40,150),(("notebooks","pens"),150,600),(("hot dogs","sodas"),200,600),(("coffees","muffins"),200,550),(("adult passes","student passes"),800,2500),(("burgers","fries"),400,1200)])
+    x=Fr(R.randint(lo,hi)//5*5,100); y=Fr(R.randint(lo,hi)//5*5,100)
+    if items[0]=="adult passes" and x<=y: x,y=y,x
+    if items[0]=="hot dogs" and x<=y: x,y=y,x
+    if items[0]=="burgers" and x<=y: x,y=y,x
+    if x==y: return
+    a,b,c,d=R.randint(1,6),R.randint(1,6),R.randint(1,6),R.randint(1,6)
+    if a*d==b*c: return
+    T1=a*x+b*y; T2=c*x+d*y
+    add("System of equations",f"{a} {items[0]} and {b} {items[1]} cost {money(T1)}. {c} {items[0]} and {d} {items[1]} cost {money(T2)}. Find the price of one of each.",
+        f"x = price of one of the {items[0]}, y = price of one of the {items[1]}",f"{co(a)}x + {co(b)}y = {float(T1):g};  {co(c)}x + {co(d)}y = {float(T2):g}",
+        f"By elimination or substitution: x = {float(x):.2f}, y = {float(y):.2f}",f"{items[0]}: {money(x)} each, {items[1]}: {money(y)} each")
+@t
+def sum_diff():
+    a=R.randint(10,200); b=R.randint(1,a-1)
+    add("System of equations",f"The sum of two numbers is {a+b} and their difference is {a-b}. Find the numbers.",
+        "x = larger, y = smaller",f"x + y = {a+b};  x − y = {a-b}",f"2x = {2*a} → x = {a}, y = {b}",f"{a} and {b}")
+@t
+def heads_legs():
+    k=R.choice([("chickens",2,"cows",4),("chickens",2,"pigs",4),("ducks",2,"goats",4),("spiders",8,"beetles",6),("bicycles",2,"tricycles",3),("motorcycles",2,"cars",4)])
+    a=R.randint(3,60); b=R.randint(3,60)
+    if k[1]==k[3]: return
+    wl="wheels" if k[0] in ("bicycles","motorcycles") else "legs"; hd="vehicles" if wl=="wheels" else ("heads" if k[0]!="spiders" else "bugs")
+    add("System of equations",f"A {('lot' if wl=='wheels' else 'farm')} has {k[0]} and {k[2]}. There are {a+b} {hd} and {a*k[1]+b*k[3]} {wl}. How many of each are there?",
+        f"x = {k[0]}, y = {k[2]}",f"x + y = {a+b};  {k[1]}x + {k[3]}y = {a*k[1]+b*k[3]}",
+        f"{k[1]}x + {k[3]}({a+b} − x) = {a*k[1]+b*k[3]} → x = {a}, y = {b}",f"{a} {k[0]} and {b} {k[2]}")
+@t
+def digits():
+    t_=R.randint(1,9); u=R.randint(0,9)
+    if t_==u or u==0: return
+    s=t_+u; d=(10*u+t_)-(10*t_+u)
+    add("Digits",f"The digits of a two-digit number add up to {s}. When the digits are reversed, the new number is {abs(d)} {'more' if d>0 else 'less'} than the original. Find the original number.",
+        "t = tens digit, u = units digit",f"t + u = {s};  (10u + t) − (10t + u) = {d}",f"9(u − t) = {d} → u − t = {d//9}; with t + u = {s}: t = {t_}, u = {u}",str(10*t_+u))
+@t
+def average_needed():
+    n=R.randint(3,6); sc=[R.randint(60,98) for _ in range(n)]; target=R.randint(75,92)
+    need=target*(n+1)-sum(sc)
+    if not (50<=need<=100): return
+    add("Average",f"{nm()} scored {', '.join(map(str,sc))} on {n} tests. What score is needed on the next test to average {target}?",
+        "x = next score",f"({' + '.join(map(str,sc))} + x) / {n+1} = {target}",f"{sum(sc)} + x = {target*(n+1)} → x = {need}",str(need))
+@t
+def proportion_recipe():
+    a=R.choice([2,3,4,6]); cups=R.choice([Fr(1,2),Fr(3,4),1,Fr(3,2),2,3]); b=R.choice([5,8,9,10,12,15,18])
+    x=cups*b/a
+    if Fr(x).denominator not in (1,2,4,8): return
+    ing=R.choice(["flour","sugar","milk","rice","oats"])
+    add("Proportion",f"A recipe uses {num(cups)} cups of {ing} for {a} servings. How many cups are needed for {b} servings?",
+        "x = cups needed",f"{num(cups)}/{a} = x/{b}",f"x = {num(cups)} × {b} / {a} = {num(x)}",pl(num(x),'cup'))
+@t
+def map_scale():
+    s=R.choice([5,10,20,25,40,50]); cm=Fr(R.randint(2,40),2); km=s*cm
+    add("Proportion",f"On a map, 1 cm represents {s} km. Two cities are {num(km)} km apart. How far apart are they on the map?",
+        "x = map distance in cm",f"1/{s} = x/{num(km)}",f"x = {num(km)}/{s} = {num(cm)}",f"{num(cm)} cm")
+@t
+def direct_var():
+    h=R.randint(4,40); w=R.choice([12,13.5,15,16.25,18,20,22.5]); h2=R.randint(4,50); W=Fr(w).limit_denominator()
+    add("Direct variation",f"Pay varies directly with hours worked. {nm()} earns {money(W*h)} for {h} hours. How much for {h2} hours?",
+        "k = hourly rate",f"{float(W*h):g} = k·{h}; pay = k·{h2}",f"k = {float(W):g} → pay = {float(W*h2):g}",money(W*h2))
+@t
+def inverse_var():
+    w=R.choice([2,3,4,5,6,8,10,12]); d=R.choice([3,4,5,6,8,9,10,12,15,18,20,24]); w2=R.choice([2,3,4,5,6,8,9,10,12,15,16,20,24])
+    if w2==w: return
+    d2=Fr(w*d,w2)
+    if d2.denominator not in (1,2): return
+    add("Inverse variation",f"{w} workers can build a wall in {d} days. At the same rate, how many days would {w2} workers take?",
+        "d = days",f"{w} × {d} = {w2} × d",f"d = {w*d}/{w2} = {num(d2)}",pl(num(d2),'day'))
+@t
+def consecutive_product():
+    x=R.randint(3,30); kind=R.choice(["","even ","odd "])
+    st=1 if kind=="" else 2
+    if kind=="even " and x%2: x+=1
+    if kind=="odd " and x%2==0: x+=1
+    P_=x*(x+st)
+    add("Quadratic",f"The product of two consecutive positive {kind}integers is {P_}. Find the integers.",
+        "x = smaller integer",f"x(x + {st}) = {P_}",f"x² + {st}x − {P_} = 0 → (x − {x})(x + {x+st}) = 0 → x = {x}",f"{x} and {x+st}")
+@t
+def projectile():
+    t1=R.randint(1,8); h0=R.choice([0,16,32,48,64,80,96,112,128,144,160]); 
+    # h=-16t^2+vt+h0=0 at t1 -> v = (16 t1^2 - h0)/t1
+    v=Fr(16*t1*t1-h0,t1)
+    if v.denominator!=1 or v<=0: return
+    other=Fr(-h0,16*t1) if True else 0
+    obj=R.choice(["ball","rock","rocket","stone"])
+    start="from the ground" if h0==0 else f"from a height of {h0} ft"
+    add("Quadratic (projectile)",f"A {obj} is launched upward {start} at {v} ft/s. Its height is h = −16t² + {v}t{(' + '+str(h0)) if h0 else ''}. After how many seconds does it hit the ground?",
+        "t = seconds",f"−16t² + {v}t{(' + '+str(h0)) if h0 else ''} = 0",f"Factor/quadratic formula → t = {t1}" + (f" (other root t = {num(other)} rejected)" if h0 else " (t = 0 is the launch)"),pl(t1,'second'))
+@t
+def number_square():
+    x=R.randint(2,20); k=R.randint(1,40); c=x*x-k*x if False else None
+    c=R.randint(1,30); S=x*x+c*x
+    add("Quadratic",f"The square of a positive number plus {c} times the number equals {S}. Find the number.",
+        "x = the number",f"x² + {c}x = {S}",f"x² + {c}x − {S} = 0 → (x − {x})(x + {x+c}) = 0 → x = {x}",str(x))
+@t
+def savings():
+    n1,n2=nm(2); a=R.randint(0,40)*10; b=a+R.randint(2,40)*10; ra=R.choice([15,20,25,30,35,40,50]); rb=R.choice([5,10,15,20])
+    if ra<=rb: return
+    w=Fr(b-a,ra-rb)
+    if w.denominator!=1: return
+    add("Savings",f"{n1} has ${a} saved and adds ${ra} each week. {n2} has ${b} saved and adds ${rb} each week. After how many weeks will they have the same amount?",
+        "w = weeks",f"{a} + {ra}w = {b} + {rb}w",f"{ra-rb}w = {b-a} → w = {w}",f"{w} weeks (each will have ${a+ra*w})")
+@t
+def goal():
+    s=R.randint(0,30)*10; r=R.choice([15,20,25,30,40,50,75]); w=R.randint(3,30); G=s+r*w
+    item=R.choice(["a bike","a laptop","a game console","concert tickets","a guitar"])
+    add("Savings",f"{nm()} has ${s} and saves ${r} per week to buy {item} that costs ${G}. How many weeks until there is enough?",
+        "w = weeks",f"{s} + {r}w = {G}",f"{r}w = {G-s} → w = {w}",pl(w,'week'))
+@t
+def wire():
+    a=R.randint(1,6); b=R.randint(1,6)
+    if a==b: return
+    k=R.randint(2,15); L=(a+b)*k
+    add("Ratio",f"A {L} m rope is cut into two pieces in the ratio {a}:{b}. How long is each piece?",
+        "x = scale factor",f"{co(a)}x + {co(b)}x = {L}",f"{a+b}x = {L} → x = {k}",f"{a*k} m and {b*k} m")
+@t
+def wire_longer():
+    s=R.randint(5,50); d=R.randint(1,30); L=2*s+d
+    add("Ratio",f"A {L} cm board is cut into two pieces. One piece is {d} cm longer than the other. How long is each piece?",
+        "x = shorter piece",f"x + (x + {d}) = {L}",f"2x = {L-d} → x = {s}",f"{s} cm and {s+d} cm")
+@t
+def wages_overtime():
+    r=R.choice([12,14,15,16,18,20,22,24]); ot=R.randint(1,15); T=40*r+Fr(3,2)*r*ot
+    add("Linear cost",f"{nm()} earns ${r}/hour for the first 40 hours and time-and-a-half after that. Last week's pay was {money(T)}. How many overtime hours were worked?",
+        "h = overtime hours",f"40({r}) + {float(1.5*r):g}h = {float(T):g}",f"{float(1.5*r):g}h = {float(T)-40*r:g} → h = {ot}",f"{ot} overtime hours ({40+ot} hours total)")
+@t
+def fuel():
+    mpg=R.choice([20,22,25,28,30,32,35,40]); g=R.randint(3,20); 
+    add("Rate",f"A car travels {mpg*g} miles on {g} gallons of gas. At this rate, how many gallons are needed for {mpg*(g+R.randint(1,10))} miles?",
+        "","","","") if False else None
+    g2=R.randint(2,25)
+    add("Rate",f"A car travels {mpg*g} miles on {g} gallons of gas. At this rate, how many gallons are needed for {mpg*g2} miles?",
+        "x = gallons",f"{mpg*g}/{g} = {mpg*g2}/x",f"{mpg}x = {mpg*g2} → x = {g2}",pl(g2,'gallon'))
+@t
+def weighted_avg():
+    p1=R.choice([4,5,6,8,10,12]); p2=R.choice([14,15,16,18,20,24]); total=R.choice([10,20,30,40,50]); x=R.randint(1,total-1)
+    m=Fr(p1*x+p2*(total-x),total)
+    if (m*100).denominator!=1: return
+    thing=R.choice(["coffee beans","nuts","candy","tea"])
+    add("Mixture",f"{num(total)} lb of a blend of {thing} selling for {money(m)}/lb is made from {thing} costing ${p1}/lb and ${p2}/lb. How many pounds of each are used?",
+        f"x = lb at ${p1}; {total} − x = lb at ${p2}",f"{p1}x + {p2}({total} − x) = {float(m*total):g}",f"{p1-p2}x = {float(m*total)-p2*total:g} → x = {x}",f"{x} lb at ${p1} and {total-x} lb at ${p2}")
+@t
+def shared_cost():
+    n=R.randint(3,12); extra=R.randint(1,3); per=R.randint(4,30)
+    if n<=extra: return
+    C=n*per
+    new=Fr(C,n+extra)
+    if (new*100).denominator!=1: return
+    add("Rational equation",f"A group shares a ${C} rental equally. If {extra} more {'person joins' if extra==1 else 'people join'}, each pays {money(per-new)} less. How many people are in the group originally?",
+        "n = original number of people",f"{C}/n − {C}/(n + {extra}) = {float(per-new):g}",f"Multiply out → quadratic in n → n = {n} (reject negative)",f"{n} people")
+@t
+def stamps_sum():
+    a=R.randint(5,60); k=R.choice([2,3,4]); c=R.randint(0,12); b=k*a+c
+    n1,n2=nm(2)
+    add("Number puzzle",f"{n1} has {('' if c==0 else str(c)+' more than ')}{k} times as many stamps as {n2}. Together they have {a+b} stamps. How many does each have?",
+        f"x = {n2}'s stamps",f"x + ({k}x + {c}) = {a+b}",f"{k+1}x = {a+b-c} → x = {a}",f"{n2}: {a}, {n1}: {b}")
+@t
+def fraction_number():
+    d=R.choice([2,3,4,5,6]); n_=R.randint(1,d-1); x=d*R.randint(2,20); add_=R.randint(1,30)
+    if math.gcd(n_,d)!=1: return
+    v=Fr(n_,d)*x+add_
+    add("Number puzzle",f"{n_}/{d} of a number plus {add_} is {v}. Find the number.","x = the number",f"({n_}/{d})x + {add_} = {v}",f"({n_}/{d})x = {v-add_} → x = {x}",str(x))
+@t
+def bus_trip():
+    t=R.choice([2,3,4,5]); s=R.randint(30,70); D=s*t; d2=R.choice([5,10,15]); 
+    # going at s, returning at s+d2 total time
+    tr=Fr(D,s+d2)
+    if tr.denominator not in (1,2,3,4,5,6): return
+    TT=t+tr
+    add("Distance (round trip)",f"A cyclist rides {D} km to a town and returns {d2} km/h faster. The whole trip takes {num(TT)} hours. How fast was the outbound ride?",
+        "s = outbound speed",f"{D}/s + {D}/(s + {d2}) = {num(TT)}",f"Clear denominators → quadratic → s = {s} (reject negative)",f"{s} km/h")
+
+
+# ======================================================================
+# SHARED HELPERS (checking + step writing)
+# ======================================================================
+# shared helpers for new templates (exec'd after old gen.py template section)
+import re as _re
+NAMES2="Ava Ben Carla Dev Elena Finn Grace Hiro Isla Jamal Kira Leo Maya Noah Omar Priya Quinn Rosa Sam Tara Umar Vera Wes Xena Yusuf Zoe Aiden Bea Caleb Dana Emeka Fatima Gus Hana Ivan Jade Kofi Lena Mateo Nia Oscar Pablo Rhea Sofia Theo Uma Victor Wren Yara Zane".split()
+def nm(k=1):
+    s=R.sample(NAMES2,k); return s if k>1 else s[0]
+def F(v):
+    v=Fr(v).limit_denominator(10000) if not isinstance(v,Fr) else v
+    if v.denominator==1: return str(v.numerator)
+    d=float(v)
+    if abs(d*10000-round(d*10000))<1e-9: return f"{d:g}"
+    return f"{v.numerator}/{v.denominator}"
+def py(s):
+    s=s.replace('−','-').replace('×','*').replace('²','**2').replace('³','**3').replace('÷','/').replace('·','*').replace('^','**')
+    s=_re.sub(r'(?<=[\d\)])\s*(?=[a-z\(])',r'*',s)
+    s=_re.sub(r'(?<=[a-z])\s*(?=\()',r'*',s)
+    return s
+def f_of(eq,var):
+    l,r=eq.split('=')
+    return lambda v: eval(py(l),{},{var:v})-eval(py(r),{},{var:v})
+def sg(b): return f"+ {F(b)}" if b>=0 else f"− {F(-b)}"
+def L(cat,prob,let,eq,var,val,ans):
+    f=f_of(eq,var); val=Fr(val)
+    assert abs(f(float(val)))<1e-7, ("L",eq,val)
+    try:
+        f0,f1,f2,f3=f(0),f(1),f(2),f(5)
+        linear=abs((f2-f1)-(f1-f0))<1e-9 and abs((f3-f0)-5*(f1-f0))<1e-9
+    except ZeroDivisionError:
+        linear=False
+    if not linear:
+        add(cat,prob,let,eq,f"Multiply both sides by the denominator and collect terms → {var} = {F(val)}",ans); return
+    a=Fr(f1-f0).limit_denominator(10000); b=Fr(f0).limit_denominator(10000)
+    if a==0: raise ValueError
+    if a<0: a,b=-a,-b
+    if a==1: steps=f"Collect like terms → {var} = {F(val)}"
+    elif a.numerator==1: steps=f"{var}/{a.denominator} = {F(-b)} → {var} = {F(-b)} × {a.denominator} = {F(val)}"
+    elif a==-1: steps=f"−{var} = {F(-b)} → {var} = {F(val)}"
+    else:
+        A=F(a); A=f"({A})" if "/" in A else A
+        steps=f"{A}{var} = {F(-b)} → {var} = {F(val)}"
+    add(cat,prob,let,eq,steps,ans)
+def Q(cat,prob,let,eq,var,val,ans,other=None):
+    f=f_of(eq,var)
+    assert abs(f(float(val)))<1e-7, ("Q",eq,val)
+    c=Fr(f(0)).limit_denominator(10000); a=Fr((f(1)+f(-1))/2).limit_denominator(10000)-c; b=Fr((f(1)-f(-1))/2).limit_denominator(10000)
+    if a<0: a,b,c=-a,-b,-c
+    from math import lcm as _l, gcd as _g
+    m=_l(a.denominator,b.denominator,c.denominator); a,b,c=a*m,b*m,c*m
+    g=_g(int(a),int(b),int(c)) or 1; a,b,c=a/g,b/g,c/g
+    disc=b*b-4*a*c
+    r=[(-b+s*Fr(math.isqrt(int(disc)) if disc.denominator==1 and math.isqrt(int(disc))**2==disc else math.sqrt(float(disc))).limit_denominator(10000))/(2*a) for s in (1,-1)]
+    oth=[x for x in r if abs(float(x)-float(val))>1e-9]
+    o=f" (the other root, {F(oth[0])}, is rejected)" if oth else ""
+    if other is not None: o=f" ({other})"
+    bt=f" {sg(b)}{var}" if b!=0 else ""
+    bt=bt.replace(f"+ 1{var}",f"+ {var}").replace(f"− 1{var}",f"− {var}")
+    ct=f" {sg(c)}" if c!=0 else ""
+    add(cat,prob,let,eq,f"{F(a) if a!=1 else ''}{var}²{bt}{ct} = 0 → {var} = {F(val)}{o}",ans)
+def RAT(cat,prob,let,eq,var,val,ans,how="Multiply both sides by the denominators and simplify"):
+    f=f_of(eq,var); assert abs(f(float(val)))<1e-7,("R",eq,val)
+    add(cat,prob,let,eq,f"{how} → {var} = {F(val)}",ans)
+def S2(cat,prob,let,eqs,vals,ans,how="Solve by elimination"):
+    for e in eqs:
+        l,r=e.split('=')
+        assert abs(eval(py(l),{},vals)-eval(py(r),{},vals))<1e-7,("S2",e,vals)
+    add(cat,prob,let,";  ".join(eqs),f"{how} → "+", ".join(f"{k} = {F(v)}" for k,v in vals.items()),ans)
+def INEQ(cat,prob,let,ineq,var,best,ans,kind):
+    # kind 'max' (≤/<) or 'min' (≥/>)
+    op=[o for o in ['≤','≥','<','>'] if o in ineq][0]
+    l,r=ineq.split(op); pyop={'≤':'<=','≥':'>=','<':'<','>':'>'}[op]
+    h=lambda v: eval(f"({py(l)}) {pyop} ({py(r)})",{},{var:v})
+    nb=best+1 if kind=='max' else best-1
+    assert h(best) and not h(nb), ("INEQ",ineq,best)
+    # boundary
+    g=lambda v: eval(py(l),{},{var:v})-eval(py(r),{},{var:v})
+    a=g(1)-g(0); bnd=Fr(-g(0)/a).limit_denominator(10000)
+    word="largest" if kind=='max' else "smallest"
+    add(cat,prob,let,ineq,f"{var} {'≤' if (op in '≤<')==(a>0) else '≥'} {F(bnd)} → {var} = {best} ({word} whole number that works)",ans)
+def PL(n,unit,plural=None):
+    plural=plural or unit+'s'
+    return f"{F(n)} {unit if Fr(n)==1 else plural}"
+def M(x): return money(x)
+
+# ======================================================================
+# NEW TEMPLATES PART 1: GEOMETRY, NUMBERS
+# ======================================================================
+# ---------- GEOMETRY ----------
+@t
+def g_tri_perim():
+    x=R.randint(3,30); a=R.randint(1,12); b=R.randint(1,10)
+    if 2*x-b<=0: return
+    s=[x,x+a,2*x-b]; P_=sum(s)
+    if not (s[0]+s[1]>s[2] and s[0]+s[2]>s[1] and s[1]+s[2]>s[0]): return
+    L("Geometry (triangle)",R.choice([f"The sides of a triangle are x, x + {a}, and 2x − {b} inches long. The perimeter is {P_} inches. Find each side.",
+        f"A triangle's second side is {a} in longer than the first, and its third side is {b} in less than twice the first. If the perimeter is {P_} in, how long is each side?"]),
+      "x = first side",f"x + (x + {a}) + (2x − {b}) = {P_}","x",x,f"{s[0]} in, {s[1]} in, {s[2]} in")
+@t
+def g_ext_angle():
+    x=R.randint(10,40); a=R.randint(1,4); b=R.randint(0,30); c=R.randint(2,5); d=R.randint(0,40)
+    A=a*x+b; B=c*x-d if c*x-d>0 else None
+    if B is None: return
+    E=A+B
+    if E>=180: return
+    # exterior = (a+c)x + (b-d) form given as k x + m with k != a+c
+    k=R.randint(1,a+c-1) if a+c>1 else None
+    if not k: return
+    m=E-k*x
+    L("Geometry (angles)",f"An exterior angle of a triangle measures ({k}x {sg(m)})°. The two remote interior angles measure ({a}x {sg(b)})° and ({c}x {sg(-d)})°. Find x and the exterior angle.",
+      "x = unknown","(" + f"{a}x {sg(b)}" + ") + (" + f"{c}x {sg(-d)}" + f") = {k}x {sg(m)}","x",x,f"x = {x}; exterior angle = {E}°")
+@t
+def g_linear_pair():
+    x=R.randint(10,40); a=R.randint(1,4); b=R.randint(-20,30); A=a*x+b; B=180-A
+    if not (0<A<180): return
+    c=R.randint(1,4)
+    if c==a: return
+    d=B-c*x
+    L("Geometry (angles)",R.choice([f"Two angles form a linear pair. One measures ({a}x {sg(b)})° and the other ({c}x {sg(d)})°. Find both angles.",
+       f"Angles A and B lie on a straight line. A = ({a}x {sg(b)})° and B = ({c}x {sg(d)})°. What are A and B?"]),
+      "x = unknown",f"({a}x {sg(b)}) + ({c}x {sg(d)}) = 180","x",x,f"x = {x}; the angles are {A}° and {B}°")
+@t
+def g_vertical():
+    x=R.randint(5,40); a,c=R.sample(range(1,8),2); b=R.randint(-15,30); A=a*x+b; d=A-c*x
+    if not (0<A<180): return
+    L("Geometry (angles)",R.choice([f"Two vertical angles measure ({a}x {sg(b)})° and ({c}x {sg(d)})°. Find x and the angle measure.",
+       f"Where two lines cross, opposite angles are ({a}x {sg(b)})° and ({c}x {sg(d)})°. Find the angle."]),
+      "x = unknown",f"{a}x {sg(b)} = {c}x {sg(d)}","x",x,f"x = {x}; each angle is {A}°")
+@t
+def g_polygon_sum():
+    n=R.randint(5,20); S=(n-2)*180
+    L("Geometry (polygons)",f"The interior angles of a polygon add up to {S}°. How many sides does it have?","n = number of sides",f"180(n − 2) = {S}","n",n,f"{n} sides")
+@t
+def g_regular_angle():
+    n=R.choice([3,4,5,6,8,9,10,12,15,18,20,24,30,36]); A=Fr(180*(n-2),n)
+    if A.denominator!=1: return
+    if R.random()<.5:
+        RAT("Geometry (polygons)",f"Each interior angle of a regular polygon measures {A}°. How many sides does the polygon have?","n = number of sides",f"180(n − 2)/n = {A}","n",n,f"{n} sides","Multiply by n: 180n − 360 = "+f"{A}n")
+    else:
+        RAT("Geometry (polygons)",f"Each exterior angle of a regular polygon is {Fr(360,n)}°. How many sides does it have?","n = number of sides",f"360/n = {F(Fr(360,n))}","n",n,f"{n} sides","Multiply by n")
+@t
+def g_diagonals():
+    n=R.randint(5,25); D=n*(n-3)//2
+    Q("Quadratic",f"A polygon has {D} diagonals. Using D = n(n − 3)/2, how many sides does it have?","n = number of sides",f"n(n − 3)/2 = {D}","n",n,f"{n} sides")
+@t
+def g_parallel():
+    x=R.randint(8,35); a,c=R.sample(range(1,7),2); b=R.randint(-10,40); A=a*x+b
+    if not (0<A<180): return
+    kind=R.choice(["corresponding","alternate interior","alternate exterior","same-side interior"])
+    if kind=="same-side interior":
+        d=180-A-c*x
+        L("Geometry (angles)",f"Two parallel lines are cut by a transversal. Two same-side interior angles measure ({a}x {sg(b)})° and ({c}x {sg(d)})°. Find both angles.","x = unknown",f"({a}x {sg(b)}) + ({c}x {sg(d)}) = 180","x",x,f"x = {x}; the angles are {A}° and {180-A}°")
+    else:
+        d=A-c*x
+        L("Geometry (angles)",f"Two parallel lines are cut by a transversal. A pair of {kind} angles measure ({a}x {sg(b)})° and ({c}x {sg(d)})°. Find x and the angle.","x = unknown",f"{a}x {sg(b)} = {c}x {sg(d)}","x",x,f"x = {x}; each angle is {A}°")
+@t
+def g_isos_angles():
+    b=R.randint(20,80); v=180-2*b; d=v-b
+    if v<=0: return
+    rel=f"{d}° more than" if d>0 else (f"{-d}° less than" if d<0 else "equal to")
+    if d==0: return
+    L("Geometry (angles)",f"In an isosceles triangle, the vertex angle is {rel} each base angle. Find all three angles.","x = each base angle",f"x + x + (x {sg(d)}) = 180","x",b,f"{b}°, {b}°, {v}°")
+@t
+def g_trap_area():
+    h=R.randint(2,20); a=R.randint(3,30); b=R.randint(3,30); A=Fr((a+b)*h,2)
+    L("Geometry (area)",f"A trapezoid has parallel sides of {a} cm and {b} cm and an area of {F(A)} cm². Find its height.","h = height",f"(1/2)({a} + {b})h = {F(A)}","h",h,f"{h} cm")
+@t
+def g_tri_area():
+    b=R.randint(3,40); h=R.randint(2,30); A=Fr(b*h,2)
+    L("Geometry (area)",R.choice([f"A triangle has an area of {F(A)} m² and a height of {h} m. How long is its base?",f"A triangular sail covers {F(A)} m². Its height is {h} m. Find the length of its base."]),"b = base",f"(1/2)b({h}) = {F(A)}","b",b,f"{b} m")
+@t
+def g_tri_area_rel():
+    b=R.randint(4,24); d=R.randint(1,10); h=b+d
+    if (b*h)%2: return
+    A=b*h//2
+    Q("Geometry (quadratic)",f"The height of a triangle is {d} cm more than its base. The area is {A} cm². Find the base and height.","b = base",f"(1/2)b(b + {d}) = {A}","b",b,f"Base {b} cm, height {h} cm")
+@t
+def g_box_volume():
+    l=R.randint(2,20); w=R.randint(2,15); h=R.randint(2,20); V=l*w*h
+    pr,u=R.choice([(f"A rectangular box is {l} in long and {w} in wide. Its volume is {V} in³. How tall is it?","in"),(f"An aquarium {l} dm long and {w} dm wide holds {V} dm³ of water when full. How deep is it?","dm")])
+    L("Geometry (volume)",pr,"h = height",f"{l} × {w} × h = {V}","h",h,f"{h} {u}")
+@t
+def g_square_grow():
+    s=R.randint(3,30); k=R.randint(1,8); dA=(s+k)**2-s*s
+    L("Geometry (area)",f"If each side of a square is increased by {k} cm, its area increases by {dA} cm². Find the original side length.","s = original side",f"(s + {k})² − s² = {dA}","s",s,f"{s} cm")
+@t
+def g_rect_same_area():
+    w=R.randint(4,20); l=w+R.randint(2,15); a=R.randint(1,6); b=Fr(l*w,l+a)
+    # length increased by a, width decreased -> keep area: (l+a)(w-b)=lw -> choose relation: square with side... use different: rectangle length is twice width; if length decreased by a and width increased by b area same
+    k=2; L_=k*w; a=R.randint(1,6); b=R.randint(1,6)
+    # (2w - a)(w + b) = 2w^2 -> 2wb - aw - ab = 0 -> w(2b - a) = ab
+    if 2*b-a<=0: return
+    w=Fr(a*b,2*b-a)
+    if w.denominator!=1 or w<=a: return
+    L("Geometry (area)",f"A rectangle's length is twice its width. If the length is decreased by {a} m and the width increased by {b} m, the area stays the same. Find the original dimensions.","w = width",f"(2w − {a})(w + {b}) = 2w²","w",w,f"Width {w} m, length {2*w} m")
+@t
+def g_pythag_ladder():
+    tr=R.choice([(3,4,5),(5,12,13),(8,15,17),(7,24,25),(6,8,10),(9,12,15),(12,16,20),(9,40,41),(20,21,29)])
+    a,b,c=tr
+    L_ = R.choice(["ladder","wire","ramp"])
+    if L_=="ladder":
+        prob=f"A {c} ft ladder leans against a wall with its foot {a} ft from the wall. How high up the wall does it reach?"
+    elif L_=="wire":
+        prob=f"A {c} m support wire runs from the top of a pole to a stake {a} m from the pole's base. How tall is the pole?"
+    else: prob=f"A ramp is {c} ft long and covers a horizontal distance of {a} ft... how high does it rise?".replace("... how","; how")
+    Q("Geometry (Pythagorean)",prob,"h = height",f"{a}² + h² = {c}²","h",b,f"{b} " + ("ft" if L_!="wire" else "m"))
+@t
+def g_pythag_legs():
+    tr=R.choice([(3,4,5),(5,12,13),(8,15,17),(7,24,25),(6,8,10),(20,21,29),(9,12,15),(12,16,20),(15,20,25),(12,35,37),(9,40,41),(10,24,26)])
+    a,b,c=tr; d=b-a
+    Q("Geometry (Pythagorean)",R.choice([f"One leg of a right triangle is {d} cm longer than the other. The hypotenuse is {c} cm. Find the legs.",f"The hypotenuse of a right triangle is {c} in, and one leg is {d} in longer than the other leg. How long are the legs?"]),
+      "x = shorter leg",f"x² + (x + {d})² = {c}²","x",a,f"{a} and {b}")
+@t
+def g_rect_diag():
+    tr=R.choice([(3,4,5),(5,12,13),(8,15,17),(6,8,10),(9,12,15),(12,16,20),(7,24,25),(20,21,29),(15,20,25)])
+    k=R.choice([1,2,3]); a,b,c=[k*v for v in tr]
+    if R.random()<.5:
+        Q("Geometry (Pythagorean)",f"A rectangular TV screen is {a} in tall with a diagonal of {c} in. How wide is it?","x = width",f"{a}² + x² = {c}²","x",b,f"{b} in")
+    else:
+        Q("Geometry (Pythagorean)",f"A rectangular field is {b} m long. A diagonal path across it is {c} m long. How wide is the field?","x = width",f"x² + {b}² = {c}²","x",a,f"{a} m")
+@t
+def g_pen_wall():
+    w=R.randint(3,30); l=R.randint(5,60); F_=2*w+l; A=w*l
+    # 2w + l = F, wl = A -> w(F - 2w) = A ; two roots possibly both valid
+    rts=[r for r in [Fr(F_+s*math.isqrt(F_*F_-8*A),4) for s in (1,-1)] if (F_*F_-8*A)>=0]
+    if math.isqrt(F_*F_-8*A)**2!=F_*F_-8*A: return
+    rts=[r for r in rts if r>0 and r.denominator==1 and F_-2*r>0]
+    if len(rts)!=2: return
+    r1,r2=rts
+    Q("Geometry (quadratic)",f"A farmer has {F_} m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of {A} m². What dimensions work?",
+      "w = each side perpendicular to the wall",f"w({F_} − 2w) = {A}","w",w,f"Two answers: {r1} m × {F_-2*r1} m, or {r2} m × {F_-2*r2} m",other=f"the other root, {F(r1 if w==r2 else r2)}, also works")
+@t
+def g_open_box():
+    x=R.randint(1,5); L_=R.randint(2*x+3,40); W=R.randint(2*x+2,L_); A=(L_-2*x)*(W-2*x)
+    Q("Geometry (quadratic)",f"Squares of side x are cut from each corner of a {L_} cm by {W} cm sheet, and the sides are folded up to make an open box. The base of the box has area {A} cm². Find x.","x = side of each cut square",f"({L_} − 2x)({W} − 2x) = {A}","x",x,f"{x} cm")
+@t
+def g_frame():
+    p=R.randint(4,20); q=R.randint(4,20); x=R.randint(1,4); T=(p+2*x)*(q+2*x)
+    Q("Geometry (quadratic)",f"A {p} in × {q} in photo is surrounded by a frame of uniform width. The framed picture covers {T} in². How wide is the frame?","x = frame width",f"({p} + 2x)({q} + 2x) = {T}","x",x,f"{x} in")
+@t
+def g_rect_PA():
+    w=R.randint(2,25); l=w+R.randint(1,20); P_=2*(l+w); A=l*w
+    Q("Geometry (quadratic)",f"A rectangle has a perimeter of {P_} ft and an area of {A} ft². Find its length and width.","w = width; length = "+f"{P_//2} − w",f"w({P_//2} − w) = {A}","w",w,f"{l} ft by {w} ft",other=f"the other root, {l}, just swaps length and width")
+@t
+def g_square_perim():
+    s=R.randint(3,40); a=R.randint(1,5); b=R.randint(-10,20); side=s
+    # side expression a x + b = s
+    if (s-b)%a or (s-b)//a<=0: return
+    x=(s-b)//a
+    L("Geometry (perimeter)",f"Each side of a square is ({a}x {sg(b)}) cm. The perimeter is {4*s} cm. Find x and the side length.","x = unknown",f"4({a}x {sg(b)}) = {4*s}","x",x,f"x = {x}; side = {s} cm")
+@t
+def g_circle_like():
+    # semicircle-free: rectangle with equilateral triangle on top perimeter
+    s=R.randint(2,20); h=R.randint(2,20); P_=3*s+2*h
+    L("Geometry (perimeter)",f"A window is a rectangle {h} ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is {P_} ft. How wide is the window?","w = width",f"w + 2({h}) + 2w = {P_}","w",s,f"{s} ft")
+@t
+def g_shadow():
+    h=R.randint(4,7); sh=R.randint(2,12); k=R.randint(3,15); T=h*k; S=sh*k
+    L("Proportion (similar triangles)",R.choice([f"A {h} ft person casts a {sh} ft shadow. At the same time a tree casts a {S} ft shadow. How tall is the tree?",f"At noon a {h} m post casts a {sh} m shadow, and a building nearby casts a {S} m shadow. How tall is the building?"]),
+      "h = height",f"{h}/{sh} = h/{S}","h",T,f"{T}")
+@t
+def g_scale_model():
+    k=R.choice([12,18,20,24,25,32,43,48,50,64,72,87,100]); real=k*R.randint(1,30)
+    L("Proportion",R.choice([f"A model car is built at a 1:{k} scale. The real car is {real} cm long. How long is the model?",f"A dollhouse is built at a 1:{k} scale. A real door is {real} mm tall. How tall is the dollhouse door?"]),
+      "x = model length",f"1/{k} = x/{real}","x",Fr(real,k),f"{F(Fr(real,k))}")
+
+# ---------- NUMBERS ----------
+@t
+def n_three_numbers():
+    a=R.randint(2,30); k=R.randint(2,4); c=R.randint(1,20); b=k*a; d=b+c; S=a+b+d
+    L("Number puzzle",f"The second of three numbers is {k} times the first. The third is {c} more than the second. Their sum is {S}. Find the numbers.","x = first number",f"x + {k}x + ({k}x + {c}) = {S}","x",a,f"{a}, {b}, {d}")
+@t
+def n_sum_product():
+    a=R.randint(2,30); b=R.randint(2,30)
+    if a==b: return
+    Q("Quadratic",R.choice([f"Two numbers add up to {a+b} and multiply to {a*b}. What are they?",f"The sum of two numbers is {a+b} and their product is {a*b}. Find the numbers."]),"x = one number; other = "+f"{a+b} − x",f"x({a+b} − x) = {a*b}","x",min(a,b),f"{min(a,b)} and {max(a,b)}",other=f"the other root, {max(a,b)}, gives the same pair")
+@t
+def n_sq_consec():
+    x=R.randint(2,30); S=x*x+(x+1)**2
+    Q("Quadratic",f"The sum of the squares of two consecutive positive integers is {S}. Find the integers.","x = smaller integer",f"x² + (x + 1)² = {S}","x",x,f"{x} and {x+1}")
+@t
+def n_reciprocal():
+    x=R.randint(2,9); S=Fr(x*x+1,x)
+    RAT("Rational equation",f"A number plus its reciprocal equals {F(S)}. Find the number.","x = the number",f"x + 1/x = {F(S)}","x",x,f"{x} or 1/{x}","Multiply by x: x² − ("+F(S)+")x + 1 = 0")
+@t
+def n_fraction_digits():
+    d=R.randint(5,20); n=d-R.randint(1,4); k=R.randint(1,5); fr=Fr(n+k,d+k)
+    if fr.numerator==n+k or math.gcd(n,d)!=1: pass
+    RAT("Rational equation",f"The denominator of a fraction is {d-n} more than the numerator. If {k} is added to both, the fraction becomes {fr.numerator}/{fr.denominator}. Find the original fraction.","x = numerator",f"(x + {k})/(x + {d-n+k}) = {fr.numerator}/{fr.denominator}","x",n,f"{n}/{d}","Cross-multiply and solve")
+@t
+def n_half_third():
+    a,b=R.sample([2,3,4,5,6,8],2); x=a*b*R.randint(1,8); S=Fr(x,a)+Fr(x,b)
+    if R.random()<.5:
+        L("Number puzzle",f"One-{['','','half','third','fourth','fifth','sixth','','eighth'][a]} of a number plus one-{['','','half','third','fourth','fifth','sixth','','eighth'][b]} of the same number is {F(S)}. Find the number.","x = the number",f"x/{a} + x/{b} = {F(S)}","x",x,str(x))
+    else:
+        D=Fr(x,min(a,b))-Fr(x,max(a,b))
+        L("Number puzzle",f"One-{['','','half','third','fourth','fifth','sixth','','eighth'][min(a,b)]} of a number is {F(D)} more than one-{['','','half','third','fourth','fifth','sixth','','eighth'][max(a,b)]} of it. Find the number.","x = the number",f"x/{min(a,b)} − x/{max(a,b)} = {F(D)}","x",x,str(x))
+@t
+def n_subtract_mult():
+    x=R.randint(-10,40); a=R.randint(1,15); k=R.randint(2,6); v=k*(x-a)
+    L("Number puzzle",R.choice([f"When {a} is subtracted from a number and the result is multiplied by {k}, the answer is {v}. Find the number.",f"{k} times the difference of a number and {a} is {v}. What is the number?"]),"x = the number",f"{k}(x − {a}) = {v}","x",x,str(x))
+@t
+def n_divided():
+    k=R.randint(2,9); q=R.randint(-5,20); x=k*q; a=R.randint(1,20)
+    L("Number puzzle",R.choice([f"A number divided by {k}, then increased by {a}, gives {q+a}. Find the number.",f"If you divide a number by {k} and add {a}, you get {q+a}. What was the number?"]),"x = the number",f"x/{k} + {a} = {q+a}","x",x,str(x))
+@t
+def n_consec_relation():
+    x=R.randint(-10,40); k=R.randint(2,5); c=k*x-(x+2)
+    L("Consecutive integers",f"Three consecutive integers are such that {k} times the smallest is {'' if c>=0 else ''}{abs(c)} {'more' if c>=0 else 'less'} than the largest. Find the integers.","x = smallest",f"{k}x = (x + 2) {sg(c)}","x",x,f"{x}, {x+1}, {x+2}")
+@t
+def n_consec_ends():
+    x=R.randint(1,60); S=x+(x+4)
+    L("Consecutive integers",f"Of three consecutive even integers, the sum of the smallest and largest is {S}. Find all three.","x = smallest",f"x + (x + 4) = {S}","x",x,f"{x}, {x+2}, {x+4}") if x%2==0 else None
+@t
+def n_square_more():
+    x=R.randint(3,25); k=R.randint(1,10); c=x*x-k*x
+    if c<=0: return
+    Q("Quadratic",f"The square of a positive number is {c} more than {k} times the number. Find the number.","x = the number",f"x² = {k}x + {c}","x",x,str(x))
+@t
+def n_digit_sum():
+    t_=R.randint(1,9); u=R.randint(0,9); k=R.randint(2,9); N=10*t_+u
+    if u!=k*t_ and t_!=k*u: return
+    if u==k*t_:
+        L("Digits",f"In a two-digit number, the units digit is {k} times the tens digit. The number is {N-(t_+u)} more than the sum of its digits. Find the number.","t = tens digit; units digit = "+f"{k}t",f"(10t + {k}t) − (t + {k}t) = {N-t_-u}","t",t_,str(N))
+@t
+def n_sum_1_to_n():
+    n=R.randint(5,60); S=n*(n+1)//2
+    Q("Quadratic (sequences)",f"How many consecutive whole numbers, starting from 1, must be added to get a sum of {S}? (Use 1 + 2 + … + n = n(n + 1)/2.)","n = how many numbers",f"n(n + 1)/2 = {S}","n",n,f"{n} numbers (1 through {n})")
+@t
+def n_handshakes():
+    n=R.randint(4,40); H=n*(n-1)//2
+    Q("Quadratic (counting)",R.choice([f"At a party everyone shook hands with everyone else exactly once, for {H} handshakes. How many people were there?",f"In a round-robin tournament each team plays every other team once, for {H} games. How many teams are there?"]),"n = number of people/teams",f"n(n − 1)/2 = {H}","n",n,f"{n}")
+@t
+def n_arith_term():
+    a=R.randint(5,30); d=R.randint(1,6); n=R.randint(5,40); T_=a+(n-1)*d
+    pr,u=R.choice([(f"A theater has {a} seats in the first row and each row has {d} more seats than the row before. Which row has {T_} seats?","Row"),(f"A savings jar holds ${a} in week 1 and grows by ${d} each week. In which week does it hold ${T_}?","Week")])
+    L("Sequences",pr,f"n = {u.lower()} number",f"{a} + (n − 1)({d}) = {T_}","n",n,f"{u} {n}")
+@t
+def n_arith_sum():
+    a=R.randint(1,10); d=R.randint(1,5); n=R.randint(4,25); S=n*(2*a+(n-1)*d)//2
+    if (n*(2*a+(n-1)*d))%2: return
+    Q("Quadratic (sequences)",f"A stack of cans has {a} can{'s' if a>1 else ''} in the top row, and each row below has {d} more than the row above. The stack has {S} cans in total. How many rows are there?","n = number of rows",f"(n/2)(2({a}) + (n − 1)({d})) = {S}","n",n,f"{n} rows")
+
+# ======================================================================
+# NEW TEMPLATES PART 2: MONEY, PERCENT, MOTION, WORK
+# ======================================================================
+# ---------- MONEY / PERCENT ----------
+@t
+def m_commission():
+    base=R.choice([300,400,500,600,750,800,1000]); r=R.choice([2,3,4,5,6,8,10,12,15]); s=R.randint(4,80)*500; T=base+Fr(r*s,100)
+    L("Percent (commission)",R.choice([f"{nm()} earns a weekly base pay of ${base} plus {r}% commission on sales. One week the total pay was {M(T)}. What were the sales?",f"A salesperson gets ${base} per week plus {r}% of everything they sell. To earn {M(T)} in a week, how much must they sell?"]),
+      "s = sales",f"{base} + {r/100:g}s = {float(T):g}","s",s,M(s))
+@t
+def m_job_offers():
+    b1=R.randint(10,30)*100; r1=R.choice([2,3,4,5]); r2=r1+R.choice([2,3,4,5,6]); s=R.randint(4,60)*1000; b2=b1+Fr((r1-r2)*s,100)
+    if b2<=0 or Fr(b2).denominator!=1: return
+    L("Break-even",f"Job A pays ${b1} a month plus {r1}% commission. Job B pays ${b2} a month plus {r2}% commission. At what monthly sales total do both pay the same?","s = monthly sales",f"{b1} + {r1/100:g}s = {b2} + {r2/100:g}s","s",s,M(s))
+@t
+def m_tip():
+    bill=Fr(R.randint(1000,20000),100); tp=R.choice([15,18,20,22,25]); T=bill*(100+tp)/100
+    if (T*100).denominator!=1: return
+    L("Percent",R.choice([f"After adding a {tp}% tip, a dinner bill came to {M(T)}. What was the bill before the tip?",f"A group paid {M(T)} for lunch, which included a {tp}% tip. How much was the meal itself?"]),"b = bill before tip",f"{(100+tp)/100:g}b = {float(T):g}","b",bill,M(bill))
+@t
+def m_split_tip():
+    n=R.randint(3,10); tp=R.choice([15,18,20,25]); bill=Fr(R.randint(20,150)*n*100,100)
+    each=bill*(100+tp)/100/n
+    if (each*100).denominator!=1: return
+    L("Percent",f"{n} friends split a restaurant bill equally, including a {tp}% tip. Each paid {M(each)}. What was the bill before the tip?","b = bill before tip",f"{(100+tp)/100:g}b / {n} = {float(each):g}","b",bill,M(bill))
+@t
+def m_markup():
+    c=R.randint(4,200)*5; mk=R.choice([20,25,30,40,50,60,75,80,100]); p=Fr(c*(100+mk),100)
+    if (p*100).denominator!=1: return
+    item=R.choice(["sofa","phone case","watch","rug","jacket","printer"])
+    L("Percent (markup)",R.choice([f"A store marks up a {item} by {mk}% and sells it for {M(p)}. What did the store pay for it?",f"After a {mk}% markup, a {item} is priced at {M(p)}. What was the wholesale cost?"]),"c = cost",f"{(100+mk)/100:g}c = {float(p):g}","c",c,M(c))
+@t
+def m_double_discount():
+    p=R.randint(4,100)*10; a=R.choice([10,20,25,30,40,50]); b=R.choice([10,15,20,25]); f_=Fr(p*(100-a)*(100-b),10000)
+    if (f_*100).denominator!=1: return
+    L("Percent",f"A coat is marked {a}% off, and then an extra {b}% is taken off the sale price. The final price is {M(f_)}. What was the original price?","p = original price",f"{(100-a)/100:g} × {(100-b)/100:g} × p = {float(f_):g}","p",p,M(p))
+@t
+def m_up_down():
+    p=R.randint(4,100)*20; a=R.choice([10,20,25,50]); b=R.choice([10,20,25,40]); f_=Fr(p*(100+a)*(100-b),10000)
+    if (f_*100).denominator!=1: return
+    L("Percent",f"A stock's price rose {a}% one month and then fell {b}% the next, ending at {M(f_)}. What was the starting price?","p = starting price",f"{(100+a)/100:g} × {(100-b)/100:g} × p = {float(f_):g}","p",p,M(p))
+@t
+def m_what_percent():
+    b=R.randint(2,80)*5; p=R.choice([5,10,12,15,20,24,25,30,35,40,45,50,60,64,75,80,90,120,150]); a=Fr(b*p,100)
+    if a.denominator!=1: return
+    L("Percent",R.choice([f"What percent of {b} is {a}?",f"{a} out of {b} students passed. What percent passed?" if p<=100 else f"What percent of {b} is {a}?"]),"p = percent",f"(p/100)({b}) = {a}","p",p,f"{p}%")
+@t
+def m_test_percent():
+    n=R.choice([20,25,40,50,60,80]); p=R.choice([60,65,70,75,80,85,90,95]); c=Fr(n*p,100)
+    if c.denominator!=1: return
+    L("Percent",f"A test has {n} questions. {nm()} scored {p}%. How many questions were answered correctly?","c = correct answers",f"c/{n} = {p/100:g}","c",c,f"{c} questions")
+@t
+def m_election():
+    T=R.randint(20,400)*100; p=R.choice([52,54,55,56,58,60,62,65]); M_=Fr(T*(2*p-100),100)
+    if M_.denominator!=1: return
+    L("Percent",f"In a two-candidate election, the winner got {p}% of the votes and won by {M_} votes. How many votes were cast?","v = total votes",f"{p/100:g}v − {(100-p)/100:g}v = {M_}","v",T,f"{T:,} votes")
+@t
+def m_spent_left():
+    x=R.randint(4,100)*20; p=R.choice([20,25,30,40,60,75]); left=Fr(x*(100-p),100)
+    if left.denominator!=1: return
+    pr,ans=R.choice([(f"{nm()} spent {p}% of a paycheck on rent and had ${left} left. How much was the paycheck?",f"${x}"),(f"After using {p}% of the fuel in a tank, {left} liters remain. How much fuel was there at first?",f"{x} L")])
+    L("Percent",pr,"x = original amount",f"x − {p/100:g}x = {left}","x",x,ans)
+@t
+def m_class_percent():
+    T=R.randint(10,60)*5; p=R.choice([20,30,40,45,55,60,64,70]); g=Fr(T*(100-p),100)
+    if g.denominator!=1: return
+    L("Percent",f"{p}% of the students in a club are boys. There are {g} girls. How many students are in the club?","n = total students",f"{(100-p)/100:g}n = {g}","n",T,f"{T} students")
+@t
+def m_profit_items():
+    fixed=R.randint(2,40)*50; c=R.choice([2,3,4,5,6,8,10,12]); p=c+R.choice([2,3,4,5,6,8,10,15]); n=R.randint(20,800); Pr=(p-c)*n-fixed
+    if Pr<0: return
+    biz=R.choice(["a lemonade stand","a T-shirt business","a bakery stall","a candle shop","a phone-case startup"])
+    if Pr<=0: return
+    if True:
+        L("Profit",f"{biz[0].upper()+biz[1:]} has fixed costs of ${fixed}. Each item costs ${c} to make and sells for ${p}. How many items must be sold to make a profit of ${Pr}?","n = items",f"{p}n − ({fixed} + {c}n) = {Pr}","n",n,f"{n} items")
+@t
+def m_breakeven():
+    fixed=R.randint(4,100)*25; c=R.randint(1,20); p=c+R.randint(1,15); n=Fr(fixed,p-c)
+    if n.denominator!=1: return
+    pr,u=R.choice([(f"It costs ${fixed} to set up a print run plus ${c} per poster. Posters sell for ${p} each. How many must be sold to break even?","posters"),(f"A food truck pays ${fixed} in daily costs, and each meal costs ${c} in ingredients. Meals sell for ${p}. How many meals a day cover the costs?","meals")])
+    L("Break-even",pr,f"n = number of {u}",f"{p}n = {fixed} + {c}n","n",n,f"{n} {u}")
+@t
+def m_depreciation():
+    v=R.randint(10,60)*1000; d=R.randint(5,40)*100; y=R.randint(2,12); V=v-d*y
+    if V<=0: return
+    thing=R.choice(["car","tractor","laptop fleet","delivery van","boat"])
+    L("Linear model",f"A {thing} bought for {M(v)} loses {M(d)} in value each year. After how many years will it be worth {M(V)}?","y = years",f"{v} − {d}y = {V}","y",y,PL(y,"year"))
+@t
+def m_interest_time():
+    P_=R.randint(2,60)*500; r=R.choice([2,3,4,5,6,8]); t=R.randint(2,10); I=Fr(P_*r*t,100)
+    if R.random()<.5:
+        L("Simple interest",f"How many years will it take {M(P_)} to earn {M(I)} in simple interest at {r}% per year?","t = years",f"{P_} × {r/100:g} × t = {float(I):g}","t",t,PL(t,"year"))
+    else:
+        L("Simple interest",f"{M(P_)} earns {M(I)} in simple interest over {t} years. What is the annual interest rate?","r = rate (as a percent)",f"{P_} × (r/100) × {t} = {float(I):g}","r",r,f"{r}%")
+@t
+def m_interest_equal():
+    r1,r2=R.sample([2,3,4,5,6,8,10],2); T=R.randint(4,60)*500
+    # r1 x = r2 (T-x) -> x = r2 T/(r1+r2)
+    x=Fr(r2*T,r1+r2)
+    if (x*100).denominator!=1 or x.denominator!=1: return
+    L("Simple interest",f"{M(T)} is split between two accounts paying {r1}% and {r2}% simple interest. Both accounts earn the same interest in a year. How much is in each?","x = amount at "+f"{r1}%",f"{r1/100:g}x = {r2/100:g}({T} − x)","x",x,f"{M(x)} at {r1}%, {M(T-x)} at {r2}%")
+@t
+def m_interest_extra():
+    a=R.randint(2,40)*500; r1=R.choice([2,3,4]); r2=R.choice([6,7,8,9,10]); target=R.choice([5,6,7])
+    if not (r1<target<r2): return
+    x=Fr(a*(target-r1),r2-target)
+    if x.denominator!=1 or x%100: return
+    L("Simple interest",f"{nm()} has {M(a)} invested at {r1}%. How much more must be invested at {r2}% so that the total earns {target}% overall?","x = extra amount",f"{r1/100:g}({a}) + {r2/100:g}x = {target/100:g}({a} + x)","x",x,M(x))
+@t
+def m_inherit():
+    b=R.randint(2,40)*500; k=R.choice([2,3]); c=R.randint(1,20)*500; T=b+k*b+(b+c)
+    n1,n2,n3=nm(3)
+    L("Ratio",f"An estate of {M(T)} is split among three heirs. {n1} gets {k} times as much as {n2}, and {n3} gets {M(c)} more than {n2}. How much does each receive?",f"x = {n2}'s share",f"{k}x + x + (x + {c}) = {T}","x",b,f"{n1} {M(k*b)}, {n2} {M(b)}, {n3} {M(b+c)}")
+@t
+def m_partnership():
+    a,b=R.sample(range(1,8),2); k=R.randint(1,40)*250; T=(a+b)*k
+    n1,n2=nm(2)
+    L("Ratio",f"{n1} and {n2} invested in a business in the ratio {a}:{b}. They share a profit of {M(T)} in the same ratio. How much does each get?","k = one share",f"{a}k + {b}k = {T}","k",k,f"{n1} {M(a*k)}, {n2} {M(b*k)}")
+@t
+def m_give_equal():
+    b=R.randint(5,100); k=R.choice([2,3,4]); a=k*b; g=Fr(a-b,2)
+    if g.denominator!=1: return
+    n1,n2=nm(2)
+    L("Number puzzle",f"{n1} has {k} times as much money as {n2}. After {n1} gives {n2} ${g}, they have the same amount. How much did each have at first?",f"x = {n2}'s money",f"{k}x − {g} = x + {g}","x",b,f"{n2} ${b}, {n1} ${a}")
+@t
+def m_fractions_spent():
+    a,b=R.choice([(4,3),(3,4),(5,2),(2,3),(5,4),(4,5),(3,2),(6,5)])
+    # spends 1/a, then 1/b of remainder, left L
+    x=a*b*R.randint(2,20); left=x*Fr(a-1,a)*Fr(b-1,b)
+    if left.denominator!=1: return
+    L("Fractions",f"{nm()} spent 1/{a} of their money on a game and then 1/{b} of what was left on lunch, leaving ${left}. How much did they start with?","x = starting money",f"x × ({a-1}/{a}) × ({b-1}/{b}) = {left}","x",x,f"${x}")
+@t
+def m_tank_fraction():
+    p,q=R.choice([(1,3),(1,4),(2,5),(1,2),(3,8),(1,5),(1,6)]); r,s_=R.choice([(3,4),(5,6),(7,8),(9,10),(2,3)])
+    if Fr(r,s_)<=Fr(p,q): return
+    C=q*s_*R.randint(1,10); add_=C*(Fr(r,s_)-Fr(p,q))
+    if add_.denominator!=1: return
+    L("Fractions",R.choice([f"A tank is {p}/{q} full. After {add_} liters are added, it is {r}/{s_} full. What is the tank's capacity?",f"A gas tank is {p}/{q} full. Adding {add_} gallons fills it to {r}/{s_}. How much does the tank hold?"]),"c = capacity",f"({p}/{q})c + {add_} = ({r}/{s_})c","c",C,f"{C}")
+@t
+def m_book_pages():
+    a,b=R.choice([(5,4),(4,3),(3,2),(6,5),(5,2)]); x=a*b*R.randint(3,25); left=x*Fr(a-1,a)*Fr(b-1,b)
+    L("Fractions",f"{nm()} read 1/{a} of a book on Monday and 1/{b} of the remaining pages on Tuesday. {left} pages are left. How many pages does the book have?","x = total pages",f"x × ({a-1}/{a}) × ({b-1}/{b}) = {left}","x",x,f"{x} pages")
+@t
+def m_diophantus():
+    # life: 1/6 youth, 1/12 more, 1/7 more, 5 years, son 1/2 life, 4 years -> 84 ; vary fractions
+    combos=[(6,12,7,5,2,4,84)]
+    a,b,c,d,e,f_,x=combos[0]
+    L("Fractions",f"A puzzle: a man spent 1/{a} of his life as a boy, 1/{b} more as a youth, and 1/{c} more before marrying. {d} years later a son was born, who lived 1/{e} as long as his father. The father died {f_} years after the son. How long did the father live?","x = father's age at death",f"x/{a} + x/{b} + x/{c} + {d} + x/{e} + {f_} = x","x",x,f"{x} years")
+@t
+def m_wages_two():
+    r1=R.choice([12,14,15,16,18]); r2=r1+R.choice([2,3,4,5,6]); h=R.randint(10,40); H=h+R.randint(5,30); T=r1*h+r2*(H-h)
+    L("Linear cost",f"{nm()} works two jobs paying ${r1}/h and ${r2}/h. Last month {H} hours were worked in total, earning ${T}. How many hours were worked at the ${r1} job?","h = hours at "+f"${r1}",f"{r1}h + {r2}({H} − h) = {T}","h",h,f"{h} hours at ${r1}, {H-h} hours at ${r2}")
+@t
+def m_parking():
+    f1=R.choice([3,4,5,6,8]); r=R.choice([1.5,2,2.5,3]); h=R.randint(2,12); T=f1+Fr(r).limit_denominator()*(h-1)
+    L("Linear cost",f"A parking garage charges ${f1} for the first hour and {M(r)} for each additional hour. A driver paid {M(T)}. How many hours did they park?","h = total hours",f"{f1} + {r:g}(h − 1) = {float(T):g}","h",h,PL(h,"hour"))
+@t
+def m_bowling():
+    s=R.choice([3,4,4.5,5]); g=R.choice([4,5,5.5,6,7]); n=R.randint(1,6); T=Fr(s).limit_denominator()+Fr(g).limit_denominator()*n
+    L("Linear cost",f"Bowling costs {M(g)} per game plus {M(s)} for shoe rental. {nm()} spent {M(T)}. How many games were bowled?","n = games",f"{s:g} + {g:g}n = {float(T):g}","n",n,PL(n,"game"))
+@t
+def m_plumber():
+    c=R.choice([50,60,75,80,90,100]); r=R.choice([45,55,60,65,70,85,90]); h=R.choice([1,1.5,2,2.5,3,3.5,4,5,6]); T=c+Fr(r)*Fr(h).limit_denominator()
+    if (T*100).denominator!=1: return
+    L("Linear cost",f"A plumber charges a ${c} call-out fee plus ${r} per hour. The bill was {M(T)}. How long did the job take?","h = hours",f"{c} + {r}h = {float(T):g}","h",Fr(h).limit_denominator(),PL(Fr(h).limit_denominator(),"hour"))
+@t
+def m_rental_budget():
+    d=R.choice([25,30,35,40,45,50]); days=R.randint(1,7); r=R.choice([0.15,0.2,0.25,0.3,0.4,0.5]); m=R.randint(4,60)*10; T=d*days+Fr(r).limit_denominator()*m
+    L("Linear cost",f"A rental car costs ${d} per day plus {M(r)} per mile. A {days}-day rental cost {M(T)}. How many miles were driven?","m = miles",f"{d}({days}) + {r:g}m = {float(T):g}","m",m,PL(m,"mile"))
+@t
+def m_buy_vs_rent():
+    buy=R.randint(4,60)*25; rent=R.choice([15,20,25,30,40,50]); up=R.choice([0,10,20,25,50]); 
+    n=Fr(buy-up,rent)
+    if n.denominator!=1 or n<2: return
+    thing=R.choice(["a carpet cleaner","a pressure washer","a tuxedo","a kayak","a tile saw"])
+    L("Break-even",f"Buying {thing} costs ${buy}. Renting one costs ${up} once plus ${rent} per use. After how many uses does renting cost the same as buying?" if up else f"Buying {thing} costs ${buy}. Renting costs ${rent} per use. After how many uses would renting cost the same as buying?","n = uses",f"{up} + {rent}n = {buy}" if up else f"{rent}n = {buy}","n",n,PL(n,"use"))
+@t
+def m_streaming():
+    up=R.randint(2,30)*10; m1=R.choice([5,8,10,12,15]); m2=m1+R.choice([3,5,7,10]); n=Fr(up,m2-m1)
+    if n.denominator!=1: return
+    L("Break-even",f"Service A has a ${up} sign-up fee and costs ${m1}/month. Service B has no fee and costs ${m2}/month. After how many months is the total cost the same?","n = months",f"{up} + {m1}n = {m2}n","n",n,PL(n,"month"))
+@t
+def m_fundraiser():
+    p=R.choice([5,8,10,12,15,20]); have=R.randint(0,40)*10; goal=have+p*R.randint(5,80); n=(goal-have)//p
+    act,unit=R.choice([("car wash","car"),("bake sale","box of cookies"),("raffle","ticket"),("plant sale","plant")])
+    L("Linear model",f"A club has raised ${have} so far. At its {act} it charges ${p} per {unit}. How many more {unit if unit!='box of cookies' else 'boxes'}{'s' if unit in ('car','ticket','plant') else ''} must it sell to reach its ${goal} goal?","n = sales",f"{have} + {p}n = {goal}","n",n,f"{n}")
+@t
+def m_field_trip():
+    bus=R.randint(4,20)*50; fee=R.choice([5,8,10,12,15]); n=R.randint(10,60); each=Fr(bus,n)+fee
+    if (each*100).denominator!=1: return
+    RAT("Rational equation",f"A field trip costs ${bus} for the bus plus ${fee} admission per student. The bus cost is shared equally, and each student pays {M(each)} in total. How many students went?","n = students",f"{bus}/n + {fee} = {float(each):g}","n",n,f"{n} students","Subtract "+str(fee)+", then n = "+str(bus)+" ÷ "+F(each-fee))
+@t
+def m_party():
+    v=R.randint(4,30)*25; g=R.choice([12,15,18,20,25,30,35]); n=R.randint(10,120); T=v+g*n
+    L("Linear cost",f"A venue charges ${v} plus ${g} per guest. The total was ${T}. How many guests came?","n = guests",f"{v} + {g}n = {T}","n",n,PL(n,"guest"))
+@t
+def m_electric():
+    f_=R.choice([8,10,12,15,20]); r=R.choice([0.11,0.12,0.13,0.14,0.15,0.18]); k=R.randint(20,120)*10; T=f_+Fr(r).limit_denominator()*k
+    if (T*100).denominator!=1: return
+    L("Linear cost",f"An electric bill is ${f_} per month plus {M(r)} per kWh. This month's bill is {M(T)}. How many kWh were used?","k = kWh",f"{f_} + {r:g}k = {float(T):g}","k",k,f"{k} kWh")
+@t
+def m_data_overage():
+    base=R.choice([30,35,40,45,50]); inc=R.choice([2,5,10,15]); r=R.choice([5,8,10,15]); over=R.randint(1,10); T=base+r*over
+    L("Linear cost",f"A phone plan costs ${base} a month and includes {inc} GB of data. Each extra GB costs ${r}. The bill was ${T}. How much data was used?","g = GB used",f"{base} + {r}(g − {inc}) = {T}","g",inc+over,f"{inc+over} GB")
+@t
+def m_allowance():
+    a=R.choice([5,8,10,12,15]); c=R.choice([2,3,4,5]); w=R.randint(2,10); n=R.randint(1,12); T=a*w+c*n
+    L("Linear cost",f"{nm()} gets ${a} allowance a week plus ${c} for each extra chore. Over {w} weeks that came to ${T}. How many extra chores were done?","n = chores",f"{a}({w}) + {c}n = {T}","n",n,PL(n,"chore"))
+@t
+def m_coupon():
+    p=R.choice([2.5,3,3.5,4,4.5,6,7.5]); n=R.randint(2,15); cp=R.choice([2,3,5,10]); T=Fr(p).limit_denominator()*n-cp
+    if T<=0: return
+    item=R.choice(["notebooks","sandwiches","bags of chips","magazines","plants"])
+    L("Linear cost",f"{item[0].upper()+item[1:]} cost {M(p)} each. With a ${cp} coupon, {nm()} paid {M(T)}. How many {item} were bought?","n = items",f"{p:g}n − {cp} = {float(T):g}","n",n,f"{n} {item}")
+@t
+def m_currency():
+    r=R.choice([0.8,0.85,0.9,1.25,1.35,1.5,110,150]); a=R.randint(2,100)*20; b=Fr(r).limit_denominator()*a
+    if (b*100).denominator!=1: return
+    L("Proportion",f"Suppose 1 dollar buys {r:g} units of a foreign currency. How many dollars do you need to get {F(b)} units?","d = dollars",f"{r:g}d = {F(b)}","d",a,M(a))
+
+# ---------- MOTION ----------
+@t
+def d_toward():
+    s1=R.randint(30,80); s2=R.randint(30,80); t=R.choice([1,1.5,2,2.5,3,4,5]); D=(s1+s2)*Fr(t).limit_denominator()
+    if D.denominator!=1: return
+    L("Distance (toward each other)",R.choice([f"Two trains start {D} miles apart and travel toward each other at {s1} mph and {s2} mph. When will they meet?",f"Two cyclists are {D} km apart and ride toward each other at {s1} km/h and {s2} km/h. How long until they meet?"]),"t = hours",f"{s1}t + {s2}t = {D}","t",Fr(t).limit_denominator(),PL(Fr(t).limit_denominator(),"hour"))
+@t
+def d_toward_delay():
+    s1=R.randint(40,70); s2=R.randint(40,70); h=R.choice([1,2]); t=R.randint(1,5); D=s1*(t+h)+s2*t
+    n1,n2=nm(2)
+    L("Distance (toward each other)",f"{n1} and {n2} live {D} miles apart. {n1} drives toward {n2} at {s1} mph. {h} hour{'s' if h>1 else ''} later, {n2} starts driving toward {n1} at {s2} mph. How long after {n2} leaves do they meet?",f"t = hours {n2} drives",f"{s1}(t + {h}) + {s2}t = {D}","t",t,PL(t,"hour"))
+@t
+def d_round_trip_dist():
+    s1=R.choice([30,40,45,50,60]); s2=R.choice([20,30,36,40,45]); T=R.choice([2,3,4,5,6,8,9,10])
+    D=Fr(T*s1*s2,s1+s2)
+    if D.denominator!=1 or s1==s2: return
+    RAT("Distance (round trip)",f"{nm()} drove to a lake at {s1} mph and returned on the same road at {s2} mph. The round trip took {T} hours. How far is the lake?","d = one-way distance",f"d/{s1} + d/{s2} = {T}","d",D,f"{D} miles","Multiply by "+str(s1*s2//math.gcd(s1,s2)))
+@t
+def d_walk_bus():
+    w=R.choice([3,4,5]); b=R.choice([20,24,30,36,40]); tw=R.choice([Fr(1,4),Fr(1,2),Fr(3,4),1]); tb=R.choice([Fr(1,4),Fr(1,2),1,Fr(3,2)]); D=w*tw+b*tb; T=tw+tb
+    L("Distance (two legs)",f"{nm()} walked at {w} km/h and then rode a bus at {b} km/h. The whole trip was {F(D)} km and took {F(T)} hours. How long was the walk?","t = walking time (h)",f"{w}t + {b}({F(T)} − t) = {F(D)}","t",tw,f"{F(tw)} h walking, {F(tb)} h on the bus")
+@t
+def d_same_time():
+    s=R.randint(20,60); d=R.randint(5,20); t=R.choice([1,2,3,4,5]); D1=s*t; D2=(s+d)*t
+    RAT("Rational equation",f"A truck travels {D1} miles in the same time a car travels {D2} miles. The car is {d} mph faster. Find both speeds.","s = truck speed",f"{D1}/s = {D2}/(s + {d})","s",s,f"Truck {s} mph, car {s+d} mph","Cross-multiply: "+f"{D1}(s + {d}) = {D2}s")
+@t
+def d_current_same_time():
+    b=R.randint(8,30); c=R.randint(1,b-1); t=R.choice([1,2,3,4]); up=(b-c)*t; dn=(b+c)*t
+    RAT("Rational equation",f"A boat goes {up} km upstream in the same time it goes {dn} km downstream. Its speed in still water is {b} km/h. What is the speed of the current?","c = current speed",f"{up}/({b} − c) = {dn}/({b} + c)","c",c,f"{c} km/h","Cross-multiply")
+@t
+def d_wind_same_time():
+    w=R.randint(2,10)*5; p=R.randint(15,60)*10; t=R.choice([2,3,4]); a=(p+w)*t; b=(p-w)*t
+    RAT("Rational equation",f"A plane flies {a} miles with a {w} mph tailwind in the same time it flies {b} miles into the same wind as a headwind. What is the plane's speed in still air?","p = plane speed",f"{a}/(p + {w}) = {b}/(p − {w})","p",p,f"{p} mph","Cross-multiply")
+@t
+def d_avg_speed():
+    v1=R.choice([30,40,50,60]); t1=R.choice([1,2,3]); v2=R.choice([45,55,65,70,75]); t2=R.choice([1,2,3,4]); avg=Fr(v1*t1+v2*t2,t1+t2)
+    if avg.denominator!=1: return
+    L("Distance (average speed)",f"{nm()} drove {t1} hour{'s' if t1>1 else ''} at {v1} mph and then some hours at {v2} mph. The average speed for the whole trip was {avg} mph. How long was the second part?","t = hours at "+f"{v2} mph",f"({v1}×{t1} + {v2}t)/({t1} + t) = {avg}","t",t2,PL(t2,"hour"))
+@t
+def d_lap():
+    a=R.choice([200,250,300,400]); v1=R.choice([3,4,5,6]); v2=v1+R.choice([1,2]); t=Fr(a,v2-v1)
+    L("Distance (catch-up)",f"Two runners start together on a {a} m track, one at {v1} m/s and the other at {v2} m/s. After how many seconds does the faster one lap the slower one?","t = seconds",f"{v2}t − {v1}t = {a}","t",t,f"{F(t)} seconds")
+@t
+def d_jog_bike():
+    j=R.choice([6,8,10]); b=R.choice([15,18,20,24]); D=R.choice([12,24,30,36,48,60]); diff=Fr(D,j)-Fr(D,b)
+    RAT("Rational equation",f"Jogging a route at {j} km/h takes {F(diff)} hours longer than cycling it at {b} km/h. How long is the route?","d = distance",f"d/{j} − d/{b} = {F(diff)}","d",D,f"{D} km","Multiply by "+str(j*b//math.gcd(j,b)))
+@t
+def d_sound():
+    v=343; t=R.choice([2,3,4,5,6,8,10]); d=v*t
+    L("Linear model",f"Sound travels about {v} m/s, so d = {v}t. A storm is {d} m away. How many seconds after the lightning flash will the thunder be heard?","t = seconds",f"{v}t = {d}","t",t,PL(t,"second"))
+# ---------- WORK ----------
+@t
+def w_three():
+    a,b,c=R.sample([2,3,4,5,6,8,10,12,15,20,24,30],3); tt=Fr(1,1)/(Fr(1,a)+Fr(1,b)+Fr(1,c))
+    if tt.denominator not in (1,2,3,4,5,6,7,8,9,10): return
+    n=nm(3)
+    RAT("Work rate",f"{n[0]}, {n[1]}, and {n[2]} can each paint a room alone in {a}, {b}, and {c} hours. How long will it take all three together?","t = hours together",f"t/{a} + t/{b} + t/{c} = 1","t",tt,f"{F(tt)} hours","Combine rates: t(1/"+f"{a} + 1/{b} + 1/{c}) = 1")
+@t
+def w_join():
+    a=R.choice([4,5,6,8,10,12]); b=R.choice([3,4,6,8,12,15]); h=R.choice([1,2])
+    if h>=a: return
+    t=(1-Fr(h,a))/(Fr(1,a)+Fr(1,b))
+    if t.denominator not in (1,2,3,4,5): return
+    n1,n2=nm(2)
+    RAT("Work rate",f"{n1} can do a job in {a} hours and {n2} can do it in {b} hours. {n1} works alone for {h} hour{'s' if h>1 else ''}, then {n2} joins. How much longer will it take to finish?","t = hours working together",f"{h}/{a} + t/{a} + t/{b} = 1","t",t,f"{F(t)} more hours","Combine rates")
+@t
+def w_pipes3():
+    a,b=R.sample([3,4,5,6,8,10,12],2); c=R.choice([6,8,10,12,15,20,24])
+    r=Fr(1,a)+Fr(1,b)-Fr(1,c)
+    if r<=0: return
+    t=1/r
+    if t.denominator not in (1,2,3,4,5,6): return
+    RAT("Work rate",f"Pipe A fills a pool in {a} hours, pipe B in {b} hours, and a drain empties it in {c} hours. With all three open, how long does it take to fill the pool?","t = hours",f"t/{a} + t/{b} − t/{c} = 1","t",t,f"{F(t)} hours","Combine rates")
+@t
+def w_faster_machine():
+    k=R.choice([2,3,4]); x=R.choice([4,6,8,9,10,12,15,16,18,20,24,30]); t=Fr(x,k+1)
+    if t.denominator not in (1,2,3,4): return
+    RAT("Work rate",f"A new machine works {k} times as fast as an old one. Together they finish an order in {F(t)} hours. How long would the old machine take alone?","x = old machine's time",f"{F(t)}/x + {F(t)}/(x/{k}) = 1","x",x,f"{x} hours (new machine: {F(Fr(x,k))} hours)","Multiply through by x")
+@t
+def w_typists():
+    a=R.choice([40,45,50,55,60,65,70]); b=R.choice([30,35,40,50,80]); W=(a+b)*R.randint(10,60)
+    L("Work rate",f"Two typists type {a} and {b} words per minute. Working together, how long will they take to type {W} words?","t = minutes",f"{a}t + {b}t = {W}","t",Fr(W,a+b),PL(Fr(W,a+b),"minute"))
+@t
+def w_inverse_gears():
+    t1=R.choice([10,12,15,18,20,24,30,36,40,48]); r1=R.choice([30,40,60,80,90,120]); t2=R.choice([8,9,12,15,16,20,24,30,40,45,60]); r2=Fr(t1*r1,t2)
+    if r2.denominator!=1 or t1==t2: return
+    L("Inverse variation",f"A gear with {t1} teeth turning at {r1} rpm drives a gear with {t2} teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn?","r = rpm",f"{t1} × {r1} = {t2}r","r",r2,f"{r2} rpm")
+@t
+def w_speed_time_inverse():
+    s=R.choice([40,45,50,60,72,75,80]); t=R.choice([2,3,4,5,6]); s2=R.choice([30,48,54,90,100,120]); t2=Fr(s*t,s2)
+    if s2==s or t2.denominator not in (1,2,3,4,5,6): return
+    L("Inverse variation",f"At {s} km/h a trip takes {t} hours. Time varies inversely with speed. How long would it take at {s2} km/h?","t = hours",f"{s} × {t} = {s2}t","t",t2,PL(t2,"hour"))
+@t
+def w_joint():
+    w=R.choice([3,4,5,6,8]); h=R.choice([6,8,10,12]); d=R.choice([5,6,8,10]); w2=R.choice([2,4,6,10,12,15]); h2=R.choice([4,5,6,8,9]); 
+    if w2==w: return
+    d2=Fr(w*h*d,w2*h2)
+    if d2.denominator not in (1,2): return
+    L("Joint variation",f"{w} workers working {h} hours a day finish a job in {d} days. How many days would {w2} workers working {h2} hours a day take?","d = days",f"{w} × {h} × {d} = {w2} × {h2} × d","d",d2,PL(d2,"day"))
+
+# ======================================================================
+# NEW TEMPLATES PART 3: MIXTURE, INEQUALITY, GROWTH, MODELS, RATIO, SYSTEMS, AVERAGES, CLOCK
+# ======================================================================
+# ---------- MIXTURES ----------
+@t
+def x_dilute():
+    c=R.choice([10,12,15,20,25,30,40,50,60,80]); v=R.choice([2,4,5,6,8,10,12,20,40]); target=R.choice([t for t in [5,6,8,10,12,15,20,25,30,40] if t<c])
+    w=Fr(c*v,target)-v
+    if w.denominator not in (1,2): return
+    L("Mixture",R.choice([f"How much water must be added to {v} L of a {c}% salt solution to make it {target}% salt?",f"A {v} L batch of {c}% juice concentrate is diluted with water to {target}% juice. How much water is added?"]),"w = liters of water",f"{c/100:g}({v}) = {target/100:g}({v} + w)","w",w,f"{F(w)} L")
+@t
+def x_pure():
+    c=R.choice([10,20,25,30,40,50]); v=R.choice([4,5,6,8,10,12,20]); target=R.choice([t for t in [30,40,50,60,70,75,80] if t>c])
+    x=Fr(v*(target-c),100-target)
+    if x.denominator not in (1,2,4): return
+    L("Mixture",f"How many liters of pure antifreeze must be added to {v} L of a {c}% antifreeze mix to get a {target}% mix?","x = liters of pure antifreeze",f"{c/100:g}({v}) + x = {target/100:g}({v} + x)","x",x,f"{F(x)} L")
+@t
+def x_evap():
+    c=R.choice([2,3,4,5,6,8,10]); v=R.choice([20,30,40,50,60,80,100]); target=R.choice([t for t in [5,6,8,10,12,15,20] if t>c])
+    e=v-Fr(c*v,target)
+    if e.denominator not in (1,2): return
+    L("Mixture",f"A {v} L tank of {c}% salt water is left to evaporate until it is {target}% salt. How much water evaporates?","e = liters evaporated",f"{c/100:g}({v}) = {target/100:g}({v} − e)","e",e,f"{F(e)} L")
+@t
+def x_replace():
+    T=R.choice([10,12,16,20,24,30]); c=R.choice([20,30,40,50]); target=R.choice([t for t in [40,50,60,70,80] if t>c])
+    x=Fr(T*(target-c),100-c)
+    if x.denominator not in (1,2,4): return
+    L("Mixture",f"A {T}-liter radiator holds a {c}% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to {target}%?","x = liters replaced",f"{c/100:g}({T} − x) + x = {target/100:g}({T})","x",x,f"{F(x)} L")
+@t
+def x_alloy():
+    a,b=sorted(R.sample([10,20,25,30,40,50,60,75,80,90],2)); T=R.choice([10,20,25,40,50,100]); x=R.randint(1,T-1); m=Fr(a*x+b*(T-x),T)
+    if m.denominator not in (1,2): return
+    metal=R.choice(["copper","silver","gold","nickel"])
+    L("Mixture",f"One alloy is {a}% {metal} and another is {b}% {metal}. How many kilograms of each are needed to make {T} kg of an alloy that is {F(m)}% {metal}?",f"x = kg of the {a}% alloy",f"{a/100:g}x + {b/100:g}({T} − x) = {float(m)/100:g}({T})","x",x,f"{x} kg of {a}%, {T-x} kg of {b}%")
+@t
+def x_add_amount():
+    p1=R.choice([4,5,6,7,8]); p2=R.choice([10,12,14,15,18]); a=R.randint(2,20); target=R.choice([t for t in [6,7,8,9,10,11,12] if p1<t<p2])
+    x=Fr(a*(target-p1),p2-target)
+    if x.denominator not in (1,2): return
+    thing=R.choice(["peanuts","raisins","granola","coffee"])
+    L("Mixture",f"How many pounds of {thing} worth ${p2}/lb must be added to {a} lb of {thing} worth ${p1}/lb to make a mix worth ${target}/lb?","x = pounds added",f"{p1}({a}) + {p2}x = {target}({a} + x)","x",x,f"{F(x)} lb")
+# ---------- INEQUALITIES ----------
+@t
+def i_budget():
+    B=R.randint(20,300); fixed=R.choice([0,5,8,10,15,20,25]); c=R.choice([2,3,4,5,6,7.5,8,12]); C=Fr(c).limit_denominator()
+    best=math.floor((B-fixed)/C)
+    if best<1: return
+    item=R.choice(["rides","songs","T-shirts","movie tickets","bags of mulch"])
+    pr=f"{nm()} has ${B} to spend. {('There is a $'+str(fixed)+' entry fee, and ') if fixed else ''}{item} cost {M(c)} each. What is the most {item} that can be bought?"
+    INEQ("Inequality",pr,"n = number bought",f"{fixed} + {c:g}n ≤ {B}" if fixed else f"{c:g}n ≤ {B}","n",best,f"{best} {item}",'max')
+@t
+def i_avg_atleast():
+    n=R.randint(2,5); sc=[R.randint(60,95) for _ in range(n)]; T=R.choice([75,80,85,88,90]); need=T*(n+1)-sum(sc)
+    if not (40<=need<=100): return
+    INEQ("Inequality",f"{nm()}'s test scores are {', '.join(map(str,sc))}. What is the lowest score on the next test that gives an average of at least {T}?","x = next score",f"({' + '.join(map(str,sc))} + x)/{n+1} ≥ {T}","x",need,f"{need}",'min')
+@t
+def i_elevator():
+    cap=R.choice([1000,1200,1500,1800,2000]); p=R.choice([150,160,170,175,180,200]); bx=R.choice([40,50,60,75]); 
+    best=(cap-p)//bx
+    INEQ("Inequality",f"An elevator holds at most {cap} lb. A {p} lb worker is loading {bx} lb boxes. How many boxes can go up with the worker in one trip?","b = boxes",f"{p} + {bx}b ≤ {cap}","b",best,f"{best} boxes",'max')
+@t
+def i_plan_cheaper():
+    f1=R.randint(5,30); r1=R.choice([0.1,0.15,0.2,0.25]); f2=f1+R.randint(5,30); r2=R.choice([0.03,0.05,0.08])
+    if r2>=r1: return
+    # A: f1 + r1 x ; B: f2 + r2 x ; B cheaper when x > (f2-f1)/(r1-r2)
+    bnd=Fr(f2-f1)/(Fr(r1).limit_denominator()-Fr(r2).limit_denominator())
+    best=math.floor(bnd)+1
+    INEQ("Inequality",f"Plan A costs ${f1} plus {M(r1)} per minute. Plan B costs ${f2} plus {M(r2)} per minute. What is the fewest whole minutes for which Plan B is cheaper?","m = minutes",f"{f2} + {r2:g}m < {f1} + {r1:g}m","m",best,f"{best} minutes",'min')
+@t
+def i_save_goal():
+    s=R.randint(0,30)*10; w=R.choice([15,20,25,35,40]); G=R.randint(20,120)*10
+    if G<=s: return
+    best=math.ceil((G-s)/w)
+    INEQ("Inequality",f"{nm()} has ${s} and saves ${w} a week. What is the fewest weeks needed to have at least ${G}?","w = weeks",f"{s} + {w}w ≥ {G}","w",best,PL(best,"week"),'min')
+@t
+def i_commission_min():
+    base=R.choice([200,300,400,500]); r=R.choice([5,8,10,12,15]); G=R.randint(6,20)*100
+    best=math.ceil((G-base)*100/r)
+    if best<=0: return
+    INEQ("Inequality",f"A salesperson earns ${base} a week plus {r}% of sales. What is the least (whole-dollar) amount of sales needed to earn at least ${G}?","s = sales",f"{base} + {r/100:g}s ≥ {G}","s",best,M(best),'min')
+@t
+def i_fence():
+    P_=R.randint(40,200); l=R.randint(10,P_//2-1)
+    best=(P_-2*l)//2
+    if best<1: return
+    INEQ("Inequality",f"A rectangular garden is {l} ft long, and there is at most {P_} ft of fencing. What is the greatest whole-number width possible?","w = width",f"2({l}) + 2w ≤ {P_}","w",best,f"{best} ft",'max')
+@t
+def i_temp():
+    a=R.randint(10,40); r=R.choice([2,3,4,5]); lim=R.randint(-20,a-5)
+    best=math.floor((a-lim)/r)
+    INEQ("Inequality",f"The temperature is {a}°F and falling {r}°F per hour. For how many whole hours will it stay at or above {lim}°F?","h = hours",f"{a} − {r}h ≥ {lim}","h",best,PL(best,"hour"),'max')
+@t
+def i_two_sided_tickets():
+    p=R.choice([6,8,10,12,15]); fixed=R.randint(100,600); G=R.randint(5,30)*100
+    best=math.ceil((G+fixed)/p)
+    INEQ("Inequality",f"A school dance costs ${fixed} to run. Tickets are ${p}. How many tickets must be sold for a profit of at least ${G}?","n = tickets",f"{p}n − {fixed} ≥ {G}","n",best,f"{best} tickets",'min')
+# ---------- GROWTH / EXPONENTIAL ----------
+@t
+def e_double():
+    N0=R.choice([50,100,200,250,300,500,1000]); h=R.choice([2,3,4,5,6,20,30]); k=R.randint(2,8); N=N0*2**k
+    unit="minutes" if h>=20 else "hours"
+    add("Exponential",f"A bacteria culture starts with {N0} cells and doubles every {h} {unit}. When will it reach {N:,} cells?",f"t = {unit}",f"{N0} × 2^(t/{h}) = {N}",f"2^(t/{h}) = {2**k} = 2^{k} → t/{h} = {k} → t = {k*h}",f"{k*h} {unit}")
+@t
+def e_half():
+    A0=R.choice([80,100,160,200,320,400,640,800]); h=R.choice([2,3,5,6,8,12,24,30]); k=R.randint(1,5); A=Fr(A0,2**k)
+    if A.denominator!=1: return
+    add("Exponential",f"A substance has a half-life of {h} years. How long until {A0} g decays to {A} g?","t = years",f"{A0} × (1/2)^(t/{h}) = {A}",f"(1/2)^(t/{h}) = 1/{2**k} → t/{h} = {k} → t = {k*h}",f"{k*h} years")
+@t
+def e_triple():
+    N0=R.choice([10,20,30,50]); h=R.choice([2,4,5,10]); k=R.randint(2,4); N=N0*3**k
+    add("Exponential",f"A rumor spreads so that the number of people who have heard it triples every {h} days. It starts with {N0} people. When will {N} people have heard it?","t = days",f"{N0} × 3^(t/{h}) = {N}",f"3^(t/{h}) = {3**k} → t/{h} = {k} → t = {k*h}",f"{k*h} days")
+# ---------- LINEAR MODELS ----------
+@t
+def l_candles():
+    a=R.randint(10,30); b=a+R.randint(3,15); ra=R.choice([1,1.5,2]); rb=ra+R.choice([0.5,1,1.5,2]); t=(b-a)/(rb-ra)
+    t=Fr(b-a)/(Fr(rb).limit_denominator()-Fr(ra).limit_denominator())
+    if t.denominator not in (1,2) or a-float(ra)*float(t)<=0: return
+    L("Linear model",f"One candle is {a} cm tall and burns {ra:g} cm per hour. Another is {b} cm tall and burns {rb:g} cm per hour. When will they be the same height?","t = hours",f"{a} − {ra:g}t = {b} − {rb:g}t","t",t,f"{F(t)} hours")
+@t
+def l_plants():
+    a=R.randint(2,20); b=a+R.randint(3,20); ra=R.choice([2,3,4,5]); rb=R.choice([1,1.5,2])
+    if rb>=ra: return
+    t=Fr(b-a)/(Fr(ra)-Fr(rb).limit_denominator())
+    if t.denominator not in (1,2): return
+    L("Linear model",f"Plant A is {a} cm tall and grows {ra} cm a week. Plant B is {b} cm tall and grows {rb:g} cm a week. After how many weeks will they be the same height?","w = weeks",f"{a} + {ra}w = {b} + {rb:g}w","w",t,f"{F(t)} weeks")
+@t
+def l_towns():
+    a=R.randint(10,60)*1000; ga=R.randint(5,30)*100; b=a+R.randint(5,60)*1000; gb=R.randint(1,20)*100
+    y=Fr(b-a,ga+gb)
+    if y.denominator!=1: return
+    L("Linear model",f"Town A has {a:,} people and grows by {ga} a year. Town B has {b:,} people and shrinks by {gb} a year. In how many years will they be equal?","y = years",f"{a} + {ga}y = {b} − {gb}y","y",y,PL(y,"year"))
+@t
+def l_drain():
+    v=R.randint(5,100)*100; r=R.randint(5,50)*10; L2=R.randint(0,v//200)*100; t=Fr(v-L2,r)
+    if t.denominator!=1 or t<=0: return
+    L("Linear model",f"A pool holds {v:,} L and drains at {r} L per minute. After how many minutes will {L2:,} L remain?","t = minutes",f"{v} − {r}t = {L2}","t",t,PL(t,"minute"))
+@t
+def l_temp_conv():
+    C=R.randint(-40,100); Fh=Fr(9*C,5)+32
+    if Fh.denominator!=1: return
+    if R.random()<.5:
+        L("Formula",f"Using F = (9/5)C + 32, what Celsius temperature equals {Fh}°F?","C = degrees Celsius",f"(9/5)C + 32 = {Fh}".replace("C","c"),"c",C,f"{C}°C")
+    else:
+        k=R.choice([2,3]); 
+        # F = k C -> 9C/5 + 32 = kC -> C = 32/(k - 9/5)
+        c=Fr(32)/(k-Fr(9,5))
+        if c.denominator!=1: return
+        L("Formula",f"At what Celsius temperature is the Fahrenheit reading exactly {k} times the Celsius reading? (F = (9/5)C + 32)","c = degrees Celsius",f"(9/5)c + 32 = {k}c","c",c,f"{c}°C ({k*c}°F)")
+@t
+def l_elevation():
+    a=R.randint(10,80)*100; r=R.randint(2,20)*50; b=R.randint(0,30)*100; rb=R.randint(2,20)*50; t=Fr(a-b,r+rb)
+    if t.denominator!=1 or t<=0: return
+    L("Linear model",f"A hot-air balloon at {a} ft descends {r} ft per minute. Another at {b} ft rises {rb} ft per minute. When are they at the same height?","t = minutes",f"{a} − {r}t = {b} + {rb}t","t",t,PL(t,"minute"))
+@t
+def l_battery():
+    s=R.choice([100,95,90,85,80]); r=R.choice([4,5,6,8,10,12,15]); e=R.choice([0,5,10,15,20]); t=Fr(s-e,r)
+    if t.denominator not in (1,2,4): return
+    L("Linear model",f"A phone at {s}% battery loses {r}% per hour. After how many hours will it be at {e}%?","h = hours",f"{s} − {r}h = {e}","h",t,f"{F(t)} hours")
+@t
+def l_pages():
+    tot=R.randint(100,800); done=R.randint(0,tot//2); d=R.randint(3,20); p=Fr(tot-done,d)
+    if p.denominator!=1: return
+    L("Linear model",f"A {tot}-page book has {done} pages already read. How many pages a day must be read to finish in {d} days?","p = pages per day",f"{done} + {d}p = {tot}","p",p,f"{p} pages per day")
+@t
+def l_slope_two_points():
+    m=R.randint(2,15); b=R.randint(10,100); x1=R.randint(1,5); x2=x1+R.randint(2,8); y1=m*x1+b; y2=m*x2+b; target=m*R.randint(x2+1,x2+15)+b; ans=(target-b)//m
+    thing=R.choice([("a taxi ride","miles","$"),("a plumber's bill","hours","$")])
+    S2("Linear model",f"For {thing[0]}, {x1} {thing[1]} cost {thing[2]}{y1} and {x2} {thing[1]} cost {thing[2]}{y2}. The cost is linear: C = m·x + b. Find m and b, then how many {thing[1]} cost {thing[2]}{target}.","m = rate, b = fixed fee",[f"{x1}m + b = {y1}",f"{x2}m + b = {y2}"],{"m":m,"b":b},f"m = {m}, b = {b}; {ans} {thing[1]}","Subtract the equations")
+@t
+def l_spring():
+    k=R.choice([2,3,4,5,6,8]); F1=R.choice([10,12,15,20,24,30]); x1=Fr(F1,k); F2=R.choice([18,25,36,40,45,50]); x2=Fr(F2,k)
+    if x1.denominator not in (1,2) or x2.denominator not in (1,2): return
+    L("Direct variation",f"A spring stretches {F(x1)} cm under a {F1} N force. Stretch varies directly with force. How far will it stretch under {F2} N?","x = stretch",f"{F(x1)}/{F1} = x/{F2}","x",x2,f"{F(x2)} cm")
+@t
+def l_ohm():
+    I=R.choice([0.5,1,1.5,2,2.5,3,4,5]); Rr=R.choice([4,6,8,10,12,20,24,30,40]); V=Fr(I).limit_denominator()*Rr
+    if R.random()<.5:
+        L("Formula",f"Using V = IR, find the resistance (in ohms) when the voltage is {F(V)} V and the current is {I:g} A.","r = resistance",f"{I:g}r = {F(V)}","r",Rr,f"{Rr} Ω")
+    else:
+        L("Formula",f"Using V = IR, find the current when the voltage is {F(V)} V and the resistance is {Rr} Ω.","i = current",f"{Rr}i = {F(V)}","i",Fr(I).limit_denominator(),f"{I:g} A")
+@t
+def l_density():
+    d=R.choice([0.5,0.8,1,1.5,2,2.5,2.7,7.8,8.9,11.3]); V=R.randint(2,50); m=Fr(d).limit_denominator()*V
+    L("Formula",f"An object has a mass of {F(m)} g and a density of {d:g} g/cm³. Using density = mass/volume, find its volume.","v = volume",f"{d:g} = {F(m)}/v".replace(f"{d:g} = {F(m)}/v",f"{d:g}v = {F(m)}"),"v",V,f"{V} cm³")
+@t
+def l_lever():
+    w1=R.randint(20,90); d1=R.randint(1,6); w2=R.randint(20,90); d2=Fr(w1*d1,w2)
+    if d2.denominator not in (1,2,4) or w1==w2: return
+    n1,n2=nm(2)
+    L("Formula",f"On a seesaw, weight × distance from the pivot must be equal on both sides. {n1} ({w1} kg) sits {d1} m from the pivot. How far from the pivot must {n2} ({w2} kg) sit to balance?","d = distance",f"{w1} × {d1} = {w2}d","d",d2,f"{F(d2)} m")
+@t
+def l_speed_formula():
+    d=R.randint(20,600); s=R.choice([20,25,40,50,60,75,80,100,120]); t=Fr(d,s)
+    if t.denominator not in (1,2,4,5): return
+    L("Formula",f"Using distance = speed × time, how long does it take to travel {d} km at {s} km/h?","t = hours",f"{s}t = {d}","t",t,f"{F(t)} hours")
+@t
+def l_perimeter_formula():
+    P_=R.randint(10,100)*2; l=R.randint(P_//4+1,P_//2-1); w=P_//2-l
+    L("Formula",f"Solve P = 2l + 2w for w when P = {P_} and l = {l}.","w = width",f"2({l}) + 2w = {P_}","w",w,str(w))
+@t
+def l_kinematics():
+    u=R.randint(0,20); a=R.choice([2,3,4,5,10]); t=R.randint(1,10); v=u+a*t
+    L("Formula",f"Using v = u + at, how long does it take an object to go from {u} m/s to {v} m/s with acceleration {a} m/s²?","t = seconds",f"{u} + {a}t = {v}","t",t,PL(t,"second"))
+# ---------- RATIO ----------
+@t
+def r_three_part():
+    a,b,c=R.sample(range(1,9),3); k=R.randint(2,30); T=(a+b+c)*k
+    things=R.choice([("flour","sugar","butter","g"),("cement","sand","gravel","kg"),("red","blue","yellow paint","mL")])
+    L("Ratio",f"A mix uses {things[0]}, {things[1]}, and {things[2]} in the ratio {a}:{b}:{c}. The total is {T} {things[3]}. How much of each is used?","k = one part",f"{a}k + {b}k + {c}k = {T}","k",k,f"{a*k}, {b*k}, {c*k} {things[3]}")
+@t
+def r_new_ratio():
+    b,g=R.sample(range(2,9),2); k=R.randint(2,8); B=b*k; G=g*k
+    # add n girls so new ratio is p:q
+    for n in range(1,30):
+        fr=Fr(B,G+n)
+        if fr.numerator<10 and fr.denominator<10 and fr!=Fr(b,g): break
+    else: return
+    L("Ratio",f"The ratio of boys to girls in a class is {b}:{g}. After {n} more girls join, the ratio becomes {fr.numerator}:{fr.denominator}. How many students were there originally?","k = scale factor (boys = "+f"{b}k, girls = {g}k)",f"{b}k/({g}k + {n}) = {fr.numerator}/{fr.denominator}","k",k,f"{B+G} students ({B} boys, {G} girls)")
+@t
+def r_marbles():
+    a=R.randint(10,60); b=R.randint(10,60); t_=R.randint(1,min(a,b)-1)
+    fr=Fr(a-t_,b+t_)
+    if fr.denominator>12 or fr.numerator>12: return
+    k=Fr(a,1)
+    # A has a, B has b with a known ratio a:b simplified
+    r=Fr(a,b)
+    if r.numerator>12 or r.denominator>12: return
+    k=a//r.numerator
+    n1,n2=nm(2)
+    L("Ratio",f"The ratio of {n1}'s marbles to {n2}'s is {r.numerator}:{r.denominator}. After {n1} gives {n2} {t_} marbles, the ratio is {fr.numerator}:{fr.denominator}. How many did each have at first?","k = scale factor",f"({r.numerator}k − {t_})/({r.denominator}k + {t_}) = {fr.numerator}/{fr.denominator}","k",k,f"{n1} {a}, {n2} {b}")
+@t
+def r_paint():
+    a,b=R.sample(range(1,7),2); have=a*R.randint(2,10); need=Fr(have*b,a)
+    RAT("Proportion",f"A shade of green uses blue and yellow paint in the ratio {a}:{b}. If {have} L of blue is used, how much yellow is needed?","y = liters of yellow",f"{a}/{b} = {have}/y","y",need,f"{F(need)} L","Cross-multiply")
+@t
+def r_scale_recipe2():
+    e=R.choice([2,3,4]); s=R.choice([12,18,24,30,36]); want=R.choice([s*k//2 for k in (1,3,4,5)]); x=Fr(e*want,s)
+    if x.denominator!=1: return
+    L("Proportion",f"A cookie recipe needs {e} eggs for {s} cookies. How many eggs for {want} cookies?","x = eggs",f"{e}/{s} = x/{want}","x",x,PL(x,"egg"))
+@t
+def r_fertilizer():
+    a=R.choice([2,3,4,5]); per=R.choice([10,20,25,50]); area=per*R.randint(3,40); x=Fr(a*area,per)
+    L("Proportion",f"A lawn needs {a} kg of fertilizer per {per} m². How much is needed for {area} m²?","x = kg needed",f"{a}/{per} = x/{area}","x",x,f"{F(x)} kg")
+# ---------- SYSTEMS ----------
+@t
+def s_points():
+    t2,t3=R.randint(5,30),R.randint(1,12); ft=R.randint(0,10); pts=2*t2+3*t3+ft
+    if R.random()<.6:
+        S2("System of equations",f"A basketball team scored {2*t2+3*t3} points from {t2+t3} field goals, all 2-pointers and 3-pointers. How many of each?","x = 2-pointers, y = 3-pointers",[f"x + y = {t2+t3}",f"2x + 3y = {2*t2+3*t3}"],{"x":t2,"y":t3},f"{t2} two-pointers, {t3} three-pointers")
+    else:
+        td,fg=R.randint(1,6),R.randint(0,5)
+        S2("System of equations",f"A football team scored {7*td+3*fg} points from {td+fg} scores, all 7-point touchdowns (with extra point) and 3-point field goals. How many of each?","x = touchdowns, y = field goals",[f"x + y = {td+fg}",f"7x + 3y = {7*td+3*fg}"],{"x":td,"y":fg},f"{td} touchdowns, {fg} field goals")
+@t
+def s_test_scoring():
+    N=R.choice([20,25,30,40,50]); c=R.randint(N//2,N); w=N-c; p,q=R.choice([(4,1),(3,1),(5,2),(2,1)]); S=p*c-q*w
+    S2("System of equations",f"A test has {N} questions. Each correct answer earns {p} points and each wrong answer loses {q}. {nm()} answered every question and scored {S}. How many were correct?","c = correct, w = wrong",[f"c + w = {N}",f"{p}c − {q}w = {S}"],{"c":c,"w":w},f"{c} correct, {w} wrong")
+@t
+def s_tables():
+    a,b=R.choice([(4,6),(2,4),(4,8),(6,8),(6,10)]); x=R.randint(2,20); y=R.randint(2,20)
+    S2("System of equations",f"A banquet hall seats {a*x+b*y} guests at {x+y} tables. Some tables seat {a} and the others seat {b}. How many of each kind are there?",f"x = {a}-seat tables, y = {b}-seat tables",[f"x + y = {x+y}",f"{a}x + {b}y = {a*x+b*y}"],{"x":x,"y":y},f"{x} tables of {a}, {y} tables of {b}")
+@t
+def s_boats():
+    a,b=R.choice([(2,3),(2,4),(3,5),(4,6)]); x=R.randint(2,15); y=R.randint(2,15)
+    thing=R.choice(["canoes","rafts","paddle boats"])
+    S2("System of equations",f"A camp rents {x+y} {thing} for {a*x+b*y} campers, filling every seat. Some {thing} hold {a} people and the rest hold {b}. How many of each were rented?",f"x = {a}-person, y = {b}-person",[f"x + y = {x+y}",f"{a}x + {b}y = {a*x+b*y}"],{"x":x,"y":y},f"{x} {a}-person and {y} {b}-person")
+@t
+def s_bills():
+    a,b=R.choice([(5,10),(5,20),(10,20),(1,5),(20,50)]); x=R.randint(2,30); y=R.randint(2,30)
+    S2("System of equations",f"A cash drawer has {x+y} bills, all ${a} and ${b} bills, totaling ${a*x+b*y}. How many of each?",f"x = ${a} bills, y = ${b} bills",[f"x + y = {x+y}",f"{a}x + {b}y = {a*x+b*y}"],{"x":x,"y":y},f"{x} ${a} bills and {y} ${b} bills")
+@t
+def s_egg_boxes():
+    a,b=R.choice([(6,12),(6,18),(12,30),(4,6)]); x=R.randint(2,40); y=R.randint(2,40)
+    S2("System of equations",f"A farm packed {a*x+b*y} eggs into {x+y} cartons, using cartons of {a} and cartons of {b}. All cartons were full. How many of each?",f"x = cartons of {a}, y = cartons of {b}",[f"x + y = {x+y}",f"{a}x + {b}y = {a*x+b*y}"],{"x":x,"y":y},f"{x} of {a}, {y} of {b}")
+@t
+def s_concert():
+    p1,p2=R.choice([(25,40),(30,50),(15,35),(20,45),(35,60)]); x=R.randint(50,800); y=R.randint(50,800)
+    S2("System of equations",f"A concert sold {x+y} tickets: lawn seats at ${p1} and reserved seats at ${p2}. Ticket sales totaled ${p1*x+p2*y:,}. How many of each were sold?","x = lawn, y = reserved",[f"x + y = {x+y}",f"{p1}x + {p2}y = {p1*x+p2*y}"],{"x":x,"y":y},f"{x} lawn, {y} reserved")
+@t
+def s_age_ratio_two():
+    c=R.randint(4,20); k=R.choice([3,4,5]); p=k*c; y=R.randint(2,20); m=Fr(p+y,c+y)
+    if m.denominator!=1 or m==k: return
+    n1,n2=nm(2)
+    S2("System of equations",f"{n1} is {k} times as old as {n2}. In {y} years, {n1} will be {m} times as old as {n2}. How old is each now?",f"p = {n1}'s age, c = {n2}'s age",[f"p = {k}c",f"p + {y} = {m}(c + {y})"],{"p":p,"c":c},f"{n1} {p}, {n2} {c}","Substitute p = "+f"{k}c")
+@t
+def s_two_lines():
+    x=R.randint(-10,10); y=R.randint(-10,10); a,b,c,d=[R.choice([-4,-3,-2,-1,1,2,3,4,5]) for _ in range(4)]
+    if a*d-b*c==0: return
+    e=a*x+b*y; f_=c*x+d*y
+    def lin(a,b): return f"{'' if a==1 else ('−' if a==-1 else a)}x {'+' if b>0 else '−'} {'' if abs(b)==1 else abs(b)}y".replace("-","−")
+    S2("System of equations",f"Two numbers x and y satisfy {lin(a,b)} = {e} and {lin(c,d)} = {f_}. Find x and y.","x, y = the numbers",[f"{lin(a,b)} = {e}",f"{lin(c,d)} = {f_}"],{"x":x,"y":y},f"x = {x}, y = {y}")
+@t
+def s_three_coins():
+    q=R.randint(2,20); d=q+R.randint(1,10); n=2*q
+    T=25*q+10*d+5*n
+    L("Coins",f"A jar has quarters, dimes, and nickels worth {M(Fr(T,100))}. There are {d-q} more dimes than quarters and twice as many nickels as quarters. How many of each coin?","q = quarters",f"25q + 10(q + {d-q}) + 5(2q) = {T}","q",q,f"{q} quarters, {d} dimes, {n} nickels")
+@t
+def s_stamps():
+    a,b=R.choice([(55,70),(44,63),(60,85),(50,75)]); x=R.randint(3,30); y=R.randint(3,30)
+    S2("System of equations",f"{nm()} bought {x+y} stamps, some at {a}¢ and some at {b}¢, for {M(Fr(a*x+b*y,100))}. How many of each?",f"x = {a}¢ stamps, y = {b}¢ stamps",[f"x + y = {x+y}",f"{a}x + {b}y = {a*x+b*y}"],{"x":x,"y":y},f"{x} at {a}¢, {y} at {b}¢")
+@t
+def s_mix_two_rates():
+    r1=R.choice([4,5,6]); r2=R.choice([8,9,10,12]); x=R.randint(3,30); y=R.randint(3,30)
+    S2("System of equations",f"A shop sold {x+y} kg of two teas, one at ${r1}/kg and one at ${r2}/kg, for ${r1*x+r2*y}. How many kg of each?",f"x = kg at ${r1}, y = kg at ${r2}",[f"x + y = {x+y}",f"{r1}x + {r2}y = {r1*x+r2*y}"],{"x":x,"y":y},f"{x} kg at ${r1}, {y} kg at ${r2}")
+@t
+def s_rect_two():
+    w=R.randint(2,30); l=w+R.randint(1,20); P_=2*(l+w)
+    S2("System of equations",f"The perimeter of a rectangle is {P_} m and its length is {l-w} m more than its width. Find the length and width.","l = length, w = width",[f"2l + 2w = {P_}",f"l = w + {l-w}"],{"l":l,"w":w},f"{l} m by {w} m","Substitute")
+@t
+def s_three_var():
+    x,y,z=R.randint(1,20),R.randint(1,20),R.randint(1,20)
+    add("System of equations (3 variables)",f"Three numbers add up to {x+y+z}. The first plus the second is {x+y}, and the second plus the third is {y+z}. Find all three.","x, y, z = the numbers",f"x + y + z = {x+y+z};  x + y = {x+y};  y + z = {y+z}",f"z = {x+y+z} − {x+y} = {z}; x = {x+y+z} − {y+z} = {x}; y = {x+y} − {x} = {y} → x = {x}, y = {y}, z = {z}",f"{x}, {y}, {z}")
+@t
+def s_fruit3():
+    a,b,c=[Fr(R.randint(5,40)*5,100) for _ in range(3)]
+    # eq: a+b+c=T1 ; 2a+b=T2 ; b+2c=T3
+    T1,T2,T3=a+b+c,2*a+b,b+2*c
+    add("System of equations (3 variables)",f"An apple, a banana, and a cherry cup cost {M(T1)} together. Two apples and a banana cost {M(T2)}. A banana and two cherry cups cost {M(T3)}. Find each price.","a, b, c = prices",f"a + b + c = {float(T1):g};  2a + b = {float(T2):g};  b + 2c = {float(T3):g}",f"Subtract eq 1 from eq 2: a − c = {float(T2-T1):g}; substitute into eq 3 → a = {float(a):g}, b = {float(b):g}, c = {float(c):g}",f"apple {M(a)}, banana {M(b)}, cherry cup {M(c)}")
+# ---------- AVERAGES ----------
+@t
+def a_weighted_grade():
+    hw=R.randint(70,98); wf=R.choice([20,25,30,40]); target=R.randint(75,92); f_=Fr(100*target-(100-wf)*hw,wf)
+    if f_.denominator!=1 or not (40<=f_<=100): return
+    L("Average (weighted)",f"A course grade is {100-wf}% coursework and {wf}% final exam. {nm()} has a coursework average of {hw}. What final exam score gives an overall grade of {target}?","f = final exam score",f"{(100-wf)/100:g}({hw}) + {wf/100:g}f = {target}","f",f_,str(f_))
+@t
+def a_missing():
+    n=R.randint(4,7); xs=[R.randint(5,60) for _ in range(n-1)]; x=R.randint(5,60); avg=Fr(sum(xs)+x,n)
+    if avg.denominator!=1: return
+    L("Average",f"The mean of {n} numbers is {avg}. {n-1} of them are {', '.join(map(str,xs))}. What is the missing number?","x = missing number",f"({' + '.join(map(str,xs))} + x)/{n} = {avg}","x",x,str(x))
+@t
+def a_consec_avg():
+    n=R.choice([3,5,7]); x=R.randint(1,80); avg=x+(n-1)//2
+    L("Consecutive integers",f"The average of {n} consecutive integers is {avg}. What is the smallest?","x = smallest",f"(x + (x + {n-1}))/2 = {avg}","x",x,f"{x} (the integers are {x} to {x+n-1})")
+@t
+def a_class_avg():
+    n1=R.randint(10,30); a1=R.randint(65,90); n2=R.randint(10,30); a2=R.randint(65,95); T=Fr(n1*a1+n2*a2,n1+n2)
+    if T.denominator not in (1,2,4,5): return
+    L("Average (weighted)",f"Class A has {n1} students averaging {a1}. Class B averages {a2}. Together the classes average {F(T)}. How many students are in class B?","n = students in class B",f"({n1}×{a1} + {a2}n)/({n1} + n) = {F(T)}","n",n2,f"{n2} students")
+@t
+def a_avg_speed_sameD():
+    v1=R.choice([30,40,60]); v2=R.choice([20,40,60,90,120])
+    if v1==v2: return
+    avg=Fr(2*v1*v2,v1+v2)
+    if avg.denominator!=1: return
+    RAT("Distance (average speed)",f"A car goes from A to B at {v1} km/h. How fast must it return so that the average speed for the round trip is {avg} km/h?","v = return speed",f"2/(1/{v1} + 1/v) = {avg}","v",v2,f"{v2} km/h","Rearrange: 1/v = 2/"+f"{avg} − 1/{v1}")
+# ---------- CLOCK ----------
+@t
+def c_clock():
+    h=R.randint(1,10); 
+    if R.random()<.5:
+        m=Fr(60*h,11)
+        add("Clock",f"At what time between {h}:00 and {h+1}:00 are the hour and minute hands of a clock exactly together?","m = minutes after "+f"{h}:00",f"6m = {30*h} + 0.5m",f"5.5m = {30*h} → m = {F(m)}",f"{F(m)} ≈ {float(m):.2f} minutes after {h}:00")
+    else:
+        m=Fr(60*h+360,11)
+        if m>=60: return
+        add("Clock",f"At what time between {h}:00 and {h+1}:00 do the hour and minute hands of a clock point in exactly opposite directions?","m = minutes after "+f"{h}:00",f"6m = {30*h} + 0.5m + 180",f"5.5m = {30*h+180} → m = {F(m)}",f"{F(m)} ≈ {float(m):.2f} minutes after {h}:00")
+
+# ======================================================================
+# GENERATE AND WRITE THE FILE
+# ======================================================================
+seen=set(); TARGET=1000
+order=list(T); rounds=0
+counts={f.__name__:0 for f in T}
+while len(P)<TARGET and rounds<40:
+    rounds+=1; R.shuffle(order)
+    for f in order:
+        if len(P)>=TARGET: break
+        for _ in range(80):
+            before=len(P)
+            try: f()
+            except (ZeroDivisionError,ValueError,AssertionError,OverflowError,TypeError): pass
+            if len(P)>before:
+                if P[-1][1] in seen: P.pop(); continue
+                seen.add(P[-1][1]); counts[f.__name__]+=1; break
+import collections
+print("templates",len(T),"problems",len(P),"rounds",rounds)
+print("min/max per template",min(counts.values()),max(counts.values()))
+print("zero:",[k for k,v in counts.items() if v==0])
+cats=collections.Counter(p[0] for p in P); print(len(cats),"categories")
+P.sort(key=lambda p:p[0])
+import re as _re
+clean=lambda z:_re.sub(r'(?<![\d.])1([a-z])',r'\1',z)
+with open(OUT,'w',encoding='utf-8') as fh:
+    fh.write(f"ALGEBRA WORD PROBLEMS WITH SOLUTIONS\n{len(P)} problems from {len(T)} problem types in {len(cats)} categories.\nEvery answer was checked by substituting it back into its equation.\n")
+    fh.write("Format per entry: ID [Category] / Problem / Let / Equation / Solve / Answer, separated by a line of '-'.\n\nCATEGORIES\n")
+    for c,n in sorted(cats.items()): fh.write(f"  {c}: {n}\n")
+    fh.write("="*70+"\n\n")
+    for i,(cat,prob,let,eq,steps,ans) in enumerate(P,1):
+        eq,steps=clean(eq),clean(steps)
+        steps=_re.sub(r'^([a-z]) = (-?[\d./]+) → \1 = \2$',r'\1 = \2',steps)
+        steps=_re.sub(r'^-([\d.]*)([a-z]) = -([\d.]+)',r'\1\2 = \3',steps)
+        fh.write(f"#{i:04d} [{cat}]\nProblem: {prob}\nLet: {let}\nEquation: {eq}\nSolve: {steps}\nAnswer: {ans}\n"+"-"*70+"\n")

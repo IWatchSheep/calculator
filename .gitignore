@@ -7,3 +7,8 @@ __pycache__/
 .env.*
 saved_templates.json
 rust_calculator/target/
+
+# regenerable / build output inside algebra_word_problems
+algebra_word_problems/algebra_matcher/training_data.jsonl
+algebra_word_problems/rust_chess/python_version_of_rust_chess/game_files_kpk/
+algebra_word_problems/rust_chess/forming_chess-main/target/
