@@ -2405,6 +2405,27 @@ class FreshWordings(unittest.TestCase):
         from fresh_word_problems_45 import FRESH
         self.assertEqual(score(FRESH), (2, 0, 7))
 
+    def test_pipes_the_open_statement_and_the_question_carry_nothing_else(self):
+        """The same extra water got through when it was said INSIDE the "all open" sentence or the question: "All three are open and water also leaves through a crack." and
+        "... how long does it take to fill the tank if water also leaves through a crack?" were answered 12/5.  What is left of the statement once the open phrase is taken out may
+        only be small filler words, and the question may not hang a clause on (if / when / while / and / also / as ...)."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours. "
+        ask = " How long does it take to fill the tank?"
+        for q in ("All three are open." + ask, "With all three open, how long does it take to fill the tank?", "All three are open, how long does it take to fill the tank?",
+                  "How long does it take to fill the tank with all three open?", "All three are open together." + ask):
+            self.assertEqual(answers(base + q), values(Fraction(12, 5)), q)
+        for q in ("All three are open and water also leaves through a crack." + ask,
+                  "All three are open. How long does it take to fill the tank if water also leaves through a crack?",
+                  "With all three open, how long does it take to fill the tank if rain also falls in?",
+                  "How long does it take to fill the tank with all three open and rain falling in?",
+                  "All three are open while it is raining." + ask):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_open_statement_set(self):
+        """Set 46 (9 wordings) was written after the batch-42 fixes and run once, untuned: 3 solved, 6 required declines, 0 wrong."""
+        from fresh_word_problems_46 import FRESH
+        self.assertEqual(score(FRESH), (3, 0, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

@@ -2972,6 +2972,9 @@ def kinematics_time(problem):
 # ---------------------------------------------------------------------------------------------------------
 _PIPE_IN = re.compile(r"\bin\s+(\d+(?:\.\d+)?)\s+(hours?|minutes?|days?)\b")
 _PIPE_FILL_WORD = re.compile(r"\b(?:pipe|fills?|inlet|tap|faucet|hose)\b")
+# what may stay in the "everything is open" statement once the phrase is taken out, and the words that hang another clause on the question
+_PIPE_FILLER = {"if", "when", "with", "then", "together", "now", "at", "the", "same", "time", "once", "all", "both", "are", "is", "be"}
+_PIPE_HANG_ON = {"if", "when", "while", "as", "with", "and", "also", "too", "but", "since", "because", "once", "after", "before", "until", "plus", "besides", "even", "still", "in", "through", "from", "into", "by"}
 _PIPE_DRAIN_WORD = re.compile(r"\b(?:drain|drains|empties|empty|leak\w*|outlet)\b")
 
 
@@ -3013,9 +3016,21 @@ def pipes_and_drain(problem):
             # the time clause has to END the sentence: "A drain empties it in 12 hours and is pinched." / "... and is full of leaves." say more about the device
             if sent[times[-1].end():].strip(" ,;"):
                 return None
-        elif not re.search(r"\bhow long\b", sent) and not cue_phrase.search(sent) and not re.search(r"(?:^|\bwith\s+)\s*all " + state + r"\b", sent):
-            # a sentence that gives no time, asks nothing and does not open the devices is something else going on ("Water also leaves through a crack.": another way out)
-            return None
+        else:
+            # a sentence that gives no time is the "everything is open" statement or the question, and nothing more: a sentence that is neither is something else going on
+            # ("Water also leaves through a crack." is another way out), and so is anything added to the statement ("... and water also leaves through a crack") or to the question
+            # ("... if rain also falls in").  What is left of the statement once the open phrase is taken out may only be small filler words; the question may not hang a clause on
+            # (no "if / when / while / and / also / as well" after "how long").
+            lead = r"(?:\b(?:with|if|when|once)\s+)?"
+            opened = re.sub(lead + cue_phrase.pattern, " ", sent)                       # the open phrase may sit in the question too: "... fill the pool with all three open?"
+            opened = re.sub(r"(?:^|" + lead + r")\s*all " + state + r"\b", " ", opened)
+            q = re.search(r"\bhow long\b", opened)
+            if opened == sent and not q:
+                return None                                      # it does not open the devices and asks nothing
+            if set(re.findall(r"[a-z']+", opened[:q.start()] if q else opened)) - _PIPE_FILLER:
+                return None
+            if q and set(re.findall(r"[a-z']+", opened[q.start():])) & _PIPE_HANG_ON:
+                return None
         if _PIPE_DRAIN_WORD.search(sent) and not _PIPE_IN.search(sent):
             # a sentence about the drain that is not the clause giving its time: it may only be the "everything is open" phrase itself, and nothing else about the drain may
             # remain once that phrase is taken out ("The drain is covered.", "The drain is pinched.", "All three are open and the drain is full of leaves.")

@@ -1,7 +1,7 @@
 ALGEBRA WORD PROBLEMS: WHAT IS DONE, WHAT IS TO DO, AND HOW TO KEEP THIS FILE CURRENT
 =======================================================================================
 File: algebra_word_problems_status.txt, in the main project folder (C:\Users\I_wat\PycharmProjects\calculator).
-Last updated by Claude after Batch 41 (the commit that follows b042f66; the algebra word problem folders, the README section and the Operators diagram list are already on GitHub), 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
+Last updated by Claude after Batch 42 (the commit that follows 5fe4e29; the algebra word problem folders, the README section and the Operators diagram list are already on GitHub), 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
 
 
 NOTE TO THE NEXT CLAUDE  (read this first)
@@ -49,7 +49,7 @@ sanity check.  Anything else returns None (a "decline"), so the trained matcher 
   algebra_matcher/test_word_solver.py       the tests: unit tests per family, the generated-problem ground truth, the hand-written answers (HAND_ANSWERS), the fresh sets, the no-raise guard.
   algebra_matcher/test_number_puzzle.py     the older tests (load_problems() lives here).
   algebra_matcher/fresh_word_problems*.py   44 "fresh sets": wordings written AFTER a family was finished, run ONCE, never tuned on.  Format: FRESH = [(problem, [answers]) or (problem, None) = must decline].
-  algebra_matcher/word_solver_results.txt   the long write-up of every batch (Batch 2 ... Batch 41): what was built, what was fixed and why, the measured numbers.
+  algebra_matcher/word_solver_results.txt   the long write-up of every batch (Batch 2 ... Batch 42): what was built, what was fixed and why, the measured numbers.
   algebra_matcher/todo_report.py            prints the unclaimed wording shapes and the counts (used for the appendix of THIS file).
   algebra_matcher/note_from_claude.txt      an old conversation note (the matcher design).
   ../operators_one_algebra_word_problem_per_file/ and ../operator_row_math_for_algebra_word_problems/   the generated problem files, diagrams and rows (section 7).
@@ -57,16 +57,16 @@ sanity check.  Anything else returns None (a "decline"), so the trained matcher 
 Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittest test_word_solver test_number_puzzle   (about 11 seconds).
 
 
-3. THE NUMBERS   (as of Batch 41)
+3. THE NUMBERS   (as of Batch 42)
 -------------------------------------------------
   families in word_solver.FAMILIES:               55
   generated problems claimed by the solver:       337 of 1,000, WRONG: 0
   generated problems still unclaimed:             663   (235 distinct wording shapes, listed in the appendix)
   hand-written problems answered:                 38 by the word solver (HAND_ANSWERS, all match the hand-calculated answers) + 3 by the number-puzzle reader = 41 of the 100;
                                                   the trained matcher's first guess covers the rest
-  tests:                                          156 word-solver and number-puzzle tests, all pass
-  fresh sets:                                     45 files (fresh_word_problems.py ... fresh_word_problems_45.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
-  git:                                            branch main, last commit before Batch 41 is b042f66 (Batch 41 is the next commit), pushed to https://github.com/IWatchSheep/calculator
+  tests:                                          158 word-solver and number-puzzle tests, all pass
+  fresh sets:                                     46 files (fresh_word_problems.py ... fresh_word_problems_46.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
+  git:                                            branch main, last commit before Batch 42 is 5fe4e29 (Batch 42 is the next commit), pushed to https://github.com/IWatchSheep/calculator
 
 
 4. DONE   (one line per batch; the long text is in word_solver_results.txt)
@@ -106,6 +106,8 @@ Batches (Batch 1 was the five-family solver and its tests; numbers in brackets a
                an "all open" that is the pool, and a GENERAL rule: nothing else may be said about the drain.                                                                                    [337]
   Batch 41     FIX ONLY (pipes_and_drain): the time clause has to END its sentence ("a drain empties it in 12 hours and is pinched" declines), and a sentence that gives no
                time, asks nothing and does not open the devices declines the problem ("Water also leaves through a crack.").  Fresh set 45: 2 solved, 7 declines, 0 wrong.   [337]
+  Batch 42     FIX ONLY (pipes_and_drain): the "all open" statement and the question may carry nothing else ("... and water also leaves through a crack", "... if rain also falls in"
+               decline).  Fresh set 46: 3 solved, 6 declines, 0 wrong.   [337]
 
 All 55 families (the FAMILIES list, in the order the solver tries them):
   sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest, two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,

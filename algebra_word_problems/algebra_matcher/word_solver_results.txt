@@ -1073,3 +1073,19 @@ Measured:
   1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 45 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 2 with an answer: 2 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
   156 word-solver and number-puzzle tests pass.
+
+Batch 42: the "all open" statement and the question may carry nothing else (pipes_and_drain; fix only, no new family)
+==============================================================
+pipes_and_drain: the batch-41 rule stopped a stray sentence, but extra water said INSIDE the open sentence or the question still got through and was answered 12/5 (wrong):
+  "All three are open and water also leaves through a crack."  /  "All three are open. How long does it take to fill the tank if water also leaves through a crack?"  /
+  "With all three open, how long does it take to fill the tank if rain also falls in?"  That water is another way in or out, and its rate is not one of the three times.
+  The fix is a general rule, not a word list: in a sentence that gives no time, the "everything is open" phrase (with an optional leading with / if / when / once, wherever it sits, so
+  "... fill the tank with all three open?" still works) is taken out first.  What is left BEFORE "how long" may only be small filler words (if, when, with, then, together, now, at the same time, all, both, are, is, be);
+  and what is left from "how long" on may not hang a clause on the question (if / when / while / as / with / and / also / too / but / since / because / once / after / before / until / plus / besides / even / still / in / through / from / into / by).
+  Unchanged: "A drain empties it in 12 hours. All three are open. How long does it take to fill the tank?", "With all three open, how long does it take to fill the tank?", "How long does it take to fill the pool with all three open?" and
+  "The pipes and the drain are open together." all still answer.
+Checks (test_word_solver.py): test_pipes_the_open_statement_and_the_question_carry_nothing_else and test_pipes_open_statement_set; the earlier tests still pass.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 46 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
+  158 word-solver and number-puzzle tests pass.
