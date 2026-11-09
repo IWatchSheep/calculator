@@ -492,7 +492,8 @@ def two_purchases(problem):
     found = list(_PURCHASE.finditer(t))
     if len(found) != 2 or re.search(r"\bsuch\b", t):
         return None
-    if any(re.match(r"\s*(?:each|apiece|per)\b", t[m.end():]) for m in found):
+    # a price followed by each / apiece / per ("$5 each", "$5 for each", "$5 a piece") is the price of ONE item, not a total
+    if any(re.match(r"\s*(?:(?:for|a)\s+)?(?:each|apiece|per|piece)\b", t[m.end():]) for m in found):
         return None
     rows = []
     digit_counts = 0
@@ -534,8 +535,75 @@ def two_purchases(problem):
                       first[1], first[3], eq1, eq2, show_exact(x), show_exact(y)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 9. price-per-pound blend:   p1*x + p2*(T - x) = blend*T      (the generator's "weighted_avg")
+#    the percent mixture with prices instead of percents.  NOT "how much must be added to a known amount".
+# ---------------------------------------------------------------------------------------------------------
+_UNIT_NAMES = {"lb": "lb", "lbs": "lb", "pound": "lb", "pounds": "lb", "kg": "kg", "kilogram": "kg", "kilograms": "kg",
+               "oz": "oz", "ounce": "oz", "ounces": "oz"}
+_UNIT_RE = "(" + "|".join(sorted(_UNIT_NAMES, key=len, reverse=True)) + r")\b"
+_PER_UNIT = re.compile(r"\s*(?:/\s*|(?:per|a)\s+)" + _UNIT_RE)
+_BLEND_OTHER = re.compile(r"\b(?:add|adds|added|adding|already|water|evaporat\w*|remov\w*|replac\w*|profit|loss|discount\w*|tax|"
+                          r"times as|twice|double|triple|half|as much|ratio|more than|less than|each of the|extra|another|"
+                          r"three|four|five|six|seven|eight|nine|ten)\b|%")
+_BLEND_MAKE = re.compile(r"\b(?:make|makes|making|get|gets|need|needs|needed|obtain|produce|produces|want|wants)\b")
+_BLEND_TARGET_CUE = re.compile(r"\b(?:worth|selling for|sells for|sell for|sold for|selling at|sells at|sell at|sold at|priced at|valued at)\s*$")
+
+
+def price_blend(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 4 or _BLEND_OTHER.search(t):
+        return None
+    prices = [n for n in nums if n[1]]
+    amts = [n for n in nums if not n[1]]
+    if len(prices) != 3 or len(amts) != 1:
+        return None
+    if not re.search(r"\b(?:how (?:much|many)|find|determine|what (?:amount|weight))\b", t):
+        return None
+    if not re.search(r"\b(?:mix\w*|blend\w*|combin\w*)\b", t):
+        return None
+    if re.search(r"\btwo\s+(?:lb|lbs|pounds?|kg|kilograms?|oz|ounces?)\b", t):
+        return None
+    # every price is "per unit" ("$6 a pound", "$6/lb", "$6 per kg"), all with the same unit
+    units = set()
+    for n in prices:
+        m = _PER_UNIT.match(t[n[3]:])
+        if not m:
+            return None
+        units.add(_UNIT_NAMES[m.group(1)])
+    T, a_start, a_end = amts[0][0], amts[0][2], amts[0][3]
+    um = re.match(r"\s*" + _UNIT_RE, t[a_end:])
+    if not um or units != {_UNIT_NAMES[um.group(1)]}:
+        return None
+    # the amount is the weight of the blend wanted: "to make 40 lb ..." or "40 lb of a blend ..."
+    unit_end = a_end + um.end()
+    if not (_BLEND_MAKE.search(" ".join(t[:a_start].split()[-3:])) or re.match(r"\s*of (?:a |the |an )?(?:blend|mixture|mix)\b", t[unit_end:])):
+        return None
+    # the blend's price is the first price after the amount, introduced by "worth / selling for / priced at ..."
+    after = [n for n in prices if n[2] >= unit_end]
+    if not after:
+        return None
+    target_n = min(after, key=lambda n: n[2])
+    if not _BLEND_TARGET_CUE.search(t[:target_n[2]].rstrip().rstrip("$").rstrip()) or len(t[unit_end:target_n[2]].split()) > 8:
+        return None
+    sources = [n for n in prices if n is not target_n]
+    p1, p2, tg = sources[0][0], sources[1][0], target_n[0]
+    if p1 == p2 or not (min(p1, p2) < tg < max(p1, p2)) or T <= 0:
+        return None
+    x1 = T * (tg - p2) / (p1 - p2)
+    x2 = T - x1
+    if x1 <= 0 or x2 <= 0:
+        return None
+    unit = _UNIT_NAMES[um.group(1)]
+    eq = "%sx + %s(%s - x) = %s(%s)" % (show(p1), show(p2), show(T), show(tg), show(T))
+    return Result("price_blend", [x1, x2], eq,
+                  "x = %s at $%s, %s - x at $%s: %s, so %s %s at $%s and %s %s at $%s" % (
+                      unit, show(p1), show(T), show(p2), eq, show_exact(x1), unit, show(p1), show_exact(x2), unit, show(p2)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
-            two_purchases]
+            two_purchases, price_blend]
 
 
 def solve(problem):

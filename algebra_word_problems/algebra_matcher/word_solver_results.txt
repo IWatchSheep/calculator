@@ -270,3 +270,34 @@ Batch 8 patch: "each" after a price, and plural forms (found by Grok)
 Measured: 1,000 generated problems: claims 97, wrong 0; 19 word-solver tests and 12 number-puzzle tests pass.
   Fresh set 10 (7 wordings, written after the patch, run once, untuned): 5 with an answer: 5 solved, 0 declined;
   2 required declines: 2 of 2 (one of them repeats a sentence in the unit tests); 0 wrong.
+
+Batch 9: "for each / a piece" after a price, and the price-per-pound blend family (price_blend)
+==============================================================
+Patch: "2 apples and 3 pears cost $5 for each. 4 apples and 1 pear cost $6. Find the price of one of each." was answered 13/10 and 4/5
+  ("for" sat between the price and "each", so the check never saw it).  A price followed by [for|a] each / apiece / per / piece now declines
+  ("$5 for each", "$5 a piece").  "Find the price of one of each" stays answered: that "each" does not follow a price.
+New family price_blend:  p1*x + p2*(T - x) = blend*T, the generator's weighted_avg: the percent mixture with prices instead of percents.
+  "Coffee worth $6 a pound is mixed with coffee worth $10 a pound to make 40 lb worth $7 a pound. How many pounds of each?" is 30 lb at $6 and 10 lb at $10.
+  It answers only when
+  * there are exactly four numbers in digits: three prices (each "$6 a pound", "$6/lb", "$6 per kg", all the same unit) and one weight in that unit,
+  * the weight is introduced by make / get / need / obtain / produce / want ("to make 40 lb ...") or is "40 lb of a blend / mixture ...",
+  * the blend's price is the first price after the weight, introduced by worth / selling for / sells for / sold at / priced at / valued at,
+  * the question asks how much / how many / find / determine, and mix / blend / combine appears,
+  * the blend's price lies strictly between the two source prices, and both amounts are positive,
+  * and none of: add / added (a known amount already there), water, evaporate, remove, replace, profit, discount, tax, a percent,
+    twice / times / half / ratio / more than / less than, "another", "each of the", a spelled count of three or more, "two pounds".
+  Amounts are exact fractions; the reading shows the equation:
+  "x = lb at $6, 40 - x at $10: 6x + 10(40 - x) = 7(40), so 30 lb at $6 and 10 lb at $10".
+  Left for later (as asked): "how many pounds must be added to a known amount" (a different equation).
+  The sentence "How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?" was a
+  required decline in the unit tests and in fresh set 6 because it is not a percent mixture; both now expect 10 and 30.
+Measured:
+  1,000 generated problems: claims 97 -> 102.  The 5 new claims are every generated "a blend of" problem (weighted_avg): ids 0537, 0545, 0553, 0562, 0569
+  (10 lb at $8 and 40 lb at $15; 26 lb at $8 and 14 lb at $24; 3 lb at $4 and 17 lb at $18; 49 lb at $10 and 1 lb at $20; 10 lb at $6 and 10 lb at $18);
+  each equals the stored answer.  Wrong: 0.
+  (The test's answer reader had to learn the "N lb at $P" form, comparing the weights and not the prices.)
+  Hand-written problems claimed by the family solver: 19 -> 20 ("Coffee worth $6 a pound ... to make 40 lb worth $7 a pound", 10 and 30); all 20 match.
+  Fresh set 11 (8 wordings, written after the family, run once, untuned): 5 with an answer: 4 solved, 1 declined; 3 required declines: 3 of 3; 0 wrong.
+  The declined one is "A 40 lb blend worth $7 a pound is made from $6 a pound coffee and $10 a pound coffee": nothing like "to make" comes before
+  the weight and it is not followed by "of a blend".  A safe miss, not fixed.
+  34 word-solver and number-puzzle tests pass (new: test_price_blend, test_price_with_for_each, test_price_blend_set).

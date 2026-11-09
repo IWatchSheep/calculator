@@ -9,7 +9,7 @@ FRESH = [
     ("A jeweler melts a 40% gold alloy with a 90% gold alloy to get 100 g of a 65% gold alloy. How many grams of each?", [50, 50]),
     ("How many liters of water must be added to 10 liters of a 40% solution to make it 25%?", None),
     ("How many liters of a 20% solution must be added to 10 liters of a 50% solution to make a 40% solution?", None),
-    ("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?", None),
+    ("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?", [10, 30]),   # was a required decline until the price_blend family
     ("How many liters of a 10% solution and a 30% solution make 10 liters of a 40% solution?", None),
     ("Mixing 5 liters of a 20% solution with 5 liters of a 40% solution gives what percent?", None),
     ("A 30% solution and a 60% solution make 12 liters of 50% solution, with three times as much of the stronger one. How much of each?", None),

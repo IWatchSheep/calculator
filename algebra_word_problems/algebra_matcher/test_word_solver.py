@@ -33,6 +33,7 @@ HAND_ANSWERS = {
     "I put some money in an account at 3% and the rest at 5%, $10,000 total. I earned $420 in interest in a year. How much was at 5%?": [4000, 6000],
     "$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?": [4000, 4000],
     "An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of each.": [Fraction(1, 2), Fraction(4, 5)],
+    "Coffee worth $6 a pound is mixed with coffee worth $10 a pound to make 40 lb worth $7 a pound. How much of each?": [10, 30],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -130,6 +131,38 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
         self.assertIsNone(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"))
 
+    def test_price_blend(self):
+        # the percent mixture with prices: p1*x + p2*(T - x) = blend*T
+        self.assertEqual(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?"), values(10, 30))
+        self.assertEqual(answers("Coffee worth $6 a pound is mixed with coffee worth $10 a pound to make 40 lb worth $7 a pound. How many pounds of each?"), values(10, 30))
+        self.assertEqual(answers("40 lb of a blend of nuts selling for $7/lb is made from nuts costing $6/lb and $10/lb. How many pounds of each are used?"), values(10, 30))
+        # the source prices in the other order give the same two amounts
+        self.assertEqual(answers("How many pounds of coffee at $10 per pound must be mixed with coffee at $6 per pound to make 40 lb worth $7 per pound?"), values(10, 30))
+        # exact amounts, equation in the reading
+        r = WS.solve("How many pounds of tea at $4 a pound and tea at $9 a pound should be combined to make 10 lb of a blend worth $5 a pound?")
+        self.assertEqual(r.values, [Fraction(8), Fraction(2)])
+        r = WS.solve("How many pounds of tea at $3 a pound and tea at $8 a pound should be combined to make 10 lb of a blend worth $4 a pound?")
+        self.assertEqual(r.values, [Fraction(8), Fraction(2)])
+        r = WS.solve("How many pounds of tea at $4 a pound and tea at $9 a pound should be combined to make 10 lb of a blend worth $6 a pound?")
+        self.assertIn("4x + 9(10 - x) = 6(10)", r.reading)
+        self.assertIn("6 lb at $4 and 4 lb at $9", r.reading)
+        # other shapes decline: adding to a known amount (a different equation), a price outside the two, a spelled count, a percent,
+        # a price that is not per pound, a missing question, three kinds
+        self.assertIsNone(answers("How many pounds of $6 a pound coffee must be added to 10 lb of $10 a pound coffee to make a blend worth $7 a pound?"))
+        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $12 per pound?"))
+        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $6 per pound?"))
+        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make three 40 lb batches worth $7 per pound?"))
+        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound, with 5% waste?"))
+        self.assertIsNone(answers("Coffee at $6 a pound and coffee at $10 a pound are mixed to make 40 lb worth $7 a pound."))
+        self.assertIsNone(answers("How many pounds of coffee at $6 a pound and $10 a pound make 40 lb worth $7 a bag?"))
+
+    def test_price_with_for_each(self):
+        # "$5 for each" and "$5 a piece" are the price of ONE item, like "$5 each" (found by Grok)
+        self.assertIsNone(answers("2 apples and 3 pears cost $5 for each. 4 apples and 1 pear cost $6. Find the price of one of each."))
+        self.assertIsNone(answers("2 apples and 3 pears cost $5 a piece. 4 apples and 1 pear cost $6. Find the price of one of each."))
+        # "Find the price of one of each" stays answered: "each" there does not follow a price
+        self.assertEqual(answers("An apple and a pear cost $1.30. Two apples and three pears cost $3.40. Find the price of one of each."), values(Fraction(1, 2), Fraction(4, 5)))
+
     def test_two_solution_mix(self):
         self.assertEqual(answers("How many liters of a 25% juice drink must be mixed with a 50% juice drink to make 100 liters of a 39% juice drink?"), values(44, 56))
         self.assertEqual(answers("One alloy is 10% silver and another is 50% silver. How many kilograms of each are needed to make 20 kg of an alloy that is 16% silver?"), values(3, 17))
@@ -139,7 +172,7 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?"))
         self.assertIsNone(answers("How many liters of water must be added to 10 liters of a 40% solution to make it 25%?"))
         self.assertIsNone(answers("How many liters of a 20% solution must be added to 10 liters of a 50% solution to make a 40% solution?"))
-        self.assertIsNone(answers("How many pounds of coffee at $6 per pound must be mixed with coffee at $10 per pound to make 40 lb worth $7 per pound?"))
+        # (a price-per-pound blend was a decline here until the price_blend family: it is not a percent mixture, see test_price_blend)
         self.assertIsNone(answers("A 12-litre bucket of 60% paint thinner is diluted with water down to 40%. How much water is added?"))
         # a spelled count of three or more ("three batches") is a number with no role (the word boundary was once stored as a backspace)
         self.assertIsNone(answers("How many liters of a 20% acid and a 50% acid are needed to make 20 liters of 30% acid if I mix three batches?"))
@@ -216,6 +249,8 @@ class GroundTruth(unittest.TestCase):
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"\$[\d,.]+ at \d+(?:\.\d+)?%", text):                # an interest answer: compare the dollars, not the rates
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
+        if re.search(r"\d\s?(?:lb|kg) at \$", text):                           # a price-blend answer: compare the weights, not the prices
+            return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
@@ -314,9 +349,10 @@ class FreshWordings(unittest.TestCase):
         from fresh_word_problems_6 import FRESH as F6
         from fresh_word_problems_7 import FRESH as F7
         s6, s7 = score(F6), score(F7)
-        print("  fresh wordings (sixth set, mixtures): %d of 4 solved, %d of 6 required declines correct, 0 wrong" % (s6[0], s6[2]))
+        print("  fresh wordings (sixth set, mixtures): %d of 5 solved, %d of 5 required declines correct, 0 wrong" % (s6[0], s6[2]))
         print("  fresh wordings (seventh set, mixtures): %d of 2 solved, %d of 3 required declines correct, 0 wrong" % (s7[0], s7[2]))
-        self.assertEqual(s6, (4, 0, 6))
+        # its pounds-of-coffee-at-$6-and-$10 item was a required decline (not a percent mixture) and is now the price_blend answer 10 and 30
+        self.assertEqual(s6, (5, 0, 5))
         self.assertEqual(s7, (2, 0, 3))
 
     def test_interest_set(self):
@@ -339,6 +375,15 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (tenth set, two purchases): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 0, 2))
+
+    def test_price_blend_set(self):
+        """Set 11: price-per-pound blend wordings written after the family and run once, untuned.  One answer is declined
+        (a safe miss: "A 40 lb blend worth ... is made from ..." has no 'make / get / need' before the amount)."""
+        from fresh_word_problems_11 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (eleventh set, price blends): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (4, 1, 3))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
