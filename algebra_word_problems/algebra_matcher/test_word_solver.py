@@ -164,6 +164,9 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Ben invests $9,000, part at 4% and the rest at 6%, compounded monthly. The interest after a year is $450. How much at each rate?"))
         self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"))
         self.assertIsNone(answers("A bank pays 3% on $4,000 and 5% on another amount. The total interest is $380. How much is the other amount?"))
+        # a cue for a real split can also match another sentence (found by Grok): "two such investments", and "part / the rest" of a YEAR
+        self.assertIsNone(answers("Lea invests $10,000, part at 3% and the rest at 5%. Two such investments earn $420 in interest in one year. How much is in each?"))
+        self.assertIsNone(answers("I invest $10,000 at 4% for part of the year and the rest of the year at 6%. The interest was $500. How much was at each rate?"))
         # the interest is not between the two possible extremes: no split can give it
         self.assertIsNone(answers("Leo invests $10,000, part at 3% and the rest at 5%. After one year the interest is $900. How much was invested at each rate?"))
 

@@ -403,7 +403,7 @@ def two_solution_mix(problem):
 # ---------------------------------------------------------------------------------------------------------
 _INT_WORD = re.compile(r"\b(?:interest|earn|earns|earned|earning|earnings|yield|yields|yielded|return|returns)\b")
 _INT_OTHER = re.compile(r"\b(?:compound\w*|monthly|quarterly|per month|each month|a month|semi|daily|months?|two years|how long|how many years|"
-                        r"same interest|equal|equally|overall|how much more|extra|additional|rate of|what rate|loan|borrow\w*|owe\w*|"
+                        r"same interest|equal|equally|overall|such|of the year|for part of|of the time|how much more|extra|additional|rate of|what rate|loan|borrow\w*|owe\w*|"
                         r"times as|twice|double|triple|half|as much|more than|less than|three|four|five|six|seven|eight|nine|ten)\b")
 _INVEST_WORD = re.compile(r"\b(?:invest\w*|account|accounts|deposit\w*|savings|bonds?|put|saved|fund|funds)\b")
 

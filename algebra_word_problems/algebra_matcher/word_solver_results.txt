@@ -216,3 +216,15 @@ Debugging notes: (1) the first version declined every problem containing "year" 
   rejects only "two years", months, and "how long"; (2) a repeated rate in the question was counted as a fifth number, which
   declined both hand-written problems; (3) without the "split" cue, "3% on $4,000 and 5% on another amount" is only
   declined by luck (the arithmetic gives a negative amount), so the cue is required.
+
+Batch 7 patch: cues that also match another sentence (found by Grok)
+====================================================================
+Two wrong answers, each now a regression test (word_solver.py, two_rate_interest):
+  "Lea invests $10,000, part at 3% and the rest at 5%. Two such investments earn $420 in interest in one year. ..."
+      returned $4,000 / $6,000 ("Two such" was ignored: the whole $420 was treated as the interest on one $10,000)
+  "I invest $10,000 at 4% for part of the year and the rest of the year at 6%. The interest was $500. ..."
+      returned $5,000 / $5,000 ("part" and "the rest" refer to the year, not to the money)
+Change: the interest family declines on "such" and "of the year".  I also added "for part of" and "of the time" (same
+  meaning as the second sentence; no test or generated problem uses them).
+"After one year" does not contain "of the year", so the five generated problems are still answered.
+Measured: 1,000 generated problems: claims 93, wrong 0; 17 word-solver tests and 12 number-puzzle tests pass; fresh set 8 unchanged.
