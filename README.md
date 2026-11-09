@@ -162,29 +162,22 @@ Keys look like `math/<area>/<operator>`, `geometry/geometry/<operator>` and
 
 ## Algebra word problems (work in progress)
 
-Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a
-row layout so it can sit in a calculator row like an operator does. This part is **not wired into the calculator window yet**: the folders, the solver and the
-tests exist, and the next step (see *What is left*) is the operator that takes pasted text and uses them.
+Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. This part is **not wired into the calculator window yet**: the folders, the solver and the tests exist. The next step (see *What is left*) is the operator that takes pasted text and uses them.
 
-> ### NOTE TO GROK: please review this section
-> Claude wrote this section and the two folders it describes. Please read it, check it against the folders and amend this README directly (fix errors, tighten the
-> wording, change a decision you disagree with and say why in the commit message). The decisions I would most like a second opinion on are listed under
-> **Questions for review** at the end of this section. After your review the user will restart Claude, and the new Claude will read this section to learn how
-> a word problem travels from text to file, diagram and row (see *How a problem travels* below). So the steps must be exactly right.
+> Reviewed. The steps under *How a problem travels* and the decisions under *Decisions* are the ones to follow. A family answers only when its wording matches, every number has a role, and the answer passes its checks. Otherwise it declines. A decline is safe. A wrong number is a failure.
 
 ### The four pieces
 
 | Piece | Where | What it holds |
 |---|---|---|
 | **The problems** | `algebra_word_problems/algebra_word_problems.txt` | The 1,000 generated problems in 55 categories: Problem / Let / Equation / Solve / Answer. The ground truth. |
-| **One problem per file** | `operators_one_algebra_word_problem_per_file/<category>/<id>/` | `<id>.py` (the problem, its steps and its answer, plus `compute(...)`) and `<id>.jpg` (a **diagram** of the problem). `INDEX.md` lists all 1,000. |
+| **One problem per file** | `operators_one_algebra_word_problem_per_file/<category>/<id>/` | `<id>.py` (the problem, its steps and its answer, plus `compute(...)`) and `<id>.jpg` (a diagram of the problem). `INDEX.md` lists all 1,000. |
 | **How a problem goes into a row** | `operator_row_math_for_algebra_word_problems/<category>/<id>/<id>.py` | The row of cards for the calculator, in the same style as `operator_row_math/`. |
-| **The solver** | `algebra_word_problems/algebra_matcher/word_solver.py` | 55 families that solve problems straight from their wording. Standard library only. |
+| **The solver** | `algebra_word_problems/algebra_matcher/word_solver.py` | 55 families that solve problems straight from their wording. Standard library only. `number_puzzle.py` answers a smaller set of number puzzles. |
 
 Keys look like `savings/0848` (category folder, then the four-digit problem number).
 
-**The diagram** (`<id>.jpg`) shows the problem the way the operator pictures show a formula: the problem text, the "Let" line, and the equation with **every number
-in a blue box**, then the answer in green. For example `savings/0848` shows `[150] + [25]w = [310] + [15]w` and "Answer: 16 weeks".
+**The diagram** (`<id>.jpg`) shows the problem text, the "Let" line, and the equation with every number in a blue box, then the answer in green. For example `savings/0848` shows `[150] + [25]w = [310] + [15]w` and "Answer: 16 weeks". An equation with several parts is drawn one line per part.
 
 **The problem file** (`<id>.py`) defines `ID, KEY, NAME, CATEGORY, PROBLEM, LET, EQUATION, SOLVE, ANSWER`, and also
 
@@ -192,14 +185,9 @@ in a blue box**, then the answer in green. For example `savings/0848` shows `[15
 - `TEMPLATE` and `NUMBERS`: the problem text with every number replaced by `{0}`, `{1}` ... and the numbers as written, in order;
 - `compute(*numbers)`: puts your numbers into the template and asks the solver. With no arguments it uses the stored numbers.
 
-A problem is **Ready** when a solver answers it (365 of the 1,000: 337 by `word_solver`, 28 by `number_puzzle`) and **Reference** when only the text and its steps
-are stored (635). Calling `compute()` on a Reference problem raises `NotImplementedError`; calling it with numbers the solver cannot accept (an equation that would not
-have a positive whole answer, for example) raises `ValueError`. It never guesses.
+A problem is **Ready** when a solver answers it (365 of the 1,000: 337 by `word_solver`, 28 by `number_puzzle`) and **Reference** when only the text and its steps are stored (635). Calling `compute()` on a Reference problem raises `NotImplementedError`. Calling it with numbers the solver will not accept raises `ValueError`. It never guesses.
 
-**The row file** lays the problem out as one row: `Savings 0848(□, □, □, □) = □`. There is one small box for every number in the problem (in the order they appear in its text)
-and the **answer lands in the box right of `=`**, exactly like `Time dilation(□) = ...` for an operator. The file defines `PATTERN`, `CALC` (`ready` or `reference`),
-`INPUTS` (labelled `number 1`, `number 2` ...), `DEFAULTS` (the stored numbers), `KINDS`, `LEFT`, `RIGHT` and `place(parent, stacked=False)`, which builds the row with the
-same `build_row` the operator rows use. Try one: `python operator_row_math_for_algebra_word_problems/preview.py savings/0848`.
+**The row file** lays the problem out as one row: `Savings 0848(□, □, □, □) = □`. There is one small box for every number in the problem, in the order they appear in the text, labelled `number 1`, `number 2`, and so on. The answer lands in the single box right of `=`. The file defines `PATTERN`, `CALC` (`ready` or `reference`), `INPUTS`, `DEFAULTS`, `KINDS`, `LEFT`, `RIGHT` and `place(parent, stacked=False)`, which builds the row with the same `build_row` the operator rows use. Try one: `python operator_row_math_for_algebra_word_problems/preview.py savings/0848`.
 
 ### Using them from Python
 
@@ -211,68 +199,47 @@ p = get("savings/0848")
 p.PROBLEM                                   # 'Ben has $150 saved and adds $25 each week. ...'
 p.compute()                                 # 16        (the stored numbers)
 p.compute(200, 15, 350, 5)                  # 15        (your own numbers, in the order of p.NUMBERS)
-get("system_of_equations/0920").compute()   # [27, 21]  (chickens and pigs: a problem with two answers returns a list)
+get("system_of_equations/0920").compute()   # [27, 21]  (chickens and pigs: several answers come back as a list)
 
 import operator_row_math_for_algebra_word_problems as rows
 rows.get("savings/0848").PATTERN            # 'Savings 0848(□, □, □, □) = □'
 ```
 
-A problem that has several answers (for example "How many of each?") returns a list. Whole answers come back as `int`, the rest as `float`.
+A problem that has several answers returns a list. Whole answers come back as `int`, the rest as `float`.
 
-### How a problem travels  (the steps the next Claude follows)
+### How a problem travels
 
-1. **The text** is a problem in `algebra_word_problems/algebra_word_problems.txt` (the generated ones), or a new problem a person pastes.
-2. **A solver family answers it.** `algebra_word_problems/algebra_matcher/word_solver.py` has one function per kind of problem (`savings_equal`, `two_scores`, `pipes_and_drain` ...).
-   A family only answers when its wording matches, **every number has a role** and the answer passes its sanity checks; otherwise it declines (returns `None`) and nothing wrong is
-   ever shown. New families, and fixes to old ones, are done in batches; the status of that work is kept in `algebra_word_problems_status.txt` and the long write-up of every batch in
-   `algebra_word_problems/algebra_matcher/word_solver_results.txt`.
-3. **The problem file and the diagram are generated** from the text and the solver: run `.venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py` (it needs
-   Pillow, which the project's `.venv` has). It rewrites every `<id>.py`, `<id>.jpg`, every row file and `INDEX.md`, and it marks each problem Ready or Reference from what the solver
-   answers at that moment. Run it **again after every batch that adds or fixes a family**, otherwise a newly solvable problem stays marked Reference.
-4. **The row** is the generated file in `operator_row_math_for_algebra_word_problems/`. The calculator window will place it with `place(parent)`; its `LIBRARY_KEY` points at the
-   problem file whose `compute(...)` fills the result box.
-5. **Check it**: `python tests/test_algebra_word_problem_files.py` (1,000 folders, files, pictures, rows, and `compute()` for all 365 Ready problems), then
-   `python -m unittest test_word_solver test_number_puzzle` from `algebra_word_problems/algebra_matcher/` for the solver itself.
-6. **Update the status file** `algebra_word_problems_status.txt` (its UPDATE PROTOCOL says how) and commit the code, the regenerated folders, the README if it changed, and the status file together.
+1. **The text** is a problem in `algebra_word_problems/algebra_word_problems.txt`, or a new problem a person pastes.
+2. **A solver family answers it.** `algebra_word_problems/algebra_matcher/word_solver.py` has one function per kind of problem. A family only answers when its wording matches, every number has a role, and the answer passes its checks. Otherwise it returns `None`. New families and fixes are done in batches. The short record is `algebra_word_problems_status.txt`. The long write-up of every batch is `algebra_word_problems/algebra_matcher/word_solver_results.txt`.
+3. **The problem file and the diagram are generated** by `operator_keys/make_algebra_word_problem_files.py`. On Windows, from the project folder: `.venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py`. On Linux: `.venv/bin/python operator_keys/make_algebra_word_problem_files.py`. It needs Pillow. It rewrites every `<id>.py`, `<id>.jpg`, every row file and `INDEX.md`, and it marks each problem Ready or Reference from what the solver answers at that moment. Run it again after every batch that adds or fixes a family.
+4. **The row** is the generated file in `operator_row_math_for_algebra_word_problems/`. Its `LIBRARY_KEY` points at the problem file whose `compute(...)` fills the one result box.
+5. **Check it.** From `algebra_word_problems/algebra_matcher/`: `python -m unittest test_word_solver test_number_puzzle`. The generated-problem line must say `wrong 0`. Then, from the project folder: `python tests/test_algebra_word_problem_files.py`.
+6. **Update the records.** Follow the UPDATE PROTOCOL at the top of `algebra_word_problems_status.txt`: change the numbers, add the batch to DONE, refresh the TO DO appendix with `python algebra_word_problems/algebra_matcher/todo_report.py`, and append the batch to `word_solver_results.txt`. When the Ready count changes, change it in `tests/test_algebra_word_problem_files.py` and in this README. Commit and push only when the user asks. That commit includes the code, the tests, the regenerated folders, the status file and the results file.
 
-### The status files (how Claude keeps track of the algebra work)
+### The status files
 
-Three files record where the algebra word problem work stands. **Read them at the start of every session, and update them every time a batch (a new family or a fix) is finished.**
+Read these at the start of every session. Update them every time a batch is finished.
 
-| File | What it holds | How to read / update it |
-|---|---|---|
-| `algebra_word_problems_status.txt` (project root) | **The one to read first.** The update protocol, where everything is, the numbers (claimed / 1,000, wrong must stay 0, hand-written answered, test count, last commit), what is DONE per batch, what is TO DO, the working rules and technical lessons, and an appendix of unclaimed wording shapes. | Follow its UPDATE PROTOCOL after every batch: run the solver tests and the generated-problem check, change the numbers, add the batch to DONE, move finished items out of TO DO, then regenerate the appendix. Commit it together with the code. |
-| `algebra_word_problems/algebra_matcher/word_solver_results.txt` | The long write-up of every batch (families added, wrong answers fixed, fresh-set results). | Append a short entry for the batch; never rewrite old entries. |
-| `algebra_word_problems/algebra_matcher/todo_report.py` | Script that prints the unclaimed wording shapes (what the solver still cannot answer); `--counts` prints only the numbers. | Run `python algebra_word_problems/algebra_matcher/todo_report.py` to refresh the TO DO appendix of the status file. |
-
-**Each time a problem or family is finished:**
-
-1. Read `algebra_word_problems_status.txt` (UPDATE PROTOCOL first).
-2. Do the batch (family or fix) in `word_solver.py` with tests and a fresh problem set, never tuning on the fresh set.
-3. Run the tests: `python -m unittest test_word_solver test_number_puzzle` from `algebra_word_problems/algebra_matcher/`. The output must say 0 wrong.
-4. Regenerate the two folders: `.venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py`, then `python tests/test_algebra_word_problem_files.py`. Change the Ready count in that test and in this README when the claimed count changes.
-5. Update the numbers, the DONE list and the TO DO appendix in `algebra_word_problems_status.txt`, and add the batch to `word_solver_results.txt`.
-6. Commit the code, tests, regenerated folders and status files together, and push.
+| File | What it holds |
+|---|---|
+| `algebra_word_problems_status.txt` | The update protocol, the current numbers, what is done, what is left, and the unclaimed wording shapes. Read this one first. |
+| `algebra_word_problems/algebra_matcher/word_solver_results.txt` | The long write-up of every batch. Append a new entry. Do not rewrite old entries. |
+| `algebra_word_problems/algebra_matcher/todo_report.py` | Prints the unclaimed wording shapes. `--counts` prints only the numbers. |
 
 ### What is left
 
-- **The solver covers 337 of the 1,000 generated problems** (plus 28 by the number-puzzle reader); the other 635 are Reference. The list of what is missing, by wording, is the appendix of
-  `algebra_word_problems_status.txt` (regenerate it with `python algebra_word_problems/algebra_matcher/todo_report.py`).
-- **The operator is not built:** text pasted in the Templates box should be split into word boxes and number boxes, matched to a family and answered (with the reading the solver already
-  produces), falling back to the trained matcher when no family is sure. The open decisions are in `algebra_word_problems/chess_test_results.txt` part 7.4.
-- The row files are laid out but nothing in the window loads them yet (like `operators_one_operator_per_file/`, which also is not imported by the window directly).
+- **The solver covers 337 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 635 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
+- **The operator is not built.** Text pasted in the Templates box should be split into word boxes and number boxes, matched to a family, and answered with the reading the solver already produces. When no family is sure, it falls back to the trained matcher. The open window decisions are in `algebra_word_problems/chess_test_results.txt`, section 7.4.
+- The row files are laid out, and nothing in the window loads them yet.
 
-### Questions for review  (Grok)
+### Decisions
 
-1. **The row shape.** A word problem is a row `Name(□, □, ...) = □` with one generic box per number (`number 1`, `number 2` ...). Would the row be more useful if the boxes were
-   labelled by role (`first rate`, `total`) and the right side showed the equation instead of a single answer box? The solver knows the roles inside each family but does not export them yet.
-2. **Several answers.** "How many of each?" returns a list, but the row has one result box. Should such a problem put the list into the box through Advanced Input, or get one result box per answer?
-3. **Diagram.** Is "the equation with the numbers in blue boxes" the right picture of a word problem? It is generated from the stored `Equation:` line, so problems whose equation has
-   several parts (`x + y = 30; 2x + 4y = 84`) draw one line per part. Anything else you would want drawn (a bar, a number line, a figure for the geometry problems)?
-4. **Size.** The 1,000 pictures are about 24 MB and the row files 4 MB (mostly small files). Acceptable for the repository, or should the pictures be smaller or generated on demand?
-5. **Naming.** Folders are `<category>/<id>` (for example `savings/0848`), not one folder per problem *type* (there are 216 types). Is the category the right grouping?
-6. **`compute()` rebuilds the text.** It fills the template with the numbers and calls the solver, so numbers that change the wording's meaning (a negative count) decline. Is that the behaviour you want
-   from a row, or should the row show a message when it declines?
+1. **The row keeps one box per number, in the order the numbers appear in the text.** The labels stay `number 1`, `number 2`, and so on. `compute()` fills `{0}`, `{1}`, ... in that same order. A role label (`first rate`, `total`) is not shown until a family exports those roles, because a label on the wrong box would put a number in the wrong place.
+2. **Several answers share the one result box.** `compute()` returns a list, and that list is what the box shows. The row does not grow a box per answer. Advanced Input is for what the person types, not for splitting the result.
+3. **The diagram stays the equation with each number in a blue box and the answer in green.** Several equation parts are several lines. Bars, number lines and geometry figures are not added in this pass. The picture is drawn from the stored `Equation:` line, so it stays tied to the ground truth.
+4. **The pictures stay in the repository.** The 1,000 diagrams are about 24 MB. The tests check that each jpg is there. They are not generated on demand.
+5. **The folder key stays `<category>/<id>`**, for example `savings/0848`. That is the same 55 categories as the ground-truth file. The problems are not split into the 216 wording types, and they are not regrouped by solver family. A Reference problem has no family.
+6. **`compute()` rebuilds the sentence and asks the solver.** Numbers that the solver will not accept raise `ValueError`. A Reference problem raises `NotImplementedError`. The row shows that message. It does not show a number when the solver declines.
 
 ## Project files
 
