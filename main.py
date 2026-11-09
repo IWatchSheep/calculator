@@ -552,7 +552,17 @@ class CalculatorGUI(tk.Tk):
             return
         if ch == "⌫":
             t = t[:-1]
-        elif ch == "." and "." in t:
+        elif ch == "±":                     # flip the sign of the number, or of the exponent after "e"
+            if "e" in t:
+                mant, exp = t.split("e", 1)
+                t = mant + "e" + (exp[1:] if exp.startswith("-") else "-" + exp)
+            else:
+                t = t[1:] if t.startswith("-") else "-" + t
+        elif ch == "EE":                    # start a power of ten:  1.5 EE ± 3  ->  1.5e-3
+            if "e" in t or not t or not t[-1].isdigit():
+                return
+            t += "e"
+        elif ch == "." and ("." in t or "e" in t):
             return
         else:
             t += ch
@@ -1132,6 +1142,7 @@ class CalculatorGUI(tk.Tk):
             [("4", "#e8e8e8", "black"), ("5", "#e8e8e8", "black"), ("6", "#e8e8e8", "black"), ("Next Col (→)", "#e8e8e8", "black")],
             [("1", "#e8e8e8", "black"), ("2", "#e8e8e8", "black"), ("3", "#e8e8e8", "black"), ("Next Number (—)", GREEN, "white")],
             [("0", "#e8e8e8", "black"), (".", "#e8e8e8", "black"), ("Backspace", "#e8e8e8", "black"), ("=", GREEN, "white")],
+            [("±", "#e8e8e8", "black"), ("EE", "#e8e8e8", "black")],      # minus sign, power of ten (1e-34)
         ]
         for r, row in enumerate(keys):
             for c, (t, bg, fg) in enumerate(row):
@@ -1141,7 +1152,7 @@ class CalculatorGUI(tk.Tk):
                 if t == "Operators":
                     b.configure(command=self._toggle_operators)
                     self.operators_btn = b
-                elif t in list("0123456789."):
+                elif t in list("0123456789.") + ["±", "EE"]:
                     b.configure(command=lambda ch=t: self._key(ch))
                 elif t == "Next Row (↓)":
                     b.configure(command=lambda: self._next_row())

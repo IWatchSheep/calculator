@@ -893,13 +893,17 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         cls.app.destroy()
 
     @staticmethod
-    def _typed(x):
-        """Text a person can type on the keypad (digits and a dot only), or None if impossible."""
-        from decimal import Decimal
-        if isinstance(x, bool) or not isinstance(x, (int, float)) or x < 0:
-            return None
-        text = format(Decimal(repr(x)), "f")
-        return text.rstrip("0").rstrip(".") if "." in text else text
+    def _keys(x):
+        """The keypad presses that type a number: digits, '.', ± for a minus sign, EE for a power of ten."""
+        keys = []
+        for ch in repr(x):
+            if ch == "-":
+                keys.append("±")
+            elif ch == "e":
+                keys.append("EE")
+            elif ch != "+":
+                keys.append(ch)
+        return keys
 
     def _type_into_boxes(self, args):
         """Click each square box of Row 1 in turn (left to right) and type its number on the keypad."""
@@ -908,7 +912,7 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         self.assertEqual(len(paths), len(args), "the row has a different number of boxes than the call")
         for path, a in zip(paths, args):
             app.rows[0]["sel"] = path
-            for ch in self._typed(a):
+            for ch in self._keys(a):
                 app._key(ch)
 
     def _calculate(self, key, args):
@@ -929,7 +933,7 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
             n = key.split("/")[-1]
             if not key.startswith(PH) or n not in NEW_PHYSICS or n in done or len(args) != _required_inputs(key):
                 continue
-            if any(self._typed(a) is None for a in args) or isinstance(expected, bool):
+            if any(isinstance(a, bool) or not isinstance(a, (int, float)) for a in args) or isinstance(expected, bool):
                 continue
             got = self._calculate(key, args)
             self.assertTrue(approx(got, expected, 1e-8), f"{key}{args}: window gave {got}, expected {expected}")
@@ -955,6 +959,38 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
             done.add(n)
         missing = sorted(set(NEW_PHYSICS) - done)
         self.assertEqual(missing, [], f"not exercised in the window: {missing}")
+
+    def test_keypad_minus_and_exponent_keys(self):
+        """± flips the sign (of the exponent after EE), EE starts a power of ten, . is refused after EE."""
+        app = self.app
+        app._reset_row(0)
+        app._place_operator_row("math/arithmetic/addition")
+        paths = [p for kind, _t, p in app._cards(0) if kind == "box"]
+        from operator_row_math import row_tree
+
+        def typed(keys):
+            row_tree.set_slot(app.rows[0]["node"], paths[0], "")
+            app.rows[0]["sel"] = paths[0]
+            for k in keys:
+                app._key(k)
+            return row_tree.get_slot(app.rows[0]["node"], paths[0])
+
+        self.assertEqual(typed(["±", "5"]), "-5")
+        self.assertEqual(typed(["±", "5", "±"]), "5")                       # second press removes the minus
+        self.assertEqual(typed(["1", ".", "5", "EE", "±", "3"]), "1.5e-3")
+        self.assertEqual(typed(["6", "EE", "3", "±", "±"]), "6e3")
+        self.assertEqual(typed(["EE", "5"]), "5")                           # no exponent without a number first
+        self.assertEqual(typed(["2", "EE", "EE", "4"]), "2e4")              # only one exponent
+        self.assertEqual(typed(["2", "EE", ".", "5"]), "2e5")               # no decimal point in the exponent
+        self.assertEqual(typed(["7", "EE", "5", "⌫", "⌫"]), "7")           # backspace removes the exponent
+
+    def test_negative_and_tiny_numbers_calculate(self):
+        c = self._calculate("physics/physics/faradays_law", (10, -4, 2))
+        self.assertAlmostEqual(c, 20)                                        # −N·ΔΦ/Δt with ΔΦ = −4
+        h = self._calculate("physics/physics/photon_energy", (1e15,))
+        self.assertAlmostEqual(h / 6.62607015e-19, 1, places=8)
+        e = self._calculate("physics/physics/de_broglie_wavelength", (9.1093837015e-31, 1e6))
+        self.assertAlmostEqual(e / 7.2737e-10, 1, places=3)
 
     def test_window_reports_errors_nicely(self):
         app = self.app

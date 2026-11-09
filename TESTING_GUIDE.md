@@ -15,7 +15,7 @@ python tests/test_operators.py NumericTests.test_000_math.arithmetic.addition   
 Use the project's `.venv` Python if Pillow is not installed globally. Without Pillow one test is
 skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test is skipped.
 
-**Last full run (author's machine, Python 3.15, Windows): 650 tests, all passed (the full run now takes about a minute because it drives the real window).**
+**Last full run (author's machine, Python 3.15, Windows): 652 tests, all passed (the full run now takes about a minute because it drives the real window).**
 
 ## 2. What the project contains
 
@@ -42,7 +42,7 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 | `InputParserTests` | 4 | Typed text becomes the right Python value; unsafe function text (`__import__`, `x.__class__`, `open(...)`, `exec`) is rejected |
 | `GuiSmokeTest` | 1 | `main.CalculatorGUI()` builds, updates and closes |
 | `NewPhysicsRowTests` | 3 | The 49 magnetism / fluid / quantum / optics / relativity operators: row module boxes match `compute()` arguments, every operator has a calculator button, row evaluation equals `compute()` |
-| `NewPhysicsCalculatorTests` | 2 | Drives the real window for all 49 new operators: pick the operator, type the numbers on the keypad, press `=`, compare with the hand-calculated answer; errors are shown as readable messages |
+| `NewPhysicsCalculatorTests` | 4 | Drives the real window for all 49 new operators: pick the operator, type the numbers on the keypad (including the `±` and `EE` keys for negative and tiny values), press `=`, compare with the hand-calculated answer; checks the `±`/`EE` key rules; errors are shown as readable messages |
 
 ## 4. How another AI should verify (do not just trust the suite)
 
@@ -97,6 +97,8 @@ Run `python main.py`, then for each item note pass/fail:
 
 - [ ] Window opens; layout matches `picture_of_gui/gui_template.png`
 - [ ] Number pad: type `12 + 7 =` → `19`; `7 ÷ 0` shows an error and does not crash
+- [ ] `±` key: flips a box between `5` and `-5`; after `EE` it flips the exponent's sign
+- [ ] `EE` key: `1.5 EE ± 3` gives `1.5e-3`; a second `EE`, an `EE` on an empty box, and a `.` after `EE` are ignored
 - [ ] Open the Operators pop-up; every section lists its buttons
 - [ ] Click at least one operator per section (Math, Geometry, Physics): its diagram (`.jpg`) shows and its row appears
 - [ ] Fill in the row inputs and compute: result equals `compute()` called directly
