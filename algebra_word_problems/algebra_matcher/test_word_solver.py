@@ -2312,6 +2312,34 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (3, 0, 5))
 
+    def test_pipes_all_three_must_be_open_not_stopped(self):
+        base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
+        ask = " How long does it take to fill the pool?"
+        # the three devices said to be open, running or working: 5/2 hours
+        for q in ("With all three open, how long does it take to fill the pool?", "All three are open." + ask, "All three are running." + ask,
+                  "With all of them open, how long does it take to fill the pool?", "The pipes and the drain are open." + ask, "The pipes and the drain are all open." + ask,
+                  "The pipes and the drain are open together." + ask, "With both pipes and the drain open, how long does it take to fill the pool?",
+                  "All open, how long does it take to fill the pool?", "How long does it take to fill the pool with all three open?",
+                  "With everything open, how long does it take to fill the pool?", "All three are working." + ask, "All the pipes and the drain are running." + ask,
+                  "All three are flowing." + ask):
+            self.assertEqual(answers(base + q), values(Fraction(5, 2)), q)
+        # "all three" is only a count: stopped, off, broken, negated, or not about the pipes at all do not turn the drain on
+        for q in ("All three are stopped." + ask, "Both pipes and the drain are off." + ask, "All the pipes and the drain are broken." + ask,
+                  "Not all three are open." + ask, "The job uses all three hours of the morning." + ask, "I like all of them." + ask,
+                  "All three are not open." + ask, "All three are open except the drain." + ask, "With all three open but the drain blocked, how long does it take to fill the pool?",
+                  "All three aren't open." + ask, "All three are clogged." + ask, "All three are idle." + ask, "All three are jammed." + ask,
+                  "The class has all three students." + ask, "Everything is open except the drain." + ask, "Both pipes and the drain are closed." + ask,
+                  "The pipes work together." + ask, "The pipes are all together." + ask, "The lights are all on." + ask, "The pipes are all open." + ask):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_three_devices_open_set(self):
+        """Set 42: neighbours of the batch-39 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_42 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (forty-second set, neighbours of the batch-39 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (3, 0, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

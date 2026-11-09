@@ -1029,3 +1029,17 @@ Measured:
   1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 41 (8 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 5 required declines: 5 of 5; 0 wrong.
   149 word-solver and number-puzzle tests pass.
+
+Batch 39: "all three" must be OPEN, not stopped, off, broken or only a count (pipes_and_drain; fix only, no new family)
+==============================================================
+pipes_and_drain: the batch-38 cue accepted "all three" (and "all of them", "the pipes and the drain") on its own, so a sentence that said the opposite turned the drain on.  These were answered 5/2 hours and now decline: "All three are stopped.", "Both pipes and the drain are off.", "All the pipes and the drain are broken.",
+  "Not all three are open.", "The job uses all three hours of the morning.", "I like all of them."  The devices phrase (all three / all of them / everything / [both | all] the pipes (taps) and the drain (leak, outlet)) must now be followed by a STATE: open / opened / running / working / flowing (optionally after is / are / being / stay /
+  remain and "all"), or the sentence must start (or follow "with" or a comma) with "all open / running / working".  "on" no longer counts (a tap or a light can be "on"), so "Everything is on." and "All on." decline.  And nothing in the problem may negate or switch off: not / no / never / neither / nor / except / without / off /
+  stopped / stops / broken / blocked / clogged / jammed / out of order / n't, on top of the earlier closed / shut / alone / then / after / only.  Also declined: "All three are not open", "All three are open except the drain", "With all three open but the drain blocked", "All three aren't open", "All three are clogged / idle / jammed",
+  "The class has all three students", "Everything is open except the drain", "Both pipes and the drain are closed".  Still 5/2: "With all three open", "All three are open / running / working / flowing", "With all of them open", "The pipes and the drain are open (all open, open together)", "With both pipes and the drain open", "All open,",
+  "... with all three open", "With everything open", "All the pipes and the drain are running".  Still declined: "The pipes work together", "The pipes are all together", "The lights are all on", "The pipes are all open" (no drain).
+Checks (test_word_solver.py): the two new test methods above; the earlier tests still pass; spelled counts ("all three" is the one allowed), each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined twice, the no-raise guard over every family.
+Measured:
+  1,000 generated problems: claims 337 -> 337 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 42 (9 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 3 with an answer: 3 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
+  151 word-solver and number-puzzle tests pass.

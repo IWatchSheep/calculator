@@ -2997,9 +2997,14 @@ def pipes_and_drain(problem):
     # the question: with everything open, how long to FILL the pool
     # everything open, THE DRAIN INCLUDED: "all three open", "all open", "with everything open", "the pipes and the drain open".  A bare "The pipes work together" /
     # "both" / "at the same time" does not open the drain (the two pipes alone are a different problem).
-    if not re.search(r"\ball three\b|\ball of them\b|\bwith everything (?:open|running|on)\b|(?:^|[.,;?!]\s*|\bwith\s+)all (?:open|running|working)\b|"
-                     r"\b(?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b[^.?!]*\b(?:open|running|together|on|working)\b|\bboth (?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b|"
-                     r"\ball (?:the )?(?:pipes|taps) and (?:the )?(?:drain|leak|outlet)\b", t):
+    # the three devices must be said to be OPEN (or running / working / flowing): "all three" alone is only a count ("All three are stopped", "all three hours", "I like all of them")
+    devices = r"(?:all three|all of them|everything|(?:both |all )?(?:the )?(?:pipes|taps) and (?:the )?(?:drain|leak|outlet))"
+    state = r"(?:open|opened|running|working|flowing)"
+    if not (re.search(devices + r"\s+(?:(?:are|is|being|stay|stays|remain|remains)\s+)?(?:all\s+)?" + state + r"\b", t)
+            or re.search(r"(?:^|[.,;?!]\s*|\bwith\s+)all " + state + r"\b", t)):
+        return None
+    # ... and nothing in the problem may turn something off or negate it
+    if re.search(r"\b(?:not|no|never|neither|nor|except|without|off|stopped|stops?|broken|blocked|clogged|jammed|out of order)\b|n't\b", t):
         return None                                              # "The pipes are all together" / "The lights are all on" say nothing about the drain
     if not re.search(r"\bhow long\b[^.?!]*\bfill\b", t) or re.search(r"\bhow long\b[^.?!]*\bempty\b", t):
         return None
