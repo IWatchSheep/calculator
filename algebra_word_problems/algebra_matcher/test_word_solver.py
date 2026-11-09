@@ -1614,6 +1614,78 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 0, 6))
 
+    def test_pages_deadline_belongs_to_this_book(self):
+        base = "A 331-page book has 13 pages already read. How many pages a day must be read to finish"
+        # the forms that stay answered
+        self.assertEqual(answers(base + " in 6 days?"), values(53))
+        self.assertEqual(answers(base + " within 6 days?"), values(53))
+        self.assertEqual(answers(base + " the book in 6 days?"), values(53))
+        self.assertEqual(answers(base + " it in 6 days?"), values(53))
+        self.assertEqual(answers(base + " reading the book in 6 days?"), values(53))
+        self.assertEqual(answers("A 100-page book has 20 pages already read. How many pages a day must be read to finish within 5 days?"), values(16))
+        # "She must finish in 6 days" is the deadline: the 80 pages left over 6 days
+        self.assertEqual(answers("A 100-page book has 20 pages already read. She must finish in 6 days. How many pages a day must be read?"), values(Fraction(40, 3)))
+        # the past tense does not count: "already finished in 6 days" is how long the 20 pages took
+        self.assertIsNone(answers("A 100-page book has 20 pages already finished in 6 days. How many pages a day must be read to finish?"))
+        # the words between "finish" and the day count must be about the same book: another job's deadline declines
+        self.assertIsNone(answers(base + " the chapter in 6 days?"))
+        self.assertIsNone(answers("A 200-page book has 20 pages already read. How many pages a day must be read to finish the essay in 8 days?"))
+        self.assertIsNone(answers("A 100-page book has 20 pages already read. How many pages a day must be read to finish the race in 2 days?"))
+        self.assertIsNone(answers("A 300-page novel has 60 pages already read. How many pages a day must be read to finish the assignment in 8 days?"))
+        # a novel is a book; a report is not
+        self.assertEqual(answers("A 100-page novel has 20 pages already read. How many pages a day must be read to finish the book in 5 days?"), values(16))
+        self.assertIsNone(answers("A 100-page report has 20 pages already read. How many pages a day must be read to finish the book in 5 days?"))
+
+    def test_opposite_angles_named_kind(self):
+        d = "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. "          # 80 degrees
+        e = "Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. "     # 98 degrees
+        for q in ("Find the angle.", "Find each angle.", "Find x.", "Find x and the angle.", "Find the larger angle."):
+            self.assertIsNotNone(answers(d + q), q)                                                    # the plain questions stay
+        self.assertEqual(answers(d + "Find the angle."), values(80))
+        self.assertEqual(answers(d + "Find x and the angle."), values(38, 80))
+        self.assertEqual(answers("In a parallelogram, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle."), values(80))
+        # a named kind is answered only when the angle IS that kind
+        self.assertEqual(answers(d + "Find the acute angle."), values(80))
+        self.assertEqual(answers(e + "Find the obtuse angle."), values(98))
+        self.assertIsNone(answers(e + "Find the acute angle."))                                      # 98 is not acute
+        self.assertIsNone(answers(d + "Find the obtuse angle."))                                     # 80 is not obtuse
+        self.assertIsNone(answers(d + "Find the right angle."))                                      # 80 is not 90
+        self.assertIsNone(answers("Where two lines cross, the opposite angles form a straight angle: (2x + 4)° and (5x − 110)°. Find the angle."))
+        self.assertIsNone(answers("Where two lines cross, the opposite angles form a right angle: (4x + 10)° and (6x − 20)°. Find x."))
+        # and a straight or right angle is answered when it really is one: 2x = x + 90 gives x = 90 and an angle of 180; 2x = x + 45 gives 90
+        self.assertEqual(answers("Where two lines cross, the opposite angles form a straight angle: (2x + 0)° and (x + 90)°. Find the angle."), values(180))
+        self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 0)° and (x + 45)°. Find the right angle."), values(90))
+
+    def test_rectangle_uses_the_problems_own_statement_of_the_longer_side(self):
+        base = "A rectangle has a perimeter of 40 ft and an area of 36 ft². "
+        # with no statement the length is the longer side
+        self.assertEqual(answers(base + "What is its length?"), values(18))
+        self.assertEqual(answers(base + "What is its width?"), values(2))
+        self.assertEqual(answers(base + "Find its length and width."), values(2, 18))
+        # the problem says which is longer
+        self.assertEqual(answers(base + "The length is shorter than the width. What is its length?"), values(2))
+        self.assertEqual(answers(base + "Its width is the longer side. What is its width?"), values(18))
+        self.assertEqual(answers(base + "The length is the smaller side. What is its length?"), values(2))
+        self.assertEqual(answers(base + "The width is greater than the length. What is its width?"), values(18))
+        self.assertEqual(answers(base + "The width is greater than the length. What is its length?"), values(2))
+        self.assertEqual(answers(base + "The length is longer than the width. What is its length?"), values(18))
+        self.assertEqual(answers(base + "The longer side is the width. What is its width?"), values(18))
+        r = WS.solve(base + "The length is shorter than the width. Find its length and width.")
+        self.assertEqual(r.values, [Fraction(2), Fraction(18)])             # both sides: the length 2, the width 18
+        self.assertEqual(2 * r.values[0] + 2 * r.values[1], 40)
+        self.assertEqual(r.values[0] * r.values[1], 36)
+        # a statement that contradicts itself, or compares a side with itself, declines
+        self.assertIsNone(answers(base + "The length is shorter than the length. What is its length?"))
+        self.assertIsNone(answers(base + "The length is longer than the width and the width is longer than the length. What is its width?"))
+
+    def test_deadline_kind_and_orientation_set(self):
+        """Set 28: neighbours of the batch-25 fixes, written after the fixes were finished and run once, untuned."""
+        from fresh_word_problems_28 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-eighth set, neighbours of the batch-25 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (7, 0, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

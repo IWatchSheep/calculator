@@ -2469,9 +2469,12 @@ _GROW_STMT2 = re.compile(
 # ---------------------------------------------------------------------------------------------------------
 # 47. pages a day to finish a book:   (N - R) / D      (the generator's "A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?")
 # ---------------------------------------------------------------------------------------------------------
-_PAGES_TOTAL = re.compile(r"\b(\d+)-pages?\b|\b(?:book|novel|report|packet|manual)\s+(?:has|of|with)\s+(\d+)\s+pages\b")
+_PAGES_TOTAL = re.compile(r"\b(\d+)-pages?\b|\b(book|novel|report|packet|manual)\s+(?:has|of|with)\s+(\d+)\s+pages\b")
+_PAGES_BOOKISH = {"book", "novel", "story", "text", "volume", "paperback", "textbook"}
+_PAGES_FUNCTION = {"the", "this", "that", "it", "my", "her", "his", "their", "its", "reading", "read", "rest", "remaining", "of", "pages", "page"}
 _PAGES_READ = re.compile(r"\b(\d+)\s+pages?\s+(?:already\s+)?(?:read|finished|done|completed|written|typed)\b")
-_PAGES_DAYS = re.compile(r"\bfinish(?:ing|ed)?(?:\s+[a-z]+){0,3}?\s+(?:in|within|over)\s+(\d+)\s+(days?|weeks?|nights?)\b")   # "to finish in 6 days": the time allowed to finish
+# "to finish [reading the book] in 6 days": the time allowed to finish THIS book (the present tense only; "already finished in 6 days" is how long the pages took)
+_PAGES_DAYS = re.compile(r"\bfinish((?:\s+[a-z]+){0,5}?)\s+(?:in|within|over)\s+(\d+)\s+(days?|weeks?|nights?)\b")
 _PAGES_OTHER = re.compile(r"\b(?:more than|less than|twice|double|half|each day she|already read twice|skip\w*|except|weekend\w*|at most|at least)\b|%|\$")
 
 
@@ -2483,11 +2486,19 @@ def pages_per_day(problem):
     tm, rm, dm = _PAGES_TOTAL.search(t), _PAGES_READ.search(t), _PAGES_DAYS.search(t)
     if not tm or not rm or not dm:
         return None
-    N = Fraction(tm.group(1) or tm.group(2))
-    R, D = Fraction(rm.group(1)), Fraction(dm.group(1))
+    N = Fraction(tm.group(1) or tm.group(3))
+    R, D = Fraction(rm.group(1)), Fraction(dm.group(2))
     if len({tm.start(), rm.start(), dm.start()}) != 3:
         return None
-    unit = dm.group(2).rstrip("s")
+    # the words between "finish" and the day count have to be about the same book (not "the chapter", "the essay", "the race")
+    nm = re.match(r"\s+([a-z]+)", t[tm.end():]) if tm.group(1) else None
+    noun = tm.group(2) if tm.group(2) else (nm.group(1) if nm else None)
+    if noun is None:
+        return None
+    allowed = _PAGES_FUNCTION | (_PAGES_BOOKISH if noun in _PAGES_BOOKISH else set()) | {noun}
+    if any(w not in allowed for w in dm.group(1).split()):
+        return None
+    unit = dm.group(3).rstrip("s")
     # the question asks for pages per (day / week / night), in the unit of the deadline
     sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
     q = next((s for s in reversed(sents) if re.search(r"\bhow many pages\b", s)), None)
@@ -2532,6 +2543,10 @@ def opposite_angles_equal(problem):
     angle = a1 * x + b1
     if not (0 < angle <= 180):
         return None
+    # a named kind ("the acute angle", "a straight angle") is answered only when the angle IS that kind
+    kind_ok = {"acute": 0 < angle < 90, "obtuse": 90 < angle < 180, "right": angle == 90, "straight": angle == 180, "reflex": False}
+    if any(not kind_ok[k] for k in re.findall(r"\b(acute|obtuse|right|straight|reflex)\s+angles?\b", t)):
+        return None
     # what is asked: the angle, x, or both
     q = max(t.rfind("find"), t.rfind("what"), t.rfind("how"))
     if q == -1:
@@ -2554,6 +2569,28 @@ _RECT_PERIM = re.compile(r"\bperimeter of\s+(\d+(?:\.\d+)?)\s*([a-z]+)\b")
 _RECT_AREA = re.compile(r"\barea of\s+(\d+(?:\.\d+)?)\s*(?:(square|sq\.?)\s+)?([a-z]+)(²|\^2|2)?")      # the unit is marked squared: ft^2, ft2, sq ft, square ft
 _RECT_UNIT = {"feet": "ft", "foot": "ft", "meters": "m", "metres": "m", "meter": "m", "metre": "m", "centimeters": "cm", "centimetres": "cm", "inches": "in", "inch": "in",
               "yards": "yd", "yard": "yd", "miles": "mi", "mile": "mi", "kilometers": "km", "kilometres": "km"}
+_RECT_LONG = r"(?:longer|larger|greater|bigger|longest|largest|greatest)"
+_RECT_SHORT = r"(?:shorter|smaller|lesser|shortest|smallest|least)"
+_RECT_REL = re.compile(r"\b(length|width)\s+(?:is|are|being)\s+(?:the\s+)?(" + _RECT_LONG + "|" + _RECT_SHORT + r")(?:\s+(?:side|one|dimension))?(?:\s+than\s+(?:the\s+)?(length|width))?\b")
+_RECT_SIDE = re.compile(r"\b(" + _RECT_LONG + "|" + _RECT_SHORT + r")\s+(?:side|dimension)\s+(?:is|being)\s+(?:the\s+)?(length|width)\b")
+
+
+def _rect_length_is_longer(text):
+    """True / False when the problem says which of length and width is the longer side, None when it does not, "bad" when it contradicts itself or is unclear."""
+    found = []
+    for m in _RECT_REL.finditer(text):
+        dim, rel, other = m.group(1), m.group(2), m.group(3)
+        if other is not None and other == dim:
+            return "bad"
+        found.append((dim, bool(re.match(_RECT_LONG, rel))))
+    for m in _RECT_SIDE.finditer(text):
+        found.append((m.group(2), bool(re.match(_RECT_LONG, m.group(1)))))
+    if not found:
+        return None
+    verdicts = {(longer if dim == "length" else not longer) for dim, longer in found}
+    return verdicts.pop() if len(verdicts) == 1 else "bad"
+
+
 _RECT_OTHER = re.compile(r"\b(?:square(?! (?:feet|foot|ft|meters?|metres?|m|cm|centimeters?|centimetres?|inch(?:es)?|in|yards?|yd|miles?|mi|km|kilometers?)\b)|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
 
 
@@ -2579,6 +2616,10 @@ def rectangle_from_perimeter_area(problem):
     asks_both = bool(re.search(r"\b(?:sides|dimensions)\b", q)) or (asks_len and asks_wid)
     if not (asks_len or asks_wid or asks_both):
         return None
+    others = " ".join(x for x in sents if x is not q)
+    length_longer = _rect_length_is_longer(others)
+    if length_longer == "bad":
+        return None
     P, A = Fraction(pm.group(1)), Fraction(am.group(1))
     if P <= 0 or A <= 0:
         return None
@@ -2596,7 +2637,11 @@ def rectangle_from_perimeter_area(problem):
     if w <= 0:
         return None
     unit = pm.group(2)
-    vals = [l, w] if asks_both else ([l] if asks_len else [w])             # length is the longer side, width the shorter
+    if length_longer is False:
+        length, width = w, l                                         # the problem says the length is the shorter side
+    else:
+        length, width = l, w                                         # unless it says otherwise, the length is the longer side
+    vals = [length, width] if asks_both else ([length] if asks_len else [width])
     return Result("rectangle_from_perimeter_area", vals, "l + w = %s;  l w = %s" % (show(s), show(A)),
                   "l + w = %s and l w = %s, so the sides are the roots of z^2 - %sz + %s = 0: l = %s and w = %s %s" % (
                       show(s), show(A), show(s), show(A), show_exact(l), show_exact(w), unit))

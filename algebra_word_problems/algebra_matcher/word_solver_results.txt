@@ -786,3 +786,24 @@ Measured:
   Hand-written problems claimed by the family solver: 38 (unchanged).
   Fresh set 27 (11 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 5 with an answer: 5 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
   103 word-solver and number-puzzle tests pass.
+
+Batch 25: more wrong numbers from nearby wordings of pages_per_day, opposite_angles_equal and rectangle_from_perimeter_area (fixes only, no new family)
+==============================================================
+pages_per_day: the deadline must be the time allowed to finish THIS book.  The words between "finish" and the day count now have to be about the book: "finish in 6 days", "within 6 days", "finish the book in 6 days", "finish it in 6 days" and
+  "finish reading the book in 6 days" stay 53 (and "within 5 days" 16); "She must finish in 6 days" stays 40/3 on a 100-page book with 20 pages read (the 80 pages left over 6 days).  The past tense does not count: "A 100-page book has 20 pages
+  already finished in 6 days. How many pages a day must be read to finish?" was answered 40/3, but the 6 days are how long the 20 pages took (the regex no longer matches "finished").  Another job's deadline declines: "finish the chapter in 6 days"
+  (was 53), "finish the essay in 8 days" (was 25) and "finish the race in 2 days" (was 40).  The noun of the book is read from "331-page book" or "novel has 100 pages"; a book / novel / story / text / volume / paperback / textbook counts as the
+  same thing ("a 100-page novel ... finish the book" is 16) and any other noun (a report) must match itself.
+opposite_angles_equal: a named kind of angle is answered only when the angle is that kind.  "Find the acute angle" on the 80 pair stays 80 and declines on (3x - 10) and (6x - 118), which is 98; "Find the obtuse angle" stays 98 on that pair and declines on
+  the 80 pair; "Find the right angle" on the 80 pair declines; "The opposite angles form a straight angle" was answered 80 and now declines (a straight angle is 180).  A statement that is true is answered: 2x = x + 90 gives x = 90 and an angle of 180
+  ("straight angle" stays), and 2x = x + 45 gives a right angle of 90.  "Find the angle", "each angle", "x", "x and the angle", "the larger angle" and the parallelogram are unchanged.
+rectangle_from_perimeter_area: the problem's own statement of which side is longer overrides the default (the length is the longer side).  Without a statement "What is its length?" is 18 and "What is its width?" is 2, as before.  With a statement:
+  "The length is shorter than the width. What is its length?" is 2 (was 18); "Its width is the longer side. What is its width?" is 18 (was 2); "the length is the smaller side" is 2 and "the width is greater than the length" gives the width 18 and the length 2.
+  Also "The longer side is the width".  When the question asks for both sides the pair is returned (2, 18 with the length shorter).  A statement that compares a side with itself ("the length is shorter than the length") or contradicts itself ("the length is
+  longer than the width and the width is longer than the length") declines.
+Checks (test_word_solver.py): the four new test methods above (and the earlier ones still pass); spelled counts, each / apiece / per, such / of the year / for part of / of the time, exact fractions, no control characters, no module-level name defined
+  twice (the new names are _PAGES_BOOKISH, _PAGES_FUNCTION, _RECT_LONG, _RECT_SHORT, _RECT_REL, _RECT_SIDE).
+Measured:
+  1,000 generated problems: claims 308 -> 308 (nothing lost), wrong 0.  Hand-written problems claimed by the family solver: 38 (unchanged).
+  Fresh set 28 (13 wordings, neighbours of these fixes, written after the fixes were finished, run once, untuned): 7 with an answer: 7 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
+  107 word-solver and number-puzzle tests pass.
