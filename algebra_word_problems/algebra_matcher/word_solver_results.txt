@@ -654,3 +654,32 @@ Measured:
   Fresh set 22 (11 wordings, written after all three families were finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 4 required declines: 4 of 4; 0 wrong.  The declined one is a safe miss,
   not fixed: "two flours" is not one of the "two <kinds>" words.
   81 word-solver and number-puzzle tests pass.
+
+Batch 20: the unit fix and three families in one commit: two_priced_items, plan_with_included, most_that_fits
+==============================================================
+Fix (two_prices_known_count): "A shop sold 31 lb of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?" was answered 19 and 12; the 31 is in pounds and the prices are per kilogram.  When a price has a unit
+  of measure (kg, lb, oz, g, hour, litre, gallon, mile, km, minute, day ...), the known amount must be in the SAME unit, and both prices must share it.  "31 kg" at $5/kg and $12/kg still returns 19 and 12;
+  "61 hours" at $16/h and $22/h still returns 31 and 30; "$3 each" with "40 drinks" has no measure unit and is unchanged; mixed units (lb / kg, hours / kg) decline.
+two_priced_items  (generator "concert"):  x + y = N,  p1 x + p2 y = T, the prices written "at $p" before the number.  "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled
+  $21,500. How many of each?" is 495 lawn and 133 reserved.  Exactly two "at $p" prices, then a total introduced by totaled / sales / came to / brought in / collected / raised, one plain count, and a
+  question for each.  Counts must be positive whole numbers.  Declines: a third price, equal prices, a total with no whole answer ($21,501) or none at all ($2,000), "each" after the total, a fee / tax / percent / free,
+  a question for money, twice, "part of the season", any spelled number other than "two kinds / types / sections".
+plan_with_included  (generator "phone plan ... includes 5 GB ... Each extra GB costs $5"):  B + r (d - I) = T.  "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90.
+  How much data was used?" is 13 GB: the TOTAL data, not the 8 extra gigabytes (d = 5 + (90 - 50) / 5).  The monthly price is followed by "a month", the extra unit must be the included unit, and the question must say
+  used.  Exact: a $92 bill is 67/5 GB.  Declines: a bill that is not above the monthly price ($50 or $40), a question for the extra data only, a different extra unit (minute), a question for a price, unlimited, "each"
+  after the bill, a fee / tax, "part of the year".
+most_that_fits  (generator "An elevator holds at most 1200 lb. A 200 lb worker is loading 60 lb boxes"):  w + b n <= L, the greatest whole n.  "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes.
+  How many boxes can go up with the worker?" is 16 (one more would weigh 1220, over 1200).  This is "at most", the other side of least_for_profit's "at least".  Three weights in one unit (lb or kg): the limit
+  (after at most / up to / capacity), the person or cart already on board, and the item whose noun the question names.  Declines: a load already at or over the limit (nothing fits), "at least", another weight
+  unit, another thing (crates for boxes), a question for a weight, several trips, two workers, "part of the day".
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings (67/5), no control characters
+  (a "\b" typed into a non-raw string once became a backspace while building these; the test caught it), no module-level name defined twice (the new names are _SEAT_*, _PLAN_*, _FITS_*, _TP_MEASURE, _TP_RATE_UNIT).
+Measured:
+  1,000 generated problems: claims 253 -> 267, wrong 0.  The 14 new claims, each equal to the stored answer:
+    two_priced_items 0887 (495 and 133), 0909 (440 and 205), 0918 (512 and 523), 0930 (692 and 175), 0949 (501 and 661) = every generated concert problem;
+    plan_with_included 0423 (13 GB), 0444 (13), 0455 (19), 0460 (17), 0472 (9) = every generated "phone plan ... includes" problem;
+    most_that_fits 0360 (16), 0371 (17), 0383 (33), 0390 (33) = every generated elevator problem.
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these shapes).
+  Fresh set 23 (13 wordings, written after all of it was finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 6 required declines: 6 of 6; 0 wrong.  The declined one is a safe miss, not fixed:
+  "How many GB were stored?" does not say "used".
+  86 word-solver and number-puzzle tests pass.

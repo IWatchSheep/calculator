@@ -1690,6 +1690,11 @@ def triangle_ratio(problem):
 _TP_RATE_AFTER = re.compile(r"\s*(?:/\s*(?:h|hr|hrs|hour|lb|kg|ea|each)\b|(?:an?|per)\s+[a-z]+\b|each\b|apiece\b)")
 _TP_TOTAL_BEFORE = re.compile(r"(?:\b(?:for|earning|earned|earns|totaling|totalling|totaled|costing|cost|costs|paying|paid|made|worth|in all)\s*(?:a total of\s*)?|\btotal of\s*)$")
 _TP_OTHER = re.compile(r"\b(?:tax|discount|tip|bonus|overtime|percent|extra|also|third|another|rest|remaining)\b|%")
+_TP_RATE_UNIT = re.compile(r"\s*(?:/\s*|per\s+|an?\s+)([a-z]+)\b")
+_TP_MEASURE = {"kg": "kg", "kilogram": "kg", "kilograms": "kg", "lb": "lb", "lbs": "lb", "pound": "lb", "pounds": "lb", "oz": "oz", "ounce": "oz", "ounces": "oz",
+               "g": "g", "gram": "g", "grams": "g", "h": "hour", "hr": "hour", "hrs": "hour", "hour": "hour", "hours": "hour", "l": "l", "liter": "l", "liters": "l",
+               "litre": "l", "litres": "l", "gallon": "gal", "gallons": "gal", "gal": "gal", "mile": "mile", "miles": "mile", "km": "km", "min": "minute",
+               "minute": "minute", "minutes": "minute", "day": "day", "days": "day"}
 _TP_TWO_WORDS = re.compile(r"\btwo (?:jobs|kinds|types|rates|prices|wages|sizes|brands|teas|coffees|grades|flavors|varieties|blends|candies|nuts|oils|fruits)\b")
 
 
@@ -1716,6 +1721,15 @@ def two_prices_known_count(problem):
         prices, in_cents = rated, False
     else:
         return None
+    # the known amount's unit must match the unit of the price: 31 lb at $5/kg is not 31 kg; 61 hours at $16/h is
+    rate_units = []
+    for n in prices:
+        um = _TP_RATE_UNIT.match(t[n[3]:])
+        rate_units.append(_TP_MEASURE.get(um.group(1)) if um else None)
+    if any(u is not None for u in rate_units):
+        cw = re.match(r"\s*([a-z]+)", t[plain[0][3]:])
+        if len(set(rate_units)) != 1 or not cw or _TP_MEASURE.get(cw.group(1)) != rate_units[0]:
+            return None
     T = money[0]
     if not (_TP_TOTAL_BEFORE.search(t[:T[2]].rstrip()) or re.match(r"\s*(?:in total|altogether)\b", t[T[3]:])) or _EACH_AFTER.match(t[T[3]:]):
         return None
@@ -2048,6 +2062,162 @@ def least_for_profit(problem):
                       eq, show_exact(need), n, n, show_exact(price * n - cost), show_exact(price * (n - 1) - cost)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 39. two seat prices written "at $p" before the number, a known count and a total:   x + y = N,  p1 x + p2 y = T     (the generator's "concert")
+# ---------------------------------------------------------------------------------------------------------
+_SEAT_TOTAL_BEFORE = re.compile(r"(?:\b(?:totaled|totalled|total|sales|revenue|receipts|brought in|collected|raised|earned|made|grossed|came to|comes to)"
+                                r"(?:\s+(?:was|were|is|of|came to|comes to|totaled|totalled))?)\s*$")
+_SEAT_TWO_WORDS = re.compile(r"\btwo (?:kinds|types|sections|classes|levels|sizes|categories|prices)\b")
+_SEAT_OTHER = re.compile(r"\b(?:tax|discount\w*|fee|fees|percent|free|extra|also|third|another|rest|remaining|bonus|refund\w*)\b|%")
+
+
+def two_priced_items(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 4 or _CHANGES_EQUATION.search(t) or _SEAT_OTHER.search(t) or re.search(_SPELLED_ANY, _SEAT_TWO_WORDS.sub(" ", t)):
+        return None
+    money = [n for n in nums if n[1]]
+    plain = [n for n in nums if not n[1]]
+    if len(money) != 3 or len(plain) != 1:
+        return None
+    prices = [n for n in money if re.search(r"\bat\s*$", t[:n[2]].rstrip())]
+    others = [n for n in money if n not in prices]
+    if len(prices) != 2 or len(others) != 1:
+        return None
+    T = others[0]
+    if not (_SEAT_TOTAL_BEFORE.search(t[:T[2]].rstrip()) or re.match(r"\s*(?:in total|altogether)\b", t[T[3]:])) or _EACH_AFTER.match(t[T[3]:]):
+        return None
+    if not (prices[0][2] < prices[1][2] < T[2]):
+        return None                                           # the prices come first, then the total
+    N = plain[0][0]
+    if N <= 0 or N.denominator != 1 or not re.match(r"\s*[a-z]+", t[plain[0][3]:]):
+        return None
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow many\b", s)), None)
+    if q is None or not re.search(r"\beach\b", q):
+        return None
+    p1, p2, total = prices[0][0], prices[1][0], T[0]
+    if p1 == p2 or p1 <= 0 or p2 <= 0:
+        return None
+    y = (total - p1 * N) / (p2 - p1)
+    x = N - y
+    if x <= 0 or y <= 0 or x.denominator != 1 or y.denominator != 1:
+        return None
+    e1, e2 = "x + y = %s" % show(N), "%sx + %sy = %s" % (show(p1), show(p2), show(total))
+    return Result("two_priced_items", [x, y], "%s;  %s" % (e1, e2),
+                  "x = number at $%s, y = number at $%s: %s and %s, so x = %s and y = %s" % (
+                      show(p1), show(p2), e1, e2, show_exact(x), show_exact(y)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 40. a plan that includes some, then charges extra:   B + r (d - I) = T      (the generator's "phone plan ... includes I GB ... Each extra GB costs $r")
+# ---------------------------------------------------------------------------------------------------------
+_PLAN_INCLUDES = re.compile(r"\bincludes?\s+(\d+(?:\.\d+)?)\s*([a-z]+)\b")
+_PLAN_EXTRA = [
+    re.compile(r"\b(?:each|every|per)\s+(?:extra|additional)\s+([a-z]+)\s+(?:costs?|is|are|charges?)\s+\$(\d+(?:\.\d+)?)"),
+    re.compile(r"\$(\d+(?:\.\d+)?)\s+(?:per|for each|for every|a)\s+(?:extra|additional)\s+([a-z]+)"),
+]
+_PLAN_OTHER = re.compile(r"\b(?:unlimited|tax|discount\w*|fee|fees|percent|free|rest|remaining|how much extra|how many extra|extra data)\b|%")
+_PLAN_BILL_BEFORE = re.compile(r"\b(?:bill|total|charge|charged|cost|owed|owes?|paid|pays?)(?:\s+(?:was|is|came to|comes to))?\s*$")
+
+
+def plan_with_included(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 4 or _CHANGES_EQUATION.search(t) or _PLAN_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    im = list(_PLAN_INCLUDES.finditer(t))
+    if len(im) != 1:
+        return None
+    inc, unit = Fraction(im[0].group(1)), im[0].group(2)
+    em = _PLAN_EXTRA[0].search(t)
+    if em:
+        eunit, rate = em.group(1), Fraction(em.group(2))
+    else:
+        em = _PLAN_EXTRA[1].search(t)
+        if not em:
+            return None
+        rate, eunit = Fraction(em.group(1)), em.group(2)
+    if _stem_unit(eunit) != _stem_unit(unit):
+        return None
+    inc_pos, rate_pos = im[0].start(1), em.start(2) if em.re is _PLAN_EXTRA[0] else em.start(1)
+    rest = [n for n in nums if not any(n[2] <= p < n[3] for p in (inc_pos, rate_pos))]
+    if len(rest) != 2 or not all(n[1] for n in rest):
+        return None
+    base, bill = rest[0], rest[1]
+    if not re.match(r"\s*(?:a|per|each|every)\s+(?:month|week|day|year)\b", t[base[3]:]):
+        return None
+    if not _PLAN_BILL_BEFORE.search(t[:bill[2]].rstrip()) or _EACH_AFTER.match(t[bill[3]:]):
+        return None
+    # the question asks for the TOTAL used, not only the extra
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow (?:much|many)\b", s)), None)
+    if q is None or not re.search(r"\b(?:used|use|uses|consumed)\b", q):
+        return None
+    B, T = base[0], bill[0]
+    if rate <= 0 or inc < 0 or T <= B:
+        return None                                           # a bill that is not above the monthly price means no extra was used
+    d = inc + (T - B) / rate
+    eq = "%s + %s(d - %s) = %s" % (show(B), show(rate), show(inc), show(T))
+    return Result("plan_with_included", [d], eq,
+                  "d = total %s used: %s, so d = %s + (%s - %s) / %s = %s %s" % (
+                      unit, eq, show(inc), show(T), show(B), show(rate), show_exact(d), unit))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 41. the most that still fits under a limit:   w + b n <= L, the greatest whole n      (the generator's "elevator holds at most")
+# ---------------------------------------------------------------------------------------------------------
+_FITS_UNIT = r"(?:lbs?|pounds?|kg|kilograms?)"
+_FITS_LIMIT_BEFORE = re.compile(r"\b(?:at most|up to|maximum of|no more than|capacity of|limit of|holds|can hold)\s*$")
+_FITS_OTHER = re.compile(r"\b(?:at least|more than|fewer|less than|trips|each way|round trip|twice|empty|already over|tax|discount\w*)\b|%|\$")
+
+
+def most_that_fits(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or _FITS_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    if not re.search(r"\bat most\b|\bup to\b|\bno more than\b|\bmaximum\b|\bcapacity\b|\blimit\b", t):
+        return None
+    for n in nums:
+        if n[1] or not re.match(r"\s*" + _FITS_UNIT + r"\b", t[n[3]:]):
+            return None
+    unit_words = [re.match(r"\s*(" + _FITS_UNIT + r")\b", t[n[3]:]).group(1) for n in nums]
+    if len({_UNIT_NAMES[w] for w in unit_words}) != 1:
+        return None                                           # all three weights in one unit
+    lim = [n for n in nums if _FITS_LIMIT_BEFORE.search(t[:n[2]].rstrip())]
+    if len(lim) != 1:
+        return None
+    L = lim[0]
+    others = [n for n in nums if n is not L]
+    # the question names the thing loaded ("how many boxes can go up ..."): its weight is the one followed by that noun
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow many\b", s)), None)
+    if q is None or not re.search(r"\b(?:go|fit|fits|be loaded|be carried|be added|be put|can be|can go|can the)\b", q):
+        return None
+    qm = re.search(r"\bhow many ([a-z]+)", q)
+    if not qm:
+        return None
+    noun = _stem_unit(qm.group(1))
+    item = [n for n in others if (re.match(r"\s*" + _FITS_UNIT + r"\s+([a-z]+)", t[n[3]:]) and _stem_unit(re.match(r"\s*" + _FITS_UNIT + r"\s+([a-z]+)", t[n[3]:]).group(1)) == noun)]
+    if len(item) != 1:
+        return None
+    body = item[0]
+    base = [n for n in others if n is not body][0]
+    if not re.match(r"\s*" + _FITS_UNIT + r"\s+(?:worker|person|man|woman|operator|driver|passenger|helper|employee|attendant|cart|trolley|pallet|loader|mover)\b", t[base[3]:]):
+        return None
+    limit, w, b = L[0], base[0], body[0]
+    if b <= 0 or w < 0 or w >= limit:
+        return None                                           # a load that is already at or over the limit leaves no room
+    n = (limit - w) // b
+    if n < 1 or not (w + b * n <= limit < w + b * (n + 1)):
+        return None
+    eq = "%s + %sn <= %s" % (show(w), show(b), show(limit))
+    return Result("most_that_fits", [Fraction(n)], eq,
+                  "%s, so n <= %s and the most is %s (one more would weigh %s, over %s)" % (
+                      eq, show_exact((limit - w) / b), show_exact(Fraction(n)), show_exact(w + b * (n + 1)), show(limit)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2057,7 +2227,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             two_scores, two_discounts, triangle_ratio,
             two_prices_known_count, drain_or_fill, percent_of_count,
             percent_change_between, ages_later_multiple, shared_fixed_cost,
-            two_rates_one_pile, least_for_profit]
+            two_rates_one_pile, least_for_profit,
+            two_priced_items, plan_with_included, most_that_fits]
 
 
 def solve(problem):

@@ -1234,6 +1234,89 @@ class FreshWordings(unittest.TestCase):
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 1, 4))
 
+    def test_known_amount_unit_matches_the_price_unit(self):
+        # 31 lb at $5/kg is not 31 kg: the known amount's unit has to be the unit of the price
+        self.assertIsNone(answers("A shop sold 31 lb of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?"))
+        self.assertIsNone(answers("A shop sold 31 kg of two teas, one at $5/lb and one at $12/lb, for $239. How many kg of each?"))
+        self.assertIsNone(answers("A shop sold 31 hours of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?"))
+        self.assertIsNone(answers("Yara works at $16 an hour and $22 an hour for 61 kg, earning $1,156. How many hours at each rate?"))
+        # the same units still answer
+        self.assertEqual(answers("A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each?"), values(12, 19))
+        self.assertEqual(answers("A shop sold 31 lb of two teas, one at $5/lb and one at $12/lb, for $239. How many lb of each?"), values(12, 19))
+        self.assertEqual(answers("Yara works at $16 an hour and $22 an hour for 61 hours, earning $1,156. How many hours at each rate?"), values(30, 31))
+        self.assertEqual(answers("Yara works two jobs paying $16/h and $22/h. Last month 61 hours were worked in total, earning $1156. How many hours were worked at the $16 job?"), values(30, 31))
+        self.assertEqual(answers("A cafe sold 40 drinks, some at $3 each and some at $5 each, for $150. How many of each?"), values(15, 25))
+
+    def test_two_priced_items(self):
+        self.assertEqual(answers("A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500. How many of each?"), values(133, 495))
+        self.assertEqual(answers("A school play sold 150 tickets: adult tickets at $12 and student tickets at $7. Sales came to $1,380. How many of each?"), values(66, 84))
+        r = WS.solve("A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500. How many of each?")
+        self.assertEqual(r.values, [Fraction(495), Fraction(133)])
+        self.assertIn("x + y = 628 and 30x + 50y = 21500", r.reading)
+        # a third price, equal prices, counts that are not whole or not positive, "each" after the total, a fee, a question for money, twice, part of the season
+        for text in ("A concert sold 628 tickets: lawn seats at $30, reserved seats at $50 and VIP seats at $90. Ticket sales totaled $21,500. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $30. Ticket sales totaled $21,500. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,501. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $2,000. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500 each. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500, plus a 5% fee. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500. How much was the lawn revenue?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50, and twice as many lawn. Ticket sales totaled $21,500. How many of each?",
+                     "A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500 for part of the season. How many of each?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_plan_with_included(self):
+        self.assertEqual(answers("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much data was used?"), values(13))
+        self.assertEqual(answers("A phone plan costs $30 a month and includes 15 GB of data. Each extra GB costs $8. The bill was $62. How much data was used?"), values(19))
+        r = WS.solve("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much data was used?")
+        self.assertEqual(r.values, [Fraction(13)])                         # the total data, not the 8 extra gigabytes
+        self.assertIn("50 + 5(d - 5) = 90", r.reading)
+        r = WS.solve("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $92. How much data was used?")
+        self.assertEqual(r.values, [Fraction(67, 5)])                      # exact, never 13.4 rounded
+        # a bill that is not above the monthly price, a question for the extra only, another unit for the extra, a question for a price, unlimited,
+        # "each" after the bill, part of the year
+        for text in ("A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $50. How much data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $40. How much data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much extra data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra minute costs $5. The bill was $90. How much data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90. How much was the bill per GB?",
+                     "A phone plan costs $50 a month and includes unlimited data. Each extra GB costs $5. The bill was $90. How much data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90 each. How much data was used?",
+                     "A phone plan costs $50 a month and includes 5 GB of data. Each extra GB costs $5. The bill was $90 for part of the year. How much data was used?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_most_that_fits(self):
+        self.assertEqual(answers("An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes. How many boxes can go up with the worker?"), values(16))
+        self.assertEqual(answers("An elevator holds at most 1200 lb. A 180 lb worker is loading 60 lb boxes. How many boxes can go up with the worker in one trip?"), values(17))
+        r = WS.solve("An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes. How many boxes can go up with the worker?")
+        self.assertIn("200 + 60n <= 1200", r.reading)
+        self.assertIn("one more would weigh 1220, over 1200", r.reading)               # 200 + 60 * 17
+        for limit, w, b in ((1200, 200, 60), (1200, 180, 60), (1500, 160, 40), (1800, 150, 50)):   # n is the most: n boxes fit, one more does not
+            text = "An elevator holds at most %d lb. A %d lb worker is loading %d lb boxes. How many boxes can go up with the worker in one trip?" % (limit, w, b)
+            n = int(next(iter(answers(text))))
+            self.assertLessEqual(w + b * n, limit)
+            self.assertGreater(w + b * (n + 1), limit)
+        # a load already at or over the limit, "at least", another unit, another thing, a question for weight, several trips, two workers, part of the day
+        for text in ("An elevator holds at most 1,200 lb. A 1,300 lb worker is loading 60 lb boxes. How many boxes can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. A 1,200 lb worker is loading 60 lb boxes. How many boxes can go up with the worker?",
+                     "An elevator holds at least 1,200 lb. A 200 lb worker is loading 60 lb boxes. How many boxes can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 kg boxes. How many boxes can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes. How many crates can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes. How much can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes in several trips. How many boxes can go up with the worker?",
+                     "An elevator holds at most 1,200 lb. Two 200 lb workers are loading 60 lb boxes. How many boxes can go up with the workers?",
+                     "An elevator holds at most 1,200 lb. A 200 lb worker is loading 60 lb boxes for part of the day. How many boxes can go up with the worker?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_units_seats_plans_fits_set(self):
+        """Set 23: wordings for the unit fix and the three families added together, written after all of them were finished and run once, untuned.
+        One answer is declined (a safe miss): "How many GB were stored?" does not say "used"."""
+        from fresh_word_problems_23 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-third set, unit fix and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 1, 6))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))
