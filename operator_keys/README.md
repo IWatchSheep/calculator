@@ -30,14 +30,26 @@ Generated from the real files by `make_operator_keys.py` (run it from the projec
 Run from the project root, in this order, whenever Python operators or Rust functions change:
 
 ```
-python operator_keys/make_operator_keys.py   # catalog + the two test data files below
+python operator_keys/make_operator_keys.py   # catalog + parity_examples.tsv + parity_differential.tsv
+python operator_keys/make_value_grid.py      # parity_values.tsv (about a minute: it runs the real Python operators)
 python operator_keys/make_rust_ops.py        # rust_calculator/src/ops/generated.rs
 cd rust_calculator && cargo test --release
 ```
 
-- `rust_calculator/tests/parity_examples.tsv` - the 367 hand-checked examples from the Python test suite whose boxes are numbers (or true/false, written 1/0) and whose answer is a number, a pair, true/false or a complex number (`re+imj`).
-- `rust_calculator/tests/parity_differential.tsv` - the real Python `compute()` run on a fixed grid (about 7,000 cases; numbers, pairs, true/false and complex answers), recording the answer or `ERR`. Rust must agree on every answer **and on which inputs are errors**.
-- `rust_calculator/tests/parity.rs` - reads both files. `MIN_PASSING` stops the count of passing examples from going down.
-- `make_rust_ops.py` writes an `Operator { ... }` entry (key, name, symbol, formula, pattern, boxes, constants with defaults) for every operator that has a Rust function named after its folder in `src/ops/physics.rs`, `geometry.rs` or `math.rs`, and for all 61 Reference operators. Only the compute bodies are written by hand. `rust_todo.json` lists the Ready operators with no Rust function yet.
+All 446 Ready operators and all 61 Reference operators exist in Rust (`rust_todo.json` is empty).
 
-Known, deliberate differences: Python integers are unbounded and Rust numbers are not (factorial-style results beyond what fits are an error or rounded; the grid skips integer results above 10^15); and for a few whole-number operators Rust rejects fractional or negative input where Python returns nonsense (listed in `STRICTER` in `parity.rs`); fractional input to the prime / field tests, where Python returns `true` (`FRACTION_NONSENSE`); and a negative number to a fractional power, where Python returns a complex number and Rust reports an error (`COMPLEX_POWER`).
+| File (in `rust_calculator/tests/`) | What it holds |
+|---|---|
+| `parity_examples.tsv` | 367 hand-checked examples from the Python test suite whose boxes are numbers (or true/false, written 1/0) and whose answer is a number, a pair, true/false or a complex number (`re+imj`) |
+| `parity_differential.tsv` | the real Python `compute()` on a fixed grid of numbers (about 7,000 cases): the answer or `ERR` |
+| `parity_values.tsv` | the real Python `compute()` on **typed** inputs for the 206 operators whose boxes are lists, matrices, sets, graphs, functions, text ... (about 5,400 cases). The inputs are the text a person types in the Advanced Input window (`1, 2, 3`   `1 2; 3 4`   `x**2 + 3*x`   `A: B, C; B: C`), turned into Python values by the program's own `advanced_input.parse`; answers are JSON with tags for tuples, sets, dicts and complex numbers |
+| `parity.rs`, `parity_values.rs` | read those files. Rust must give the same answer, or an error on exactly the same inputs. `MIN_PASSING` stops the count going down |
+
+Rust side: `src/kinds.rs` parses typed text exactly like `advanced_input.parse`; `src/expr.rs` is the safe evaluator for typed functions (`x**2 + 3*x`, `[2*x, 2*y]`, `x > 2`) with Python's error behaviour; `src/ops/{lists,matrices,sets,graphs,calculus,misc}.rs` hold the compute functions (one per operator, named after its folder); `make_rust_ops.py` writes the `Operator { ... }` entries.
+
+Known, deliberate differences (each is an allow-list in the test files):
+- Python integers are unbounded and Rust numbers are not (huge factorial-style results are an error or rounded; the grids skip integer results above 10^15).
+- For some whole-number operators Rust rejects fractional or negative input where Python returns nonsense (`STRICTER` in `parity.rs`); the prime / field tests say a fractional number is not prime (`FRACTION_NONSENSE`).
+- A negative number to a fractional power is a complex number in Python; real-valued Rust operators report an error instead (`COMPLEX_POWER`, and "Python's answer is complex" in `parity_values.rs`).
+- Python builds some answers by walking a set, so the order of the items depends on hashing and on text changes from run to run (`direct_product`, `cartesian_product`, `power_set`, and which valid route `hamiltonian_path` finds first): only the items are compared (`ORDER_FREE`).
+- `statistics.quantiles` with one data point follows Python 3.13+ (the grid was generated with Python 3.15).

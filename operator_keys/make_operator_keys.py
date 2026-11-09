@@ -100,7 +100,7 @@ def token(v):
 
 def result_tokens(v):
     """The result as the text after the second tab: one token, or two numbers for a pair. None = not representable."""
-    if isinstance(v, (tuple, list)) and len(v) == 2 and all(is_num(x) and math.isfinite(x) for x in v):
+    if isinstance(v, tuple) and len(v) == 2 and all(is_num(x) and math.isfinite(x) for x in v):
         return repr(v[0]) + " " + repr(v[1])
     return token(v)
 
