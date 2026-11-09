@@ -1,5 +1,7 @@
 """Fresh wordings for number_puzzle.py, written after the reader was finished and run once (not tuned on).
 Each item: (problem, answer).  answer None = the reader must decline (not a plain one-unknown number puzzle)."""
+from fractions import Fraction
+
 FRESH = [
     ("Twice a number, increased by 7, equals 25. What is the number?", 9),
     ("The sum of a number and 15 is 40. Find the number.", 25),
@@ -20,8 +22,8 @@ FRESH = [
     ("A number plus 9 equals 3 times the number minus 5. Find the number.", 7),
     ("Half of a number decreased by 4 is 11. Find the number.", 30),
     ("Think of a number. Add 5 to it and multiply by 3 to get 36. What is the number?", 7),
-    ("Seven times a number is 3 more than the number itself plus 30. Find the number.", None),
-    # must be declined
+    ("Seven times a number is 3 more than the number itself plus 30. Find the number.", Fraction(11, 2)),
+    # must be declined (8 problems)
     ("A number squared is 49. Find the positive number.", None),
     ("The sum of two numbers is 20 and their difference is 4. Find the numbers.", None),
     ("The sum of three consecutive integers is 72. Find the integers.", None),

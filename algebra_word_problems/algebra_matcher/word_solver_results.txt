@@ -1,0 +1,52 @@
+Five-family word solver (word_solver.py): what was measured
+===========================================================
+
+What it does: solves five families directly from the wording and shows its reading.
+    sum_difference   "sum 90 and difference 14", "one is 8 bigger than the other", a board cut in two, two ages
+    consecutive      "the sum of 3 consecutive odd integers is 87", "three integers in a row total 138"
+    work_together    two workers' separate times -> time together (1/a + 1/b)
+    percent_change   the price BEFORE a percent rise (raise, markup, tax, tip) or fall (discount, off)
+    proportion       "If 3 kg of apples cost $7.50, how much do 8 kg cost?"  (three numbers, direct proportion)
+Safety rules (the same idea as number_puzzle.py): it answers only if the wording pattern matches, EVERY number in
+the problem has a role, and the answer passes a sanity check.  Anything else -> None and the matcher takes over.
+
+Tests (python test_word_solver.py): 9 tests, all pass
+  - phrasings per family and problems it must decline (a missing role, a saving instead of a price, a negative
+    number, parity that does not fit, inverse proportion, workers who drain or leak ...)
+  - ground truth, all 1,000 generated problems: claimed 74 (sum_difference 13, consecutive 5, work_together 5,
+    percent_change 22, proportion 29), wrong 0.  Every claim is in the intended categories.
+        NOTE: written while looking at these problems, so this is a development result.
+  - the 100 hand-written matcher problems: it claims 13, and all 13 match answers I calculated by hand.
+  - 33 FRESH wordings (fresh_word_problems.py) written after the solver was finished and run once, untuned:
+        21 problems with an answer: 18 solved, 3 declined (safe), 0 wrong.   12 required declines: 12 of 12 declined.
+        The 3 gaps: "...12% service charge..." (charge is not in the rise words), "A machine makes 240 bolts in 8 hours.
+        How many in 20 hours?" ('make' is not a cue word), "...how far does it go in 5 hours?" ('how far' is not matched).
+        One item in the fresh file was mislabelled by me (a leftover expression that expected a decline for a problem
+        whose true answer is 24/5); the solver's 4.8 was right.  I corrected the label, not the solver.
+
+Bugs the tests found (each has a regression test now)
+  1. proportion was far too loose (52 claims, 28 wrong on the generated problems: overtime pay, speed of sound, estates).
+     Fixed by roles by position (the known pair BEFORE the question, the asked quantity AFTER it) and by rejecting
+     rates written with / or =, "first", "after that", "split", "together", "per minute".
+  2. work_together answered a problem that gives the TOGETHER time and asks for one worker alone (3.75 h, truth 15 h).
+     Found by hand-checking set B.  Fixed by declining anything that mentions "alone", "the other" or "each other".
+  3. work_together answered "a tap fills a bath in 10 min but the plug leaks and empties it in 30 min" (7.5, truth 15).
+     The leak check used word boundaries and missed "leaks" and "empties".  Found by the hand-set test.
+  4. percent_change could answer "A shirt costs $40 and is 25% off. What is the sale price?" with the wrong value, and
+     "25% off, saving $10. What was the original price?" (the $10 is a saving).  Fixed: the question sentence must ask
+     for the value BEFORE the change (before / original / old / wholesale / itself ...), and amounts that follow
+     "by $", "of $", "saving" are rejected.
+
+Effect on the matcher's 100 hand-written problems (number reader, then the five families, then the matcher):
+                                plain matcher       + number reader      + reader + five families
+  set A (60, tuned on)          48/60  58/60        49/60  58/60         51/60  60/60        (top-1 / top-3)
+  set B (40, never tuned)       29/40  36/40        31/40  37/40         34/40  40/40
+  set B top-1: 72.5% -> 77.5% -> 85.0%    top-3: 90.0% -> 92.5% -> 100%
+  The problems it answers are answered exactly, not only given a type.
+
+What this does NOT show
+  * The families were chosen BECAUSE of the matcher's misses in sets A and B, so those sets are no longer a clean
+    test for these five families.  The 33 fresh wordings (18 of 21 solved, 0 wrong) are the honest check.
+  * Coverage is small: the solver claims 74 of the 1,000 generated problems (7.4%); with the number reader, 102 (10%).
+    The other types still depend on the matcher alone.
+  * All wordings (generated, hand-written, fresh) come from the same author as the solver.

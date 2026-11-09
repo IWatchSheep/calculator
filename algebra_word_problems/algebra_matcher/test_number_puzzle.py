@@ -144,24 +144,27 @@ class HandSets(unittest.TestCase):
 
 
 class FreshWordings(unittest.TestCase):
-    """28 wordings written after the reader was finished and run once, untuned (see fresh_number_puzzles.py).
-    Declining is allowed; a wrong answer, or an answer to something that is not a plain puzzle, is a failure."""
+    """28 wordings written after the reader was finished and run once, untuned (see fresh_number_puzzles.py):
+    20 puzzles with an answer and 8 problems that must be declined.  Declining a puzzle is allowed (safe); a wrong
+    answer, or an answer to something that is not a plain puzzle, is a failure."""
 
     def test_fresh(self):
         from fresh_number_puzzles import FRESH
-        right = declined = 0
+        solved = declined = required_declines = 0
         for text, want in FRESH:
             r = NP.solve(text)
             if want is None:
                 self.assertIsNone(r, "should decline: " + text)
-                right += 1
+                required_declines += 1
             elif r is None:
                 declined += 1
             else:
                 self.assertEqual(r.answer, want, text)
-                right += 1
-        print("  fresh wordings: %d right, %d declined (safe), 0 wrong, of %d" % (right, declined, len(FRESH)))
-        self.assertGreaterEqual(right, 24)
+                solved += 1
+        with_answer = solved + declined
+        print("  fresh wordings: %d of the %d puzzles with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, with_answer, declined, required_declines, required_declines))
+        self.assertEqual((solved, declined, required_declines), (15, 5, 8))
 
 
 if __name__ == "__main__":

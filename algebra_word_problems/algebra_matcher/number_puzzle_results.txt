@@ -16,14 +16,19 @@ Tests (python test_number_puzzle.py):  12 tests, all pass
         NOTE: the reader was written while looking at these problems, so 28/28 is a development result.
   - the 100 hand-written matcher test problems: it claimed 3, all correct, all number puzzles.
   - 28 FRESH wordings written after the reader was finished and run once, without tuning
-    (fresh_number_puzzles.py):  24 right, 0 wrong, 4 declined (declining is safe: the matcher takes over).
-        The 4 it declined are real gaps:
+    (fresh_number_puzzles.py): 20 puzzles with an answer and 8 problems that must be declined.
+        Puzzles with an answer: 15 solved, 5 declined (declining is safe: the matcher takes over), 0 wrong.
+        Required declines: 8 of 8 declined.
+        (CORRECTION: an earlier version of this file said "24 right of 28", which counted 9 required declines as
+        successes, and one of those, "Seven times a number is 3 more than the number itself plus 30", is really a
+        solvable puzzle (x = 11/2), so declining it is a miss.  The honest figure is 15 of 20.)
+        The 5 puzzles it declined are real gaps:
           "If you add 6 to a number and double the result, you get 30."          (chain with 'double the result')
           "I think of a number, multiply it by 5 and subtract 3. The answer is 47." (answer in the next sentence)
           "When a number is increased by 12 the result is 30."                    (no comma before 'the result')
           "Think of a number. Add 5 to it and multiply by 3 to get 36."           ('to get' as the relation)
-        These were NOT fixed after the run, so the 24/28 stays an honest number.  Fixing them would turn the fresh
-        set into a development set; new fresh wordings would be needed to measure again.
+          "Seven times a number is 3 more than the number itself plus 30."        ('the number itself')
+        None of them was fixed after the run, so the figure stays honest.
 
 Effect on the matcher's 100 hand-written problems (reader first, matcher for everything it declines):
   set A (60, the tuning set):          top-1  48/60 -> 49/60     top-3  58/60 -> 58/60     (reader answered 1)
