@@ -1,0 +1,38 @@
+Number-puzzle reader (number_puzzle.py): what was measured
+==========================================================
+
+What it does: reads "number puzzles" with ONE unknown number and keeps the word order
+("Five less than twice a number is 31"  ->  2x - 5 = 31  ->  x = 18).  It returns nothing (None) unless it
+understood every word of the equation sentence, so it can run BEFORE the matcher.  Standard library only.
+
+Tests (python test_number_puzzle.py):  12 tests, all pass
+  - hand-written phrasings: order of "less/more than", chains ("triple it and take away 7"), commas
+    ("five times a number, decreased by 19, is 106"), passive ("4 is subtracted from a number and the result
+    is multiplied by 5"), fractions and number words, the unknown on both sides, exact fractional answers,
+    and 7 problems it must decline (squares, digits, consecutive, stamps, percent ...)
+  - the ground truth in algebra_word_problems.txt, all 1,000 generated problems:
+        claimed 28, wrong 0.  All 28 problems with one unknown number and a single numeric answer were read
+        (28 of 28), and it claimed nothing in any other category.
+        NOTE: the reader was written while looking at these problems, so 28/28 is a development result.
+  - the 100 hand-written matcher test problems: it claimed 3, all correct, all number puzzles.
+  - 28 FRESH wordings written after the reader was finished and run once, without tuning
+    (fresh_number_puzzles.py):  24 right, 0 wrong, 4 declined (declining is safe: the matcher takes over).
+        The 4 it declined are real gaps:
+          "If you add 6 to a number and double the result, you get 30."          (chain with 'double the result')
+          "I think of a number, multiply it by 5 and subtract 3. The answer is 47." (answer in the next sentence)
+          "When a number is increased by 12 the result is 30."                    (no comma before 'the result')
+          "Think of a number. Add 5 to it and multiply by 3 to get 36."           ('to get' as the relation)
+        These were NOT fixed after the run, so the 24/28 stays an honest number.  Fixing them would turn the fresh
+        set into a development set; new fresh wordings would be needed to measure again.
+
+Effect on the matcher's 100 hand-written problems (reader first, matcher for everything it declines):
+  set A (60, the tuning set):          top-1  48/60 -> 49/60     top-3  58/60 -> 58/60     (reader answered 1)
+  set B (40, never tuned on):          top-1  29/40 -> 31/40     top-3  36/40 -> 37/40     (reader answered 2)
+      set B top-1:  72.5% -> 77.5%     top-3: 90.0% -> 92.5%
+  In both sets the reader answered the problem exactly (it gives the answer, not only a type).
+
+What this does NOT show
+  * The reader only covers plain one-unknown number puzzles (28 of the 1,000 generated problems, 2.8%).
+    The other 42 - 28 = 14 "Number puzzle" category problems (three numbers, "has 3 more than 4 times as many
+    stamps", "gives $43 to") have two or three unknowns and are left to the matcher.
+  * All test wordings were written by the same author as the reader.  Real users will phrase things differently.

@@ -1,0 +1,33 @@
+"""Fresh wordings for number_puzzle.py, written after the reader was finished and run once (not tuned on).
+Each item: (problem, answer).  answer None = the reader must decline (not a plain one-unknown number puzzle)."""
+FRESH = [
+    ("Twice a number, increased by 7, equals 25. What is the number?", 9),
+    ("The sum of a number and 15 is 40. Find the number.", 25),
+    ("Subtract 8 from a number and you get 20. What is it?", 28),
+    ("A number multiplied by 4 gives 52. Find the number.", 13),
+    ("Eight less than a number is 15. Find the number.", 23),
+    ("Three more than half of a number is 10. Find the number.", 14),
+    ("If you add 6 to a number and double the result, you get 30. What is the number?", 9),
+    ("I think of a number, multiply it by 5 and subtract 3. The answer is 47. What is my number?", 10),
+    ("Ten times a number is 90.", 9),
+    ("A number divided by 3 is 12. Find the number.", 36),
+    ("Four times a number minus 9 equals 2 times the number plus 5. Find the number.", 7),
+    ("The difference of a number and 7 is 12. What is the number?", 19),
+    ("One-third of a number is 9. What is the number?", 27),
+    ("When a number is increased by 12 the result is 30. What is the number?", 18),
+    ("The product of a number and 6 is 42. Find the number.", 7),
+    ("Twice the sum of a number and 4 is 30. Find the number.", 11),
+    ("A number plus 9 equals 3 times the number minus 5. Find the number.", 7),
+    ("Half of a number decreased by 4 is 11. Find the number.", 30),
+    ("Think of a number. Add 5 to it and multiply by 3 to get 36. What is the number?", 7),
+    ("Seven times a number is 3 more than the number itself plus 30. Find the number.", None),
+    # must be declined
+    ("A number squared is 49. Find the positive number.", None),
+    ("The sum of two numbers is 20 and their difference is 4. Find the numbers.", None),
+    ("The sum of three consecutive integers is 72. Find the integers.", None),
+    ("A rectangle's length is 3 more than its width and its perimeter is 26. Find the width.", None),
+    ("Maria has 5 more than twice the stamps Joe has. They have 41 together. How many does Joe have?", None),
+    ("The number of students is 30 and each gets 4 pencils. How many pencils are needed?", None),
+    ("What number is 25% of 80?", None),
+    ("A number is its own reciprocal. Find the number.", None),
+]
