@@ -162,7 +162,7 @@ Keys look like `math/<area>/<operator>`, `geometry/geometry/<operator>` and
 
 ## Algebra word problems (work in progress)
 
-Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram. The row is not placed in the calculator yet, and = does not call `compute()`. The operator that takes pasted text is also not built. Both are under *What is left*.
+Besides the 507 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram, and if the problem is Ready (377 of them) it is also put into the target row as `Name(□, □ ...) = □`: fill one box for every number in the text, in the order they appear, and press `=` to get the answer. A Reference problem shows its diagram and says so, and is not placed. The operator that takes pasted text is not built. It is under *What is left*.
 
 > Reviewed. The steps under *How a problem travels* and the decisions under *Decisions* are the ones to follow. A family answers only when its wording matches, every number has a role, and the answer passes its checks. Otherwise it declines. A decline is safe. A wrong number is a failure.
 
@@ -230,7 +230,7 @@ Read these at the start of every session. Update them every time a batch is fini
 
 - **The solver covers 349 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 623 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
 - **The operator is not built.** Text pasted in the Templates box should be split into word boxes and number boxes, matched to a family, and answered with the reading the solver already produces. When no family is sure, it falls back to the trained matcher. The open window decisions are in `algebra_word_problems/chess_test_results.txt`, section 7.4.
-- The row files are laid out. Nothing in the window places a row yet, and = does not call `compute()`. A problem can be opened from Operators only to see its diagram.
+- **The rows are in the window.** A Ready problem clicked in Operators > Algebra word problems goes into the target row (or into a box of a row that already has math), and `=` calls its `compute()`. Several answers show as a list in the result. Reference problems are not placed. The boxes are empty: the stored numbers are not prefilled, and the boxes are labelled `number 1`, `number 2`, ... rather than by role.
 
 ### Decisions
 

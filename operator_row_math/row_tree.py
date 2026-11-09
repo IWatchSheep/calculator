@@ -9,7 +9,11 @@ import math
 import types
 
 import operator_row_math
+import operator_row_math_for_algebra_word_problems as word_rows
+import operators_one_algebra_word_problem_per_file as word_library
 import operators_one_operator_per_file as library
+
+WORD_PREFIX = "word:"      # a node key "word:savings/0848" is an algebra word problem, not an operator
 
 
 # a plain number used as a whole row (e.g. the "× □" after a bracket)
@@ -45,7 +49,7 @@ def build_node(spec):
 def new_node(key):
     if key == "_number":
         return {"key": key, "mod": NUMBER, "slots": [""]}
-    mod = operator_row_math.get(key)
+    mod = word_rows.get(key[len(WORD_PREFIX):]) if key.startswith(WORD_PREFIX) else operator_row_math.get(key)
     return {"key": key, "mod": mod, "slots": [""] * sum(1 for kind, _ in mod.LEFT if kind == "box")}
 
 
@@ -127,7 +131,7 @@ def evaluate(node):
             vals.append(slot["value"])
         elif isinstance(slot, dict):
             v = evaluate(slot)
-            if mod.CALC == "advanced":
+            if mod.CALC == "advanced" or node["key"] == "_number":      # the plain number around a row passes any result through (several answers come back as a list)
                 vals.append(v)
                 continue
             if isinstance(v, bool) or not isinstance(v, (int, float, complex)):
@@ -146,8 +150,12 @@ def evaluate(node):
     if node["key"] == "_number":
         return vals[0]
     try:
+        if node["key"].startswith(WORD_PREFIX):
+            return word_library.get(node["key"][len(WORD_PREFIX):]).compute(*vals)
         return library.get(node["key"]).compute(*vals)
     except ZeroDivisionError:
         raise ValueError("Division by zero.")
+    except NotImplementedError as e:
+        raise ValueError("%s is reference only: %s" % (mod.NAME, e))
     except (ValueError, OverflowError, TypeError, KeyError, IndexError, AttributeError) as e:
         raise ValueError("%s can't calculate that: %s" % (mod.NAME, e))

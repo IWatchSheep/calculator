@@ -120,5 +120,58 @@ class Computing(unittest.TestCase):
             library.get("savings/0848").compute(200, 15)                               # a box is missing
 
 
+class InTheCalculator(unittest.TestCase):
+    """The Ready problems can be put into a calculator row from the Operators window, and = answers them."""
+
+    def test_every_ready_problem_answers_through_the_row_tree(self):
+        from operator_row_math import row_tree
+        ready = 0
+        for key in library.keys():
+            lib = library.get(key)
+            node = row_tree.new_node(row_tree.WORD_PREFIX + key)
+            node["slots"] = [str(n) for n in lib.NUMBERS]
+            if lib.SOLVER is None:
+                with self.assertRaises(ValueError, msg=key):
+                    row_tree.evaluate(node)               # a Reference problem says so, it never shows a number
+            else:
+                ready += 1
+                self.assertEqual(row_tree.evaluate(node), lib.compute(), key)
+        self.assertEqual(ready, 377)
+
+    def test_the_window_places_a_problem_and_equals_answers_it(self):
+        try:
+            import tkinter
+            import main
+            app = main.CalculatorGUI()
+            app.update()
+        except (ImportError, tkinter.TclError) as exc:
+            raise unittest.SkipTest("no GUI available: %s" % exc)
+        try:
+            import algebra_word_problem_catalog as catalog
+            items = {i["key"]: i for i in catalog.load_catalog(os.path.join(LIB, "INDEX.md"))}
+
+            def fill(key):
+                boxes = [k for k, c in enumerate(app._cards(0)) if c[0] == "box"]
+                for k, number in zip(boxes, library.get(key).NUMBERS):
+                    app._pick_box(0, k)
+                    for ch in str(number):
+                        app._key(ch)
+
+            for key, shown in (("savings/0848", "16"), ("system_of_equations/0920", "(27, 21)")):
+                app._clear_all()
+                app._place_word_problem(items[key])
+                self.assertIn(items[key]["problem"], app.results.get("1.0", "end"))
+                fill(key)
+                app._equals()
+                self.assertIn("=  " + shown, app.results.get("1.0", "end"), key)
+            reference = next(i for i in items.values() if i["status"] != "Ready")
+            app._clear_all()
+            app._place_word_problem(reference)
+            self.assertIn("reference only", app.results.get("1.0", "end"))
+            self.assertTrue(app._is_blank(app.rows[0]))          # nothing was placed
+        finally:
+            app.destroy()
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1 if "-v" not in sys.argv else 2)

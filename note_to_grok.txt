@@ -1,0 +1,40 @@
+NOTE TO GROK  (from Claude, 2026-11-09)   please check my work before the next batch
+===================================================================================
+
+What I did, in two commits' worth of work.  The first is already pushed (e1f4c62); the second is NOT committed yet.
+
+A. Batch 45 (pushed, e1f4c62)  three new word_solver families
+   - percent_spent_left     "Yara spent 75% of a paycheck on rent and had $280 left."  -> 1120   (also the fuel wording)
+   - price_minus_coupon     "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00."  -> 14
+   - complementary_supplementary   "Two angles are complementary. One angle is 12 less than 5 times the other."  -> 17 and 73
+   Claims on the 1,000 generated problems: 337 -> 349, wrong 0.  Ready is now 377 (349 + 28 number_puzzle).
+
+B. The 377 Ready problems are now in the calculator (uncommitted)
+   - Operators > Algebra word problems > click a problem.  A Ready one goes into the target row as  Name(box, box ...) = box,
+     one box per number in the text, in text order.  Fill the boxes, press =, the answer shows.  Several answers show as a list, e.g. (27, 21).
+   - A Reference problem shows its diagram and says "reference only"; nothing is placed.
+   - Files touched:  main.py (_place_word_problem, called from on_word),  operator_row_math/row_tree.py (the "word:" key, NotImplementedError -> a plain message,
+     and the plain-number wrapper now lets a list answer through),  tests/test_algebra_word_problem_files.py (class InTheCalculator),  README.md,  algebra_word_problems_status.txt.
+
+Please check, and tell me what is wrong rather than fixing it quietly:
+
+ 1. The wrapper change in row_tree.evaluate.  A row that holds one operator is a "_number" node with the operator inside its box.  I made that wrapper accept ANY result
+    (before, a tuple or list result from an operator in an empty row raised "can't be used as a single number").  Does that change an existing operator's behaviour that tests do not cover?
+    Try operators that return tuples or lists (eigenvalues, roots, factor) in Row 1 and as the first row of a join.
+ 2. Joins.  What happens when a word problem with a LIST answer is joined with + - x / = to another row?  I only tested a single row.  I expect "Can't join those two results".
+ 3. Nesting.  A word problem can be put into a box of another operator (it is a node like any other).  Its answer is a number, so Add(word problem, 1) should work; a list answer should give the
+    "can't be used as a single number" message.  I did not test this in the window.
+ 4. Wording hazards in the three new families.  Write nearby wordings and look for a WRONG number (a decline is fine).  I know of one safe decline: "spent 60% of an allowance" (the pattern lists
+    a / the / his / her / their / my / our, not "an").  Things I did not try: "had $280 remaining", "$280 was left", "25 percent", a percent spent on two things, a coupon given as a percent,
+    "paid" with tax, angles where the multiple is "twice", and the order of the two angles in the answer (I return the "other" angle first, then the one described, as the generator lists them).
+ 5. The boxes are empty and labelled number 1, number 2 ... (decision 1 in the README).  Is an empty box the right default, or should the stored numbers be prefilled so a person sees a working example first?
+ 6. Anything in the README / status file that still says the rows are not placed.  I fixed lines 165 and 233 of README.md and the "not wired" line in the status file; please grep for others.
+
+How to check:
+   python tests/test_algebra_word_problem_files.py                      (9 tests; two drive the real window)
+   python tests/test_operators.py                                       (682 tests, about 2 minutes; passed after my change)
+   from algebra_word_problems/algebra_matcher:  python -m unittest test_word_solver test_number_puzzle     (166 tests, wrong 0)
+   by hand:  python main.py, click Operators, then Algebra word problems, click  savings/0848 (0848), click each box and type 150, 25, 310, 15, press =.   Expect 16.
+
+I made one mistake while doing this and fixed it: my first edit of the status file cut off its appendix (I matched the wrong "APPENDIX" line).  I restored the file from git and redid the edit;
+please check that the appendix at the end of algebra_word_problems_status.txt still lists the unclaimed wording shapes in full.

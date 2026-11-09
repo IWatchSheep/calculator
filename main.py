@@ -1269,6 +1269,18 @@ class CalculatorGUI(tk.Tk):
             self._word_catalog_items = catalog.load_catalog(os.path.join(WORD_DIR, "INDEX.md"))
         return self._word_catalog_items
 
+    def _place_word_problem(self, item):
+        """A Ready algebra word problem goes into the target row as `Name(□, □ ...) = □`, one box for every number
+        in its text (in the order they appear).  A Reference problem only shows its diagram: nothing answers it yet."""
+        if item["status"] != "Ready":
+            self._say("%s %s is reference only: its text, steps and diagram are stored, but no solver answers it yet, so it is not placed in a row.\n%s"
+                      % (item["category"], item["id"], item["problem"]))
+            return
+        key = row_tree.WORD_PREFIX + item["key"]
+        self._place_operator_row(key)
+        self._say("%s\n%s %s: fill the boxes in order (number 1 is the first number in the text, and so on), then press =."
+                  % (item["problem"], item["category"], item["id"]))
+
     def _show_word_diagram(self, item):
         """Open the problem's diagram. Clicking another problem uses the same window."""
         import algebra_word_problem_catalog as catalog
@@ -1436,6 +1448,7 @@ class CalculatorGUI(tk.Tk):
                 return
             prev_title.configure(text="%s   %s   [%s]" % (item["id"], item["category"], item["status"]))
             self._show_word_diagram(item)
+            self._place_word_problem(item)
 
         word_list.bind("<<ListboxSelect>>", on_word)
 

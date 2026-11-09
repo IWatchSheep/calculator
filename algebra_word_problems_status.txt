@@ -33,7 +33,7 @@ Where everything is (section 2) and the working rules (section 6) are things the
 1. WHAT THIS IS
 ---------------
 The calculator project (Python, GUI in main.py, Rust port in rust_calculator/) is getting an ALGEBRA WORD PROBLEM feature: text pasted in the Templates text box is split into word boxes and number boxes,
-matched to a problem type, and solved.  The user plans an operator for it later (see section 5, TO DO).  So far only the STANDALONE SOLVER exists; it is not wired into the GUI yet.
+matched to a problem type, and solved.  The user plans an operator for it later (see section 5, TO DO).  The STANDALONE SOLVER is wired into the calculator rows since 2026-11-09: a Ready problem picked in Operators > Algebra word problems is placed in a row and = calls its compute() (see section 7).  The operator that takes PASTED text is still not built.
 
 The solver's rule (from number_puzzle.py): a family answers ONLY when (1) its wording pattern matches, (2) EVERY number in the problem was given a role by the pattern, and (3) the answer passes a
 sanity check.  Anything else returns None (a "decline"), so the trained matcher can take over.  A wrong role must never become a wrong answer: a decline is always safe, a wrong number is the failure.
@@ -191,6 +191,7 @@ The user asked for the 1,000 generated problems to be put into their own files, 
   README.md                                                                          a new section "Algebra word problems (work in progress)" with a NOTE TO GROK, the four pieces, the Python use, HOW A PROBLEM TRAVELS (text -> solver family -> generated file and diagram -> row ->
                                                                                       checks -> status file), what is left, and six QUESTIONS FOR REVIEW; plus rows in the "Project files" table and a line in "Testing".
 Status of the 1,000: 377 Ready (349 word_solver, 28 number_puzzle), 623 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
+WIRED INTO THE WINDOW (2026-11-09, after Batch 45):  main.py _place_word_problem() puts a Ready problem into the target row when it is clicked in Operators > Algebra word problems; operator_row_math/row_tree.py knows the node key "word:<category>/<id>" (row file from operator_row_math_for_algebra_word_problems, answer from the problem file's compute()); a list answer passes through the plain-number wrapper so several answers show as a list; a Reference problem is not placed and says so.  Tests: tests/test_algebra_word_problem_files.py class InTheCalculator (9 tests in the file).  The boxes are empty (no prefill) and labelled number 1, number 2 ...
 OPEN: Grok was asked (in the README) to review the section and amend it; the six questions are the decisions still open (row shape and labels by role, several answers in one result box, the diagram, the 24 MB of pictures,
 folder naming by category, how a declined compute() should look in a row).  When Grok has amended the README, read it again before changing the folders: it may change the generator's output.
 NOT DONE: nothing in main.py loads these rows yet; the operator (paste text -> solver -> row) is not built (section 5 C).
