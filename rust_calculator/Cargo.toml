@@ -1,0 +1,16 @@
+[package]
+name = "rust_calculator"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.83"
+description = "Desktop calculator: operators in rows (Rust port of the Python Tkinter calculator)"
+
+[dependencies]
+eframe = "0.29"
+egui = "0.29"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
