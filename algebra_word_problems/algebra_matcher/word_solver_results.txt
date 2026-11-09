@@ -741,3 +741,27 @@ Measured:
   Fresh set 25 (12 wordings, written after all three were finished, run once, untuned): 7 with an answer: 6 solved, 1 declined; 5 required declines: 5 of 5; 0 wrong.  The declined one is a safe miss, not fixed:
   "For 3 months the total was $76" ("the total was" is not one of the total cues).
   95 word-solver and number-puzzle tests pass.
+
+Batch 23: pages a day, opposite angles, a rectangle from its perimeter and area
+==============================================================
+pages_per_day  (generator "A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"):  (N - R) / D.  The answer is 53 (13 + 6p = 331).  The total is "<n>-page" or "book has <n> pages",
+  the read part is "<n> pages already read / finished / done", the deadline is "in <n> days|weeks|nights", and the question must ask "how many pages a <same unit>" with must / need to / should.  Exact: 7 days gives 318/7.
+  Declines: zero days, the whole book (or more) already read, another period asked ("pages a week" with a deadline in days), a question for days or for pages left, a spelled number ("six days"), twice / more than,
+  "part of the term".
+opposite_angles_equal  (generator "Where two lines cross, opposite angles are (2x + 4)° and (5x - 110)°. Find the angle."):  a1 x + b1 = a2 x + b2.  Opposite (vertical) angles are equal: x = 38 and each angle is 80.  The answer is what is
+  asked: the angle, x, or both ("Find x and the angle" gives 38 and 80).  "Two lines" is the shape of the problem and is allowed.  The angle must be above 0 and at most 180 (x = -2 gives 0, x = 100 gives 204: both decline).  Exact:
+  (2x + 4) and (5x - 100) give 220/3 degrees.  Declines: adjacent angles, angles that add to 180 (a linear pair), equal coefficients, a third angle, other numbers, "part of the year".
+rectangle_from_perimeter_area  (generator "A rectangle has a perimeter of 40 ft and an area of 36 ft^2. Find its length and width."):  l + w = P / 2 and l w = A.  Half the perimeter is 20 and the sides add to 20 and multiply to 36, so they are the
+  roots of z^2 - 20z + 36: 18 and 2 (a test checks 2 x 18 + 2 x 2 = 40 and 18 x 2 = 36).  The discriminant must be a perfect square of a rational (exact sides): 101 and 37 square feet give no real or no exact sides and decline; 41 ft and
+  100 sq ft give 25/2 and 8.  A square (10 by 10) is allowed as a rectangle when the problem says "rectangle"; the word "square" declines.  The area's unit must be the perimeter's unit squared (36 m^2 with 40 ft declines).
+  Declines: a zero area, a question for the diagonal, a border / frame / path, "part of the year".
+Checks on each family (test_word_solver.py): spelled counts ("two lines" is the one allowed), each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings
+  (318/7, 220/3, 25/2), no control characters, no module-level name defined twice (the new names are _PAGES_*, _OPPANG_*, _RECT_*).  The test's answer reader learned "x = 38; each angle is 80 degrees": it compares the angle.
+Measured:
+  1,000 generated problems: claims 295 -> 308, wrong 0.  The 13 new claims, each equal to the stored answer:
+    pages_per_day 0484 (53), 0493 (24), 0506 (6), 0514 (107), 0525 (14) = every generated "pages already read" problem;
+    opposite_angles_equal 0238 (80), 0252 (98), 0265 (55), 0272 (116) = every generated "opposite angles" problem;
+    rectangle_from_perimeter_area 0309 (18 by 2), 0319 (31 by 21), 0325 (21 by 9), 0335 (27 by 15) = every generated rectangle-with-perimeter-and-area problem.
+  Hand-written problems claimed by the family solver: 38 (unchanged; none of the hand-written problems is in these shapes).
+  Fresh set 26 (12 wordings, written after all three were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 6 required declines: 6 of 6; 0 wrong.
+  99 word-solver and number-puzzle tests pass.

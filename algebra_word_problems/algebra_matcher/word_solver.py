@@ -2466,6 +2466,128 @@ _GROW_STMT2 = re.compile(
     r"(?P<u>year|month|week|day|hour|decade)\b")
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 47. pages a day to finish a book:   (N - R) / D      (the generator's "A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?")
+# ---------------------------------------------------------------------------------------------------------
+_PAGES_TOTAL = re.compile(r"\b(\d+)-pages?\b|\b(?:book|novel|report|packet|manual)\s+(?:has|of|with)\s+(\d+)\s+pages\b")
+_PAGES_READ = re.compile(r"\b(\d+)\s+pages?\s+(?:already\s+)?(?:read|finished|done|completed|written|typed)\b")
+_PAGES_DAYS = re.compile(r"\b(?:in|within|over|before)\s+(\d+)\s+(days?|weeks?|nights?)\b")
+_PAGES_OTHER = re.compile(r"\b(?:more than|less than|twice|double|half|each day she|already read twice|skip\w*|except|weekend\w*|at most|at least)\b|%|\$")
+
+
+def pages_per_day(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or _PAGES_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    tm, rm, dm = _PAGES_TOTAL.search(t), _PAGES_READ.search(t), _PAGES_DAYS.search(t)
+    if not tm or not rm or not dm:
+        return None
+    N = Fraction(tm.group(1) or tm.group(2))
+    R, D = Fraction(rm.group(1)), Fraction(dm.group(1))
+    if len({tm.start(), rm.start(), dm.start()}) != 3:
+        return None
+    unit = dm.group(2).rstrip("s")
+    # the question asks for pages per (day / week / night), in the unit of the deadline
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    q = next((s for s in reversed(sents) if re.search(r"\bhow many pages\b", s)), None)
+    if q is None or not re.search(r"\b(?:a|per|each|every)\s+" + unit + r"\b", q) or not re.search(r"\b(?:must|need to|have to|should|has to|needs to)\b", q):
+        return None
+    if D <= 0 or R < 0 or R >= N:
+        return None                                              # a deadline of zero, or the whole book already read (or more)
+    p = (N - R) / D
+    eq = "%s + %sp = %s" % (show(R), show(D), show(N))
+    return Result("pages_per_day", [p], eq, "p = pages per %s: %s, so p = (%s - %s) / %s = %s" % (unit, eq, show(N), show(R), show(D), show_exact(p)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 48. opposite (vertical) angles are equal:   a1 x + b1 = a2 x + b2      (the generator's "Where two lines cross, opposite angles are (2x + 4)° and (5x - 110)°")
+# ---------------------------------------------------------------------------------------------------------
+_OPPANG_EXPR = re.compile(r"\(\s*(\d*)\s*x\s*([+-])\s*(\d+(?:\.\d+)?)\s*\)\s*(?:°|degrees?)?")
+_OPPANG_OTHER = re.compile(r"\b(?:adjacent|supplementary|complementary|linear pair|straight line|add to|adds to|sum|total|together|triangle|parallel)\b")
+
+
+def opposite_angles_equal(problem):
+    t = clean(problem)
+    if _CHANGES_EQUATION.search(t) or _OPPANG_OTHER.search(t) or re.search(_SPELLED_ANY, re.sub(r"\btwo (?:straight )?lines\b", " ", t)):
+        return None                                              # "two lines" is the two crossing lines, the shape of the problem
+    if not re.search(r"\b(?:opposite|vertical) angles\b", t):
+        return None
+    ex = list(_OPPANG_EXPR.finditer(t))
+    if len(ex) != 2:
+        return None
+    rest = t[:ex[0].start()] + " " + t[ex[0].end():ex[1].start()] + " " + t[ex[1].end():]
+    if re.search(r"\d", rest):
+        return None
+    coefs = []
+    for m in ex:
+        a = Fraction(m.group(1)) if m.group(1) else Fraction(1)
+        b = Fraction(m.group(3)) * (1 if m.group(2) == "+" else -1)
+        coefs.append((a, b))
+    (a1, b1), (a2, b2) = coefs
+    if a1 == a2:
+        return None
+    x = (b2 - b1) / (a1 - a2)
+    angle = a1 * x + b1
+    if not (0 < angle <= 180):
+        return None
+    # what is asked: the angle, x, or both
+    q = max(t.rfind("find"), t.rfind("what"), t.rfind("how"))
+    if q == -1:
+        return None
+    tail = t[q:]
+    asks_angle = bool(re.search(r"\bangles?\b", tail))
+    asks_x = bool(re.search(r"\bx\b", tail))
+    if not (asks_angle or asks_x):
+        return None
+    vals = ([x] if asks_x else []) + ([angle] if asks_angle else [])
+    eq = "%sx %s %s = %sx %s %s" % (show(a1), "+" if b1 >= 0 else "-", show(abs(b1)), show(a2), "+" if b2 >= 0 else "-", show(abs(b2)))
+    return Result("opposite_angles_equal", vals, eq,
+                  "opposite angles are equal: %s, so x = %s and each angle is %s degrees" % (eq, show_exact(x), show_exact(angle)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 49. a rectangle from its perimeter and its area:   l + w = P / 2,  l w = A      (the generator's "A rectangle has a perimeter of 40 ft and an area of 36 ft^2")
+# ---------------------------------------------------------------------------------------------------------
+_RECT_PERIM = re.compile(r"\bperimeter of\s+(\d+(?:\.\d+)?)\s*([a-z]+)\b")
+_RECT_AREA = re.compile(r"\barea of\s+(\d+(?:\.\d+)?)\s*(?:square |sq\.? )?([a-z]+)(?:²|\^2|2)?")
+_RECT_OTHER = re.compile(r"\b(?:square|diagonal|border|frame|path|cut|hole|cost|triangle|circle|twice|times as)\b|%|\$")
+
+
+def rectangle_from_perimeter_area(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or _CHANGES_EQUATION.search(t) or _RECT_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    if not re.search(r"\brectangle\b", t):
+        return None
+    pm, am = _RECT_PERIM.search(t), _RECT_AREA.search(t)
+    if not pm or not am or pm.group(2) != am.group(2):
+        return None                                              # the area's unit is the perimeter's unit squared
+    if not re.search(r"\bfind\b[^.?!]*\b(?:length|width|sides|dimensions)\b|\bwhat (?:are|is)\b[^.?!]*\b(?:length|width|dimensions|sides)\b", t):
+        return None
+    P, A = Fraction(pm.group(1)), Fraction(am.group(1))
+    if P <= 0 or A <= 0:
+        return None
+    s = P / 2
+    disc = s * s - 4 * A
+    if disc < 0:
+        return None
+    # the sides are the roots of z^2 - s z + A = 0; they must be positive and exact (a whole or fractional number, not an irrational one)
+    num, den = disc.numerator, disc.denominator
+    rn, rd = _isqrt_exact(num), _isqrt_exact(den)
+    if rn is None or rd is None:
+        return None
+    root = Fraction(rn, rd)
+    l, w = (s + root) / 2, (s - root) / 2
+    if w <= 0:
+        return None
+    unit = pm.group(2)
+    return Result("rectangle_from_perimeter_area", [l, w], "l + w = %s;  l w = %s" % (show(s), show(A)),
+                  "l + w = %s and l w = %s, so the sides are the roots of z^2 - %sz + %s = 0: l = %s and w = %s %s" % (
+                      show(s), show(A), show(s), show(A), show_exact(l), show_exact(w), unit))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -2478,7 +2600,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             two_rates_one_pile, least_for_profit,
             two_priced_items, plan_with_included, most_that_fits,
             line_from_two_points, election_margin, wind_same_time,
-            base_plus_extra_over_time, distance_speed_time]
+            base_plus_extra_over_time, distance_speed_time,
+            pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area]
 
 
 def solve(problem):

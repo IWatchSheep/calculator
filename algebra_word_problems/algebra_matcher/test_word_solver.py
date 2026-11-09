@@ -275,6 +275,8 @@ class GroundTruth(unittest.TestCase):
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
         if len(re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text)) == 2:         # "9 at 55c, 21 at 70c" / "31 hours at $16, 30 hours at $22": compare the counts, not the prices
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text))
+        if re.match(r"x = -?\d+; each angle is ", text):                                  # "x = 38; each angle is 80 degrees": the question asked for the angle
+            return [Fraction(re.search(r"each angle is (\d+(?:\.\d+)?)", text).group(1))]
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
@@ -1472,6 +1474,79 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (twenty-fifth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (6, 1, 5))
+
+    def test_pages_per_day(self):
+        self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
+        self.assertEqual(answers("A 548-page book has 116 pages already read. How many pages a day must be read to finish in 18 days?"), values(24))
+        r = WS.solve("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?")
+        self.assertIn("13 + 6p = 331", r.reading)
+        self.assertIn("p = (331 - 13) / 6 = 53", r.reading)
+        r = WS.solve("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 7 days?")
+        self.assertEqual(r.values, [Fraction(318, 7)])                      # an exact fraction
+        # zero days, the whole book (or more) already read, another period asked, a question for days or for pages left, a spelled number, twice, part of the term
+        for text in ("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 0 days?",
+                     "A 331-page book has 331 pages already read. How many pages a day must be read to finish in 6 days?",
+                     "A 331-page book has 400 pages already read. How many pages a day must be read to finish in 6 days?",
+                     "A 331-page book has 13 pages already read. How many pages a week must be read to finish in 6 days?",
+                     "A 331-page book has 13 pages already read. How many days must be read to finish in 6 days?",
+                     "A 331-page book has 13 pages already read. How many pages are left?",
+                     "A 331-page book has 13 pages already read. How many pages a day must be read to finish in six days?",
+                     "A 331-page book has 13 pages already read, and twice that tomorrow. How many pages a day must be read to finish in 6 days?",
+                     "A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days for part of the term?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_opposite_angles_equal(self):
+        self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle."), values(80))
+        self.assertEqual(answers("Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. Find the angle."), values(98))
+        self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find x."), values(38))
+        self.assertEqual(answers("Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find x and the angle."), values(38, 80))
+        self.assertEqual(answers("Where two lines cross, vertical angles are (2x + 4) degrees and (5x - 110) degrees. Find each angle."), values(80))
+        r = WS.solve("Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle.")
+        self.assertIn("2x + 4 = 5x - 110", r.reading)
+        self.assertIn("x = 38 and each angle is 80 degrees", r.reading)
+        r = WS.solve("Where two lines cross, opposite angles are (2x + 4)° and (5x − 100)°. Find the angle.")
+        self.assertEqual(r.values, [Fraction(220, 3)])                       # an exact fraction of a degree
+        # adjacent angles, angles that add to 180, equal coefficients, an angle over 180 or not positive, a third angle, part of the year
+        for text in ("Where two lines cross, adjacent angles are (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "Where two lines cross, opposite angles add to 180: (2x + 4)° and (5x − 110)°. Find the angle.",
+                     "Where two lines cross, opposite angles are (2x + 4)° and (2x − 110)°. Find the angle.",
+                     "Where two lines cross, opposite angles are (2x + 90)° and (5x − 120)°. Find the angle.",
+                     "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)° and 30°. Find the angle.",
+                     "Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)° for part of the year. Find the angle."):
+            self.assertIsNone(answers(text), text)
+        # an angle of 0 or less (x = -2 gives 0) and an angle past a straight line (x = 100 gives 204) decline
+        self.assertIsNone(answers("Where two lines cross, opposite angles are (2x + 4)° and (3x + 6)°. Find the angle."))
+        self.assertIsNone(answers("Where two lines cross, opposite angles are (2x + 4)° and (3x − 96)°. Find the angle."))
+
+    def test_rectangle_from_perimeter_area(self):
+        self.assertEqual(answers("A rectangle has a perimeter of 40 ft and an area of 36 ft². Find its length and width."), values(2, 18))
+        self.assertEqual(answers("A rectangle has a perimeter of 104 ft and an area of 651 ft². Find its length and width."), values(21, 31))
+        self.assertEqual(answers("A rectangle has a perimeter of 40 ft and an area of 100 ft². Find its length and width."), values(10, 10))       # a square is a rectangle
+        r = WS.solve("A rectangle has a perimeter of 40 ft and an area of 36 ft². Find its length and width.")
+        self.assertEqual(r.values, [Fraction(18), Fraction(2)])
+        self.assertIn("l + w = 20 and l w = 36", r.reading)
+        for l, w in [(r.values[0], r.values[1])]:
+            self.assertEqual(2 * l + 2 * w, 40)                              # both sides fit the perimeter and the area
+            self.assertEqual(l * w, 36)
+        r = WS.solve("A rectangle has a perimeter of 41 ft and an area of 100 ft². Find its length and width.")
+        self.assertEqual(r.values, [Fraction(25, 2), Fraction(8)])           # exact fractions
+        # sides that are not real, not exact, an area in another unit, a zero area, a square, another question, part of the year
+        for text in ("A rectangle has a perimeter of 40 ft and an area of 101 ft². Find its length and width.",
+                     "A rectangle has a perimeter of 40 ft and an area of 37 ft². Find its length and width.",
+                     "A rectangle has a perimeter of 40 ft and an area of 36 m². Find its length and width.",
+                     "A rectangle has a perimeter of 40 ft and an area of 0 ft². Find its length and width.",
+                     "A square has a perimeter of 40 ft and an area of 100 ft². Find its length and width.",
+                     "A rectangle has a perimeter of 40 ft and an area of 36 ft². Find its diagonal.",
+                     "A rectangle has a perimeter of 40 ft and an area of 36 ft² for part of the year. Find its length and width."):
+            self.assertIsNone(answers(text), text)
+
+    def test_pages_angles_rectangle_set(self):
+        """Set 26: wordings for pages_per_day, opposite_angles_equal and rectangle_from_perimeter_area, written after all three were finished and run once, untuned."""
+        from fresh_word_problems_26 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twenty-sixth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 0, 6))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
