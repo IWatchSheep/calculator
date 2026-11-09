@@ -271,6 +271,8 @@ class GroundTruth(unittest.TestCase):
             return [Fraction(re.match(r"\d+", text).group())]
         if re.search(r"\d\s?(?:lb|kg) at \$", text):                           # a price-blend answer: compare the weights, not the prices
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
+        if len(re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text)) == 2:         # "9 at 55c, 21 at 70c" / "31 hours at $16, 30 hours at $22": compare the counts, not the prices
+            return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text))
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
         text = re.sub(r"\([^)]*\)", "", text)
@@ -994,6 +996,94 @@ class FreshWordings(unittest.TestCase):
         print("  fresh wordings (nineteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
         self.assertEqual((solved, declined, required), (5, 1, 7))
+
+    def test_scores_count_is_introduced_by_from(self):
+        # "from 40 field goals" is the number of scores; "in 40 games" and "on 40 ..." are not (the 40 could be games, not baskets)
+        self.assertEqual(answers("A team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?"), values(12, 28))
+        self.assertIsNone(answers("A team scored 92 points in 40 games, all 2-pointers and 3-pointers. How many of each?"))
+        self.assertIsNone(answers("A team scored 92 points on 40 field goals, all 2-pointers and 3-pointers. How many of each?"))
+        self.assertIsNone(answers("A team scored 92 points with 40 field goals, all 2-pointers and 3-pointers. How many of each?"))
+
+    def test_two_prices_known_count(self):
+        self.assertEqual(answers("Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65. How many of each?"), values(9, 21))
+        self.assertEqual(answers("Yara works two jobs paying $16/h and $22/h. Last month 61 hours were worked in total, earning $1156. How many hours were worked at the $16 job?"), values(30, 31))
+        self.assertEqual(answers("Yara works at $16 an hour and $22 an hour for 61 hours, earning $1,156. How many hours at each rate?"), values(30, 31))
+        r = WS.solve("Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65. How many of each?")
+        self.assertEqual(r.values, [Fraction(9), Fraction(21)])
+        self.assertIn("0.55x + 0.7y = 19.65", r.reading)                   # cents became dollars before meeting the dollar total
+        self.assertIn("a price in cents is divided by 100", r.reading)
+        r = WS.solve("Yara works at $16 an hour and $22 an hour for 61 hours, earning $1,156. How many hours at each rate?")
+        self.assertIn("16x + 22y = 1156", r.reading)
+        self.assertNotIn("cents", r.reading)
+        # a third price, equal prices, a total that is "each", counts that are not whole or not positive, a question for money, a percent / tax,
+        # a spelled number, part of the year, a fractional number of hours
+        for text in ("Noah bought 30 stamps, some at 55¢, some at 70¢ and some at 90¢, for $19.65. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 55¢, for $19.65. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65 each. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.00. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $10. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65. How much did the 55¢ ones cost?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65 plus 5% tax. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $1965. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and twice as many at 70¢, for $19.65. How many of each?",
+                     "Noah bought 30 stamps, some at 55¢ and some at 70¢, for $19.65 for part of the year. How many of each?",
+                     "Yara works at $16 an hour and $22 an hour for 61.5 hours, earning $1,156. How many hours at each rate?",
+                     "Yara works at $16 an hour and $22 an hour and $30 an hour for 61 hours, earning $1,156. How many hours at each rate?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_drain_or_fill(self):
+        self.assertEqual(answers("A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will 500 L remain?"), values(176))
+        self.assertEqual(answers("A tank holds 500 L and fills at 25 L per minute. After how many minutes will it hold 2,000 L?"), values(60))
+        r = WS.solve("A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will 500 L remain?")
+        self.assertIn("9300 - 50t = 500", r.reading)
+        self.assertIn("t = 176 minutes", r.reading)
+        r = WS.solve("A tank holds 500 L and fills at 25 L per minute. After how many minutes will it hold 2,000 L?")
+        self.assertIn("500 + 25t = 2000", r.reading)                       # filling uses a plus
+        r = WS.solve("A pool holds 1,000 L and drains at 300 L per minute. After how many minutes will 100 L remain?")
+        self.assertEqual(r.values, [Fraction(3)])
+        r = WS.solve("A pool holds 1,000 L and drains at 300 L per minute. After how many minutes will 400 L remain?")
+        self.assertEqual(r.values, [Fraction(2)])
+        r = WS.solve("A pool holds 1,000 L and drains at 300 L per minute. After how many minutes will 150 L remain?")
+        self.assertEqual(r.values, [Fraction(17, 6)])                      # an exact fraction of a minute
+        # a mark that is above the start when draining or below it when filling (negative time), a question for the amount, another time unit,
+        # another volume unit, two rates, a spelled number, part of the day, "empty"
+        for text in ("A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will 9,500 L remain?",
+                     "A tank holds 500 L and fills at 25 L per minute. After how many minutes will it hold 100 L?",
+                     "A pool holds 9,300 L and drains at 50 L per minute. How many liters remain after 10 minutes?",
+                     "A pool holds 9,300 L and drains at 50 L per minute. After how many hours will 500 L remain?",
+                     "A pool holds 9,300 L and drains at 50 gallons per minute. After how many minutes will 500 L remain?",
+                     "A pool holds 9,300 L and drains at 50 L per minute while a pump fills 20 L per minute. After how many minutes will 500 L remain?",
+                     "A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will half remain?",
+                     "A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will it be empty?",
+                     "A pool holds 9,300 L and drains at 50 L per minute. After how many minutes will 500 L remain for part of the day?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_percent_of_count(self):
+        self.assertEqual(answers("A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?"), values(13))
+        self.assertEqual(answers("A test has 40 questions. Pablo scored 95%. How many questions were answered correctly?"), values(38))
+        r = WS.solve("A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?")
+        self.assertIn("20 x 65/100", r.reading)
+        self.assertIn("13 answered correctly", r.reading)
+        # a result that is not a whole number, a percent of a percent, a question for the percent or for the wrong ones, a spelled number,
+        # a second percent, part of the year, a percent over 100
+        for text in ("A test has 25 questions. Jamal scored 65%. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65% of 80%. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65%. What percent were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65%. How many questions were answered incorrectly?",
+                     "A test has twenty questions. Jamal scored 65%. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65% and then 10% more. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65% for part of the year. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 130%. How many questions were answered correctly?",
+                     "A test has 20 questions. Jamal scored 65%. How many questions were answered correctly in two tests?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_prices_drain_percent_set(self):
+        """Set 20: wordings for two_prices_known_count, drain_or_fill and percent_of_count, written after all three were finished and run once, untuned."""
+        from fresh_word_problems_20 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (twentieth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (6, 0, 7))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

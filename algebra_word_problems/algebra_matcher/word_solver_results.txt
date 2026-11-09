@@ -563,3 +563,34 @@ Measured:
   Fresh set 19 (13 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 5 solved, 1 declined; 7 required declines: 7 of 7; 0 wrong.  The declined one:
   "In a triangle the three angles are in the ratio 1:2:3" is not one of the angles-of-a-triangle phrases (a safe miss, not fixed).
   67 word-solver and number-puzzle tests pass.
+
+Batch 17: the "in 40 games" fix and three families in one commit: two_prices_known_count, drain_or_fill, percent_of_count
+==============================================================
+Fix (two_scores): "A team scored 92 points in 40 games, all 2-pointers and 3-pointers. How many of each?" was answered 28 and 12; the 40 are games, not baskets.  The count of scores is
+  introduced by "from" in every generated problem, so "in", "on" and "with" no longer introduce it (they decline).
+two_prices_known_count  (generator "stamps" in cents and "two jobs" at an hourly wage):  x + y = N,  p1 x + p2 y = T.  "Noah bought 30 stamps, some at 55 cents and some at 70 cents, for $19.65.
+  How many of each?" is 9 at 55 cents and 21 at 70 cents; "$16 an hour and $22 an hour, 61 hours, earning $1,156" is 31 hours at $16 and 30 at $22.  A price in cents is divided by 100 BEFORE it meets
+  the dollar total (0.55x + 0.7y = 19.65); dollar prices are used as they are.  Exactly two prices (both in cents, or both "per hour" / each / "an hour" / /h), one plain count, one dollar total
+  introduced by for / earning / paying / "in total"; a price repeated in the question ("at the $16 job") is not a new number.  "Two jobs / kinds / types / rates" is the count of the two prices and is allowed.
+  Declines: a third price, equal prices, a total followed by "each", counts that are not whole (61.5 hours) or not positive, a question for money, tax / percent / discount / bonus / overtime / extra,
+  any other spelled number, "part of the year".
+drain_or_fill  (generator "pool drains"):  V - r t = L (drains / empties / leaks / loses / pumps out) or V + r t = L (fills / gains / pumps in).  "A pool holds 9,300 L and drains at 50 L per minute.
+  After how many minutes will 500 L remain?" is 176 minutes; filling uses a plus ("holds 500 L and fills at 25 L per minute ... will it hold 2,000 L" is 60).  One start amount, one rate per time unit, one
+  mark, all in one volume unit; the question asks for the TIME in the rate's time unit and names the mark (remain / left / hold / contain / reach).  Exact: 850 / 300 = 17/6 minutes.  Declines: a negative time
+  (a mark above the start when draining, below it when filling), a question for the amount ("how many liters remain after 10 minutes"), another time or volume unit, two rates (while a pump fills), "half",
+  "empty", a spelled number, "part of the day".
+percent_of_count  (generator "A test has N questions. X scored P%"):  N x P / 100.  "A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?" is 13.  The percent is the score on
+  the count; the question asks how many were correct.  The result must be a whole number (65% of 25 declines).  Declines: a percent of a percent ("65% of 80%"), a second percent, a question for the percent or
+  for the wrong / incorrect ones, more / less / off / tax, a spelled number ("twenty"), "part of the year", a percent over 100.
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a total, such / of the year / for part of / of the time, exact fractions in values and readings (0.55x + 0.7y = 19.65, 17/6),
+  no control characters, no module-level name defined twice (the names here are _TP_*, _DRAIN_*, _PCTC_*).
+Measured:
+  1,000 generated problems: claims 206 -> 226, wrong 0.  The 20 new claims, each equal to the stored answer:
+    two_prices_known_count 0422 (31 and 30), 0433 (25 and 28), 0454 (12 and 9), 0466 (15 and 9), 0474 (26 and 27) = every generated "two jobs" wage problem;
+      and the stamps problems 0883 (9 and 21), 0901 (15 and 9), 0923 (26 and 10), 0941 (25 and 14), 0942 (17 and 23) = every generated stamps-in-cents problem;
+    drain_or_fill 0481 (176), 0496 (74), 0512 (6), 0519 (20), 0527 (5) = every generated "pool drains" problem;
+    percent_of_count 0613 (13), 0633 (13), 0647 (38), 0656 (76), 0670 (56) = every generated "scored P%" test problem.
+  (The test's answer reader learned "9 at 55 cents, 21 at 70 cents" and "31 hours at $16, 30 hours at $22": it compares the counts, not the prices.)
+  Hand-written problems claimed by the family solver: 37 (unchanged; none of the hand-written problems is in these three shapes).
+  Fresh set 20 (13 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 6 solved, 0 declined; 7 required declines: 7 of 7; 0 wrong.
+  72 word-solver and number-puzzle tests pass.

@@ -1570,7 +1570,7 @@ def add_to_blend(problem):
 # ---------------------------------------------------------------------------------------------------------
 _SCORE_KIND = re.compile(r"\b(?:(\d+)|(two|three|four|five|six|seven))-(?:pointers?|points?)\b")
 _SCORE_TOTAL = re.compile(r"(?<![\w-])(\d+)\s+points?\b")
-_SCORE_COUNT = re.compile(r"\b(?:from|on|with|in)\s+(\d+)\s+[a-z]+(?:\s+[a-z]+)?")
+_SCORE_COUNT = re.compile(r"\bfrom\s+(\d+)\s+[a-z]+(?:\s+[a-z]+)?")          # only "from" introduces the number of scores ("in 40 games" does not)
 _SCORE_OTHER = re.compile(r"\b(?:free throws?|fouls?|safety|safeties|penalt\w*|conversions?|bonus\w*|overtime|other|rest|some)\b")
 
 
@@ -1683,13 +1683,167 @@ def triangle_ratio(problem):
                       show(total), show(total), show_exact(Fraction(180) / total), ", ".join("%s degrees" % show_exact(a) for a in angles)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 31. two prices and a known count:   x + y = N,  p1 x + p2 y = T      (the generator's "stamps" in cents and "two jobs" at an hourly wage)
+#     a price in cents is 1/100 of a dollar before it meets a dollar total
+# ---------------------------------------------------------------------------------------------------------
+_TP_RATE_AFTER = re.compile(r"\s*(?:/\s*(?:h|hr|hrs|hour|lb|kg|ea|each)\b|(?:an?|per)\s+[a-z]+\b|each\b|apiece\b)")
+_TP_TOTAL_BEFORE = re.compile(r"(?:\b(?:for|earning|earned|earns|totaling|totalling|totaled|costing|cost|costs|paying|paid|made|worth|in all)\s*(?:a total of\s*)?|\btotal of\s*)$")
+_TP_OTHER = re.compile(r"\b(?:tax|discount|tip|bonus|overtime|percent|extra|also|third|another|rest|remaining)\b|%")
+_TP_TWO_WORDS = re.compile(r"\btwo (?:jobs|kinds|types|rates|prices|wages|sizes|brands)\b")
+
+
+def two_prices_known_count(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if _CHANGES_EQUATION.search(t) or _TP_OTHER.search(t) or re.search(_SPELLED_ANY, _TP_TWO_WORDS.sub(" ", t)):
+        return None
+    # the question may repeat a price ("How many hours were worked at the $16 job?"): not a new number
+    q = t.rfind("how ")
+    main = [n for n in nums if q == -1 or n[2] < q]
+    repeated = [n for n in nums if q != -1 and n[2] >= q]
+    if any(not any(m[0] == n[0] for m in main) for n in repeated):
+        return None
+    cents = [n for n in main if re.match(r"\s*(?:¢|cents?\b)", t[n[3]:])]
+    rated = [n for n in main if n[1] and _TP_RATE_AFTER.match(t[n[3]:]) and n not in cents]
+    plain = [n for n in main if not n[1] and n not in cents]
+    money = [n for n in main if n[1] and n not in rated and n not in cents]
+    if len(plain) != 1 or len(money) != 1:
+        return None
+    if len(cents) == 2 and not rated:
+        prices, in_cents = cents, True
+    elif len(rated) == 2 and not cents:
+        prices, in_cents = rated, False
+    else:
+        return None
+    T = money[0]
+    if not (_TP_TOTAL_BEFORE.search(t[:T[2]].rstrip()) or re.match(r"\s*(?:in total|altogether)\b", t[T[3]:])) or _EACH_AFTER.match(t[T[3]:]):
+        return None
+    N = plain[0][0]
+    if N <= 0 or N.denominator != 1:
+        return None
+    # the question asks how many of each (or at a named price)
+    if q == -1 or not (re.search(r"\bhow many\b", t[q:]) and (re.search(r"\beach\b", t[q:]) or repeated)):
+        return None
+    scale = Fraction(1, 100) if in_cents else Fraction(1)
+    p1, p2, total = prices[0][0] * scale, prices[1][0] * scale, T[0]
+    if p1 == p2 or p1 <= 0 or p2 <= 0:
+        return None
+    y = (total - p1 * N) / (p2 - p1)
+    x = N - y
+    if x <= 0 or y <= 0 or x.denominator != 1 or y.denominator != 1:
+        return None
+    unit = "cents" if in_cents else "dollars"
+    e1, e2 = "x + y = %s" % show(N), "%sx + %sy = %s" % (show(p1), show(p2), show(total))
+    return Result("two_prices_known_count", [x, y], "%s;  %s" % (e1, e2),
+                  "x = number at %s, y = number at %s%s: %s and %s, so x = %s and y = %s" % (
+                      show(prices[0][0]) + " " + unit, show(prices[1][0]) + " " + unit,
+                      " (a price in cents is divided by 100 to meet the dollar total)" if in_cents else "", e1, e2, show_exact(x), show_exact(y)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 32. draining or filling to a mark:   V - r t = L  (drains)   or   V + r t = L  (fills)      (the generator's "pool drains")
+# ---------------------------------------------------------------------------------------------------------
+_DRAIN_UNIT = r"(?:liters?|litres?|l|gallons?|gal|quarts?|kg|lbs?|pounds?|cups?)"
+_DRAIN_UNIT_NAME = {"liter": "l", "litre": "l", "l": "l", "gallon": "gal", "gal": "gal", "quart": "quart", "kg": "kg", "lb": "lb", "pound": "lb", "cup": "cup"}
+_DRAIN_TIME = r"(?:seconds?|secs?|minutes?|mins?|hours?|hrs?|days?|weeks?)"
+_DRAIN_TIME_NAME = {"second": "second", "sec": "second", "minute": "minute", "min": "minute", "hour": "hour", "hr": "hour", "day": "day", "week": "week"}
+_DRAIN_START = re.compile(r"\b(?:holds|contains|has|had|starts? with|started with|is filled with|is holding|is full with)\s+(\d+(?:\.\d+)?)\s*(" + _DRAIN_UNIT + r")\b")
+_DRAIN_RATE = re.compile(r"\b(drains?|empties|leaks?|loses|lose|pumps? out|fills?|gains?|pumps? in|adds?)\s+(?:at|by|about)?\s*(\d+(?:\.\d+)?)\s*(" + _DRAIN_UNIT
+                         + r")\s*(?:per|a|each|every|/)\s*(" + _DRAIN_TIME + r")\b")
+_DRAIN_OTHER = re.compile(r"\b(?:while|but|and then|then|until|both|valve|second|another|also|stops?|resum\w*|after (?:that|which)|half|full)\b|%|\$")
+
+
+def _drain_norm(table, word):
+    w = word.lower()
+    return table.get(w, table.get(w.rstrip("s"), w))
+
+
+def drain_or_fill(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 3 or _CHANGES_EQUATION.search(t) or _DRAIN_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    sm, rm = list(_DRAIN_START.finditer(t)), list(_DRAIN_RATE.finditer(t))
+    if len(sm) != 1 or len(rm) != 1:
+        return None
+    verb = rm[0].group(1)
+    down = bool(re.match(r"drain|empt|leak|lose|pumps? out", verb))
+    V, r = Fraction(sm[0].group(1)), Fraction(rm[0].group(2))
+    u1, u2 = _drain_norm(_DRAIN_UNIT_NAME, sm[0].group(2)), _drain_norm(_DRAIN_UNIT_NAME, rm[0].group(3))
+    if u1 != u2:
+        return None
+    tunit = _drain_norm(_DRAIN_TIME_NAME, rm[0].group(4))
+    # the third number is the mark to reach: "will 500 L remain", "will it hold 2,000 L"
+    used = [sm[0].start(1), rm[0].start(2)]
+    rest = [n for n in nums if not any(n[2] <= u < n[3] for u in used)]
+    if len(rest) != 1 or rest[0][1]:
+        return None
+    target = rest[0]
+    um = re.match(r"\s*(" + _DRAIN_UNIT + r")\b", t[target[3]:])
+    if not um or _drain_norm(_DRAIN_UNIT_NAME, um.group(1)) != u1:
+        return None
+    # the question asks for the TIME, in the unit of the rate, and mentions the mark: remain / left / hold / contain / reach
+    qm = re.search(r"\b(?:after how many|how many|how long)\s*(" + _DRAIN_TIME + r")?", t)
+    if not qm or (qm.group(1) and _drain_norm(_DRAIN_TIME_NAME, qm.group(1)) != tunit):
+        return None
+    if not qm.group(1) and "how long" not in qm.group(0):
+        return None
+    after = t[qm.start():]
+    if not re.search(r"\b(?:remain\w*|left|hold|holds|contain\w*|have|reach\w*|be in)\b", after) or re.search(r"\bhow many (?:" + _DRAIN_UNIT + r")\b", t):
+        return None
+    L = target[0]
+    tt = (V - L) / r if down else (L - V) / r
+    if tt <= 0 or r <= 0 or V < 0 or L < 0:
+        return None
+    sign = "-" if down else "+"
+    eq = "%s %s %st = %s" % (show(V), sign, show(r), show(L))
+    return Result("drain_or_fill", [tt], eq, "t = number of %ss: %s, so t = %s %s%s" % (tunit, eq, show_exact(tt), tunit, "" if tt == 1 else "s"))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 33. a percent of a count:   count x percent / 100      (the generator's "A test has N questions. X scored P%.")
+# ---------------------------------------------------------------------------------------------------------
+_PCTC_NOUN = r"(?:questions?|problems?|items?|shots?|attempts?|students?|people|marbles|cards|tickets|games|answers|points)"
+_PCTC_OTHER = re.compile(r"\b(?:more|less|increase\w*|decrease\w*|off|discount\w*|tax|tip|of which|rest|remaining|incorrect\w*|wrong|missed|failed|fewer|than|each|per|doubl\w*)\b|\$")
+
+
+def percent_of_count(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 2 or t.count("%") != 1 or _CHANGES_EQUATION.search(t) or _PCTC_OTHER.search(t) or re.search(_SPELLED_ANY, t):
+        return None
+    pct = [n for n in nums if t[n[3]:n[3] + 2].strip().startswith("%")]
+    cnt = [n for n in nums if n not in pct]
+    if len(pct) != 1 or len(cnt) != 1 or cnt[0][1] or cnt[0][0].denominator != 1:
+        return None
+    cm = re.match(r"\s*" + _PCTC_NOUN + r"\b", t[cnt[0][3]:])
+    if not cm:
+        return None
+    # "scored 65%" / "got 65%" / "made 65%": the percent is the score on the count; the question asks how many were correct
+    if not re.search(r"\b(?:scored|score|got|earned|answered)\b|%\s*of\b", t):
+        return None
+    q = t.rfind("how many")
+    if q == -1 or not re.search(r"\b(?:correct\w*|right|passed|made|scored|earned|got)\b", t[q:]) or re.search(r"\bwhat percent\b|\bhow much\b", t):
+        return None
+    n, p = cnt[0][0], pct[0][0]
+    if n <= 0 or not (0 <= p <= 100):
+        return None
+    result = n * p / 100
+    if result.denominator != 1:
+        return None
+    eq = "%s x %s/100" % (show(n), show(p))
+    return Result("percent_of_count", [result], eq, "%s, so %s answered correctly" % (eq, show_exact(result)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
             still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth,
             fixed_plus_rate, two_changing_equal, add_to_blend,
-            two_scores, two_discounts, triangle_ratio]
+            two_scores, two_discounts, triangle_ratio,
+            two_prices_known_count, drain_or_fill, percent_of_count]
 
 
 def solve(problem):
