@@ -340,3 +340,42 @@ Measured:
   7 required declines: 7 of 7; 0 wrong.  The two declined: "brings my average up to 75" (the pattern knows "to bring my average up to", not
   "brings my average up to") and "Counting heads gives 20 and counting feet gives 56" (no "20 heads").  Safe misses, not fixed.
   39 word-solver and number-puzzle tests pass.
+
+Batch 11: two fixes and three families in one commit: opposite_directions, catch_up, polygon_angle_sum
+==============================================================
+Fix 1 (savings_equal): "I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will I have as much as she has now?" was
+  answered 15 weeks.  She has $350 NOW, so the time is 10 weeks (200 + 15w = 350), a different equation.  The question now declines on
+  now / currently / today / at the moment / so far.
+Fix 2 (heads_and_feet): "There are hens and sheep. 30 heads and 84 feet. How many animals are there?" was answered 18 and 12; the number of animals is 30.
+  The question must now name one of the two animals (by stem, so "horses" and "horse" both count) or say "each".  "How many sheep?" and
+  "How many horses are there?" stay answered; "How many animals are there?" declines.
+opposite_directions  (generator "opposite"):  (s1 + s2) t = D.  "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h.
+  When are they 360 km apart?" is 3 hours.  Needs "opposite direction(s)", exactly two hourly speeds in one unit (mph, km/h, kph, miles per hour ...), one
+  distance "<n> <miles|km> apart" in the same unit system, and a question for the time.  "Two cars / trains / hikers ..." is the count of the two speeds
+  and is allowed; any other spelled number declines.  Declines: same direction, toward / meet, any head start or later / earlier / follow / catch,
+  currents and wind, stops, a question for a speed or a distance, mixed units (mph with km), "part of the year", "such", "half".
+catch_up  (generator "catchup"):  s1 (t + h) = s2 t.  "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph.  How long until the
+  fast one catches it?" is 4 hours AFTER THE FOLLOWER LEAVES.  The head start may be digits or a spelled count ("Two hours later" is the count the
+  equation uses).  The question must be "how long / how many hours / when" with catch / overtake; "after <the leader> leaves" declines (it asks the
+  leader's time), "after <the follower> leaves" is answered, and a distance question declines.  Who is the leader is read from the subject of each
+  sentence (words before leaves / follows / starts ...).  Declines: the follower not faster (slower or equal), no head start, a stop, "also",
+  "another", a second spelled number, "part of".
+polygon_angle_sum  (generator "g_polygon_sum"):  (n - 2) * 180 = S.  "How many sides does a polygon have if its inside angles total 1440 degrees?" is 10.
+  Declines: regular, each / every, one angle, measures, exterior / outside, diagonals, a named polygon (triangle, hexagon ...), a sum that is not a whole
+  multiple of 180 (1450), and a result that is not a whole number of sides above 2 (0 and 90 give none; 180 gives 3 sides).
+Checks on each family (test_word_solver.py): spelled counts, each / apiece / per after a price (no prices in these families, "$" declines),
+  such / of the year / for part of / of the time, exact fractions in values and readings (5/2 hours, 13/4 hours, 5/6 hours), no control characters
+  (the test that reads every .py file passes).
+Measured:
+  1,000 generated problems: claims 112 -> 127, wrong 0.  The 15 new claims, each equal to the stored answer:
+    opposite_directions 0135 (2.5 h = 5/2), 0136 (4), 0137 (1), 0138 (1), 0139 (3) = every generated "opposite directions" problem;
+    catch_up 0126 (13/4 = 3.25 h), 0128 (13/2 = 6.5), 0130 (2), 0132 (19/2 = 9.5), 0134 (47/4 = 11.75) = every generated catch-up problem;
+    polygon_angle_sum 0301 (6), 0303 (13), 0305 (7), 0306 (17), 0308 (5) = every "interior angles ... add up to" problem
+      (the regular-polygon, exterior-angle and diagonal templates decline).
+  Hand-written problems claimed by the family solver: 23 -> 25, all match the hand-calculated answers:
+    "How many sides does a polygon have if its inside angles total 1440 degrees?" 10;
+    "Two cars leave the same spot heading in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart?" 3 hours.
+  Fresh set 13 (15 wordings, written after all three families were finished, run once, untuned): 6 with an answer: 5 solved, 1 declined;
+  9 required declines: 9 of 9; 0 wrong.  The declined one: "How long after her friend leaves until she is caught?" has no catch / catches / overtake
+  word (a safe miss, not fixed).
+  44 word-solver and number-puzzle tests pass.

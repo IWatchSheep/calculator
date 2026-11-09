@@ -37,6 +37,8 @@ HAND_ANSWERS = {
     "I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?": [15],
     "My test marks are 70, 85 and 90. What do I need on the fourth test to average 85?": [95],
     "On a farm there are some hens and some sheep. Altogether I count 30 heads and 84 feet. How many sheep?": [12, 18],
+    "How many sides does a polygon have if its inside angles total 1440 degrees?": [10],
+    "Two cars leave the same spot heading in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart?": [3],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
 }
@@ -475,6 +477,88 @@ class FreshWordings(unittest.TestCase):
             data = open(path, "rb").read()
             bad = sorted({b for b in data if b < 32 and b not in (9, 10, 13)})
             self.assertEqual(bad, [], os.path.basename(path))
+
+    def test_two_fixes_now_and_how_many_animals(self):
+        # "as much as she has now" is the other saver's amount TODAY (200 + 15w = 350), not the time they are equal
+        self.assertIsNone(answers("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will I have as much as she has now?"))
+        # "how many animals" is the number of heads: the question must name one of the two animals, or say "each"
+        self.assertIsNone(answers("There are hens and sheep. 30 heads and 84 feet. How many animals are there?"))
+        self.assertEqual(answers("There are hens and sheep. 30 heads and 84 feet. How many sheep?"), values(12, 18))
+        self.assertEqual(answers("A yard has 25 heads and 70 legs among its geese and horses. How many horses are there?"), values(10, 15))
+        self.assertEqual(answers("There are hens and sheep. 30 heads and 84 feet. How many of each are there?"), values(12, 18))
+
+    def test_opposite_directions(self):
+        self.assertEqual(answers("Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart?"), values(3))
+        self.assertEqual(answers("Omar and Lena leave the same town at the same time, driving in opposite directions at 30 mph and 36 mph. After how many hours will they be 165 miles apart?"), values(Fraction(5, 2)))
+        r = WS.solve("Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart?")
+        self.assertIn("(50 + 70)t = 360", r.reading)
+        r = WS.solve("Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 100 km apart?")
+        self.assertEqual(r.values, [Fraction(5, 6)])                  # an exact fraction, never 0.8333
+        self.assertIn("5/6 hours", r.reading)
+        # the same direction, a head start, a question for a speed or a distance, mixed units, a third car, a spelled number that is not the count
+        for text in ("Two cars leave the same spot in the same direction, one at 50 km/h and one at 70 km/h. When are they 360 km apart?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. How fast is the first if they are 360 km apart after 3 hours?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. One leaves an hour later. When are they 360 km apart?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart, with a head start of 20 km?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. How far apart are they after 3 hours?",
+                     "Three cars leave the same spot in opposite directions at 50 km/h and 70 km/h. When are they 360 km apart?",
+                     "Two cars leave the same spot in opposite directions, one at 50 mph and one at 70 km/h. When are they 360 km apart?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 miles apart?",
+                     "Two cars leave the same spot in opposite directions, twice at 50 km/h and one at 70 km/h. When are they 360 km apart?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart for part of the year?",
+                     "Two cars leave the same spot in opposite directions, one at 50 km/h and one at 70 km/h. When are they 360 km apart, such as half the time?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_catch_up(self):
+        self.assertEqual(answers("A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How long until the fast one catches it?"), values(4))
+        self.assertEqual(answers("Caleb leaves at 39 mph. 2 hours later, Aiden follows the same route at 63 mph. How long after Aiden leaves will Aiden catch up?"), values(Fraction(13, 4)))
+        self.assertEqual(answers("A slow train leaves at 40 mph. Three hours later a fast train follows at 60 mph. How long until the fast one catches it?"), values(6))
+        r = WS.solve("A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How long until the fast one catches it?")
+        self.assertIn("40(t + 2) = 60t", r.reading)
+        self.assertIn("t = 4 hours", r.reading)
+        r = WS.solve("Caleb leaves at 39 mph. 2 hours later, Aiden follows the same route at 63 mph. How long after Aiden leaves will Aiden catch up?")
+        self.assertIn("13/4 hours", r.reading)                          # exact, not 3.25 rounded
+        # the answer is the FOLLOWER's time: "after the slow train leaves" is a different question and declines; so does a distance
+        self.assertEqual(answers("A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How many hours after the fast train leaves does the fast one catch it?"), values(4))
+        for text in ("A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How many hours after the slow train leaves does the fast one catch it?",
+                     "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How far from the station does the fast one catch it?",
+                     # the follower is not faster
+                     "A slow train leaves at 60 mph. Two hours later a fast train follows at 40 mph. How long until the fast one catches it?",
+                     "A slow train leaves at 40 mph. Two hours later a fast train follows at 40 mph. How long until the fast one catches it?",
+                     # no head start, a spelled number that is not the head start, a stop, part of the way
+                     "A slow train leaves at 40 mph. A fast train follows at 60 mph. How long until the fast one catches it?",
+                     "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph. How long until the fast one catches it? Half the time it stops.",
+                     "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph for part of the way. How long until the fast one catches it?",
+                     "A slow train leaves at 40 mph. Two hours later a fast train follows at 60 mph and twice that speed after noon. How long until the fast one catches it?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_polygon_angle_sum(self):
+        self.assertEqual(answers("How many sides does a polygon have if its inside angles total 1440 degrees?"), values(10))
+        self.assertEqual(answers("The interior angles of a polygon add up to 720°. How many sides does it have?"), values(6))
+        r = WS.solve("The interior angles of a polygon add up to 720°. How many sides does it have?")
+        self.assertIn("(n - 2) * 180 = 720", r.reading)
+        self.assertIn("n = 6 sides", r.reading)
+        # a regular polygon's one angle, an exterior angle, a sum that is not a multiple of 180, a result that is not above 2 sides, diagonals
+        for text in ("Each interior angle of a regular polygon measures 150°. How many sides does the polygon have?",
+                     "Each exterior angle of a regular polygon is 30°. How many sides does it have?",
+                     "The exterior angles of a polygon add up to 360°. How many sides does it have?",
+                     "The interior angles of a polygon add up to 1450°. How many sides does it have?",
+                     "The interior angles of a polygon add up to 0°. How many sides does it have?",
+                     "The interior angles of a polygon add up to 90°. How many sides does it have?",
+                     "The interior angles of a regular polygon add up to 1440°. How many sides does it have?",
+                     "The interior angles of a polygon add up to 1440°. How many diagonals does it have?",
+                     "The interior angles of a polygon add up to two thousand degrees. How many sides does it have?",
+                     "The interior angles of a polygon add up to 1440° for part of the year. How many sides does it have?"):
+            self.assertIsNone(answers(text), text)
+
+    def test_distance_geometry_set(self):
+        """Set 13: wordings for opposite_directions, catch_up and polygon_angle_sum, written after all three were finished and run once, untuned.
+        One answer is declined (a safe miss): "until she is caught" has no 'catch / catches / overtake' word."""
+        from fresh_word_problems_13 import FRESH
+        solved, declined, required = score(FRESH)
+        print("  fresh wordings (thirteenth set, distance and geometry): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+              % (solved, solved + declined, declined, required, required))
+        self.assertEqual((solved, declined, required), (5, 1, 9))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

@@ -631,7 +631,7 @@ def savings_equal(problem):
     if m1.group("who") == m2.group("who") or m1.group("u") != m2.group("u"):
         return None
     rest = t[:m1.start()] + " " + t[m1.end():m2.start()] + " " + t[m2.end():]
-    if re.search(r"\d", rest) or re.search(_SPELLED_ANY, rest):
+    if re.search(r"\d", rest) or re.search(_SPELLED_ANY, rest) or re.search(r"\b(?:now|currently|today|at the moment|so far)\b", rest):
         return None
     # the question asks WHEN they are equal, not an amount of money
     if not re.search(r"\b(?:when|how (?:many|long)|after how)\b", rest) or not re.search(r"\b(?:same|equal|even|as much)\b", rest):
@@ -785,7 +785,8 @@ def heads_and_feet(problem):
     tail = t[q:]
     if re.search(r"\b(?:legs|feet|heads|total|altogether|more|fewer|less)\b", tail):
         return None
-    if not re.search(r"\b(?:" + "|".join(map(re.escape, [shown[two[0]], shown[four[0]]])) + r"|each|animals|are there|of them)\b", tail):
+    tail_words = re.findall(r"[a-z]+", tail)
+    if "each" not in tail_words and not ({_animal_stem(w) for w in tail_words} & {two[0], four[0]}):    # "how many animals" is the heads, not an answer
         return None
     H, L = heads[0][0], legs[0][0]
     s_count = (L - 2 * H) / 2
@@ -799,8 +800,153 @@ def heads_and_feet(problem):
                       n2, n4, show(H), show(L), show_exact(h_count), show_exact(s_count)))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 13-15. distance and geometry:  opposite directions, catch-up, interior angles of a polygon
+# ---------------------------------------------------------------------------------------------------------
+_SPEED_UNIT = r"mph|mi/h|miles per hour|miles an hour|miles/hour|km/h|kph|kmh|km/hr|kilometers per hour|kilometres per hour|km per hour"
+_SPEED = re.compile(NUM + r"\s*(" + _SPEED_UNIT + r")(?![\w/])")
+_DIST = re.compile(NUM + r"\s*(miles?|mi|kilometers?|kilometres?|km)\s+apart\b")
+
+
+def _speed_group(unit):
+    return "mi" if unit.startswith(("mph", "mi", "miles")) else "km"
+
+
+def _dist_group(unit):
+    return "mi" if unit.startswith("mi") else "km"
+
+
+_TWO_VEHICLES = re.compile(r"\btwo (?:cars|trains|cyclists|runners|planes|boats|buses|trucks|bikes|bicycles|friends|people|hikers|walkers|vehicles|ships|joggers|riders|drivers|motorcycles)\b")
+_ASKS_TIME = re.compile(r"\b(?:how (?:many hours|long|much time)|when|after how many hours)\b")
+_ASKS_OTHER = re.compile(r"\b(?:how fast|what speed|what (?:is|are) (?:the|their) speeds?|how far|how many (?:miles|kilometers|kilometres|km))\b")
+
+
+def opposite_directions(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t) or len(digit_numbers(problem)) != 3:
+        return None
+    if not re.search(r"\bopposite directions?\b", t):
+        return None
+    if re.search(r"\b(?:same direction|toward|towards|meet|meets|later|earlier|head start|ahead|behind|follow\w*|catch\w*|chase\w*|round trip|return\w*|back|then|"
+                 r"current|stream|wind|stop\w*|rest\w*|break)\b", t):
+        return None
+    work = _TWO_VEHICLES.sub(" ", t)                  # "Two cars" is the count of the two speeds the equation uses
+    if re.search(_SPELLED_ANY, work):
+        return None
+    speeds = list(_SPEED.finditer(t))
+    dists = list(_DIST.finditer(t))
+    if len(speeds) != 2 or len(dists) != 1:
+        return None
+    g1, g2 = _speed_group(speeds[0].group(2)), _speed_group(speeds[1].group(2))
+    if not (g1 == g2 == _dist_group(dists[0].group(2))):
+        return None
+    if not _ASKS_TIME.search(t) or _ASKS_OTHER.search(t):
+        return None
+    s1, s2, D = Fraction(speeds[0].group(1)), Fraction(speeds[1].group(1)), Fraction(dists[0].group(1))
+    if s1 <= 0 or s2 <= 0 or D <= 0:
+        return None
+    tt = D / (s1 + s2)
+    eq = "(%s + %s)t = %s" % (show(s1), show(s2), show(D))
+    return Result("opposite_directions", [tt], eq, "t = hours: %s, so t = %s hours" % (eq, show_exact(tt)))
+
+
+_HEAD_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+_HEAD_START = re.compile(r"(\d+(?:\.\d+)?|" + "|".join(_HEAD_WORDS) + r")\s+(?:hours?|hrs?)\s+later\b[,]?")
+_FOLLOW_VERB = re.compile(r"\b(?:follows?|following|chases?|chasing)\b")
+_SUBJECT_VERBS = {"follows", "follow", "leaves", "leave", "starts", "start", "departs", "chases", "drives", "drive", "travels", "travel", "rides",
+                  "ride", "runs", "run", "sets", "goes", "heads", "walks", "walk", "jogs", "is", "starts"}
+_CATCH_CUE = re.compile(r"\b(?:catch|catches|catching|overtake|overtakes)\b")
+_ARTICLES = {"a", "an", "the", "his", "her", "their", "its", "my", "our"}
+
+
+def _subject_tokens(sentence):
+    toks = re.findall(r"[a-z]+", sentence)
+    out = []
+    for w in toks:
+        if w in _SUBJECT_VERBS:
+            break
+        out.append(w)
+    return {w for w in out if w not in _ARTICLES}
+
+
+def catch_up(problem):
+    t = clean(problem)
+    if "$" in t or "%" in t or _CHANGES_EQUATION.search(t):
+        return None
+    if re.search(r"\b(?:opposite|toward|towards|meet|meets|apart|return\w*|back|stops?|stopped|rests?|breaks?|detour|lunch|current|stream|wind|also|another)\b", t):
+        return None
+    hs = list(_HEAD_START.finditer(t))
+    if len(hs) != 1 or not _FOLLOW_VERB.search(t) or not _CATCH_CUE.search(t):
+        return None
+    head = Fraction(_HEAD_WORDS[hs[0].group(1)]) if hs[0].group(1) in _HEAD_WORDS else Fraction(hs[0].group(1))
+    work = t[:hs[0].start()] + " " + t[hs[0].end():]          # "Two hours later" is the head start the equation uses
+    if re.search(_SPELLED_ANY, work):
+        return None
+    speeds = list(_SPEED.finditer(t))
+    if len(speeds) != 2 or _speed_group(speeds[0].group(2)) != _speed_group(speeds[1].group(2)):
+        return None
+    # every number in digits is a speed or the head start
+    if len(digit_numbers(problem)) != 2 + (1 if hs[0].group(1) not in _HEAD_WORDS else 0):
+        return None
+    s1, s2 = Fraction(speeds[0].group(1)), Fraction(speeds[1].group(1))
+    if s1 <= 0 or head <= 0 or s2 <= s1:
+        return None
+    # the question: "how long ... catches" asks the FOLLOWER's time; "after <the leader> leaves" or a distance declines
+    q = max(t.rfind("how "), t.rfind("when "))
+    if q == -1:
+        return None
+    tail = t[q:]
+    if not _CATCH_CUE.search(tail) or not re.match(r"(?:how (?:long|many hours)|when)\b", tail) or _ASKS_OTHER.search(tail):
+        return None
+    sents = [s for s in re.split(r"[.?!]\s*", t) if s.strip()]
+    lead_s = next((s for s in sents if speeds[0].group(0) in s), None)
+    foll_s = next((s for s in sents if speeds[1].group(0) in s), None)
+    if lead_s is None or foll_s is None or lead_s == foll_s:
+        return None
+    foll_s = _HEAD_START.sub(" ", foll_s)
+    F, Ld = _subject_tokens(foll_s), _subject_tokens(lead_s)
+    for am in re.finditer(r"\bafter\s+(.*?)\s+(?:leaves|starts|departs|sets off|begins)\b", tail):
+        C = set(re.findall(r"[a-z]+", am.group(1))) - _ARTICLES
+        if not (C & (F - Ld)) or (C & (Ld - F)):
+            return None
+    if re.search(r"\b(?:since|from the start|in all|in total|altogether)\b", tail):
+        return None
+    tt = s1 * head / (s2 - s1)
+    eq = "%s(t + %s) = %st" % (show(s1), show(head), show(s2))
+    return Result("catch_up", [tt], eq,
+                  "t = hours after the follower leaves: %s, so t = %s hours" % (eq, show_exact(tt)))
+
+
+_POLY_SUM = re.compile(r"\b(?:interior|inside|inner) angles\b")
+
+
+def polygon_angle_sum(problem):
+    t = clean(problem)
+    nums = digit_numbers(problem)
+    if len(nums) != 1 or "$" in t or "%" in t or _CHANGES_EQUATION.search(t):
+        return None
+    if not _POLY_SUM.search(t) or not re.search(r"\bpolygon\b", t):
+        return None
+    if re.search(r"\b(?:regular|each|every|exterior|outside|outer|equal|measures?|diagonals?|one angle|same measure|triangle|quadrilateral|pentagon|hexagon|"
+                 r"octagon|heptagon|decagon|square|rectangle)\b", t):
+        return None
+    if re.search(_SPELLED_ANY, t):
+        return None
+    S = nums[0]
+    if not re.match(r"\s*(?:°|degrees?|deg)\b|\s*°", t[S[3]:]) or not re.search(r"\b(?:sum|add up|adds up|add to|total|totals|sum to|add)\b", t):
+        return None
+    if not re.search(r"\bhow many (?:sides|vertices|corners|edges)\b", t):
+        return None
+    n = S[0] / 180 + 2
+    if n.denominator != 1 or n < 3:
+        return None
+    eq = "(n - 2) * 180 = %s" % show(S[0])
+    return Result("polygon_angle_sum", [n], eq, "n = number of sides: %s, so n = %s sides" % (eq, show_exact(n)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
-            two_purchases, price_blend, savings_equal, average_needed, heads_and_feet]
+            two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
+            opposite_directions, catch_up, polygon_angle_sum]
 
 
 def solve(problem):
