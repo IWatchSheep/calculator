@@ -1,0 +1,482 @@
+ALGEBRA WORD PROBLEMS: WHAT IS DONE, WHAT IS TO DO, AND HOW TO KEEP THIS FILE CURRENT
+=======================================================================================
+File: algebra_word_problems_status.txt, in the main project folder (C:\Users\I_wat\PycharmProjects\calculator).
+Last updated by Claude after commit 5370e44 (Batch 40) plus the uncommitted algebra word problem folders and README section, 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
+
+
+NOTE TO THE NEXT CLAUDE  (read this first)
+-------------------------------------------
+The user asked that THIS FILE be kept current every time an algebra word problem (a new family, or a fix to an existing one) is finished.  After you finish a batch, update the file like this:
+
+  UPDATE PROTOCOL
+  1. Run the checks (from algebra_word_problems/algebra_matcher):
+         python -m unittest test_word_solver test_number_puzzle
+     The line "generated problems: 1000, claimed N, wrong 0" in its output gives the new claim count.  Wrong MUST stay 0.  The last line of the output ("Ran X tests ... OK") gives the test count.
+  2. Run  python todo_report.py --counts  for the numbers in section 3, and  python todo_report.py  for the list of unclaimed wording shapes.
+  2b. REGENERATE THE TWO FOLDERS (new in this version; see section 7): from the project folder run
+         .venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py
+      then  python tests/test_algebra_word_problem_files.py .  Each problem file records which solver answers it (Ready / Reference), so a family you just added only shows up as Ready after this step.
+      The test expects the Ready count (365 = 337 word_solver + 28 number_puzzle); change that number in tests/test_algebra_word_problem_files.py when the claim count changes, and the 365 in the README.
+  3. In section 3 (THE NUMBERS) change the numbers and the "last commit" line.
+  4. In section 4 (DONE) add ONE line for the batch: "Batch N (date): what it did; families added or fixed; new claim count".  The long write-up of the batch goes into
+         algebra_word_problems/algebra_matcher/word_solver_results.txt   (a new "Batch N: ..." section at the end, same style as the earlier ones)
+     and only the short line goes here.  A fixes-only batch gets a line too (see Batches 24 to 40).
+  5. In section 5 (TO DO) remove what the batch finished (a family covers a generated template: its shapes leave the unclaimed list), and add anything new you learned (a safe miss worth fixing, a hazard).
+  6. Replace the appendix (everything after the line "APPENDIX: UNCLAIMED WORDING SHAPES") with the new output of  python todo_report.py .
+  7. Add the batch line to section 6 if it changed how the work is done (a new rule from the user or from Grok).
+  8. Do NOT commit or push unless the user asks; when they do, include this file, word_solver_results.txt and the regenerated folders in the same commit as the code.
+  Keep the file plain text, short lines, no tables that need a viewer.  Dates: use absolute dates.
+
+Where everything is (section 2) and the working rules (section 6) are things the user types into every job; follow them exactly.
+
+
+1. WHAT THIS IS
+---------------
+The calculator project (Python, GUI in main.py, Rust port in rust_calculator/) is getting an ALGEBRA WORD PROBLEM feature: text pasted in the Templates text box is split into word boxes and number boxes,
+matched to a problem type, and solved.  The user plans an operator for it later (see section 5, TO DO).  So far only the STANDALONE SOLVER exists; it is not wired into the GUI yet.
+
+The solver's rule (from number_puzzle.py): a family answers ONLY when (1) its wording pattern matches, (2) EVERY number in the problem was given a role by the pattern, and (3) the answer passes a
+sanity check.  Anything else returns None (a "decline"), so the trained matcher can take over.  A wrong role must never become a wrong answer: a decline is always safe, a wrong number is the failure.
+
+
+2. WHERE EVERYTHING IS   (all under algebra_word_problems/)
+-----------------------------------------------------------
+  algebra_word_problems.txt                 1,000 generated problems (55 categories, 216 types): Problem / Let / Equation / Solve / Answer.  The ground truth.
+  algebra_problem_generator.txt             the generator (python source in a .txt) that made them: each @t template is one wording.  Use it to see every wording a family must cover.
+  algebra_matcher/word_solver.py            THE SOLVER: 55 family functions + FAMILIES list + solve(problem).  Standard library only.  ~3,000 lines.
+  algebra_matcher/number_puzzle.py          the number-puzzle reader (older, 12 tests); word_solver uses its Lin helper.
+  algebra_matcher/algebra_matcher.py        the trained text matcher (72% first guess on new wordings) and the HAND_TEST / FRESH_TEST sets (100 hand-written problems).
+  algebra_matcher/test_word_solver.py       the tests: unit tests per family, the generated-problem ground truth, the hand-written answers (HAND_ANSWERS), the fresh sets, the no-raise guard.
+  algebra_matcher/test_number_puzzle.py     the older tests (load_problems() lives here).
+  algebra_matcher/fresh_word_problems*.py   44 "fresh sets": wordings written AFTER a family was finished, run ONCE, never tuned on.  Format: FRESH = [(problem, [answers]) or (problem, None) = must decline].
+  algebra_matcher/word_solver_results.txt   the long write-up of every batch (Batch 2 ... Batch 40): what was built, what was fixed and why, the measured numbers.
+  algebra_matcher/todo_report.py            prints the unclaimed wording shapes and the counts (used for the appendix of THIS file).
+  algebra_matcher/note_from_claude.txt      an old conversation note (the matcher design).
+  ../operators_one_algebra_word_problem_per_file/ and ../operator_row_math_for_algebra_word_problems/   the generated problem files, diagrams and rows (section 7).
+  chess_test_results.txt, chess_experiments/, rust_chess/   the forming_chess experiments the plan was based on.
+Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittest test_word_solver test_number_puzzle   (about 11 seconds).
+
+
+3. THE NUMBERS   (as of commit 5370e44, Batch 40)
+-------------------------------------------------
+  families in word_solver.FAMILIES:               55
+  generated problems claimed by the solver:       337 of 1,000, WRONG: 0
+  generated problems still unclaimed:             663   (235 distinct wording shapes, listed in the appendix)
+  hand-written problems answered:                 38 by the word solver (HAND_ANSWERS, all match the hand-calculated answers) + 3 by the number-puzzle reader = 41 of the 100;
+                                                  the trained matcher's first guess covers the rest
+  tests:                                          154 word-solver and number-puzzle tests, all pass
+  fresh sets:                                     44 files (fresh_word_problems.py ... fresh_word_problems_44.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
+  git:                                            branch main, last commit 5370e44, pushed to https://github.com/IWatchSheep/calculator
+
+
+4. DONE   (one line per batch; the long text is in word_solver_results.txt)
+----------------------------------------------------------------------------
+Before the batches:
+  - number-puzzle reader (12 tests), the trained matcher (72% / 90% top-3 on new wordings), the five-family word solver (sum and difference, consecutive integers, work together, percent change, proportion).
+Batches (Batch 1 was the five-family solver and its tests; numbers in brackets are the claims on the 1,000 generated problems after the batch where known):
+  Batch 2      service charge, "how far", the noun "machine"; second fresh set.
+  Batch 3      cue verbs cover / stamp / print; spelled-number rule for proportion.
+  Batch 4-5    spelled counts and hidden counts in percent_change and work_together (found by Grok).
+  Batch 6      two_solution_mix (percent mixtures: the generator's "mixture" and "x_alloy").
+  Batch 7      two_rate_interest (money split between two interest rates).
+  Batch 8      two_purchases (two items, counts as roles: "An apple and a pear cost ...").
+  Batch 9      "for each / a piece" fix; price_blend (price-per-pound blend of two coffees).                                      [102]
+  Batch 10     savings_equal, average_needed, heads_and_feet.                                                                       [112]
+  Batch 11     "now" fix (savings), "how many animals" fix (heads); opposite_directions, catch_up, polygon_angle_sum.             [127]
+  Batch 12     catch-up fix (the later vehicle must be faster); toward_each_other, consecutive_product, most_you_can_buy.         [141]
+  Batch 13     "or" fix; still_water_current, ratio_split, three_numbers.                                                          [151]
+  Batch 14     "h" as hours; catch_up_clock, periodic_growth (doubling / tripling / halving).                                       [165]
+  Batch 15     fixed_plus_rate, two_changing_equal, add_to_blend; a spelled-"two" fix found by fresh set 17.                         [192]
+  Batch 16     two_scores, two_discounts, triangle_ratio.                                                                          [206]
+  Batch 17     "in 40 games" fix; two_prices_known_count (cents and hourly wages), drain_or_fill, percent_of_count.               [226]
+  Batch 18     "score" fix; percent_change_between, ages_later_multiple, shared_fixed_cost.                                         [240]
+  Batch 19     two teas / two coffees at two prices, two_rates_one_pile (typists), least_for_profit (the school dance).             [253]
+  Batch 20     unit-of-the-known-amount fix; two_priced_items (concert), plan_with_included (phone plan), most_that_fits (elevator). [267]
+  Batch 21     "how many X" unit fix; line_from_two_points (taxi), election_margin, wind_same_time (plane).                         [282]
+  Batch 22     measured heights until equal (plants), base_plus_extra_over_time (allowance), distance_speed_time.                  [295]
+  Batch 23     pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area.                                                [308]
+  Batch 24-32  FIXES ONLY on those three families (pages: the deadline must be the time to FINISH this book; angles: the question must ask for the angle, named kinds must be true, "form a straight
+               angle" is a statement; rectangle: the question decides what is returned, the problem's own statement of which side is longer, "it" / "one" comparisons, comparison words that compare something
+               else, "of the shorter side", a clause hanging on the side just named, the both-sides sentence declines, the comma is optional).  Batch 32 fixed a CRASH (a question with no "find" / "what")
+               and added a guard that calls every family directly on cut-up problems: no family may ever raise.                                                                              [308]
+  Batch 33     temperature_whole_hours, two_candles_equal, transversal_equal_angles; the checker now expects x AND the angle for "Find x and the angle".   [323]
+  Batch 34-35  FIXES ONLY: temperature needs "whole" / "full" hours; the candle question must be about the candles, "the same height as ..." must name the other candle, another sentence that asks declines.
+  Batch 36     class_ratio_after_join, kinematics_time (v = u + at), pipes_and_drain.                                                                      [337]
+  Batch 37-40  FIXES ONLY on the class ratio and the pipes: "originally" must be in the one "how many", "the drain must be open too", "all three" must be OPEN not stopped / off / broken / sealed,
+               an "all open" that is the pool, and a GENERAL rule: nothing else may be said about the drain.                                                                                    [337]
+
+All 55 families (the FAMILIES list, in the order the solver tries them):
+  sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest, two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
+  opposite_directions, catch_up, polygon_angle_sum, toward_each_other, consecutive_product, most_you_can_buy, still_water_current, ratio_split, three_numbers, catch_up_clock, periodic_growth,
+  fixed_plus_rate, two_changing_equal, add_to_blend, two_scores, two_discounts, triangle_ratio, two_prices_known_count, drain_or_fill, percent_of_count, percent_change_between, ages_later_multiple,
+  shared_fixed_cost, two_rates_one_pile, least_for_profit, two_priced_items, plan_with_included, most_that_fits, line_from_two_points, election_margin, wind_same_time, base_plus_extra_over_time,
+  distance_speed_time, pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area, temperature_whole_hours, two_candles_equal, transversal_equal_angles, class_ratio_after_join, kinematics_time,
+  pipes_and_drain.
+  (Each has a docstring-style comment above it in word_solver.py with the generator template it came from, and a section in word_solver_results.txt.)
+
+Known SAFE MISSES (the solver declines on purpose; not bugs, listed so nobody "fixes" them by loosening a rule):
+  "Two flours" / "two people" are not in the "two <kinds>" word lists; "How many people" does not match "$5 per person" / "per ticket"; "How many animals" is not a total of students; "the total was $76" is not a total cue;
+  "In a triangle the three angles are in the ratio" is not an "angles of a triangle" phrase; liters are not a price-blend unit; a motorboat "goes 45 miles with the current in 3 hours" (words between the distance and "in 3 hours");
+  "brings my average up to 75"; "counting heads gives 20"; "She is caught" (not a catch word); "Two whole numbers that follow each other"; "Jar A holds $50 and grows by" (holds); "is 30 cm tall and burns" variants outside the candle pattern;
+  the same-side interior angles template (sum 180, a different family: left out on purpose); the football-scores wording appears in the generator but not in the 1,000 problems.
+
+
+5. TO DO
+--------
+A. MORE GENERATED TEMPLATES (the main list).  663 of the 1,000 generated problems are still unclaimed; they fall into 235 distinct wording shapes (the appendix lists every one with its category, how many problems use it, the
+   first id and an example).  The biggest groups by category: Number puzzle 42, System of equations 34, Geometry (quadratic) 28, Linear cost 27, Percent 27, Rational equation 27, Break-even 24, Geometry (angles) 24, Inequality 24,
+   Ratio 24, Work rate 24, Formula 23, Linear model 23, Quadratic 21, Mixture 20, Geometry (area) 18.  The user and Grok choose the next three families in each job ("Paste this to Claude ..."); when no job is waiting, pick from the appendix.
+   Note: the matcher can recognise many of these types, but the SOLVER only answers when every number has a role; "Number puzzle" shapes are mostly handled by number_puzzle.py (it answers some before word_solver is tried).
+B. NEW WORDINGS OF FAMILIES THAT EXIST.  The solver was built against the generator's wording plus the user's examples; real textbook wording is the real test.  Every "fix only" batch (24 to 40) came from Grok / the user
+   probing one family with nearby wordings and finding a wrong number.  Expect more.  Do not guess: wait for the user's job, or write nearby wordings yourself and look for a wrong number (a decline is fine, a wrong number is a bug).
+C. THE OPERATOR (not started).  Wire word_solver.solve() and the matcher into the calculator's Templates text box as an algebra word-problem operator: split pasted text into word boxes and number boxes, call solve(), show the
+   family's reading (the "reading" string already says the equation and the steps), fall back to the matcher's top 3 with a confidence ("ask the user when the score is low").  The decisions still open are in chess_test_results.txt
+   part 7.4: the scope of a first version, how the ~20 problem families are defined, where the archive of past problems lives, whether the experiment files go in the repo.  Ask the user before building.
+D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
+   most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
+E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
+
+
+6. HOW THE USER WORKS WITH CLAUDE ON THIS  (the rules of every job; follow them exactly)
+-----------------------------------------------------------------------------------------
+  - The user pastes a "job" written by Grok after it reviewed the last commit.  It says what is right, what is still wrong (with the exact sentence and the wrong number it returned) and what the next three families (or fixes) are.
+  - "One commit, the same checks, then push."  The same checks, every time:
+      * all tests pass (python -m unittest test_word_solver test_number_puzzle);
+      * the 1,000 generated problems: claims go up by exactly the new template's problems, WRONG stays 0, and list every new claim (ids and answers) in word_solver_results.txt;
+      * every decline the job lists is covered by a test (a test per sentence, with the right answer named in a comment);
+      * "stay" cases: the sentences the job says must still answer are asserted unchanged;
+      * exact fractions in the values and in the readings (31/5, never 6.2);
+      * spelled numbers (two, three, twice, half ...) decline unless they are a count the equation uses; each / apiece / per right after a TOTAL price declines;
+        "such", "of the year", "for part of", "of the time" decline when they change the equation;
+      * no control characters in the .py files (a test reads every .py file) and no module-level name defined twice (a test checks word_solver.py);
+      * the no-raise guard: no family may raise on any input, cut up or not;
+      * write ONE FRESH SET after all the new families are finished, run it ONCE, do NOT tune on it.  If it finds a wrong answer, fix it, say so in the notes, call that set a "development set" in its test and write a new fresh set;
+      * hand-written problems the solver now answers must be added to HAND_ANSWERS with the hand-calculated answer (the test fails otherwise and tells you which sentence);
+      * add a "Batch N" section to word_solver_results.txt, then commit and push ONCE, with the trailer  "Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"  (use the one in the current system reminder).
+  - Report to the user in plain words: what changed, the claim count, hand-written count, the fresh set result, anything you decided that the job did not say.  Say it when a required decline had to become an answer and you changed an
+    old test's expectation (those changes are always written in the test and in the results file).
+  - A new family: copy the generator wording (algebra_problem_generator.txt) AND the user's example wording; support both.  A decline is always the safe answer.
+
+TECHNICAL LESSONS (each one cost a bug):
+  - NEVER type "\b" (or any backslash escape) inside a NON-raw Python string when writing code through a script: "\b" becomes a backspace character.  Use raw strings (r"...") and the Write / Edit tools; the control-character test
+    catches it.  When a heredoc fails with quoting trouble, write the script with the Write tool instead.
+  - Module-level names in word_solver.py are shared by all families.  Reusing a name (_UP, _DOWN, _TIME_UNIT were each reused once) silently broke an older family (22 percent problems went to 0 claims).  Give every new
+    constant a family-specific prefix; the duplicate-name test now fails if a name is defined twice.
+  - clean() lowercases and turns the word "percent" into "%", "−" into "-", and removes thousands commas: patterns must be written for the cleaned text.  digit_numbers(problem) returns (value, is_money, start, end) and does NOT
+    include a minus sign.
+  - Families run in FAMILIES order and solve() declines if two families answer differently, so a new family that overlaps an old one can break the old one's claims: always compare the generated claim counts per family.
+  - "Whack-a-mole" lists of bad words do not work (a drain "covered" was missed after "sealed, capped, plugged"): prefer a general rule (a contrast word declines; nothing else may be said about X).
+  - Run scripts from algebra_matcher/ with  PYTHONPATH=.  when they live elsewhere.
+
+
+7. THE TWO ALGEBRA WORD PROBLEM FOLDERS AND THE README SECTION  (added 2026-11-09, uncommitted when written)
+-----------------------------------------------------------------------------------------------------------
+The user asked for the 1,000 generated problems to be put into their own files, with a diagram each, and for a way to put each into a calculator row.  Built, in this order of dependence:
+  operators_one_algebra_word_problem_per_file/<category>/<id>/<id>.py + <id>.jpg    1,000 problem files with diagrams (equation with the numbers in blue boxes, answer in green), INDEX.md,
+                                                                                      _solve.py (compute(...) helper), __init__.py (get / keys / load_all).  Key example: savings/0848.
+  operator_row_math_for_algebra_word_problems/<category>/<id>/<id>.py              1,000 row files:  Savings 0848(box, box, box, box) = box,  built with operator_row_math.row_builder.build_row;
+                                                                                      __init__.py (get / keys) and preview.py (tk preview).
+  operator_keys/make_algebra_word_problem_files.py                                  THE GENERATOR.  Rewrites both folders and INDEX.md from algebra_word_problems/algebra_word_problems.txt and the solver.  ~11 seconds.
+  tests/test_algebra_word_problem_files.py                                          6 tests: 1,000 folders / files / pictures / rows, stored text, compute() for all 365 Ready problems, your own numbers, errors.
+  README.md                                                                          a new section "Algebra word problems (work in progress)" with a NOTE TO GROK, the four pieces, the Python use, HOW A PROBLEM TRAVELS (text -> solver family -> generated file and diagram -> row ->
+                                                                                      checks -> status file), what is left, and six QUESTIONS FOR REVIEW; plus rows in the "Project files" table and a line in "Testing".
+Status of the 1,000: 365 Ready (337 word_solver, 28 number_puzzle), 635 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
+OPEN: Grok was asked (in the README) to review the section and amend it; the six questions are the decisions still open (row shape and labels by role, several answers in one result box, the diagram, the 24 MB of pictures,
+folder naming by category, how a declined compute() should look in a row).  When Grok has amended the README, read it again before changing the folders: it may change the generator's output.
+NOT DONE: nothing in main.py loads these rows yet; the operator (paste text -> solver -> row) is not built (section 5 C).
+Order of work agreed with the user on 2026-11-09: (1) README written and sent to Grok for review, (2) Claude is restarted after the Anthropic update, (3) the new Claude reads this file and the README, (4) back to fixing / adding algebra word problem families.
+
+
+APPENDIX: UNCLAIMED WORDING SHAPES   (regenerate with: python todo_report.py)
+==============================================================================
+generated problems: 1000   claimed by the word solver: 337   unclaimed: 663   distinct unclaimed wording shapes: 235   families: 55
+(the number of WRONG claims is checked by test_word_solver.py: GroundTruth.test_never_wrong_on_generated_problems, it must stay 0)
+
+UNCLAIMED BY CATEGORY (problems):
+   42  Number puzzle
+   34  System of equations
+   28  Geometry (quadratic)
+   27  Linear cost
+   27  Percent
+   27  Rational equation
+   24  Break-even
+   24  Geometry (angles)
+   24  Inequality
+   24  Ratio
+   24  Work rate
+   23  Formula
+   23  Linear model
+   21  Quadratic
+   20  Mixture
+   18  Geometry (area)
+   15  Simple interest
+   14  Consecutive integers
+   14  Fractions
+   14  Inverse variation
+   13  Geometry (Pythagorean)
+   10  Average (weighted)
+   10  Coins
+   10  Digits
+   10  Distance (average speed)
+   10  Proportion
+   10  Quadratic (sequences)
+    9  Distance (round trip)
+    9  Geometry (triangle)
+    9  System of equations (3 variables)
+    8  Geometry (perimeter)
+    5  Age
+    5  Distance (catch-up)
+    5  Distance (toward each other)
+    5  Distance (two legs)
+    5  Geometry (rectangle)
+    5  Joint variation
+    5  Percent (commission)
+    5  Profit
+    5  Quadratic (projectile)
+    5  Savings
+    5  Sequences
+    5  Tickets
+    4  Average
+    4  Clock
+    4  Current / wind
+    4  Geometry (polygons)
+    4  Geometry (volume)
+    4  Proportion (similar triangles)
+    4  Quadratic (counting)
+
+UNCLAIMED WORDING SHAPES (category | problems | first id | example):
+  Age | 4 | 0001 | Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now?
+  Age | 1 | 0003 | Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now?
+  Average | 2 | 0010 | The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the missing number?
+  Average | 2 | 0015 | The mean of 5 numbers is 36. 4 of them are 18, 50, 34, 36. What is the missing number?
+  Average (weighted) | 5 | 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in cla
+  Average (weighted) | 5 | 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives a
+  Break-even | 5 | 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is 
+  Break-even | 5 | 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do 
+  Break-even | 4 | 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day co
+  Break-even | 2 | 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost 
+  Break-even | 2 | 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost t
+  Break-even | 1 | 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do th
+  Break-even | 1 | 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even?
+  Break-even | 1 | 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost t
+  Break-even | 1 | 0040 | Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying?
+  Break-even | 1 | 0042 | Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they 
+  Break-even | 1 | 0047 | Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buyi
+  Clock | 4 | 0053 | At what time between 1:00 and 2:00 are the hour and minute hands of a clock exactly together?
+  Coins | 5 | 0058 | A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as qu
+  Coins | 3 | 0057 | Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there?
+  Coins | 2 | 0062 | Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there?
+  Consecutive integers | 5 | 0067 | Of three consecutive even integers, the sum of the smallest and largest is 8. Find all three.
+  Consecutive integers | 5 | 0068 | The average of 5 consecutive integers is 50. What is the smallest?
+  Consecutive integers | 3 | 0069 | Three consecutive integers are such that 3 times the smallest is 4 more than the largest. Find the integers.
+  Consecutive integers | 1 | 0078 | Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers.
+  Current / wind | 4 | 0087 | A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. Find the plane's sp
+  Digits | 5 | 0095 | In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find
+  Digits | 5 | 0096 | The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original
+  Distance (average speed) | 5 | 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h?
+  Distance (average speed) | 3 | 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long w
+  Distance (average speed) | 2 | 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was
+  Distance (catch-up) | 5 | 0125 | Two runners start together on a 400 m track, one at 5 m/s and the other at 7 m/s. After how many seconds does the faster
+  Distance (round trip) | 5 | 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake
+  Distance (round trip) | 3 | 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ri
+  Distance (round trip) | 1 | 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound r
+  Distance (toward each other) | 3 | 0149 | Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Car
+  Distance (toward each other) | 2 | 0152 | Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Em
+  Distance (two legs) | 5 | 0159 | Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the walk?
+  Formula | 5 | 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume.
+  Formula | 5 | 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far
+  Formula | 4 | 0180 | Solve P = 2l + 2w for w when P = 70 and l = 27.
+  Formula | 3 | 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω.
+  Formula | 3 | 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F?
+  Formula | 2 | 0204 | Using V = IR, find the resistance (in ohms) when the voltage is 50 V and the current is 5 A.
+  Formula | 1 | 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32)
+  Fractions | 5 | 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start wi
+  Fractions | 4 | 0213 | Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does th
+  Fractions | 2 | 0212 | A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold?
+  Fractions | 2 | 0214 | A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity?
+  Fractions | 1 | 0211 | A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son 
+  Geometry (Pythagorean) | 3 | 0224 | A rectangular field is 4 m long. A diagonal path across it is 5 m long. How wide is the field?
+  Geometry (Pythagorean) | 3 | 0226 | One leg of a right triangle is 23 cm longer than the other. The hypotenuse is 37 cm. Find the legs.
+  Geometry (Pythagorean) | 2 | 0225 | A 10 ft ladder leans against a wall with its foot 6 ft from the wall. How high up the wall does it reach?
+  Geometry (Pythagorean) | 2 | 0228 | A rectangular TV screen is 12 in tall with a diagonal of 20 in. How wide is it?
+  Geometry (Pythagorean) | 1 | 0229 | The hypotenuse of a right triangle is 29 in, and one leg is 1 in longer than the other leg. How long are the legs?
+  Geometry (Pythagorean) | 1 | 0231 | A 29 m support wire runs from the top of a pole to a stake 20 m from the pole's base. How tall is the pole?
+  Geometry (Pythagorean) | 1 | 0234 | A ramp is 41 ft long and covers a horizontal distance of 9 ft; how high does it rise?
+  Geometry (angles) | 5 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angl
+  Geometry (angles) | 5 | 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. F
+  Geometry (angles) | 3 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles.
+  Geometry (angles) | 2 | 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles.
+  Geometry (angles) | 1 | 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles.
+  Geometry (angles) | 1 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles.
+  Geometry (angles) | 1 | 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B?
+  Geometry (angles) | 1 | 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure.
+  Geometry (angles) | 1 | 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B?
+  Geometry (angles) | 1 | 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles.
+  Geometry (angles) | 1 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles.
+  Geometry (angles) | 1 | 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles.
+  Geometry (angles) | 1 | 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B?
+  Geometry (area) | 5 | 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length.
+  Geometry (area) | 5 | 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height.
+  Geometry (area) | 4 | 0275 | A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stay
+  Geometry (area) | 4 | 0277 | A triangle has an area of 60 m² and a height of 3 m. How long is its base?
+  Geometry (perimeter) | 4 | 0293 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. 
+  Geometry (perimeter) | 3 | 0292 | Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length.
+  Geometry (perimeter) | 1 | 0298 | Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length.
+  Geometry (polygons) | 2 | 0300 | Each interior angle of a regular polygon measures 150°. How many sides does the polygon have?
+  Geometry (polygons) | 2 | 0302 | Each exterior angle of a regular polygon is 120°. How many sides does it have?
+  Geometry (quadratic) | 5 | 0311 | Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. T
+  Geometry (quadratic) | 5 | 0313 | A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path?
+  Geometry (quadratic) | 5 | 0314 | The height of a triangle is 9 cm more than its base. The area is 243 cm². Find the base and height.
+  Geometry (quadratic) | 5 | 0315 | A 18 in × 15 in photo is surrounded by a frame of uniform width. The framed picture covers 418 in². How wide is the fram
+  Geometry (quadratic) | 4 | 0310 | A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must ha
+  Geometry (quadratic) | 4 | 0312 | A rectangle's length is 12 m more than its width, and its area is 640 m². Find the dimensions.
+  Geometry (rectangle) | 3 | 0341 | The length of a rectangle is 3 less than 3 times its width. The perimeter is 178 cm. Find the dimensions.
+  Geometry (rectangle) | 1 | 0342 | The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the dimensions.
+  Geometry (rectangle) | 1 | 0344 | The length of a rectangle is 5 more than 3 times its width. The perimeter is 170 cm. Find the dimensions.
+  Geometry (triangle) | 4 | 0346 | Each of the two equal sides of an isosceles triangle is 2 cm longer than the base. The perimeter is 52 cm. Find the side
+  Geometry (triangle) | 3 | 0347 | A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the pe
+  Geometry (triangle) | 2 | 0353 | The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side.
+  Geometry (volume) | 3 | 0355 | A rectangular box is 16 in long and 5 in wide. Its volume is 320 in³. How tall is it?
+  Geometry (volume) | 1 | 0356 | An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it?
+  Inequality | 5 | 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for whi
+  Inequality | 5 | 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width poss
+  Inequality | 5 | 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at le
+  Inequality | 4 | 0362 | Elena has $160 and saves $40 a week. What is the fewest weeks needed to have at least $670?
+  Inequality | 1 | 0366 | Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85?
+  Inequality | 1 | 0373 | Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 8
+  Inequality | 1 | 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 
+  Inequality | 1 | 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88?
+  Inequality | 1 | 0397 | Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75?
+  Inverse variation | 5 | 0401 | 12 workers can build a wall in 10 days. At the same rate, how many days would 3 workers take?
+  Inverse variation | 5 | 0402 | A gear with 24 teeth turning at 40 rpm drives a gear with 20 teeth. Teeth × rpm is the same for both gears. How fast doe
+  Inverse variation | 4 | 0403 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 90 km/h?
+  Joint variation | 5 | 0415 | 6 workers working 10 hours a day finish a job in 5 days. How many days would 4 workers working 5 hours a day take?
+  Linear cost | 5 | 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used?
+  Linear cost | 5 | 0432 | Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many overtime
+  Linear cost | 4 | 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled?
+  Linear cost | 4 | 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours 
+  Linear cost | 4 | 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven?
+  Linear cost | 3 | 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?
+  Linear cost | 2 | 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought?
+  Linear model | 5 | 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the th
+  Linear model | 5 | 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%?
+  Linear model | 4 | 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to rea
+  Linear model | 4 | 0489 | A hot-air balloon at 5500 ft descends 650 ft per minute. Another at 1300 ft rises 400 ft per minute. When are they at th
+  Linear model | 3 | 0487 | A tractor bought for $23,000.00 loses $1,600.00 in value each year. After how many years will it be worth $16,600.00?
+  Linear model | 1 | 0509 | A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 
+  Linear model | 1 | 0513 | A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00
+  Mixture | 5 | 0536 | A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates?
+  Mixture | 5 | 0538 | How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix?
+  Mixture | 5 | 0539 | A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it t
+  Mixture | 3 | 0541 | A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added?
+  Mixture | 2 | 0535 | How much water must be added to 4 L of a 30% salt solution to make it 5% salt?
+  Number puzzle | 5 | 0572 | Tara has 3 more than 4 times as many stamps as Aiden. Together they have 38 stamps. How many does each have?
+  Number puzzle | 5 | 0576 | Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much did each ha
+  Number puzzle | 5 | 0577 | 1/2 of a number plus 27 is 39. Find the number.
+  Number puzzle | 5 | 0578 | 6 times a number minus 4 equals 5 times the number plus 6. Find the number.
+  Number puzzle | 4 | 0571 | The second of three numbers is 3 times the first. The third is 8 more than the second. Their sum is 176. Find the number
+  Number puzzle | 3 | 0570 | 6 times the difference of a number and 6 is 174. What is the number?
+  Number puzzle | 2 | 0574 | Five times a number, decreased by 19, is 106. Find the number.
+  Number puzzle | 2 | 0575 | One-fourth of a number plus one-half of the same number is 48. Find the number.
+  Number puzzle | 2 | 0582 | A number divided by 9, then increased by 9, gives 10. Find the number.
+  Number puzzle | 1 | 0573 | If you divide a number by 7 and add 1, you get -3. What was the number?
+  Number puzzle | 1 | 0581 | One-third of a number is 4 more than one-fifth of it. Find the number.
+  Number puzzle | 1 | 0584 | When 4 is subtracted from a number and the result is multiplied by 5, the answer is 60. Find the number.
+  Number puzzle | 1 | 0586 | 9 times a number, increased by 31, is 229. Find the number.
+  Number puzzle | 1 | 0596 | One-fourth of a number is 2 more than one-fifth of it. Find the number.
+  Number puzzle | 1 | 0603 | If you divide a number by 5 and add 10, you get 26. What was the number?
+  Number puzzle | 1 | 0604 | Four times a number, increased by 1, is 117. Find the number.
+  Number puzzle | 1 | 0608 | 6 times the difference of a number and 11 is -108. What is the number?
+  Number puzzle | 1 | 0610 | 9 times a number, decreased by 11, is 205. Find the number.
+  Percent | 5 | 0623 | 9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip?
+  Percent | 5 | 0625 | A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price?
+  Percent | 4 | 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck?
+  Percent | 4 | 0621 | 3 is 30% of what number?
+  Percent | 4 | 0624 | 20% of the students in a club are boys. There are 136 girls. How many students are in the club?
+  Percent | 3 | 0620 | What percent of 95 is 114?
+  Percent | 2 | 0644 | 30 out of 150 students passed. What percent passed?
+  Percent (commission) | 3 | 0677 | Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sale
+  Percent (commission) | 2 | 0679 | A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell?
+  Profit | 3 | 0686 | A candle shop has fixed costs of $2000. Each item costs $2 to make and sells for $17. How many items must be sold to mak
+  Profit | 1 | 0689 | A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to 
+  Profit | 1 | 0690 | A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make
+  Proportion | 5 | 0691 | A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the model?
+  Proportion | 5 | 0697 | On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they on the map?
+  Proportion (similar triangles) | 2 | 0725 | A 5 ft person casts a 2 ft shadow. At the same time a tree casts a 30 ft shadow. How tall is the tree?
+  Proportion (similar triangles) | 2 | 0726 | At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building?
+  Quadratic | 5 | 0729 | The square of a positive number is 48 more than 2 times the number. Find the number.
+  Quadratic | 4 | 0730 | The sum of the squares of two consecutive positive integers is 85. Find the integers.
+  Quadratic | 4 | 0731 | The square of a positive number plus 16 times the number equals 720. Find the number.
+  Quadratic | 4 | 0732 | A polygon has 5 diagonals. Using D = n(n − 3)/2, how many sides does it have?
+  Quadratic | 2 | 0734 | Two numbers add up to 56 and multiply to 780. What are they?
+  Quadratic | 2 | 0736 | The sum of two numbers is 43 and their product is 456. Find the numbers.
+  Quadratic (counting) | 2 | 0755 | At a party everyone shook hands with everyone else exactly once, for 10 handshakes. How many people were there?
+  Quadratic (counting) | 2 | 0757 | In a round-robin tournament each team plays every other team once, for 45 games. How many teams are there?
+  Quadratic (projectile) | 3 | 0759 | A rocket is launched upward from a height of 96 ft at 16 ft/s. Its height is h = −16t² + 16t + 96. After how many second
+  Quadratic (projectile) | 1 | 0762 | A rock is launched upward from a height of 16 ft at 24 ft/s. Its height is h = −16t² + 24t + 16. After how many seconds 
+  Quadratic (projectile) | 1 | 0763 | A stone is launched upward from a height of 32 ft at 124 ft/s. Its height is h = −16t² + 124t + 32. After how many secon
+  Quadratic (sequences) | 5 | 0764 | How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2
+  Quadratic (sequences) | 4 | 0766 | A stack of cans has 8 cans in the top row, and each row below has 2 more than the row above. The stack has 260 cans in t
+  Quadratic (sequences) | 1 | 0765 | A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in tot
+  Ratio | 5 | 0783 | Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much d
+  Ratio | 4 | 0784 | A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece?
+  Ratio | 3 | 0786 | A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used?
+  Ratio | 1 | 0780 | An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than N
+  Ratio | 1 | 0781 | A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used?
+  Ratio | 1 | 0782 | The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did each have
+  Ratio | 1 | 0787 | The ratio of Hana's marbles to Maya's is 1:1. After Hana gives Maya 23 marbles, the ratio is 1:3. How many did each have
+  Ratio | 1 | 0790 | An estate of $92,000.00 is split among three heirs. Finn gets 3 times as much as Sam, and Ben gets $2,000.00 more than S
+  Ratio | 1 | 0793 | The ratio of Ben's marbles to Carla's is 3:5. After Ben gives Carla 16 marbles, the ratio is 1:7. How many did each have
+  Ratio | 1 | 0799 | An estate of $71,000.00 is split among three heirs. Jamal gets 3 times as much as Maya, and Noah gets $6,000.00 more tha
+  Ratio | 1 | 0802 | The ratio of Yusuf's marbles to Zane's is 5:6. After Yusuf gives Zane 18 marbles, the ratio is 2:9. How many did each ha
+  Ratio | 1 | 0804 | An estate of $31,500.00 is split among three heirs. Xena gets 3 times as much as Dana, and Finn gets $9,000.00 more than
+  Ratio | 1 | 0808 | A mix uses red, blue, and yellow paint in the ratio 7:4:2. The total is 390 mL. How much of each is used?
+  Ratio | 1 | 0809 | The ratio of Gus's marbles to Kira's is 6:5. After Gus gives Kira 16 marbles, the ratio is 4:7. How many did each have a
+  Ratio | 1 | 0810 | An estate of $88,500.00 is split among three heirs. Theo gets 3 times as much as Kira, and Umar gets $1,000.00 more than
+  Rational equation | 5 | 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the or
+  Rational equation | 5 | 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the 
+  Rational equation | 4 | 0815 | A number plus its reciprocal equals 2.5. Find the number.
+  Rational equation | 4 | 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group origi
+  Rational equation | 4 | 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds.
+  Rational equation | 3 | 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route?
+  Rational equation | 1 | 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route?
+  Rational equation | 1 | 0847 | A number plus its reciprocal equals 10/3. Find the number.
+  Savings | 2 | 0851 | Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?
+  Savings | 1 | 0849 | Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough?
+  Savings | 1 | 0852 | Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough?
+  Savings | 1 | 0856 | Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough?
+  Sequences | 4 | 0857 | A theater has 29 seats in the first row and each row has 5 more seats than the row before. Which row has 209 seats?
+  Sequences | 1 | 0860 | A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63?
+  Simple interest | 5 | 0862 | Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall?
+  Simple interest | 5 | 0864 | $16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a yea
+  Simple interest | 3 | 0865 | How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year?
+  Simple interest | 2 | 0874 | $15,000.00 earns $5,400.00 in simple interest over 9 years. What is the annual interest rate?
+  System of equations | 5 | 0890 | A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each?
+  System of equations | 5 | 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there?
+  System of equations | 5 | 0896 | A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each?
+  System of equations | 4 | 0889 | The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the length and width.
+  System of equations | 4 | 0894 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question a
+  System of equations | 3 | 0895 | A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many of ea
+  System of equations | 1 | 0888 | Two numbers x and y satisfy −4x − 3y = 9 and 5x − 3y = -18. Find x and y.
+  System of equations | 1 | 0893 | A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many of each are there?
+  System of equations | 1 | 0900 | A lot has bicycles and tricycles. There are 112 vehicles and 277 wheels. How many of each are there?
+  System of equations | 1 | 0902 | A camp rents 16 paddle boats for 74 campers, filling every seat. Some paddle boats hold 4 people and the rest hold 6. Ho
+  System of equations | 1 | 0910 | Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y.
+  System of equations | 1 | 0912 | Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y.
+  System of equations | 1 | 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y.
+  System of equations | 1 | 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there?
+  System of equations (3 variables) | 5 | 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cu
+  System of equations (3 variables) | 4 | 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three.
+  Tickets | 3 | 0959 | Adult tickets to a movie screening cost $12 and child tickets cost $6. 167 tickets were sold for a total of $1404. How m
+  Tickets | 1 | 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of ea
+  Tickets | 1 | 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of e
+  Work rate | 5 | 0969 | An inlet pipe fills a tank in 5 hours. A drain empties it in 6 hours. If both are open, how long does it take to fill th
+  Work rate | 5 | 0970 | Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone
+  Work rate | 4 | 0967 | A new machine works 2 times as fast as an old one. Together they finish an order in 3 hours. How long would the old mach
+  Work rate | 3 | 0971 | Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer
+  Work rate | 2 | 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much long
+  Work rate | 1 | 0968 | Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long will it take all three together?
+  Work rate | 1 | 0978 | Quinn, Jamal, and Sam can each paint a room alone in 24, 20, and 30 hours. How long will it take all three together?
+  Work rate | 1 | 0986 | Aiden, Lena, and Yara can each paint a room alone in 8, 30, and 20 hours. How long will it take all three together?
+  Work rate | 1 | 0990 | Sofia, Grace, and Sam can each paint a room alone in 24, 15, and 10 hours. How long will it take all three together?
+  Work rate | 1 | 0998 | Grace, Uma, and Omar can each paint a room alone in 10, 30, and 24 hours. How long will it take all three together?
