@@ -85,3 +85,26 @@ Measured:
           "A printer prints 48 pages in 3 minutes. How many ... in 10 minutes?"     ("prints")
       They were NOT fixed after the run.
   The stored answer stays the exact fraction; the reading carries the nearest-cent text for money.
+
+Batch 3: cue verbs cover / stamp / print, and a rule found by the third fresh set
+==================================================================================
+Change 1 (as asked): cover|covers|stamp|stamps|print|prints added to the proportion cue list.
+  The three problems that fresh_word_problems_2.py missed now solve: 315, 240, 160.  fresh_word_problems_2.py is
+  unchanged on disk; it scored 18 solved / 3 declined / 0 wrong BEFORE this change and is now a development set (21 / 0).
+  1,000 generated problems after change 1: claims 79 -> 79 (no new claim, none lost), wrong 0.
+
+Third fresh set (fresh_word_problems_3.py, 15 wordings written after change 1, run once, untuned):
+  10 with an answer: 9 solved, 1 declined ("A boat covers 45 km ... At this speed ..." - "speed" is a reject word),
+  5 required declines: 4 declined, 1 WRONG ANSWER:
+      "If a printer prints 48 pages in 3 minutes, how many pages will two printers print in 10 minutes?"
+      -> 160 (true answer 320).  The word "two" is a number with no role, but only numbers written in digits were counted.
+Change 2 (a bug fix prompted by that result, not a cue): the proportion family declines when a number is written as a
+  word (two, three ... ten, twice, double, triple, half, another, second, both).  Same principle as "every number needs a
+  role", applied to spelled numbers in the one family where the failure was seen.  Regression tests added.
+  1,000 generated problems after change 2: claims 79 -> 79, none lost, wrong 0.
+  Fresh set 3 is now a development set: (9 solved, 1 declined, 5 required declines correct, 0 wrong).
+
+Fourth fresh set (fresh_word_problems_4.py, 8 wordings written after change 2, run once, untuned):
+  4 with an answer: 3 solved, 1 declined (a "pump" - pumps are deliberately rejected).  4 required declines: 4 of 4.  0 wrong.
+
+Still open: the same "spelled number" hole may exist in the other four families (not seen there, not changed).

@@ -294,11 +294,14 @@ def proportion(problem):
     # roles by position: the known pair comes BEFORE the question, the quantity asked about comes AFTER it
     if not (nums[0][2] < q.start() and nums[1][2] < q.start() and nums[2][2] > q.start()):
         return None
+    # a number written as a word ("two printers", "twice", "another") is a number with no role: decline
+    if re.search(r"\b(?:two|three|four|five|six|seven|eight|nine|ten|twice|double|triple|half|another|second|both)\b", t):
+        return None
     if re.search(r"\d\s+and\s+\d|\btogether\b|\bper (?:minute|hour|second|day|week)\b", t):
         return None
     if re.search(r"(?:/|=|\bfirst\b|after that|overtime|split|among|times as|more than|less than|plus|minus|\bis \d)", t):
         return None
-    if not re.search(r"\b(cost|costs|price|pay|pays|paid|earn|earns|for|per|rate|varies directly|needs|need|uses|use|travels|travel|drives|weigh|weighs|buy|gets|makes)\b", t):
+    if not re.search(r"\b(cost|costs|price|pay|pays|paid|earn|earns|for|per|rate|varies directly|needs|need|uses|use|travels|travel|drives|weigh|weighs|buy|gets|makes|cover|covers|stamp|stamps|print|prints)\b", t):
         return None
     units = ["$" if n[1] else unit_after(t, n[3]) for n in nums]
     u1, u2, u3 = units

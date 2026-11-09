@@ -91,6 +91,13 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("A train travels 150 km in 2 hours. At that rate, how far does it go in 5 hours?"), values(375))
         self.assertEqual(answers("A machine makes 240 bolts in 8 hours. How many bolts does it make in 20 hours?"), values(600))
         self.assertIsNone(answers("A car goes 60 mph for 3 hours then 40 mph for 2 hours. How far does it go in all?"))
+        # cue verbs added in batch 3 (covers, stamps, prints)
+        self.assertEqual(answers("A bus covers 210 miles in 6 hours. How far does it go in 9 hours?"), values(315))
+        self.assertEqual(answers("A press stamps 90 plates in 15 minutes. How many plates does it stamp in 40 minutes?"), values(240))
+        self.assertEqual(answers("A printer prints 48 pages in 3 minutes. How many pages will it print in 10 minutes?"), values(160))
+        # a number written as a word has no role: "two printers" doubles the answer, so decline (found by fresh set 3)
+        self.assertIsNone(answers("If a printer prints 48 pages in 3 minutes, how many pages will two printers print in 10 minutes?"))
+        self.assertIsNone(answers("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?"))
         self.assertIsNone(answers("If 6 workers build a wall in 12 days, how long would 9 workers take?"))
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
         self.assertIsNone(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"))
@@ -173,16 +180,26 @@ class DevelopmentWordings(unittest.TestCase):
         self.assertEqual((solved, declined, required), (21, 0, 12))
 
 
+class DevelopmentWordingsLater(unittest.TestCase):
+    """Fresh sets 2 and 3 became development sets when they led to changes (cue verbs; the spelled-number rule)."""
+
+    def test_second_and_third_sets(self):
+        from fresh_word_problems_2 import FRESH as F2
+        from fresh_word_problems_3 import FRESH as F3
+        self.assertEqual(score(F2), (21, 0, 6))      # it scored 18 solved / 3 declined before the cue verbs were added
+        self.assertEqual(score(F3), (9, 1, 5))       # it had 1 WRONG answer (two printers) before the spelled-number rule
+
+
 class FreshWordings(unittest.TestCase):
-    """27 new wordings written AFTER the three cue changes and run once, untuned (fresh_word_problems_2.py):
-    21 with an answer, 6 that must be declined.  Declining is safe; a wrong answer is a failure."""
+    """8 wordings written AFTER the spelled-number rule and run once, untuned (fresh_word_problems_4.py):
+    4 with an answer, 4 that must be declined.  Declining is safe; a wrong answer is a failure."""
 
     def test_fresh(self):
-        from fresh_word_problems_2 import FRESH
+        from fresh_word_problems_4 import FRESH
         solved, declined, required = score(FRESH)
-        print("  fresh wordings (second set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
+        print("  fresh wordings (fourth set): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (18, 3, 6))
+        self.assertEqual((solved, declined, required), (3, 1, 4))
 
 
 if __name__ == "__main__":
