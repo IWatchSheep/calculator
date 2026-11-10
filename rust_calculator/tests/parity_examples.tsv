@@ -239,6 +239,10 @@ math/trigonometry/two_argument_arctangent	1 -1	2.356194490192345
 physics/physics/acceleration	10 2	5
 physics/physics/angular_acceleration	6 2	3
 physics/physics/angular_acceleration	-6 2	-3
+physics/physics/bearing_between	0 0 0 0.017453292519943295	0
+physics/physics/bearing_between	0 0 0.017453292519943295 0	1.5707963267948966
+physics/physics/bearing_between	0 0 0 -0.017453292519943295	3.141592653589793
+physics/physics/bearing_between	0 0 -0.017453292519943295 0	-1.5707963267948966
 physics/physics/bernoulli_equation	100000 2 0 4 1 1000	84190
 physics/physics/bernoulli_equation	5 1 0 1 0 1000	5
 physics/physics/bohr_energy_level	1	-13.605693122994
@@ -279,6 +283,10 @@ physics/physics/electric_power	2 5	10
 physics/physics/energy_momentum_relation	3 4 1	5
 physics/physics/energy_momentum_relation	0 2 1	2
 physics/physics/energy_momentum_relation	1 0 1	1
+physics/physics/exponential_smoothing	10 20 0.5	15
+physics/physics/exponential_smoothing	8 12 0.25	9
+physics/physics/exponential_smoothing	10 20 0	10
+physics/physics/exponential_smoothing	10 20 1	20
 physics/physics/faradays_law	10 0.5 2	-2.5
 physics/physics/faradays_law	1 -4 2	2
 physics/physics/final_velocity	1 2 3	7
@@ -288,6 +296,8 @@ physics/physics/gravitational_time_dilation	100 1 4 1 1	70.71067811865476
 physics/physics/gravitational_time_dilation	100 0 4 1 1	100
 physics/physics/gravitational_time_dilation_from_radius	100 0 10	100
 physics/physics/gravitational_time_dilation_from_radius	100 5 20	86.60254037844386
+physics/physics/haversine_distance	0 0 0 0	0
+physics/physics/haversine_distance	0 0 0.017453292519943295 0	111194.92664455874
 physics/physics/heat	2 4 5	40
 physics/physics/heisenberg_uncertainty	1e-10	5.272859085e-25
 physics/physics/heisenberg_uncertainty	1	5.272859085e-35
@@ -303,6 +313,12 @@ physics/physics/impact_force	2 -3 1	9
 physics/physics/impulse	5 2	10
 physics/physics/inductor_energy	2 3	9
 physics/physics/inductor_energy	0.5 4	4
+physics/physics/kalman_predict_state	10 2 3	16
+physics/physics/kalman_predict_variance	1 0.25	1.25
+physics/physics/kalman_predict_variance	4 0	4
+physics/physics/kalman_update_state	10 4 14 4	12
+physics/physics/kalman_update_variance	4 4	2
+physics/physics/kalman_update_variance	0 1	0
 physics/physics/kinetic_energy	2 3	9
 physics/physics/length_contraction	100 0.8 1	60
 physics/physics/length_contraction	100 0 1	100

@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 576)
+        self.assertEqual(len(keys), 584)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 576)
+        self.assertEqual(count, 584)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -139,7 +139,7 @@ class RustPort(unittest.TestCase):
                     "physics/physics/time_dilation", "math/statistics_and_probability/standard_deviation",
                     "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation",
                     "math/statistics_and_probability/range", "math/statistics_and_probability/interquartile_range",
-                    "math/statistics_and_probability/variance_of_random_variable", "physics/physics/kalman_update_state"):
+                    "math/statistics_and_probability/variance_of_random_variable", "physics/physics/kalman_update_state", "physics/physics/pid_sum"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
@@ -574,6 +574,23 @@ class InTheWindow(unittest.TestCase):
         # the one-row call of the same operator is the single update step
         import operators_one_operator_per_file as library
         self.assertEqual(library.get("physics/physics/kalman_update_state").compute(10, 4, 14, 4), 12)
+
+
+    def test_the_pid_output_in_four_rows_gives_the_plan_numbers(self):
+        """Kp 2, error 3, Ki 4, stored integral 1, time step 0.5, Kd 0.5, previous error 1: P = 6, I = 10, D = 2 and the output is 18."""
+        from operator_row_math import row_tree
+        self.app._clear_all()
+        self.app._place_operator_row("physics/physics/pid_sum")
+        self.app.update()
+        for row, slot, text in ((0, 0, "2"), (0, 1, "3"), (1, 0, "4"), (1, 1, "1"), (1, 3, "0.5"), (2, 0, "0.5"), (2, 2, "1")):
+            row_tree.set_slot(self.app.rows[row]["node"], (slot,), text)
+        self.press_equals()
+        self.assertEqual([row_tree.evaluate(self.app.rows[k]["node"]) for k in range(4)], [6, 10, 2, 18])
+        self.assertEqual(row_tree.get_slot(self.app.rows[1]["node"], (2,)), "3")           # the error is copied from Row 1 ...
+        self.assertEqual(row_tree.get_slot(self.app.rows[2]["node"], (1,)), "3")
+        self.assertEqual(row_tree.get_slot(self.app.rows[2]["node"], (3,)), "0.5")         # ... and the time step of Row 3 from Row 2
+        self.assertEqual([self.chained_values(3, (k,)) for k in range(3)], [6, 10, 2])
+        self.assertTrue(self.app.results.get("1.0", "end").strip().endswith("18"))
 
 
     def test_the_answer_of_the_chain_is_the_last_rows_answer(self):

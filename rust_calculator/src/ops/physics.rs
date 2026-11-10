@@ -511,3 +511,46 @@ pub fn bearing_between(a: &[f64]) -> R {
     need(!(east == 0.0 && north == 0.0), "the two points are the same, there is no direction")?;
     n(north.atan2(east))
 }
+
+// ---------- the filter and the control step (batch 6; the same operations in the same order as the Python files) ----------
+
+fn time_step(dt: f64) -> Result<(), String> {
+    need(dt > 0.0, "time step must be positive")
+}
+
+pub fn complementary_filter(a: &[f64]) -> R {
+    // previous, gyro, dt, measured, alpha
+    time_step(a[2])?;
+    need((0.0..=1.0).contains(&a[4]), "the weight must be from 0 to 1")?;
+    n(a[4] * (a[0] + a[1] * a[2]) + (1.0 - a[4]) * a[3])
+}
+
+pub fn control_error(a: &[f64]) -> R {
+    n(a[0] - a[1])
+}
+
+pub fn pid_proportional(a: &[f64]) -> R {
+    n(a[0] * a[1])
+}
+
+pub fn pid_integral_state(a: &[f64]) -> R {
+    // integral, error, dt
+    time_step(a[2])?;
+    n(a[0] + a[1] * a[2])
+}
+
+pub fn pid_integral_term(a: &[f64]) -> R {
+    // ki, integral, error, dt
+    time_step(a[3])?;
+    n(a[0] * (a[1] + a[2] * a[3]))
+}
+
+pub fn pid_derivative(a: &[f64]) -> R {
+    // kd, error, previous_error, dt
+    time_step(a[3])?;
+    n(a[0] * (a[1] - a[2]) / a[3])
+}
+
+pub fn pid_sum(a: &[f64]) -> R {
+    n(a[0] + a[1] + a[2])
+}

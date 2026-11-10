@@ -593,6 +593,14 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Kalman update variance | p⁺ = (1 − k)p | k = p / (p + r),  p⁺ = (1 − k) p   (kept out of the three-row step: the robot needs this variance for the next step) | Ready | `physics/physics/kalman_update_variance/` |
 | Haversine distance | great-circle distance | a = sin²(Δlat/2) + cos(lat1) cos(lat2) sin²(Δlon/2),  d = 6371000 · 2 atan2(√a, √(1 − a))   (Earth radius 6371000 m, angles in radians) | Ready | `physics/physics/haversine_distance/` |
 | Bearing between two points | atan2(north, east) | east = sin(Δlon) cos(lat2),  north = cos(lat1) sin(lat2) − sin(lat1) cos(lat2) cos(Δlon),  heading = atan2(north, east)   (0 is east, positive turns toward north) | Ready | `physics/physics/bearing_between/` |
+| Complementary filter | α(θ + ωt) + (1 − α)θₘ | θ = α (θ₀ + ω t) + (1 − α) θₘ   (the gyro prediction blended with a measured angle; α close to 1 trusts the gyro) | Ready | `physics/physics/complementary_filter/` |
+| Local east, north, up | a small GPS step on the flat Earth | east = 6371000 cos(lat) Δlon,  north = 6371000 Δlat,  up = Δheight   (radians and metres; the flat patch, not the haversine arc) | Ready | `physics/physics/local_east_north_up/` |
+| Control error | e = setpoint − measured | e = setpoint − measured   (positive means too low) | Ready | `physics/physics/control_error/` |
+| PID proportional | P = Kp e | P = Kp e   (the proportional term) | Ready | `physics/physics/pid_proportional/` |
+| PID integral state | I ← I + e t | I ← I + e t   (the stored integral the robot keeps for the next step; not part of the four-row sum) | Ready | `physics/physics/pid_integral_state/` |
+| PID integral term | Iout = Ki (I + e t) | Iout = Ki (I + e t)   (the integral contribution: this step's error is added before multiplying by Ki) | Ready | `physics/physics/pid_integral_term/` |
+| PID derivative | D = Kd (e − e₀) / t | D = Kd (e − e₀) / t   (the derivative contribution) | Ready | `physics/physics/pid_derivative/` |
+| PID output | P + I + D | P + I + D   (the sum of the three terms; the menu operator opens four rows joined by →, the answer is the last row) | Ready | `physics/physics/pid_sum/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

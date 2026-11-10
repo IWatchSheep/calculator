@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 576)
+        self.assertEqual(len(self.ops), 584)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 576)
+        self.assertEqual(len(status), 584)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -251,6 +251,12 @@ CASES = [
     (PH + "haversine_distance", (0, 0, 0, 0), 0), (PH + "haversine_distance", (0, 0, 0.017453292519943295, 0), 111194.92664455874),
     (PH + "bearing_between", (0, 0, 0, 0.017453292519943295), 0), (PH + "bearing_between", (0, 0, 0.017453292519943295, 0), 1.5707963267948966),
     (PH + "bearing_between", (0, 0, 0, -0.017453292519943295), 3.141592653589793), (PH + "bearing_between", (0, 0, -0.017453292519943295, 0), -1.5707963267948966),
+    (PH + "complementary_filter", (0, 0.1, 0.1, 0.02, 0.98), 0.010200000000000002),
+    (PH + "local_east_north_up", (0, 0, 0.017453292519943295, 5), [111194.92664455874, 0, 5]),
+    (PH + "local_east_north_up", (1.0471975511965976, 0, 0.017453292519943295, 0), [55597.463322279385, 0, 0]),
+    (PH + "control_error", (10, 7), 3), (PH + "control_error", (7, 10), -3), (PH + "pid_proportional", (2, 3), 6),
+    (PH + "pid_integral_state", (1, 3, 0.5), 2.5), (PH + "pid_integral_term", (4, 1, 3, 0.5), 10), (PH + "pid_derivative", (0.5, 3, 1, 0.5), 2),
+    (PH + "pid_sum", (6, 10, 2), 18),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -902,6 +908,40 @@ class WhereAmIDeclineTests(unittest.TestCase):
         # smoothing with the weight 1 / 0 takes the sample / keeps the old value
         smooth = get(PH + "exponential_smoothing").compute
         self.assertEqual((smooth(3, 7, 1), smooth(3, 7, 0)), (7, 3))
+
+
+class ControlDeclineTests(unittest.TestCase):
+    """Batch 6 of the robot maths (complementary filter, east-north-up, PID) declines with the plan's messages."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says("complementary_filter", (0, 0.1, 0, 0.02, 0.98), "time step must be positive")
+        self.says("complementary_filter", (0, 0.1, -1, 0.02, 0.98), "time step must be positive")
+        self.says("complementary_filter", (0, 0.1, 0.1, 0.02, 1.5), "the weight must be from 0 to 1")
+        self.says("local_east_north_up", (1.6, 0, 0, 0), "latitude is past the pole")
+        self.says("pid_integral_state", (1, 3, 0), "time step must be positive")
+        self.says("pid_integral_term", (4, 1, 3, 0), "time step must be positive")
+        self.says("pid_derivative", (0.5, 3, 1, -0.5), "time step must be positive")
+
+    def test_the_flat_patch_agrees_with_the_haversine_arc_for_a_small_step(self):
+        import math
+        lat, dlat, dlon = 0.7, 2e-5, 3e-5
+        east, north, up = get(PH + "local_east_north_up").compute(lat, dlat, dlon, 0)
+        arc = get(PH + "haversine_distance").compute(lat, 0.4, lat + dlat, 0.4 + dlon)
+        self.assertAlmostEqual(math.hypot(east, north), arc, delta=1e-3 * arc)      # a short step: the flat patch and the arc agree
+        self.assertEqual(up, 0)
+
+    def test_the_pid_pieces_add_up(self):
+        p, i, d = get(PH + "pid_proportional").compute, get(PH + "pid_integral_term").compute, get(PH + "pid_derivative").compute
+        state = get(PH + "pid_integral_state").compute
+        kp, ki, kd, integral, error, previous, dt = 2, 4, 0.5, 1, 3, 1, 0.5
+        self.assertEqual(i(ki, integral, error, dt), ki * state(integral, error, dt))     # the integral term is Ki times the new integral state
+        self.assertEqual(get(PH + "pid_sum").compute(p(kp, error), i(ki, integral, error, dt), d(kd, error, previous, dt)), 18)
+        self.assertEqual(get(PH + "control_error").compute(10, 7), 3)
 
 
 # --------------------------------------------------------------------------- 3. error handling

@@ -4589,6 +4589,10 @@ physics/physics/angular_acceleration	0.5 3	0.16666666666666666
 physics/physics/angular_acceleration	5 0.25	20.0
 physics/physics/angular_acceleration	3 0.5	6.0
 physics/physics/angular_acceleration	0.25 2.5	0.1
+physics/physics/bearing_between	0 0 0 0.017453292519943295	0.0
+physics/physics/bearing_between	0 0 0.017453292519943295 0	1.5707963267948966
+physics/physics/bearing_between	0 0 0 -0.017453292519943295	3.141592653589793
+physics/physics/bearing_between	0 0 -0.017453292519943295 0	-1.5707963267948966
 physics/physics/bearing_between	0.5 2.5 -3 10	ERR
 physics/physics/bearing_between	2 1 2 1	ERR
 physics/physics/bearing_between	100 1 10 10	ERR
@@ -4871,6 +4875,46 @@ physics/physics/centripetal_acceleration	1 0.5	2.0
 physics/physics/centripetal_acceleration	7.5 5	11.25
 physics/physics/centripetal_acceleration	100 10	1000.0
 physics/physics/centripetal_acceleration	-1 -3	-0.3333333333333333
+physics/physics/complementary_filter	100 100 0 2.5 3	ERR
+physics/physics/complementary_filter	2 -3 2.5 -3 -1	ERR
+physics/physics/complementary_filter	0 -1 3 0 2	ERR
+physics/physics/complementary_filter	2 7.5 7.5 -3 -3	ERR
+physics/physics/complementary_filter	3 2.5 -3 0.5 -3	ERR
+physics/physics/complementary_filter	0.5 3 1 0.25 0.5	1.875
+physics/physics/complementary_filter	-1 2.5 -1 5 2	ERR
+physics/physics/complementary_filter	-3 0 0.25 0.25 5	ERR
+physics/physics/complementary_filter	5 2 -3 0.25 3	ERR
+physics/physics/complementary_filter	0 0 2.5 0.5 0.25	0.375
+physics/physics/complementary_filter	3 0 1 1 -3	ERR
+physics/physics/complementary_filter	100 2.5 7.5 2 0.25	31.1875
+physics/physics/complementary_filter	2 10 5 0 3	ERR
+physics/physics/complementary_filter	2.5 0 -1 0 -3	ERR
+physics/physics/complementary_filter	0.25 1 2 -3 0.25	-1.6875
+physics/physics/complementary_filter	2 0 3 100 0.25	75.5
+physics/physics/complementary_filter	3 0 0.5 0.25 -1	ERR
+physics/physics/complementary_filter	10 3 0 10 7.5	ERR
+physics/physics/complementary_filter	7.5 100 2.5 1 0.25	65.125
+physics/physics/complementary_filter	5 3 -1 7.5 -1	ERR
+physics/physics/complementary_filter	7.5 0.25 10 7.5 -3	ERR
+physics/physics/complementary_filter	10 5 5 0 1	35
+physics/physics/complementary_filter	7.5 2.5 2.5 2 1	13.75
+physics/physics/complementary_filter	5 3 0 -3 10	ERR
+physics/physics/complementary_filter	100 0 3 7.5 -3	ERR
+physics/physics/complementary_filter	100 0 0 5 2	ERR
+physics/physics/complementary_filter	0 0.5 100 -1 3	ERR
+physics/physics/complementary_filter	1 1 5 -3 7.5	ERR
+physics/physics/complementary_filter	-1 100 100 0.5 100	ERR
+physics/physics/complementary_filter	-1 5 7.5 10 1	36.5
+physics/physics/complementary_filter	-3 0.5 2.5 7.5 2	ERR
+physics/physics/complementary_filter	2.5 -1 10 0.25 1	-7.5
+physics/physics/complementary_filter	-3 3 7.5 0.25 2.5	ERR
+physics/physics/complementary_filter	100 1 0.5 7.5 -3	ERR
+physics/physics/complementary_filter	2 3 -3 1 3	ERR
+physics/physics/complementary_filter	10 7.5 2 2 10	ERR
+physics/physics/complementary_filter	7.5 0 1 5 -1	ERR
+physics/physics/complementary_filter	2 2 3 5 10	ERR
+physics/physics/complementary_filter	2 0.25 0.5 -3 0.25	-1.71875
+physics/physics/complementary_filter	100 3 -1 10 100	ERR
 physics/physics/compton_shift	1.5707963267948966	2.4263102386830918e-12
 physics/physics/compton_shift	3.141592653589793	4.852620477366184e-12
 physics/physics/compton_shift	0	0.0
@@ -4927,6 +4971,40 @@ physics/physics/continuity_equation	0.25 100 0	ERR
 physics/physics/continuity_equation	7.5 -3 -1	22.5
 physics/physics/continuity_equation	0.5 5 2.5	1.0
 physics/physics/continuity_equation	0.5 3 2.5	0.6
+physics/physics/control_error	5 1	4
+physics/physics/control_error	3 -3	6
+physics/physics/control_error	2 2	0
+physics/physics/control_error	2 100	-98
+physics/physics/control_error	100 10	90
+physics/physics/control_error	0 0	0
+physics/physics/control_error	100 3	97
+physics/physics/control_error	3 10	-7
+physics/physics/control_error	0.5 0.25	0.25
+physics/physics/control_error	5 0.5	4.5
+physics/physics/control_error	-3 -3	0
+physics/physics/control_error	2 7.5	-5.5
+physics/physics/control_error	0.5 0.5	0.0
+physics/physics/control_error	-3 2.5	-5.5
+physics/physics/control_error	0 5	-5
+physics/physics/control_error	3 100	-97
+physics/physics/control_error	-3 -1	-2
+physics/physics/control_error	5 5	0
+physics/physics/control_error	100 5	95
+physics/physics/control_error	0.5 2	-1.5
+physics/physics/control_error	2.5 -3	5.5
+physics/physics/control_error	2 1	1
+physics/physics/control_error	-1 0.25	-1.25
+physics/physics/control_error	2.5 -1	3.5
+physics/physics/control_error	1 2.5	-1.5
+physics/physics/control_error	2.5 3	-0.5
+physics/physics/control_error	10 0	10
+physics/physics/control_error	-1 3	-4
+physics/physics/control_error	100 2.5	97.5
+physics/physics/control_error	1 10	-9
+physics/physics/control_error	100 2	98
+physics/physics/control_error	5 3	2
+physics/physics/control_error	10 3	7
+physics/physics/control_error	-3 0	-3
 physics/physics/coulomb_s_law	1e-06 1e-06 1	0.008987551792299998
 physics/physics/coulomb_s_law	2 2.5 1	44937758961.5
 physics/physics/coulomb_s_law	0.5 1 0	ERR
@@ -5354,6 +5432,10 @@ physics/physics/energy_momentum_relation	1 2.5	8.987551787368176e+16
 physics/physics/energy_momentum_relation	0.25 10	2.246887946842064e+16
 physics/physics/energy_momentum_relation	5 0	4.493775893684088e+17
 physics/physics/energy_momentum_relation	0.5 7.5	4.4937758936840936e+16
+physics/physics/exponential_smoothing	10 20 0.5	15.0
+physics/physics/exponential_smoothing	8 12 0.25	9.0
+physics/physics/exponential_smoothing	10 20 0	10
+physics/physics/exponential_smoothing	10 20 1	20
 physics/physics/exponential_smoothing	0.5 0.5 -1	ERR
 physics/physics/exponential_smoothing	0.25 10 0.5	5.125
 physics/physics/exponential_smoothing	3 5 0.25	3.5
@@ -5611,6 +5693,8 @@ physics/physics/gravitational_time_dilation_from_radius	-1 0 100	-1.0
 physics/physics/gravitational_time_dilation_from_radius	0.25 3 3	ERR
 physics/physics/gravitational_time_dilation_from_radius	0.25 2 1	ERR
 physics/physics/gravitational_time_dilation_from_radius	0.25 -1 -3	ERR
+physics/physics/haversine_distance	0 0 0 0	0.0
+physics/physics/haversine_distance	0 0 0.017453292519943295 0	111194.92664455874
 physics/physics/haversine_distance	10 -3 10 1	ERR
 physics/physics/haversine_distance	100 0.25 -1 3	ERR
 physics/physics/haversine_distance	-3 0.5 -1 7.5	ERR
@@ -5997,6 +6081,7 @@ physics/physics/inductor_energy	0.25 -3	1.125
 physics/physics/inductor_energy	5 1	2.5
 physics/physics/inductor_energy	0 10	0.0
 physics/physics/inductor_energy	-1 5	-12.5
+physics/physics/kalman_predict_state	10 2 3	16
 physics/physics/kalman_predict_state	10 -1 10	0
 physics/physics/kalman_predict_state	1 10 0.5	6.0
 physics/physics/kalman_predict_state	3 2 2.5	8.0
@@ -6036,6 +6121,8 @@ physics/physics/kalman_predict_state	2.5 0.5 100	52.5
 physics/physics/kalman_predict_state	0 -1 5	-5
 physics/physics/kalman_predict_state	1 3 0.5	2.5
 physics/physics/kalman_predict_state	100 2.5 0.5	101.25
+physics/physics/kalman_predict_variance	1 0.25	1.25
+physics/physics/kalman_predict_variance	4 0	4
 physics/physics/kalman_predict_variance	-3 -1	ERR
 physics/physics/kalman_predict_variance	10 1	11
 physics/physics/kalman_predict_variance	7.5 3	10.5
@@ -6072,6 +6159,7 @@ physics/physics/kalman_predict_variance	2 2.5	4.5
 physics/physics/kalman_predict_variance	2 10	12
 physics/physics/kalman_predict_variance	0 3	3
 physics/physics/kalman_predict_variance	5 100	105
+physics/physics/kalman_update_state	10 4 14 4	12.0
 physics/physics/kalman_update_state	0.25 0.5 0 7.5	0.234375
 physics/physics/kalman_update_state	1 0 0.25 2	1.0
 physics/physics/kalman_update_state	-3 10 -1 100	-2.8181818181818183
@@ -6112,6 +6200,8 @@ physics/physics/kalman_update_state	10 -1 10 2	ERR
 physics/physics/kalman_update_state	100 10 2.5 -3	ERR
 physics/physics/kalman_update_state	-1 100 0.25 10	0.13636363636363624
 physics/physics/kalman_update_state	0.5 2.5 -3 3	-1.0909090909090908
+physics/physics/kalman_update_variance	4 4	2.0
+physics/physics/kalman_update_variance	0 1	0.0
 physics/physics/kalman_update_variance	-3 3	ERR
 physics/physics/kalman_update_variance	0.25 1	0.2
 physics/physics/kalman_update_variance	7.5 -3	ERR
@@ -6342,6 +6432,34 @@ physics/physics/lensmakers_equation	3 100 10	-5.5555555555555545
 physics/physics/lensmakers_equation	10 100 3	-0.34364261168384885
 physics/physics/lensmakers_equation	1 0.25 1	ERR
 physics/physics/lensmakers_equation	0.5 100 5	10.526315789473685
+physics/physics/local_east_north_up	2 10 2.5 10	ERR
+physics/physics/local_east_north_up	2.5 7.5 7.5 -3	ERR
+physics/physics/local_east_north_up	2 -1 0.25 0	ERR
+physics/physics/local_east_north_up	10 2.5 5 1	ERR
+physics/physics/local_east_north_up	2 0 5 100	ERR
+physics/physics/local_east_north_up	10 0 -3 0	ERR
+physics/physics/local_east_north_up	-3 2 2.5 -3	ERR
+physics/physics/local_east_north_up	7.5 100 2.5 -3	ERR
+physics/physics/local_east_north_up	7.5 3 0.25 0.5	ERR
+physics/physics/local_east_north_up	2.5 0.25 5 2	ERR
+physics/physics/local_east_north_up	-3 -1 0 -1	ERR
+physics/physics/local_east_north_up	2.5 10 0.5 2.5	ERR
+physics/physics/local_east_north_up	3 -1 -3 0.5	ERR
+physics/physics/local_east_north_up	5 0 2.5 5	ERR
+physics/physics/local_east_north_up	5 -3 0.5 3	ERR
+physics/physics/local_east_north_up	5 7.5 0.5 10	ERR
+physics/physics/local_east_north_up	10 0.25 0.25 -1	ERR
+physics/physics/local_east_north_up	7.5 -3 -1 7.5	ERR
+physics/physics/local_east_north_up	3 2.5 0.5 7.5	ERR
+physics/physics/local_east_north_up	10 3 100 100	ERR
+physics/physics/local_east_north_up	100 0.5 1 2.5	ERR
+physics/physics/local_east_north_up	10 100 1 1	ERR
+physics/physics/local_east_north_up	7.5 3 0 100	ERR
+physics/physics/local_east_north_up	2 3 5 3	ERR
+physics/physics/local_east_north_up	100 -3 2 2.5	ERR
+physics/physics/local_east_north_up	100 0 -3 1	ERR
+physics/physics/local_east_north_up	100 5 1 3	ERR
+physics/physics/local_east_north_up	100 0.5 3 7.5	ERR
 physics/physics/lorentz_factor	0.6	1.0
 physics/physics/lorentz_factor	0.8	1.0
 physics/physics/lorentz_factor	0	1.0
@@ -6908,6 +7026,204 @@ physics/physics/photon_momentum	2.5	2.65042806e-34
 physics/physics/photon_momentum	0	ERR
 physics/physics/photon_momentum	10	6.62607015e-35
 physics/physics/photon_momentum	0.5	1.32521403e-33
+physics/physics/pid_derivative	5 2 5 2	-7.5
+physics/physics/pid_derivative	-3 2 1 -1	ERR
+physics/physics/pid_derivative	3 0.25 0.5 -1	ERR
+physics/physics/pid_derivative	-1 0 10 0.25	40.0
+physics/physics/pid_derivative	5 100 10 0.25	1800.0
+physics/physics/pid_derivative	-3 -1 2 7.5	1.2
+physics/physics/pid_derivative	-3 10 2.5 100	-0.225
+physics/physics/pid_derivative	-1 10 7.5 5	-0.5
+physics/physics/pid_derivative	10 -3 -1 100	-0.2
+physics/physics/pid_derivative	2 0.25 0.25 10	0.0
+physics/physics/pid_derivative	0.5 1 100 10	-4.95
+physics/physics/pid_derivative	-3 -3 10 3	13.0
+physics/physics/pid_derivative	0.25 100 0.5 2.5	9.95
+physics/physics/pid_derivative	0 -3 0 0.5	0.0
+physics/physics/pid_derivative	2 0.5 7.5 3	-4.666666666666667
+physics/physics/pid_derivative	100 7.5 0 100	7.5
+physics/physics/pid_derivative	7.5 7.5 2.5 2.5	15.0
+physics/physics/pid_derivative	-1 0 2 1	2.0
+physics/physics/pid_derivative	0.25 2.5 1 0.25	1.5
+physics/physics/pid_derivative	0 0.25 7.5 5	-0.0
+physics/physics/pid_derivative	-1 100 10 2	-45.0
+physics/physics/pid_derivative	7.5 10 10 -3	ERR
+physics/physics/pid_derivative	2 2.5 10 1	-15.0
+physics/physics/pid_derivative	100 -3 2.5 2	-275.0
+physics/physics/pid_derivative	0 10 10 5	0.0
+physics/physics/pid_derivative	3 2.5 10 0	ERR
+physics/physics/pid_derivative	100 0 100 1	-10000.0
+physics/physics/pid_derivative	2 -1 10 1	-22.0
+physics/physics/pid_derivative	1 100 -1 5	20.2
+physics/physics/pid_derivative	100 0.25 10 0.25	-3900.0
+physics/physics/pid_derivative	2 -1 -1 -1	ERR
+physics/physics/pid_derivative	100 7.5 1 10	65.0
+physics/physics/pid_derivative	2 3 -1 0.25	32.0
+physics/physics/pid_derivative	0.5 3 5 0.25	-4.0
+physics/physics/pid_derivative	0.25 2 -1 -3	ERR
+physics/physics/pid_derivative	3 0 -3 0	ERR
+physics/physics/pid_derivative	0 0.25 100 0.5	-0.0
+physics/physics/pid_derivative	3 0 -3 0.25	36.0
+physics/physics/pid_derivative	3 0 100 0.25	-1200.0
+physics/physics/pid_derivative	3 0.5 5 10	-1.35
+physics/physics/pid_integral_state	0.5 2 -1	ERR
+physics/physics/pid_integral_state	0.5 0 100	0.5
+physics/physics/pid_integral_state	2.5 5 -1	ERR
+physics/physics/pid_integral_state	0.5 -3 2.5	-7.0
+physics/physics/pid_integral_state	10 3 100	310
+physics/physics/pid_integral_state	1 0.5 5	3.5
+physics/physics/pid_integral_state	10 -1 -1	ERR
+physics/physics/pid_integral_state	-3 2 0.5	-2.0
+physics/physics/pid_integral_state	7.5 0.25 7.5	9.375
+physics/physics/pid_integral_state	1 2.5 5	13.5
+physics/physics/pid_integral_state	0.5 0.25 7.5	2.375
+physics/physics/pid_integral_state	0.25 7.5 0	ERR
+physics/physics/pid_integral_state	0.5 2.5 3	8.0
+physics/physics/pid_integral_state	7.5 7.5 2.5	26.25
+physics/physics/pid_integral_state	0.5 2 7.5	15.5
+physics/physics/pid_integral_state	0.5 0 -1	ERR
+physics/physics/pid_integral_state	0 7.5 0	ERR
+physics/physics/pid_integral_state	2 -1 -3	ERR
+physics/physics/pid_integral_state	-1 10 0	ERR
+physics/physics/pid_integral_state	0.25 -1 10	-9.75
+physics/physics/pid_integral_state	7.5 100 0	ERR
+physics/physics/pid_integral_state	-1 0.25 -3	ERR
+physics/physics/pid_integral_state	1 7.5 2	16.0
+physics/physics/pid_integral_state	100 7.5 100	850.0
+physics/physics/pid_integral_state	0 1 1	1
+physics/physics/pid_integral_state	0.25 5 0.25	1.5
+physics/physics/pid_integral_state	0 1 10	10
+physics/physics/pid_integral_state	3 -3 0.5	1.5
+physics/physics/pid_integral_state	3 0.5 -3	ERR
+physics/physics/pid_integral_state	10 0.5 7.5	13.75
+physics/physics/pid_integral_state	0.25 10 10	100.25
+physics/physics/pid_integral_state	2 0.5 0	ERR
+physics/physics/pid_integral_state	100 0 100	100
+physics/physics/pid_integral_state	0.25 2.5 10	25.25
+physics/physics/pid_integral_state	100 5 2	110
+physics/physics/pid_integral_state	2.5 100 5	502.5
+physics/physics/pid_integral_state	100 0 7.5	100.0
+physics/physics/pid_integral_state	-3 0 2	-3
+physics/physics/pid_integral_state	0 2.5 1	2.5
+physics/physics/pid_integral_state	100 0.5 0.5	100.25
+physics/physics/pid_integral_term	5 -1 10 0	ERR
+physics/physics/pid_integral_term	3 2.5 100 -1	ERR
+physics/physics/pid_integral_term	3 2.5 0 5	7.5
+physics/physics/pid_integral_term	3 2.5 0 7.5	7.5
+physics/physics/pid_integral_term	-3 -3 0 5	9
+physics/physics/pid_integral_term	-3 1 5 0	ERR
+physics/physics/pid_integral_term	1 2.5 7.5 0.5	6.25
+physics/physics/pid_integral_term	5 10 2 3	80
+physics/physics/pid_integral_term	7.5 0.5 1 0.25	5.625
+physics/physics/pid_integral_term	7.5 10 1 -3	ERR
+physics/physics/pid_integral_term	0 0.25 2.5 3	0.0
+physics/physics/pid_integral_term	0.5 -3 0 2	-1.5
+physics/physics/pid_integral_term	1 -3 1 0.25	-2.75
+physics/physics/pid_integral_term	2 100 7.5 0.25	203.75
+physics/physics/pid_integral_term	7.5 2 1 0.25	16.875
+physics/physics/pid_integral_term	1 0.25 7.5 2.5	19.0
+physics/physics/pid_integral_term	-1 7.5 3 0.5	-9.0
+physics/physics/pid_integral_term	2 -1 0.5 -1	ERR
+physics/physics/pid_integral_term	0.5 1 5 10	25.5
+physics/physics/pid_integral_term	100 5 2.5 7.5	2375.0
+physics/physics/pid_integral_term	7.5 1 0.25 100	195.0
+physics/physics/pid_integral_term	100 100 -1 2	9800
+physics/physics/pid_integral_term	100 0 -1 -3	ERR
+physics/physics/pid_integral_term	10 0.5 0.5 100	505.0
+physics/physics/pid_integral_term	7.5 100 0.5 0.5	751.875
+physics/physics/pid_integral_term	5 100 0.5 2	505.0
+physics/physics/pid_integral_term	-3 10 -1 0.25	-29.25
+physics/physics/pid_integral_term	-1 7.5 7.5 100	-757.5
+physics/physics/pid_integral_term	0 2 3 7.5	0.0
+physics/physics/pid_integral_term	7.5 5 0.5 0.5	39.375
+physics/physics/pid_integral_term	-3 10 0.25 -3	ERR
+physics/physics/pid_integral_term	0.5 2.5 0 5	1.25
+physics/physics/pid_integral_term	3 1 -3 0.25	0.75
+physics/physics/pid_integral_term	0.5 1 -3 0.5	-0.25
+physics/physics/pid_integral_term	-3 0.25 2.5 0	ERR
+physics/physics/pid_integral_term	-1 2.5 7.5 100	-752.5
+physics/physics/pid_integral_term	3 5 10 3	105
+physics/physics/pid_integral_term	-1 7.5 7.5 0.5	-11.25
+physics/physics/pid_integral_term	0.5 -3 100 5	248.5
+physics/physics/pid_integral_term	10 100 100 -3	ERR
+physics/physics/pid_proportional	10 -1	-10
+physics/physics/pid_proportional	2 0	0
+physics/physics/pid_proportional	1 1	1
+physics/physics/pid_proportional	7.5 7.5	56.25
+physics/physics/pid_proportional	-1 5	-5
+physics/physics/pid_proportional	2 -3	-6
+physics/physics/pid_proportional	100 5	500
+physics/physics/pid_proportional	5 -1	-5
+physics/physics/pid_proportional	2 10	20
+physics/physics/pid_proportional	7.5 100	750.0
+physics/physics/pid_proportional	1 7.5	7.5
+physics/physics/pid_proportional	0.5 -1	-0.5
+physics/physics/pid_proportional	10 0.25	2.5
+physics/physics/pid_proportional	7.5 10	75.0
+physics/physics/pid_proportional	-1 0.25	-0.25
+physics/physics/pid_proportional	2 100	200
+physics/physics/pid_proportional	3 0	0
+physics/physics/pid_proportional	3 -1	-3
+physics/physics/pid_proportional	1 100	100
+physics/physics/pid_proportional	5 3	15
+physics/physics/pid_proportional	2.5 5	12.5
+physics/physics/pid_proportional	1 2.5	2.5
+physics/physics/pid_proportional	7.5 0.5	3.75
+physics/physics/pid_proportional	7.5 0	0.0
+physics/physics/pid_proportional	7.5 2.5	18.75
+physics/physics/pid_proportional	-3 10	-30
+physics/physics/pid_proportional	0.25 5	1.25
+physics/physics/pid_proportional	2 -1	-2
+physics/physics/pid_proportional	2.5 -3	-7.5
+physics/physics/pid_proportional	2 0.5	1.0
+physics/physics/pid_proportional	0 3	0
+physics/physics/pid_proportional	100 10	1000
+physics/physics/pid_proportional	0 5	0
+physics/physics/pid_proportional	-1 100	-100
+physics/physics/pid_proportional	-1 -3	3
+physics/physics/pid_proportional	2 2.5	5.0
+physics/physics/pid_proportional	1 10	10
+physics/physics/pid_proportional	0.5 1	0.5
+physics/physics/pid_proportional	100 0.5	50.0
+physics/physics/pid_sum	7.5 7.5 0	15.0
+physics/physics/pid_sum	-1 -1 1	-1
+physics/physics/pid_sum	0.5 -3 0.25	-2.25
+physics/physics/pid_sum	1 100 1	102
+physics/physics/pid_sum	5 3 -3	5
+physics/physics/pid_sum	100 10 10	120
+physics/physics/pid_sum	0 -3 2	-1
+physics/physics/pid_sum	5 0 0.25	5.25
+physics/physics/pid_sum	2.5 5 0.25	7.75
+physics/physics/pid_sum	0.25 -1 -1	-1.75
+physics/physics/pid_sum	3 10 3	16
+physics/physics/pid_sum	5 5 7.5	17.5
+physics/physics/pid_sum	0.25 -1 100	99.25
+physics/physics/pid_sum	-3 5 2.5	4.5
+physics/physics/pid_sum	0.5 -1 10	9.5
+physics/physics/pid_sum	2.5 3 7.5	13.0
+physics/physics/pid_sum	3 0.25 -3	0.25
+physics/physics/pid_sum	0.25 2.5 10	12.75
+physics/physics/pid_sum	0.5 10 7.5	18.0
+physics/physics/pid_sum	-1 0.5 1	0.5
+physics/physics/pid_sum	2.5 0 2.5	5.0
+physics/physics/pid_sum	2.5 100 2	104.5
+physics/physics/pid_sum	1 100 0.25	101.25
+physics/physics/pid_sum	2 100 1	103
+physics/physics/pid_sum	100 10 0.5	110.5
+physics/physics/pid_sum	100 2 10	112
+physics/physics/pid_sum	0.5 -3 -3	-5.5
+physics/physics/pid_sum	5 2 100	107
+physics/physics/pid_sum	0.5 -1 7.5	7.0
+physics/physics/pid_sum	-1 1 0.25	0.25
+physics/physics/pid_sum	1 2 3	6
+physics/physics/pid_sum	10 -1 100	109
+physics/physics/pid_sum	100 1 2.5	103.5
+physics/physics/pid_sum	1 2.5 0	3.5
+physics/physics/pid_sum	5 5 0	10
+physics/physics/pid_sum	7.5 3 100	110.5
+physics/physics/pid_sum	1 3 -3	1
+physics/physics/pid_sum	-1 0.25 100	99.25
+physics/physics/pid_sum	100 -3 5	102
 physics/physics/poiseuille_flow	0.01 1000 0.001 1	0.003926990816987241
 physics/physics/poiseuille_flow	0.02 1000 0.001 1	0.06283185307179585
 physics/physics/poiseuille_flow	100 7.5 0.25 2.5	471238898.03846896

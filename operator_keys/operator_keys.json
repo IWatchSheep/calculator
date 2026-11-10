@@ -1,6 +1,6 @@
 {
- "count": 576,
- "ready": 504,
+ "count": 584,
+ "ready": 512,
  "reference": 72,
  "operators": [
   {
@@ -19372,7 +19372,44 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0,
+      0,
+      0,
+      0.017453292519943295
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      0,
+      0,
+      0.017453292519943295,
+      0
+     ],
+     "expected": 1.5707963267948966
+    },
+    {
+     "args": [
+      0,
+      0,
+      0,
+      -0.017453292519943295
+     ],
+     "expected": 3.141592653589793
+    },
+    {
+     "args": [
+      0,
+      0,
+      -0.017453292519943295,
+      0
+     ],
+     "expected": -1.5707963267948966
+    }
+   ]
   },
   {
    "key": "physics/physics/bernoulli_equation",
@@ -19825,6 +19862,59 @@
    ]
   },
   {
+   "key": "physics/physics/complementary_filter",
+   "name": "Complementary filter",
+   "symbol": "α(θ + ωt) + (1 − α)θₘ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "θ = α (θ₀ + ω t) + (1 − α) θₘ   (the gyro prediction blended with a measured angle; α close to 1 trusts the gyro)",
+   "status": "Ready",
+   "inputs": [
+    "previous",
+    "gyro",
+    "dt",
+    "measured",
+    "alpha"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ ( □ + □ □ ) + ( 1 − □ ) □",
+   "compute_signature": "compute(previous, gyro, dt, measured, alpha)",
+   "compute_params": [
+    {
+     "name": "previous",
+     "kind": "required"
+    },
+    {
+     "name": "gyro",
+     "kind": "required"
+    },
+    {
+     "name": "dt",
+     "kind": "required"
+    },
+    {
+     "name": "measured",
+     "kind": "required"
+    },
+    {
+     "name": "alpha",
+     "kind": "required"
+    }
+   ],
+   "required_args": 5,
+   "max_args": 5,
+   "varargs": false,
+   "arity": 5,
+   "examples": []
+  },
+  {
    "key": "physics/physics/compton_shift",
    "name": "Compton wavelength shift",
    "symbol": "Δλ = (h/mc)(1 − cos θ)",
@@ -19944,6 +20034,41 @@
      "expected": 5
     }
    ]
+  },
+  {
+   "key": "physics/physics/control_error",
+   "name": "Control error",
+   "symbol": "e = setpoint − measured",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "e = setpoint − measured   (positive means too low)",
+   "status": "Ready",
+   "inputs": [
+    "setpoint",
+    "measured"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ − □",
+   "compute_signature": "compute(setpoint, measured)",
+   "compute_params": [
+    {
+     "name": "setpoint",
+     "kind": "required"
+    },
+    {
+     "name": "measured",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/coulomb_s_law",
@@ -20266,7 +20391,53 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      4,
+      1.5707963267948966,
+      0.5
+     ],
+     "expected": [
+      1,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      2,
+      0,
+      3
+     ],
+     "expected": [
+      6,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      -2,
+      0,
+      3
+     ],
+     "expected": [
+      -6,
+      0
+     ]
+    }
+   ]
   },
   {
    "key": "physics/physics/density",
@@ -20640,7 +20811,40 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      20,
+      0.5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      8,
+      12,
+      0.25
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      10,
+      20,
+      0
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      10,
+      20,
+      1
+     ],
+     "expected": 20
+    }
+   ]
   },
   {
    "key": "physics/physics/faradays_law",
@@ -21016,7 +21220,26 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      0,
+      0,
+      0.017453292519943295,
+      0
+     ],
+     "expected": 111194.92664455874
+    }
+   ]
   },
   {
    "key": "physics/physics/heat",
@@ -21557,7 +21780,16 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      2,
+      3
+     ],
+     "expected": 16
+    }
+   ]
   },
   {
    "key": "physics/physics/kalman_predict_variance",
@@ -21592,7 +21824,22 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      1,
+      0.25
+     ],
+     "expected": 1.25
+    },
+    {
+     "args": [
+      4,
+      0
+     ],
+     "expected": 4
+    }
+   ]
   },
   {
    "key": "physics/physics/kalman_update_state",
@@ -21639,7 +21886,17 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      4,
+      14,
+      4
+     ],
+     "expected": 12
+    }
+   ]
   },
   {
    "key": "physics/physics/kalman_update_variance",
@@ -21674,7 +21931,22 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      4,
+      4
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      0,
+      1
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/kinetic_energy",
@@ -21925,6 +22197,53 @@
      "expected": 0.2
     }
    ]
+  },
+  {
+   "key": "physics/physics/local_east_north_up",
+   "name": "Local east, north, up",
+   "symbol": "a small GPS step on the flat Earth",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "east = 6371000 cos(lat) Δlon,  north = 6371000 Δlat,  up = Δheight   (radians and metres; the flat patch, not the haversine arc)",
+   "status": "Ready",
+   "inputs": [
+    "lat",
+    "delta_lat",
+    "delta_lon",
+    "delta_height"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( 6371000 cos □ □ , 6371000 □ , □ )",
+   "compute_signature": "compute(lat, delta_lat, delta_lon, delta_height)",
+   "compute_params": [
+    {
+     "name": "lat",
+     "kind": "required"
+    },
+    {
+     "name": "delta_lat",
+     "kind": "required"
+    },
+    {
+     "name": "delta_lon",
+     "kind": "required"
+    },
+    {
+     "name": "delta_height",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
   },
   {
    "key": "physics/physics/lorentz_factor",
@@ -23030,6 +23349,217 @@
      "expected": 6.62607015e-34
     }
    ]
+  },
+  {
+   "key": "physics/physics/pid_derivative",
+   "name": "PID derivative",
+   "symbol": "D = Kd (e − e₀) / t",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "D = Kd (e − e₀) / t   (the derivative contribution)",
+   "status": "Ready",
+   "inputs": [
+    "kd",
+    "error",
+    "previous_error",
+    "dt"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ ( □ − □ ) / □",
+   "compute_signature": "compute(kd, error, previous_error, dt)",
+   "compute_params": [
+    {
+     "name": "kd",
+     "kind": "required"
+    },
+    {
+     "name": "error",
+     "kind": "required"
+    },
+    {
+     "name": "previous_error",
+     "kind": "required"
+    },
+    {
+     "name": "dt",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/pid_integral_state",
+   "name": "PID integral state",
+   "symbol": "I ← I + e t",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "I ← I + e t   (the stored integral the robot keeps for the next step; not part of the four-row sum)",
+   "status": "Ready",
+   "inputs": [
+    "integral",
+    "error",
+    "dt"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + □ □",
+   "compute_signature": "compute(integral, error, dt)",
+   "compute_params": [
+    {
+     "name": "integral",
+     "kind": "required"
+    },
+    {
+     "name": "error",
+     "kind": "required"
+    },
+    {
+     "name": "dt",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/pid_integral_term",
+   "name": "PID integral term",
+   "symbol": "Iout = Ki (I + e t)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "Iout = Ki (I + e t)   (the integral contribution: this step's error is added before multiplying by Ki)",
+   "status": "Ready",
+   "inputs": [
+    "ki",
+    "integral",
+    "error",
+    "dt"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ ( □ + □ □ )",
+   "compute_signature": "compute(ki, integral, error, dt)",
+   "compute_params": [
+    {
+     "name": "ki",
+     "kind": "required"
+    },
+    {
+     "name": "integral",
+     "kind": "required"
+    },
+    {
+     "name": "error",
+     "kind": "required"
+    },
+    {
+     "name": "dt",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/pid_proportional",
+   "name": "PID proportional",
+   "symbol": "P = Kp e",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "P = Kp e   (the proportional term)",
+   "status": "Ready",
+   "inputs": [
+    "kp",
+    "error"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ □",
+   "compute_signature": "compute(kp, error)",
+   "compute_params": [
+    {
+     "name": "kp",
+     "kind": "required"
+    },
+    {
+     "name": "error",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/pid_sum",
+   "name": "PID output",
+   "symbol": "P + I + D",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "P + I + D   (the sum of the three terms; the menu operator opens four rows joined by →, the answer is the last row)",
+   "status": "Ready",
+   "inputs": [
+    "p",
+    "i",
+    "d"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + □ + □",
+   "compute_signature": "compute(p, i, d)",
+   "compute_params": [
+    {
+     "name": "p",
+     "kind": "required"
+    },
+    {
+     "name": "i",
+     "kind": "required"
+    },
+    {
+     "name": "d",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
   },
   {
    "key": "physics/physics/poiseuille_flow",

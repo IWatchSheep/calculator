@@ -677,3 +677,10 @@ pub fn dead_reckoning(a: &[Value]) -> R {
     need(t >= 0.0, "time cannot be negative")?;
     Ok(vlist(vec![position[0] + speed * heading.cos() * t, position[1] + speed * heading.sin() * t]))
 }
+
+pub fn local_east_north_up(a: &[Value]) -> R {
+    // lat, delta_lat, delta_lon, delta_height
+    let (lat, dlat, dlon, dh) = (num(&a[0])?, num(&a[1])?, num(&a[2])?, num(&a[3])?);
+    need(lat.abs() <= std::f64::consts::FRAC_PI_2, "latitude is past the pole")?;
+    Ok(vlist(vec![6371000.0 * lat.cos() * dlon, 6371000.0 * dlat, dh]))
+}

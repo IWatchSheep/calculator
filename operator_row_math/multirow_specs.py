@@ -228,6 +228,17 @@ SPECS = {
         ],
         "joins": ["→", "→"],
     },
+    "physics/physics/pid_sum": {
+        "title": "PID controller, one step: the control output from the error. Row 1 is the proportional push P = Kp e from the current error. Row 2 is the integral push Ki (I + e t) from the accumulated error; its error box copies Row 1's error. Row 3 is the derivative push Kd (e − e₀) / t from how fast the error is changing; its error box copies Row 1's error and its time step copies Row 2's. Row 4 adds the three pushes: P from Row 1, I from Row 2, D from Row 3. The rows are joined by →: the answer is the last row's answer, the control output. The robot keeps the next integral with its own operator, pid_integral_state.",
+        "rows": [
+            {"op": "physics/physics/pid_proportional", "title": "The push from the current error."},
+            {"op": "physics/physics/pid_integral_term", "title": "The push from the accumulated error. The error box copies Row 1."},
+            {"op": "physics/physics/pid_derivative", "title": "The push from how fast the error is changing. The error box copies Row 1 and the time step copies Row 2."},
+            {"op": "physics/physics/pid_sum", "title": "The control output. P reads Row 1, I reads Row 2 and D reads Row 3.", "fill": {0: {"chain": 0}, 1: {"chain": 1}, 2: {"chain": 2}}},
+        ],
+        "joins": ["→", "→", "→"],
+        "links": [((1, (2,)), (0, (1,))), ((2, (1,)), (0, (1,))), ((2, (3,)), (1, (3,)))],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

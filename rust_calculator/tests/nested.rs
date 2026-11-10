@@ -657,3 +657,57 @@ fn the_kalman_step_in_three_rows_gives_the_plan_numbers() {
     assert_eq!(doc.rows[2].inputs[1], "4");
     assert_eq!(number(&doc, 2), 15.0);
 }
+
+#[test]
+fn the_control_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let ph = "physics/physics/";
+    let call = |key: &str, xs: &[f64]| -> Result<Value, String> {
+        let op = ops::get(&format!("{ph}{key}")).unwrap();
+        let args: Vec<Value> = xs.iter().map(|x| Value::Number(*x)).collect();
+        match op.compute_v {
+            Some(f) => f(&args),
+            None => (op.compute)(xs),
+        }
+    };
+    let one = |key: &str, xs: &[f64]| -> f64 {
+        match call(key, xs).unwrap() {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let said = |key: &str, xs: &[f64]| call(key, xs).unwrap_err();
+    assert_eq!(one("complementary_filter", &[0., 0.1, 0.1, 0.02, 0.98]), 0.010200000000000002);
+    assert_eq!(one("control_error", &[10., 7.]), 3.0);
+    assert_eq!(one("control_error", &[7., 10.]), -3.0);
+    assert_eq!(one("pid_proportional", &[2., 3.]), 6.0);
+    assert_eq!(one("pid_integral_state", &[1., 3., 0.5]), 2.5);
+    assert_eq!(one("pid_integral_term", &[4., 1., 3., 0.5]), 10.0);
+    assert_eq!(one("pid_derivative", &[0.5, 3., 1., 0.5]), 2.0);
+    assert_eq!(one("pid_sum", &[6., 10., 2.]), 18.0);
+    match call("local_east_north_up", &[1.0471975511965976, 0., 0.017453292519943295, 0.]).unwrap() {
+        Value::List(v) => {
+            let got: Vec<f64> = v.iter().map(|x| if let Value::Number(n) = x { *n } else { panic!() }).collect();
+            assert!((got[0] - 55597.463322279385).abs() < 1e-6 && got[1] == 0.0 && got[2] == 0.0, "{got:?}");
+        }
+        o => panic!("{o:?}"),
+    }
+    assert!(said("complementary_filter", &[0., 0.1, 0., 0.02, 0.98]).contains("time step must be positive"));
+    assert!(said("complementary_filter", &[0., 0.1, 0.1, 0.02, 1.5]).contains("the weight must be from 0 to 1"));
+    assert!(said("local_east_north_up", &[1.6, 0., 0., 0.]).contains("latitude is past the pole"));
+    assert!(said("pid_integral_state", &[1., 3., 0.]).contains("time step must be positive"));
+    assert!(said("pid_integral_term", &[4., 1., 3., 0.]).contains("time step must be positive"));
+    assert!(said("pid_derivative", &[0.5, 3., 1., -0.5]).contains("time step must be positive"));
+}
+
+#[test]
+fn the_pid_output_in_four_rows_gives_the_plan_numbers() {
+    let key = "physics/physics/pid_sum";
+    let mut doc = chain_doc(key, &[(0, 0, "2"), (0, 1, "3"), (1, 0, "4"), (1, 1, "1"), (1, 3, "0.5"), (2, 0, "0.5"), (2, 2, "1")]);
+    doc.equals_all().unwrap();
+    assert_eq!([number(&doc, 0), number(&doc, 1), number(&doc, 2), number(&doc, 3)], [6.0, 10.0, 2.0, 18.0]);
+    assert_eq!(doc.rows[1].inputs[2], "3"); // the error is copied from Row 1
+    assert_eq!(doc.rows[2].inputs[1], "3");
+    assert_eq!(doc.rows[2].inputs[3], "0.5"); // the time step of Row 3 is copied from Row 2
+    assert_eq!((doc.rows[3].inputs[0].as_str(), doc.rows[3].inputs[1].as_str(), doc.rows[3].inputs[2].as_str()), ("6", "10", "2"));
+}

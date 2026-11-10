@@ -294,6 +294,18 @@ static KALMAN: Spec = Spec {
     links: &[],
 };
 
+static PID: Spec = Spec {
+    title: "PID controller, one step: the control output from the error. Row 1 is the proportional push P = Kp e from the current error. Row 2 is the integral push Ki (I + e t) from the accumulated error; its error box copies Row 1's error. Row 3 is the derivative push Kd (e − e₀) / t from how fast the error is changing; its error box copies Row 1's error and its time step copies Row 2's. Row 4 adds the three pushes: P from Row 1, I from Row 2, D from Row 3. The rows are joined by →: the answer is the last row's answer, the control output. The robot keeps the next integral with its own operator, pid_integral_state.",
+    rows: &[
+        RowSpec { title: "The push from the current error.", node: NodeSpec { op: "physics/physics/pid_proportional", fill: &[] } },
+        RowSpec { title: "The push from the accumulated error. The error box copies Row 1.", node: NodeSpec { op: "physics/physics/pid_integral_term", fill: &[] } },
+        RowSpec { title: "The push from how fast the error is changing. The error box copies Row 1 and the time step copies Row 2.", node: NodeSpec { op: "physics/physics/pid_derivative", fill: &[] } },
+        RowSpec { title: "The control output. P reads Row 1, I reads Row 2 and D reads Row 3.", node: NodeSpec { op: "physics/physics/pid_sum", fill: &[(0, Fill::Row(0)), (1, Fill::Row(1)), (2, Fill::Row(2))] } },
+    ],
+    joins: &["→", "→", "→"],
+    links: &[((1, &[2]), (0, &[1])), ((2, &[1]), (0, &[1])), ((2, &[3]), (1, &[3]))],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -311,6 +323,7 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/statistics_and_probability/sample_standard_deviation" => &SAMPLE_STANDARD_DEVIATION,
         "physics/physics/gravitational_time_dilation" => &GRAVITATIONAL_TIME_DILATION,
         "physics/physics/kalman_update_state" => &KALMAN,
+        "physics/physics/pid_sum" => &PID,
         "physics/physics/relativistic_kinetic_energy" => &KINETIC_ENERGY,
         "physics/physics/relativistic_momentum" => &MOMENTUM,
         "physics/physics/length_contraction" => &LENGTH_CONTRACTION,
