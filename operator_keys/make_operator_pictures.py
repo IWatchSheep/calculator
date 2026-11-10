@@ -30,12 +30,19 @@ KEEP = os.path.join(ROOT, "operator_pictures_one_line")      # the old one-line 
 
 
 def font(size):
-    for path in (
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        os.path.join(FONT_DIR, "segoeui.ttf"),
-        os.path.join(FONT_DIR, "cambria.ttc"),
-    ):
+    """The formula font: Cambria, like every other operator picture (the others are only fallbacks for a computer without Windows fonts)."""
+    for path, index in ((os.path.join(FONT_DIR, "cambria.ttc"), 0), (os.path.join(FONT_DIR, "georgia.ttf"), 0), (os.path.join(FONT_DIR, "times.ttf"), 0),
+                        ("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", 0), ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 0)):
+        try:
+            return ImageFont.truetype(path, size, index=index)
+        except OSError:
+            continue
+    return ImageFont.load_default()
+
+
+def small_font(size):
+    """The font of the word list under a formula (Segoe UI, like the description line)."""
+    for path in (os.path.join(FONT_DIR, "segoeui.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"):
         try:
             return ImageFont.truetype(path, size)
         except OSError:
@@ -168,11 +175,12 @@ def redraw(key, source, dest):
     formula_w = sum(colw) + gap * (columns - 1) + (sum(tail_w) + gap * len(tail_w) if tail else 0)
 
     words = getattr(m, "WORDS", {})
-    word_rows = [(shown(left[i][1]), words[i][0], words[i][1]) for i in sorted(words) if i < n and i in placed]
+    # one line for every card that has words: the card's symbol (a boxed number or answer: the box exactly as drawn above), its label, its context
+    word_rows = [(box_of[i] if i in box_of else shown(left[i][1]), words[i][0], words[i][1]) for i in sorted(words) if i < n and i in placed]
     W = 1040 if style == "A" else max(int(formula_w) + 68, title_right + 34, 120)
     W = max(W, int(formula_w) + 68)
     single = box_h if style == "B" else 58
-    height = old.height + (band_h - single) + 18 * len(word_rows)
+    height = old.height + (band_h - single) + 24 * len(word_rows)
     out = Image.new("RGB", (W, height), "white")
     d = ImageDraw.Draw(out)
     head = 72 if style == "A" else 44
@@ -214,11 +222,18 @@ def redraw(key, source, dest):
         else:
             text(x + w / 2, cy, v, 0, 0)
         x += w + gap
-    f_word = font(15)
+    f_word = small_font(15)
     for n_line, (symbol, label, context) in enumerate(word_rows):
-        d.text((40, top_y + band_h + 8 + 18 * n_line), "%s   %s  -  %s" % (symbol, label, context), font=f_word, fill="#4a5a78")
+        y_line = top_y + band_h + 8 + 24 * n_line
+        if isinstance(symbol, str):
+            d.text((40, y_line + 10), symbol, font=font(19), fill="#1c2b3a", anchor="lm")
+        else:
+            small = symbol.copy()
+            small.thumbnail((74, 24), Image.LANCZOS)
+            out.paste(small, (40, y_line + 10 - small.height // 2))
+        d.text((128, y_line + 10), "%s  -  %s" % (label, context), font=f_word, fill="#4a5a78", anchor="lm")
     if desc is not None:
-        out.paste(desc, (36 + 2, top_y + band_h + 39 + 18 * len(word_rows)))
+        out.paste(desc, (36 + 2, top_y + band_h + 39 + 24 * len(word_rows)))
     out.save(dest, "JPEG", quality=92)
 
 

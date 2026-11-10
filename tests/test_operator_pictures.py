@@ -193,11 +193,20 @@ class InTheWindow(unittest.TestCase):
         box.insert(0, text)
         box.event_generate("<KeyRelease>")
 
-    def test_the_label_and_context_boxes_take_the_words_you_type(self):
+    def test_an_operator_opens_with_its_words_in_the_boxes(self):
         self.app._place_operator_row("physics/physics/gravitation")
         self.app.update()
+        label, context = self.app._card_words(0)[0]                          # the answer card of F = G m1 m2 / r^2
+        self.assertTrue(label and context)
+        frame = self.card_frames()[0]
+        self.assertEqual((frame.label_box.get(), frame.context_box.get()), (label, context))
+        self.assertEqual(self.app.rows[0]["words"], {})                      # nothing typed yet: these are the operator's own words
+
+    def test_the_label_and_context_boxes_take_the_words_you_type(self):
+        self.app._place_operator_row("math/arithmetic/addition")             # an operator that comes with no words
+        self.app.update()
         frames = self.card_frames()
-        self.assertEqual(len(frames), len(self.app._cards(0)) - 1)           # every card but the / of the fraction has its Label / Item and Context boxes
+        self.assertEqual(len(frames), len(self.app._cards(0)))               # every card has its Label / Item and Context boxes
         self.type_word(frames[0].label_box, "force")
         self.type_word(frames[0].context_box, "newtons")
         self.assertEqual(self.app.rows[0]["words"][0], ("force", "newtons"))
@@ -207,8 +216,21 @@ class InTheWindow(unittest.TestCase):
         self.assertEqual((again.label_box.get(), again.context_box.get()), ("force", "newtons"))
         self.assertEqual(self.app._card_words(0)[0], ("force", "newtons"))
 
-    def test_the_console_puts_a_word_into_the_box_last_clicked(self):
+    def test_words_typed_over_the_operators_own_words_replace_them(self):
         self.app._place_operator_row("physics/physics/gravitation")
+        self.app.update()
+        box = self.card_frames()[0].label_box
+        box.focus_force()
+        box.update()
+        box.event_generate("<FocusIn>")
+        box.delete(0, "end")                                                 # erase the words, then type different ones
+        box.insert(0, "pull")
+        box.event_generate("<KeyRelease>")
+        self.assertEqual(self.app._card_words(0)[0][0], "pull")
+        self.assertTrue(self.app._card_words(0)[0][1])                       # the Context box still has its own words
+
+    def test_the_console_puts_a_word_into_the_box_last_clicked(self):
+        self.app._place_operator_row("math/arithmetic/addition")
         self.app.update()
         self.card_frames()[2].label_box.event_generate("<FocusIn>")
         self.app._apply_word(0, "pens")
@@ -218,10 +240,10 @@ class InTheWindow(unittest.TestCase):
         self.assertEqual(self.app._card_words(0)[2], ("pens", "in the drawer"))
 
     def test_the_words_of_a_row_are_forgotten_when_its_math_changes(self):
-        self.app._place_operator_row("physics/physics/gravitation")
+        self.app._place_operator_row("math/arithmetic/addition")
         self.type_word(self.card_frames()[0].label_box, "force")
         self.assertEqual(self.app.rows[0]["words"][0][0], "force")
-        self.app._place_operator_row("physics/physics/gravitation")
+        self.app._place_operator_row("math/arithmetic/addition")
         self.assertEqual(self.app.rows[0]["words"], {})
 
     def test_the_answer_box_fills_in_and_a_repeated_variable_is_one_input(self):

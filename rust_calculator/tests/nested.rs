@@ -3,7 +3,7 @@
 use rust_calculator::layout::CardKind;
 use rust_calculator::multirow;
 use rust_calculator::ops;
-use rust_calculator::row::Document;
+use rust_calculator::row::{Document, Join};
 
 fn shown(doc: &Document) -> String {
     doc.rows[0].flatten().iter().map(|c| if c.text.is_empty() { "□".to_string() } else { c.text.clone() }).collect::<Vec<_>>().join(" ")
@@ -105,4 +105,15 @@ fn heat_equation_links_the_boxes_of_row_two_to_row_one() {
     assert_eq!(doc.rows[1].slot_text(&[1, 0]).unwrap(), "x**2 + y**2");
     assert_eq!(doc.rows[1].slot_text(&[1, 1]).unwrap(), "1, 2");
     assert!(doc.rows.iter().all(|r| r.flatten().iter().any(|c| c.kind == CardKind::Out) || true));
+}
+
+#[test]
+fn the_exterior_derivative_and_the_direct_sum_open_on_two_rows() {
+    for (key, rows) in [("math/differential_geometry_and_tensors/exterior_derivative", 2), ("math/abstract_algebra/direct_sum", 2)] {
+        let mut doc = Document::new();
+        doc.apply_template(ops::get(key).unwrap().key, multirow::get(key).unwrap()).unwrap();
+        let placed: Vec<_> = doc.rows.iter().filter(|r| r.operator().is_some()).collect();
+        assert_eq!(placed.len(), rows, "{key}");
+        assert_eq!(doc.rows[1].join, Join::Eq, "{key}");
+    }
 }
