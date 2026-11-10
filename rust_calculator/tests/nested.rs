@@ -835,3 +835,28 @@ fn a_star_finds_the_path_and_declines_like_the_python_one() {
     assert!(run("A: B=1", "A: 0, 0", "A", "B").unwrap_err().contains("each node needs a position"));
     assert!(run("A: B=1", "A: 0, 0; B: 1, 0; C: 2, 0", "A", "C").unwrap_err().contains("no path"));
 }
+
+#[test]
+fn the_schwarzschild_geometry_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call("schwarzschild_g_tt", &[4., 2.]).unwrap(), -0.5);
+    assert_eq!(call("schwarzschild_g_rr", &[4., 2.]).unwrap(), 2.0);
+    assert_eq!(call("photon_sphere_radius", &[2.]).unwrap(), 3.0);
+    assert_eq!(call("isco_radius", &[2.]).unwrap(), 6.0);
+    assert_eq!(call("schwarzschild_g_tt", &[4., 0.]).unwrap(), -1.0);
+    for key in ["schwarzschild_g_tt", "schwarzschild_g_rr"] {
+        assert!(call(key, &[0., 2.]).unwrap_err().contains("a radius must be positive"));
+        assert!(call(key, &[4., -1.]).unwrap_err().contains("the horizon radius cannot be negative"));
+        assert!(call(key, &[2., 2.]).unwrap_err().contains("r is not outside the horizon"));
+        assert!(call(key, &[1., 2.]).unwrap_err().contains("r is not outside the horizon"));
+    }
+    for key in ["photon_sphere_radius", "isco_radius"] {
+        assert!(call(key, &[0.]).unwrap_err().contains("the horizon radius must be positive"));
+    }
+}

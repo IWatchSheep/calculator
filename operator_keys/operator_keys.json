@@ -1,6 +1,6 @@
 {
- "count": 599,
- "ready": 527,
+ "count": 603,
+ "ready": 531,
  "reference": 72,
  "operators": [
   {
@@ -22171,6 +22171,42 @@
    ]
   },
   {
+   "key": "physics/physics/isco_radius",
+   "name": "Innermost stable circular orbit",
+   "symbol": "r = 6GM/c² = 3 Rs",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r = 6GM/c² = 3 Rs   (the closest stable circular orbit of a massive particle around a non-spinning mass)",
+   "status": "Ready",
+   "inputs": [
+    "Rs"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 3 × □",
+   "compute_signature": "compute(Rs)",
+   "compute_params": [
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      2
+     ],
+     "expected": 6
+    }
+   ]
+  },
+  {
    "key": "physics/physics/kalman_predict_state",
    "name": "Kalman predict state",
    "symbol": "x′ = x + ut",
@@ -23869,6 +23905,42 @@
       1
      ],
      "expected": 6.62607015e-34
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/photon_sphere_radius",
+   "name": "Photon sphere",
+   "symbol": "r = 3GM/c² = 1.5 Rs",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r = 3GM/c² = 1.5 Rs   (the radius of the unstable circular orbit of a light ray)",
+   "status": "Ready",
+   "inputs": [
+    "Rs"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 1.5 × □",
+   "compute_signature": "compute(Rs)",
+   "compute_params": [
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
     }
    ]
   },
@@ -25784,6 +25856,92 @@
       10
      ],
      "expected": 10
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_g_rr",
+   "name": "Schwarzschild g_rr",
+   "symbol": "g_rr = 1/(1 − Rs/r)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "g_rr = 1 / (1 − Rs/r)   (the radial coefficient of the Schwarzschild metric outside a spherical mass; r and Rs in metres)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 1 / ( 1 − □ / □ )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      4,
+      2
+     ],
+     "expected": 2
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_g_tt",
+   "name": "Schwarzschild g_tt",
+   "symbol": "g_tt = −(1 − Rs/r)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "g_tt = −(1 − Rs/r)   (the time coefficient of the Schwarzschild metric outside a spherical mass, signature (−, +, +, +); r and Rs in metres)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = − ( 1 − □ / □ )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      4,
+      2
+     ],
+     "expected": -0.5
     }
    ]
   },

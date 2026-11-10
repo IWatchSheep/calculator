@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 599)
+        self.assertEqual(len(self.ops), 603)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 599)
+        self.assertEqual(len(status), 603)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -278,6 +278,8 @@ CASES = [
     (PH + "potential_field_step", ([0, 0, 0], [10, 0, 0], [1, 0, 0], 2, 1, 1), [9.5, 0, 0]),
     (PH + "potential_field_step", ([0, 0, 0], [10, 0, 0], [-1, 0, 0], 2, 1, 1), [10.5, 0, 0]),
     (PH + "potential_field_step", ([0, 0, 0], [3, 0, 0], [0, 10, 0], 2, 1, 1), [3, 0, 0]),
+    (PH + "schwarzschild_g_tt", (4, 2), -0.5), (PH + "schwarzschild_g_rr", (4, 2), 2),
+    (PH + "photon_sphere_radius", (2,), 3), (PH + "isco_radius", (2,), 6),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1109,6 +1111,41 @@ class SegmentConeFieldAndAStarTests(unittest.TestCase):
         self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0], "B": [1]}, "A", "B"), "each node needs a position")
         self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0]}, "A", "B"), "each node needs a position")
         self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0], "B": [1, 0], "C": [2, 0]}, "A", "C"), "no path")
+
+
+class SchwarzschildGeometryTests(unittest.TestCase):
+    """General relativity, job 1: the Schwarzschild metric outside a spherical mass, the photon sphere and the ISCO."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        for key in ("schwarzschild_g_tt", "schwarzschild_g_rr"):
+            self.says(key, (0, 2), "a radius must be positive")
+            self.says(key, (-1, 2), "a radius must be positive")
+            self.says(key, (4, -1), "the horizon radius cannot be negative")
+            self.says(key, (2, 2), "r is not outside the horizon")
+            self.says(key, (1, 2), "r is not outside the horizon")
+        for key in ("photon_sphere_radius", "isco_radius"):
+            self.says(key, (0,), "the horizon radius must be positive")
+            self.says(key, (-2,), "the horizon radius must be positive")
+
+    def test_the_geometry_agrees_with_the_existing_operators(self):
+        import math
+        rs = get(PH + "schwarzschild_radius").compute(1.989e30)             # the Sun
+        g_tt, g_rr = get(PH + "schwarzschild_g_tt").compute, get(PH + "schwarzschild_g_rr").compute
+        for r in (2 * rs, 3 * rs, 10 * rs, 1e9):
+            self.assertAlmostEqual(g_tt(r, rs) * g_rr(r, rs), -1, places=12)              # g_tt g_rr = -1 for the Schwarzschild metric
+            # sqrt(-g_tt) is the factor gravitational_time_dilation gives a static clock at r (far-away time 1)
+            self.assertAlmostEqual(math.sqrt(-g_tt(r, rs)), get(PH + "gravitational_time_dilation_from_radius").compute(1, rs, r), places=12)
+        self.assertAlmostEqual(g_tt(1e30, rs), -1, places=12)                                # far away: flat space
+        self.assertEqual(g_tt(4, 0), -1)                                                      # no mass, no curvature
+        photon, isco = get(PH + "photon_sphere_radius").compute, get(PH + "isco_radius").compute
+        self.assertEqual((photon(rs), isco(rs)), (1.5 * rs, 3 * rs))
+        self.assertLess(rs, photon(rs))
+        self.assertLess(photon(rs), isco(rs))                                                 # horizon < photon sphere < ISCO
 
 
 # --------------------------------------------------------------------------- 3. error handling

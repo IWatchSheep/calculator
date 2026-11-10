@@ -616,6 +616,10 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Distance to a segment | distance from a point to a segment | t = ((p − a) · (b − a)) / |b − a|² clamped to 0..1;  the closest point is a + t (b − a);  the answer is the distance from p to it (metres) | Ready | `physics/physics/distance_to_segment/` |
 | Point inside a camera cone | field of view | 1 when v · d > 0 and (v · d) / (|v| |d|) ≥ cos α, with v = p − c (the camera c looks along d with half-angle α; the edge counts as inside); 0 otherwise | Ready | `physics/physics/point_inside_camera_cone/` |
 | Potential-field step | pull plus push | F = k_att (goal − position) + F_rep;  inside the influence distance F_rep = k_rep (1/d − 1/influence)(1/d²) u, otherwise 0  (u points from the obstacle toward the robot) | Ready | `physics/physics/potential_field_step/` |
+| Schwarzschild g_tt | g_tt = −(1 − Rs/r) | g_tt = −(1 − Rs/r)   (the time coefficient of the Schwarzschild metric outside a spherical mass, signature (−, +, +, +); r and Rs in metres) | Ready | `physics/physics/schwarzschild_g_tt/` |
+| Schwarzschild g_rr | g_rr = 1/(1 − Rs/r) | g_rr = 1 / (1 − Rs/r)   (the radial coefficient of the Schwarzschild metric outside a spherical mass; r and Rs in metres) | Ready | `physics/physics/schwarzschild_g_rr/` |
+| Photon sphere | r = 3GM/c² = 1.5 Rs | r = 3GM/c² = 1.5 Rs   (the radius of the unstable circular orbit of a light ray) | Ready | `physics/physics/photon_sphere_radius/` |
+| Innermost stable circular orbit | r = 6GM/c² = 3 Rs | r = 6GM/c² = 3 Rs   (the closest stable circular orbit of a massive particle around a non-spinning mass) | Ready | `physics/physics/isco_radius/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

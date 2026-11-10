@@ -1,0 +1,25 @@
+GENERAL RELATIVITY OPERATORS - STATUS          (written 2026-11-10; update after every job)
+=========================================================================================
+
+The job (Grok's list): fill out general relativity in the one calculator with NEW operators only (a formula with a number each, no spacetime simulator).
+Do not change schwarzschild_radius, gravitational_time_dilation, the GPS clock operators, or the reference-only Riemann, Ricci, Christoffel and geodesic cards.
+Grok sends one job at a time; wire only the job it says.  Use the recipe in robot_navigation_status.txt ("HOW TO ADD A BATCH").
+
+DONE
+  Job 1  Schwarzschild geometry outside a spherical mass (physics/physics): schwarzschild_g_tt, schwarzschild_g_rr, photon_sphere_radius, isco_radius.
+         603 operators, 531 calculating after this job.  Checked against the existing operators: g_tt * g_rr = -1; sqrt(-g_tt) equals the factor that
+         gravitational_time_dilation_from_radius gives; horizon < photon sphere < ISCO.
+
+WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
+  Job 2   circular orbits around a non-spinning mass (r > 3 Rs): angular speed sqrt(GM/r^3), period 2 pi sqrt(r^3/GM), coordinate orbital speed;
+          decline inside the ISCO for the stable-orbit speed
+  Job 3   light deflection 4GM / (c^2 b), small angle
+  Job 4   Mercury perihelion advance 6 pi GM / (c^2 a (1 - e^2)) radians per orbit (about 43 arcseconds per century; hand-check the inputs)
+  Job 5   gravitational redshift between two finite radii: sqrt((1 - Rs/r_receiver) / (1 - Rs/r_source))
+  Job 6   one geodesic step (radial fall: the next r after one time step), not a loop
+  Job 7   Kerr metric: outer and inner horizon, g_tt on the equator; decline "the spin is past the extreme Kerr limit"
+  Job 8   frame dragging, Lense-Thirring rate 2 G J / (c^2 r^3)
+  Job 9   gravitational waves, leading order for a circular binary: wave frequency, quadrupole strain
+  Job 10  one radial step of the Tolman-Oppenheimer-Volkoff equation (pressure change over a thin shell)
+
+NOT ON THE LIST  a 3D numerical evolution of spacetime, a waveform synthesizer, a merger simulation, a full orbit integration.

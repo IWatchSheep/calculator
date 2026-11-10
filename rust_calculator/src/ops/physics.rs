@@ -595,3 +595,33 @@ pub fn gps_gravitational_clock(a: &[f64]) -> R {
 pub fn gps_clock_correction(a: &[f64]) -> R {
     n(a[0] + a[1])
 }
+
+// ---------- Schwarzschild geometry outside a spherical mass (general relativity, job 1; the same operations as the Python files) ----------
+
+fn outside_horizon(r: f64, rs: f64) -> Result<(), String> {
+    need(r > 0.0, "a radius must be positive")?;
+    need(rs >= 0.0, "the horizon radius cannot be negative")?;
+    need(r > rs, "r is not outside the horizon")
+}
+
+pub fn schwarzschild_g_tt(a: &[f64]) -> R {
+    // r, Rs
+    outside_horizon(a[0], a[1])?;
+    n(-(1.0 - a[1] / a[0]))
+}
+
+pub fn schwarzschild_g_rr(a: &[f64]) -> R {
+    // r, Rs
+    outside_horizon(a[0], a[1])?;
+    n(1.0 / (1.0 - a[1] / a[0]))
+}
+
+pub fn photon_sphere_radius(a: &[f64]) -> R {
+    need(a[0] > 0.0, "the horizon radius must be positive")?;
+    n(1.5 * a[0])
+}
+
+pub fn isco_radius(a: &[f64]) -> R {
+    need(a[0] > 0.0, "the horizon radius must be positive")?;
+    n(3.0 * a[0])
+}
