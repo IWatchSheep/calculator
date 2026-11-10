@@ -233,6 +233,7 @@ math/graph_theory_and_combinatorics/path | path ( [graph] )
 math/graph_theory_and_combinatorics/planar_graph | planar ( [graph] )
 math/graph_theory_and_combinatorics/recurrence_relation | [] ₙ = f ( [] ₙ₋₁ , … )
 math/graph_theory_and_combinatorics/shortest_path_dijkstra | [] ( [graph] , [start] ) => {}
+math/graph_theory_and_combinatorics/a_star | A* ( [graph]{graph|node to a list of neighbor, weight pairs, weights are metres} , [positions]{positions|node to x, y in metres} , [start]{start|the node the robot is on} , [goal]{goal|the node the robot wants} ) => {}
 math/graph_theory_and_combinatorics/spanning_tree | [] ⊆ [graph]
 math/graph_theory_and_combinatorics/stirling_number_second_kind | S ( [n] , [k] ) = ( 1 / [k] ! ) Σ ⱼ ( − 1 ) ʲ C ( [k] , [] ) ( [k] − [] ) ⁿ
 math/graph_theory_and_combinatorics/tree | Connected + no cycles
@@ -595,4 +596,7 @@ physics/physics/closing_speed | {}{closing speed|metres per second, positive mea
 physics/physics/gps_kinematic_clock | {}{clock rate|microseconds per day, negative} = ( 1 / [gamma]{Lorentz factor|from the satellite speed, the answer of the row above when this is chained} − 1 ) · 86400 · 1000000
 physics/physics/gps_gravitational_clock | {}{clock rate|microseconds per day, positive} = GM{Earth gravity|3.986004418e14 m3/s2} ( 1 / [ground_radius]{ground radius|metres from the Earth's centre} − 1 / [satellite_radius]{satellite radius|metres from the Earth's centre} ) / c{speed of light|299792458 m/s} ² · 86400 · 1000000
 physics/physics/gps_clock_correction | {}{correction|microseconds per day, the clock runs ahead} = [special]{kinematic part|microseconds per day, negative} + [gravitational]{gravitational part|microseconds per day, positive}
+physics/physics/distance_to_segment | {}{distance|metres from the point to the nearest spot on the segment} = distance ( [p]{point|x, y, z in metres} , segment [a]{segment start|x, y, z in metres} [b]{segment end|x, y, z in metres} )
+physics/physics/point_inside_camera_cone | {}{inside|1 if the point is inside the camera cone, 0 if outside} = [point]{point|x, y, z in metres} ∈ cone ( [camera]{camera|x, y, z in metres} , [direction]{look direction|x, y, z, it is normalised for you} , [half_angle]{half angle|radians, from the look direction to the edge of the view} )
+physics/physics/potential_field_step | {}{push|Fx, Fy, Fz} = [k_att]{pull gain|strength of the pull toward the goal} ( [goal]{goal|x, y, z in metres} − [position]{robot|x, y, z in metres} ) + [k_rep]{push gain|strength of the push away from the obstacle} ( 1 / d − 1 / [influence]{influence|metres, the obstacle pushes only inside this distance} ) ( 1 / d ² ) ( [position] − [obstacle]{obstacle|x, y, z in metres} ) / d
 physics/physics/work | {}{work|joules} = [F]{force|newtons, along the motion} × [d]{distance|metres}

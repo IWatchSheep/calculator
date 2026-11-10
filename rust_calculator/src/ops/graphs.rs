@@ -418,3 +418,74 @@ pub fn max_flow_min_cut(a: &[Value]) -> R {
         flow += push;
     }
 }
+
+pub fn a_star(a: &[Value]) -> R {
+    // graph, positions, start, goal
+    let g = weighted(&a[0])?;
+    need(g.iter().all(|(_, nb)| nb.iter().all(|(_, w)| *w >= 0.0)), "a weight cannot be negative")?;
+    let positions = dict(&a[1])?;
+    let where_is = |node: &Value| -> Result<(f64, f64), String> {
+        let p = positions.iter().find(|(k, _)| k.same_item(node)).and_then(|(_, v)| nums(v).ok());
+        match p {
+            Some(p) if p.len() == 2 => Ok((p[0], p[1])),
+            _ => Err("each node needs a position".to_string()),
+        }
+    };
+    let (start, goal) = (a[2].clone(), a[3].clone());
+    let (gx, gy) = where_is(&goal)?;
+    let heuristic = |node: &Value| -> Result<f64, String> {
+        let (x, y) = where_is(node)?;
+        Ok(((gx - x) * (gx - x) + (gy - y) * (gy - y)).sqrt())
+    };
+    // cost[i] and came[i] belong to nodes[i]
+    let mut nodes: Vec<Value> = vec![start.clone()];
+    let mut cost: Vec<f64> = vec![0.0];
+    let mut came: Vec<Option<usize>> = vec![None];
+    let index = |nodes: &Vec<Value>, v: &Value| nodes.iter().position(|k| k.same_item(v));
+    let mut count = 0usize;
+    let mut heap: Vec<(f64, usize, usize)> = vec![(heuristic(&start)?, count, 0)];
+    while !heap.is_empty() {
+        // the smallest f, then the earliest pushed
+        let mut best = 0;
+        for i in 1..heap.len() {
+            if heap[i].0 < heap[best].0 || (heap[i].0 == heap[best].0 && heap[i].1 < heap[best].1) {
+                best = i;
+            }
+        }
+        let (f, _, u) = heap.swap_remove(best);
+        if f > cost[u] + heuristic(&nodes[u])? {
+            continue;
+        }
+        if nodes[u].same_item(&goal) {
+            let mut path = vec![nodes[u].clone()];
+            let mut at = u;
+            while let Some(p) = came[at] {
+                path.push(nodes[p].clone());
+                at = p;
+            }
+            path.reverse();
+            return Ok(Value::List(path));
+        }
+        if let Some((_, nb)) = g.iter().find(|(k, _)| k.same_item(&nodes[u])) {
+            for (v, w) in nb {
+                let ng = cost[u] + w;
+                let vi = match index(&nodes, v) {
+                    Some(i) => i,
+                    None => {
+                        nodes.push(v.clone());
+                        cost.push(f64::INFINITY);
+                        came.push(None);
+                        nodes.len() - 1
+                    }
+                };
+                if ng < cost[vi] {
+                    cost[vi] = ng;
+                    came[vi] = Some(u);
+                    count += 1;
+                    heap.push((ng + heuristic(v)?, count, vi));
+                }
+            }
+        }
+    }
+    Err("no path".into())
+}

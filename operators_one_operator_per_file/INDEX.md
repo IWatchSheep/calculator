@@ -401,6 +401,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Spanning tree | T ⊆ G | A tree that contains every vertex of G | Ready | `math/graph_theory_and_combinatorics/spanning_tree/` |
 | Adjacency matrix | A | Aᵢⱼ = 1 if vertices i and j are joined (undirected), else 0 | Ready | `math/graph_theory_and_combinatorics/adjacency_matrix/` |
 | Shortest path (Dijkstra) | d(u, v) | Dijkstra's algorithm; graph = {node: [(neighbor, weight), …]}, returns {node: distance} | Ready | `math/graph_theory_and_combinatorics/shortest_path_dijkstra/` |
+| Shortest path (A*) | A* | A* on the Dijkstra graph with node positions; straight-line distance to the goal; returns the path of nodes | Ready | `math/graph_theory_and_combinatorics/a_star/` |
 | Chromatic number | χ(G) | The smallest number of colors needed to color vertices so adjacent vertices differ | Ready | `math/graph_theory_and_combinatorics/chromatic_number/` |
 | Planar graph | planar | Can be drawn in the plane without crossing edges; then E ≤ 3V − 6 (V ≥ 3) | Ready | `math/graph_theory_and_combinatorics/planar_graph/` |
 | Euler path | Euler path | A path using every edge exactly once; exists iff the graph is connected with 0 or 2 odd-degree vertices | Ready | `math/graph_theory_and_combinatorics/euler_path/` |
@@ -612,6 +613,9 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | GPS kinematic clock | (1/γ − 1) per day | (1/γ − 1) · 86400 · 1000000   (microseconds per day by which a moving clock runs behind a clock at rest; the answer is negative) | Ready | `physics/physics/gps_kinematic_clock/` |
 | GPS gravitational clock | GM (1/R − 1/r) / c² per day | GM (1/R − 1/r) / c² · 86400 · 10⁶   (microseconds per day by which a clock at radius r runs ahead of a clock at radius R; GM = 3.986004418e14 m³/s², c = 299792458 m/s) | Ready | `physics/physics/gps_gravitational_clock/` |
 | GPS clock correction | special plus gravitational | special + gravitational   (about +38 microseconds per day; the menu operator opens four rows joined by →, the answer is the last row) | Ready | `physics/physics/gps_clock_correction/` |
+| Distance to a segment | distance from a point to a segment | t = ((p − a) · (b − a)) / |b − a|² clamped to 0..1;  the closest point is a + t (b − a);  the answer is the distance from p to it (metres) | Ready | `physics/physics/distance_to_segment/` |
+| Point inside a camera cone | field of view | 1 when v · d > 0 and (v · d) / (|v| |d|) ≥ cos α, with v = p − c (the camera c looks along d with half-angle α; the edge counts as inside); 0 otherwise | Ready | `physics/physics/point_inside_camera_cone/` |
+| Potential-field step | pull plus push | F = k_att (goal − position) + F_rep;  inside the influence distance F_rep = k_rep (1/d − 1/influence)(1/d²) u, otherwise 0  (u points from the obstacle toward the robot) | Ready | `physics/physics/potential_field_step/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

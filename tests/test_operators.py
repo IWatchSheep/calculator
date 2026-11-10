@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 595)
+        self.assertEqual(len(self.ops), 599)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 595)
+        self.assertEqual(len(status), 599)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -269,6 +269,15 @@ CASES = [
     (PH + "gps_kinematic_clock", (1.0000000000834925,), -7.213755992552251),
     (PH + "gps_gravitational_clock", (6378137, 26561750), 45.651861866919695),
     (PH + "gps_clock_correction", (-7.213755992552251, 45.651861866919695), 38.438105874367444),
+    (PH + "distance_to_segment", ([0, 0, 0], [4, 0, 0], [2, 3, 0]), 3), (PH + "distance_to_segment", ([0, 0, 0], [4, 0, 0], [6, 0, 0]), 2),
+    (PH + "distance_to_segment", ([0, 0, 0], [4, 0, 0], [-1, 0, 0]), 1),
+    (PH + "point_inside_camera_cone", ([0, 0, 0], [1, 0, 0], 0.7853981633974483, [2, 0, 0]), 1),
+    (PH + "point_inside_camera_cone", ([0, 0, 0], [1, 0, 0], 0.7853981633974483, [1, 1, 0]), 1),
+    (PH + "point_inside_camera_cone", ([0, 0, 0], [1, 0, 0], 0.7853981633974483, [1, 2, 0]), 0),
+    (PH + "point_inside_camera_cone", ([0, 0, 0], [1, 0, 0], 0.7853981633974483, [-1, 0, 0]), 0),
+    (PH + "potential_field_step", ([0, 0, 0], [10, 0, 0], [1, 0, 0], 2, 1, 1), [9.5, 0, 0]),
+    (PH + "potential_field_step", ([0, 0, 0], [10, 0, 0], [-1, 0, 0], 2, 1, 1), [10.5, 0, 0]),
+    (PH + "potential_field_step", ([0, 0, 0], [3, 0, 0], [0, 10, 0], 2, 1, 1), [3, 0, 0]),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1025,6 +1034,81 @@ class ObstacleAndClockDeclineTests(unittest.TestCase):
         self.assertAlmostEqual(gravity, 45.651861866919695, places=9)
         self.assertAlmostEqual(get(PH + "gps_clock_correction").compute(special, gravity), 38.438105874367444, places=9)
         self.assertTrue(-7.5 < special < -7.0 and 45 < gravity < 46 and 38 < special + gravity < 39)       # about -7, +45 and +38 microseconds a day
+
+
+class SegmentConeFieldAndAStarTests(unittest.TestCase):
+    """The four operators Grok first left out: distance to a segment, a camera cone, a potential-field push and A*."""
+    GT = "math/graph_theory_and_combinatorics/"
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_geometry_declines(self):
+        seg, cone, field = PH + "distance_to_segment", PH + "point_inside_camera_cone", PH + "potential_field_step"
+        self.says(seg, ([0, 0], [1, 1, 1], [0, 0, 0]), "a point has 3 numbers: x, y, z")
+        self.says(seg, ([1, 1, 1], [1, 1, 1], [0, 0, 0]), "the segment has length zero")
+        self.says(cone, ([0, 0], [1, 0, 0], 0.5, [1, 1, 1]), "a point has 3 numbers: x, y, z")
+        self.says(cone, ([0, 0, 0], [0, 0, 0], 0.5, [1, 1, 1]), "the look direction has length zero")
+        self.says(cone, ([0, 0, 0], [1, 0, 0], 0.5, [0, 0, 0]), "the point is the camera")
+        self.says(cone, ([0, 0, 0], [1, 0, 0], 3.2, [1, 1, 1]), "the field of view must be from 0 to pi")
+        self.says(cone, ([0, 0, 0], [1, 0, 0], -0.1, [1, 1, 1]), "the field of view must be from 0 to pi")
+        self.says(field, ([0, 0], [1, 1, 1], [5, 5, 5], 2, 1, 1), "a point has 3 numbers: x, y, z")
+        self.says(field, ([1, 1, 1], [3, 3, 3], [1, 1, 1], 2, 1, 1), "the distance is zero")
+        self.says(field, ([0, 0, 0], [3, 3, 3], [1, 0, 0], 0, 1, 1), "the influence distance must be positive")
+        self.says(field, ([0, 0, 0], [3, 3, 3], [1, 0, 0], 2, -1, 1), "a gain cannot be negative")
+        self.says(field, ([0, 0, 0], [3, 3, 3], [1, 0, 0], 2, 1, -1), "a gain cannot be negative")
+
+    def test_the_geometry_agrees_with_itself(self):
+        import math
+        seg = get(PH + "distance_to_segment").compute
+        point = get(PH + "distance_3d").compute
+        self.assertEqual(seg([0, 0, 0], [4, 0, 0], [2, 0, 0]), 0)                          # on the segment
+        self.assertAlmostEqual(seg([0, 0, 0], [0, 0, 5], [3, 4, 2]), 5, places=12)         # beside a vertical segment
+        self.assertEqual(seg([0, 0, 0], [4, 0, 0], [7, 4, 0]), point([4, 0, 0], [7, 4, 0]))   # past the end it is the distance to the end point
+        cone = get(PH + "point_inside_camera_cone").compute
+        wide = math.pi
+        self.assertEqual(cone([0, 0, 0], [0, 0, 5], wide, [1, 1, -1]), 0)                   # v . d <= 0 is outside even with a very wide cone
+        self.assertEqual(cone([1, 1, 1], [0, 0, 2], 0.3, [1, 1, 9]), 1)                      # straight ahead, any direction length
+        field = get(PH + "potential_field_step").compute
+        pull = field([0, 0, 0], [4, 0, 0], [0, 50, 0], 2, 2, 5)                              # out of reach of the push: only the pull, k_att times the way to the goal
+        self.assertEqual(pull, [8, 0, 0])
+        near = field([0, 0, 0], [4, 0, 0], [0, 1, 0], 2, 2, 5)                               # an obstacle above pushes the robot down
+        self.assertEqual((near[0], near[2]), (8, 0))
+        self.assertLess(near[1], 0)
+
+    def test_a_star(self):
+        a_star = get(self.GT + "a_star").compute
+        graph = {"A": [("B", 1), ("C", 4)], "B": [("C", 1)]}
+        pos = {"A": [0, 0], "B": [1, 0], "C": [2, 0]}
+        self.assertEqual(a_star(graph, pos, "A", "C"), ["A", "B", "C"])
+        self.assertEqual(a_star(graph, pos, "A", "A"), ["A"])
+        self.assertEqual(a_star(graph, pos, "B", "C"), ["B", "C"])
+        # a grid of 3 x 3 nodes with a wall of expensive edges in the middle: the cheap way round is found, and it costs the same as Dijkstra's answer
+        grid, positions = {}, {}
+        for i in range(3):
+            for j in range(3):
+                positions[(i, j)] = [i, j]
+        for i in range(3):
+            for j in range(3):
+                edges = []
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    if 0 <= i + di < 3 and 0 <= j + dj < 3:
+                        edges.append(((i + di, j + dj), 10 if (i + di, j + dj) == (1, 1) else 1))
+                grid[(i, j)] = edges
+        path = a_star(grid, positions, (0, 0), (2, 2))
+        cost = sum(dict(grid[u])[v] for u, v in zip(path, path[1:]))
+        dist = get(self.GT + "shortest_path_dijkstra").compute(grid, (0, 0))
+        self.assertEqual((path[0], path[-1], cost), ((0, 0), (2, 2), dist[(2, 2)]))
+
+    def test_a_star_declines(self):
+        key = self.GT + "a_star"
+        pos = {"A": [0, 0], "B": [1, 0], "C": [2, 0]}
+        self.says(key, ({"A": [("B", -1)]}, pos, "A", "B"), "a weight cannot be negative")
+        self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0], "B": [1]}, "A", "B"), "each node needs a position")
+        self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0]}, "A", "B"), "each node needs a position")
+        self.says(key, ({"A": [("B", 1)]}, {"A": [0, 0], "B": [1, 0], "C": [2, 0]}, "A", "C"), "no path")
 
 
 # --------------------------------------------------------------------------- 3. error handling

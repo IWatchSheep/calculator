@@ -294,6 +294,9 @@ physics/physics/faradays_law	10 0.5 2	-2.5
 physics/physics/faradays_law	1 -4 2	2
 physics/physics/final_velocity	1 2 3	7
 physics/physics/frequency	0.5	2
+physics/physics/gps_clock_correction	-7.213755992552251 45.651861866919695	38.438105874367444
+physics/physics/gps_gravitational_clock	6378137 26561750	45.651861866919695
+physics/physics/gps_kinematic_clock	1.0000000000834925	-7.213755992552251
 physics/physics/gravitation	1 1 1	6.674e-11
 physics/physics/gravitational_time_dilation	100 1 4 1 1	70.71067811865476
 physics/physics/gravitational_time_dilation	100 0 4 1 1	100
@@ -334,6 +337,8 @@ physics/physics/lorentz_factor	0.6 1	1.25
 physics/physics/lorentz_factor	0.8 1	1.6666666666666667
 physics/physics/lorentz_factor	0 1	1
 physics/physics/lorentz_factor	179875474.79999998	1.25
+physics/physics/low_pass_step	10 20 1 1	15
+physics/physics/low_pass_step	10 20 1 3	12.5
 physics/physics/magnetic_field_solenoid	1000 2	0.0025132741228718345
 physics/physics/magnetic_field_solenoid	0 5	0
 physics/physics/magnetic_field_straight_wire	1 1	2e-07
@@ -407,6 +412,9 @@ physics/physics/reynolds_number	1000 2 0.1 0.001	200000
 physics/physics/reynolds_number	1000 0 0.1 0.001	0
 physics/physics/rydberg_formula	1 2	1.2150227341098497e-07
 physics/physics/rydberg_formula	2 3	6.56112276419319e-07
+physics/physics/saturation	5 0 10	5
+physics/physics/saturation	-1 0 10	0
+physics/physics/saturation	12 0 10	10
 physics/physics/schwarzschild_radius	1 1 1	2
 physics/physics/schwarzschild_radius	1.989e+30	2953.9937713977156
 physics/physics/self_induced_emf	2 3 0.5	-12
@@ -445,6 +453,7 @@ physics/physics/tipping_margin	0.2 1 1.5707963267948966	-1
 physics/physics/torque	2 3 1.5707963267948966	6
 physics/physics/torricelli_speed	5	9.904544411531507
 physics/physics/torricelli_speed	0	0
+physics/physics/turn_radius	10 0.7853981633974483	10.19367991845056
 physics/physics/velocity	10 2	5
 physics/physics/velocity_squared	0 2 4	4
 physics/physics/volume_flow_rate	0.5 4	2

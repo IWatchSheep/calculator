@@ -774,3 +774,64 @@ fn the_gps_clock_in_four_rows_gives_the_plan_numbers() {
     assert!((number(&doc, 3) - 38.438105874367444).abs() < 1e-9);
     assert!(doc.rows[1].inputs[0].parse::<f64>().unwrap() > 1.0); // the γ box holds Row 1's answer
 }
+
+#[test]
+fn the_segment_cone_field_and_a_star_operators_give_the_numbers_of_the_work_plan() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, args: Vec<Value>| -> Result<Value, String> { (ops::get(key).unwrap().compute_v.unwrap())(&args) };
+    let list = |xs: &[f64]| Value::List(xs.iter().map(|x| Value::Number(*x)).collect());
+    let num = |x: f64| Value::Number(x);
+    let number = |v: Value| -> f64 {
+        match v {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let ph = "physics/physics/";
+    let seg = |p: &[f64]| number(call(&format!("{ph}distance_to_segment"), vec![list(&[0., 0., 0.]), list(&[4., 0., 0.]), list(p)]).unwrap());
+    assert_eq!((seg(&[2., 3., 0.]), seg(&[6., 0., 0.]), seg(&[-1., 0., 0.])), (3.0, 2.0, 1.0));
+    let cone = |p: &[f64]| number(call(&format!("{ph}point_inside_camera_cone"), vec![list(&[0., 0., 0.]), list(&[1., 0., 0.]), num(std::f64::consts::FRAC_PI_4), list(p)]).unwrap());
+    assert_eq!((cone(&[2., 0., 0.]), cone(&[1., 1., 0.]), cone(&[1., 2., 0.]), cone(&[-1., 0., 0.])), (1.0, 1.0, 0.0, 0.0));
+    let field = |obstacle: &[f64], goal: &[f64]| -> Vec<f64> {
+        match call(&format!("{ph}potential_field_step"), vec![list(&[0., 0., 0.]), list(goal), list(obstacle), num(2.), num(1.), num(1.)]).unwrap() {
+            Value::List(v) => v.iter().map(|x| if let Value::Number(n) = x { *n } else { panic!() }).collect(),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(field(&[1., 0., 0.], &[10., 0., 0.]), vec![9.5, 0.0, 0.0]);
+    assert_eq!(field(&[-1., 0., 0.], &[10., 0., 0.]), vec![10.5, 0.0, 0.0]);
+    assert_eq!(field(&[0., 10., 0.], &[3., 0., 0.]), vec![3.0, 0.0, 0.0]);
+    let said = |key: &str, args: Vec<Value>| call(&format!("{ph}{key}"), args).unwrap_err();
+    assert!(said("distance_to_segment", vec![list(&[1., 1., 1.]), list(&[1., 1., 1.]), list(&[0., 0., 0.])]).contains("the segment has length zero"));
+    assert!(said("point_inside_camera_cone", vec![list(&[0., 0., 0.]), list(&[0., 0., 0.]), num(0.5), list(&[1., 1., 1.])]).contains("the look direction has length zero"));
+    assert!(said("point_inside_camera_cone", vec![list(&[0., 0., 0.]), list(&[1., 0., 0.]), num(0.5), list(&[0., 0., 0.])]).contains("the point is the camera"));
+    assert!(said("point_inside_camera_cone", vec![list(&[0., 0., 0.]), list(&[1., 0., 0.]), num(3.2), list(&[1., 1., 1.])]).contains("the field of view must be from 0 to pi"));
+    assert!(said("potential_field_step", vec![list(&[1., 1., 1.]), list(&[3., 3., 3.]), list(&[1., 1., 1.]), num(2.), num(1.), num(1.)]).contains("the distance is zero"));
+    assert!(said("potential_field_step", vec![list(&[0., 0., 0.]), list(&[3., 3., 3.]), list(&[1., 0., 0.]), num(0.), num(1.), num(1.)]).contains("the influence distance must be positive"));
+    assert!(said("potential_field_step", vec![list(&[0., 0., 0.]), list(&[3., 3., 3.]), list(&[1., 0., 0.]), num(2.), num(-1.), num(1.)]).contains("a gain cannot be negative"));
+}
+
+#[test]
+fn a_star_finds_the_path_and_declines_like_the_python_one() {
+    use rust_calculator::kinds::parse_kind;
+    use rust_calculator::value::Value;
+    let key = "math/graph_theory_and_combinatorics/a_star";
+    let run = |graph: &str, positions: &str, start: &str, goal: &str| -> Result<Value, String> {
+        let args = vec![parse_kind("wgraph", graph)?, parse_kind("graph", positions)?, parse_kind("item", start)?, parse_kind("item", goal)?];
+        (ops::get(key).unwrap().compute_v.unwrap())(&args)
+    };
+    let names = |v: Value| -> Vec<String> {
+        match v {
+            Value::List(items) => items.iter().map(|x| x.show()).collect(),
+            o => panic!("{o:?}"),
+        }
+    };
+    let graph = "A: B=1, C=4; B: C=1";
+    let pos = "A: 0, 0; B: 1, 0; C: 2, 0";
+    assert_eq!(names(run(graph, pos, "A", "C").unwrap()), vec!["A", "B", "C"]);
+    assert_eq!(names(run(graph, pos, "A", "A").unwrap()), vec!["A"]);
+    assert!(run("A: B=-1", pos, "A", "B").unwrap_err().contains("a weight cannot be negative"));
+    assert!(run("A: B=1", "A: 0, 0; B: 1", "A", "B").unwrap_err().contains("each node needs a position"));
+    assert!(run("A: B=1", "A: 0, 0", "A", "B").unwrap_err().contains("each node needs a position"));
+    assert!(run("A: B=1", "A: 0, 0; B: 1, 0; C: 2, 0", "A", "C").unwrap_err().contains("no path"));
+}

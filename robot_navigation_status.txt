@@ -5,7 +5,7 @@ The job: make sure the calculator HAS the maths a walking robot or a flying dron
 only operators whose compute() a robot's code could import.  Plan written by Grok (note_to_grok_robot_navigation.txt); Grok drafts each batch, Claude wires
 it in Python and Rust, tests it, and the project owner approves the commit.
 
-DONE  (all committed and pushed to main; Python and Rust; 595 operators, 523 calculating, 72 formula-only after batch 8)
+DONE  (all committed and pushed to main; Python and Rust; 599 operators, 527 calculating, 72 formula-only after batch 9)
 -------------------------------------------------------------------------------------------------------------------
 Batch 1  quaternions (Math > Linear algebra)      997216df   multiply, conjugate, inverse, normalise, from axis and angle, rotate a vector,
                                                               to / from yaw pitch roll (gimbal lock is declined, never guessed)
@@ -31,9 +31,12 @@ CONVENTIONS  (Grok's, written into the Label / Context words)
   g = 9.81 m/s^2, Earth radius 6371000 m, GM = 3.986004418e14, c = 299792458.  Latitudes and longitudes are radians.  A position is a list.
   A chained box carries ONE number, so a list answer is one row (or one row per component).
 
-NOT DONE  (Grok decided these are not worth forcing into one formula)
-  distance to a line segment, a camera cone (is a point in the field of view), a potential-field push, A*.  Dijkstra (shortest_path_dijkstra) already exists.
-  A moving average is the existing mean; one acceleration step is the existing v = u + a t; low pass with a typed alpha is exponential smoothing.
+Batch 9  the four left out first                  (this commit)   distance to a segment, point inside a camera cone, potential-field step, A* (math/graph_theory_and_combinatorics/a_star:
+                                                              graph typed as a weighted graph, positions typed in the "graph" box as  A: 0, 0; B: 1, 0).  Camera edge: a tolerance of 1e-12
+                                                              on the cosine so that a point exactly on the edge counts as inside.  599 operators, 527 calculating
+
+NOT DONE
+  Nothing from Grok's list.  A moving average is the existing mean; one acceleration step is the existing v = u + a t; low pass with a typed alpha is exponential smoothing.
 
 RESULTS WORTH KNOWING
   - Two of Grok's test numbers were wrong and were corrected in agreement with Grok: speed_after_distance(10, -2, 9) is 8 (8.944... is the answer for s = 5);

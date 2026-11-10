@@ -737,3 +737,44 @@ pub fn point_inside_cylinder(a: &[Value]) -> R {
     let (dx, dy) = (p[0] - c[0], p[1] - c[1]);
     n(if dx * dx + dy * dy <= radius * radius && 0.0 <= p[2] && p[2] <= height { 1.0 } else { 0.0 })
 }
+
+pub fn distance_to_segment(a: &[Value]) -> R {
+    // a, b, p
+    let (p0, b, p) = (nums(&a[0])?, nums(&a[1])?, nums(&a[2])?);
+    need(p0.len() == 3 && b.len() == 3 && p.len() == 3, "a point has 3 numbers: x, y, z")?;
+    let ab = [b[0] - p0[0], b[1] - p0[1], b[2] - p0[2]];
+    let length2 = ab[0] * ab[0] + ab[1] * ab[1] + ab[2] * ab[2];
+    need(length2 != 0.0, "the segment has length zero")?;
+    let t = (((p[0] - p0[0]) * ab[0] + (p[1] - p0[1]) * ab[1] + (p[2] - p0[2]) * ab[2]) / length2).max(0.0).min(1.0);
+    let (dx, dy, dz) = (p[0] - (p0[0] + t * ab[0]), p[1] - (p0[1] + t * ab[1]), p[2] - (p0[2] + t * ab[2]));
+    n((dx * dx + dy * dy + dz * dz).sqrt())
+}
+
+pub fn point_inside_camera_cone(a: &[Value]) -> R {
+    // camera, direction, half_angle, point
+    let (camera, direction, point) = (nums(&a[0])?, nums(&a[1])?, nums(&a[3])?);
+    need(camera.len() == 3 && direction.len() == 3 && point.len() == 3, "a point has 3 numbers: x, y, z")?;
+    let half_angle = num(&a[2])?;
+    let d_size = (direction[0] * direction[0] + direction[1] * direction[1] + direction[2] * direction[2]).sqrt();
+    need(d_size != 0.0, "the look direction has length zero")?;
+    let v = [point[0] - camera[0], point[1] - camera[1], point[2] - camera[2]];
+    let v_size = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    need(v_size != 0.0, "the point is the camera")?;
+    need((0.0..=PI).contains(&half_angle), "the field of view must be from 0 to pi")?;
+    let along = v[0] * direction[0] + v[1] * direction[1] + v[2] * direction[2];
+    n(if along > 0.0 && along / (v_size * d_size) >= half_angle.cos() - 1e-12 { 1.0 } else { 0.0 })
+}
+
+pub fn potential_field_step(a: &[Value]) -> R {
+    // position, goal, obstacle, influence, k_att, k_rep
+    let (position, goal, obstacle) = (nums(&a[0])?, nums(&a[1])?, nums(&a[2])?);
+    need(position.len() == 3 && goal.len() == 3 && obstacle.len() == 3, "a point has 3 numbers: x, y, z")?;
+    let (influence, k_att, k_rep) = (num(&a[3])?, num(&a[4])?, num(&a[5])?);
+    let away = [position[0] - obstacle[0], position[1] - obstacle[1], position[2] - obstacle[2]];
+    let d = (away[0] * away[0] + away[1] * away[1] + away[2] * away[2]).sqrt();
+    need(d != 0.0, "the distance is zero")?;
+    need(influence > 0.0, "the influence distance must be positive")?;
+    need(k_att >= 0.0 && k_rep >= 0.0, "a gain cannot be negative")?;
+    let push = if d < influence { k_rep * (1.0 / d - 1.0 / influence) * (1.0 / (d * d)) } else { 0.0 };
+    Ok(vlist((0..3).map(|k| k_att * (goal[k] - position[k]) + push * away[k] / d).collect()))
+}

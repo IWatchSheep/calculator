@@ -1,6 +1,6 @@
 {
- "count": 595,
- "ready": 523,
+ "count": 599,
+ "ready": 527,
  "reference": 72,
  "operators": [
   {
@@ -8617,6 +8617,53 @@
      ]
     }
    ]
+  },
+  {
+   "key": "math/graph_theory_and_combinatorics/a_star",
+   "name": "Shortest path (A*)",
+   "symbol": "A*",
+   "category": "Math",
+   "subcategory": "Graph theory and combinatorics",
+   "formula": "A* on the Dijkstra graph with node positions; straight-line distance to the goal; returns the path of nodes",
+   "status": "Ready",
+   "inputs": [
+    "graph",
+    "positions",
+    "start",
+    "goal"
+   ],
+   "input_kinds": [
+    "wgraph",
+    "graph",
+    "item",
+    "item"
+   ],
+   "row_calc": "advanced",
+   "pattern": "A* ( □ , □ , □ , □ ) = □",
+   "compute_signature": "compute(graph, positions, start, goal)",
+   "compute_params": [
+    {
+     "name": "graph",
+     "kind": "required"
+    },
+    {
+     "name": "positions",
+     "kind": "required"
+    },
+    {
+     "name": "start",
+     "kind": "required"
+    },
+    {
+     "name": "goal",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
   },
   {
    "key": "math/graph_theory_and_combinatorics/adjacency_matrix",
@@ -19894,7 +19941,38 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       10,
+       0,
+       0
+      ],
+      [
+       -3,
+       0,
+       0
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       10,
+       0,
+       0
+      ],
+      [
+       2,
+       0,
+       0
+      ]
+     ],
+     "expected": -2
+    }
+   ]
   },
   {
    "key": "physics/physics/complementary_filter",
@@ -20700,7 +20778,140 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       3,
+       4,
+       12
+      ]
+     ],
+     "expected": 13
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/distance_to_segment",
+   "name": "Distance to a segment",
+   "symbol": "distance from a point to a segment",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "t = ((p − a) · (b − a)) / |b − a|² clamped to 0..1;  the closest point is a + t (b − a);  the answer is the distance from p to it (metres)",
+   "status": "Ready",
+   "inputs": [
+    "a",
+    "b",
+    "p"
+   ],
+   "input_kinds": [
+    "list",
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = distance ( □ , segment □ □ )",
+   "compute_signature": "compute(a, b, p)",
+   "compute_params": [
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "b",
+     "kind": "required"
+    },
+    {
+     "name": "p",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       4,
+       0,
+       0
+      ],
+      [
+       2,
+       3,
+       0
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       4,
+       0,
+       0
+      ],
+      [
+       6,
+       0,
+       0
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       4,
+       0,
+       0
+      ],
+      [
+       -1,
+       0,
+       0
+      ]
+     ],
+     "expected": 1
+    }
+   ]
   },
   {
    "key": "physics/physics/double_slit_fringe_spacing",
@@ -21119,7 +21330,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      -7.213755992552251,
+      45.651861866919695
+     ],
+     "expected": 38.438105874367444
+    }
+   ]
   },
   {
    "key": "physics/physics/gps_gravitational_clock",
@@ -21154,7 +21373,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      6378137,
+      26561750
+     ],
+     "expected": 45.651861866919695
+    }
+   ]
   },
   {
    "key": "physics/physics/gps_kinematic_clock",
@@ -21183,7 +21410,14 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      1.0000000000834925
+     ],
+     "expected": -7.213755992552251
+    }
+   ]
   },
   {
    "key": "physics/physics/gravitation",
@@ -22574,7 +22808,26 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      20,
+      1,
+      1
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      10,
+      20,
+      1,
+      3
+     ],
+     "expected": 12.5
+    }
+   ]
   },
   {
    "key": "physics/physics/magnetic_field_solenoid",
@@ -23877,6 +24130,138 @@
    ]
   },
   {
+   "key": "physics/physics/point_inside_camera_cone",
+   "name": "Point inside a camera cone",
+   "symbol": "field of view",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "1 when v · d > 0 and (v · d) / (|v| |d|) ≥ cos α, with v = p − c (the camera c looks along d with half-angle α; the edge counts as inside); 0 otherwise",
+   "status": "Ready",
+   "inputs": [
+    "camera",
+    "direction",
+    "half_angle",
+    "point"
+   ],
+   "input_kinds": [
+    "list",
+    "list",
+    "number",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = □ ∈ cone ( □ , □ , □ )",
+   "compute_signature": "compute(camera, direction, half_angle, point)",
+   "compute_params": [
+    {
+     "name": "camera",
+     "kind": "required"
+    },
+    {
+     "name": "direction",
+     "kind": "required"
+    },
+    {
+     "name": "half_angle",
+     "kind": "required"
+    },
+    {
+     "name": "point",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      0.7853981633974483,
+      [
+       2,
+       0,
+       0
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      0.7853981633974483,
+      [
+       1,
+       1,
+       0
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      0.7853981633974483,
+      [
+       1,
+       2,
+       0
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      0.7853981633974483,
+      [
+       -1,
+       0,
+       0
+      ]
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
    "key": "physics/physics/point_inside_cylinder",
    "name": "Point inside a tree trunk",
    "symbol": "a vertical cylinder",
@@ -23921,7 +24306,56 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      1,
+      10,
+      [
+       0.6,
+       0.8,
+       2
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      1,
+      10,
+      [
+       0.6,
+       0.8,
+       11
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      1,
+      10,
+      [
+       2,
+       0,
+       2
+      ]
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/point_inside_sphere",
@@ -23962,7 +24396,40 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      5,
+      [
+       3,
+       4,
+       0
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      5,
+      [
+       6,
+       0,
+       0
+      ]
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/poiseuille_flow",
@@ -24075,6 +24542,147 @@
       3
      ],
      "expected": 58.86
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/potential_field_step",
+   "name": "Potential-field step",
+   "symbol": "pull plus push",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "F = k_att (goal − position) + F_rep;  inside the influence distance F_rep = k_rep (1/d − 1/influence)(1/d²) u, otherwise 0  (u points from the obstacle toward the robot)",
+   "status": "Ready",
+   "inputs": [
+    "position",
+    "goal",
+    "obstacle",
+    "influence",
+    "k_att",
+    "k_rep"
+   ],
+   "input_kinds": [
+    "list",
+    "list",
+    "list",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = □ ( □ − □ ) + □ ( 1 / d − 1 / □ ) ( 1 / d ² ) ( □ − □ ) / d",
+   "compute_signature": "compute(position, goal, obstacle, influence, k_att, k_rep)",
+   "compute_params": [
+    {
+     "name": "position",
+     "kind": "required"
+    },
+    {
+     "name": "goal",
+     "kind": "required"
+    },
+    {
+     "name": "obstacle",
+     "kind": "required"
+    },
+    {
+     "name": "influence",
+     "kind": "required"
+    },
+    {
+     "name": "k_att",
+     "kind": "required"
+    },
+    {
+     "name": "k_rep",
+     "kind": "required"
+    }
+   ],
+   "required_args": 6,
+   "max_args": 6,
+   "varargs": false,
+   "arity": 6,
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       10,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      2,
+      1,
+      1
+     ],
+     "expected": [
+      9.5,
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       10,
+       0,
+       0
+      ],
+      [
+       -1,
+       0,
+       0
+      ],
+      2,
+      1,
+      1
+     ],
+     "expected": [
+      10.5,
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       3,
+       0,
+       0
+      ],
+      [
+       0,
+       10,
+       0
+      ],
+      2,
+      1,
+      1
+     ],
+     "expected": [
+      3,
+      0,
+      0
+     ]
     }
    ]
   },
@@ -25152,7 +25760,32 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      5,
+      0,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -1,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      12,
+      0,
+      10
+     ],
+     "expected": 10
+    }
+   ]
   },
   {
    "key": "physics/physics/schwarzschild_radius",
@@ -25820,7 +26453,23 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       6,
+       8,
+       0
+      ],
+      [
+       -3,
+       -4,
+       0
+      ]
+     ],
+     "expected": 2
+    }
+   ]
   },
   {
    "key": "physics/physics/time_to_distance",
@@ -26097,7 +26746,15 @@
    "max_args": 3,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      0.7853981633974483
+     ],
+     "expected": 10.19367991845056
+    }
+   ]
   },
   {
    "key": "physics/physics/velocity",
