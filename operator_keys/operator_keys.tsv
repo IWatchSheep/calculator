@@ -543,6 +543,7 @@ physics/physics/newton_s_second_law	Newton's second law	F = ma	Physics	Physics	F
 physics/physics/ohm_s_law	Ohm's law	V = IR	Physics	Physics	V = I R	Ready	2	2	I,R	compute(I, R)
 physics/physics/particle_in_a_box	Particle in a box (energy levels)	Eₙ = n²h²/8mL²	Physics	Physics	Eₙ = n² h² / (8 m L²)   (h = 6.62607015×10⁻³⁴ J·s)	Ready	3	4	n,m,L	compute(n, m, L, h=6.62607015e-34)
 physics/physics/pendulum_period	Pendulum period	T = 2π√(L/g)	Physics	Physics	T = 2π √(L / g)	Ready	1	2	L	compute(L, g=9.81)
+physics/physics/perihelion_advance	Perihelion advance	3π Rs / (a (1 − e²)) per orbit	Physics	Physics	3π Rs / (a (1 − e²)) radians per orbit, times 36525 / period_days orbits per century, times 648000/π: arcseconds per century (the general-relativity part only, not the pull of other planets)	Ready	4	4	a,eccentricity,period_days,Rs	compute(a, eccentricity, period_days, Rs)
 physics/physics/photoelectric_effect	Photoelectric effect	K = hf − φ	Physics	Physics	K_max = h f − φ   (0 if h f < φ: no electrons are ejected)	Ready	2	3	f,work_function	compute(f, work_function, h=6.62607015e-34)
 physics/physics/photon_energy	Photon energy (Planck's relation)	E = hf	Physics	Physics	E = h f   (h = 6.62607015×10⁻³⁴ J·s)	Ready	1	2	f	compute(f, h=6.62607015e-34)
 physics/physics/photon_momentum	Photon momentum	p = h/λ	Physics	Physics	p = h / λ   (h = 6.62607015×10⁻³⁴ J·s)	Ready	1	2	wavelength	compute(wavelength, h=6.62607015e-34)

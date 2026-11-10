@@ -20,8 +20,12 @@ DONE
          small-angle formula does not apply").  608 operators, 536 calculating.  Checked: 10, 2 -> 0.4; light grazing the Sun gives 8.490013479230432e-06
          radians (1.751 arcseconds) with schwarzschild_radius' own G and c, equal to 4GM / (c^2 b).
 
+  Job 4  Perihelion advance (physics/physics): perihelion_advance(a, eccentricity, period_days, Rs) in arcseconds per century (3 pi Rs / (a (1 - e^2)) per
+         orbit, 36525 / period_days orbits per century).  609 operators, 537 calculating.  Mercury gives 42.98061141519078 exactly as Grok said (with
+         schwarzschild_radius' own G and c).  Grok's circle test number 20626480.62314147 was wrong: 100 x 648000 / pi = 20626480.624709636, which is what
+         the operator returns (1 radian per orbit, 100 orbits).
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 4   Mercury perihelion advance 6 pi GM / (c^2 a (1 - e^2)) radians per orbit (about 43 arcseconds per century; hand-check the inputs)
   Job 5   gravitational redshift between two finite radii: sqrt((1 - Rs/r_receiver) / (1 - Rs/r_source))
   Job 6   one geodesic step (radial fall: the next r after one time step), not a loop
   Job 7   Kerr metric: outer and inner horizon, g_tt on the equator; decline "the spin is past the extreme Kerr limit"

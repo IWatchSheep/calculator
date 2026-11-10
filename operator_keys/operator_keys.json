@@ -1,6 +1,6 @@
 {
- "count": 608,
- "ready": 536,
+ "count": 609,
+ "ready": 537,
  "reference": 72,
  "operators": [
   {
@@ -23799,6 +23799,63 @@
       9.81
      ],
      "expected": 6.283185307179586
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/perihelion_advance",
+   "name": "Perihelion advance",
+   "symbol": "3π Rs / (a (1 − e²)) per orbit",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "3π Rs / (a (1 − e²)) radians per orbit, times 36525 / period_days orbits per century, times 648000/π: arcseconds per century (the general-relativity part only, not the pull of other planets)",
+   "status": "Ready",
+   "inputs": [
+    "a",
+    "eccentricity",
+    "period_days",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 3 π □ / ( □ ( 1 − □ ² ) ) × 36525 / □ × 648000 / π",
+   "compute_signature": "compute(a, eccentricity, period_days, Rs)",
+   "compute_params": [
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "eccentricity",
+     "kind": "required"
+    },
+    {
+     "name": "period_days",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": [
+    {
+     "args": [
+      18.84955592153876,
+      0,
+      365.25,
+      2
+     ],
+     "expected": 20626480.624709636
     }
    ]
   },

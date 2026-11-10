@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 608)
+        self.assertEqual(len(self.ops), 609)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 608)
+        self.assertEqual(len(status), 609)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -283,6 +283,7 @@ CASES = [
     (PH + "schwarzschild_orbit_angular_speed", (4, 2), 37474057.25), (PH + "schwarzschild_orbit_period", (4, 2), 1.6766760175613453e-07),
     (PH + "schwarzschild_coordinate_speed", (4, 2), 149896229.0), (PH + "schwarzschild_local_orbit_speed", (6, 2), 149896228.99999997),
     (PH + "light_deflection_angle", (10, 2), 0.4),
+    (PH + "perihelion_advance", (18.84955592153876, 0, 365.25, 2), 20626480.624709636),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1215,6 +1216,35 @@ class LightDeflectionTests(unittest.TestCase):
         arcseconds = angle * 180 / math.pi * 3600
         self.assertAlmostEqual(arcseconds, 1.751, places=3)                          # about 1.75 arcseconds
         self.assertAlmostEqual(angle, 4 * 6.674e-11 * 1.9885e30 / (299792458 ** 2 * 695700000), delta=1e-18)   # 4GM / (c^2 b)
+
+
+class PerihelionAdvanceTests(unittest.TestCase):
+    """General relativity, job 4: Mercury's perihelion advance."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "perihelion_advance").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 0.2, 88, 2), "a radius must be positive")
+        self.says((1e10, 0.2, 0, 2), "the period must be positive")
+        self.says((1e10, 0.2, -88, 2), "the period must be positive")
+        self.says((1e10, 0.2, 88, 0), "the horizon radius must be positive")
+        self.says((1e10, 1, 88, 2), "the eccentricity must be from 0 up to but not including 1")
+        self.says((1e10, -0.1, 88, 2), "the eccentricity must be from 0 up to but not including 1")
+        self.says((1e10, 1.5, 88, 2), "the eccentricity must be from 0 up to but not including 1")
+
+    def test_a_circle_with_one_radian_per_orbit_and_mercury(self):
+        import math
+        advance = get(PH + "perihelion_advance").compute
+        self.assertAlmostEqual(advance(6 * math.pi, 0, 365.25, 2), 100 * 648000 / math.pi, delta=1e-6)      # exactly 1 radian per orbit, 100 orbits
+        rs = get(PH + "schwarzschild_radius").compute(1.9885e30)                                              # that operator's own G and c
+        mercury = advance(57909175678.24835, 0.20563069, 87.9691, rs)
+        self.assertEqual(mercury, 42.98061141519078)                                                           # the famous 43 arcseconds per century
+        self.assertTrue(42.9 < mercury < 43.1)
+        self.assertGreater(advance(5.79e10, 0.5, 87.9691, rs), advance(5.79e10, 0.2, 87.9691, rs))             # a more eccentric orbit precesses faster
+        self.assertGreater(advance(5.79e10, 0.2, 87.9691, rs), advance(1.08e11, 0.2, 224.7, rs))              # and a wider one more slowly
 
 
 # --------------------------------------------------------------------------- 3. error handling

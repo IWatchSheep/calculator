@@ -905,3 +905,25 @@ fn the_light_deflection_operator_gives_the_numbers_of_the_work_plan_and_declines
     assert!(call(&[3., 2.]).unwrap_err().contains("the ray falls in; the small-angle formula does not apply"));
     assert!(call(&[5.196152422706632, 2.]).unwrap_err().contains("the ray falls in"));
 }
+
+#[test]
+fn the_perihelion_advance_operator_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/perihelion_advance").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let rs = match (ops::get("physics/physics/schwarzschild_radius").unwrap().compute)(&[1.9885e30, 6.674e-11, 299792458.0]).unwrap() {
+        Value::Number(x) => x,
+        o => panic!("{o:?}"),
+    };
+    assert_eq!(call(&[57909175678.24835, 0.20563069, 87.9691, rs]).unwrap(), 42.98061141519078);
+    assert!((call(&[6.0 * std::f64::consts::PI, 0., 365.25, 2.]).unwrap() - 20626480.624709636).abs() < 1e-6);
+    assert!(call(&[0., 0.2, 88., 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[1e10, 0.2, 0., 2.]).unwrap_err().contains("the period must be positive"));
+    assert!(call(&[1e10, 0.2, 88., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+    assert!(call(&[1e10, 1., 88., 2.]).unwrap_err().contains("the eccentricity must be from 0 up to but not including 1"));
+    assert!(call(&[1e10, -0.1, 88., 2.]).unwrap_err().contains("the eccentricity must be from 0 up to but not including 1"));
+}

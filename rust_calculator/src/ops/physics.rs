@@ -666,3 +666,15 @@ pub fn light_deflection_angle(a: &[f64]) -> R {
     need(a[0] > 1.5 * 3.0_f64.sqrt() * a[1], "the ray falls in; the small-angle formula does not apply")?;
     n(2.0 * a[1] / a[0])
 }
+
+// ---------- perihelion advance (general relativity, job 4; the same operations as the Python file) ----------
+
+pub fn perihelion_advance(a: &[f64]) -> R {
+    // a, eccentricity, period_days, Rs
+    need(a[0] > 0.0, "a radius must be positive")?;
+    need(a[2] > 0.0, "the period must be positive")?;
+    need(a[3] > 0.0, "the horizon radius must be positive")?;
+    need(a[1] >= 0.0 && a[1] < 1.0, "the eccentricity must be from 0 up to but not including 1")?;
+    let pi = std::f64::consts::PI;
+    n(3.0 * pi * a[3] / (a[0] * (1.0 - a[1] * a[1])) * (36525.0 / a[2]) * (648000.0 / pi))
+}

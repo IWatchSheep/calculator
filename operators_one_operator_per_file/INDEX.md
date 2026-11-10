@@ -625,6 +625,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Circular-orbit coordinate speed | r Ω = c √(Rs / (2 r)) | r Ω = c √(Rs / (2 r))   (the Kepler speed of a circular orbit: circumference radius times the angular speed; not the speed a hovering observer measures; r > 1.5 Rs) | Ready | `physics/physics/schwarzschild_coordinate_speed/` |
 | Circular-orbit local speed | v = c √((Rs/2r) / (1 − Rs/r)) | v = c √( (Rs / (2 r)) / (1 − Rs / r) )   (the speed an observer hovering at that radius measures; stable orbits only, r ≥ 3 Rs) | Ready | `physics/physics/schwarzschild_local_orbit_speed/` |
 | Light deflection | δ = 2 Rs / b | δ = 4GM / (c² b) = 2 Rs / b   (the weak-field bend of a ray with closest approach b, in radians; only accurate when Rs/b is small; b ≤ (3√3/2) Rs falls into the mass) | Ready | `physics/physics/light_deflection_angle/` |
+| Perihelion advance | 3π Rs / (a (1 − e²)) per orbit | 3π Rs / (a (1 − e²)) radians per orbit, times 36525 / period_days orbits per century, times 648000/π: arcseconds per century (the general-relativity part only, not the pull of other planets) | Ready | `physics/physics/perihelion_advance/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |
