@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 609)
+        self.assertEqual(len(self.ops), 610)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 609)
+        self.assertEqual(len(status), 610)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -284,6 +284,8 @@ CASES = [
     (PH + "schwarzschild_coordinate_speed", (4, 2), 149896229.0), (PH + "schwarzschild_local_orbit_speed", (6, 2), 149896228.99999997),
     (PH + "light_deflection_angle", (10, 2), 0.4),
     (PH + "perihelion_advance", (18.84955592153876, 0, 365.25, 2), 20626480.624709636),
+    (PH + "schwarzschild_frequency_ratio", (4, 4, 2), 1), (PH + "schwarzschild_frequency_ratio", (4, 8, 2), 0.816496580927726),
+    (PH + "schwarzschild_frequency_ratio", (8, 4, 2), 1.224744871391589),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1245,6 +1247,34 @@ class PerihelionAdvanceTests(unittest.TestCase):
         self.assertTrue(42.9 < mercury < 43.1)
         self.assertGreater(advance(5.79e10, 0.5, 87.9691, rs), advance(5.79e10, 0.2, 87.9691, rs))             # a more eccentric orbit precesses faster
         self.assertGreater(advance(5.79e10, 0.2, 87.9691, rs), advance(1.08e11, 0.2, 224.7, rs))              # and a wider one more slowly
+
+
+class FrequencyRatioTests(unittest.TestCase):
+    """General relativity, job 5: the frequency ratio between two static clocks in the Schwarzschild geometry."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "schwarzschild_frequency_ratio").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 8, 2), "a radius must be positive")
+        self.says((4, -8, 2), "a radius must be positive")
+        self.says((4, 8, -1), "the horizon radius cannot be negative")
+        self.says((2, 8, 2), "r is not outside the horizon")
+        self.says((4, 2, 2), "r is not outside the horizon")
+        self.says((1, 8, 2), "r is not outside the horizon")
+
+    def test_the_direction_and_the_existing_clock_factor(self):
+        ratio = get(PH + "schwarzschild_frequency_ratio").compute
+        clock = get(PH + "gravitational_time_dilation_from_radius").compute      # dt0 = dt sqrt(1 - Rs/r): how fast a static clock at r runs
+        for source, receiver, rs in ((4, 8, 2), (8, 4, 2), (3.5, 1e6, 2), (6.957e8, 1.496e11, 2953.2)):
+            self.assertAlmostEqual(ratio(source, receiver, rs), clock(1, rs, source) / clock(1, rs, receiver), places=12)
+            self.assertAlmostEqual(ratio(source, receiver, rs) * ratio(receiver, source, rs), 1, places=12)    # there and back
+        self.assertLess(ratio(4, 8, 2), 1)                       # a photon climbing out arrives at a lower frequency
+        self.assertGreater(ratio(8, 4, 2), 1)                    # falling in, it arrives at a higher one
+        self.assertEqual(ratio(5, 9, 0), 1)                      # no mass, no shift
+        self.assertAlmostEqual(ratio(6.957e8, 1.496e11, 2953.2), 1 - 2953.2 / 2 * (1 / 6.957e8 - 1 / 1.496e11), delta=1e-9)   # weak field: 1 - GM/c2 (1/r_s - 1/r_r)
 
 
 # --------------------------------------------------------------------------- 3. error handling

@@ -420,6 +420,9 @@ physics/physics/saturation	5 0 10	5
 physics/physics/saturation	-1 0 10	0
 physics/physics/saturation	12 0 10	10
 physics/physics/schwarzschild_coordinate_speed	4 2	149896229.0
+physics/physics/schwarzschild_frequency_ratio	4 4 2	1
+physics/physics/schwarzschild_frequency_ratio	4 8 2	0.816496580927726
+physics/physics/schwarzschild_frequency_ratio	8 4 2	1.224744871391589
 physics/physics/schwarzschild_g_rr	4 2	2
 physics/physics/schwarzschild_g_tt	4 2	-0.5
 physics/physics/schwarzschild_local_orbit_speed	6 2	149896228.99999997

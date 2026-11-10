@@ -1,6 +1,6 @@
 {
- "count": 609,
- "ready": 537,
+ "count": 610,
+ "ready": 538,
  "reference": 72,
  "operators": [
   {
@@ -25999,6 +25999,72 @@
       2
      ],
      "expected": 149896229.0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_frequency_ratio",
+   "name": "Schwarzschild frequency ratio",
+   "symbol": "ν_receiver / ν_source",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ν_receiver / ν_source = √((1 − Rs/r_source) / (1 − Rs/r_receiver))   (between two static clocks outside the horizon; below 1 when the source is deeper, above 1 when the receiver is deeper)",
+   "status": "Ready",
+   "inputs": [
+    "r_source",
+    "r_receiver",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( ( 1 − □ / □ ) / ( 1 − □ / □ ) )",
+   "compute_signature": "compute(r_source, r_receiver, Rs)",
+   "compute_params": [
+    {
+     "name": "r_source",
+     "kind": "required"
+    },
+    {
+     "name": "r_receiver",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      4,
+      4,
+      2
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      4,
+      8,
+      2
+     ],
+     "expected": 0.816496580927726
+    },
+    {
+     "args": [
+      8,
+      4,
+      2
+     ],
+     "expected": 1.224744871391589
     }
    ]
   },

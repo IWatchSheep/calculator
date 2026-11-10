@@ -927,3 +927,23 @@ fn the_perihelion_advance_operator_gives_the_numbers_of_the_work_plan_and_declin
     assert!(call(&[1e10, 1., 88., 2.]).unwrap_err().contains("the eccentricity must be from 0 up to but not including 1"));
     assert!(call(&[1e10, -0.1, 88., 2.]).unwrap_err().contains("the eccentricity must be from 0 up to but not including 1"));
 }
+
+#[test]
+fn the_frequency_ratio_operator_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/schwarzschild_frequency_ratio").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call(&[4., 4., 2.]).unwrap(), 1.0);
+    assert_eq!(call(&[4., 8., 2.]).unwrap(), 0.816496580927726);
+    assert_eq!(call(&[8., 4., 2.]).unwrap(), 1.224744871391589);
+    assert_eq!(call(&[5., 9., 0.]).unwrap(), 1.0);
+    assert!(call(&[0., 8., 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[4., -8., 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[4., 8., -1.]).unwrap_err().contains("the horizon radius cannot be negative"));
+    assert!(call(&[2., 8., 2.]).unwrap_err().contains("r is not outside the horizon"));
+    assert!(call(&[4., 2., 2.]).unwrap_err().contains("r is not outside the horizon"));
+}

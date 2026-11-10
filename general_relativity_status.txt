@@ -25,8 +25,12 @@ DONE
          schwarzschild_radius' own G and c).  Grok's circle test number 20626480.62314147 was wrong: 100 x 648000 / pi = 20626480.624709636, which is what
          the operator returns (1 radian per orbit, 100 orbits).
 
+  Job 5  Frequency ratio between two static clocks (physics/physics): schwarzschild_frequency_ratio(r_source, r_receiver, Rs) = sqrt((1 - Rs/r_source) /
+         (1 - Rs/r_receiver)), the frequency at the receiver over the frequency sent (Grok corrected the swapped radii of the old list: below 1 when the
+         source is deeper).  610 operators, 538 calculating.  Grok's numbers match exactly (1, 0.816496580927726, 1.224744871391589); equals the ratio of the
+         clock factors from gravitational_time_dilation_from_radius; there-and-back product is 1.
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 5   gravitational redshift between two finite radii: sqrt((1 - Rs/r_receiver) / (1 - Rs/r_source))
   Job 6   one geodesic step (radial fall: the next r after one time step), not a loop
   Job 7   Kerr metric: outer and inner horizon, g_tt on the equator; decline "the spin is past the extreme Kerr limit"
   Job 8   frame dragging, Lense-Thirring rate 2 G J / (c^2 r^3)

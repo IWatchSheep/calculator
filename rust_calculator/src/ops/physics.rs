@@ -678,3 +678,13 @@ pub fn perihelion_advance(a: &[f64]) -> R {
     let pi = std::f64::consts::PI;
     n(3.0 * pi * a[3] / (a[0] * (1.0 - a[1] * a[1])) * (36525.0 / a[2]) * (648000.0 / pi))
 }
+
+// ---------- the frequency ratio between two static clocks (general relativity, job 5; the same operations as the Python file) ----------
+
+pub fn schwarzschild_frequency_ratio(a: &[f64]) -> R {
+    // r_source, r_receiver, Rs
+    need(a[0] > 0.0 && a[1] > 0.0, "a radius must be positive")?;
+    need(a[2] >= 0.0, "the horizon radius cannot be negative")?;
+    need(a[0] > a[2] && a[1] > a[2], "r is not outside the horizon")?;
+    n(((1.0 - a[2] / a[0]) / (1.0 - a[2] / a[1])).sqrt())
+}
