@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 526)
+        self.assertEqual(len(self.ops), 529)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 526)
+        self.assertEqual(len(status), 529)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -596,6 +596,9 @@ CASES += [
     (PH + "relativistic_momentum_from_gamma", (1.25, 2, 0.6), 1.5), (PH + "relativistic_momentum_from_gamma", (1, 5, 0), 0),
     (PH + "length_contraction_from_gamma", (100, 1.25), 80), (PH + "length_contraction_from_gamma", (7, 1), 7),
     (PH + "time_dilation_from_gamma", (1, 1.25), 1.25), (PH + "time_dilation_from_gamma", (10, 1), 10),
+    (ST + "standard_deviation_from_variance", (4,), 2), (ST + "standard_deviation_from_variance", (0,), 0),
+    (ST + "sample_standard_deviation_from_variance", (9,), 3), (ST + "sample_standard_deviation_from_variance", (2.25,), 1.5),
+    (PH + "gravitational_time_dilation_from_radius", (100, 0, 10), 100), (PH + "gravitational_time_dilation_from_radius", (100, 5, 20), 100 * 0.75 ** 0.5),
     (PH + "relativistic_doppler_frequency", (100, 0.6), 50), (PH + "relativistic_doppler_frequency", (100, -0.6), 200), (PH + "relativistic_doppler_frequency", (100, 0), 100),
     (PH + "schwarzschild_radius", (1, 1, 1), 2),
     (PH + "schwarzschild_radius", (1.989e30,), 2 * 6.674e-11 * 1.989e30 / 299792458 ** 2),
@@ -828,7 +831,6 @@ NEW_PHYSICS = [
     'lorentz_factor',
     'energy_momentum_relation',
     'relativistic_velocity_addition', 'schwarzschild_radius',
-    'gravitational_time_dilation',
 ]
 
 
@@ -953,8 +955,6 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
             ("lorentz_factor", (0.6 * c,), 1.25),
             ("energy_momentum_relation", (1, 0), c * c),
             ("relativistic_velocity_addition", (0.5 * c, 0.5 * c), 0.8 * c),
-            ("gravitational_time_dilation", (1000, 1.989e30, 6.957e8),
-             1000 * math.sqrt(1 - 2 * 6.674e-11 * 1.989e30 / (6.957e8 * c * c))),
         ]
         for n, args, expected in extra:
             key = PH + n

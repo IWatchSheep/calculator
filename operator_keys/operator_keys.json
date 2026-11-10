@@ -1,6 +1,6 @@
 {
- "count": 526,
- "ready": 454,
+ "count": 529,
+ "ready": 457,
  "reference": 72,
  "operators": [
   {
@@ -14740,6 +14740,35 @@
    ]
   },
   {
+   "key": "math/statistics_and_probability/sample_standard_deviation_from_variance",
+   "name": "Sample standard deviation: from the sample variance",
+   "symbol": "s = √(s²)",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "s = √(s²)   (s² is the answer of the row above)",
+   "status": "Ready",
+   "inputs": [
+    "sample_variance"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( □ )",
+   "compute_signature": "compute(sample_variance)",
+   "compute_params": [
+    {
+     "name": "sample_variance",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
    "key": "math/statistics_and_probability/sample_variance",
    "name": "Sample variance",
    "symbol": "s²",
@@ -14825,6 +14854,35 @@
      "expected": 2
     }
    ]
+  },
+  {
+   "key": "math/statistics_and_probability/standard_deviation_from_variance",
+   "name": "Standard deviation: from the variance",
+   "symbol": "σ = √(σ²)",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "σ = √(σ²)   (σ² is the answer of the row above)",
+   "status": "Ready",
+   "inputs": [
+    "variance"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( □ )",
+   "compute_signature": "compute(variance)",
+   "compute_params": [
+    {
+     "name": "variance",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
   },
   {
    "key": "math/statistics_and_probability/t_test_statistic",
@@ -18962,6 +19020,47 @@
      "expected": 100
     }
    ]
+  },
+  {
+   "key": "physics/physics/gravitational_time_dilation_from_radius",
+   "name": "Gravitational time dilation: from the horizon",
+   "symbol": "Δt₀ = Δt√(1 − rₛ/r)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "Δt₀ = Δt √(1 − rₛ/r)   (rₛ is the answer of the row above; r > rₛ)",
+   "status": "Ready",
+   "inputs": [
+    "dt",
+    "rs",
+    "r"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ × √ ( 1 − □ / □ )",
+   "compute_signature": "compute(dt, rs, r)",
+   "compute_params": [
+    {
+     "name": "dt",
+     "kind": "required"
+    },
+    {
+     "name": "rs",
+     "kind": "required"
+    },
+    {
+     "name": "r",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
   },
   {
    "key": "physics/physics/heat",

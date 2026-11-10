@@ -359,8 +359,10 @@ math/statistics_and_probability/probability | P{probability|favorable outcomes d
 math/statistics_and_probability/quartiles | quartiles ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/range | range ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/sample_standard_deviation | {}{sample standard deviation|spread, dividing by n - 1} = √ ( [] ² )
+math/statistics_and_probability/sample_standard_deviation_from_variance | {}{sample standard deviation|the spread of a sample} = √ ( [sample_variance]{sample variance|the answer of the row above} )
 math/statistics_and_probability/sample_variance | {}{sample variance|spread squared, dividing by n - 1} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / ( [] − 1 )
 math/statistics_and_probability/standard_deviation | {}{standard deviation|the usual spread of the numbers} = √ ( [] ² )
+math/statistics_and_probability/standard_deviation_from_variance | {}{standard deviation|the usual spread of the numbers} = √ ( [variance]{variance|the answer of the row above} )
 math/statistics_and_probability/t_test_statistic | {}{t statistic|how far the mean is from the claimed value} = ( [mean]{sample mean|average of the data} − [mu0]{claimed mean|the value being tested} ₀ ) / ( [s]{sample standard deviation|spread of the data} / √ [n]{sample size|how many values} )
 math/statistics_and_probability/uniform_distribution | f ( [x]{value|where you read the density} ) = 1 / ( [b]{high end|the largest possible value} − [a]{low end|the smallest possible value} ) for [a]{low end|the smallest possible value} ≤ [x]{value|where you read the density} ≤ [b]{high end|the largest possible value} , else 0
 math/statistics_and_probability/variance | {}{variance|the square of the standard deviation} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / []
@@ -464,6 +466,7 @@ physics/physics/final_velocity | {}{final speed|metres per second} = [u]{startin
 physics/physics/frequency | {}{frequency|hertz, cycles per second} = 1 / [T]{period|seconds for one cycle}
 physics/physics/gravitation | {}{force|newtons, the pull between the masses} = G{gravitational constant|6.674e-11 N m2/kg2} × [m1]{first mass|kilograms} × [m2]{second mass|kilograms} / [r]{separation|metres between the centres} ²
 physics/physics/gravitational_time_dilation | {}{clock time|seconds on the clock near the mass} = [dt]{far-away time|seconds measured far from the mass} × √ ( 1 − 2 × G{gravitational constant|6.674e-11 N m2/kg2} × [M]{mass|kilograms} / ( [r]{distance|metres from the centre, outside the horizon} × c{speed of light|299792458 m/s} ² ) )
+physics/physics/gravitational_time_dilation_from_radius | {}{clock time|seconds on the clock near the mass} = [dt]{far-away time|seconds measured far from the mass} × √ ( 1 − [rs]{horizon radius|the answer of the row above, metres} / [r]{distance|metres from the centre, outside the horizon} )
 physics/physics/heat | {}{heat|joules} = [m]{mass|kilograms} × [c]{specific heat|joules per kilogram per kelvin} × [delta_T]{temperature change|kelvin}
 physics/physics/heisenberg_uncertainty | [delta_x]{position uncertainty|metres} × {}{momentum uncertainty|smallest possible, kg m/s} ≥ ħ / 2
 physics/physics/hooke_s_law | {}{restoring force|newtons, back toward the rest point} = − [k]{spring constant|newtons per metre} × [x]{stretch|metres from the rest point}

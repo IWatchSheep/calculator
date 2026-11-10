@@ -154,8 +154,10 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Range | range | range = max − min | Ready | `math/statistics_and_probability/range/` |
 | Variance | σ² | σ² = Σ(xᵢ − μ)² / n   (population) | Ready | `math/statistics_and_probability/variance/` |
 | Standard deviation | σ | σ = √(σ²)   (population) | Ready | `math/statistics_and_probability/standard_deviation/` |
+| Standard deviation: from the variance | σ = √(σ²) | σ = √(σ²)   (σ² is the answer of the row above) | Ready | `math/statistics_and_probability/standard_deviation_from_variance/` |
 | Sample variance | s² | s² = Σ(xᵢ − x̄)² / (n − 1) | Ready | `math/statistics_and_probability/sample_variance/` |
 | Sample standard deviation | s | s = √(s²) | Ready | `math/statistics_and_probability/sample_standard_deviation/` |
+| Sample standard deviation: from the sample variance | s = √(s²) | s = √(s²)   (s² is the answer of the row above) | Ready | `math/statistics_and_probability/sample_standard_deviation_from_variance/` |
 | Z-score | z | z = (x − μ) / σ | Ready | `math/statistics_and_probability/z_score/` |
 | Covariance | cov(X,Y) | cov(X,Y) = Σ(xᵢ − x̄)(yᵢ − ȳ) / (n − 1) | Ready | `math/statistics_and_probability/covariance/` |
 | Correlation | r | r = cov(X,Y) / (sₓ · s_y) | Ready | `math/statistics_and_probability/correlation/` |
@@ -629,3 +631,4 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Relativistic Doppler: frequency | f = f₀√((1−β)/(1+β)) | f = f₀ √( (1 − β)/(1 + β) )   (β is the answer of the row above) | Ready | `physics/physics/relativistic_doppler_frequency/` |
 | Schwarzschild radius | rₛ = 2GM/c² | rₛ = 2 G M / c²   (G = 6.674×10⁻¹¹ N·m²/kg²) | Ready | `physics/physics/schwarzschild_radius/` |
 | Gravitational time dilation | Δt₀ = Δt√(1 − rₛ/r) | Δt₀ = Δt √(1 − 2GM/(r c²))   (clock at distance r from mass M, r > rₛ) | Ready | `physics/physics/gravitational_time_dilation/` |
+| Gravitational time dilation: from the horizon | Δt₀ = Δt√(1 − rₛ/r) | Δt₀ = Δt √(1 − rₛ/r)   (rₛ is the answer of the row above; r > rₛ) | Ready | `physics/physics/gravitational_time_dilation_from_radius/` |

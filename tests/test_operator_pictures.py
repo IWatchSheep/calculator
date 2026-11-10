@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 526)
+        self.assertEqual(len(keys), 529)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 526)
+        self.assertEqual(count, 529)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -136,7 +136,8 @@ class RustPort(unittest.TestCase):
                     "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions",
                     "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler",
                     "physics/physics/relativistic_kinetic_energy", "physics/physics/relativistic_momentum", "physics/physics/length_contraction",
-                    "physics/physics/time_dilation"):
+                    "physics/physics/time_dilation", "math/statistics_and_probability/standard_deviation",
+                    "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
@@ -407,6 +408,79 @@ class InTheWindow(unittest.TestCase):
         self.app._sync_links()
         self.press_equals()
         self.assertEqual(float(row_tree.get_slot(self.app.rows[1]["node"], (2,))), 1.5e8)    # v on Row 2 is the v typed on Row 1
+
+    # ---------- standard deviations and gravitational time dilation: Row 1 is an operator that already exists ----------
+    def type_list(self, row, values):
+        from operator_row_math import row_tree
+        text = ", ".join(str(v) for v in values)
+        row_tree.set_slot(self.app.rows[row]["node"], (0,), row_tree.advanced_slot("list", text, list(values), "[%s]" % text))
+
+    def test_the_standard_deviation_in_two_rows_matches_todays_to_one_bit(self):
+        """Row 1 is the variance, Row 2 its square root.  statistics.pstdev takes the square root of the exact fraction, so now and then (about one case in eight)
+        sqrt(pvariance) is the neighbouring float: checked to one bit (2 ulp), never more."""
+        import math
+        import statistics
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        for key, today, variance in (("math/statistics_and_probability/standard_deviation", statistics.pstdev, statistics.pvariance),
+                                     ("math/statistics_and_probability/sample_standard_deviation", statistics.stdev, statistics.variance)):
+            for data in ([2, 4, 4, 4, 5, 5, 7, 9], [1, 2, 3, 4], [0.1, 0.2, 0.3], [10.5, 3.25, 7.0], [73.148457, -9.6, -63.067931, 26.0, -81.18], [5, 5]):
+                self.app._clear_all()
+                self.app._place_operator_row(key)
+                self.app.update()
+                self.type_list(0, data)
+                self.press_equals()
+                got = row_tree.evaluate(self.app.rows[1]["node"])
+                expected = today(data)
+                self.assertTrue(abs(got - expected) <= 2 * math.ulp(expected), (key, data, got, expected))
+                self.assertEqual(got, math.sqrt(variance(data)), (key, data))               # the square root of Row 1's exact answer
+                self.assertEqual(self.chained_values(1, (0,)), variance(data), (key, data))   # the chained box holds Row 1's exact answer
+
+    def test_the_standard_deviations_decline_like_todays(self):
+        key = "math/statistics_and_probability/sample_standard_deviation"
+        self.place_chain(key, {})
+        self.type_list(0, [5])                                                              # a sample of one number
+        text = self.press_equals()
+        self.assertIn("at least two data points", text)
+        self.assertIsNone(self.chained_values(1, (0,)))
+        self.app._clear_all()
+        self.app._place_operator_row("math/statistics_and_probability/standard_deviation")  # no numbers typed at all
+        text = self.press_equals()
+        self.assertIn("Row 1", text)
+        self.assertIsNone(self.chained_values(1, (0,)))
+
+    def test_gravitational_time_dilation_in_two_rows_gives_todays_number(self):
+        import math
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        today = library.get("physics/physics/gravitational_time_dilation").compute
+        key = "physics/physics/gravitational_time_dilation"
+        for dt, M, r in ((1000, 1.989e30, 6.957e8), (3600, 5.972e24, 6.371e6), (1, 1.989e30, 1e10), (2.5, 3e31, 5e8)):
+            self.app._clear_all()
+            self.place_chain(key, {0: M})
+            row_tree.set_slot(self.app.rows[1]["node"], (0,), repr(dt))
+            row_tree.set_slot(self.app.rows[1]["node"], (2,), repr(r))
+            self.press_equals()
+            got = row_tree.evaluate(self.app.rows[1]["node"])
+            expected = today(dt, M, r)
+            self.assertTrue(abs(got - expected) <= 2 * math.ulp(expected), (dt, M, r, got, expected))
+            self.assertEqual(self.chained_values(1, (1,)), library.get("physics/physics/schwarzschild_radius").compute(M))      # the exact horizon radius
+
+    def test_gravitational_time_dilation_declines_inside_the_horizon_with_todays_message(self):
+        from operator_row_math import row_tree
+        key = "physics/physics/gravitational_time_dilation"
+        self.place_chain(key, {0: 1.989e30})                                                # the horizon of the Sun is about 2954 metres
+        row_tree.set_slot(self.app.rows[1]["node"], (0,), "1000")
+        row_tree.set_slot(self.app.rows[1]["node"], (2,), "2000")                           # r is inside it
+        text = self.press_equals()
+        self.assertIn("r must be outside the Schwarzschild radius", text)
+        self.assertIsNotNone(self.chained_values(1, (1,)))                                   # Row 1 did not decline: its radius is in the chained box
+        self.app._clear_all()
+        self.place_chain(key, {})                                                           # Row 1 itself declines (its mass box is empty): the chained box stays empty
+        row_tree.set_slot(self.app.rows[1]["node"], (0,), "1000")
+        row_tree.set_slot(self.app.rows[1]["node"], (2,), "1e9")
+        self.press_equals()
+        self.assertIsNone(self.chained_values(1, (1,)))
 
     def test_the_answer_of_the_chain_is_the_last_rows_answer(self):
         self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})

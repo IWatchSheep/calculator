@@ -220,6 +220,36 @@ static TIME_DILATION: Spec = Spec {
     links: &[],
 };
 
+static STANDARD_DEVIATION: Spec = Spec {
+    title: "Standard deviation of a whole population. Row 1 is the variance of the list of numbers you type there: the average squared distance from the mean. Row 2 reads that variance and takes its square root, σ = √(σ²), the usual spread of the numbers in the same units as the numbers. The rows are joined by →: the answer is the last row's answer, the standard deviation.",
+    rows: &[
+        RowSpec { title: "The variance of the numbers typed here: their average squared distance from the mean.", node: NodeSpec { op: "math/statistics_and_probability/variance", fill: &[] } },
+        RowSpec { title: "The standard deviation: the square root of that variance. The variance box reads Row 1.", node: NodeSpec { op: "math/statistics_and_probability/standard_deviation_from_variance", fill: &[(0, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
+static SAMPLE_STANDARD_DEVIATION: Spec = Spec {
+    title: "Standard deviation of a sample (dividing by n − 1). Row 1 is the sample variance of the list of numbers you type there; it needs at least two numbers. Row 2 reads that sample variance and takes its square root, s = √(s²). The rows are joined by →: the answer is the last row's answer, the sample standard deviation.",
+    rows: &[
+        RowSpec { title: "The sample variance of the numbers typed here (it needs at least two numbers).", node: NodeSpec { op: "math/statistics_and_probability/sample_variance", fill: &[] } },
+        RowSpec { title: "The sample standard deviation: the square root of that variance. The sample variance box reads Row 1.", node: NodeSpec { op: "math/statistics_and_probability/sample_standard_deviation_from_variance", fill: &[(0, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
+static GRAVITATIONAL_TIME_DILATION: Spec = Spec {
+    title: "Gravitational time dilation. Row 1 finds the horizon radius rₛ = 2GM/c² of the mass M you type there (G and c are the usual constants). Row 2 reads that radius and gives the time Δt₀ on a clock at distance r from the mass, Δt₀ = Δt √(1 − rₛ/r), for the far-away time Δt; r must be outside the horizon. The rows are joined by →: the answer is the last row's answer, the clock time.",
+    rows: &[
+        RowSpec { title: "The horizon radius rₛ = 2GM/c² of the mass typed here.", node: NodeSpec { op: "physics/physics/schwarzschild_radius", fill: &[] } },
+        RowSpec { title: "The clock time from that radius. The rₛ box reads Row 1; the far-away time Δt and the distance r are typed here; r must be outside the horizon.", node: NodeSpec { op: "physics/physics/gravitational_time_dilation_from_radius", fill: &[(1, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -230,6 +260,9 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
         "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
+        "math/statistics_and_probability/standard_deviation" => &STANDARD_DEVIATION,
+        "math/statistics_and_probability/sample_standard_deviation" => &SAMPLE_STANDARD_DEVIATION,
+        "physics/physics/gravitational_time_dilation" => &GRAVITATIONAL_TIME_DILATION,
         "physics/physics/relativistic_kinetic_energy" => &KINETIC_ENERGY,
         "physics/physics/relativistic_momentum" => &MOMENTUM,
         "physics/physics/length_contraction" => &LENGTH_CONTRACTION,

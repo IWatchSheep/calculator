@@ -285,6 +285,14 @@ pub fn wronskian(a: &[f64]) -> R {
 pub fn bayes_theorem(a: &[f64]) -> R {
     n(a[0] * a[1] / a[2])
 }
+pub fn standard_deviation_from_variance(a: &[f64]) -> R {
+    need(a[0] >= 0.0, "math domain error")?;
+    n(a[0].sqrt())
+}
+pub fn sample_standard_deviation_from_variance(a: &[f64]) -> R {
+    need(a[0] >= 0.0, "math domain error")?;
+    n(a[0].sqrt())
+}
 pub fn binomial_distribution(a: &[f64]) -> R {
     let (nn, k) = (nat(a[0], "n")?, nat(a[1], "k")?);
     // k above n: Python's (1 - p) ** (n - k) has a NEGATIVE exponent, which is a division by zero when p is 1

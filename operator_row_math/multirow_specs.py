@@ -165,6 +165,30 @@ SPECS = {
         ],
         "joins": ["→"],
     },
+    "math/statistics_and_probability/standard_deviation": {
+        "title": "Standard deviation of a whole population. Row 1 is the variance of the list of numbers you type there: the average squared distance from the mean. Row 2 reads that variance and takes its square root, σ = √(σ²), the usual spread of the numbers in the same units as the numbers. The rows are joined by →: the answer is the last row's answer, the standard deviation.",
+        "rows": [
+            {"op": "math/statistics_and_probability/variance", "title": "The variance of the numbers typed here: their average squared distance from the mean."},
+            {"op": "math/statistics_and_probability/standard_deviation_from_variance", "title": "The standard deviation: the square root of that variance. The variance box reads Row 1.", "fill": {0: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
+    "math/statistics_and_probability/sample_standard_deviation": {
+        "title": "Standard deviation of a sample (dividing by n − 1). Row 1 is the sample variance of the list of numbers you type there; it needs at least two numbers. Row 2 reads that sample variance and takes its square root, s = √(s²). The rows are joined by →: the answer is the last row's answer, the sample standard deviation.",
+        "rows": [
+            {"op": "math/statistics_and_probability/sample_variance", "title": "The sample variance of the numbers typed here (it needs at least two numbers)."},
+            {"op": "math/statistics_and_probability/sample_standard_deviation_from_variance", "title": "The sample standard deviation: the square root of that variance. The sample variance box reads Row 1.", "fill": {0: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
+    "physics/physics/gravitational_time_dilation": {
+        "title": "Gravitational time dilation. Row 1 finds the horizon radius rₛ = 2GM/c² of the mass M you type there (G and c are the usual constants). Row 2 reads that radius and gives the time Δt₀ on a clock at distance r from the mass, Δt₀ = Δt √(1 − rₛ/r), for the far-away time Δt; r must be outside the horizon. The rows are joined by →: the answer is the last row's answer, the clock time.",
+        "rows": [
+            {"op": "physics/physics/schwarzschild_radius", "title": "The horizon radius rₛ = 2GM/c² of the mass typed here."},
+            {"op": "physics/physics/gravitational_time_dilation_from_radius", "title": "The clock time from that radius. The rₛ box reads Row 1; the far-away time Δt and the distance r are typed here; r must be outside the horizon.", "fill": {1: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

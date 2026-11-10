@@ -258,3 +258,63 @@ fn the_lorentz_chains_give_todays_numbers_and_decline_at_the_speed_of_light() {
         }
     }
 }
+
+#[test]
+fn the_standard_deviations_in_two_rows_match_the_one_row_operators() {
+    use rust_calculator::value::Value;
+    for (key, one_row) in [
+        ("math/statistics_and_probability/standard_deviation", "math/statistics_and_probability/standard_deviation"),
+        ("math/statistics_and_probability/sample_standard_deviation", "math/statistics_and_probability/sample_standard_deviation"),
+    ] {
+        for data in ["2, 4, 4, 4, 5, 5, 7, 9", "1, 2, 3, 4", "0.1, 0.2, 0.3", "10.5, 3.25, 7.0", "73.148457, -9.6, -63.067931, 26.0, -81.18", "5, 5"] {
+            let mut chain = Document::new();
+            chain.apply_template(ops::get(key).unwrap().key, multirow::get(key).unwrap()).unwrap();
+            chain.rows[0].inputs[0] = data.to_string();
+            chain.equals_all().unwrap_or_else(|e| panic!("{key} {data}: {e}"));
+            let mut single = Document::new();
+            single.rows[0].set_operator(ops::get(one_row).unwrap());
+            single.rows[0].inputs[0] = data.to_string();
+            single.equals_all().unwrap();
+            let (got, want) = (number(&chain, 1), match single.rows[0].value {
+                Some(Value::Number(x)) => x,
+                ref other => panic!("{other:?}"),
+            });
+            assert_eq!(got, want, "{key} {data}"); // Rust's one-row operators take the square root of the variance too: the same float
+            assert!(chain.rows[1].inputs[0].parse::<f64>().is_ok(), "the chained box holds Row 1's number");
+        }
+    }
+    // a sample of one number declines, and the chained box stays empty
+    let key = "math/statistics_and_probability/sample_standard_deviation";
+    let mut chain = Document::new();
+    chain.apply_template(ops::get(key).unwrap().key, multirow::get(key).unwrap()).unwrap();
+    chain.rows[0].inputs[0] = "5".to_string();
+    let err = chain.equals_all().unwrap_err();
+    assert!(err.contains("at least two data points"), "{err}");
+    assert_eq!(chain.rows[1].inputs[0], "");
+}
+
+#[test]
+fn gravitational_time_dilation_in_two_rows_gives_todays_number_and_declines_inside_the_horizon() {
+    let key = "physics/physics/gravitational_time_dilation";
+    let today = ops::get(key).unwrap();
+    let (g, c) = (6.674e-11_f64, 299792458.0_f64);
+    for (dt, m, r) in [(1000.0, 1.989e30, 6.957e8), (3600.0, 5.972e24, 6.371e6), (1.0, 1.989e30, 1e10), (2.5, 3e31, 5e8)] {
+        let (sdt, sm, sr) = (format!("{dt}"), format!("{m}"), format!("{r}"));
+        let mut doc = chain_doc(key, &[(0, 0, &sm), (1, 0, &sdt), (1, 2, &sr)]);
+        doc.equals_all().unwrap();
+        let want = match (today.compute)(&[dt, m, r, g, c]).unwrap() {
+            rust_calculator::value::Value::Number(x) => x,
+            other => panic!("{other:?}"),
+        };
+        let got = number(&doc, 1);
+        assert!((got - want).abs() <= 2.0 * f64::EPSILON * want.abs(), "{dt} {m} {r}: {got} vs {want}"); // one bit, never more
+        assert!(doc.rows[1].inputs[1].parse::<f64>().is_ok()); // the chained box holds Row 1's radius
+    }
+    let mut doc = chain_doc(key, &[(0, 0, "1.989e30"), (1, 0, "1000"), (1, 2, "2000")]);
+    let err = doc.equals_all().unwrap_err();
+    assert!(err.contains("r must be outside the Schwarzschild radius"), "{err}");
+    assert!(doc.rows[1].inputs[1].parse::<f64>().is_ok()); // Row 1 did not decline: its radius is there
+    let mut doc = chain_doc(key, &[(1, 0, "1000"), (1, 2, "1e9")]); // Row 1's mass box is empty: Row 1 declines
+    assert!(doc.equals_all().is_err());
+    assert_eq!(doc.rows[1].inputs[1], "");
+}

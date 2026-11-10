@@ -3807,6 +3807,32 @@ math/statistics_and_probability/probability	10 -1	-10.0
 math/statistics_and_probability/probability	0.5 0.5	1.0
 math/statistics_and_probability/probability	0.5 2	0.25
 math/statistics_and_probability/probability	0 0	ERR
+math/statistics_and_probability/sample_standard_deviation_from_variance	0.5	0.7071067811865476
+math/statistics_and_probability/sample_standard_deviation_from_variance	2	1.4142135623730951
+math/statistics_and_probability/sample_standard_deviation_from_variance	2.5	1.5811388300841898
+math/statistics_and_probability/sample_standard_deviation_from_variance	7.5	2.7386127875258306
+math/statistics_and_probability/sample_standard_deviation_from_variance	1	1.0
+math/statistics_and_probability/sample_standard_deviation_from_variance	0.25	0.5
+math/statistics_and_probability/sample_standard_deviation_from_variance	5	2.23606797749979
+math/statistics_and_probability/sample_standard_deviation_from_variance	0	0.0
+math/statistics_and_probability/sample_standard_deviation_from_variance	10	3.1622776601683795
+math/statistics_and_probability/sample_standard_deviation_from_variance	-3	ERR
+math/statistics_and_probability/sample_standard_deviation_from_variance	-1	ERR
+math/statistics_and_probability/sample_standard_deviation_from_variance	100	10.0
+math/statistics_and_probability/sample_standard_deviation_from_variance	3	1.7320508075688772
+math/statistics_and_probability/standard_deviation_from_variance	-3	ERR
+math/statistics_and_probability/standard_deviation_from_variance	0	0.0
+math/statistics_and_probability/standard_deviation_from_variance	7.5	2.7386127875258306
+math/statistics_and_probability/standard_deviation_from_variance	2	1.4142135623730951
+math/statistics_and_probability/standard_deviation_from_variance	0.5	0.7071067811865476
+math/statistics_and_probability/standard_deviation_from_variance	3	1.7320508075688772
+math/statistics_and_probability/standard_deviation_from_variance	5	2.23606797749979
+math/statistics_and_probability/standard_deviation_from_variance	100	10.0
+math/statistics_and_probability/standard_deviation_from_variance	1	1.0
+math/statistics_and_probability/standard_deviation_from_variance	10	3.1622776601683795
+math/statistics_and_probability/standard_deviation_from_variance	2.5	1.5811388300841898
+math/statistics_and_probability/standard_deviation_from_variance	0.25	0.5
+math/statistics_and_probability/standard_deviation_from_variance	-1	ERR
 math/statistics_and_probability/t_test_statistic	52 50 4 16	2.0
 math/statistics_and_probability/t_test_statistic	0 1 7.5 10	-0.4216370213557839
 math/statistics_and_probability/t_test_statistic	0.25 0.25 0.5 2.5	0.0
@@ -5244,6 +5270,44 @@ physics/physics/gravitational_time_dilation	2 1 5	2.0
 physics/physics/gravitational_time_dilation	10 0 0	ERR
 physics/physics/gravitational_time_dilation	-3 2.5 0.5	-3.0
 physics/physics/gravitational_time_dilation	5 0.5 3	5.0
+physics/physics/gravitational_time_dilation_from_radius	10 0.5 -3	ERR
+physics/physics/gravitational_time_dilation_from_radius	100 -1 2	122.4744871391589
+physics/physics/gravitational_time_dilation_from_radius	1 5 5	ERR
+physics/physics/gravitational_time_dilation_from_radius	7.5 2 -3	ERR
+physics/physics/gravitational_time_dilation_from_radius	5 1 10	4.743416490252569
+physics/physics/gravitational_time_dilation_from_radius	5 -1 7.5	5.322906474223771
+physics/physics/gravitational_time_dilation_from_radius	5 2 -3	ERR
+physics/physics/gravitational_time_dilation_from_radius	2.5 5 0.25	ERR
+physics/physics/gravitational_time_dilation_from_radius	10 5 7.5	5.773502691896258
+physics/physics/gravitational_time_dilation_from_radius	0.25 -3 -1	ERR
+physics/physics/gravitational_time_dilation_from_radius	2.5 2 2.5	1.1180339887498947
+physics/physics/gravitational_time_dilation_from_radius	1 2 2.5	0.44721359549995787
+physics/physics/gravitational_time_dilation_from_radius	10 0.5 2.5	8.94427190999916
+physics/physics/gravitational_time_dilation_from_radius	5 -3 1	10.0
+physics/physics/gravitational_time_dilation_from_radius	5 7.5 2.5	ERR
+physics/physics/gravitational_time_dilation_from_radius	0 5 2	ERR
+physics/physics/gravitational_time_dilation_from_radius	2 5 5	ERR
+physics/physics/gravitational_time_dilation_from_radius	100 2.5 7.5	81.6496580927726
+physics/physics/gravitational_time_dilation_from_radius	0 7.5 0	ERR
+physics/physics/gravitational_time_dilation_from_radius	5 0 0.5	5.0
+physics/physics/gravitational_time_dilation_from_radius	7.5 2 -1	ERR
+physics/physics/gravitational_time_dilation_from_radius	2.5 100 0.25	ERR
+physics/physics/gravitational_time_dilation_from_radius	-1 100 7.5	ERR
+physics/physics/gravitational_time_dilation_from_radius	2 -1 0	ERR
+physics/physics/gravitational_time_dilation_from_radius	100 0.25 0.25	ERR
+physics/physics/gravitational_time_dilation_from_radius	7.5 0.5 -3	ERR
+physics/physics/gravitational_time_dilation_from_radius	-1 0.25 100	-0.998749217771909
+physics/physics/gravitational_time_dilation_from_radius	3 -1 0.25	6.708203932499369
+physics/physics/gravitational_time_dilation_from_radius	2 1 10	1.8973665961010275
+physics/physics/gravitational_time_dilation_from_radius	10 -1 0.25	22.360679774997898
+physics/physics/gravitational_time_dilation_from_radius	-3 3 0.5	ERR
+physics/physics/gravitational_time_dilation_from_radius	0.25 7.5 0	ERR
+physics/physics/gravitational_time_dilation_from_radius	2 -3 7.5	2.3664319132398464
+physics/physics/gravitational_time_dilation_from_radius	-1 3 7.5	-0.7745966692414834
+physics/physics/gravitational_time_dilation_from_radius	-1 0 100	-1.0
+physics/physics/gravitational_time_dilation_from_radius	0.25 3 3	ERR
+physics/physics/gravitational_time_dilation_from_radius	0.25 2 1	ERR
+physics/physics/gravitational_time_dilation_from_radius	0.25 -1 -3	ERR
 physics/physics/heat	2 4 5	40
 physics/physics/heat	-3 100 0	0
 physics/physics/heat	-1 2.5 0	-0.0

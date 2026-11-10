@@ -224,6 +224,11 @@ pub fn relativistic_doppler(a: &[f64]) -> R {
     let beta = a[1] / a[2];
     n(a[0] * ((1.0 - beta) / (1.0 + beta)).sqrt())
 }
+pub fn gravitational_time_dilation_from_radius(a: &[f64]) -> R {
+    // dt, rs, r
+    need(a[2] > a[1], "r must be outside the Schwarzschild radius")?;
+    n(a[0] * (1.0 - a[1] / a[2]).sqrt())
+}
 pub fn relativistic_beta(a: &[f64]) -> R {
     // v, c
     need(a[0].abs() < a[1], "speed must be less than the speed of light")?;
