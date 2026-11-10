@@ -6615,6 +6615,45 @@ physics/physics/lens_magnification	2.5 2.5	-1.0
 physics/physics/lens_magnification	2 2.5	-0.8
 physics/physics/lens_magnification	0.25 3	-0.08333333333333333
 physics/physics/lens_magnification	5 10	-0.5
+physics/physics/lense_thirring_rate	0 8	0.0
+physics/physics/lense_thirring_rate	8.074318974340423e+36 8	23421285.78125
+physics/physics/lense_thirring_rate	-8.074318974340423e+36 8	-23421285.78125
+physics/physics/lense_thirring_rate	2 -3	ERR
+physics/physics/lense_thirring_rate	-1 1	-1.4851652948203698e-27
+physics/physics/lense_thirring_rate	3 0.25	2.85151736605511e-25
+physics/physics/lense_thirring_rate	10 3	5.500612203038407e-28
+physics/physics/lense_thirring_rate	0 2	0.0
+physics/physics/lense_thirring_rate	10 0.25	9.505057886850368e-25
+physics/physics/lense_thirring_rate	7.5 2.5	7.128793415137776e-28
+physics/physics/lense_thirring_rate	7.5 1	1.1138739711152774e-26
+physics/physics/lense_thirring_rate	2 7.5	7.040783619889162e-30
+physics/physics/lense_thirring_rate	100 100	1.4851652948203697e-31
+physics/physics/lense_thirring_rate	0.5 2.5	4.7525289434251834e-29
+physics/physics/lense_thirring_rate	100 0	ERR
+physics/physics/lense_thirring_rate	100 2	1.8564566185254623e-26
+physics/physics/lense_thirring_rate	2.5 10	3.712913237050925e-30
+physics/physics/lense_thirring_rate	0.25 3	1.3751530507596017e-29
+physics/physics/lense_thirring_rate	7.5 2	1.3923424638940968e-27
+physics/physics/lense_thirring_rate	0.5 0	ERR
+physics/physics/lense_thirring_rate	7.5 7.5	2.640293857458436e-29
+physics/physics/lense_thirring_rate	5 2	9.282283092627312e-28
+physics/physics/lense_thirring_rate	5 10	7.42582647410185e-30
+physics/physics/lense_thirring_rate	10 -3	ERR
+physics/physics/lense_thirring_rate	5 2.5	4.752528943425184e-28
+physics/physics/lense_thirring_rate	3 0.5	3.5643967075688876e-26
+physics/physics/lense_thirring_rate	-3 -3	ERR
+physics/physics/lense_thirring_rate	7.5 5	8.91099176892222e-29
+physics/physics/lense_thirring_rate	-1 0	ERR
+physics/physics/lense_thirring_rate	2.5 -3	ERR
+physics/physics/lense_thirring_rate	1 100	1.4851652948203699e-33
+physics/physics/lense_thirring_rate	2 3	1.1001224406076813e-28
+physics/physics/lense_thirring_rate	2.5 5	2.97033058964074e-29
+physics/physics/lense_thirring_rate	-3 -1	ERR
+physics/physics/lense_thirring_rate	10 2.5	9.505057886850367e-28
+physics/physics/lense_thirring_rate	0.5 0.5	5.940661179281479e-27
+physics/physics/lense_thirring_rate	0 10	0.0
+physics/physics/lense_thirring_rate	-1 -3	ERR
+physics/physics/lense_thirring_rate	5 3	2.7503061015192033e-28
 physics/physics/lensmakers_equation	1.5 0.2 -0.2	0.2
 physics/physics/lensmakers_equation	0.25 3 3	ERR
 physics/physics/lensmakers_equation	-1 -3 2.5	0.6818181818181818

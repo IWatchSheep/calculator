@@ -729,3 +729,11 @@ pub fn kerr_frame_dragging_g_tphi(a: &[f64]) -> R {
     kerr_check(a[1], a[2])?;
     n(-a[1] * a[2] / a[0] + 0.0)
 }
+
+// ---------- the Lense-Thirring rate (general relativity, job 8; the same operations as the Python file) ----------
+
+pub fn lense_thirring_rate(a: &[f64]) -> R {
+    // J, r, G, c
+    need(a[1] > 0.0, "a radius must be positive")?;
+    n(2.0 * a[2] * a[0] / (a[3] * a[3] * (a[1] * a[1] * a[1])))
+}

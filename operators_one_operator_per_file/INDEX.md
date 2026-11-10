@@ -631,6 +631,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Kerr outer horizon | r+ = Rs/2 + √((Rs/2)² − a²) | r+ = Rs/2 + √((Rs/2)² − a²)   (the larger horizon of a spinning mass; a = J/(M c) in metres; a = 0 gives r+ = Rs; |a| ≤ Rs/2) | Ready | `physics/physics/kerr_outer_horizon/` |
 | Kerr inner horizon | r− = Rs/2 − √((Rs/2)² − a²) | r− = Rs/2 − √((Rs/2)² − a²)   (the smaller horizon of a spinning mass; a = J/(M c) in metres; a = 0 gives r− = 0; |a| ≤ Rs/2) | Ready | `physics/physics/kerr_inner_horizon/` |
 | Kerr g_tφ | g_tφ = −Rs a / r | g_tφ = −Rs a / r   (the equator value of the frame-dragging coefficient of the Kerr metric; a = J/(M c) in metres; positive a gives a negative answer) | Ready | `physics/physics/kerr_frame_dragging_g_tphi/` |
+| Lense–Thirring rate | Ω = 2GJ / (c² r³) | Ω = 2 G J / (c² r³)   (radians per second by which local inertial frames are dragged around a slowly spinning mass; G = 6.674e-11, c = 299792458; positive J is a right-hand spin) | Ready | `physics/physics/lense_thirring_rate/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

@@ -1,6 +1,6 @@
 {
- "count": 614,
- "ready": 542,
+ "count": 615,
+ "ready": 543,
  "reference": 72,
  "operators": [
   {
@@ -22797,6 +22797,73 @@
       5
      ],
      "expected": 2
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/lense_thirring_rate",
+   "name": "Lense–Thirring rate",
+   "symbol": "Ω = 2GJ / (c² r³)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "Ω = 2 G J / (c² r³)   (radians per second by which local inertial frames are dragged around a slowly spinning mass; G = 6.674e-11, c = 299792458; positive J is a right-hand spin)",
+   "status": "Ready",
+   "inputs": [
+    "J",
+    "r"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 × G × □ / ( c ² □ ³ )",
+   "compute_signature": "compute(J, r, G=6.674e-11, c=299792458)",
+   "compute_params": [
+    {
+     "name": "J",
+     "kind": "required"
+    },
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "G",
+     "kind": "optional",
+     "default": 6.674e-11
+    },
+    {
+     "name": "c",
+     "kind": "optional",
+     "default": 299792458
+    }
+   ],
+   "required_args": 2,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      0,
+      8
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      8.074318974340423e+36,
+      8
+     ],
+     "expected": 23421285.78125
+    },
+    {
+     "args": [
+      -8.074318974340423e+36,
+      8
+     ],
+     "expected": -23421285.78125
     }
    ]
   },

@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 614)
+        self.assertEqual(len(self.ops), 615)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 614)
+        self.assertEqual(len(status), 615)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -290,6 +290,8 @@ CASES = [
     (PH + "kerr_outer_horizon", (10, 0), 10), (PH + "kerr_outer_horizon", (10, 4), 8), (PH + "kerr_outer_horizon", (10, 5), 5), (PH + "kerr_outer_horizon", (10, -4), 8),
     (PH + "kerr_inner_horizon", (10, 0), 0), (PH + "kerr_inner_horizon", (10, 4), 2), (PH + "kerr_inner_horizon", (10, 5), 5),
     (PH + "kerr_frame_dragging_g_tphi", (8, 10, 4), -5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, -4), 5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, 0), 0),
+    (PH + "lense_thirring_rate", (0, 8), 0), (PH + "lense_thirring_rate", (8.074318974340423e+36, 8), 23421285.78125),
+    (PH + "lense_thirring_rate", (-8.074318974340423e+36, 8), -23421285.78125),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1341,6 +1343,30 @@ class KerrTests(unittest.TestCase):
         self.assertEqual(drag(8, 10, 4), -drag(8, 10, -4))                                        # the sign follows the spin
         self.assertEqual(str(drag(8, 10, 0)), "0.0")                                              # no negative zero
         self.assertAlmostEqual(drag(8, 10, 4) * 8, -10 * 4, places=12)
+
+
+class LenseThirringTests(unittest.TestCase):
+    """General relativity, job 8: the Lense-Thirring rate."""
+
+    def test_the_decline(self):
+        for r in (0, -8):
+            with self.assertRaises(ValueError) as ctx:
+                get(PH + "lense_thirring_rate").compute(1e36, r)
+            self.assertIn("a radius must be positive", str(ctx.exception))
+
+    def test_it_matches_the_kerr_frame_dragging_coefficient(self):
+        """Omega = -c g_tphi / r^2 for the Kerr equatorial g_tphi = -Rs a / r, with Rs = 2GM/c^2 and J = a M c."""
+        G, c = 6.674e-11, 299792458
+        rate, g_tphi = get(PH + "lense_thirring_rate").compute, get(PH + "kerr_frame_dragging_g_tphi").compute
+        for rs, a, r in ((10, 4, 8), (10, -4, 8), (2953.2, 1000, 1e5), (1e3, 100, 1e9)):
+            mass = rs * c * c / (2 * G)
+            J = a * mass * c
+            self.assertAlmostEqual(rate(J, r), -c * g_tphi(r, rs, a) / (r * r), delta=1e-12 * abs(rate(J, r)))
+        self.assertEqual(rate(2e36, 5), -rate(-2e36, 5))                                   # the sign follows the spin
+        self.assertAlmostEqual(rate(2e36, 10) * 8, rate(2e36, 5), delta=1e-12 * rate(2e36, 5))      # falls off as 1 / r^3
+        # the Earth's angular momentum 5.86e33 kg m^2/s at its surface: a few times 1e-14 rad/s
+        earth = rate(5.86e33, 6.371e6)
+        self.assertTrue(1e-15 < earth < 1e-13)
 
 
 # --------------------------------------------------------------------------- 3. error handling

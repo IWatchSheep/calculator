@@ -39,8 +39,12 @@ DONE
          equatorial g_tt equals Schwarzschild's, so g_tphi is the piece that shows the spin).  614 operators, 542 calculating.  Grok's numbers match exactly.
          Checked: the horizons add to Rs and multiply to a^2; a = 0 gives Rs and 0; the extreme spin makes them meet; no negative zero for a = 0.
 
+  Job 8  Frame dragging (physics/physics): lense_thirring_rate(J, r) = 2 G J / (c^2 r^3) in radians per second (G = 6.674e-11 and c = 299792458 are filled in
+         as in schwarzschild_radius; slow-spin limit, so no extreme-spin check).  615 operators, 543 calculating.  Grok's numbers match exactly (0, and
+         +-23421285.78125 for J = +-8.074318974340423e+36 at r = 8).  Checked: equals -c g_tphi / r^2 for job 7's coefficient (with Rs = 2GM/c^2 and J = a M c);
+         the sign follows the spin; it falls off as 1 / r^3.
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 8   frame dragging, Lense-Thirring rate 2 G J / (c^2 r^3)
   Job 9   gravitational waves, leading order for a circular binary: wave frequency, quadrupole strain
   Job 10  one radial step of the Tolman-Oppenheimer-Volkoff equation (pressure change over a thin shell)
 

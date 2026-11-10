@@ -343,6 +343,9 @@ physics/physics/length_contraction_from_gamma	100 1.25	80
 physics/physics/length_contraction_from_gamma	7 1	7
 physics/physics/lens_magnification	15 30	-0.5
 physics/physics/lens_magnification	-10 5	2
+physics/physics/lense_thirring_rate	0 8	0
+physics/physics/lense_thirring_rate	8.074318974340423e+36 8	23421285.78125
+physics/physics/lense_thirring_rate	-8.074318974340423e+36 8	-23421285.78125
 physics/physics/lensmakers_equation	1.5 0.2 -0.2	0.2
 physics/physics/light_deflection_angle	10 2	0.4
 physics/physics/lorentz_factor	0.6 1	1.25

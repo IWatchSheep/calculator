@@ -992,3 +992,20 @@ fn the_kerr_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_mes
     assert!(call("kerr_frame_dragging_g_tphi", &[8., 0., 0.]).unwrap_err().contains("the horizon radius must be positive"));
     assert!(call("kerr_frame_dragging_g_tphi", &[8., 10., 6.]).unwrap_err().contains("the spin is past the extreme Kerr limit"));
 }
+
+#[test]
+fn the_lense_thirring_operator_gives_the_numbers_of_the_work_plan_and_declines_with_its_message() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/lense_thirring_rate").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    // J and r, then the two constants the row fills in
+    assert_eq!(call(&[0., 8., 6.674e-11, 299792458.0]).unwrap(), 0.0);
+    assert_eq!(call(&[8.074318974340423e+36, 8., 6.674e-11, 299792458.0]).unwrap(), 23421285.78125);
+    assert_eq!(call(&[-8.074318974340423e+36, 8., 6.674e-11, 299792458.0]).unwrap(), -23421285.78125);
+    assert!(call(&[1e36, 0., 6.674e-11, 299792458.0]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[1e36, -8., 6.674e-11, 299792458.0]).unwrap_err().contains("a radius must be positive"));
+}
