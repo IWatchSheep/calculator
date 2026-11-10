@@ -105,7 +105,7 @@ math/arithmetic/round_down | floor ( [x] ) => {}
 math/arithmetic/round_nearest | round ( [x] ) => {}
 math/arithmetic/round_up | ceil ( [x] ) => {}
 math/arithmetic/subtraction | [a] − [b] => {}
-math/calculus/chain_rule | ( f ∘ g ) ′ ( [] ) = f ′ ( g ( [] ) ) · g ′ ( [] )
+math/calculus/chain_rule | ( f ∘ g ) ′ ( x ) = f ′ ( g ( x ) ) · g ′ ( x )
 math/calculus/curl | ∇ × [F] => {}
 math/calculus/definite_integral | ∫ [f] dx from [a] to [b] → {}
 math/calculus/derivative | {} = lim ( h → 0 ) ( ( [f] ( [x] + h ) − [f] ( [x] ) ) / h )
@@ -321,7 +321,7 @@ math/real_analysis/measure | μ ( [intervals] ) => {}
 math/real_analysis/outer_measure | [intervals] *
 math/real_analysis/radius_of_convergence | {} = 1 / [L]
 math/real_analysis/ratio_test | {} = lim | [a_next] ₙ₊₁ / [a_n] ₙ |
-math/real_analysis/riemann_sum | Σ f ( [] ᵢ ) · [] => {}
+math/real_analysis/riemann_sum | Σ f ( x ᵢ ) · Δx => {}
 math/real_analysis/riemannstieltjes_sum | Σ f ( [xs] ᵢ ) · ( g ( [xs] ᵢ₊₁ ) − g ( [xs] ᵢ ) ) => {}
 math/real_analysis/root_test | {} = lim ⁿ √ | [a_n] ₙ |
 math/real_analysis/series_convergence_test | Σ [terms] ₙ
@@ -329,10 +329,10 @@ math/real_analysis/sigma_algebra | Sigma-algebra ( [] )
 math/real_analysis/supremum | sup ( [values] ) => {}
 math/real_analysis/uniform_continuity | ∀ ε > 0 , ∃ δ > 0 , ∀ x , y ∈ D · | x − y | < δ ⇒ | f ( x ) − f ( y ) | < ε
 math/real_analysis/uniform_convergence | [] ₙ ⇉ []
-math/statistics_and_probability/bayes_theorem | P ( [] | [] ) = P ( [] | [] ) × P ( [p_a] ) / P ( [p_b] )
+math/statistics_and_probability/bayes_theorem | P ( A | B ) = P ( [p_b_given_a] | A ) × P ( [p_a] ) / P ( [p_b] )
 math/statistics_and_probability/binomial_distribution | P ( [] = [k] ) = C ( [n] , [k] ) · [p] ᵏ · ( 1 − [p] ) ⁿ⁻ᵏ
 math/statistics_and_probability/chi_square_statistic | {} ² = Σ ( [observed] ᵢ − [expected] ᵢ ) ² / [expected] ᵢ
-math/statistics_and_probability/conditional_probability | P ( [] | [] ) = P ( [] ∩ [] ) / P ( [p_b] )
+math/statistics_and_probability/conditional_probability | P ( A | B ) = P ( [p_a_and_b] ∩ B ) / P ( [p_b] )
 math/statistics_and_probability/confidence_interval | {} = [mean] ± [] × [sd] / √ ( [n] )
 math/statistics_and_probability/correlation | {} = cov ( [x] , [y] ) / ( [] ₓ · [] [] )
 math/statistics_and_probability/covariance | cov ( [x] , [y] ) = Σ ( [x] ᵢ − [] ) ( [y] ᵢ − [] ) / ( [] − 1 )
@@ -429,7 +429,7 @@ math/trigonometry/tangent | tan [theta] = sin [theta] / cos [theta]
 math/trigonometry/two_argument_arctangent | atan2 ( [y] , [x] ) => {}
 physics/physics/acceleration | {} = [delta_v] / [t]
 physics/physics/bernoulli_equation | {} = [P1] + ½ × [rho] × ( [v1] ² − [v2] ² ) + [rho] × g × ( [h1] − [h2] )
-physics/physics/bohr_energy_level | {} = − 13.6 eV × [] ² / [n] ²
+physics/physics/bohr_energy_level | {} = − 13.6 eV × Z ² / [n] ²
 physics/physics/brewster_angle | tan ( {} ) = [n2] / [n1]
 physics/physics/buoyant_force | {} = [rho] × g × [V]
 physics/physics/capacitance | {} = [C] × [V]
@@ -476,12 +476,12 @@ physics/physics/motional_emf | {} = [B] × [L] × [v]
 physics/physics/newton_s_second_law | {} = [m] × [a]
 physics/physics/ohm_s_law | {} = [I] × [R]
 physics/physics/particle_in_a_box | {} = [n] ² × h ² / ( 8 × [m] × [L] ² )
-physics/physics/pendulum_period | {} = 2 π √ ( [L] / [] )
+physics/physics/pendulum_period | {} = 2 π √ ( [L] / g )
 physics/physics/photoelectric_effect | {} = h × [f] − [work_function]
 physics/physics/photon_energy | {} = h × [f]
 physics/physics/photon_momentum | {} = h / [wavelength]
 physics/physics/poiseuille_flow | {} = π × [r] ⁴ × [delta_P] / ( 8 × [mu] × [L] )
-physics/physics/potential_energy | {} = [m] × [] × [h]
+physics/physics/potential_energy | {} = [m] × g × [h]
 physics/physics/power_physics | {} = [W] / [t]
 physics/physics/pressure | {} = [F] / [A]
 physics/physics/quantum_harmonic_oscillator | {} = ħ × [omega] × ( [n] + ½ )
@@ -493,7 +493,7 @@ physics/physics/relativistic_velocity_addition | {} = ( [u] + [v] ) / ( 1 + [u] 
 physics/physics/resistors_in_parallel | 1 / {} = Σ 1 / [resistors] ᵢ
 physics/physics/resistors_in_series | [resistors] ₁ + [] ₂ + … => {}
 physics/physics/reynolds_number | {} = [rho] × [v] × [L] / [mu]
-physics/physics/rydberg_formula | 1 / {} = R × [] ² × ( 1 / [n1] ² − 1 / [n2] ² )
+physics/physics/rydberg_formula | 1 / {} = R × Z ² × ( 1 / [n1] ² − 1 / [n2] ² )
 physics/physics/schwarzschild_radius | {} = 2 × G × [M] / c ²
 physics/physics/self_induced_emf | {} = − [L] × [delta_I] / [dt]
 physics/physics/snell_s_law | [n1] × sin ( [theta1] ) = [n2] × sin ( {} )
@@ -506,5 +506,5 @@ physics/physics/velocity | {} = [d] / [t]
 physics/physics/velocity_squared | {} = √ ( [u] ² + 2 × [a] × [s] )
 physics/physics/volume_flow_rate | {} = [A] × [v]
 physics/physics/wave_speed | {} = [f] × [wavelength]
-physics/physics/weight | {} = [m] × []
+physics/physics/weight | {} = [m] × g
 physics/physics/work | {} = [F] × [d]

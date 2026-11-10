@@ -5,7 +5,8 @@ The picture (operators_one_operator_per_file/.../<operator>.jpg) is the referenc
     math/algebra/power | [a] ^ [b] => {}
     geometry/geometry/cone_surface_area | {} = π × [r] × ( [r] + [l] )
 
-    []       a box the picture draws that is not an input (drawn, but never typed into)
+    []       a box the picture draws that is not an input: an ordinary card showing a square (never typed into, not blue)
+    [_x]     the same, when the picture shows the letter or constant x in that box (g, h, Δx ...)
     [name]   a box for the operator's input `name` (the names are the INPUTS of the row file).  Writing the same name again draws another box that shares the same value
              (the picture writes the variable twice), so the row's SLOTS list repeats that input.
     {}       an answer box inside the formula (the A of A = π r²).  It is never typed into; = fills it with the answer.
@@ -50,7 +51,7 @@ def build(key, dsl, inputs, calc="ready"):
     left, slots, pattern = [], [], []
     first_seen = set()
     for tok in left_text.split():
-        m = re.fullmatch(r"\[([^\]]+)\]", tok)
+        m = None if tok.startswith("[_") else re.fullmatch(r"\[([^\]]+)\]", tok)
         if m:
             name = m.group(1)
             if name not in inputs:
@@ -65,6 +66,10 @@ def build(key, dsl, inputs, calc="ready"):
         elif tok == "[]":
             left.append(("dec", ""))
             pattern.append(BOX)
+        elif re.fullmatch(r"\[_([^\]]+)\]", tok):          # [_x] = a variable letter or constant the picture draws in a box: an ordinary card, not an input
+            letter = tok[2:-1]
+            left.append(("dec", letter))
+            pattern.append(letter)
         else:
             left.append(("op", tok))
             pattern.append(tok)

@@ -57,7 +57,9 @@ def make_component(parent, center, kind, lead="+", on_pick=None, selected=False)
 
 def _card(parent, item, on_pick=None, selected=False):
     kind, text = item
-    if kind in ("box", "out", "dec"):             # "out" is the formula's answer box: it shows the answer after =, nothing is typed into it
+    if kind == "dec":                       # a box the picture draws that is not an input: an ordinary card (a letter, or a square when the picture shows a blank box); only a typed box is blue
+        return make_component(parent, text or BOX, "helper")
+    if kind in ("box", "out"):             # "out" is the formula's answer box: it shows the answer after =, nothing is typed into it
         return make_component(parent, text or BOX, "number", on_pick=on_pick, selected=selected)
     return make_component(parent, text, "helper")
 

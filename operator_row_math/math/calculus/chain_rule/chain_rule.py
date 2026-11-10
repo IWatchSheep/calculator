@@ -1,6 +1,6 @@
 """Row for the operator: Chain rule
 
-Picture:      ( f ∘ g ) ′ ( □ ) = f ′ ( g ( □ ) ) · g ′ ( □ ) with □ , □
+Picture:      ( f ∘ g ) ′ ( x ) = f ′ ( g ( x ) ) · g ′ ( x ) with □ , □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/calculus/chain_rule
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Chain rule'
 KEY = 'math/calculus/chain_rule'
-PATTERN = '( f ∘ g ) ′ ( □ ) = f ′ ( g ( □ ) ) · g ′ ( □ ) with □ , □'
+PATTERN = '( f ∘ g ) ′ ( x ) = f ′ ( g ( x ) ) · g ′ ( x ) with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'ready'
 INPUTS = ['fprime_at_gx', 'gprime_at_x']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '('), ('op', 'f'), ('op', '∘'), ('op', 'g'), ('op', ')'), ('op', '′'), ('op', '('), ('dec', ''), ('op', ')'), ('op', '='), ('op', 'f'), ('op', '′'), ('op', '('), ('op', 'g'), ('op', '('), ('dec', ''), ('op', ')'), ('op', ')'), ('op', '·'), ('op', 'g'), ('op', '′'), ('op', '('), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+LEFT = [('op', '('), ('op', 'f'), ('op', '∘'), ('op', 'g'), ('op', ')'), ('op', '′'), ('op', '('), ('op', 'x'), ('op', ')'), ('op', '='), ('op', 'f'), ('op', '′'), ('op', '('), ('op', 'g'), ('op', '('), ('op', 'x'), ('op', ')'), ('op', ')'), ('op', '·'), ('op', 'g'), ('op', '′'), ('op', '('), ('op', 'x'), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

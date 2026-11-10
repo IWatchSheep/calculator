@@ -46,6 +46,16 @@ class RowFiles(unittest.TestCase):
         self.assertEqual(rows.get("math/algebra/power").RIGHT, [("box", "")])                       # "a ^ b = [ ]": the picture's last box is the result
         self.assertEqual(text("math/abstract_algebra/kernel")[:2], ["ker", ""])
 
+    def test_a_constant_or_letter_is_an_ordinary_card_not_a_blue_box(self):
+        """Only a box the person types is blue.  g in W = m g, and the A of P(A|B), are ordinary cards."""
+        weight = rows.get("physics/physics/weight")
+        self.assertEqual([c for c in weight.LEFT if c[0] == "box"], [("box", "")])             # only m
+        self.assertIn(("op", "g"), weight.LEFT)
+        bayes = rows.get("math/statistics_and_probability/bayes_theorem")
+        self.assertEqual(bayes.INPUTS, ["p_b_given_a", "p_a", "p_b"])
+        self.assertEqual(len(bayes.LEFT) - len([c for c in bayes.LEFT if c[0] != "box"]), 3)   # the three probabilities are the boxes the picture draws
+        self.assertNotIn("with", [t for _, t in bayes.LEFT])
+
     def test_inputs_the_picture_does_not_draw_get_extra_boxes_and_are_listed(self):
         kernel = rows.get("math/abstract_algebra/kernel")
         self.assertEqual([t for k, t in kernel.LEFT if k == "op"], ["ker", "with", ","])

@@ -1,6 +1,6 @@
 """Row for the operator: Weight
 
-Picture:      □ = □ × □
+Picture:      □ = □ × g
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/weight
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Weight'
 KEY = 'physics/physics/weight'
-PATTERN = '□ = □ × □'
+PATTERN = '□ = □ × g'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'ready'
 INPUTS = ['m']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('dec', '')]      # cards left of "="
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', 'g')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

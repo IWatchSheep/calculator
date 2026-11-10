@@ -1,5 +1,5 @@
 Operators whose picture does not draw every input.  The row follows the picture, then adds  with [ ] , [ ]  for the inputs listed here (so the operator still calculates).
-Written by make_operator_row_files.py.  115 operators.
+Written by make_operator_row_files.py.  113 operators.
 
 math/abstract_algebra/coset   extra boxes for: op
 math/abstract_algebra/cyclic_group   extra boxes for: op, identity
@@ -88,8 +88,6 @@ math/real_analysis/mean_value_theorem   extra boxes for: f, a, b
 math/real_analysis/riemann_sum   extra boxes for: f, a, b, n
 math/real_analysis/riemannstieltjes_sum   extra boxes for: f, g
 math/real_analysis/root_test   extra boxes for: n
-math/statistics_and_probability/bayes_theorem   extra boxes for: p_b_given_a
-math/statistics_and_probability/conditional_probability   extra boxes for: p_a_and_b
 math/statistics_and_probability/interquartile_range   extra boxes for: data
 math/statistics_and_probability/linear_regression   extra boxes for: x, y
 math/statistics_and_probability/percentile   extra boxes for: k

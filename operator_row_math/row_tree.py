@@ -113,7 +113,7 @@ def flatten(node, path=()):
             else:
                 out.append(("box", slot, path + (j,)))
         elif kind == "dec":                   # a box the picture draws that is not an input (the second box of A (+) B): shown, never typed into
-            out.append(("dec", "", None))
+            out.append(("dec", text, None))
         elif kind == "out":                   # the answer box of the formula, e.g. the A of A = pi r^2: filled in by =, never typed into
             shown = node.get("out", "")
             out.append(("out", shown[o] if isinstance(shown, list) else shown, None))
