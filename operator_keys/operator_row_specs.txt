@@ -271,6 +271,13 @@ math/linear_algebra/quaternion_from_axis_angle | [axis]{axis|x, y, z, right-hand
 math/linear_algebra/rotate_vector_by_quaternion | [q]{quaternion|w, x, y, z, the turn} [v]{vector|x, y, z, metres, the point being turned} [q] ⁻¹ => {}
 math/linear_algebra/quaternion_to_yaw_pitch_roll | [q]{quaternion|w, x, y, z, it is normalised for you} => {}
 math/linear_algebra/quaternion_from_yaw_pitch_roll | [yaw]{yaw|radians about z, up} [pitch]{pitch|radians about y, left} [roll]{roll|radians about x, forward} => {}
+math/linear_algebra/rotation_matrix_from_quaternion | R ( [q]{quaternion|w, x, y, z, it is normalised for you} ) => {}
+math/linear_algebra/rotation_matrix_from_axis_angle | R ( [axis]{axis|x, y, z, right-handed, it is normalised for you} , [angle]{angle|radians, right-hand rule} ) => {}
+math/linear_algebra/rotation_matrix_from_yaw_pitch_roll | R ( [yaw]{yaw|radians about z, up} , [pitch]{pitch|radians about y, left} , [roll]{roll|radians about x, forward} ) => {}
+math/linear_algebra/rotate_vector_by_matrix | [R]{rotation matrix|three rows of three numbers} [v]{vector|x, y, z, metres} => {}
+math/linear_algebra/quaternion_slerp | slerp ( [q0]{start orientation|w, x, y, z} , [q1]{end orientation|w, x, y, z} , [t]{blend|0 is the start, 1 is the end} ) => {}
+math/linear_algebra/angle_between_quaternions | ∠ ( [q0]{first orientation|w, x, y, z} , [q1]{second orientation|w, x, y, z} ) => {}
+math/linear_algebra/rotation_matrix_to_quaternion | q ( [R]{rotation matrix|three rows of three numbers, right-handed} ) => {}
 math/logic_and_sets/and | [a] ∧ [b] => {}
 math/logic_and_sets/cardinality | | [a] | => {}
 math/logic_and_sets/complement | [a] ᶜ => {}

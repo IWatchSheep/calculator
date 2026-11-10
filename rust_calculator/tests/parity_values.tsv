@@ -1396,6 +1396,46 @@ math/graph_theory_and_combinatorics/vertex_degree	["0: 1; 1: 2; 2:", "B"]	ERR
 math/graph_theory_and_combinatorics/vertex_degree	["A: B, C, D; B: A, C; C: A, B, D; D: A, C", "b"]	ERR
 math/graph_theory_and_combinatorics/vertex_degree	["A: B; B: A, C; C: B", "b"]	ERR
 math/graph_theory_and_combinatorics/vertex_degree	["A: B; B: C; C: D; D: A", "3"]	ERR
+math/linear_algebra/angle_between_quaternions	["-2", "5"]	ERR
+math/linear_algebra/angle_between_quaternions	["5", "0"]	ERR
+math/linear_algebra/angle_between_quaternions	["3, 4, 12", "2, -1, 3"]	ERR
+math/linear_algebra/angle_between_quaternions	["1, 2, 3", "0, 1, 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["2.5", "1, 3, 3, 1"]	ERR
+math/linear_algebra/angle_between_quaternions	["4 3 2 1", "2, 3, 5, 7, 11"]	ERR
+math/linear_algebra/angle_between_quaternions	["2, 4, 6, 8", "4 3 2 1"]	1.6821373411358609
+math/linear_algebra/angle_between_quaternions	["2, -1, 3", "0, 1, 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["4 5 6", "0 0 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["1 2 3 4", "2, 4, 6, 8"]	4.2146848510894035e-08
+math/linear_algebra/angle_between_quaternions	["1 2 3 4 5", "2, 3, 5, 7, 11"]	ERR
+math/linear_algebra/angle_between_quaternions	["3, 4, 12", "0, 1, 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["0", "2.5"]	ERR
+math/linear_algebra/angle_between_quaternions	["5 4 3 2 1", "1, 1, 2, 3, 5"]	ERR
+math/linear_algebra/angle_between_quaternions	["3, 4, 12", "1 0 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["-2", "-2"]	ERR
+math/linear_algebra/angle_between_quaternions	["1.5 2.5 3.5", "1 0 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["2.5", "-2"]	ERR
+math/linear_algebra/angle_between_quaternions	["4 5 6", "1.5 2.5 3.5"]	ERR
+math/linear_algebra/angle_between_quaternions	["1 2 3 4", "1, 3, 3, 1"]	1.230959417340775
+math/linear_algebra/angle_between_quaternions	["0, 1, 0", "0, 1, 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["1 2 3 4 5", "0, 1, 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["1, 1, 2, 3, 5", "1, 1, 2, 3, 5"]	ERR
+math/linear_algebra/angle_between_quaternions	["-2", "2.5"]	ERR
+math/linear_algebra/angle_between_quaternions	["2, 3, 5, 7, 11", "5 4 3 2 1"]	ERR
+math/linear_algebra/angle_between_quaternions	["3 4", "0 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["1 0 0", "0 0"]	ERR
+math/linear_algebra/angle_between_quaternions	["2, -1, 3", "2, 4, 6, 8"]	ERR
+math/linear_algebra/angle_between_quaternions	["1, 1, 2, 3, 5", "-2"]	ERR
+math/linear_algebra/angle_between_quaternions	["5", "-2"]	ERR
+math/linear_algebra/angle_between_quaternions	["2, -1, 3", "1, 2, 3"]	ERR
+math/linear_algebra/angle_between_quaternions	["3, 4, 12", "1.5 2.5 3.5"]	ERR
+math/linear_algebra/angle_between_quaternions	["3, 4, 12", "4 5 6"]	ERR
+math/linear_algebra/angle_between_quaternions	["0", "-2"]	ERR
+math/linear_algebra/angle_between_quaternions	["0", "5"]	ERR
+math/linear_algebra/angle_between_quaternions	["0, 1, 0", "1, 2, 3"]	ERR
+math/linear_algebra/angle_between_quaternions	["2, 4, 6, 8", "2, 4, 6, 8"]	4.2146848510894035e-08
+math/linear_algebra/angle_between_quaternions	["1.5 2.5 3.5", "3, 4, 12"]	ERR
+math/linear_algebra/angle_between_quaternions	["0 0 0", "2, -1, 3"]	ERR
+math/linear_algebra/angle_between_quaternions	["1 2 3 4", "1 2 3 4"]	4.2146848510894035e-08
 math/linear_algebra/characteristic_polynomial	["2 0; 0 3"]	[1, -5, 6]
 math/linear_algebra/characteristic_polynomial	["1 0; 0 1"]	[1, -2, 1]
 math/linear_algebra/characteristic_polynomial	["1; 2; 3"]	ERR
@@ -1994,6 +2034,46 @@ math/linear_algebra/quaternion_normalize	["0 0 0"]	ERR
 math/linear_algebra/quaternion_normalize	["1, 2"]	ERR
 math/linear_algebra/quaternion_normalize	["1.5 2.5"]	ERR
 math/linear_algebra/quaternion_normalize	["1, 3, 3, 1"]	[0.22360679774997896, 0.6708203932499369, 0.6708203932499369, 0.22360679774997896]
+math/linear_algebra/quaternion_slerp	["0 0", "0 0", "10"]	ERR
+math/linear_algebra/quaternion_slerp	["2, -1, 3", "0, 1, 0", "5"]	ERR
+math/linear_algebra/quaternion_slerp	["2.5", "-2", "-1"]	ERR
+math/linear_algebra/quaternion_slerp	["0, 1, 0", "3, 4, 12", "-1"]	ERR
+math/linear_algebra/quaternion_slerp	["3, 4, 12", "5", "100"]	ERR
+math/linear_algebra/quaternion_slerp	["2, -1, 3", "0 0 0", "10"]	ERR
+math/linear_algebra/quaternion_slerp	["-2", "3, 4, 12", "7"]	ERR
+math/linear_algebra/quaternion_slerp	["2, -1", "3 4", "2.5"]	ERR
+math/linear_algebra/quaternion_slerp	["0 0", "0 0", "0.1"]	ERR
+math/linear_algebra/quaternion_slerp	["1 2 3 4 5", "5 4 3 2 1", "-2"]	ERR
+math/linear_algebra/quaternion_slerp	["1 2 3 4 5", "1, 1, 2, 3, 5", "2.5"]	ERR
+math/linear_algebra/quaternion_slerp	["4 3 2 1", "2, 4, 6, 8", "10"]	ERR
+math/linear_algebra/quaternion_slerp	["1 2 3 4 5", "2, 3, 5, 7, 11", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["2, 4, 6, 8", "4 3 2 1", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["-2", "-2", "7"]	ERR
+math/linear_algebra/quaternion_slerp	["0", "5", "0"]	ERR
+math/linear_algebra/quaternion_slerp	["0, 1, 0", "1, 2, 3", "7"]	ERR
+math/linear_algebra/quaternion_slerp	["1.5 2.5 3.5", "1, 2, 3", "2.5"]	ERR
+math/linear_algebra/quaternion_slerp	["-2", "2.5", "-1"]	ERR
+math/linear_algebra/quaternion_slerp	["4 5 6", "1, 2, 3", "10"]	ERR
+math/linear_algebra/quaternion_slerp	["1.5 2.5 3.5", "3, 4, 12", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["5 4 3 2 1", "5 4 3 2 1", "-1"]	ERR
+math/linear_algebra/quaternion_slerp	["2, -1, 3", "0 0 0", "0.5"]	ERR
+math/linear_algebra/quaternion_slerp	["2, 3, 5, 7, 11", "1 2 3 4 5", "4"]	ERR
+math/linear_algebra/quaternion_slerp	["1 0 0", "1, 2, 3", "4"]	ERR
+math/linear_algebra/quaternion_slerp	["4 3 2 1", "2, 4, 6, 8", "1"]	[0.18257418583505536, 0.3651483716701107, 0.5477225575051661, 0.7302967433402214]
+math/linear_algebra/quaternion_slerp	["0 0 0", "2, 3, 5, 7, 11", "100"]	ERR
+math/linear_algebra/quaternion_slerp	["5", "-2", "1"]	ERR
+math/linear_algebra/quaternion_slerp	["1.5 2.5 3.5", "1 0 0", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["0, 1, 0", "2, 4, 6, 8", "0"]	ERR
+math/linear_algebra/quaternion_slerp	["5 4 3 2 1", "1 2 3 4 5", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["1, 3, 3, 1", "2, 4, 6, 8", "0.5"]	[0.21310188765750798, 0.543518550302741, 0.639305662972524, 0.5004632256668569]
+math/linear_algebra/quaternion_slerp	["0", "0", "2"]	ERR
+math/linear_algebra/quaternion_slerp	["1 2 3 4", "1, 3, 3, 1", "10"]	ERR
+math/linear_algebra/quaternion_slerp	["5", "-2", "2.5"]	ERR
+math/linear_algebra/quaternion_slerp	["3, 4, 12", "1, 3, 3, 1", "-1"]	ERR
+math/linear_algebra/quaternion_slerp	["4 5 6", "0, 1, 0", "0"]	ERR
+math/linear_algebra/quaternion_slerp	["0, 1, 0", "0 0 0", "2.5"]	ERR
+math/linear_algebra/quaternion_slerp	["0, 1, 0", "2, -1, 3", "0"]	ERR
+math/linear_algebra/quaternion_slerp	["1.5 2.5 3.5", "0", "2.5"]	ERR
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["0 0 0"]	ERR
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["1, 1, 2, 3, 5"]	ERR
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["2, 3, 5, 7, 11"]	ERR
@@ -2020,6 +2100,46 @@ math/linear_algebra/quaternion_to_yaw_pitch_roll	["2, 4, 6, 8"]	[2.3561944901923
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["1, 3, 3, 1"]	[1.5707963267948966, 0.0, 2.498091544796509]
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["0, 1"]	ERR
 math/linear_algebra/quaternion_to_yaw_pitch_roll	["2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 0 0; 0 3 0; 0 0 4", "-2"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 0; 0 3", "2, 3, 5, 7, 11"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "3, 4, 12"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0", "1, 2"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 0; 0 3", "0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0", "5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 2 3; 4 5 6; 7 8 10", "1, 3, 3, 1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1; 2; 3", "0, 1, 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 1 0; 1 3 1; 0 1 4", "0, 1, 0"]	[1.0, 3.0, 1.0]
+math/linear_algebra/rotate_vector_by_matrix	["1 2; 3 4; 5 6", "4 5 6"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 1; 1 2", "0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 0 0; 0 3 0; 0 0 4", "1, 2, 3"]	[2.0, 6.0, 12.0]
+math/linear_algebra/rotate_vector_by_matrix	["2 0 0; 0 3 0; 0 0 4", "1.5 2.5 3.5"]	[3.0, 7.5, 14.0]
+math/linear_algebra/rotate_vector_by_matrix	["0", "2, -1, 3"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0 1; 1 0", "0, 1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 0; 0 1; 1 1", "2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1; 2; 3", "1 0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["5", "2.5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 0 0; 0 1 0; 0 0 1", "3, 4, 12"]	[3.0, 4.0, 12.0]
+math/linear_algebra/rotate_vector_by_matrix	["4 1; 2 3", "2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 2 3; 4 5 6; 7 8 10", "0 0 0"]	[0.0, 0.0, 0.0]
+math/linear_algebra/rotate_vector_by_matrix	["1; 2; 3", "1.5 2.5 3.5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 0; 0 1; 1 1", "1 0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["5", "1, 2, 3"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["4 1 2; 1 3 0; 2 0 5", "1.5 2.5 3.5"]	[15.5, 9.0, 20.5]
+math/linear_algebra/rotate_vector_by_matrix	["4 1; 2 3", "0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 2; 3 4; 5 6", "0, 1, 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 0 0; 0 1 0; 0 0 1", "0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0 1; 1 0", "2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1; 2; 3", "2, -1, 3"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2 1; 1 2", "2, -1"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0", "0 0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["0", "1, 1, 2, 3, 5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "1.5 2.5 3.5"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["2", "1 0 0"]	ERR
+math/linear_algebra/rotate_vector_by_matrix	["1 0 0; 0 1 0; 0 0 1", "1, 2, 3"]	[1.0, 2.0, 3.0]
+math/linear_algebra/rotate_vector_by_matrix	["5", "0"]	ERR
 math/linear_algebra/rotate_vector_by_quaternion	["1, 2, 3", "0 0 0"]	ERR
 math/linear_algebra/rotate_vector_by_quaternion	["3, 4, 12", "0 0 0"]	ERR
 math/linear_algebra/rotate_vector_by_quaternion	["1, 2", "0, 1"]	ERR
@@ -2060,6 +2180,92 @@ math/linear_algebra/rotate_vector_by_quaternion	["1 2 3 4 5", "1, 1, 2, 3, 5"]	E
 math/linear_algebra/rotate_vector_by_quaternion	["1, 2, 3", "3, 4, 12"]	ERR
 math/linear_algebra/rotate_vector_by_quaternion	["4 5 6", "1 0 0"]	ERR
 math/linear_algebra/rotate_vector_by_quaternion	["0", "5"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["5 4 3 2 1", "0"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1.5 2.5 3.5", "5"]	[[0.36133737017203305, 0.8662479349431944, -0.34503596931886743], [-0.6073306525805051, 0.4994265874321341, 0.6178370029401208], [0.7075201646266325, -0.01369667742717906, 0.7065604133222854]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, 3, 5, 7, 11", "10"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["5 4 3 2 1", "0.5"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0, 1, 0", "2.5"]	[[-0.8011436155469336, 0.0, 0.5984721441039565], [0.0, 1.0, 0.0], [-0.5984721441039565, 0.0, -0.8011436155469336]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1.5 2.5 3.5", "-1"]	[[0.5901490437860523, 0.7296219761814973, -0.34550814460937773], [-0.5634661831217889, 0.6787654667512302, 0.47093874508703076], [0.5781262548929696, -0.08324189461437753, 0.811690101198997]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, -1", "4"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, -1, 3", "4"]	[[-0.18117401490258023, 0.37055712135473995, 0.9109683837199667], [-0.843026727315772, -0.5355262193733543, 0.05017574508606326], [0.5064404341631294, -0.7588801540276113, 0.40941299254871]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1 0 0", "0.1"]	[[1.0, 0.0, 0.0], [0.0, 0.9950041652780258, -0.09983341664682815], [0.0, 0.09983341664682815, 0.9950041652780258]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, 4, 6, 8", "3"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0 0 0", "0"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0, 1, 0", "-1"]	[[0.5403023058681398, 0.0, -0.8414709848078965], [0.0, 1.0, 0.0], [0.8414709848078965, 0.0, 0.5403023058681398]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, 3, 5, 7, 11", "2"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 1, 2, 3, 5", "1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1 0 0", "10"]	[[1.0, 0.0, 0.0], [0.0, -0.8390715290764528, 0.5440211108893699], [0.0, -0.5440211108893699, -0.8390715290764528]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1.5 2.5 3.5", "10"]	[[-0.6396541343573192, 0.7503608471206757, 0.16673688106693973], [-0.08563619805689765, -0.285134321523304, 0.9546543145410307], [0.7638776276223495, 0.5963698666077848, 0.2466453977277181]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2.5", "4"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0 0 0", "0.5"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 2", "3"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, 4, 6, 8", "5"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 3, 3, 1", "10"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, -1, 3", "-1"]	[[0.6716445041915283, 0.6090066421373934, 0.42190587791811224], [-0.7403488404607821, 0.5731378554489868, 0.35127851212351696], [-0.027879282947946227, -0.5482918096086, 0.8358222520957641]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2.5", "2"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["2.5", "-1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, -1, 3", "100"]	[[0.9016563373483457, 0.3863269977839945, 0.1943381076957677], [-0.4256644628446562, 0.8721532385528494, 0.24116072141405392], [-0.0763257125137825, -0.3001669190050465, 0.9508281686741729]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["2, -1, 3", "10"]	[[-0.31362252076889474, 0.1734627690148302, 0.9335692701842067], [-0.6989117773223881, -0.7077092769995632, -0.10329524078492902], [0.6427777547384672, -0.6848782716764079, 0.34318873961555263]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1 2 3 4 5", "-1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["4 5 6", "1"]	[[0.635823904648786, -0.4559651125407949, 0.6227549906848051], [0.6947691094924107, 0.6895548039628996, -0.20447507629735673], [-0.33619019434286634, 0.5626810717247803, 0.7552259031245938]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["4 5 6", "2"]	[[-0.12188255882306076, -0.2539140064508189, 0.9595167112577231], [0.9895747007610227, 0.04364109739673516, 0.1372492849953722], [-0.07672387808547854, 0.9662417564699335, 0.24594778833204112]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1 2 3 4 5", "7"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 2, 3", "-1"]	[[0.5731378554489868, 0.7403488404607821, -0.35127851212351696], [-0.6090066421373934, 0.6716445041915283, 0.42190587791811224], [0.5482918096086, -0.027879282947946227, 0.8358222520957641]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 2", "10"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0 0", "1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["3 4", "1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1.5 2.5 3.5", "0"]	[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 1, 2, 3, 5", "10"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["5", "10"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0 0 0", "-1"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["0 0 0", "5"]	ERR
+math/linear_algebra/rotation_matrix_from_axis_angle	["1, 2, 3", "4"]	[[-0.5355262193733543, 0.843026727315772, -0.05017574508606326], [-0.37055712135473995, -0.18117401490258023, 0.9109683837199667], [0.7588801540276113, 0.5064404341631294, 0.40941299254871]]
+math/linear_algebra/rotation_matrix_from_quaternion	["1, 2, 3"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1 2 3 4 5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["0 0"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["5 4 3 2 1"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["2, -1, 3"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1.5 2.5 3.5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["3, 4, 12"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1, 3, 3, 1"]	[[0.0, 0.8, 0.6], [1.0, 0.0, 0.0], [0.0, 0.6, -0.8]]
+math/linear_algebra/rotation_matrix_from_quaternion	["4 5 6"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1, 1, 2, 3, 5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["0, 1, 0"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1 2 3 4"]	[[-0.6666666666666663, 0.13333333333333336, 0.7333333333333332], [0.6666666666666665, -0.33333333333333304, 0.6666666666666666], [0.33333333333333326, 0.9333333333333332, 0.13333333333333353]]
+math/linear_algebra/rotation_matrix_from_quaternion	["2, 3, 5, 7, 11"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["-2"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["4 3 2 1"]	[[0.6666666666666667, 0.13333333333333336, 0.7333333333333332], [0.6666666666666665, 0.3333333333333335, -0.6666666666666666], [-0.33333333333333326, 0.9333333333333332, 0.13333333333333353]]
+math/linear_algebra/rotation_matrix_from_quaternion	["1.5 2.5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["0 0 0"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1 0 0"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["2.5"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["0, 1"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["3 4"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["2, -1"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["2, 4, 6, 8"]	[[-0.6666666666666663, 0.13333333333333336, 0.7333333333333332], [0.6666666666666665, -0.33333333333333304, 0.6666666666666666], [0.33333333333333326, 0.9333333333333332, 0.13333333333333353]]
+math/linear_algebra/rotation_matrix_from_quaternion	["0"]	ERR
+math/linear_algebra/rotation_matrix_from_quaternion	["1, 2"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1; 2; 3"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 2; 3 4; 5 6"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["0"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["5"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["4 1; 2 3"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["2"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["2 1; 1 2"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["2 0 0; 0 3 0; 0 0 4"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 2 3; 4 5 6; 7 8 10"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["0 1; 1 0"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["4 1 2; 1 3 0; 2 0 5"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 2 3; 4 5 6"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["2 0; 0 3"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["2 1 0; 1 3 1; 0 1 4"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 0 2; 0 1 3"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 0; 0 1"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 0; 0 1; 1 1"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 2; 3 4"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 2; 2 4"]	ERR
+math/linear_algebra/rotation_matrix_to_quaternion	["1 0 0; 0 1 0; 0 0 1"]	[1.0, 0.0, 0.0, 0.0]
 math/linear_algebra/row_reduce_rref	["4 1 2; 1 3 0; 2 0 5"]	[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 math/linear_algebra/row_reduce_rref	["5"]	[[1.0]]
 math/linear_algebra/row_reduce_rref	["2"]	[[1.0]]

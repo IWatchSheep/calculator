@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 545)
+        self.assertEqual(len(self.ops), 552)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 545)
+        self.assertEqual(len(status), 552)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -265,6 +265,22 @@ CASES = [
     (LA + "quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, 0, 0.7071067811865476],), [1.5707963267948966, 0, 0]),
     (LA + "quaternion_to_yaw_pitch_roll", ([2 ** 0.5, 0, 0, 2 ** 0.5],), [1.5707963267948966, 0, 0]),
     (LA + "quaternion_from_yaw_pitch_roll", (1.5707963267948966, 0, 0), [0.7071067811865476, 0, 0, 0.7071067811865476]),
+    (LA + "rotation_matrix_from_quaternion", ([1, 0, 0, 0],), [[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    (LA + "rotation_matrix_from_quaternion", ([0.7071067811865476, 0, 0, 0.7071067811865476],), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
+    (LA + "rotation_matrix_from_quaternion", ([2 ** 0.5, 0, 0, 2 ** 0.5],), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
+    (LA + "rotation_matrix_from_quaternion", ([0, 1, 0, 0],), [[1, 0, 0], [0, -1, 0], [0, 0, -1]]),
+    (LA + "rotation_matrix_from_axis_angle", ([0, 0, 2], 1.5707963267948966), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
+    (LA + "rotation_matrix_from_yaw_pitch_roll", (1.5707963267948966, 0, 0), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
+    (LA + "rotate_vector_by_matrix", ([[0, -1, 0], [1, 0, 0], [0, 0, 1]], [1, 0, 0]), [0, 1, 0]),
+    (LA + "quaternion_slerp", ([1, 0, 0, 0], [0.7071067811865476, 0, 0, 0.7071067811865476], 0.5), [0.9238795325112868, 0, 0, 0.38268343236508984]),
+    (LA + "quaternion_slerp", ([1, 0, 0, 0], [-0.7071067811865476, 0, 0, -0.7071067811865476], 0.5), [0.9238795325112868, 0, 0, 0.38268343236508984]),
+    (LA + "quaternion_slerp", ([1, 0, 0, 0], [0.7071067811865476, 0, 0, 0.7071067811865476], 0), [1, 0, 0, 0]),
+    (LA + "quaternion_slerp", ([1, 0, 0, 0], [0.7071067811865476, 0, 0, 0.7071067811865476], 1), [0.7071067811865476, 0, 0, 0.7071067811865476]),
+    (LA + "angle_between_quaternions", ([1, 0, 0, 0], [0.7071067811865476, 0, 0, 0.7071067811865476]), 1.5707963267948966),
+    (LA + "angle_between_quaternions", ([1, 0, 0, 0], [0, 1, 0, 0]), 3.141592653589793), (LA + "angle_between_quaternions", ([1, 0, 0, 0], [-1, 0, 0, 0]), 0),
+    (LA + "rotation_matrix_to_quaternion", ([[1, 0, 0], [0, 1, 0], [0, 0, 1]],), [1, 0, 0, 0]),
+    (LA + "rotation_matrix_to_quaternion", ([[0, -1, 0], [1, 0, 0], [0, 0, 1]],), [0.7071067811865476, 0, 0, 0.7071067811865476]),
+    (LA + "rotation_matrix_to_quaternion", ([[1, 0, 0], [0, -1, 0], [0, 0, -1]],), [0, 1, 0, 0]),
     (LA + "unit_vector", ([3, 4],), [0.6, 0.8]), (LA + "vector_projection", ([3, 4], [1, 0]), [3, 0]),
     (LA + "solve_ax_b", ([[2, 1], [1, 3]], [5, 10]), [1, 3]),
     (LA + "characteristic_polynomial", ([[2, 0], [0, 3]],), [1, -5, 6]),
@@ -672,6 +688,46 @@ class QuaternionDeclineTests(unittest.TestCase):
     def test_gimbal_lock_is_declined_not_guessed(self):
         self.says("quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, 0.7071067811865476, 0],), "gimbal lock")
         self.says("quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, -0.7071067811865476, 0],), "gimbal lock")
+
+    def test_the_rotation_matrix_operators_decline_with_the_plan_messages(self):
+        Rz = [[0, -1, 0], [1, 0, 0], [0, 0, 1]]
+        self.says("rotation_matrix_from_quaternion", ([1, 2, 3],), "a quaternion has 4 numbers: w, x, y, z")
+        self.says("rotation_matrix_from_quaternion", ([0, 0, 0, 0],), "the quaternion is zero, it cannot be a rotation")
+        self.says("rotation_matrix_from_axis_angle", ([0, 0], 1.0), "a vector has 3 numbers: x, y, z")
+        self.says("rotation_matrix_from_axis_angle", ([0, 0, 0], 1.0), "the axis has length zero")
+        self.says("rotate_vector_by_matrix", (Rz, [1, 0]), "a vector has 3 numbers: x, y, z")
+        self.says("rotate_vector_by_matrix", ([[1, 0], [0, 1]], [1, 0, 0]), "a rotation matrix has 3 rows of 3 numbers")
+        self.says("rotation_matrix_to_quaternion", ([[1, 0], [0, 1]],), "a rotation matrix has 3 rows of 3 numbers")
+        self.says("rotation_matrix_to_quaternion", ([[2, 0, 0], [0, 2, 0], [0, 0, 2]],), "not a rotation matrix")       # scaled, so not a rotation
+        self.says("rotation_matrix_to_quaternion", ([[1, 0, 0], [0, 1, 0], [0, 0, -1]],), "not a rotation matrix")      # a mirror: determinant -1
+        self.says("quaternion_slerp", ([1, 0, 0, 0], [0, 1, 0, 0], 1.5), "the blend is outside 0 to 1")
+        self.says("quaternion_slerp", ([1, 0, 0], [0, 1, 0, 0], 0.5), "a quaternion has 4 numbers")
+        self.says("quaternion_slerp", ([0, 0, 0, 0], [0, 1, 0, 0], 0.5), "zero")
+        self.says("angle_between_quaternions", ([1, 0, 0, 0], [0, 0, 0, 0]), "zero")
+        self.says("angle_between_quaternions", ([1, 0, 0, 0], [0, 0, 1]), "a quaternion has 4 numbers")
+
+    def test_the_matrix_and_the_quaternion_turn_a_vector_the_same_way_and_go_back_and_forth(self):
+        qs = [[0.5, 0.5, 0.5, 0.5], [0.9, -0.1, 0.3, 0.2], [0, 0, 0, 1], [-0.2, 0.7, 0.1, -0.6]]
+        to_matrix = get(LA + "rotation_matrix_from_quaternion").compute
+        by_matrix = get(LA + "rotate_vector_by_matrix").compute
+        by_quaternion = get(LA + "rotate_vector_by_quaternion").compute
+        back = get(LA + "rotation_matrix_to_quaternion").compute
+        norm = get(LA + "quaternion_normalize").compute
+        for q in qs:
+            v = [1.5, -2.0, 0.25]
+            self.assertTrue(all(abs(a - b) < 1e-12 for a, b in zip(by_matrix(to_matrix(q), v), by_quaternion(q, v))), q)
+            n = norm(q)
+            n = n if n[0] >= 0 else [-c for c in n]
+            self.assertTrue(all(abs(a - b) < 1e-12 for a, b in zip(back(to_matrix(q)), n)), q)       # w >= 0 fixes the sign
+        yaw_pitch_roll = get(LA + "rotation_matrix_from_yaw_pitch_roll").compute
+        axis_angle = get(LA + "rotation_matrix_from_axis_angle").compute
+        one, two = yaw_pitch_roll(0.3, 0.2, -0.4), to_matrix(get(LA + "quaternion_from_yaw_pitch_roll").compute(0.3, 0.2, -0.4))
+        self.assertTrue(all(abs(a - b) < 1e-15 for r, s in zip(one, two) for a, b in zip(r, s)))
+        self.assertTrue(all(abs(a - b) < 1e-12 for r, s in zip(axis_angle([0, 0, 1], 1.5707963267948966), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]) for a, b in zip(r, s)))
+        angle = get(LA + "angle_between_quaternions").compute
+        slerp = get(LA + "quaternion_slerp").compute
+        q0, q1 = [1, 0, 0, 0], [0.5, 0.5, 0.5, 0.5]
+        self.assertAlmostEqual(angle(q0, slerp(q0, q1, 0.25)), 0.25 * angle(q0, q1), places=12)     # a quarter of the way is a quarter of the turn
 
     def test_the_round_trip_and_a_composition(self):
         import math

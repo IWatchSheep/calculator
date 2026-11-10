@@ -523,13 +523,13 @@ pub fn resistors_in_series(a: &[Value]) -> R {
 
 // ---------- quaternions (w, x, y, z; real part first): the same operations in the same order as the Python files ----------
 
-fn quaternion(v: &Value) -> Result<[f64; 4], String> {
+pub(super) fn quaternion(v: &Value) -> Result<[f64; 4], String> {
     let q = nums(v)?;
     need(q.len() == 4, "a quaternion has 4 numbers: w, x, y, z")?;
     Ok([q[0], q[1], q[2], q[3]])
 }
 
-fn quat_multiply(p: &[f64; 4], q: &[f64; 4]) -> [f64; 4] {
+pub(super) fn quat_multiply(p: &[f64; 4], q: &[f64; 4]) -> [f64; 4] {
     [
         p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3],
         p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2],
@@ -538,11 +538,11 @@ fn quat_multiply(p: &[f64; 4], q: &[f64; 4]) -> [f64; 4] {
     ]
 }
 
-fn quat_size(q: &[f64; 4]) -> f64 {
+pub(super) fn quat_size(q: &[f64; 4]) -> f64 {
     (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]).sqrt()
 }
 
-fn vector3(v: &Value) -> Result<[f64; 3], String> {
+pub(super) fn vector3(v: &Value) -> Result<[f64; 3], String> {
     let x = nums(v)?;
     need(x.len() == 3, "a vector has 3 numbers: x, y, z")?;
     Ok([x[0], x[1], x[2]])
@@ -611,4 +611,39 @@ pub fn quaternion_from_yaw_pitch_roll(a: &[Value]) -> R {
     let q_pitch = [(pitch / 2.0).cos(), 0.0, (pitch / 2.0).sin(), 0.0];
     let q_roll = [(roll / 2.0).cos(), (roll / 2.0).sin(), 0.0, 0.0];
     Ok(vlist(quat_multiply(&quat_multiply(&q_yaw, &q_pitch), &q_roll).to_vec()))
+}
+
+pub fn quaternion_slerp(a: &[Value]) -> R {
+    let (q0, q1) = (quaternion(&a[0])?, quaternion(&a[1])?);
+    let t = num(&a[2])?;
+    let (s0, s1) = (quat_size(&q0), quat_size(&q1));
+    need(s0 != 0.0 && s1 != 0.0, "the quaternion is zero, it cannot be blended")?;
+    need((0.0..=1.0).contains(&t), "the blend is outside 0 to 1")?;
+    let ua: Vec<f64> = q0.iter().map(|c| c / s0).collect();
+    let mut ub: Vec<f64> = q1.iter().map(|c| c / s1).collect();
+    let mut d = ua[0] * ub[0] + ua[1] * ub[1] + ua[2] * ub[2] + ua[3] * ub[3];
+    if d < 0.0 {
+        ub = ub.iter().map(|c| -c).collect();
+        d = -d;
+    }
+    d = d.min(1.0);
+    if d > 0.9995 {
+        let r: Vec<f64> = (0..4).map(|k| ua[k] + t * (ub[k] - ua[k])).collect();
+        let s = quat_size(&[r[0], r[1], r[2], r[3]]);
+        return Ok(vlist(r.iter().map(|c| c / s).collect()));
+    }
+    let omega = d.acos();
+    let k0 = ((1.0 - t) * omega).sin() / omega.sin();
+    let k1 = (t * omega).sin() / omega.sin();
+    Ok(vlist((0..4).map(|k| k0 * ua[k] + k1 * ub[k]).collect()))
+}
+
+pub fn angle_between_quaternions(a: &[Value]) -> R {
+    let (q0, q1) = (quaternion(&a[0])?, quaternion(&a[1])?);
+    let (s0, s1) = (quat_size(&q0), quat_size(&q1));
+    need(s0 != 0.0 && s1 != 0.0, "the quaternion is zero, it has no orientation")?;
+    let ua: Vec<f64> = q0.iter().map(|c| c / s0).collect();
+    let ub: Vec<f64> = q1.iter().map(|c| c / s1).collect();
+    let d = (ua[0] * ub[0] + ua[1] * ub[1] + ua[2] * ub[2] + ua[3] * ub[3]).abs().min(1.0);
+    n(2.0 * d.acos())
 }

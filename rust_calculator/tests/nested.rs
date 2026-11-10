@@ -432,3 +432,49 @@ fn the_quaternion_operators_give_the_numbers_of_the_work_plan_and_decline_with_i
     assert!(said("quaternion_from_axis_angle", vec![list(&[0., 0.]), Value::Number(1.)]).contains("a vector has 3 numbers: x, y, z"));
     assert!(said("quaternion_from_axis_angle", vec![list(&[0., 0., 0.]), Value::Number(1.)]).contains("the axis has length zero"));
 }
+
+#[test]
+fn the_rotation_matrix_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let la = "math/linear_algebra/";
+    let call = |key: &str, args: Vec<Value>| -> Result<Value, String> { (ops::get(&format!("{la}{key}")).unwrap().compute_v.unwrap())(&args) };
+    let flat = |v: Value| -> Vec<f64> {
+        match v {
+            Value::List(items) => items
+                .iter()
+                .flat_map(|r| match r {
+                    Value::List(cells) => cells.iter().map(|c| if let Value::Number(x) = c { *x } else { panic!() }).collect::<Vec<f64>>(),
+                    Value::Number(x) => vec![*x],
+                    o => panic!("{o:?}"),
+                })
+                .collect(),
+            Value::Number(x) => vec![x],
+            o => panic!("{o:?}"),
+        }
+    };
+    let list = |xs: &[f64]| Value::List(xs.iter().map(|x| Value::Number(*x)).collect());
+    let matrix = |m: [[f64; 3]; 3]| Value::List(m.iter().map(|r| list(r)).collect());
+    let near = |a: Vec<f64>, b: &[f64], tol: f64| a.len() == b.len() && a.iter().zip(b).all(|(p, q)| (p - q).abs() < tol);
+    let (r2, half_pi) = (2f64.sqrt(), std::f64::consts::FRAC_PI_2);
+    let rz = [[0., -1., 0.], [1., 0., 0.], [0., 0., 1.]];
+    let rz_flat = [0., -1., 0., 1., 0., 0., 0., 0., 1.];
+    assert!(near(flat(call("rotation_matrix_from_quaternion", vec![list(&[r2, 0., 0., r2])]).unwrap()), &rz_flat, 1e-12));
+    assert!(near(flat(call("rotation_matrix_from_quaternion", vec![list(&[0., 1., 0., 0.])]).unwrap()), &[1., 0., 0., 0., -1., 0., 0., 0., -1.], 1e-12));
+    assert!(near(flat(call("rotation_matrix_from_axis_angle", vec![list(&[0., 0., 2.]), Value::Number(half_pi)]).unwrap()), &rz_flat, 1e-12));
+    assert!(near(flat(call("rotation_matrix_from_yaw_pitch_roll", vec![Value::Number(half_pi), Value::Number(0.), Value::Number(0.)]).unwrap()), &rz_flat, 1e-12));
+    assert!(near(flat(call("rotate_vector_by_matrix", vec![matrix(rz), list(&[1., 0., 0.])]).unwrap()), &[0., 1., 0.], 1e-12));
+    let h = 0.7071067811865476;
+    let want = [0.9238795325112868, 0., 0., 0.38268343236508984];
+    assert!(near(flat(call("quaternion_slerp", vec![list(&[1., 0., 0., 0.]), list(&[h, 0., 0., h]), Value::Number(0.5)]).unwrap()), &want, 1e-15));
+    assert!(near(flat(call("quaternion_slerp", vec![list(&[1., 0., 0., 0.]), list(&[-h, 0., 0., -h]), Value::Number(0.5)]).unwrap()), &want, 1e-15));
+    assert!(near(flat(call("angle_between_quaternions", vec![list(&[1., 0., 0., 0.]), list(&[0., 1., 0., 0.])]).unwrap()), &[std::f64::consts::PI], 1e-15));
+    assert!(near(flat(call("angle_between_quaternions", vec![list(&[1., 0., 0., 0.]), list(&[-1., 0., 0., 0.])]).unwrap()), &[0.], 1e-15));
+    assert!(near(flat(call("rotation_matrix_to_quaternion", vec![matrix(rz)]).unwrap()), &[h, 0., 0., h], 1e-12));
+    assert!(near(flat(call("rotation_matrix_to_quaternion", vec![matrix([[1., 0., 0.], [0., -1., 0.], [0., 0., -1.]])]).unwrap()), &[0., 1., 0., 0.], 1e-12));
+    let said = |key: &str, args: Vec<Value>| call(key, args).unwrap_err();
+    assert!(said("rotation_matrix_to_quaternion", vec![matrix([[2., 0., 0.], [0., 2., 0.], [0., 0., 2.]])]).contains("not a rotation matrix"));
+    assert!(said("rotation_matrix_to_quaternion", vec![matrix([[1., 0., 0.], [0., 1., 0.], [0., 0., -1.]])]).contains("not a rotation matrix"));
+    assert!(said("rotate_vector_by_matrix", vec![Value::List(vec![list(&[1., 0.]), list(&[0., 1.])]), list(&[1., 0., 0.])]).contains("a rotation matrix has 3 rows of 3 numbers"));
+    assert!(said("quaternion_slerp", vec![list(&[1., 0., 0., 0.]), list(&[0., 1., 0., 0.]), Value::Number(1.5)]).contains("the blend is outside 0 to 1"));
+    assert!(said("rotation_matrix_from_quaternion", vec![list(&[0., 0., 0., 0.])]).contains("the quaternion is zero, it cannot be a rotation"));
+}

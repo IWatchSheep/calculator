@@ -89,6 +89,6 @@ mod tests {
             assert!(img.width() > 100 && img.height() > 100, "{} is {}x{}", layout.key, img.width(), img.height());
             count += 1;
         }
-        assert_eq!(count, 545);
+        assert_eq!(count, 552);
     }
 }

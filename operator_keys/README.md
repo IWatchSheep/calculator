@@ -4,7 +4,7 @@ Generated from the real files by `make_operator_keys.py` (run it from the projec
 
 | File | What it holds |
 |---|---|
-| `operator_keys.json` | all 545 operators, one object each (see fields below) |
+| `operator_keys.json` | all 552 operators, one object each (see fields below) |
 | `operator_keys.tsv` | the same, flat (key, name, symbol, category, subcategory, formula, status, arity, max_args, inputs, compute_signature) |
 | `rust_key_mismatch_map.json` | the Rust port's current keys that do not exist in Python -> the Python key to rename them to |
 
@@ -12,7 +12,7 @@ Generated from the real files by `make_operator_keys.py` (run it from the projec
 
 - `key` – exact folder key, e.g. `physics/physics/time_dilation` (always `group/subgroup/name`; physics is flat under `physics/physics/`, geometry under `geometry/geometry/`)
 - `name`, `symbol`, `category`, `subcategory`, `formula`
-- `status` – `Ready` (473) or `Reference` (72, formula only, no `compute`)
+- `status` – `Ready` (480) or `Reference` (72, formula only, no `compute`)
 - `inputs` / `input_kinds` – what each box in the row is, left to right, and what to type in it (`number`, `list`, `matrix` ...)
 - `arity` – number of boxes in the row (what `row_tree.evaluate` passes positionally to `compute`)
 - `compute_signature`, `compute_params` – the real positional signature, with defaults. `required_args` / `max_args` / `varargs` summarise it (`max_args` is `null` when it takes any number)
@@ -37,7 +37,7 @@ python operator_keys/make_rust_layouts.py    # rust_calculator/src/layouts.rs: h
 cd rust_calculator && cargo test --release
 ```
 
-All 473 Ready operators and all 72 Reference operators exist in Rust (`rust_todo.json` is empty).
+All 480 Ready operators and all 72 Reference operators exist in Rust (`rust_todo.json` is empty).
 
 | File (in `rust_calculator/tests/`) | What it holds |
 |---|---|

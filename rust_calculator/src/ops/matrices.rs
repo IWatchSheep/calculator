@@ -3,6 +3,7 @@
 //! `zip` stops at the shorter list and an out-of-range index is an error, so the same is done here.
 
 use super::vals::*;
+use super::lists::{quat_multiply, quat_size, quaternion, vector3};
 use crate::value::Value;
 
 fn row_sub(a: &[f64], bb: &[f64], f: f64) -> Vec<f64> {
@@ -489,4 +490,82 @@ pub fn linear_programming(a: &[Value]) -> R {
 
 pub fn simplex_method(a: &[Value]) -> R {
     simplex(a)
+}
+
+// ---------- rotation matrices (the same operations in the same order as the Python files) ----------
+
+fn matrix_of_quaternion(q: &[f64; 4]) -> Mat {
+    let s = quat_size(q);
+    let (w, x, y, z) = (q[0] / s, q[1] / s, q[2] / s, q[3] / s);
+    vec![
+        vec![1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - z * w), 2.0 * (x * z + y * w)],
+        vec![2.0 * (x * y + z * w), 1.0 - 2.0 * (x * x + z * z), 2.0 * (y * z - x * w)],
+        vec![2.0 * (x * z - y * w), 2.0 * (y * z + x * w), 1.0 - 2.0 * (x * x + y * y)],
+    ]
+}
+
+fn three_by_three(v: &Value) -> Result<[[f64; 3]; 3], String> {
+    let m = mat(v)?;
+    need(m.len() == 3 && m.iter().all(|r| r.len() == 3), "a rotation matrix has 3 rows of 3 numbers")?;
+    Ok([[m[0][0], m[0][1], m[0][2]], [m[1][0], m[1][1], m[1][2]], [m[2][0], m[2][1], m[2][2]]])
+}
+
+pub fn rotation_matrix_from_quaternion(a: &[Value]) -> R {
+    let q = quaternion(&a[0])?;
+    need(quat_size(&q) != 0.0, "the quaternion is zero, it cannot be a rotation")?;
+    Ok(vmat(matrix_of_quaternion(&q)))
+}
+
+pub fn rotation_matrix_from_axis_angle(a: &[Value]) -> R {
+    let axis = vector3(&a[0])?;
+    let angle = num(&a[1])?;
+    let size = (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]).sqrt();
+    need(size != 0.0, "the axis has length zero")?;
+    let s = (angle / 2.0).sin();
+    Ok(vmat(matrix_of_quaternion(&[(angle / 2.0).cos(), axis[0] / size * s, axis[1] / size * s, axis[2] / size * s])))
+}
+
+pub fn rotation_matrix_from_yaw_pitch_roll(a: &[Value]) -> R {
+    let (yaw, pitch, roll) = (num(&a[0])?, num(&a[1])?, num(&a[2])?);
+    let q_yaw = [(yaw / 2.0).cos(), 0.0, 0.0, (yaw / 2.0).sin()];
+    let q_pitch = [(pitch / 2.0).cos(), 0.0, (pitch / 2.0).sin(), 0.0];
+    let q_roll = [(roll / 2.0).cos(), (roll / 2.0).sin(), 0.0, 0.0];
+    Ok(vmat(matrix_of_quaternion(&quat_multiply(&quat_multiply(&q_yaw, &q_pitch), &q_roll))))
+}
+
+pub fn rotate_vector_by_matrix(a: &[Value]) -> R {
+    let r = three_by_three(&a[0])?;
+    let v = vector3(&a[1])?;
+    Ok(vlist(r.iter().map(|row| row[0] * v[0] + row[1] * v[1] + row[2] * v[2]).collect()))
+}
+
+pub fn rotation_matrix_to_quaternion(a: &[Value]) -> R {
+    let r = three_by_three(&a[0])?;
+    for i in 0..3 {
+        for j in 0..3 {
+            let dot = r[i][0] * r[j][0] + r[i][1] * r[j][1] + r[i][2] * r[j][2];
+            need((dot - if i == j { 1.0 } else { 0.0 }).abs() <= 1e-8, "not a rotation matrix")?;
+        }
+    }
+    let det = r[0][0] * (r[1][1] * r[2][2] - r[1][2] * r[2][1]) - r[0][1] * (r[1][0] * r[2][2] - r[1][2] * r[2][0])
+        + r[0][2] * (r[1][0] * r[2][1] - r[1][1] * r[2][0]);
+    need((det - 1.0).abs() <= 1e-8, "not a rotation matrix")?;
+    let trace = r[0][0] + r[1][1] + r[2][2];
+    let mut q = if trace > 0.0 {
+        let s = (trace + 1.0).sqrt() * 2.0;
+        [0.25 * s, (r[2][1] - r[1][2]) / s, (r[0][2] - r[2][0]) / s, (r[1][0] - r[0][1]) / s]
+    } else if r[0][0] > r[1][1] && r[0][0] > r[2][2] {
+        let s = (1.0 + r[0][0] - r[1][1] - r[2][2]).sqrt() * 2.0;
+        [(r[2][1] - r[1][2]) / s, 0.25 * s, (r[0][1] + r[1][0]) / s, (r[0][2] + r[2][0]) / s]
+    } else if r[1][1] > r[2][2] {
+        let s = (1.0 + r[1][1] - r[0][0] - r[2][2]).sqrt() * 2.0;
+        [(r[0][2] - r[2][0]) / s, (r[0][1] + r[1][0]) / s, 0.25 * s, (r[1][2] + r[2][1]) / s]
+    } else {
+        let s = (1.0 + r[2][2] - r[0][0] - r[1][1]).sqrt() * 2.0;
+        [(r[1][0] - r[0][1]) / s, (r[0][2] + r[2][0]) / s, (r[1][2] + r[2][1]) / s, 0.25 * s]
+    };
+    if q[0] < 0.0 {
+        q = [-q[0], -q[1], -q[2], -q[3]];
+    }
+    Ok(vlist(q.iter().map(|c| c + 0.0).collect()))
 }

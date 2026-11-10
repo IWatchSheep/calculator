@@ -144,6 +144,13 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Rotate a vector | q v q⁻¹ | v turned by q: q v q⁻¹ (the axes stay fixed; a q that is not unit length is allowed) | Ready | `math/linear_algebra/rotate_vector_by_quaternion/` |
 | Quaternion to yaw, pitch and roll | q → yaw pitch roll | yaw = atan2(2(wz + xy), 1 − 2(y² + z²)),  pitch = asin(2(wy − zx)),  roll = atan2(2(wx + yz), 1 − 2(x² + y²))  (q normalised first) | Ready | `math/linear_algebra/quaternion_to_yaw_pitch_roll/` |
 | Yaw, pitch and roll to quaternion | yaw pitch roll → q | q = q_yaw q_pitch q_roll, with q_roll = [cos(r/2), sin(r/2), 0, 0], q_pitch = [cos(p/2), 0, sin(p/2), 0], q_yaw = [cos(y/2), 0, 0, sin(y/2)] | Ready | `math/linear_algebra/quaternion_from_yaw_pitch_roll/` |
+| Rotation matrix from a quaternion | R(q) | R(q) from the normalised quaternion (w, x, y, z): [1 − 2(y² + z²), 2(xy − zw), 2(xz + yw)], [2(xy + zw), 1 − 2(x² + z²), 2(yz − xw)], [2(xz − yw), 2(yz + xw), 1 − 2(x² + y²)] | Ready | `math/linear_algebra/rotation_matrix_from_quaternion/` |
+| Rotation matrix from axis and angle | R(axis, θ) | the quaternion cos(θ/2) + sin(θ/2) · (the unit axis), then R(q); the axis is normalised first, the angle is in radians | Ready | `math/linear_algebra/rotation_matrix_from_axis_angle/` |
+| Rotation matrix from yaw, pitch and roll | R(yaw, pitch, roll) | the quaternion q_yaw q_pitch q_roll, then R(q) | Ready | `math/linear_algebra/rotation_matrix_from_yaw_pitch_roll/` |
+| Rotate a vector by a matrix | R v | R v: the three rows of R times v | Ready | `math/linear_algebra/rotate_vector_by_matrix/` |
+| Quaternion blend | slerp | slerp(q₀, q₁, t) = (sin((1 − t)ω) q₀ + sin(tω) q₁) / sin ω, ω = acos(q₀ · q₁); the short way round (q and −q are the same turn) | Ready | `math/linear_algebra/quaternion_slerp/` |
+| Angle between two orientations | ∠(q₀, q₁) | ∠ = 2 acos(|q₀ · q₁|) with both quaternions normalised (q and −q are the same orientation), from 0 to π radians | Ready | `math/linear_algebra/angle_between_quaternions/` |
+| Quaternion from a rotation matrix | q(R) | Shepperd's method: the largest of w, x, y, z is found first; the answer has w ≥ 0 | Ready | `math/linear_algebra/rotation_matrix_to_quaternion/` |
 | Norm | ‖v‖ₚ | ‖v‖ₚ = (Σ \|vᵢ\|ᵖ)^(1/p) | Ready | `math/linear_algebra/norm/` |
 | Null space | null(A) | null(A) = { x : A·x = 0 } | Ready | `math/linear_algebra/null_space/` |
 | Column space | col(A) | col(A) = span of the columns of A = { A·x : x } | Ready | `math/linear_algebra/column_space/` |
