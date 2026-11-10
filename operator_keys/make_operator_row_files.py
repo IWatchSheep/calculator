@@ -23,6 +23,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 import operator_row_math as R  # noqa: E402
+from operator_row_math.layout import level_of, shown  # noqa: E402
 
 EXTRAS = {}
 SPECS = os.path.join(ROOT, "operator_keys", "operator_row_specs.txt")
@@ -48,7 +49,7 @@ def read_specs():
 def build(key, dsl, inputs, calc="ready"):
     """(left cards, right cards, slots, pattern) from one spec line."""
     left_text, arrow, right_text = dsl.partition("=>")
-    left, slots, pattern = [], [], []
+    left, slots, pattern, levels = [], [], [], []
     first_seen = set()
     for tok in left_text.split():
         m = None if tok.startswith("[_") else re.fullmatch(r"\[([^\]]+)\]", tok)
@@ -57,21 +58,26 @@ def build(key, dsl, inputs, calc="ready"):
             if name not in inputs:
                 raise SystemExit("%s: [%s] is not an input (%s)" % (key, name, inputs))
             left.append(("box", ""))
+            levels.append(0)
             slots.append(inputs.index(name))
             first_seen.add(name)
             pattern.append(BOX)
         elif tok == "{}":
             left.append(("out", ""))
+            levels.append(0)
             pattern.append(BOX)
         elif tok == "[]":
             left.append(("dec", ""))
+            levels.append(0)
             pattern.append(BOX)
         elif re.fullmatch(r"\[_([^\]]+)\]", tok):          # [_x] = a variable letter or constant the picture draws in a box: an ordinary card, not an input
             letter = tok[2:-1]
             left.append(("dec", letter))
+            levels.append(0)
             pattern.append(letter)
         else:
-            left.append(("op", tok))
+            left.append(("op", shown(tok)))          # an exponent / subscript has its own cell (one row up / down) and shows ordinary characters
+            levels.append(level_of(tok))
             pattern.append(tok)
     missing = [n for n in inputs if n not in first_seen]
     if calc == "reference":                      # a reference operator cannot calculate: nothing to add
@@ -79,6 +85,7 @@ def build(key, dsl, inputs, calc="ready"):
     for i, name in enumerate(missing):          # an input the picture does not draw still gets a box, after the picture: "with [ ] , [ ]"
         left.append(("op", "with" if i == 0 else ","))
         left.append(("box", ""))
+        levels.extend([0, 0])
         slots.append(inputs.index(name))
         pattern.append("with" if i == 0 else ",")
         pattern.append(BOX)
@@ -91,7 +98,7 @@ def build(key, dsl, inputs, calc="ready"):
         pattern.append("= " + BOX)
     if not left:
         raise SystemExit("%s: empty formula" % key)
-    return left, right, slots, " ".join(pattern)
+    return left, right, slots, " ".join(pattern), levels
 
 
 def rewrite(key, dsl):
@@ -101,7 +108,7 @@ def rewrite(key, dsl):
     nl = "\r\n" if "\r\n" in src else "\n"
     src = src.replace("\r\n", "\n")
     mod = R.get(key)
-    left, right, slots, pattern = build(key, dsl, list(mod.INPUTS), mod.CALC)
+    left, right, slots, pattern, levels = build(key, dsl, list(mod.INPUTS), mod.CALC)
     ident = list(range(len(mod.INPUTS)))
 
     def put(name, value, comment=None):
@@ -118,9 +125,15 @@ def rewrite(key, dsl):
     put("LEFT", repr(left))
     put("RIGHT", repr(right))
     src = re.sub(r"^SLOTS = .*\n", "", src, flags=re.M)
+    src = re.sub(r"^LEVELS = .*\n", "", src, flags=re.M)
+    extra = ""
     if slots != ident:
-        line = "SLOTS = %r    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)\n" % slots
-        src = re.sub(r"^(KINDS = .*\n)", lambda m: m.group(1) + line, src, count=1, flags=re.M)
+        extra += "SLOTS = %r    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)\n" % slots
+    if any(levels):
+        extra += "LEVELS = %r    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line\n" % levels
+    if extra:
+        src = re.sub(r"^(KINDS = .*\n)", lambda m: m.group(1) + extra, src, count=1, flags=re.M)
+    src = src.replace("return build_row(parent, LEFT, RIGHT, stacked)", "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"))")
     src = re.sub(r"^Picture:      .*$", "Picture:      " + pattern.replace("\\", "\\\\"), src, count=1, flags=re.M)
     open(path, "w", encoding="utf-8", newline="").write(src.replace("\n", nl))
 

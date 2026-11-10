@@ -46,6 +46,22 @@ class RowFiles(unittest.TestCase):
         self.assertEqual(rows.get("math/algebra/power").RIGHT, [("box", "")])                       # "a ^ b = [ ]": the picture's last box is the result
         self.assertEqual(text("math/abstract_algebra/kernel")[:2], ["ker", ""])
 
+    def test_exponents_and_subscripts_sit_in_their_own_cell_above_or_below(self):
+        """Every card is its own column; an exponent is one grid row up (level -1) and a subscript one row down (+1), and shows ordinary characters."""
+        circle = rows.get("geometry/geometry/circle_area")
+        self.assertEqual(circle.LEVELS, [0, 0, 0, 0, 0, -1])
+        self.assertEqual(circle.LEFT[-1], ("op", "2"))                                 # r squared: the 2 is its own card, one row up
+        sigma = rows.get("math/algebra/geometric_series_sum")
+        self.assertIn(1, sigma.LEVELS)                                                 # a subscript is one row down
+        for key in rows.keys():
+            m = rows.get(key)
+            levels = getattr(m, "LEVELS", None)
+            if levels is not None:
+                self.assertEqual(len(levels), len(m.LEFT), key)
+                self.assertTrue(set(levels) <= {-1, 0, 1}, key)
+        node = row_tree.new_node("geometry/geometry/circle_area")
+        self.assertEqual(len(row_tree.levels(node)), len(row_tree.flatten(node)))      # one level for every card the window draws
+
     def test_a_constant_or_letter_is_an_ordinary_card_not_a_blue_box(self):
         """Only a box the person types is blue.  g in W = m g, and the A of P(A|B), are ordinary cards."""
         weight = rows.get("physics/physics/weight")

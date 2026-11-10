@@ -26,4 +26,4 @@ RIGHT = [('box', '')]
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

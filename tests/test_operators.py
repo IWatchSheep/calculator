@@ -1080,7 +1080,7 @@ class TemplateMathTests(unittest.TestCase):
         self.assertEqual(d("(2 + 3) × 4"), "(2 + 3) × 4")
         self.assertEqual(d("2 + 3 × 4"), "2 + (3 × 4)")
         self.assertEqual(d("(□ + 3) * 2"), "(□ + 3) × 2")
-        self.assertEqual(d("Time dilation(1, x)"), "1 / √ ( 1 − □ ² / c ² )")      # the row is the picture's formula: the template reads its right-hand side
+        self.assertEqual(d("Time dilation(1, x)"), "1 / √ ( 1 − □^2 / c^2 )")      # the row is the picture's formula: the template reads its right-hand side
 
     def test_empty_boxes(self):
         n = lambda t: self.tm.empty_boxes(self.tm.parse_math(t))

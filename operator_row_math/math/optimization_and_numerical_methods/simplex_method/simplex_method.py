@@ -27,4 +27,4 @@ RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

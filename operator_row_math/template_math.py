@@ -264,7 +264,19 @@ def describe(node):
         eq = next((n for n, (k, t) in enumerate(cards) if k == "op" and t == "="), None)
         if eq is not None:
             parts = parts[eq + 1:]
-    return " ".join(p if isinstance(p, str) else p[1] for p in parts if not (isinstance(p, tuple) and p[0] == "out"))
+    lv = list(getattr(node["mod"], "LEVELS", None) or [])
+    lv = (lv[eq + 1:] if (any(k == "out" for k, _ in cards) and eq is not None) else lv)
+    pieces = []
+    for n, p in enumerate(parts):
+        if isinstance(p, tuple) and p[0] == "out":
+            continue
+        text = p if isinstance(p, str) else p[1]
+        level = lv[n] if n < len(lv) else 0
+        if level and pieces:                              # an exponent / subscript is its own card; written here as x^2 / x_n, attached to what it belongs to
+            pieces[-1] += ("^" if level < 0 else "_") + text
+        else:
+            pieces.append(text)
+    return " ".join(pieces)
 
 
 def empty_boxes(node):

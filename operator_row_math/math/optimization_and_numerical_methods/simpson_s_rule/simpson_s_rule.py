@@ -19,11 +19,12 @@ PATTERN = '∫ ₐ ᵇ □ ≈ □ / 3 · ( □ ₀ + 4 □ ₁ + 2 □ ₂ + ..
 CALC = 'advanced'
 INPUTS = ['f', 'a', 'b']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+LEVELS = [0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∫'), ('op', 'ₐ'), ('op', 'ᵇ'), ('box', ''), ('op', '≈'), ('dec', ''), ('op', '/'), ('op', '3'), ('op', '·'), ('op', '('), ('dec', ''), ('op', '₀'), ('op', '+'), ('op', '4'), ('dec', ''), ('op', '₁'), ('op', '+'), ('op', '2'), ('dec', ''), ('op', '₂'), ('op', '+'), ('op', '...'), ('op', '+'), ('dec', ''), ('op', 'ₙ'), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+LEFT = [('op', '∫'), ('op', 'a'), ('op', 'b'), ('box', ''), ('op', '≈'), ('dec', ''), ('op', '/'), ('op', '3'), ('op', '·'), ('op', '('), ('dec', ''), ('op', '0'), ('op', '+'), ('op', '4'), ('dec', ''), ('op', '1'), ('op', '+'), ('op', '2'), ('dec', ''), ('op', '2'), ('op', '+'), ('op', '...'), ('op', '+'), ('dec', ''), ('op', 'n'), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

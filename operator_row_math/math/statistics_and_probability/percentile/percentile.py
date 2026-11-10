@@ -19,11 +19,12 @@ PATTERN = '□ ₖ with □ = □'
 CALC = 'advanced'
 INPUTS = ['data', 'k']    # what each box (left to right) is
 KINDS = ['list', 'number']    # what to type in each box (see advanced_input.KINDS)
+LEVELS = [0, 1, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', 'ₖ'), ('op', 'with'), ('box', '')]      # cards left of "="
+LEFT = [('box', ''), ('op', 'k'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

@@ -64,11 +64,13 @@ def _card(parent, item, on_pick=None, selected=False):
     return make_component(parent, text, "helper")
 
 
-def build_row(parent, left, right, stacked=False, on_pick=None, selected=None):
+def build_row(parent, left, right, stacked=False, on_pick=None, selected=None, levels=None):
     """Return a Frame holding the operator row.  left/right are lists of ("box", "") / ("op", text).
     on_pick(index) is called with the position (in `left`) of a box card the user clicks;
-    `selected` is the position of the box card to draw as the current target."""
+    `selected` is the position of the box card to draw as the current target.
+    levels = the grid row of every card of `left` (-1 above the line for an exponent, +1 below for a subscript, 0 on the line); every card is its own column."""
     row = tk.Frame(parent, bg=CREAM)
+    lv = list(levels or [])
     if stacked:
         cards = [(None, i) for i in left if i[0] == "op"]
     else:
@@ -76,13 +78,14 @@ def build_row(parent, left, right, stacked=False, on_pick=None, selected=None):
     col = 0
     for idx, item in cards:
         pick = (lambda k=idx: on_pick(k)) if (on_pick and idx is not None and item[0] == "box") else None
-        _card(row, item, pick, selected == idx and idx is not None).grid(row=0, column=col, padx=(0, 10), pady=4)
+        level = lv[idx] if (idx is not None and idx < len(lv)) else 0
+        _card(row, item, pick, selected == idx and idx is not None).grid(row=1 + level, column=col, padx=(0, 10), pady=4)
         col += 1
     if right:
         if cards:
-            tk.Label(row, text="=", bg=CREAM, font=("Segoe UI", 20, "bold")).grid(row=0, column=col, padx=(0, 10))
+            tk.Label(row, text="=", bg=CREAM, font=("Segoe UI", 20, "bold")).grid(row=1, column=col, padx=(0, 10))
             col += 1
         for item in right:
-            _card(row, item).grid(row=0, column=col, padx=(0, 10), pady=4)
+            _card(row, item).grid(row=1, column=col, padx=(0, 10), pady=4)
             col += 1
     return row

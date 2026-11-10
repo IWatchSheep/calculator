@@ -22,10 +22,11 @@ BOX_INDEX = [0, 1, 2]    # the place of each box's number in the problem text (N
 DEFAULTS = ['30', '3', '72']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
+LEVELS = [0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
 LEFT = [('box', ''), ('op', '×'), ('box', ''), ('op', '='), ('box', ''), ('op', 'd')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 
 def place(parent, stacked=False):
     """Create this problem's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS)

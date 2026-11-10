@@ -20,11 +20,12 @@ CALC = 'advanced'
 INPUTS = ['x', 'y']    # what each box (left to right) is
 KINDS = ['list', 'list']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, -1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'd'), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ')'), ('op', '='), ('op', '√'), ('op', '('), ('op', 'Σ'), ('op', 'ᵢ'), ('op', '('), ('box', ''), ('op', 'ᵢ'), ('op', '−'), ('box', ''), ('op', 'ᵢ'), ('op', ')'), ('op', '²'), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'd'), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ')'), ('op', '='), ('op', '√'), ('op', '('), ('op', 'Σ'), ('op', 'i'), ('op', '('), ('box', ''), ('op', 'i'), ('op', '−'), ('box', ''), ('op', 'i'), ('op', ')'), ('op', '2'), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

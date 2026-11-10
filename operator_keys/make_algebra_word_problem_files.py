@@ -280,22 +280,26 @@ TOKEN = re.compile(NUMBER.pattern + r"|\S")
 
 def row_cards(plan):
     """The row's cards from the plan, ONE TOKEN PER CARD (a card's centre shows one symbol): a blue box is a box card; a number that is not a box, a letter, + - x / = ( ) ;
-    each is an operator card of its own.  Returns (cards, box_index, pattern)."""
-    cards, box_index, pattern = [], [], []
+    each is an operator card of its own; an exponent or subscript is its own card one grid row up or down.  Returns (cards, box_index, pattern, levels)."""
+    sys.path.insert(0, ROOT)
+    from operator_row_math.layout import level_of, shown
+    cards, box_index, pattern, levels = [], [], [], []
     for tok in plan:
         if tok[0] == "txt":
             for m in TOKEN.finditer(tok[1]):
-                cards.append(("op", m.group(0)))
+                cards.append(("op", shown(m.group(0))))
+                levels.append(level_of(m.group(0)))
                 pattern.append(m.group(0))
         else:
             cards.append(("box", ""))
+            levels.append(0)
             box_index.append(tok[2])
             pattern.append(BOX)
-    return cards, box_index, " ".join(pattern)
+    return cards, box_index, " ".join(pattern), levels
 
 
 def row_file(p, key, numbers, solver):
-    cards, box_index, pattern = row_cards(equation_plan(p["Equation"], numbers))
+    cards, box_index, pattern, levels = row_cards(equation_plan(p["Equation"], numbers))
     boxes = pattern
     left = repr(cards)
     return '''"""Row for the algebra word problem: %(category)s %(id)s
@@ -322,20 +326,21 @@ BOX_INDEX = %(box_index_r)s    # the place of each box's number in the problem t
 DEFAULTS = %(defaults_r)s    # the boxes' numbers as written in the stored problem
 KINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
+LEVELS = %(levels_r)s    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
 LEFT = %(left)s      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 
 def place(parent, stacked=False):
     """Create this problem's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS)
 ''' % {
         "category": p["category"], "id": p["id"], "name": "%s %s" % (p["category"], p["id"]), "boxes": boxes, "box": BOX, "key": key,
         "calc_text": "ready - fill the boxes, press = and the answer appears right of =" if solver else "reference - the problem is stored; no solver answers it yet",
         "name_r": py_str("%s %s" % (p["category"], p["id"])), "key_r": py_str(key),
         "pattern_r": py_str("%s  ->  answer %s" % (pattern, BOX)), "calc_r": py_str("ready" if solver else "reference"),
         "inputs_r": py_str(["number %d" % (i + 1) for i in box_index]), "box_index_r": py_str(box_index), "defaults_r": py_str([numbers[i] for i in box_index]),
-        "kinds_r": py_str(["number"] * len(box_index)), "left": left}
+        "kinds_r": py_str(["number"] * len(box_index)), "left": left, "levels_r": py_str(levels)}
 
 
 def main():

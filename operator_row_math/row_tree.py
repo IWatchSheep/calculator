@@ -91,35 +91,46 @@ def new_node(key):
 
 def flatten(node, path=()):
     """Cards left to right: [(kind, text, path)].  Box cards carry the path of the slot they show."""
+    return [card for card, _level in _walk(node, path)]
+
+
+def levels(node):
+    """The grid row of every card of flatten(node), as an offset from the main line: -1 above (an exponent), +1 below (a subscript), 0 on the line."""
+    return [level for _card, level in _walk(node)]
+
+
+def _walk(node, path=()):
     out, smap, b, seen, o = [], slot_map(node["mod"]), 0, set(), 0
-    for kind, text in node["mod"].LEFT:
+    lv = getattr(node["mod"], "LEVELS", None) or []
+    for n, (kind, text) in enumerate(node["mod"].LEFT):
+        level = lv[n] if n < len(lv) else 0
         if kind == "box":
             j = smap[b]
             b += 1
             slot = node["slots"][j]
             if j in seen:                     # the same variable written again: a copy of the box, it shows (and selects) the same slot
                 if isinstance(slot, dict) and "adv" in slot:
-                    out.append(("box", slot["label"], path + (j,)))
+                    out.append((("box", slot["label"], path + (j,)), level))
                 elif isinstance(slot, dict):
-                    out.append(("box", slot["mod"].NAME, path + (j,)))
+                    out.append((("box", slot["mod"].NAME, path + (j,)), level))
                 else:
-                    out.append(("box", slot, path + (j,)))
+                    out.append((("box", slot, path + (j,)), level))
                 continue
             seen.add(j)
             if isinstance(slot, dict) and "adv" in slot:
-                out.append(("box", slot["label"], path + (j,)))
+                out.append((("box", slot["label"], path + (j,)), level))
             elif isinstance(slot, dict):
-                out.extend(flatten(slot, path + (j,)))
+                out.extend((card, lvl + level) for card, lvl in _walk(slot, path + (j,)))
             else:
-                out.append(("box", slot, path + (j,)))
+                out.append((("box", slot, path + (j,)), level))
         elif kind == "dec":                   # a box the picture draws that is not an input (the second box of A (+) B): shown, never typed into
-            out.append(("dec", text, None))
+            out.append((("dec", text, None), level))
         elif kind == "out":                   # the answer box of the formula, e.g. the A of A = pi r^2: filled in by =, never typed into
             shown = node.get("out", "")
-            out.append(("out", shown[o] if isinstance(shown, list) else shown, None))
+            out.append((("out", shown[o] if isinstance(shown, list) else shown, None), level))
             o += 1
         else:
-            out.append(("op", text, None))
+            out.append((("op", text, None), level))
     return out
 
 
