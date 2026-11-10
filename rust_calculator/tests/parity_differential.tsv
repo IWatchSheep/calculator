@@ -8108,6 +8108,47 @@ physics/physics/quantum_harmonic_oscillator	3 100	3.6910013595000004e-32
 physics/physics/quantum_harmonic_oscillator	-1 2	-1.054571817e-34
 physics/physics/quantum_harmonic_oscillator	7.5 0	0.0
 physics/physics/quantum_harmonic_oscillator	2.5 10	3.163715451e-33
+physics/physics/rectangular_barrier_transmission	1 2 0.7071067811865475 1	0.0
+physics/physics/rectangular_barrier_transmission	0.25 10 0 -1	ERR
+physics/physics/rectangular_barrier_transmission	100 5 3 0	ERR
+physics/physics/rectangular_barrier_transmission	1 5 100 0.25	0.0
+physics/physics/rectangular_barrier_transmission	7.5 1 0 -1	ERR
+physics/physics/rectangular_barrier_transmission	2 1 3 7.5	ERR
+physics/physics/rectangular_barrier_transmission	7.5 2.5 3 1	ERR
+physics/physics/rectangular_barrier_transmission	3 2 2 3	ERR
+physics/physics/rectangular_barrier_transmission	2.5 100 10 100	0.0
+physics/physics/rectangular_barrier_transmission	3 3 -3 100	ERR
+physics/physics/rectangular_barrier_transmission	5 10 2 100	0.0
+physics/physics/rectangular_barrier_transmission	2 5 1 -1	ERR
+physics/physics/rectangular_barrier_transmission	5 10 1 1	0.0
+physics/physics/rectangular_barrier_transmission	7.5 10 -1 5	ERR
+physics/physics/rectangular_barrier_transmission	-1 7.5 0.5 -1	ERR
+physics/physics/rectangular_barrier_transmission	100 5 0.5 -1	ERR
+physics/physics/rectangular_barrier_transmission	7.5 7.5 2.5 2.5	ERR
+physics/physics/rectangular_barrier_transmission	2 100 2.5 0.25	0.0
+physics/physics/rectangular_barrier_transmission	2.5 2.5 -3 0	ERR
+physics/physics/rectangular_barrier_transmission	7.5 7.5 10 -3	ERR
+physics/physics/rectangular_barrier_transmission	10 5 1 -1	ERR
+physics/physics/rectangular_barrier_transmission	10 -1 5 2.5	ERR
+physics/physics/rectangular_barrier_transmission	1 2 1 -3	ERR
+physics/physics/rectangular_barrier_transmission	2 0 3 2	ERR
+physics/physics/rectangular_barrier_transmission	0 -1 5 0.25	ERR
+physics/physics/rectangular_barrier_transmission	5 0.5 -1 -3	ERR
+physics/physics/rectangular_barrier_transmission	-1 0 0.5 100	ERR
+physics/physics/rectangular_barrier_transmission	2.5 0.5 0 -1	ERR
+physics/physics/rectangular_barrier_transmission	0 0.5 10 -3	ERR
+physics/physics/rectangular_barrier_transmission	-3 2 -1 10	ERR
+physics/physics/rectangular_barrier_transmission	-1 1 10 -3	ERR
+physics/physics/rectangular_barrier_transmission	0.25 2 100 0	ERR
+physics/physics/rectangular_barrier_transmission	-3 100 1 2.5	ERR
+physics/physics/rectangular_barrier_transmission	5 0 2.5 5	ERR
+physics/physics/rectangular_barrier_transmission	-3 3 1 7.5	ERR
+physics/physics/rectangular_barrier_transmission	0.25 2 100 2.5	0.0
+physics/physics/rectangular_barrier_transmission	7.5 3 2 0.5	ERR
+physics/physics/rectangular_barrier_transmission	2 2.5 -3 0	ERR
+physics/physics/rectangular_barrier_transmission	5 3 0 0	ERR
+physics/physics/rectangular_barrier_transmission	10 7.5 -1 5	ERR
+physics/physics/rectangular_barrier_transmission	2.5 0 100 3	ERR
 physics/physics/refractive_index	200000000.0	1.49896229
 physics/physics/refractive_index	299792458	1.0
 physics/physics/refractive_index	1	299792458.0

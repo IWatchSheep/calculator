@@ -802,3 +802,17 @@ pub fn electron_compton_wavelength(a: &[f64]) -> R {
     // m, h, c
     n(a[1] / (a[0] * a[2]))
 }
+
+// ---------- quantum mechanics, job 2 (the same operations as the Python file) ----------
+
+pub fn rectangular_barrier_transmission(a: &[f64]) -> R {
+    // E, V, L, m, hbar
+    need(a[0] > 0.0, "the energy must be positive")?;
+    need(a[0] < a[1], "the energy is not below the barrier")?;
+    need(a[2] > 0.0, "a length must be positive")?;
+    need(a[3] > 0.0, "mass must be positive")?;
+    need(a[4] > 0.0, "hbar must be positive")?;
+    let kappa = (2.0 * a[3] * (a[1] - a[0])).sqrt() / a[4];
+    let s = (kappa * a[2]).sinh();
+    n(1.0 / (1.0 + a[1].powi(2) * s.powi(2) / (4.0 * a[0] * (a[1] - a[0]))))
+}

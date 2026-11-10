@@ -1,6 +1,6 @@
 {
- "count": 623,
- "ready": 551,
+ "count": 624,
+ "ready": 552,
  "reference": 72,
  "operators": [
   {
@@ -25795,6 +25795,69 @@
       2
      ],
      "expected": 5.272859085e-34
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/rectangular_barrier_transmission",
+   "name": "Rectangular-barrier transmission",
+   "symbol": "T = [1 + V² sinh²(κ L) / (4 E (V − E))]⁻¹",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "T = [1 + V² sinh²(κ L) / (4 E (V − E))]⁻¹, κ = √(2 m (V − E)) / ħ   (the probability that a particle of mass m and energy E below a barrier of height V and thickness L gets through; ħ = 1.054571817e-34 J s unless another is passed)",
+   "status": "Ready",
+   "inputs": [
+    "E",
+    "V",
+    "L",
+    "m"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 1 / ( 1 + □ ² × sinh ² ( □ × √ ( 2 × □ × ( □ − □ ) ) / ħ ) / ( 4 × □ × ( □ − □ ) ) )",
+   "compute_signature": "compute(E, V, L, m, hbar=1.054571817e-34)",
+   "compute_params": [
+    {
+     "name": "E",
+     "kind": "required"
+    },
+    {
+     "name": "V",
+     "kind": "required"
+    },
+    {
+     "name": "L",
+     "kind": "required"
+    },
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "hbar",
+     "kind": "optional",
+     "default": 1.054571817e-34
+    }
+   ],
+   "required_args": 4,
+   "max_args": 5,
+   "varargs": false,
+   "arity": 4,
+   "examples": [
+    {
+     "args": [
+      1,
+      2,
+      0.7071067811865475,
+      1,
+      1
+     ],
+     "expected": 0.4199743416140261
     }
    ]
   },

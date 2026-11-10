@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 623)
+        self.assertEqual(len(self.ops), 624)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 623)
+        self.assertEqual(len(status), 624)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -302,6 +302,7 @@ CASES = [
     (PH + "infinite_well_probability_density", (1, 2, 1), 1), (PH + "infinite_well_probability_density", (1, 1, 0), 0), (PH + "infinite_well_probability_density", (2, 1, 0.25), 2),
     (PH + "bohr_radius", (1,), 5.29177210903e-11), (PH + "bohr_radius", (2,), 2.645886054515e-11),
     (PH + "electron_compton_wavelength", (), 2.426310238683092e-12),
+    (PH + "rectangular_barrier_transmission", (1, 2, 0.7071067811865475, 1, 1), 0.4199743416140261),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1473,6 +1474,37 @@ class QuantumMechanicsJob1Tests(unittest.TestCase):
         self.assertEqual(get(PH + "bohr_radius").compute(1, 5.29177210903e-11), get(PH + "bohr_radius").compute(1))
         lam = get(PH + "electron_compton_wavelength").compute()
         self.assertAlmostEqual(get(PH + "compton_shift").compute(3.141592653589793) / lam, 2.0, places=12)   # theta = pi: the shift is twice the Compton wavelength
+
+
+class RectangularBarrierTests(unittest.TestCase):
+    """Quantum mechanics, job 2: tunneling through one rectangular barrier."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "rectangular_barrier_transmission").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 2, 1, 1, 1), "the energy must be positive")
+        self.says((-1, 2, 1, 1, 1), "the energy must be positive")
+        self.says((2, 2, 1, 1, 1), "the energy is not below the barrier")
+        self.says((3, 2, 1, 1, 1), "the energy is not below the barrier")
+        self.says((1, 2, 0, 1, 1), "a length must be positive")
+        self.says((1, 2, 1, 0, 1), "mass must be positive")
+        self.says((1, 2, 1, 1, 0), "hbar must be positive")
+
+    def test_the_physics(self):
+        t = get(PH + "rectangular_barrier_transmission").compute
+        self.assertAlmostEqual(t(1, 2, 0.7071067811865475, 1, 1), 1 / math.cosh(1) ** 2, places=15)
+        self.assertGreater(t(1, 2, 1e-9, 1, 1), 0.999999)               # a very thin barrier lets almost everything through
+        self.assertEqual(t(1, 2, 1e6, 1, 1), 0.0)                       # a very thick one lets nothing (and does not overflow)
+        self.assertGreater(t(1.9, 2, 1, 1, 1), t(1.0, 2, 1, 1, 1))      # more energy tunnels more easily
+        self.assertGreater(t(1, 2, 1, 1, 1), t(1, 2, 2, 1, 1))          # a thicker barrier is harder
+        for args in ((1, 2, 0.5, 1, 1), (0.3, 5, 2, 3, 1)):
+            self.assertTrue(0 <= t(*args) <= 1)
+        # opaque-barrier limit: T ~ 16 E (V-E) / V^2 * exp(-2 kappa L)
+        e, v, l = 1.0, 2.0, 8.0
+        self.assertAlmostEqual(t(e, v, l, 1, 1) / (16 * e * (v - e) / v ** 2 * math.exp(-2 * math.sqrt(2 * (v - e)) * l)), 1, places=6)
 
 
 class ErrorTests(unittest.TestCase):

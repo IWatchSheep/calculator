@@ -1085,3 +1085,21 @@ fn the_quantum_job_1_operators_give_the_numbers_of_the_work_plan_and_decline_wit
     assert!(call("bohr_radius", &[0., a0]).unwrap_err().contains("the atomic number must be a positive whole number"));
     assert!(call("bohr_radius", &[1.5, a0]).unwrap_err().contains("the atomic number must be a positive whole number"));
 }
+
+#[test]
+fn the_rectangular_barrier_gives_the_number_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/rectangular_barrier_transmission").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call(&[1., 2., 0.7071067811865475, 1., 1.]).unwrap(), 0.4199743416140261);
+    assert_eq!(call(&[1., 2., 1e6, 1., 1.]).unwrap(), 0.0);
+    assert!(call(&[0., 2., 1., 1., 1.]).unwrap_err().contains("the energy must be positive"));
+    assert!(call(&[2., 2., 1., 1., 1.]).unwrap_err().contains("the energy is not below the barrier"));
+    assert!(call(&[1., 2., 0., 1., 1.]).unwrap_err().contains("a length must be positive"));
+    assert!(call(&[1., 2., 1., 0., 1.]).unwrap_err().contains("mass must be positive"));
+    assert!(call(&[1., 2., 1., 1., 0.]).unwrap_err().contains("hbar must be positive"));
+}

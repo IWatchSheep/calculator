@@ -417,6 +417,7 @@ physics/physics/projectile_time_of_flight	10 1.5707963267948966	2.03873598369011
 physics/physics/projectile_time_of_flight	10 0.7853981633974483	1.4416040391163047
 physics/physics/quantum_harmonic_oscillator	0 2	1.054571817e-34
 physics/physics/quantum_harmonic_oscillator	2 2	5.272859085e-34
+physics/physics/rectangular_barrier_transmission	1 2 0.7071067811865475 1 1	0.4199743416140261
 physics/physics/refractive_index	200000000.0	1.49896229
 physics/physics/refractive_index	299792458	1
 physics/physics/relativistic_beta	0.6 1	0.6

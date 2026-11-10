@@ -640,6 +640,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Infinite-well probability density | |ψ|² = (2/L) sin²(n π x / L) | |ψ|² = (2/L) sin²(n π x / L)   (the probability per metre of finding a particle in a one-dimensional box at x; the walls are at 0 and L) | Ready | `physics/physics/infinite_well_probability_density/` |
 | Bohr radius | a = a₀ / Z | a = a₀ / Z   (a₀ = 5.29177210903e-11 m, the hydrogen Bohr radius; a nucleus of charge Z pulls it in to a₀/Z) | Ready | `physics/physics/bohr_radius/` |
 | Electron Compton wavelength | λ = h / (m c) | λ = h / (m_e c)   (m_e = 9.1093837015e-31 kg, c = 299792458 m/s, h = 6.62607015e-34 J s; the wavelength itself, not the scattering shift) | Ready | `physics/physics/electron_compton_wavelength/` |
+| Rectangular-barrier transmission | T = [1 + V² sinh²(κ L) / (4 E (V − E))]⁻¹ | T = [1 + V² sinh²(κ L) / (4 E (V − E))]⁻¹, κ = √(2 m (V − E)) / ħ   (the probability that a particle of mass m and energy E below a barrier of height V and thickness L gets through; ħ = 1.054571817e-34 J s unless another is passed) | Ready | `physics/physics/rectangular_barrier_transmission/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |
