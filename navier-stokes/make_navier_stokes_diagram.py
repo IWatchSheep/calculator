@@ -1,119 +1,177 @@
-"""Draws navier-stokes/navier_stokes.jpg: the Navier-Stokes equations for an incompressible Newtonian fluid, written out in full.
+"""Draws navier-stokes/navier_stokes.jpg: the incompressible Navier-Stokes equations, every term in its own column.
 
     python navier-stokes/make_navier_stokes_diagram.py
 
-Shown: the vector form, then the same momentum equation as three lines (the x, y and z components, with u, v, w the velocity components), then the
-continuity equation.  Written the way the rows write math: every derivative is a fraction with its numerator on the line above the bar and its denominator
-on the line below, and an exponent sits one line up.  Nothing here is wired into the calculator.
+The calculator's row rule, applied to one equation (one row):
+  every symbol is its own column;
+  a derivative is a fraction, numerator above the bar and denominator below;
+  an exponent is one line up, in its own column;
+  a subscript is one line down, in its own column.
+Those lines belong to that one equation. Nothing here is wired into the calculator, and nothing is calculated.
 """
 import os
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FONTS = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
 
 
-def font(name, size, index=0):
-    return ImageFont.truetype(os.path.join(FONTS, name), size, index=index)
+def load_font(size, bold=False):
+    candidates = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", "segoeuib.ttf" if bold else "seguisym.ttf"),
+        os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", "cambria.ttc"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default()
 
 
-MATH, SMALL = font("cambria.ttc", 38, 1), font("cambria.ttc", 25, 1)      # Cambria Math has the \u2202 \u2207 symbols
-LABEL, TITLE, NOTE = font("cambria.ttc", 24, 1), font("segoeuib.ttf", 30), font("cambria.ttc", 19, 1)
+MATH, SMALL = load_font(26), load_font(18)
+TITLE, LABEL, NOTE = load_font(28, bold=True), load_font(18), load_font(16)
 INK, RULE, GREY = "#1c2b3a", "#dde3ee", "#4a5a78"
-W, H = 1320, 970
-img = Image.new("RGB", (W, H), "white")
-d = ImageDraw.Draw(img)
+
+# levels inside one equation: -2 exponent of a numerator, -1 numerator, 0 the bar, +1 exponent of a denominator, +2 denominator
+# a symbol that is not inside a fraction sits on the bar (level 0); its subscript is one line down (+1)
 
 
-def width(s, f=MATH):
-    return d.textlength(s, font=f)
+def numer(text, level=0):
+    return (text, -1 if level == 0 else -2)
 
 
-def put(x, base, s, f=MATH, fill=INK):
-    d.text((x, base), s, font=f, fill=fill, anchor="ls")
-    return x + width(s, f)
+def denom(text, level=0):
+    return (text, 2 if level == 0 else 1)
 
 
-def frac(x, base, top, bottom):
-    """a derivative: numerator on the line above the bar, denominator on the line below"""
-    w = max(width(top), width(bottom)) + 12
-    d.line((x, base - 14, x + w, base - 14), fill=INK, width=3)
-    d.text((x + w / 2, base - 24), top, font=MATH, fill=INK, anchor="ms")
-    d.text((x + w / 2, base + 38), bottom, font=MATH, fill=INK, anchor="ms")
-    return x + w + 6
+def first(q, axis):
+    """∂q/∂axis, each symbol its own column."""
+    return ("frac", [numer("∂"), numer(q)], [denom("∂"), denom(axis)])
 
 
-def sub(x, base, s, low):
-    x = put(x, base, s)
-    return put(x, base + 8, low, SMALL)
+def second(q, axis):
+    """∂²q/∂axis². The 2 is its own column, one line above the symbol it powers."""
+    return ("frac", [numer("∂"), numer("2", -1), numer(q)], [denom("∂"), denom(axis), denom("2", -1)])
 
 
-def op(x, base, s):
-    return put(x + 8, base, s) + 8
+def symbol(text, level=0):
+    return ("sym", text, level)
 
 
-def component(x, base, q, axis, f_name):
-    """rho ( dq/dt + u dq/dx + v dq/dy + w dq/dz ) = - dp/d(axis) + mu ( d2q/dx2 + d2q/dy2 + d2q/dz2 ) + f_axis"""
-    x = put(x, base, "\u03c1 (") + 4
-    x = frac(x, base, "\u2202" + q, "\u2202t")
+def momentum(q, axis):
+    """ρ(∂q/∂t + u ∂q/∂x + v ∂q/∂y + w ∂q/∂z) = −∂p/∂axis + μ(∂²q/∂x² + ∂²q/∂y² + ∂²q/∂z²) + f_axis"""
+    row = [symbol("ρ"), symbol("("), first(q, "t")]
     for vel, ax in (("u", "x"), ("v", "y"), ("w", "z")):
-        x = op(x, base, "+")
-        x = put(x, base, vel) + 2
-        x = frac(x, base, "\u2202" + q, "\u2202" + ax)
-    x = put(x, base, ")") + 6
-    x = op(x, base, "=")
-    x = put(x, base, "\u2212") + 4
-    x = frac(x, base, "\u2202p", "\u2202" + axis)
-    x = op(x, base, "+")
-    x = put(x, base, "\u03bc (") + 4
-    for k, ax in enumerate("xyz"):
-        if k:
-            x = op(x, base, "+")
-        x = frac(x, base, "\u2202\u00b2" + q, "\u2202" + ax + "\u00b2")
-    x = put(x, base, ")") + 6
-    x = op(x, base, "+")
-    return sub(x, base, "f", f_name)
+        row += [symbol("+"), symbol(vel), first(q, ax)]
+    row += [symbol(")"), symbol("="), symbol("−"), first("p", axis), symbol("+"), symbol("μ"), symbol("("), second(q, "x")]
+    for ax in "yz":
+        row += [symbol("+"), second(q, ax)]
+    row += [symbol(")"), symbol("+"), symbol("f"), symbol(axis, 1)]
+    return row
 
 
-d.text((44, 22), "Navier\u2013Stokes equations (incompressible Newtonian fluid)", font=TITLE, fill="#16233a")
-d.line((40, 70, W - 40, 70), fill=RULE, width=3)
+def continuity():
+    row = [first("u", "x")]
+    for q, ax in (("v", "y"), ("w", "z")):
+        row += [symbol("+"), first(q, ax)]
+    row += [symbol("="), symbol("0")]
+    return row
 
-# ---- vector form
-put(44, 128, "Vector form", LABEL, GREY)
-x = put(44, 205, "\u03c1 (") + 4
-x = frac(x, 205, "\u2202u", "\u2202t")
-x = op(x, 205, "+")
-x = put(x, 205, "(u \u00b7 \u2207) u") + 4
-x = put(x, 205, ")") + 6
-x = op(x, 205, "=")
-x = put(x, 205, "\u2212\u2207p") + 6
-x = op(x, 205, "+")
-x = put(x, 205, "\u03bc \u2207") + 0
-put(x, 205 - 24, "2", SMALL)
-x = put(x + 16, 205, "u") + 6
-x = op(x, 205, "+")
-put(x, 205, "f")
 
-# ---- the three components
-d.line((40, 270, W - 40, 270), fill=RULE, width=2)
-put(44, 312, "Written out, one line for each direction (u, v, w are the velocity components along x, y, z)", LABEL, GREY)
-base = 395
-for q, axis, name in (("u", "x", "x"), ("v", "y", "y"), ("w", "z", "z")):
-    component(44, base, q, axis, name)
-    base += 118
+def layout(pieces):
+    """Columns {level: text} and the inclusive column span of each fraction bar."""
+    cols, bars = [], []
+    for piece in pieces:
+        if piece[0] == "sym":
+            cols.append({piece[2]: piece[1]})
+            continue
+        numer_tokens, denom_tokens = piece[1], piece[2]
+        start = len(cols)
+        for i in range(max(len(numer_tokens), len(denom_tokens))):
+            cell = {}
+            if i < len(numer_tokens):
+                cell[numer_tokens[i][1]] = numer_tokens[i][0]
+            if i < len(denom_tokens):
+                cell[denom_tokens[i][1]] = denom_tokens[i][0]
+            cols.append(cell)
+        bars.append((start, len(cols) - 1))
+    return cols, bars
 
-# ---- continuity
-d.line((40, base - 62, W - 40, base - 62), fill=RULE, width=2)
-put(44, base - 28, "Continuity (the fluid is incompressible)", LABEL, GREY)
-x = frac(44, base + 52, "\u2202u", "\u2202x")
-x = op(x, base + 52, "+")
-x = frac(x, base + 52, "\u2202v", "\u2202y")
-x = op(x, base + 52, "+")
-x = frac(x, base + 52, "\u2202w", "\u2202z")
-put(op(x, base + 52, "="), base + 52, "0")
 
-d.text((44, H - 42), "\u03c1 density     \u03bc dynamic viscosity     p pressure     f force per volume (gravity ...)     t time     x, y, z position     "
-       "\u2207 gradient     \u2207\u00b2 Laplacian", font=NOTE, fill=GREY)
-img.save(os.path.join(HERE, "navier_stokes.jpg"), "JPEG", quality=92)
-print("wrote", os.path.join(HERE, "navier_stokes.jpg"))
+def draw_equation(d, cols, bars, left, bar_y):
+    probe = d
+    gap = 7
+
+    def tw(text, font=MATH):
+        return probe.textlength(text, font=font) if text else 0
+
+    widths = []
+    for cell in cols:
+        widest = 16
+        for level, text in cell.items():
+            font = SMALL if level in (-2, 1) else MATH
+            widest = max(widest, tw(text, font) + 4)
+        widths.append(widest)
+    xs, x = [], left
+    for w in widths:
+        xs.append(x)
+        x += w + gap
+    right = x
+
+    def y_of(level):
+        return bar_y + { -2: -62, -1: -34, 0: 0, 1: 30, 2: 58 }[level]
+
+    for start, end in bars:
+        x0 = xs[start]
+        x1 = xs[end] + widths[end]
+        probe.line((x0, bar_y, x1, bar_y), fill=INK, width=3)
+    for i, cell in enumerate(cols):
+        for level, text in cell.items():
+            font = SMALL if level in (-2, 1) else MATH
+            cx = xs[i] + widths[i] / 2
+            probe.text((cx, y_of(level)), text, font=font, fill=INK, anchor="mm")
+    return right
+
+
+def main():
+    equations = [
+        ("x, the velocity component u", momentum("u", "x")),
+        ("y, the velocity component v", momentum("v", "y")),
+        ("z, the velocity component w", momentum("w", "z")),
+        ("Continuity. The fluid is incompressible, so the volume does not change.", continuity()),
+    ]
+    laid = [(title, *layout(pieces)) for title, pieces in equations]
+    width = 80 + max(sum(1 for _ in cols) for _title, cols, _bars in ((t, c, b) for t, c, b in laid)) * 4
+    # measure real width with a throwaway image
+    scratch = ImageDraw.Draw(Image.new("RGB", (10, 10)))
+    # draw_equation needs the real draw for textlength; build image after measuring via a first pass on a wide canvas
+    measure = Image.new("RGB", (4000, 200), "white")
+    md = ImageDraw.Draw(measure)
+    extents = []
+    for title, cols, bars in laid:
+        extents.append(draw_equation(md, cols, bars, 48, 80))
+    width = int(max(extents) + 56)
+    band = 168
+    head = 118
+    height = head + band * len(laid) + 70
+    img = Image.new("RGB", (width, height), "white")
+    d = ImageDraw.Draw(img)
+    d.text((40, 28), "Navier–Stokes equations, every term in its own column", font=TITLE, fill="#16233a")
+    d.text((40, 68), "Incompressible Newtonian fluid, constant viscosity. One equation is one row: the lines above and below a bar belong to that row.", font=LABEL, fill=GREY)
+    d.line((36, 98, width - 36, 98), fill=RULE, width=3)
+    y = head + 78
+    for (title, cols, bars), _extent in zip(laid, extents):
+        d.text((40, y - 78), title, font=LABEL, fill=GREY)
+        draw_equation(d, cols, bars, 48, y)
+        y += band
+        d.line((36, y - 86, width - 36, y - 86), fill=RULE, width=2)
+    d.text((40, height - 36),
+           "ρ density    μ dynamic viscosity    p pressure    f force per volume    u, v, w velocity along x, y, z    t time",
+           font=NOTE, fill=GREY)
+    path = os.path.join(HERE, "navier_stokes.jpg")
+    img.save(path, "JPEG", quality=92)
+    print("wrote", path, img.size)
+
+
+if __name__ == "__main__":
+    main()
