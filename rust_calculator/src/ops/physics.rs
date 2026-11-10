@@ -450,3 +450,64 @@ pub fn impact_force(a: &[f64]) -> R {
     need(a[2] > 0.0, "the stopping distance must be positive")?;
     n(a[0] * a[1] * a[1] / (2.0 * a[2]))
 }
+
+// ---------- one step of "where am I" (batch 5; the same operations in the same order as the Python files) ----------
+
+pub fn exponential_smoothing(a: &[f64]) -> R {
+    // previous, sample, alpha
+    need((0.0..=1.0).contains(&a[2]), "the weight must be from 0 to 1")?;
+    n(a[2] * a[1] + (1.0 - a[2]) * a[0])
+}
+
+pub fn kalman_predict_state(a: &[f64]) -> R {
+    // x, u, t
+    need(a[2] >= 0.0, "time cannot be negative")?;
+    n(a[0] + a[1] * a[2])
+}
+
+pub fn kalman_predict_variance(a: &[f64]) -> R {
+    // p, q
+    need(a[0] >= 0.0, "a variance cannot be negative")?;
+    need(a[1] >= 0.0, "process noise cannot be negative")?;
+    n(a[0] + a[1])
+}
+
+pub fn kalman_update_state(a: &[f64]) -> R {
+    // x, p, z, r
+    need(a[1] >= 0.0, "a variance cannot be negative")?;
+    need(a[3] > 0.0, "measurement noise must be positive")?;
+    let k = a[1] / (a[1] + a[3]);
+    n(a[0] + k * (a[2] - a[0]))
+}
+
+pub fn kalman_update_variance(a: &[f64]) -> R {
+    // p, r
+    need(a[0] >= 0.0, "a variance cannot be negative")?;
+    need(a[1] > 0.0, "measurement noise must be positive")?;
+    let k = a[0] / (a[0] + a[1]);
+    n((1.0 - k) * a[0])
+}
+
+fn latitudes(lat1: f64, lat2: f64) -> Result<(), String> {
+    let half_pi = std::f64::consts::FRAC_PI_2;
+    need(lat1.abs() <= half_pi && lat2.abs() <= half_pi, "latitude is past the pole")
+}
+
+pub fn haversine_distance(a: &[f64]) -> R {
+    // lat1, lon1, lat2, lon2
+    latitudes(a[0], a[2])?;
+    let s1 = ((a[2] - a[0]) / 2.0).sin();
+    let s2 = ((a[3] - a[1]) / 2.0).sin();
+    let h = (s1 * s1 + a[0].cos() * a[2].cos() * s2 * s2).max(0.0).min(1.0);
+    n(6371000.0 * 2.0 * h.sqrt().atan2((1.0 - h).sqrt()))
+}
+
+pub fn bearing_between(a: &[f64]) -> R {
+    // lat1, lon1, lat2, lon2
+    latitudes(a[0], a[2])?;
+    let dlon = a[3] - a[1];
+    let east = dlon.sin() * a[2].cos();
+    let north = a[0].cos() * a[2].sin() - a[0].sin() * a[2].cos() * dlon.cos();
+    need(!(east == 0.0 && north == 0.0), "the two points are the same, there is no direction")?;
+    n(north.atan2(east))
+}

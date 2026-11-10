@@ -4550,6 +4550,8 @@ physics/physics/acceleration	1 0.5	2.0
 physics/physics/acceleration	2.5 5	0.5
 physics/physics/acceleration	100 0.5	200.0
 physics/physics/acceleration	2 100	0.02
+physics/physics/angular_acceleration	6 2	3.0
+physics/physics/angular_acceleration	-6 2	-3.0
 physics/physics/angular_acceleration	100 1	100.0
 physics/physics/angular_acceleration	3 3	1.0
 physics/physics/angular_acceleration	0.5 1	0.5
@@ -4587,6 +4589,46 @@ physics/physics/angular_acceleration	0.5 3	0.16666666666666666
 physics/physics/angular_acceleration	5 0.25	20.0
 physics/physics/angular_acceleration	3 0.5	6.0
 physics/physics/angular_acceleration	0.25 2.5	0.1
+physics/physics/bearing_between	0.5 2.5 -3 10	ERR
+physics/physics/bearing_between	2 1 2 1	ERR
+physics/physics/bearing_between	100 1 10 10	ERR
+physics/physics/bearing_between	-1 -3 5 -1	ERR
+physics/physics/bearing_between	10 100 -3 10	ERR
+physics/physics/bearing_between	0.25 7.5 0.5 10	0.882417993012706
+physics/physics/bearing_between	7.5 3 2 -1	ERR
+physics/physics/bearing_between	-3 -3 -1 10	ERR
+physics/physics/bearing_between	-3 2.5 10 0.5	ERR
+physics/physics/bearing_between	0 0 100 0.5	ERR
+physics/physics/bearing_between	0 0.5 2 0	ERR
+physics/physics/bearing_between	5 2.5 -3 7.5	ERR
+physics/physics/bearing_between	7.5 2 1 1	ERR
+physics/physics/bearing_between	7.5 1 5 10	ERR
+physics/physics/bearing_between	-3 -3 0 0.25	ERR
+physics/physics/bearing_between	2 10 1 0	ERR
+physics/physics/bearing_between	-3 0.25 100 10	ERR
+physics/physics/bearing_between	1 0.5 1 -3	1.3587581424378476
+physics/physics/bearing_between	0.25 -1 2.5 0.5	ERR
+physics/physics/bearing_between	1 -1 3 2.5	ERR
+physics/physics/bearing_between	0.25 1 2 7.5	ERR
+physics/physics/bearing_between	-3 2 100 2	ERR
+physics/physics/bearing_between	0.25 10 -3 10	ERR
+physics/physics/bearing_between	-1 0.5 -3 5	ERR
+physics/physics/bearing_between	3 5 -3 -3	ERR
+physics/physics/bearing_between	0.5 0.5 1 3	1.241427758238064
+physics/physics/bearing_between	-1 2 7.5 0	ERR
+physics/physics/bearing_between	0 2.5 1 3	1.2721665026405247
+physics/physics/bearing_between	0.25 2 -1 -1	-1.6819759134615857
+physics/physics/bearing_between	5 -1 0 0.25	ERR
+physics/physics/bearing_between	-3 -3 1 2.5	ERR
+physics/physics/bearing_between	-3 1 2 0.5	ERR
+physics/physics/bearing_between	10 2.5 0.5 3	ERR
+physics/physics/bearing_between	1 -1 0.5 0.25	0.03142733065787888
+physics/physics/bearing_between	10 -1 0.5 0.5	ERR
+physics/physics/bearing_between	100 7.5 5 5	ERR
+physics/physics/bearing_between	0.5 -1 10 100	ERR
+physics/physics/bearing_between	5 100 3 10	ERR
+physics/physics/bearing_between	10 1 5 0.25	ERR
+physics/physics/bearing_between	10 5 3 2	ERR
 physics/physics/bernoulli_equation	100000 2 0 4 1 1000	84190.0
 physics/physics/bernoulli_equation	5 1 0 1 0 1000	5.0
 physics/physics/bernoulli_equation	-3 7.5 -1 -3 3 100	-1564.5
@@ -5004,6 +5046,8 @@ physics/physics/cyclotron_radius	-3 -1 5 -3	-0.2
 physics/physics/cyclotron_radius	2.5 3 2 7.5	0.5
 physics/physics/cyclotron_radius	2.5 0 2.5 3	0.0
 physics/physics/cyclotron_radius	0 3 7.5 -1	-0.0
+physics/physics/cylinder_moment_of_inertia	2 3	9.0
+physics/physics/cylinder_moment_of_inertia	4 0	0.0
 physics/physics/cylinder_moment_of_inertia	2.5 3	11.25
 physics/physics/cylinder_moment_of_inertia	7.5 0.25	0.234375
 physics/physics/cylinder_moment_of_inertia	2.5 10	125.0
@@ -5019,7 +5063,6 @@ physics/physics/cylinder_moment_of_inertia	0.25 0.5	0.03125
 physics/physics/cylinder_moment_of_inertia	7.5 5	93.75
 physics/physics/cylinder_moment_of_inertia	7.5 -3	ERR
 physics/physics/cylinder_moment_of_inertia	1 0.5	0.125
-physics/physics/cylinder_moment_of_inertia	2 3	9.0
 physics/physics/cylinder_moment_of_inertia	2.5 -3	ERR
 physics/physics/cylinder_moment_of_inertia	2.5 7.5	70.3125
 physics/physics/cylinder_moment_of_inertia	2 0.25	0.0625
@@ -5311,6 +5354,45 @@ physics/physics/energy_momentum_relation	1 2.5	8.987551787368176e+16
 physics/physics/energy_momentum_relation	0.25 10	2.246887946842064e+16
 physics/physics/energy_momentum_relation	5 0	4.493775893684088e+17
 physics/physics/energy_momentum_relation	0.5 7.5	4.4937758936840936e+16
+physics/physics/exponential_smoothing	0.5 0.5 -1	ERR
+physics/physics/exponential_smoothing	0.25 10 0.5	5.125
+physics/physics/exponential_smoothing	3 5 0.25	3.5
+physics/physics/exponential_smoothing	-1 10 5	ERR
+physics/physics/exponential_smoothing	3 10 0.5	6.5
+physics/physics/exponential_smoothing	10 10 2.5	ERR
+physics/physics/exponential_smoothing	2 -3 0.5	-0.5
+physics/physics/exponential_smoothing	10 100 0.5	55.0
+physics/physics/exponential_smoothing	1 0 2.5	ERR
+physics/physics/exponential_smoothing	0.5 0.25 0	0.5
+physics/physics/exponential_smoothing	0.25 0 -3	ERR
+physics/physics/exponential_smoothing	0.25 7.5 3	ERR
+physics/physics/exponential_smoothing	3 10 0	3
+physics/physics/exponential_smoothing	3 3 1	3
+physics/physics/exponential_smoothing	5 2 3	ERR
+physics/physics/exponential_smoothing	3 7.5 7.5	ERR
+physics/physics/exponential_smoothing	1 2 0	1
+physics/physics/exponential_smoothing	100 100 10	ERR
+physics/physics/exponential_smoothing	0 -1 100	ERR
+physics/physics/exponential_smoothing	2 1 7.5	ERR
+physics/physics/exponential_smoothing	2 5 2.5	ERR
+physics/physics/exponential_smoothing	0.5 100 3	ERR
+physics/physics/exponential_smoothing	0.5 1 -3	ERR
+physics/physics/exponential_smoothing	0 7.5 -1	ERR
+physics/physics/exponential_smoothing	0.5 0.5 0	0.5
+physics/physics/exponential_smoothing	5 -1 5	ERR
+physics/physics/exponential_smoothing	0.5 2.5 2.5	ERR
+physics/physics/exponential_smoothing	2 5 7.5	ERR
+physics/physics/exponential_smoothing	100 2 -1	ERR
+physics/physics/exponential_smoothing	0.25 10 7.5	ERR
+physics/physics/exponential_smoothing	-1 5 5	ERR
+physics/physics/exponential_smoothing	1 10 10	ERR
+physics/physics/exponential_smoothing	-3 -1 0.5	-2.0
+physics/physics/exponential_smoothing	2.5 -3 7.5	ERR
+physics/physics/exponential_smoothing	1 3 -1	ERR
+physics/physics/exponential_smoothing	3 3 100	ERR
+physics/physics/exponential_smoothing	100 7.5 3	ERR
+physics/physics/exponential_smoothing	0.5 5 2	ERR
+physics/physics/exponential_smoothing	10 2.5 5	ERR
 physics/physics/faradays_law	10 0.5 2	-2.5
 physics/physics/faradays_law	1 -4 2	2.0
 physics/physics/faradays_law	0.25 2.5 100	-0.00625
@@ -5529,6 +5611,46 @@ physics/physics/gravitational_time_dilation_from_radius	-1 0 100	-1.0
 physics/physics/gravitational_time_dilation_from_radius	0.25 3 3	ERR
 physics/physics/gravitational_time_dilation_from_radius	0.25 2 1	ERR
 physics/physics/gravitational_time_dilation_from_radius	0.25 -1 -3	ERR
+physics/physics/haversine_distance	10 -3 10 1	ERR
+physics/physics/haversine_distance	100 0.25 -1 3	ERR
+physics/physics/haversine_distance	-3 0.5 -1 7.5	ERR
+physics/physics/haversine_distance	1 2 7.5 5	ERR
+physics/physics/haversine_distance	0 0.25 -3 100	ERR
+physics/physics/haversine_distance	100 3 0.5 10	ERR
+physics/physics/haversine_distance	100 -3 0 7.5	ERR
+physics/physics/haversine_distance	0.25 0.5 -1 0	8389582.3814925
+physics/physics/haversine_distance	3 0.25 2 0.5	ERR
+physics/physics/haversine_distance	10 3 3 10	ERR
+physics/physics/haversine_distance	7.5 1 1 1	ERR
+physics/physics/haversine_distance	1 100 0 3	13342356.5205369
+physics/physics/haversine_distance	0.5 0.25 0 2.5	13727511.133169325
+physics/physics/haversine_distance	2 100 2 2	ERR
+physics/physics/haversine_distance	-1 0 -1 2.5	6859930.337717336
+physics/physics/haversine_distance	3 0 -1 7.5	ERR
+physics/physics/haversine_distance	2 -1 100 2	ERR
+physics/physics/haversine_distance	0 5 -1 7.5	12859602.529663377
+physics/physics/haversine_distance	2.5 100 -3 0	ERR
+physics/physics/haversine_distance	2 0.25 10 1	ERR
+physics/physics/haversine_distance	0.5 3 0.5 10	3987268.1246091393
+physics/physics/haversine_distance	0.25 -1 -3 5	ERR
+physics/physics/haversine_distance	1 7.5 1 5	6859930.337717336
+physics/physics/haversine_distance	5 3 100 1	ERR
+physics/physics/haversine_distance	2 5 5 0.25	ERR
+physics/physics/haversine_distance	1 10 -3 7.5	ERR
+physics/physics/haversine_distance	0.5 -3 3 0.5	ERR
+physics/physics/haversine_distance	-1 2 0.5 -3	11742195.043325787
+physics/physics/haversine_distance	5 1 2 100	ERR
+physics/physics/haversine_distance	5 1 1 0.5	ERR
+physics/physics/haversine_distance	0.25 10 100 1	ERR
+physics/physics/haversine_distance	-3 10 2 -1	ERR
+physics/physics/haversine_distance	10 100 1 0	ERR
+physics/physics/haversine_distance	-1 0.25 -1 -1	4098424.485567412
+physics/physics/haversine_distance	7.5 5 100 0.5	ERR
+physics/physics/haversine_distance	10 2.5 2.5 100	ERR
+physics/physics/haversine_distance	3 0.5 0 3	ERR
+physics/physics/haversine_distance	2 0.25 -3 10	ERR
+physics/physics/haversine_distance	3 0.5 -1 3	ERR
+physics/physics/haversine_distance	100 2 3 100	ERR
 physics/physics/heat	2 4 5	40
 physics/physics/heat	-3 100 0	0
 physics/physics/heat	-1 2.5 0	-0.0
@@ -5758,6 +5880,8 @@ physics/physics/ideal_gas_law	-3 3 -1	74.830163562
 physics/physics/ideal_gas_law	0 1 7.5	0.0
 physics/physics/ideal_gas_law	0.5 -1 2	-2.0786156545
 physics/physics/ideal_gas_law	7.5 1 -1	-62.358469635000006
+physics/physics/impact_force	2 3 1	9.0
+physics/physics/impact_force	2 -3 1	9.0
 physics/physics/impact_force	0 7.5 -1	ERR
 physics/physics/impact_force	2.5 3 5	2.25
 physics/physics/impact_force	1 2 5	0.4
@@ -5873,6 +5997,160 @@ physics/physics/inductor_energy	0.25 -3	1.125
 physics/physics/inductor_energy	5 1	2.5
 physics/physics/inductor_energy	0 10	0.0
 physics/physics/inductor_energy	-1 5	-12.5
+physics/physics/kalman_predict_state	10 -1 10	0
+physics/physics/kalman_predict_state	1 10 0.5	6.0
+physics/physics/kalman_predict_state	3 2 2.5	8.0
+physics/physics/kalman_predict_state	100 2.5 2.5	106.25
+physics/physics/kalman_predict_state	0 5 1	5
+physics/physics/kalman_predict_state	0.5 0 5	0.5
+physics/physics/kalman_predict_state	-3 -3 1	-6
+physics/physics/kalman_predict_state	100 1 10	110
+physics/physics/kalman_predict_state	2.5 -3 0.25	1.75
+physics/physics/kalman_predict_state	5 2.5 1	7.5
+physics/physics/kalman_predict_state	2 0.25 10	4.5
+physics/physics/kalman_predict_state	0.5 2.5 -1	ERR
+physics/physics/kalman_predict_state	-3 -1 1	-4
+physics/physics/kalman_predict_state	3 -3 10	-27
+physics/physics/kalman_predict_state	0.5 100 0	0.5
+physics/physics/kalman_predict_state	0 10 -1	ERR
+physics/physics/kalman_predict_state	-1 0 -3	ERR
+physics/physics/kalman_predict_state	7.5 2 100	207.5
+physics/physics/kalman_predict_state	7.5 0 100	7.5
+physics/physics/kalman_predict_state	100 10 0.25	102.5
+physics/physics/kalman_predict_state	3 -1 -3	ERR
+physics/physics/kalman_predict_state	10 -3 -1	ERR
+physics/physics/kalman_predict_state	100 2.5 -3	ERR
+physics/physics/kalman_predict_state	2.5 -3 2.5	-5.0
+physics/physics/kalman_predict_state	100 0 2	100
+physics/physics/kalman_predict_state	0 0 2.5	0.0
+physics/physics/kalman_predict_state	0.5 0.25 -1	ERR
+physics/physics/kalman_predict_state	1 0 0.5	1.0
+physics/physics/kalman_predict_state	2 -1 1	1
+physics/physics/kalman_predict_state	0.25 5 -1	ERR
+physics/physics/kalman_predict_state	2 -3 0.5	0.5
+physics/physics/kalman_predict_state	-3 2 3	3
+physics/physics/kalman_predict_state	0.25 0 -1	ERR
+physics/physics/kalman_predict_state	2.5 2.5 100	252.5
+physics/physics/kalman_predict_state	5 100 100	10005
+physics/physics/kalman_predict_state	2.5 0.5 100	52.5
+physics/physics/kalman_predict_state	0 -1 5	-5
+physics/physics/kalman_predict_state	1 3 0.5	2.5
+physics/physics/kalman_predict_state	100 2.5 0.5	101.25
+physics/physics/kalman_predict_variance	-3 -1	ERR
+physics/physics/kalman_predict_variance	10 1	11
+physics/physics/kalman_predict_variance	7.5 3	10.5
+physics/physics/kalman_predict_variance	-1 0.5	ERR
+physics/physics/kalman_predict_variance	2 0	2
+physics/physics/kalman_predict_variance	3 2.5	5.5
+physics/physics/kalman_predict_variance	2 1	3
+physics/physics/kalman_predict_variance	0 1	1
+physics/physics/kalman_predict_variance	2.5 10	12.5
+physics/physics/kalman_predict_variance	5 0	5
+physics/physics/kalman_predict_variance	-1 7.5	ERR
+physics/physics/kalman_predict_variance	0 7.5	7.5
+physics/physics/kalman_predict_variance	100 0.25	100.25
+physics/physics/kalman_predict_variance	3 0.5	3.5
+physics/physics/kalman_predict_variance	2 -1	ERR
+physics/physics/kalman_predict_variance	3 3	6
+physics/physics/kalman_predict_variance	-1 0	ERR
+physics/physics/kalman_predict_variance	-1 2.5	ERR
+physics/physics/kalman_predict_variance	10 5	15
+physics/physics/kalman_predict_variance	2 3	5
+physics/physics/kalman_predict_variance	5 2	7
+physics/physics/kalman_predict_variance	7.5 5	12.5
+physics/physics/kalman_predict_variance	0.5 2.5	3.0
+physics/physics/kalman_predict_variance	2 5	7
+physics/physics/kalman_predict_variance	0.25 2	2.25
+physics/physics/kalman_predict_variance	7.5 2.5	10.0
+physics/physics/kalman_predict_variance	0 2	2
+physics/physics/kalman_predict_variance	100 7.5	107.5
+physics/physics/kalman_predict_variance	1 1	2
+physics/physics/kalman_predict_variance	2.5 7.5	10.0
+physics/physics/kalman_predict_variance	10 2	12
+physics/physics/kalman_predict_variance	0.5 100	100.5
+physics/physics/kalman_predict_variance	2 2.5	4.5
+physics/physics/kalman_predict_variance	2 10	12
+physics/physics/kalman_predict_variance	0 3	3
+physics/physics/kalman_predict_variance	5 100	105
+physics/physics/kalman_update_state	0.25 0.5 0 7.5	0.234375
+physics/physics/kalman_update_state	1 0 0.25 2	1.0
+physics/physics/kalman_update_state	-3 10 -1 100	-2.8181818181818183
+physics/physics/kalman_update_state	1 -1 7.5 0	ERR
+physics/physics/kalman_update_state	1 2 0.5 7.5	0.8947368421052632
+physics/physics/kalman_update_state	5 10 -3 -1	ERR
+physics/physics/kalman_update_state	2 2 3 -3	ERR
+physics/physics/kalman_update_state	7.5 0 0.25 3	7.5
+physics/physics/kalman_update_state	-3 0.5 2 2	-2.0
+physics/physics/kalman_update_state	5 0.5 100 1	36.666666666666664
+physics/physics/kalman_update_state	100 7.5 -1 5	39.400000000000006
+physics/physics/kalman_update_state	100 2.5 2.5 7.5	75.625
+physics/physics/kalman_update_state	0 5 0.25 10	0.08333333333333333
+physics/physics/kalman_update_state	0 1 2.5 10	0.2272727272727273
+physics/physics/kalman_update_state	-1 2.5 10 1	6.857142857142858
+physics/physics/kalman_update_state	100 2.5 -1 0.5	15.833333333333329
+physics/physics/kalman_update_state	0 -1 0 10	ERR
+physics/physics/kalman_update_state	7.5 0.5 1 10	7.190476190476191
+physics/physics/kalman_update_state	2.5 3 5 2	4.0
+physics/physics/kalman_update_state	0 -3 -3 1	ERR
+physics/physics/kalman_update_state	10 2.5 0 3	5.454545454545455
+physics/physics/kalman_update_state	5 0.5 7.5 1	5.833333333333333
+physics/physics/kalman_update_state	0 2.5 -3 5	-1.0
+physics/physics/kalman_update_state	-1 5 7.5 0.5	6.727272727272727
+physics/physics/kalman_update_state	0.5 10 0.25 0.25	0.25609756097560976
+physics/physics/kalman_update_state	-1 7.5 1 0.25	0.935483870967742
+physics/physics/kalman_update_state	3 100 3 5	3.0
+physics/physics/kalman_update_state	5 -3 -3 10	ERR
+physics/physics/kalman_update_state	7.5 2.5 2 0.25	2.5
+physics/physics/kalman_update_state	100 2.5 1 7.5	75.25
+physics/physics/kalman_update_state	7.5 10 0 -3	ERR
+physics/physics/kalman_update_state	2.5 2.5 0 0.25	0.22727272727272751
+physics/physics/kalman_update_state	7.5 100 7.5 7.5	7.5
+physics/physics/kalman_update_state	3 5 2.5 2	2.642857142857143
+physics/physics/kalman_update_state	3 3 0.25 7.5	2.2142857142857144
+physics/physics/kalman_update_state	5 0 0.25 7.5	5.0
+physics/physics/kalman_update_state	10 -1 10 2	ERR
+physics/physics/kalman_update_state	100 10 2.5 -3	ERR
+physics/physics/kalman_update_state	-1 100 0.25 10	0.13636363636363624
+physics/physics/kalman_update_state	0.5 2.5 -3 3	-1.0909090909090908
+physics/physics/kalman_update_variance	-3 3	ERR
+physics/physics/kalman_update_variance	0.25 1	0.2
+physics/physics/kalman_update_variance	7.5 -3	ERR
+physics/physics/kalman_update_variance	2 -3	ERR
+physics/physics/kalman_update_variance	0.25 7.5	0.24193548387096775
+physics/physics/kalman_update_variance	10 3	2.3076923076923075
+physics/physics/kalman_update_variance	-1 -1	ERR
+physics/physics/kalman_update_variance	0.5 2.5	0.4166666666666667
+physics/physics/kalman_update_variance	100 2	1.9607843137254943
+physics/physics/kalman_update_variance	1 10	0.9090909090909091
+physics/physics/kalman_update_variance	-1 5	ERR
+physics/physics/kalman_update_variance	2.5 100	2.4390243902439024
+physics/physics/kalman_update_variance	0.5 7.5	0.46875
+physics/physics/kalman_update_variance	100 1	0.990099009900991
+physics/physics/kalman_update_variance	10 1	0.9090909090909094
+physics/physics/kalman_update_variance	10 0.5	0.4761904761904767
+physics/physics/kalman_update_variance	7.5 3	2.142857142857143
+physics/physics/kalman_update_variance	2 2.5	1.1111111111111112
+physics/physics/kalman_update_variance	2.5 7.5	1.875
+physics/physics/kalman_update_variance	7.5 7.5	3.75
+physics/physics/kalman_update_variance	2.5 5	1.666666666666667
+physics/physics/kalman_update_variance	5 -1	ERR
+physics/physics/kalman_update_variance	0.5 -1	ERR
+physics/physics/kalman_update_variance	-3 0.25	ERR
+physics/physics/kalman_update_variance	0.5 0	ERR
+physics/physics/kalman_update_variance	2.5 10	2.0
+physics/physics/kalman_update_variance	0 100	0.0
+physics/physics/kalman_update_variance	-3 1	ERR
+physics/physics/kalman_update_variance	0 0.25	0.0
+physics/physics/kalman_update_variance	3 0.25	0.23076923076923062
+physics/physics/kalman_update_variance	2 0.5	0.3999999999999999
+physics/physics/kalman_update_variance	0.5 0.25	0.16666666666666669
+physics/physics/kalman_update_variance	0.5 2	0.4
+physics/physics/kalman_update_variance	0 2	0.0
+physics/physics/kalman_update_variance	3 1	0.75
+physics/physics/kalman_update_variance	5 5	2.5
+physics/physics/kalman_update_variance	2.5 1	0.7142857142857142
+physics/physics/kalman_update_variance	1 2	0.6666666666666667
+physics/physics/kalman_update_variance	7.5 0	ERR
 physics/physics/kinetic_energy	2 3	9.0
 physics/physics/kinetic_energy	100 1	50.0
 physics/physics/kinetic_energy	0 2	0.0
@@ -6319,6 +6597,8 @@ physics/physics/mass_energy_equivalence	0	0
 physics/physics/mass_energy_equivalence	2.5	2.246887946842044e+17
 physics/physics/mass_energy_equivalence	0.5	4.493775893684088e+16
 physics/physics/mass_energy_equivalence	7.5	6.740663840526132e+17
+physics/physics/max_friction_on_slope	0.5 2 0	9.81
+physics/physics/max_friction_on_slope	0.5 2 1.0471975511965976	4.905000000000001
 physics/physics/max_friction_on_slope	0 1 100	ERR
 physics/physics/max_friction_on_slope	5 10 1	265.0182810283226
 physics/physics/max_friction_on_slope	2.5 0 -3	ERR
@@ -7345,6 +7625,9 @@ physics/physics/self_induced_emf	0.25 -3 2.5	0.3
 physics/physics/self_induced_emf	100 2.5 10	-25.0
 physics/physics/self_induced_emf	5 -1 100	0.05
 physics/physics/self_induced_emf	0.25 10 3	-0.8333333333333334
+physics/physics/slope_force	2 0	0.0
+physics/physics/slope_force	2 0.5235987755982988	9.809999999999999
+physics/physics/slope_force	2 1.5707963267948966	19.62
 physics/physics/slope_force	100 -1	ERR
 physics/physics/slope_force	-3 2.5	ERR
 physics/physics/slope_force	2.5 1	20.637075902413663
@@ -7464,12 +7747,13 @@ physics/physics/speed_after_distance	0.5 2 -1	ERR
 physics/physics/speed_after_distance	-1 0.25 5	1.8708286933869707
 physics/physics/speed_after_distance	0.5 5 1	3.2015621187164243
 physics/physics/speed_after_distance	-3 -3 -1	3.872983346207417
+physics/physics/steepest_climb_angle	0	0.0
+physics/physics/steepest_climb_angle	1	0.7853981633974483
+physics/physics/steepest_climb_angle	1.7320508075688772	1.0471975511965976
 physics/physics/steepest_climb_angle	-3	ERR
 physics/physics/steepest_climb_angle	2.5	1.1902899496825317
-physics/physics/steepest_climb_angle	1	0.7853981633974483
 physics/physics/steepest_climb_angle	5	1.373400766945016
 physics/physics/steepest_climb_angle	100	1.5607966601082315
-physics/physics/steepest_climb_angle	0	0.0
 physics/physics/steepest_climb_angle	3	1.2490457723982544
 physics/physics/steepest_climb_angle	0.5	0.4636476090008061
 physics/physics/steepest_climb_angle	2	1.1071487177940904
@@ -7711,6 +7995,9 @@ physics/physics/time_to_distance	0.25 3 100	8.08205772350596
 physics/physics/time_to_distance	1 0.5 1	0.8284271247461903
 physics/physics/time_to_distance	0.25 2.5 0.5	0.5403124237432848
 physics/physics/time_to_distance	-3 0 1	ERR
+physics/physics/tipping_margin	0.2 1 0	0.2
+physics/physics/tipping_margin	0.2 1 0.19739555984988078	0.0
+physics/physics/tipping_margin	0.2 1 1.5707963267948966	-1.0
 physics/physics/tipping_margin	2 0.25 5	ERR
 physics/physics/tipping_margin	10 0 5	ERR
 physics/physics/tipping_margin	-1 1 7.5	ERR

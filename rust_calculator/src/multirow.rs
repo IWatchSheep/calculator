@@ -283,6 +283,17 @@ static VARIANCE_OF_RANDOM_VARIABLE: Spec = Spec {
     links: &[((1, &[0]), (0, &[0])), ((1, &[1]), (0, &[1]))],
 };
 
+static KALMAN: Spec = Spec {
+    title: "Kalman filter, one step in one dimension. Row 1 predicts the state: where the filter expects to be after coasting at speed u for time t. Row 2 predicts the variance: how uncertain that expectation is, the old variance p plus the process noise q. Row 3 reads both predictions and the measurement z with its noise r, and gives the updated state x⁺ = x + k (z − x) with the gain k = p / (p + r). The rows are joined by →: the answer is the last row's answer, the updated state. The updated variance is its own operator, because → keeps only one number.",
+    rows: &[
+        RowSpec { title: "Where the filter expects to be.", node: NodeSpec { op: "physics/physics/kalman_predict_state", fill: &[] } },
+        RowSpec { title: "How uncertain that expectation is.", node: NodeSpec { op: "physics/physics/kalman_predict_variance", fill: &[] } },
+        RowSpec { title: "The estimate after the measurement. The predicted state reads Row 1 and the predicted variance reads Row 2; the measurement and its noise are typed here.", node: NodeSpec { op: "physics/physics/kalman_update_state", fill: &[(0, Fill::Row(0)), (1, Fill::Row(1))] } },
+    ],
+    joins: &["→", "→"],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -299,6 +310,7 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/statistics_and_probability/standard_deviation" => &STANDARD_DEVIATION,
         "math/statistics_and_probability/sample_standard_deviation" => &SAMPLE_STANDARD_DEVIATION,
         "physics/physics/gravitational_time_dilation" => &GRAVITATIONAL_TIME_DILATION,
+        "physics/physics/kalman_update_state" => &KALMAN,
         "physics/physics/relativistic_kinetic_energy" => &KINETIC_ENERGY,
         "physics/physics/relativistic_momentum" => &MOMENTUM,
         "physics/physics/length_contraction" => &LENGTH_CONTRACTION,

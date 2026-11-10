@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 568)
+        self.assertEqual(len(self.ops), 576)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 568)
+        self.assertEqual(len(status), 576)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -244,6 +244,13 @@ CASES = [
     (PH + "angular_acceleration", (6, 2), 3), (PH + "angular_acceleration", (-6, 2), -3),
     (PH + "tipping_margin", (0.2, 1, 0), 0.2), (PH + "tipping_margin", (0.2, 1, 0.19739555984988078), 0), (PH + "tipping_margin", (0.2, 1, 1.5707963267948966), -1),
     (PH + "impact_force", (2, 3, 1), 9), (PH + "impact_force", (2, -3, 1), 9),
+    (PH + "dead_reckoning", ([1, 2], 4, 1.5707963267948966, 0.5), [1, 4]), (PH + "dead_reckoning", ([0, 0], 2, 0, 3), [6, 0]), (PH + "dead_reckoning", ([0, 0], -2, 0, 3), [-6, 0]),
+    (PH + "exponential_smoothing", (10, 20, 0.5), 15), (PH + "exponential_smoothing", (8, 12, 0.25), 9), (PH + "exponential_smoothing", (10, 20, 0), 10), (PH + "exponential_smoothing", (10, 20, 1), 20),
+    (PH + "kalman_predict_state", (10, 2, 3), 16), (PH + "kalman_predict_variance", (1, 0.25), 1.25), (PH + "kalman_predict_variance", (4, 0), 4),
+    (PH + "kalman_update_state", (10, 4, 14, 4), 12), (PH + "kalman_update_variance", (4, 4), 2), (PH + "kalman_update_variance", (0, 1), 0),
+    (PH + "haversine_distance", (0, 0, 0, 0), 0), (PH + "haversine_distance", (0, 0, 0.017453292519943295, 0), 111194.92664455874),
+    (PH + "bearing_between", (0, 0, 0, 0.017453292519943295), 0), (PH + "bearing_between", (0, 0, 0.017453292519943295, 0), 1.5707963267948966),
+    (PH + "bearing_between", (0, 0, 0, -0.017453292519943295), 3.141592653589793), (PH + "bearing_between", (0, 0, -0.017453292519943295, 0), -1.5707963267948966),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -847,6 +854,54 @@ class MechanicsDeclineTests(unittest.TestCase):
         self.assertEqual(get(PH + "centre_of_mass").compute([2, 2], [[1, 2, 3], [3, 2, 1]]), [2, 2, 2])
         # impact force times the crumple distance is the kinetic energy
         self.assertAlmostEqual(get(PH + "impact_force").compute(2, 3, 0.5) * 0.5, get(PH + "kinetic_energy").compute(2, 3), places=9)
+
+
+class WhereAmIDeclineTests(unittest.TestCase):
+    """Batch 5 of the robot maths (dead reckoning, smoothing, Kalman, haversine, bearing) declines with the plan's messages."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says("dead_reckoning", ([1, 2, 3], 1, 0, 1), "a position has 2 numbers: east, north")
+        self.says("dead_reckoning", ([1, 2], 1, 0, -1), "time cannot be negative")
+        self.says("exponential_smoothing", (1, 2, 1.5), "the weight must be from 0 to 1")
+        self.says("exponential_smoothing", (1, 2, -0.1), "the weight must be from 0 to 1")
+        self.says("kalman_predict_state", (1, 2, -3), "time cannot be negative")
+        self.says("kalman_predict_variance", (-1, 0), "a variance cannot be negative")
+        self.says("kalman_predict_variance", (1, -1), "process noise cannot be negative")
+        self.says("kalman_update_state", (1, -1, 2, 1), "a variance cannot be negative")
+        self.says("kalman_update_state", (1, 1, 2, 0), "measurement noise must be positive")
+        self.says("kalman_update_variance", (-1, 1), "a variance cannot be negative")
+        self.says("kalman_update_variance", (1, 0), "measurement noise must be positive")
+        for key in ("haversine_distance", "bearing_between"):
+            self.says(key, (1.6, 0, 0, 0), "latitude is past the pole")
+            self.says(key, (0, 0, -1.6, 0), "latitude is past the pole")
+        self.says("bearing_between", (0.3, 0.2, 0.3, 0.2), "the two points are the same, there is no direction")
+
+    def test_the_pieces_agree_with_each_other(self):
+        import math
+        walk = get(PH + "dead_reckoning").compute
+        bearing, distance = get(PH + "bearing_between").compute, get(PH + "haversine_distance").compute
+        # a small hop east then north: the heading from the bearing operator is the heading dead reckoning takes
+        lat, lon = 0.5, 0.2
+        for dlat, dlon in ((0.0, 1e-4), (1e-4, 0.0), (-1e-4, 1e-4)):
+            heading = bearing(lat, lon, lat + dlat, lon + dlon)
+            metres = distance(lat, lon, lat + dlat, lon + dlon)
+            east, north = walk([0, 0], metres, heading, 1)
+            self.assertAlmostEqual(math.hypot(east, north), metres, places=6)
+            self.assertAlmostEqual(north, 6371000 * dlat, delta=0.05)
+        # a Kalman step: the updated variance is never above the predicted one and the state moves toward the measurement
+        up_state, up_var = get(PH + "kalman_update_state").compute, get(PH + "kalman_update_variance").compute
+        for p, r in ((4, 4), (1, 9), (9, 1)):
+            self.assertLess(up_var(p, r), p + 1e-12)
+            x = up_state(10, p, 14, r)
+            self.assertTrue(10 <= x <= 14)
+        # smoothing with the weight 1 / 0 takes the sample / keeps the old value
+        smooth = get(PH + "exponential_smoothing").compute
+        self.assertEqual((smooth(3, 7, 1), smooth(3, 7, 0)), (7, 3))
 
 
 # --------------------------------------------------------------------------- 3. error handling

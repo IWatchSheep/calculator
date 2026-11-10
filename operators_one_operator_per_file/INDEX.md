@@ -585,6 +585,14 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Angular acceleration | α = τ / I | α = τ / I   (a negative torque turns the other way) | Ready | `physics/physics/angular_acceleration/` |
 | Tipping margin | b cos θ − h sin θ | b cos θ − h sin θ   (metres from the downhill foot to where the weight falls; positive stays upright) | Ready | `physics/physics/tipping_margin/` |
 | Tree impact force | F = mv² / 2s | F = m v² / (2 s)   (the average force to stop a mass from speed v over a distance s) | Ready | `physics/physics/impact_force/` |
+| Dead reckoning | x + v t along the heading | east = x + v cos(heading) t,  north = y + v sin(heading) t   (heading 0 is east, positive turns toward north; a negative speed backs up) | Ready | `physics/physics/dead_reckoning/` |
+| Exponential smoothing | y = αx + (1 − α)y₀ | y = α x + (1 − α) y₀   (one new sample blended into the previous estimate; α = 0 keeps the old value, α = 1 takes the new sample) | Ready | `physics/physics/exponential_smoothing/` |
+| Kalman predict state | x′ = x + ut | x′ = x + u t   (the position a 1-D filter expects after coasting at speed u for time t) | Ready | `physics/physics/kalman_predict_state/` |
+| Kalman predict variance | p′ = p + q | p′ = p + q   (the uncertainty grows by the process noise q) | Ready | `physics/physics/kalman_predict_variance/` |
+| Kalman update | x⁺ = x + k(z − x) | k = p / (p + r),  x⁺ = x + k (z − x)   (the menu operator opens three rows: predict the state, predict the variance, then this update) | Ready | `physics/physics/kalman_update_state/` |
+| Kalman update variance | p⁺ = (1 − k)p | k = p / (p + r),  p⁺ = (1 − k) p   (kept out of the three-row step: the robot needs this variance for the next step) | Ready | `physics/physics/kalman_update_variance/` |
+| Haversine distance | great-circle distance | a = sin²(Δlat/2) + cos(lat1) cos(lat2) sin²(Δlon/2),  d = 6371000 · 2 atan2(√a, √(1 − a))   (Earth radius 6371000 m, angles in radians) | Ready | `physics/physics/haversine_distance/` |
+| Bearing between two points | atan2(north, east) | east = sin(Δlon) cos(lat2),  north = cos(lat1) sin(lat2) − sin(lat1) cos(lat2) cos(Δlon),  heading = atan2(north, east)   (0 is east, positive turns toward north) | Ready | `physics/physics/bearing_between/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

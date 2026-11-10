@@ -237,6 +237,8 @@ math/trigonometry/tangent	0	0
 math/trigonometry/two_argument_arctangent	1 1	0.7853981633974483
 math/trigonometry/two_argument_arctangent	1 -1	2.356194490192345
 physics/physics/acceleration	10 2	5
+physics/physics/angular_acceleration	6 2	3
+physics/physics/angular_acceleration	-6 2	-3
 physics/physics/bernoulli_equation	100000 2 0 4 1 1000	84190
 physics/physics/bernoulli_equation	5 1 0 1 0 1000	5
 physics/physics/bohr_energy_level	1	-13.605693122994
@@ -261,6 +263,8 @@ physics/physics/critical_angle	1.5 1	0.7297276562269663
 physics/physics/critical_angle	2 1	0.5235987755982988
 physics/physics/cyclotron_radius	2 3 1 4	1.5
 physics/physics/cyclotron_radius	2 3 -1 4	1.5
+physics/physics/cylinder_moment_of_inertia	2 3	9
+physics/physics/cylinder_moment_of_inertia	4 0	0
 physics/physics/de_broglie_wavelength	1 1	6.62607015e-34
 physics/physics/de_broglie_wavelength	2 3	1.104345025e-34
 physics/physics/density	10 2	5
@@ -294,6 +298,8 @@ physics/physics/hydraulic_press	10 1 1	10
 physics/physics/hydrostatic_pressure	1000 10	98100
 physics/physics/hydrostatic_pressure	1000 0	0
 physics/physics/ideal_gas_law	1 273.15 0.0224	101388.19036190625
+physics/physics/impact_force	2 3 1	9
+physics/physics/impact_force	2 -3 1	9
 physics/physics/impulse	5 2	10
 physics/physics/inductor_energy	2 3	9
 physics/physics/inductor_energy	0.5 4	4
@@ -325,6 +331,8 @@ physics/physics/malus_law	100 1.0471975511965976	25
 physics/physics/malus_law	100 0	100
 physics/physics/malus_law	100 1.5707963267948966	0
 physics/physics/mass_energy_equivalence	1	89875517873681764
+physics/physics/max_friction_on_slope	0.5 2 0	9.81
+physics/physics/max_friction_on_slope	0.5 2 1.0471975511965976	4.905000000000001
 physics/physics/momentum	2 3	6
 physics/physics/motional_emf	0.5 2 3	3
 physics/physics/motional_emf	0 2 3	0
@@ -379,12 +387,18 @@ physics/physics/schwarzschild_radius	1 1 1	2
 physics/physics/schwarzschild_radius	1.989e+30	2953.9937713977156
 physics/physics/self_induced_emf	2 3 0.5	-12
 physics/physics/self_induced_emf	0.1 -5 0.01	50
+physics/physics/slope_force	2 0	0
+physics/physics/slope_force	2 0.5235987755982988	9.809999999999999
+physics/physics/slope_force	2 1.5707963267948966	19.62
 physics/physics/snell_s_law	1 0.5235987755982988 1	0.5235987755982988
 physics/physics/snell_s_law	1 0.5235987755982988 2	0.25268025514207865
 physics/physics/speed_after_distance	0 2 8	5.656854249492381
 physics/physics/speed_after_distance	3 0 10	3
 physics/physics/speed_after_distance	10 -2 9	8
 physics/physics/speed_after_distance	10 -2 5	8.94427190999916
+physics/physics/steepest_climb_angle	0	0
+physics/physics/steepest_climb_angle	1	0.7853981633974483
+physics/physics/steepest_climb_angle	1.7320508075688772	1.0471975511965976
 physics/physics/stokes_drag	0.001 0.01 2	0.0003769911184307752
 physics/physics/stokes_drag	0.001 0.01 0	0
 physics/physics/stopping_distance	10 -2	25
@@ -401,6 +415,9 @@ physics/physics/time_to_distance	0 2 4	2
 physics/physics/time_to_distance	4 0 10	2.5
 physics/physics/time_to_distance	10 -2 9	1
 physics/physics/time_to_distance	0 0 0	0
+physics/physics/tipping_margin	0.2 1 0	0.2
+physics/physics/tipping_margin	0.2 1 0.19739555984988078	0
+physics/physics/tipping_margin	0.2 1 1.5707963267948966	-1
 physics/physics/torque	2 3 1.5707963267948966	6
 physics/physics/torricelli_speed	5	9.904544411531507
 physics/physics/torricelli_speed	0	0

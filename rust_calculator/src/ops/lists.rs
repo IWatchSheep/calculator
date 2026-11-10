@@ -668,3 +668,12 @@ pub fn centre_of_mass(a: &[Value]) -> R {
     need(total != 0.0, "the total mass is zero")?;
     Ok(vlist((0..3).map(|k| masses.iter().zip(&positions).fold(0.0, |s, (m, p)| s + m * p[k]) / total).collect()))
 }
+
+pub fn dead_reckoning(a: &[Value]) -> R {
+    // position, speed, heading, t
+    let position = nums(&a[0])?;
+    need(position.len() == 2, "a position has 2 numbers: east, north")?;
+    let (speed, heading, t) = (num(&a[1])?, num(&a[2])?, num(&a[3])?);
+    need(t >= 0.0, "time cannot be negative")?;
+    Ok(vlist(vec![position[0] + speed * heading.cos() * t, position[1] + speed * heading.sin() * t]))
+}

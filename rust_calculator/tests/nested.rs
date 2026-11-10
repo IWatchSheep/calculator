@@ -589,3 +589,71 @@ fn the_mechanics_operators_give_the_numbers_of_the_work_plan_and_decline_with_it
     assert!(said("tipping_margin", &[-0.1, 1., 0.1]).contains("a length cannot be negative"));
     assert!(said("impact_force", &[2., 3., 0.]).contains("the stopping distance must be positive"));
 }
+
+#[test]
+fn the_where_am_i_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let ph = "physics/physics/";
+    let call = |key: &str, args: Vec<Value>| -> Result<Value, String> {
+        let op = ops::get(&format!("{ph}{key}")).unwrap();
+        match op.compute_v {
+            Some(f) => f(&args),
+            None => (op.compute)(&args.iter().map(|v| if let Value::Number(x) = v { *x } else { panic!() }).collect::<Vec<f64>>()),
+        }
+    };
+    let nums = |xs: &[f64]| xs.iter().map(|x| Value::Number(*x)).collect::<Vec<_>>();
+    let one = |key: &str, xs: &[f64]| -> f64 {
+        match call(key, nums(xs)).unwrap() {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let said = |key: &str, xs: &[f64]| call(key, nums(xs)).unwrap_err();
+    let (half_pi, one_degree) = (std::f64::consts::FRAC_PI_2, 0.017453292519943295);
+    assert_eq!(one("exponential_smoothing", &[10., 20., 0.5]), 15.0);
+    assert_eq!(one("exponential_smoothing", &[8., 12., 0.25]), 9.0);
+    assert_eq!(one("kalman_predict_state", &[10., 2., 3.]), 16.0);
+    assert_eq!(one("kalman_predict_variance", &[1., 0.25]), 1.25);
+    assert_eq!(one("kalman_update_state", &[10., 4., 14., 4.]), 12.0);
+    assert_eq!(one("kalman_update_variance", &[4., 4.]), 2.0);
+    assert_eq!(one("kalman_update_variance", &[0., 1.]), 0.0);
+    assert_eq!(one("haversine_distance", &[0., 0., 0., 0.]), 0.0);
+    assert!((one("haversine_distance", &[0., 0., one_degree, 0.]) - 111194.92664455874).abs() < 1e-6);
+    assert_eq!(one("bearing_between", &[0., 0., 0., one_degree]), 0.0);
+    assert_eq!(one("bearing_between", &[0., 0., one_degree, 0.]), half_pi);
+    assert_eq!(one("bearing_between", &[0., 0., 0., -one_degree]), std::f64::consts::PI);
+    assert_eq!(one("bearing_between", &[0., 0., -one_degree, 0.]), -half_pi);
+    let walk = |p: &[f64], s: f64, h: f64, t: f64| -> Vec<f64> {
+        match call("dead_reckoning", vec![Value::List(nums(p)), Value::Number(s), Value::Number(h), Value::Number(t)]).unwrap() {
+            Value::List(v) => v.iter().map(|x| if let Value::Number(n) = x { *n } else { panic!() }).collect(),
+            o => panic!("{o:?}"),
+        }
+    };
+    let close = |a: Vec<f64>, b: &[f64]| a.iter().zip(b).all(|(p, q)| (p - q).abs() < 1e-12);
+    assert!(close(walk(&[1., 2.], 4., half_pi, 0.5), &[1., 4.]));
+    assert!(close(walk(&[0., 0.], 2., 0., 3.), &[6., 0.]));
+    assert!(close(walk(&[0., 0.], -2., 0., 3.), &[-6., 0.]));
+    assert!(call("dead_reckoning", vec![Value::List(nums(&[1., 2., 3.])), Value::Number(1.), Value::Number(0.), Value::Number(1.)]).unwrap_err().contains("a position has 2 numbers: east, north"));
+    assert!(call("dead_reckoning", vec![Value::List(nums(&[1., 2.])), Value::Number(1.), Value::Number(0.), Value::Number(-1.)]).unwrap_err().contains("time cannot be negative"));
+    assert!(said("exponential_smoothing", &[1., 2., 1.5]).contains("the weight must be from 0 to 1"));
+    assert!(said("kalman_predict_state", &[1., 2., -3.]).contains("time cannot be negative"));
+    assert!(said("kalman_predict_variance", &[-1., 0.]).contains("a variance cannot be negative"));
+    assert!(said("kalman_predict_variance", &[1., -1.]).contains("process noise cannot be negative"));
+    assert!(said("kalman_update_state", &[1., 1., 2., 0.]).contains("measurement noise must be positive"));
+    assert!(said("kalman_update_variance", &[-1., 1.]).contains("a variance cannot be negative"));
+    assert!(said("haversine_distance", &[1.6, 0., 0., 0.]).contains("latitude is past the pole"));
+    assert!(said("bearing_between", &[0., 0., -1.6, 0.]).contains("latitude is past the pole"));
+    assert!(said("bearing_between", &[0.3, 0.2, 0.3, 0.2]).contains("the two points are the same, there is no direction"));
+}
+
+#[test]
+fn the_kalman_step_in_three_rows_gives_the_plan_numbers() {
+    let key = "physics/physics/kalman_update_state";
+    let mut doc = chain_doc(key, &[(0, 0, "10"), (0, 1, "2"), (0, 2, "3"), (1, 0, "4"), (1, 1, "0"), (2, 2, "14"), (2, 3, "4")]);
+    doc.equals_all().unwrap();
+    assert_eq!(number(&doc, 0), 16.0);
+    assert_eq!(number(&doc, 1), 4.0);
+    assert_eq!(doc.rows[2].inputs[0], "16");
+    assert_eq!(doc.rows[2].inputs[1], "4");
+    assert_eq!(number(&doc, 2), 15.0);
+}

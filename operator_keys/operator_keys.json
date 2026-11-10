@@ -1,6 +1,6 @@
 {
- "count": 568,
- "ready": 496,
+ "count": 576,
+ "ready": 504,
  "reference": 72,
  "operators": [
   {
@@ -19310,6 +19310,68 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
+   "examples": [
+    {
+     "args": [
+      6,
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      -6,
+      2
+     ],
+     "expected": -3
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/bearing_between",
+   "name": "Bearing between two points",
+   "symbol": "atan2(north, east)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "east = sin(Δlon) cos(lat2),  north = cos(lat1) sin(lat2) − sin(lat1) cos(lat2) cos(Δlon),  heading = atan2(north, east)   (0 is east, positive turns toward north)",
+   "status": "Ready",
+   "inputs": [
+    "lat1",
+    "lon1",
+    "lat2",
+    "lon2"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = atan2 ( cos □ sin □ − sin □ cos □ cos ( □ − □ ) , sin ( □ − □ ) cos □ )",
+   "compute_signature": "compute(lat1, lon1, lat2, lon2)",
+   "compute_params": [
+    {
+     "name": "lat1",
+     "kind": "required"
+    },
+    {
+     "name": "lon1",
+     "kind": "required"
+    },
+    {
+     "name": "lat2",
+     "kind": "required"
+    },
+    {
+     "name": "lon2",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
    "examples": []
   },
   {
@@ -19691,7 +19753,33 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       3
+      ],
+      [
+       [
+        0,
+        0,
+        0
+       ],
+       [
+        4,
+        0,
+        0
+       ]
+      ]
+     ],
+     "expected": [
+      3,
+      0,
+      0
+     ]
+    }
+   ]
   },
   {
    "key": "physics/physics/centripetal_acceleration",
@@ -20061,7 +20149,22 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      2,
+      3
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      4,
+      0
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/de_broglie_wavelength",
@@ -20117,6 +20220,53 @@
      "expected": 1.104345025e-34
     }
    ]
+  },
+  {
+   "key": "physics/physics/dead_reckoning",
+   "name": "Dead reckoning",
+   "symbol": "x + v t along the heading",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "east = x + v cos(heading) t,  north = y + v sin(heading) t   (heading 0 is east, positive turns toward north; a negative speed backs up)",
+   "status": "Ready",
+   "inputs": [
+    "position",
+    "speed",
+    "heading",
+    "t"
+   ],
+   "input_kinds": [
+    "list",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = □ + □ □ ( cos □ , sin □ )",
+   "compute_signature": "compute(position, speed, heading, t)",
+   "compute_params": [
+    {
+     "name": "position",
+     "kind": "required"
+    },
+    {
+     "name": "speed",
+     "kind": "required"
+    },
+    {
+     "name": "heading",
+     "kind": "required"
+    },
+    {
+     "name": "t",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
   },
   {
    "key": "physics/physics/density",
@@ -20452,6 +20602,47 @@
    ]
   },
   {
+   "key": "physics/physics/exponential_smoothing",
+   "name": "Exponential smoothing",
+   "symbol": "y = αx + (1 − α)y₀",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "y = α x + (1 − α) y₀   (one new sample blended into the previous estimate; α = 0 keeps the old value, α = 1 takes the new sample)",
+   "status": "Ready",
+   "inputs": [
+    "previous",
+    "sample",
+    "alpha"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ □ + ( 1 − □ ) □",
+   "compute_signature": "compute(previous, sample, alpha)",
+   "compute_params": [
+    {
+     "name": "previous",
+     "kind": "required"
+    },
+    {
+     "name": "sample",
+     "kind": "required"
+    },
+    {
+     "name": "alpha",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
    "key": "physics/physics/faradays_law",
    "name": "Faraday's law of induction",
    "symbol": "ε = −N ΔΦ/Δt",
@@ -20779,6 +20970,53 @@
      "expected": 86.60254037844386
     }
    ]
+  },
+  {
+   "key": "physics/physics/haversine_distance",
+   "name": "Haversine distance",
+   "symbol": "great-circle distance",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "a = sin²(Δlat/2) + cos(lat1) cos(lat2) sin²(Δlon/2),  d = 6371000 · 2 atan2(√a, √(1 − a))   (Earth radius 6371000 m, angles in radians)",
+   "status": "Ready",
+   "inputs": [
+    "lat1",
+    "lon1",
+    "lat2",
+    "lon2"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 6371000 · 2 atan2 ( √ a , √ ( 1 − a ) ) with a = sin ² ( ( □ − □ ) / 2 ) + cos □ cos □ sin ² ( ( □ − □ ) / 2 )",
+   "compute_signature": "compute(lat1, lon1, lat2, lon2)",
+   "compute_params": [
+    {
+     "name": "lat1",
+     "kind": "required"
+    },
+    {
+     "name": "lon1",
+     "kind": "required"
+    },
+    {
+     "name": "lat2",
+     "kind": "required"
+    },
+    {
+     "name": "lon2",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
   },
   {
    "key": "physics/physics/heat",
@@ -21168,7 +21406,24 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      2,
+      3,
+      1
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      2,
+      -3,
+      1
+     ],
+     "expected": 9
+    }
+   ]
   },
   {
    "key": "physics/physics/impulse",
@@ -21262,6 +21517,164 @@
      "expected": 4
     }
    ]
+  },
+  {
+   "key": "physics/physics/kalman_predict_state",
+   "name": "Kalman predict state",
+   "symbol": "x′ = x + ut",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "x′ = x + u t   (the position a 1-D filter expects after coasting at speed u for time t)",
+   "status": "Ready",
+   "inputs": [
+    "x",
+    "u",
+    "t"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + □ □",
+   "compute_signature": "compute(x, u, t)",
+   "compute_params": [
+    {
+     "name": "x",
+     "kind": "required"
+    },
+    {
+     "name": "u",
+     "kind": "required"
+    },
+    {
+     "name": "t",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/kalman_predict_variance",
+   "name": "Kalman predict variance",
+   "symbol": "p′ = p + q",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "p′ = p + q   (the uncertainty grows by the process noise q)",
+   "status": "Ready",
+   "inputs": [
+    "p",
+    "q"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + □",
+   "compute_signature": "compute(p, q)",
+   "compute_params": [
+    {
+     "name": "p",
+     "kind": "required"
+    },
+    {
+     "name": "q",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/kalman_update_state",
+   "name": "Kalman update",
+   "symbol": "x⁺ = x + k(z − x)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "k = p / (p + r),  x⁺ = x + k (z − x)   (the menu operator opens three rows: predict the state, predict the variance, then this update)",
+   "status": "Ready",
+   "inputs": [
+    "x",
+    "p",
+    "z",
+    "r"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + ( □ / ( □ + □ ) ) ( □ − □ )",
+   "compute_signature": "compute(x, p, z, r)",
+   "compute_params": [
+    {
+     "name": "x",
+     "kind": "required"
+    },
+    {
+     "name": "p",
+     "kind": "required"
+    },
+    {
+     "name": "z",
+     "kind": "required"
+    },
+    {
+     "name": "r",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/kalman_update_variance",
+   "name": "Kalman update variance",
+   "symbol": "p⁺ = (1 − k)p",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "k = p / (p + r),  p⁺ = (1 − k) p   (kept out of the three-row step: the robot needs this variance for the next step)",
+   "status": "Ready",
+   "inputs": [
+    "p",
+    "r"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( 1 − □ / ( □ + □ ) ) □",
+   "compute_signature": "compute(p, r)",
+   "compute_params": [
+    {
+     "name": "p",
+     "kind": "required"
+    },
+    {
+     "name": "r",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/kinetic_energy",
@@ -22034,7 +22447,24 @@
    "max_args": 4,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0.5,
+      2,
+      0
+     ],
+     "expected": 9.81
+    },
+    {
+     "args": [
+      0.5,
+      2,
+      1.0471975511965976
+     ],
+     "expected": 4.905000000000001
+    }
+   ]
   },
   {
    "key": "physics/physics/momentum",
@@ -23900,7 +24330,29 @@
    "max_args": 3,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      2,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2,
+      0.5235987755982988
+     ],
+     "expected": 9.809999999999999
+    },
+    {
+     "args": [
+      2,
+      1.5707963267948966
+     ],
+     "expected": 19.62
+    }
+   ]
   },
   {
    "key": "physics/physics/snell_s_law",
@@ -24061,7 +24513,26 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 0.7853981633974483
+    },
+    {
+     "args": [
+      1.7320508075688772
+     ],
+     "expected": 1.0471975511965976
+    }
+   ]
   },
   {
    "key": "physics/physics/stokes_drag",
@@ -24455,7 +24926,32 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0.2,
+      1,
+      0
+     ],
+     "expected": 0.2
+    },
+    {
+     "args": [
+      0.2,
+      1,
+      0.19739555984988078
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      0.2,
+      1,
+      1.5707963267948966
+     ],
+     "expected": -1
+    }
+   ]
   },
   {
    "key": "physics/physics/torque",

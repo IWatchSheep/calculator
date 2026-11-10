@@ -219,6 +219,15 @@ SPECS = {
         "joins": ["→", "→"],
         "links": [((1, (0,)), (0, (0,))), ((1, (1,)), (0, (1,)))],
     },
+    "physics/physics/kalman_update_state": {
+        "title": "Kalman filter, one step in one dimension. Row 1 predicts the state: where the filter expects to be after coasting at speed u for time t. Row 2 predicts the variance: how uncertain that expectation is, the old variance p plus the process noise q. Row 3 reads both predictions and the measurement z with its noise r, and gives the updated state x⁺ = x + k (z − x) with the gain k = p / (p + r). The rows are joined by →: the answer is the last row's answer, the updated state. The updated variance is its own operator, because → keeps only one number.",
+        "rows": [
+            {"op": "physics/physics/kalman_predict_state", "title": "Where the filter expects to be."},
+            {"op": "physics/physics/kalman_predict_variance", "title": "How uncertain that expectation is."},
+            {"op": "physics/physics/kalman_update_state", "title": "The estimate after the measurement. The predicted state reads Row 1 and the predicted variance reads Row 2; the measurement and its noise are typed here.", "fill": {0: {"chain": 0}, 1: {"chain": 1}}},
+        ],
+        "joins": ["→", "→"],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,
