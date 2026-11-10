@@ -20,6 +20,7 @@ CALC = 'advanced'
 INPUTS = ['u', 'v', 'x0', 'y0']    # what each box (left to right) is
 KINDS = ['multi', 'multi', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 1, 0, 1, 2, 3]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+FRAC = [[[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [[1, 'd']], [], [[2, 'n']], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [[2, 'd']], [], [[3, 'n']], [[3, 'n']], [[3, 'bar']], [[3, 'd']], [[3, 'd']], [], [], [[4, 'n']], [[4, 'n']], [[4, 'bar']], [[4, 'd']], [[4, 'd']], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '∂'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', '='), ('op', '∂'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', 'and'), ('op', '∂'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', '='), ('op', '−'), ('op', '∂'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

@@ -23,7 +23,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 import operator_row_math as R  # noqa: E402
-from operator_row_math.layout import level_of, shown  # noqa: E402
+from operator_row_math.layout import group_fractions, level_of, shown  # noqa: E402
 
 EXTRAS = {}
 SPECS = os.path.join(ROOT, "operator_keys", "operator_row_specs.txt")
@@ -79,6 +79,7 @@ def build(key, dsl, inputs, calc="ready"):
             left.append(("op", shown(tok)))          # an exponent / subscript has its own cell (one row up / down) and shows ordinary characters
             levels.append(level_of(tok))
             pattern.append(tok)
+    fracs = group_fractions(left, levels)           # the picture's own cards only: the "with" boxes added below are never part of a fraction
     missing = [n for n in inputs if n not in first_seen]
     if calc == "reference":                      # a reference operator cannot calculate: nothing to add
         missing = []
@@ -86,6 +87,7 @@ def build(key, dsl, inputs, calc="ready"):
         left.append(("op", "with" if i == 0 else ","))
         left.append(("box", ""))
         levels.extend([0, 0])
+        fracs.extend([[], []])
         slots.append(inputs.index(name))
         pattern.append("with" if i == 0 else ",")
         pattern.append(BOX)
@@ -98,7 +100,7 @@ def build(key, dsl, inputs, calc="ready"):
         pattern.append("= " + BOX)
     if not left:
         raise SystemExit("%s: empty formula" % key)
-    return left, right, slots, " ".join(pattern), levels
+    return left, right, slots, " ".join(pattern), levels, fracs
 
 
 def rewrite(key, dsl):
@@ -108,7 +110,7 @@ def rewrite(key, dsl):
     nl = "\r\n" if "\r\n" in src else "\n"
     src = src.replace("\r\n", "\n")
     mod = R.get(key)
-    left, right, slots, pattern, levels = build(key, dsl, list(mod.INPUTS), mod.CALC)
+    left, right, slots, pattern, levels, fracs = build(key, dsl, list(mod.INPUTS), mod.CALC)
     ident = list(range(len(mod.INPUTS)))
 
     def put(name, value, comment=None):
@@ -126,14 +128,17 @@ def rewrite(key, dsl):
     put("RIGHT", repr(right))
     src = re.sub(r"^SLOTS = .*\n", "", src, flags=re.M)
     src = re.sub(r"^LEVELS = .*\n", "", src, flags=re.M)
+    src = re.sub(r"^FRAC = .*\n", "", src, flags=re.M)
     extra = ""
     if slots != ident:
         extra += "SLOTS = %r    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)\n" % slots
     if any(levels):
         extra += "LEVELS = %r    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line\n" % levels
+    if any(fracs):
+        extra += "FRAC = %r    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)\n" % [[list(e) for e in f] for f in fracs]
     if extra:
         src = re.sub(r"^(KINDS = .*\n)", lambda m: m.group(1) + extra, src, count=1, flags=re.M)
-    src = src.replace("return build_row(parent, LEFT, RIGHT, stacked)", "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"))")
+    src = src.replace("return build_row(parent, LEFT, RIGHT, stacked)", "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"), fracs=globals().get(\"FRAC\"))")
     src = re.sub(r"^Picture:      .*$", "Picture:      " + pattern.replace("\\", "\\\\"), src, count=1, flags=re.M)
     open(path, "w", encoding="utf-8", newline="").write(src.replace("\n", nl))
 

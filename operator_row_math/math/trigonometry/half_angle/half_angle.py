@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['theta']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+FRAC = [[], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [], [], [], [[2, 'hide']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'hide']], [[2, 'bar']], [[2, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'sin'), ('op', '('), ('box', ''), ('op', '/'), ('op', '2'), ('op', ')'), ('op', '='), ('op', '√'), ('op', '('), ('op', '('), ('op', '1'), ('op', '−'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', ')'), ('op', '/'), ('op', '2'), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

@@ -62,6 +62,39 @@ class RowFiles(unittest.TestCase):
         node = row_tree.new_node("geometry/geometry/circle_area")
         self.assertEqual(len(row_tree.levels(node)), len(row_tree.flatten(node)))      # one level for every card the window draws
 
+    def test_a_fraction_is_always_written_top_to_bottom(self):
+        """A "/" in a formula is a fraction: the numerator on the row above a bar, the denominator on the row below, centred over the bar.  Brackets that only wrapped
+        a whole numerator or denominator are not drawn; a product stays in the numerator; a bracketed denominator is alone; nested fractions stack."""
+        from operator_row_math.layout import group_fractions
+        from operator_row_math.row_builder import _plan
+
+        def cards(text):
+            return [("box", "") if t == "B" else ("op", t) for t in text.split()]
+
+        def table(text):
+            c = cards(text)
+            f = group_fractions(c, [0] * len(c))
+            return [(t, [(g, p) for g, p in fl]) for (_k, t), fl in zip(c, f)]
+
+        t = table("B × B / ( B × B )")                                  # m v / (q B): the bracketed denominator is alone, the brackets are not drawn
+        self.assertEqual([p for _t, fl in t for g, p in fl], ["n", "n", "n", "bar", "hide", "d", "d", "d", "hide"])
+        t = table("1 / B − 1 / B")                                      # the minus is not part of either fraction
+        self.assertEqual([len(fl) for _t, fl in t], [1, 1, 1, 0, 1, 1, 1])
+        self.assertEqual(table("yes / no"), [("yes", []), ("/", []), ("no", [])])        # "yes / no" is text, not a fraction
+        # where the cards go: numerator one row up, denominator one row down, centred over a bar as wide as the wider side
+        c = cards("B B / B")
+        f = group_fractions(c, [0, 0, 0, 0])
+        placed, bars, end = _plan(4, [0, 0, 0, 0], f)
+        self.assertEqual(placed[0], (-1, 0))
+        self.assertEqual(placed[1], (-1, 1))
+        self.assertEqual(placed[3], (1, 0))                              # the single denominator card is left of centre only if it fits: width 1 over width 2
+        self.assertEqual(bars, [(0, 0, 2)])
+        self.assertEqual(end, 2)
+        # the real rows
+        self.assertTrue(any(rows.get("physics/physics/gravitation").FRAC))
+        self.assertTrue(any(rows.get("math/algebra/quadratic_formula").FRAC))
+        self.assertFalse(any(getattr(rows.get("math/arithmetic/addition"), "FRAC", [[]])))
+
     def test_a_constant_or_letter_is_an_ordinary_card_not_a_blue_box(self):
         """Only a box the person types is blue.  g in W = m g, and the A of P(A|B), are ordinary cards."""
         weight = rows.get("physics/physics/weight")

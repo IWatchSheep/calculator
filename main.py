@@ -538,7 +538,7 @@ class CalculatorGUI(tk.Tk):
         else:
             sel = next((n for n, c in enumerate(cards) if c[2] is not None and c[2] == row["sel"]), None)
             build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
-                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"])
+                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"])
                       ).pack(anchor="w", padx=6, pady=4)
         row["refresh"]()
 

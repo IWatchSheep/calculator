@@ -19,6 +19,7 @@ PATTERN = '□ = μ₀ × □ / ( 2 π × □ )'
 CALC = 'ready'
 INPUTS = ['I', 'r']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+FRAC = [[], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', 'μ₀'), ('op', '×'), ('box', ''), ('op', '/'), ('op', '('), ('op', '2'), ('op', 'π'), ('op', '×'), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

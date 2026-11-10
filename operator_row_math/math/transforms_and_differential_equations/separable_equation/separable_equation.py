@@ -19,6 +19,7 @@ PATTERN = '□ □ / □ □ = g ( □ ) □ ( □ ) with □ , □ , □ , □ 
 CALC = 'advanced'
 INPUTS = ['g', 'h', 'x0', 'y0', 'x_end']    # what each box (left to right) is
 KINDS = ['function', 'function', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+FRAC = [[[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [[1, 'd']], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('dec', ''), ('dec', ''), ('op', '/'), ('dec', ''), ('dec', ''), ('op', '='), ('op', 'g'), ('op', '('), ('dec', ''), ('op', ')'), ('dec', ''), ('op', '('), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

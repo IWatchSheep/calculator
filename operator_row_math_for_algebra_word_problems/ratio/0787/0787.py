@@ -22,6 +22,7 @@ BOX_INDEX = [2, 0, 4]    # the place of each box's number in the problem text (N
 DEFAULTS = ['23', '1', '3']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
+FRAC = [[[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
 LEFT = [('op', '('), ('op', 'k'), ('op', '−'), ('box', ''), ('op', ')'), ('op', '/'), ('op', '('), ('op', 'k'), ('op', '+'), ('op', '23'), ('op', ')'), ('op', '='), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
@@ -29,4 +30,4 @@ RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number 
 
 def place(parent, stacked=False):
     """Create this problem's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS, fracs=FRAC)

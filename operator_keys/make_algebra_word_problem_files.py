@@ -295,11 +295,12 @@ def row_cards(plan):
             levels.append(0)
             box_index.append(tok[2])
             pattern.append(BOX)
-    return cards, box_index, " ".join(pattern), levels
+    from operator_row_math.layout import group_fractions
+    return cards, box_index, " ".join(pattern), levels, group_fractions(cards, levels)
 
 
 def row_file(p, key, numbers, solver):
-    cards, box_index, pattern, levels = row_cards(equation_plan(p["Equation"], numbers))
+    cards, box_index, pattern, levels, fracs = row_cards(equation_plan(p["Equation"], numbers))
     boxes = pattern
     left = repr(cards)
     return '''"""Row for the algebra word problem: %(category)s %(id)s
@@ -326,6 +327,7 @@ BOX_INDEX = %(box_index_r)s    # the place of each box's number in the problem t
 DEFAULTS = %(defaults_r)s    # the boxes' numbers as written in the stored problem
 KINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
+FRAC = %(frac_r)s    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 LEVELS = %(levels_r)s    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
 LEFT = %(left)s      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
@@ -333,14 +335,14 @@ RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number 
 
 def place(parent, stacked=False):
     """Create this problem's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS, fracs=FRAC)
 ''' % {
         "category": p["category"], "id": p["id"], "name": "%s %s" % (p["category"], p["id"]), "boxes": boxes, "box": BOX, "key": key,
         "calc_text": "ready - fill the boxes, press = and the answer appears right of =" if solver else "reference - the problem is stored; no solver answers it yet",
         "name_r": py_str("%s %s" % (p["category"], p["id"])), "key_r": py_str(key),
         "pattern_r": py_str("%s  ->  answer %s" % (pattern, BOX)), "calc_r": py_str("ready" if solver else "reference"),
         "inputs_r": py_str(["number %d" % (i + 1) for i in box_index]), "box_index_r": py_str(box_index), "defaults_r": py_str([numbers[i] for i in box_index]),
-        "kinds_r": py_str(["number"] * len(box_index)), "left": left, "levels_r": py_str(levels)}
+        "kinds_r": py_str(["number"] * len(box_index)), "left": left, "levels_r": py_str(levels), "frac_r": py_str([[list(e) for e in f] for f in fracs])}
 
 
 def main():

@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+FRAC = [[], [], [], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'tanh'), ('box', ''), ('op', '='), ('op', 'sinh'), ('box', ''), ('op', '/'), ('op', 'cosh'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

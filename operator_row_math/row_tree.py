@@ -94,43 +94,55 @@ def flatten(node, path=()):
     return [card for card, _level in _walk(node, path)]
 
 
+def fracs(node):
+    """For every card of flatten(node): the fractions it is inside (see layout.group_fractions), as a list of (group, part)."""
+    return [frac for _card, _level, frac in _walk3(node)]
+
+
 def levels(node):
     """The grid row of every card of flatten(node), as an offset from the main line: -1 above (an exponent), +1 below (a subscript), 0 on the line."""
-    return [level for _card, level in _walk(node)]
+    return [level for _card, level, _frac in _walk3(node)]
 
 
 def _walk(node, path=()):
+    return [(card, level) for card, level, _frac in _walk3(node, path)]
+
+
+def _walk3(node, path=(), outer=()):
+    """[(card, level, fraction path)] for every card of the node, nested operators included.  `outer` = the fractions the node's own box sits in."""
     out, smap, b, seen, o = [], slot_map(node["mod"]), 0, set(), 0
     lv = getattr(node["mod"], "LEVELS", None) or []
+    fr = getattr(node["mod"], "FRAC", None) or []
     for n, (kind, text) in enumerate(node["mod"].LEFT):
         level = lv[n] if n < len(lv) else 0
+        own = tuple(outer) + tuple(((path, g), part) for g, part in (fr[n] if n < len(fr) else ()))
         if kind == "box":
             j = smap[b]
             b += 1
             slot = node["slots"][j]
             if j in seen:                     # the same variable written again: a copy of the box, it shows (and selects) the same slot
                 if isinstance(slot, dict) and "adv" in slot:
-                    out.append((("box", slot["label"], path + (j,)), level))
+                    out.append((("box", slot["label"], path + (j,)), level, own))
                 elif isinstance(slot, dict):
-                    out.append((("box", slot["mod"].NAME, path + (j,)), level))
+                    out.append((("box", slot["mod"].NAME, path + (j,)), level, own))
                 else:
-                    out.append((("box", slot, path + (j,)), level))
+                    out.append((("box", slot, path + (j,)), level, own))
                 continue
             seen.add(j)
             if isinstance(slot, dict) and "adv" in slot:
-                out.append((("box", slot["label"], path + (j,)), level))
+                out.append((("box", slot["label"], path + (j,)), level, own))
             elif isinstance(slot, dict):
-                out.extend((card, lvl + level) for card, lvl in _walk(slot, path + (j,)))
+                out.extend((card, lvl + level, frac) for card, lvl, frac in _walk3(slot, path + (j,), own))
             else:
-                out.append((("box", slot, path + (j,)), level))
+                out.append((("box", slot, path + (j,)), level, own))
         elif kind == "dec":                   # a box the picture draws that is not an input (the second box of A (+) B): shown, never typed into
-            out.append((("dec", text, None), level))
+            out.append((("dec", text, None), level, own))
         elif kind == "out":                   # the answer box of the formula, e.g. the A of A = pi r^2: filled in by =, never typed into
             shown = node.get("out", "")
-            out.append((("out", shown[o] if isinstance(shown, list) else shown, None), level))
+            out.append((("out", shown[o] if isinstance(shown, list) else shown, None), level, own))
             o += 1
         else:
-            out.append((("op", text, None), level))
+            out.append((("op", text, None), level, own))
     return out
 
 
