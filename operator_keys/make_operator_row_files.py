@@ -26,6 +26,7 @@ import operator_row_math as R  # noqa: E402
 from operator_row_math.layout import group_fractions, level_of, shown  # noqa: E402
 
 EXTRAS = {}
+STACK = set()      # keys whose spec starts with @stack: exponents share the column of the symbol they power (STACK_EXPONENTS = True in the row file)
 SPECS = os.path.join(ROOT, "operator_keys", "operator_row_specs.txt")
 BOX = "□"
 
@@ -48,6 +49,13 @@ def read_specs():
 
 def build(key, dsl, inputs, calc="ready"):
     """(left cards, right cards, slots, pattern) from one spec line."""
+    if dsl.split()[:1] == ["@stack"]:
+        dsl = dsl.split(None, 1)[1]
+        STACK.add(key)
+        stack = True
+    else:
+        STACK.discard(key)
+        stack = False
     left_text, arrow, right_text = dsl.partition("=>")
     left, slots, pattern, levels = [], [], [], []
     first_seen = set()
@@ -75,11 +83,22 @@ def build(key, dsl, inputs, calc="ready"):
             left.append(("dec", letter))
             levels.append(0)
             pattern.append(letter)
+        elif re.fullmatch(r"\{sub:(.+)\}", tok):          # {sub:y} = the letter y one grid row down (Unicode has no subscript y or z)
+            left.append(("op", tok[5:-1]))
+            levels.append(1)
+            pattern.append(tok[5:-1])
         else:
             left.append(("op", shown(tok)))          # an exponent / subscript has its own cell (one row up / down) and shows ordinary characters
             levels.append(level_of(tok))
             pattern.append(tok)
     fracs = group_fractions(left, levels)           # the picture's own cards only: the "with" boxes added below are never part of a fraction
+    if stack:
+        # group_fractions takes everything back to the "+" as the numerator, so  u ∂u / ∂x  would be (u ∂u) / ∂x.  The equation is u TIMES ∂u/∂x: the velocity that multiplies
+        # a derivative stays on the line in its own column and the bar goes only under the derivative.
+        for i in range(len(left) - 1):
+            if (left[i][0] == "op" and left[i][1] in ("u", "v", "w") and left[i + 1] == ("op", "∂") and fracs[i] and fracs[i + 1]
+                    and fracs[i][-1] == fracs[i + 1][-1] and fracs[i][-1][1] == "n"):
+                fracs[i] = fracs[i][:-1]
     missing = [n for n in inputs if n not in first_seen]
     if calc == "reference":                      # a reference operator cannot calculate: nothing to add
         missing = []
@@ -129,16 +148,21 @@ def rewrite(key, dsl):
     src = re.sub(r"^SLOTS = .*\n", "", src, flags=re.M)
     src = re.sub(r"^LEVELS = .*\n", "", src, flags=re.M)
     src = re.sub(r"^FRAC = .*\n", "", src, flags=re.M)
+    src = re.sub(r"^STACK_EXPONENTS = .*\n", "", src, flags=re.M)
     extra = ""
     if slots != ident:
         extra += "SLOTS = %r    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)\n" % slots
     if any(levels):
         extra += "LEVELS = %r    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line\n" % levels
+    if key in STACK:
+        extra += "STACK_EXPONENTS = True    # an exponent card shares the column of the symbol it powers (one grid row up) instead of having a column of its own\n"
     if any(fracs):
         extra += "FRAC = %r    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)\n" % [[list(e) for e in f] for f in fracs]
     if extra:
         src = re.sub(r"^(KINDS = .*\n)", lambda m: m.group(1) + extra, src, count=1, flags=re.M)
     call = "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"), fracs=globals().get(\"FRAC\"))"
+    if key in STACK:
+        call = call[:-1] + ", stack_exponents=True)"
     src = re.sub(r"return build_row\(parent, LEFT, RIGHT, stacked[^\n]*\)", lambda m: call, src)     # also fixes files that only pass levels=
     src = re.sub(r"^Picture:      .*$", "Picture:      " + pattern.replace("\\", "\\\\"), src, count=1, flags=re.M)
     open(path, "w", encoding="utf-8", newline="").write(src.replace("\n", nl))

@@ -818,7 +818,8 @@ impl CalculatorApp {
             return None;
         }
         let pcs: Vec<layout::PC> = cards.iter().map(|c| c.pc()).collect();
-        let plan = layout::plan_pc(&pcs);
+        let stack = self.doc.rows[i].op_key.as_deref().map_or(false, layout::stacks);
+        let plan = layout::plan_pc(&pcs, stack);
         let (n_rows, n_cols) = (plan.rows().max(1) as usize, plan.columns.max(1) as usize);
         // what is in each grid cell
         enum Cell {

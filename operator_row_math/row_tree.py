@@ -104,6 +104,11 @@ def levels(node):
     return [level for _card, level, _frac in _walk3(node)]
 
 
+def stack_exponents(node):
+    """True when the row's operator draws an exponent in the column of the symbol it powers (STACK_EXPONENTS in its row file)."""
+    return bool(getattr(node["mod"], "STACK_EXPONENTS", False))
+
+
 def _walk(node, path=()):
     return [(card, level) for card, level, _frac in _walk3(node, path)]
 

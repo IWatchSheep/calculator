@@ -183,6 +183,7 @@ PHYSICS_OPS = [
     "Continuity equation   A₁v₁ = A₂v₂",
     "Bernoulli's equation   P + ½ρv² + ρgh = const",
     "Reynolds number   Re = ρvL/μ",
+    "Navier–Stokes equation   ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f",
     "Poiseuille's law (flow in a pipe)   Q = πr⁴ΔP/8μL",
     "Torricelli's law   v = √(2gh)",
     "Stokes' drag force   F = 6πμrv",
@@ -538,8 +539,8 @@ class CalculatorGUI(tk.Tk):
         else:
             sel = next((n for n, c in enumerate(cards) if c[2] is not None and c[2] == row["sel"]), None)
             build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
-                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"])
-                      ).pack(anchor="w", padx=6, pady=4)
+                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"]),
+                      stack_exponents=row_tree.stack_exponents(row["node"])).pack(anchor="w", padx=6, pady=4)
         row["refresh"]()
 
     def _set_result(self, i, text=None):

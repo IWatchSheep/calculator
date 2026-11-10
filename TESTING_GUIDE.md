@@ -21,10 +21,10 @@ skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test i
 
 | Thing | Count | Where |
 |---|---|---|
-| Operators | 507 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
+| Operators | 512 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
 | "Ready" operators (`compute()` calculates) | 446 | marked `Ready` in `operators_one_operator_per_file/INDEX.md` |
-| "Reference" operators (formula only) | 61 | marked `Reference`; `compute()` raises `NotImplementedError` |
-| Row modules (GUI placement of each operator) | 507 | `operator_row_math/` |
+| "Reference" operators (formula only) | 66 | marked `Reference`; `compute()` raises `NotImplementedError` |
+| Row modules (GUI placement of each operator) | 512 | `operator_row_math/` |
 | Button-to-operator links | — | `operator_links.py` |
 | Input parser (typed text → Python values) | — | `operator_row_math/advanced_input.py` |
 
@@ -35,7 +35,7 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 
 | Group | Tests | What it proves |
 |---|---|---|
-| `StructureTests` | 9 | All 507 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
+| `StructureTests` | 9 | All 512 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
 | `NumericTests` | 604 | `compute()` returns a hand-calculated answer for known inputs. All 446 Ready operators are covered, most with 2+ cases |
 | `ErrorTests` | 9 | Bad input raises a clear exception (`ZeroDivisionError`, `ValueError`, …) instead of returning a wrong number |
 | `IdentityTests` | 18 | Operators agree with each other: sin²+cos²=1, exp/ln inverse, M·M⁻¹=I, Pascal's rule, gcd·lcm=ab, A·v=λ·v, RK4 ≈ e, … |
@@ -91,7 +91,7 @@ The suite was written by the same author as the code, so check it rather than be
 | `epsilon_delta_continuity` | returns *a* valid δ (not necessarily the largest) |
 | `spanning_tree` | takes a **weighted** graph `{v: [(neighbour, weight)]}` and returns `(edges, total)` |
 | numerical calculus (`derivative`, integrals, limits…) | accurate to about 1e-6, not exact |
-| Reference-only operators (61) | `compute()` raises `NotImplementedError` by design |
+| Reference-only operators (66) | `compute()` raises `NotImplementedError` by design |
 
 ## 6. Manual GUI checklist (cannot be automated here)
 
@@ -115,7 +115,7 @@ Run `python main.py`, then for each item note pass/fail:
 
 ## 7. Where the suite is thin (known gaps)
 
-- The 61 Reference operators are only checked for structure and `NotImplementedError`, because they have
+- The 66 Reference operators are only checked for structure and `NotImplementedError`, because they have
   no calculation to test.
 - Several results are numerical approximations; the suite uses a relative tolerance of 1e-6, so errors
   smaller than that are invisible.

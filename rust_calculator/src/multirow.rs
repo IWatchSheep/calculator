@@ -103,6 +103,19 @@ static LAPLACE: Spec = Spec {
     links: &[((1, &[0]), (0, &[0])), ((1, &[1]), (0, &[1]))],
 };
 
+static NAVIER_STOKES: Spec = Spec {
+    title: "Navier–Stokes equations (incompressible fluid): Row 1 is the vector form; Rows 2, 3 and 4 are the same equation written out for the x, y and z directions; Row 5 is continuity.  Each row is one equation, drawn on the same rows and columns as its diagram.  Reference only: nothing is calculated.",
+    rows: &[
+        RowSpec { title: "vector form", node: NodeSpec { op: "physics/physics/navier_stokes_equation", fill: &[] } },
+        RowSpec { title: "x momentum", node: NodeSpec { op: "physics/physics/navier_stokes_x_momentum", fill: &[] } },
+        RowSpec { title: "y momentum", node: NodeSpec { op: "physics/physics/navier_stokes_y_momentum", fill: &[] } },
+        RowSpec { title: "z momentum", node: NodeSpec { op: "physics/physics/navier_stokes_z_momentum", fill: &[] } },
+        RowSpec { title: "continuity", node: NodeSpec { op: "physics/physics/navier_stokes_continuity", fill: &[] } },
+    ],
+    joins: &["=", "=", "=", "="],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -110,6 +123,7 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/transforms_and_differential_equations/heat_equation" => &HEAT,
         "math/transforms_and_differential_equations/wave_equation" => &WAVE,
         "math/transforms_and_differential_equations/laplace_s_equation" => &LAPLACE,
+        "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
         "math/constants_and_relations/open_bracket"
         | "math/constants_and_relations/close_bracket"
         | "math/constants_and_relations/square_brackets"

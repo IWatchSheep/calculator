@@ -61,7 +61,7 @@ fn a_fraction_inside_a_box_stays_a_fraction() {
     doc.place_operator(ops::get("geometry/geometry/slope").unwrap());
     let cards = doc.rows[0].flatten();
     assert!(cards.iter().any(|c| !c.frac.is_empty()), "the slope formula's numerator and denominator are inside a fraction");
-    let plan = rust_calculator::layout::plan_pc(&cards.iter().map(|c| c.pc()).collect::<Vec<_>>());
+    let plan = rust_calculator::layout::plan_pc(&cards.iter().map(|c| c.pc()).collect::<Vec<_>>(), false);
     assert!(plan.rows() >= 3 && !plan.bars.is_empty());
 }
 

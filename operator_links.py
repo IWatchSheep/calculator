@@ -478,6 +478,7 @@ LINKS = {
     ('PHYSICS_OPS', 'Continuity equation   A₁v₁ = A₂v₂'): 'physics/physics/continuity_equation',
     ('PHYSICS_OPS', "Bernoulli's equation   P + ½ρv² + ρgh = const"): 'physics/physics/bernoulli_equation',
     ('PHYSICS_OPS', 'Reynolds number   Re = ρvL/μ'): 'physics/physics/reynolds_number',
+    ('PHYSICS_OPS', 'Navier–Stokes equation   ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f'): 'physics/physics/navier_stokes_equation',
     ('PHYSICS_OPS', "Poiseuille's law (flow in a pipe)   Q = πr⁴ΔP/8μL"): 'physics/physics/poiseuille_flow',
     ('PHYSICS_OPS', "Torricelli's law   v = √(2gh)"): 'physics/physics/torricelli_speed',
     ('PHYSICS_OPS', "Stokes' drag force   F = 6πμrv"): 'physics/physics/stokes_drag',

@@ -149,12 +149,24 @@ fn parse(cards: &[PC], indices: &[usize], depth: usize) -> Vec<Item> {
     items
 }
 
-fn width(items: &[Item]) -> i32 {
+/// With `stack`, an exponent card straight after the card it powers shares that card's column (one grid row up) instead of having a column of its own.
+fn stacked(cards: &[PC], items: &[Item], k: usize, stack: bool) -> bool {
+    stack && k > 0 && matches!(items[k], Item::Card(i) if cards[i].level == -1) && matches!(items[k - 1], Item::Card(_))
+}
+
+fn width(cards: &[PC], items: &[Item], stack: bool) -> i32 {
     items
         .iter()
-        .map(|it| match it {
-            Item::Card(_) => 1,
-            Item::Frac(n, d) => width(n).max(width(d)).max(1),
+        .enumerate()
+        .map(|(k, it)| match it {
+            Item::Card(_) => {
+                if stacked(cards, items, k, stack) {
+                    0
+                } else {
+                    1
+                }
+            }
+            Item::Frac(n, d) => width(cards, n, stack).max(width(cards, d, stack)).max(1),
         })
         .sum()
 }
@@ -183,18 +195,22 @@ fn bases(cards: &[PC], n: &[Item], d: &[Item]) -> (i32, i32) {
     (-1 - reach(cards, n).1.max(0), 1 + (-reach(cards, d).0).max(0))
 }
 
-fn place(cards: &[PC], items: &[Item], mut col: i32, base: i32, plan: &mut Plan) -> i32 {
-    for it in items {
+fn place(cards: &[PC], items: &[Item], mut col: i32, base: i32, stack: bool, plan: &mut Plan) -> i32 {
+    for (k, it) in items.iter().enumerate() {
         match it {
             Item::Card(i) => {
+                if stacked(cards, items, k, stack) {
+                    plan.placed[*i] = Some((base + cards[*i].level as i32, col - 1));
+                    continue;
+                }
                 plan.placed[*i] = Some((base + cards[*i].level as i32, col));
                 col += 1;
             }
             Item::Frac(n, d) => {
-                let w = width(n).max(width(d)).max(1);
+                let w = width(cards, n, stack).max(width(cards, d, stack)).max(1);
                 let (nb, db) = bases(cards, n, d);
-                place(cards, n, col + (w - width(n)) / 2, base + nb, plan);
-                place(cards, d, col + (w - width(d)) / 2, base + db, plan);
+                place(cards, n, col + (w - width(cards, n, stack)) / 2, base + nb, stack, plan);
+                place(cards, d, col + (w - width(cards, d, stack)) / 2, base + db, stack, plan);
                 plan.bars.push((base, col, w));
                 col += w;
             }
@@ -206,18 +222,28 @@ fn place(cards: &[PC], items: &[Item], mut col: i32, base: i32, plan: &mut Plan)
 /// Place the cards of a layout: every card is its own column; a numerator is on the row above its bar and a denominator on the row below, centred over the bar.
 /// The grid rows are shifted so the highest one is 0.
 pub fn plan(cards: &[Card]) -> Plan {
-    let pcs: Vec<PC> = cards.iter().map(|c| PC { level: c.level, frac: c.frac.iter().map(|&(g, p)| (g as u32, p)).collect() }).collect();
-    plan_pc(&pcs)
+    plan_stack(cards, false)
 }
 
-/// Place cards given only by level and fractions (see `plan`).
-pub fn plan_pc(cards: &[PC]) -> Plan {
+/// `plan`, with exponents sharing the column of the symbol they power when `stack` is true.
+pub fn plan_stack(cards: &[Card], stack: bool) -> Plan {
+    let pcs: Vec<PC> = cards.iter().map(|c| PC { level: c.level, frac: c.frac.iter().map(|&(g, p)| (g as u32, p)).collect() }).collect();
+    plan_pc(&pcs, stack)
+}
+
+/// Does this operator draw an exponent in the column of the symbol it powers (Python `STACK_EXPONENTS`)?
+pub fn stacks(key: &str) -> bool {
+    crate::layouts::STACKED.contains(&key)
+}
+
+/// Place cards given only by level and fractions (see `plan`).  `stack`: exponents share the column of the symbol they power (see `stacked`).
+pub fn plan_pc(cards: &[PC], stack: bool) -> Plan {
     let shown: Vec<usize> = (0..cards.len())
         .filter(|&i| !matches!(cards[i].frac.last(), Some(&(_, p)) if p == BAR || p == HIDE))
         .collect();
     let items = parse(cards, &shown, 0);
     let mut plan = Plan { placed: vec![None; cards.len()], bars: Vec::new(), columns: 0 };
-    plan.columns = place(cards, &items, 0, 0, &mut plan);
+    plan.columns = place(cards, &items, 0, 0, stack, &mut plan);
     let top = plan
         .placed
         .iter()
@@ -253,6 +279,32 @@ mod tests {
     const F_BAR: &[(u16, u8)] = &[(1, BAR)];
 
     #[test]
+    fn a_stacked_exponent_shares_the_column_of_the_symbol_it_powers() {
+        // x ^2 (an exponent card after x): its own column normally, x's column when exponents are stacked
+        let cards = [card(O, "x", -1, 0, N), card(O, "2", -1, -1, N), card(O, "+", -1, 0, N)];
+        assert_eq!(plan(&cards).placed, vec![Some((1, 0)), Some((0, 1)), Some((1, 2))]);
+        let p = plan_stack(&cards, true);
+        assert_eq!(p.placed, vec![Some((1, 0)), Some((0, 0)), Some((1, 1))]);
+        assert_eq!(p.columns, 2);
+    }
+
+    #[test]
+    fn the_navier_stokes_rows_have_the_columns_and_grid_rows_of_their_diagram() {
+        // (operator, columns, grid rows) as drawn in navier-stokes/navier_stokes_rows.jpg
+        for (key, columns, rows) in [
+            ("physics/physics/navier_stokes_equation", 22, 3),
+            ("physics/physics/navier_stokes_x_momentum", 36, 5),
+            ("physics/physics/navier_stokes_y_momentum", 36, 5),
+            ("physics/physics/navier_stokes_z_momentum", 36, 5),
+            ("physics/physics/navier_stokes_continuity", 10, 3),
+        ] {
+            assert!(stacks(key), "{key} must stack its exponents");
+            let p = plan_stack(get(key).unwrap().cards, true);
+            assert_eq!((p.columns, p.rows()), (columns, rows), "{key}");
+        }
+    }
+
+    #[test]
     fn a_fraction_is_numerator_over_bar_over_denominator() {
         // B B / B  ->  numerator of two cards over a denominator of one card
         let cards = [card(B, "", 0, 0, F_NUM), card(B, "", 1, 0, F_NUM), card(O, "/", -1, 0, F_BAR), card(B, "", 2, 0, F_DEN)];
@@ -285,7 +337,7 @@ mod tests {
 
     #[test]
     fn every_operator_has_a_layout_whose_boxes_are_its_inputs() {
-        assert_eq!(crate::layouts::LAYOUTS.len(), 507);
+        assert_eq!(crate::layouts::LAYOUTS.len(), 512);
         for l in crate::layouts::LAYOUTS {
             let op = crate::ops::get(l.key).unwrap_or_else(|| panic!("no operator for layout {}", l.key));
             for c in l.cards {

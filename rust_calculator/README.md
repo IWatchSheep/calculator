@@ -33,7 +33,7 @@ Sets and neighbour lists keep the order they were typed in, on both sides: `Dire
 
 Everything in the Python program is ported:
 
-- all 507 operators (446 Ready, 61 Reference), each drawn from its picture (`layouts.rs`), with typed values for lists, matrices, sets, graphs and functions (`kinds.rs`, `expr.rs`)
+- all 512 operators (446 Ready, 66 Reference), each drawn from its picture (`layouts.rs`), with typed values for lists, matrices, sets, graphs and functions (`kinds.rs`, `expr.rs`)
 - the Advanced Input window, the kind hint in every box, the formula pictures (the JPGs) and the word-problem diagrams (`pictures.rs`)
 - operators nested inside operators and the multi-row operators (`multirow.rs`)
 - Mathematical Templates (`template_math.rs`)

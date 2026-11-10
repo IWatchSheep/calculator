@@ -32,7 +32,7 @@ def build_text():
         "",
         "pub static LAYOUTS: &[Layout] = &[",
     ]
-    count = 0
+    count, stacked = 0, []
     for key in R.keys():
         m = R.get(key)
         smap = row_tree.slot_map(m)
@@ -52,7 +52,12 @@ def build_text():
             cards.append("card(%s, %s, %d, %d, %s)" % (KIND[kind], rs(text), slot, levels[n], fr))
         lines.append("    Layout { key: %s, right_box: %s, cards: &[%s] }," % (rs(key), "true" if m.RIGHT else "false", ", ".join(cards)))
         count += 1
+        if getattr(m, "STACK_EXPONENTS", False):
+            stacked.append(key)
     lines.append("];")
+    lines.append("")
+    lines.append("/// The operators whose rows draw an exponent in the column of the symbol it powers (STACK_EXPONENTS in the Python row file).")
+    lines.append("pub static STACKED: &[&str] = &[%s];" % ", ".join(rs(k) for k in stacked))
     lines.append("")
     return "\n".join(lines), count
 

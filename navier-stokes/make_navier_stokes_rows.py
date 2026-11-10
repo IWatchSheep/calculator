@@ -8,7 +8,8 @@ a fraction has its numerator on the grid row above its bar and its denominator o
 Those grid rows belong to the one calculator row.  They are not Row 2, Row 3 ...
 
 The cards, levels and fraction groups come from the project's own code (make_operator_row_files.build, layout.group_fractions) and the places of the cards from
-the row planner (row_builder._plan), so this is exactly what an operator row file with these equations would hold.
+the row planner (row_builder._plan, with stack_exponents=True: an exponent shares the column of the symbol it powers), so this is what an operator row file with these
+equations would hold.  One hand edit, and why: the velocity that multiplies a derivative (the u of  u ∂u/∂x ) is taken out of the fraction, see build_all().
 """
 import os
 import sys
@@ -47,7 +48,13 @@ def build_all():
         left, right, slots, pattern, levels, fracs = MK.build("navier_stokes/" + title, dsl, [], "reference")
         if letter:
             left[-1] = ("op", letter)          # the force component: f with its direction letter one grid row down
-        placed, bars, end = _plan(len(left), levels, fracs)
+        # group_fractions takes everything back to the "+" as the numerator, so  u ∂u / ∂x  becomes (u ∂u) / ∂x.  The equation is  u  times  ∂u/∂x : the velocity that
+        # multiplies a derivative stays on the line in its own column and the bar goes only under the derivative.  So that multiplier is taken out of its fraction here.
+        for i in range(len(left) - 1):
+            if left[i][1] in ("u", "v", "w") and left[i + 1][1] == "∂" and fracs[i] and fracs[i + 1] and fracs[i][-1] == fracs[i + 1][-1] and fracs[i][-1][1] == "n":
+                fracs[i] = fracs[i][:-1]
+        # an exponent is in the column of the symbol it powers, one grid row up:  ∂² = a ∂ column with a 2 above it,  x² = an x column with a 2 above it
+        placed, bars, end = _plan(len(left), levels, fracs, stack_exponents=True)
         out.append({"title": title, "dsl": dsl, "LEFT": left, "LEVELS": levels, "FRAC": fracs, "placed": placed, "bars": bars, "columns": end})
     return out
 
@@ -134,7 +141,7 @@ def preview(rows):
     root.title("Navier-Stokes rows (preview, not in the calculator)")
     for r in rows:
         tk.Label(root, text=r["title"], anchor="w", font=("Segoe UI", 9, "bold")).pack(fill="x", padx=8)
-        build_row(root, r["LEFT"], [], False, levels=r["LEVELS"], fracs=r["FRAC"]).pack(anchor="w", padx=8, pady=(0, 10))
+        build_row(root, r["LEFT"], [], False, levels=r["LEVELS"], fracs=r["FRAC"], stack_exponents=True).pack(anchor="w", padx=8, pady=(0, 10))
     root.mainloop()
 
 

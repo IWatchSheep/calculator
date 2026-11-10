@@ -64,7 +64,7 @@ def _card(parent, item, on_pick=None, selected=False):
     return make_component(parent, text, "helper")
 
 
-def _plan(n, levels, fracs):
+def _plan(n, levels, fracs, stack_exponents=False):
     """Where every card goes: ({card index: (grid row, column)}, [(row, column, width) of every fraction bar]).  A fraction stacks its numerator on the row above the bar
     and its denominator on the row below, both centred over the bar, which is as wide as the wider of the two; a card inside (an exponent ...) keeps its own level."""
     def parse(indices, depth):
@@ -86,8 +86,12 @@ def _plan(n, levels, fracs):
                 k += 1
         return items
 
+    def stacked(items, k):
+        """stack_exponents: an exponent card straight after the card it powers shares that card's column (one grid row up) instead of having a column of its own."""
+        return stack_exponents and k > 0 and items[k][0] == "card" and items[k - 1][0] == "card" and levels[items[k][1]] == -1
+
     def width(items):
-        return sum(1 if it[0] == "card" else max(width(it[1]), width(it[2]), 1) for it in items)
+        return sum(0 if stacked(items, k) else (1 if it[0] == "card" else max(width(it[1]), width(it[2]), 1)) for k, it in enumerate(items))
 
     placed, bars = {}, []
 
@@ -108,8 +112,11 @@ def _plan(n, levels, fracs):
         return -1 - max(0, reach(it[1])[1]), 1 + max(0, -reach(it[2])[0])
 
     def place(items, col, base):
-        for it in items:
+        for k, it in enumerate(items):
             if it[0] == "card":
+                if stacked(items, k):
+                    placed[it[1]] = (base + levels[it[1]], col - 1)
+                    continue
                 placed[it[1]] = (base + levels[it[1]], col)
                 col += 1
             else:
@@ -126,12 +133,13 @@ def _plan(n, levels, fracs):
     return placed, bars, end
 
 
-def build_row(parent, left, right, stacked=False, on_pick=None, selected=None, levels=None, fracs=None):
+def build_row(parent, left, right, stacked=False, on_pick=None, selected=None, levels=None, fracs=None, stack_exponents=False):
     """Return a Frame holding the operator row.  left/right are lists of ("box", "") / ("op", text).
     on_pick(index) is called with the position (in `left`) of a box card the user clicks;
     `selected` is the position of the box card to draw as the current target.
     levels = the grid row of every card of `left` (-1 above the line for an exponent, +1 below for a subscript, 0 on the line); every card is its own column.
-    fracs = for every card the fractions it is inside (layout.group_fractions): numerators go on the row above the bar and denominators on the row below, always."""
+    fracs = for every card the fractions it is inside (layout.group_fractions): numerators go on the row above the bar and denominators on the row below, always.
+    stack_exponents = True puts an exponent card in the column of the card it powers instead of a column of its own (off by default)."""
     row = tk.Frame(parent, bg=CREAM)
     lv = list(levels or []) + [0] * (len(left) - len(levels or []))
     fr = [list(f) for f in (fracs or [])] + [[] for _ in range(len(left) - len(fracs or []))]
@@ -143,7 +151,7 @@ def build_row(parent, left, right, stacked=False, on_pick=None, selected=None, l
             col += 1
         placed, bars = {}, []
     else:
-        placed, bars, col = _plan(len(left), lv, fr)
+        placed, bars, col = _plan(len(left), lv, fr, stack_exponents)
     top = min([r for r, _c in placed.values()] + [b[0] - 1 for b in bars] + [0])
     for idx, (r, c) in placed.items():
         item = left[idx]

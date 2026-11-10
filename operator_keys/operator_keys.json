@@ -1,7 +1,7 @@
 {
- "count": 507,
+ "count": 512,
  "ready": 446,
- "reference": 61,
+ "reference": 66,
  "operators": [
   {
    "key": "geometry/geometry/arc_length",
@@ -19867,6 +19867,131 @@
      "expected": 0
     }
    ]
+  },
+  {
+   "key": "physics/physics/navier_stokes_continuity",
+   "name": "Navier–Stokes: continuity (incompressible)",
+   "symbol": "∇·u = 0",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "∂u/∂x + ∂v/∂y + ∂w/∂z = 0   (incompressible flow)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "∂ u / ∂ x + ∂ v / ∂ y + ∂ w / ∂ z = 0",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/navier_stokes_equation",
+   "name": "Navier–Stokes equation",
+   "symbol": "ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f   (incompressible flow, ∇·u = 0)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "ρ ( ∂ u / ∂ t + ( u · ∇ ) u ) = − ∇ p + μ ∇ ² u + f",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/navier_stokes_x_momentum",
+   "name": "Navier–Stokes: x momentum",
+   "symbol": "ρ Du/Dt = −∂p/∂x + μ∇²u + fₓ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ρ(∂u/∂t + u ∂u/∂x + v ∂u/∂y + w ∂u/∂z) = −∂p/∂x + μ(∂²u/∂x² + ∂²u/∂y² + ∂²u/∂z²) + f_x   (incompressible flow)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "ρ ( ∂ u / ∂ t + u ∂ u / ∂ x + v ∂ u / ∂ y + w ∂ u / ∂ z ) = − ∂ p / ∂ x + μ ( ∂ ² u / ∂ x ² + ∂ ² u / ∂ y ² + ∂ ² u / ∂ z ² ) + f x",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/navier_stokes_y_momentum",
+   "name": "Navier–Stokes: y momentum",
+   "symbol": "ρ Dv/Dt = −∂p/∂y + μ∇²v + f_y",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ρ(∂v/∂t + u ∂v/∂x + v ∂v/∂y + w ∂v/∂z) = −∂p/∂y + μ(∂²v/∂x² + ∂²v/∂y² + ∂²v/∂z²) + f_y   (incompressible flow)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "ρ ( ∂ v / ∂ t + u ∂ v / ∂ x + v ∂ v / ∂ y + w ∂ v / ∂ z ) = − ∂ p / ∂ y + μ ( ∂ ² v / ∂ x ² + ∂ ² v / ∂ y ² + ∂ ² v / ∂ z ² ) + f y",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/navier_stokes_z_momentum",
+   "name": "Navier–Stokes: z momentum",
+   "symbol": "ρ Dw/Dt = −∂p/∂z + μ∇²w + f_z",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ρ(∂w/∂t + u ∂w/∂x + v ∂w/∂y + w ∂w/∂z) = −∂p/∂z + μ(∂²w/∂x² + ∂²w/∂y² + ∂²w/∂z²) + f_z   (incompressible flow)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "ρ ( ∂ w / ∂ t + u ∂ w / ∂ x + v ∂ w / ∂ y + w ∂ w / ∂ z ) = − ∂ p / ∂ z + μ ( ∂ ² w / ∂ x ² + ∂ ² w / ∂ y ² + ∂ ² w / ∂ z ² ) + f z",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
   },
   {
    "key": "physics/physics/newton_s_second_law",

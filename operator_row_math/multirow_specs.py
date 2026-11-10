@@ -69,6 +69,18 @@ SPECS = {
         "joins": ["+", "="],
         "links": [((1, (0,)), (0, (0,))), ((1, (1,)), (0, (1,)))],
     },
+    "physics/physics/navier_stokes_equation": {
+        "title": "Navier–Stokes equations (incompressible fluid): Row 1 is the vector form; Rows 2, 3 and 4 are the same equation written out for the x, y and z directions; "
+                 "Row 5 is continuity.  Each row is one equation, drawn on the same rows and columns as its diagram.  Reference only: nothing is calculated.",
+        "rows": [
+            {"op": "physics/physics/navier_stokes_equation", "title": "vector form"},
+            {"op": "physics/physics/navier_stokes_x_momentum", "title": "x momentum"},
+            {"op": "physics/physics/navier_stokes_y_momentum", "title": "y momentum"},
+            {"op": "physics/physics/navier_stokes_z_momentum", "title": "z momentum"},
+            {"op": "physics/physics/navier_stokes_continuity", "title": "continuity"},
+        ],
+        "joins": ["=", "=", "=", "="],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,
