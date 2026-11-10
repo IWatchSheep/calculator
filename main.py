@@ -183,7 +183,6 @@ PHYSICS_OPS = [
     "Continuity equation   A₁v₁ = A₂v₂",
     "Bernoulli's equation   P + ½ρv² + ρgh = const",
     "Reynolds number   Re = ρvL/μ",
-    "Navier–Stokes equation   ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f",
     "Poiseuille's law (flow in a pipe)   Q = πr⁴ΔP/8μL",
     "Torricelli's law   v = √(2gh)",
     "Stokes' drag force   F = 6πμrv",

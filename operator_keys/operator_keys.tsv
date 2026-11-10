@@ -471,7 +471,6 @@ physics/physics/malus_law	Malus's law	I = I₀cos²θ	Physics	Physics	I = I₀ c
 physics/physics/mass_energy_equivalence	Mass-energy equivalence	E = mc²	Physics	Physics	E = m c²   (c = 299 792 458 m/s)	Ready	1	2	m	compute(m, c=299792458)
 physics/physics/momentum	Momentum	p = mv	Physics	Physics	p = m v	Ready	2	2	m,v	compute(m, v)
 physics/physics/motional_emf	Motional emf	ε = BLv	Physics	Physics	ε = B L v   (rod of length L moving at speed v across B)	Ready	3	3	B,L,v	compute(B, L, v)
-physics/physics/navier_stokes_equation	Navier–Stokes equation	ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f	Physics	Physics	ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f   (incompressible flow, ∇·u = 0)	Reference	0			compute(*args)
 physics/physics/newton_s_second_law	Newton's second law	F = ma	Physics	Physics	F = m a	Ready	2	2	m,a	compute(m, a)
 physics/physics/ohm_s_law	Ohm's law	V = IR	Physics	Physics	V = I R	Ready	2	2	I,R	compute(I, R)
 physics/physics/particle_in_a_box	Particle in a box (energy levels)	Eₙ = n²h²/8mL²	Physics	Physics	Eₙ = n² h² / (8 m L²)   (h = 6.62607015×10⁻³⁴ J·s)	Ready	3	4	n,m,L	compute(n, m, L, h=6.62607015e-34)

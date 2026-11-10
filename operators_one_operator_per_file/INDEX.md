@@ -576,7 +576,6 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Continuity equation | A₁v₁ = A₂v₂ | v₂ = A₁ v₁ / A₂   (incompressible fluid) | Ready | `physics/physics/continuity_equation/` |
 | Bernoulli's equation | P + ½ρv² + ρgh = const | P₂ = P₁ + ½ρ(v₁² − v₂²) + ρg(h₁ − h₂)   (g = 9.81 m/s²) | Ready | `physics/physics/bernoulli_equation/` |
 | Reynolds number | Re = ρvL/μ | Re = ρ v L / μ   (μ = dynamic viscosity) | Ready | `physics/physics/reynolds_number/` |
-| Navier–Stokes equation | ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f | ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f   (incompressible flow, ∇·u = 0) | Reference | `physics/physics/navier_stokes_equation/` |
 | Poiseuille's law (flow in a pipe) | Q = πr⁴ΔP/8μL | Q = π r⁴ ΔP / (8 μ L)   (laminar flow in a round pipe) | Ready | `physics/physics/poiseuille_flow/` |
 | Torricelli's law | v = √(2gh) | v = √(2 g h)   (g = 9.81 m/s²) | Ready | `physics/physics/torricelli_speed/` |
 | Stokes' drag force | F = 6πμrv | F = 6π μ r v   (small sphere, slow flow) | Ready | `physics/physics/stokes_drag/` |

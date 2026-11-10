@@ -436,7 +436,6 @@ physics/physics/capacitance | {} = [C] × [V]
 physics/physics/centripetal_acceleration | {} = [v] ² / [r]
 physics/physics/compton_shift | {} = h / ( m × c ) × ( 1 − cos ( [theta] ) )
 physics/physics/continuity_equation | [A1] × [v1] = [A2] × {}
-physics/physics/navier_stokes_equation | [_ρ] ( ∂ u / ∂ t + ( u · ∇ ) u ) = − ∇ p + [_μ] ∇ ² u + [_f]
 physics/physics/coulomb_s_law | {} = kₑ × [q1] × [q2] / [r] ²
 physics/physics/critical_angle | sin ( {} ) = [n2] / [n1]
 physics/physics/cyclotron_radius | {} = [m] × [v] / ( | [q] | × [B] )
