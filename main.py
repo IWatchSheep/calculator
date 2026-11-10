@@ -594,16 +594,18 @@ class CalculatorGUI(tk.Tk):
         self._sync_links()
 
     def _equals(self):
-        """Number pad =: calculate the rows, joined by the symbols in their helper cards, and print the
-        result in the row after the last one used.  With a multi-row operator, every row is calculated
-        and the results are joined by that operator's joins."""
+        """Number pad =: calculate the rows, joined by the symbols in their helper cards.  Each row shows its own
+        answer in its own answer card (right of its "=", beside "math to put on the left").  When rows are joined
+        (Row 2 has a join sign), the answer for all of them is printed in the row after the last one used (Row 3
+        for Rows 1 and 2).  A single row prints nothing further down.  With a multi-row operator, every row is
+        calculated and the results are joined by that operator's joins."""
         if self.template is not None:
             return self._equals_template()
         if self._is_blank(self.rows[0]):
             self._say("Type a number in Row 1 first: click its square box, then use the number pad "
                       "(or pick an operator with 'math to put on the left').")
             return
-        total, lines, last = None, [], 0
+        total, lines, last, used = None, [], 0, 0
         for k, row in enumerate(self.rows):
             if row["is_result"] or (k > 0 and self._is_blank(row) and not row["join"]):
                 continue
@@ -628,10 +630,14 @@ class CalculatorGUI(tk.Tk):
                     self._say(str(e))
                     return
                 lines.append("Row %d:  %s %s" % (k + 1, row["join"], cards))
-            self._set_result(k, advanced_input.short_label(row_tree.fmt(total), 14))
+            self._set_result(k, advanced_input.short_label(row_tree.fmt(v), 14))      # the row's own answer, in its own card
             last = k
-        self._show_result_row(last + 1, total)
-        lines.append("=  %s     (printed in Row %d)" % (row_tree.fmt(total), last + 2))
+            used += 1
+        if used > 1:                                  # joined rows: the answer for all of them goes in the next row (Row 3 for Rows 1 and 2)
+            self._show_result_row(last + 1, total)
+            lines.append("=  %s     (all %d rows joined, shown in Row %d)" % (row_tree.fmt(total), used, last + 2))
+        else:
+            lines.append("=  %s     (shown in Row 1's answer card, right of the =)" % row_tree.fmt(total))
         self._say("\n".join(lines))
 
     def _sync_links(self):

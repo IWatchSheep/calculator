@@ -50,6 +50,15 @@ appears. Every operator comes with a picture of its formula.
 The full list, with each formula and whether it calculates, is in
 [`operators_one_operator_per_file/INDEX.md`](operators_one_operator_per_file/INDEX.md).
 
+**The rule for math on several lines: it is still ONE row.** If an operator's diagram shows math that can be written on several lines (a fraction with its numerator above and denominator below, an exponent above a number, a subscript or the limits of a sigma below it), the row is drawn that way, on several lines, and never squeezed onto a single line. Those lines are only how the math is drawn. **They are not Row 2, Row 3 and so on.** Everything drawn for one operator, however many lines it takes, is Row 1, and all of it works together as that one row:
+
+- Pressing `=` calculates the whole of Row 1, every line of it, as a single piece of math. The answer stays on Row 1: it is shown in Row 1's own answer card, the card to the right of the `=` beside the **math to put on the left** button (the card with the eight arrows around it). Nothing is printed into Row 2.
+- Typing a number goes into a box on any of the lines (a box in the numerator, a box in the denominator, the box under a sigma). The boxes are all part of Row 1.
+- The `Next Row (↓)` button on the number pad goes from Row 1 to Row 2. Row 2 is a different row, and a join sign (`+ − × ÷ = ≠ < > ≤ ≥`) in Row 2 joins it to Row 1. Press `=` again and each of Row 1 and Row 2 shows its own answer in its own answer card, and the answer for Rows 1 and 2 together appears on Row 3.
+- The rows that the join signs join are real calculator rows. The lines inside one fraction or one exponent are not.
+
+The multi-row operators (for example Stokes' theorem) are a different thing: they really are several calculator rows, one per equation, joined by their own signs. Everything described above is about the lines inside a single row.
+
 **How a row is laid out (the grid).** Every number or symbol in a row is its own card, a column in the row, and each card is surrounded by eight arrows. The arrows stand for joining another card on that side: the arrow pointing to the top right of a number leads to the cell up and to the right of it, which is where that number's exponent goes. So in `A = π × r²` the `r` is a card, and the `2` is its own card one row up in the next column. A subscript (the `n` of `aₙ`, the limit under a sigma) is its own card one row down. In the formulas, a sigma is a card of its own and the numbers around it (its limits and the term beside it) get their own cards in the rows above and below it, and you click a card and type its value. In the row files this is the `LEVELS` list: `-1` for a card one row up (an exponent), `+1` for one row down (a subscript or lower limit), `0` for the main line. It is read from the superscript and subscript characters of the picture, so it works the same for the operator rows and for the algebra word problem rows (a squared `x` in a word problem's equation has its `2` one row up).
 
 **Fractions are always written top to bottom.** Wherever a formula has a `/`, the row writes it as a fraction on several rows: the numerator on the row above, a bar, and the denominator on the row below, centred over the bar, the way most people write it. A product stays together in the numerator (`G × m₁ × m₂` over `r²`), a bracketed denominator is shown without its brackets (`h` over `m × c`), fractions inside fractions stack (the Lorentz factor), and an exponent inside a denominator keeps its own row below the bar. Only text such as `yes / no` stays inline. In the row files this is the `FRAC` list: for each card, which fractions it is inside and whether it is the numerator (`n`), the denominator (`d`), the bar (`bar`) or brackets that are not drawn (`hide`). A fraction row is tall, so scroll the rows area to see all of it. The 123 operators and 269 algebra word problems whose formula has a `/` are written this way. The operator pictures and the word problem diagrams themselves are still drawn with the `/` on one line.
@@ -90,7 +99,7 @@ The full list, with each formula and whether it calculates, is in
 2. Type `time dilation` in the **Search** box and click **Time dilation**. The pop-up shows its
    picture and the keys it needs, and Row 1 now reads `Time dilation( □ , □ )`.
 3. Click the first square box and type `1` on the keypad. Click the second box and type `179875474.8`.
-4. Press **`=`**. The result `1.25` appears in the results area and in Row 2.
+4. Press **`=`**. The result `1.25` appears in the results area and in Row 1's own answer card (the card to the right of the `=`, beside the **math to put on the left** button).
 
 **The pieces of the window**
 

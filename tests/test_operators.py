@@ -924,7 +924,7 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         self._type_into_boxes(args)
         app._equals()
         said = app.results.get("1.0", "end")
-        m = re.search(r"=\s+(\S+)\s+\(printed", said)
+        m = re.search(r"=\s+(\S+)\s+\((?:printed|shown)", said)          # "=  24     (shown in Row 1's answer card ...)"
         self.assertIsNotNone(m, f"{key}: no result in the window, it said: {said!r}")
         return float(m.group(1))
 

@@ -138,6 +138,9 @@ class InTheWindow(unittest.TestCase):
     def paths(self):
         return sorted({p for k, _t, p in self.app._cards(0) if k == "box"})        # one path per input
 
+    def paths_of(self, i):
+        return sorted({p for k, _t, p in self.app._cards(i) if k == "box"})
+
     def type_into(self, path, text):
         self.app.rows[0]["sel"] = path
         for ch in text:
@@ -175,6 +178,33 @@ class InTheWindow(unittest.TestCase):
         self.type_into(c, "2")
         app._equals()
         self.assertEqual(sorted(self.outs()), ["1", "2"])
+
+    def test_math_on_several_lines_is_still_one_row(self):
+        """A fraction or an exponent is drawn on several lines, but all of them are Row 1: no extra calculator rows, = calculates the whole of Row 1 and prints in Row 2,
+        and Next Row goes from Row 1 to Row 2."""
+        app = self.app
+        before = len(app.rows)
+        app._place_operator_row("physics/physics/gravitation")                # F = G m1 m2 / r^2: a fraction with an exponent
+        self.assertEqual(len(app.rows), before)                                # the lines of the fraction are not rows
+        self.assertTrue(any(f for f in row_tree.fracs(app.rows[0]["node"])))   # it is drawn as a fraction ...
+        self.assertTrue(any(l for l in row_tree.levels(app.rows[0]["node"])))   # ... with an exponent on its own line
+        for path, text in zip(self.paths(), ("5", "2", "3", "4")):               # boxes on the different lines are all boxes of Row 1
+            self.type_into(path, text)
+        app._equals()
+        self.assertTrue(app.rows[0]["result"].cget("text").startswith("7.4155"))        # the answer stays on Row 1, in its own answer card right of the =
+        self.assertEqual([i for i, r in enumerate(app.rows) if r["is_result"]], [])      # nothing is printed into Row 2
+        app._next_row()
+        self.assertEqual(app.op_target + 1, 2)                                   # Next Row: Row 1 -> Row 2
+        # Row 2 with a join sign: = shows each row's own answer in its own card and the answer for both on Row 3
+        app._place_operator_row("math/arithmetic/addition")
+        for path, text in zip(self.paths_of(1), ("1", "2")):
+            app.rows[1]["sel"] = path
+            for ch in text:
+                app._key(ch)
+        app._join_key("+")
+        app._equals()
+        self.assertEqual([i for i, r in enumerate(app.rows) if r["is_result"]], [2])    # the joined answer is in Row 3
+        self.assertEqual(app.rows[1]["result"].cget("text"), "3")                        # Row 2's own answer stays in Row 2
 
     def test_a_picture_that_hides_inputs_still_calculates_through_extra_boxes(self):
         app = self.app
