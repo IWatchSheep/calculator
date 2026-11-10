@@ -711,3 +711,66 @@ fn the_pid_output_in_four_rows_gives_the_plan_numbers() {
     assert_eq!(doc.rows[2].inputs[3], "0.5"); // the time step of Row 3 is copied from Row 2
     assert_eq!((doc.rows[3].inputs[0].as_str(), doc.rows[3].inputs[1].as_str(), doc.rows[3].inputs[2].as_str()), ("6", "10", "2"));
 }
+
+#[test]
+fn the_obstacle_and_clock_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let ph = "physics/physics/";
+    let call = |key: &str, args: Vec<Value>| -> Result<Value, String> {
+        let op = ops::get(&format!("{ph}{key}")).unwrap();
+        match op.compute_v {
+            Some(f) => f(&args),
+            None => (op.compute)(&args.iter().map(|v| if let Value::Number(x) = v { *x } else { panic!() }).collect::<Vec<f64>>()),
+        }
+    };
+    let nums = |xs: &[f64]| xs.iter().map(|x| Value::Number(*x)).collect::<Vec<_>>();
+    let list = |xs: &[f64]| Value::List(nums(xs));
+    let number = |v: Value| -> f64 {
+        match v {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let said = |key: &str, args: Vec<Value>| call(key, args).unwrap_err();
+    let n = |key: &str, xs: &[f64]| number(call(key, nums(xs)).unwrap());
+    assert_eq!(n("saturation", &[12., 0., 10.]), 10.0);
+    assert_eq!(n("saturation", &[-1., 0., 10.]), 0.0);
+    assert_eq!(n("low_pass_step", &[10., 20., 1., 3.]), 12.5);
+    assert!((n("turn_radius", &[10., 0.7853981633974483, 9.81]) - 10.19367991845056).abs() < 1e-12);
+    assert_eq!(number(call("distance_3d", vec![list(&[0., 0., 0.]), list(&[3., 4., 12.])]).unwrap()), 13.0);
+    assert_eq!(number(call("time_to_collision", vec![list(&[6., 8., 0.]), list(&[-3., -4., 0.])]).unwrap()), 2.0);
+    assert_eq!(number(call("closing_speed", vec![list(&[10., 0., 0.]), list(&[2., 0., 0.])]).unwrap()), -2.0);
+    assert_eq!(number(call("point_inside_sphere", vec![list(&[0., 0., 0.]), Value::Number(5.), list(&[3., 4., 0.])]).unwrap()), 1.0);
+    assert_eq!(number(call("point_inside_sphere", vec![list(&[0., 0., 0.]), Value::Number(5.), list(&[6., 0., 0.])]).unwrap()), 0.0);
+    let cyl = |p: &[f64]| number(call("point_inside_cylinder", vec![list(&[0., 0.]), Value::Number(1.), Value::Number(10.), list(p)]).unwrap());
+    assert_eq!((cyl(&[0.6, 0.8, 2.]), cyl(&[0.6, 0.8, 11.]), cyl(&[2., 0., 2.])), (1.0, 0.0, 0.0));
+    assert!((n("gps_kinematic_clock", &[1.0000000000834925]) + 7.213755992552251).abs() < 1e-9);
+    assert!((n("gps_gravitational_clock", &[6378137., 26561750.]) - 45.651861866919695).abs() < 1e-9);
+    assert!((n("gps_clock_correction", &[-7.213755992552251, 45.651861866919695]) - 38.438105874367444).abs() < 1e-9);
+    assert!(said("saturation", nums(&[5., 10., 0.])).contains("the low limit is above the high limit"));
+    assert!(said("low_pass_step", nums(&[1., 2., 0., 1.])).contains("time step must be positive"));
+    assert!(said("low_pass_step", nums(&[1., 2., 1., 0.])).contains("the time constant must be positive"));
+    assert!(said("time_to_collision", vec![list(&[0., 0., 0.]), list(&[1., 0., 0.])]).contains("the distance is zero"));
+    assert!(said("time_to_collision", vec![list(&[10., 0., 0.]), list(&[3., 0., 0.])]).contains("not approaching"));
+    assert!(said("distance_3d", vec![list(&[0., 0.]), list(&[1., 2., 3.])]).contains("a point has 3 numbers: x, y, z"));
+    assert!(said("point_inside_sphere", vec![list(&[0., 0., 0.]), Value::Number(-1.), list(&[1., 1., 1.])]).contains("radius cannot be negative"));
+    assert!(said("point_inside_cylinder", vec![list(&[0., 0., 0.]), Value::Number(1.), Value::Number(10.), list(&[0., 0., 1.])]).contains("a centre has 2 numbers: x, y"));
+    assert!(said("point_inside_cylinder", vec![list(&[0., 0.]), Value::Number(1.), Value::Number(-10.), list(&[0., 0., 1.])]).contains("a length cannot be negative"));
+    assert!(said("turn_radius", nums(&[10., 0., 9.81])).contains("no bank, the turn radius is infinite"));
+    assert!(said("turn_radius", nums(&[10., 1.5707963267948966, 9.81])).contains("the bank is past horizontal"));
+    assert!(said("turn_radius", nums(&[-1., 0.5, 9.81])).contains("speed cannot be negative"));
+    assert!(said("gps_kinematic_clock", nums(&[0.9])).contains("a Lorentz factor is at least 1"));
+    assert!(said("gps_gravitational_clock", nums(&[0., 100.])).contains("a radius must be positive"));
+    assert!(said("gps_gravitational_clock", nums(&[7000000., 6378137.])).contains("the satellite must be above the ground"));
+}
+
+#[test]
+fn the_gps_clock_in_four_rows_gives_the_plan_numbers() {
+    let key = "physics/physics/gps_clock_correction";
+    let mut doc = chain_doc(key, &[(0, 0, "3874"), (2, 0, "6378137"), (2, 1, "26561750")]);
+    doc.equals_all().unwrap();
+    assert!((number(&doc, 1) + 7.213755992552251).abs() < 1e-9);
+    assert!((number(&doc, 2) - 45.651861866919695).abs() < 1e-9);
+    assert!((number(&doc, 3) - 38.438105874367444).abs() < 1e-9);
+    assert!(doc.rows[1].inputs[0].parse::<f64>().unwrap() > 1.0); // the γ box holds Row 1's answer
+}

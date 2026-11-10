@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 584)
+        self.assertEqual(len(keys), 595)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 584)
+        self.assertEqual(count, 595)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -139,7 +139,7 @@ class RustPort(unittest.TestCase):
                     "physics/physics/time_dilation", "math/statistics_and_probability/standard_deviation",
                     "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation",
                     "math/statistics_and_probability/range", "math/statistics_and_probability/interquartile_range",
-                    "math/statistics_and_probability/variance_of_random_variable", "physics/physics/kalman_update_state", "physics/physics/pid_sum"):
+                    "math/statistics_and_probability/variance_of_random_variable", "physics/physics/kalman_update_state", "physics/physics/pid_sum", "physics/physics/gps_clock_correction"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
@@ -591,6 +591,29 @@ class InTheWindow(unittest.TestCase):
         self.assertEqual(row_tree.get_slot(self.app.rows[2]["node"], (3,)), "0.5")         # ... and the time step of Row 3 from Row 2
         self.assertEqual([self.chained_values(3, (k,)) for k in range(3)], [6, 10, 2])
         self.assertTrue(self.app.results.get("1.0", "end").strip().endswith("18"))
+
+
+    def test_the_gps_clock_in_four_rows_gives_the_plan_numbers(self):
+        """Speed 3874, radii 6378137 and 26561750: Row 2 is -7.2137..., Row 3 is 45.6518..., and the correction is 38.4381... microseconds a day."""
+        from operator_row_math import row_tree
+        self.app._clear_all()
+        self.app._place_operator_row("physics/physics/gps_clock_correction")
+        self.app.update()
+        for row, slot, text in ((0, 0, "3874"), (2, 0, "6378137"), (2, 1, "26561750")):
+            row_tree.set_slot(self.app.rows[row]["node"], (slot,), text)
+        self.press_equals()
+        values = [row_tree.evaluate(self.app.rows[k]["node"]) for k in range(4)]
+        self.assertAlmostEqual(values[1], -7.213755992552251, places=9)
+        self.assertAlmostEqual(values[2], 45.651861866919695, places=9)
+        self.assertAlmostEqual(values[3], 38.438105874367444, places=9)
+        self.assertEqual(self.chained_values(1, (0,)), values[0])                            # the gamma box holds Row 1's answer
+        self.assertEqual((self.chained_values(3, (0,)), self.chained_values(3, (1,))), (values[1], values[2]))
+        self.assertTrue(self.app.results.get("1.0", "end").strip().endswith(row_tree.fmt(values[3])))
+
+    def test_the_relativity_operators_say_when_they_do_not_matter(self):
+        for key in ("lorentz_factor", "time_dilation", "length_contraction", "relativistic_momentum", "relativistic_kinetic_energy"):
+            node = row_tree.new_node("physics/physics/" + key)
+            self.assertIn("negligible below about 1 percent of the speed of light", " ".join(c for _l, c in row_tree.words(node)), key)
 
 
     def test_the_answer_of_the_chain_is_the_last_rows_answer(self):

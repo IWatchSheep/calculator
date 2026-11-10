@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 584)
+        self.assertEqual(len(self.ops), 595)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 584)
+        self.assertEqual(len(status), 595)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -257,6 +257,18 @@ CASES = [
     (PH + "control_error", (10, 7), 3), (PH + "control_error", (7, 10), -3), (PH + "pid_proportional", (2, 3), 6),
     (PH + "pid_integral_state", (1, 3, 0.5), 2.5), (PH + "pid_integral_term", (4, 1, 3, 0.5), 10), (PH + "pid_derivative", (0.5, 3, 1, 0.5), 2),
     (PH + "pid_sum", (6, 10, 2), 18),
+    (PH + "saturation", (5, 0, 10), 5), (PH + "saturation", (-1, 0, 10), 0), (PH + "saturation", (12, 0, 10), 10),
+    (PH + "low_pass_step", (10, 20, 1, 1), 15), (PH + "low_pass_step", (10, 20, 1, 3), 12.5),
+    (PH + "distance_3d", ([0, 0, 0], [3, 4, 12]), 13), (PH + "distance_3d", ([1, 2, 3], [1, 2, 3]), 0),
+    (PH + "time_to_collision", ([6, 8, 0], [-3, -4, 0]), 2),
+    (PH + "point_inside_sphere", ([0, 0, 0], 5, [3, 4, 0]), 1), (PH + "point_inside_sphere", ([0, 0, 0], 5, [6, 0, 0]), 0),
+    (PH + "point_inside_cylinder", ([0, 0], 1, 10, [0.6, 0.8, 2]), 1), (PH + "point_inside_cylinder", ([0, 0], 1, 10, [0.6, 0.8, 11]), 0),
+    (PH + "point_inside_cylinder", ([0, 0], 1, 10, [2, 0, 2]), 0),
+    (PH + "turn_radius", (10, 0.7853981633974483), 10.19367991845056),
+    (PH + "closing_speed", ([10, 0, 0], [-3, 0, 0]), 3), (PH + "closing_speed", ([10, 0, 0], [2, 0, 0]), -2),
+    (PH + "gps_kinematic_clock", (1.0000000000834925,), -7.213755992552251),
+    (PH + "gps_gravitational_clock", (6378137, 26561750), 45.651861866919695),
+    (PH + "gps_clock_correction", (-7.213755992552251, 45.651861866919695), 38.438105874367444),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -942,6 +954,77 @@ class ControlDeclineTests(unittest.TestCase):
         self.assertEqual(i(ki, integral, error, dt), ki * state(integral, error, dt))     # the integral term is Ki times the new integral state
         self.assertEqual(get(PH + "pid_sum").compute(p(kp, error), i(ki, integral, error, dt), d(kd, error, previous, dt)), 18)
         self.assertEqual(get(PH + "control_error").compute(10, 7), 3)
+
+
+class ObstacleAndClockDeclineTests(unittest.TestCase):
+    """Batches 7 and 8 of the robot maths (saturation, obstacles, the GPS clock) decline with the plan's messages."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says("saturation", (5, 10, 0), "the low limit is above the high limit")
+        self.says("low_pass_step", (1, 2, 0, 1), "time step must be positive")
+        self.says("low_pass_step", (1, 2, 1, 0), "the time constant must be positive")
+        self.says("distance_3d", ([0, 0], [1, 2, 3]), "a point has 3 numbers: x, y, z")
+        self.says("time_to_collision", ([1, 2], [1, 2, 3]), "3 numbers")
+        self.says("time_to_collision", ([0, 0, 0], [1, 0, 0]), "the distance is zero")
+        self.says("time_to_collision", ([10, 0, 0], [3, 0, 0]), "not approaching")
+        self.says("time_to_collision", ([10, 0, 0], [0, 3, 0]), "not approaching")                  # moving past, not toward
+        self.says("closing_speed", ([0, 0, 0], [1, 0, 0]), "the distance is zero")
+        self.says("closing_speed", ([1, 2], [1, 2, 3]), "3 numbers")
+        self.says("point_inside_sphere", ([0, 0], 5, [1, 1, 1]), "a point has 3 numbers: x, y, z")
+        self.says("point_inside_sphere", ([0, 0, 0], -1, [1, 1, 1]), "radius cannot be negative")
+        self.says("point_inside_cylinder", ([0, 0, 0], 1, 10, [0, 0, 1]), "a centre has 2 numbers: x, y")
+        self.says("point_inside_cylinder", ([0, 0], 1, 10, [0, 0]), "a point has 3 numbers: x, y, z")
+        self.says("point_inside_cylinder", ([0, 0], -1, 10, [0, 0, 1]), "radius cannot be negative")
+        self.says("point_inside_cylinder", ([0, 0], 1, -10, [0, 0, 1]), "a length cannot be negative")
+        self.says("turn_radius", (-1, 0.5), "speed cannot be negative")
+        self.says("turn_radius", (10, 0), "no bank, the turn radius is infinite")
+        self.says("turn_radius", (10, 1.5707963267948966), "the bank is past horizontal")
+        self.says("turn_radius", (10, -1.6), "the bank is past horizontal")
+        self.says("turn_radius", (10, 0.5, 0), "gravity must pull downward")
+        self.says("gps_kinematic_clock", (0.9,), "a Lorentz factor is at least 1")
+        self.says("gps_gravitational_clock", (0, 100), "a radius must be positive")
+        self.says("gps_gravitational_clock", (6378137, 6378137), "the satellite must be above the ground")
+        self.says("gps_gravitational_clock", (7000000, 6378137), "the satellite must be above the ground")
+
+    def test_the_boundary_and_the_banked_turn(self):
+        inside = get(PH + "point_inside_sphere").compute
+        self.assertEqual((inside([0, 0, 0], 5, [5, 0, 0]), inside([0, 0, 0], 0, [0, 0, 0])), (1, 1))      # on the surface counts as inside
+        cyl = get(PH + "point_inside_cylinder").compute
+        self.assertEqual((cyl([0, 0], 1, 10, [0, 0, 0]), cyl([0, 0], 1, 10, [0, 0, 10]), cyl([0, 0], 1, 10, [0, 0, -0.1])), (1, 1, 0))
+        radius = get(PH + "turn_radius").compute
+        self.assertAlmostEqual(radius(10, -0.7853981633974483), -radius(10, 0.7853981633974483), places=12)   # the other way round
+        self.assertAlmostEqual(radius(10, 0.7853981633974483), get(PH + "projectile_range").compute(10, 0.7853981633974483), places=9)  # v²/g at 45 degrees
+
+    def test_the_two_collision_operators_agree(self):
+        closing, time = get(PH + "closing_speed").compute, get(PH + "time_to_collision").compute
+        for position, velocity in (([6, 8, 0], [-3, -4, 0]), ([0, 0, 10], [0, 0, -2.5]), ([3, 4, 12], [-1, -1, -3])):
+            speed = closing(position, velocity)
+            self.assertGreater(speed, 0)
+            distance = get(PH + "distance_3d").compute([0, 0, 0], position)
+            self.assertAlmostEqual(time(position, velocity), distance / speed, places=12)
+
+    def test_saturation_and_the_low_pass_step(self):
+        clamp, step = get(PH + "saturation").compute, get(PH + "low_pass_step").compute
+        for value in (-5, 0, 3.5, 10, 99):
+            self.assertTrue(0 <= clamp(value, 0, 10) <= 10)
+        self.assertEqual(clamp(7, 7, 7), 7)
+        self.assertTrue(10 < step(10, 20, 1, 3) < step(10, 20, 1, 1) < 20)         # a larger time constant smooths more
+
+    def test_the_gps_clock_pieces(self):
+        import math
+        from operators_one_operator_per_file import get as library
+        gamma = library(PH + "lorentz_factor").compute(3874)
+        special = get(PH + "gps_kinematic_clock").compute(gamma)
+        gravity = get(PH + "gps_gravitational_clock").compute(6378137, 26561750)
+        self.assertAlmostEqual(special, -7.213755992552251, places=9)
+        self.assertAlmostEqual(gravity, 45.651861866919695, places=9)
+        self.assertAlmostEqual(get(PH + "gps_clock_correction").compute(special, gravity), 38.438105874367444, places=9)
+        self.assertTrue(-7.5 < special < -7.0 and 45 < gravity < 46 and 38 < special + gravity < 39)       # about -7, +45 and +38 microseconds a day
 
 
 # --------------------------------------------------------------------------- 3. error handling

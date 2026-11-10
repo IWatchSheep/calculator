@@ -4875,6 +4875,7 @@ physics/physics/centripetal_acceleration	1 0.5	2.0
 physics/physics/centripetal_acceleration	7.5 5	11.25
 physics/physics/centripetal_acceleration	100 10	1000.0
 physics/physics/centripetal_acceleration	-1 -3	-0.3333333333333333
+physics/physics/complementary_filter	0 0.1 0.1 0.02 0.98	0.010200000000000002
 physics/physics/complementary_filter	100 100 0 2.5 3	ERR
 physics/physics/complementary_filter	2 -3 2.5 -3 -1	ERR
 physics/physics/complementary_filter	0 -1 3 0 2	ERR
@@ -4971,6 +4972,8 @@ physics/physics/continuity_equation	0.25 100 0	ERR
 physics/physics/continuity_equation	7.5 -3 -1	22.5
 physics/physics/continuity_equation	0.5 5 2.5	1.0
 physics/physics/continuity_equation	0.5 3 2.5	0.6
+physics/physics/control_error	10 7	3
+physics/physics/control_error	7 10	-3
 physics/physics/control_error	5 1	4
 physics/physics/control_error	3 -3	6
 physics/physics/control_error	2 2	0
@@ -5570,6 +5573,94 @@ physics/physics/frequency	-3	-0.3333333333333333
 physics/physics/frequency	100	0.01
 physics/physics/frequency	2	0.5
 physics/physics/frequency	7.5	0.13333333333333333
+physics/physics/gps_clock_correction	2 -1	1
+physics/physics/gps_clock_correction	-3 1	-2
+physics/physics/gps_clock_correction	0 0.5	0.5
+physics/physics/gps_clock_correction	5 7.5	12.5
+physics/physics/gps_clock_correction	2.5 1	3.5
+physics/physics/gps_clock_correction	2.5 -1	1.5
+physics/physics/gps_clock_correction	3 0	3
+physics/physics/gps_clock_correction	0.25 3	3.25
+physics/physics/gps_clock_correction	-1 10	9
+physics/physics/gps_clock_correction	3 3	6
+physics/physics/gps_clock_correction	3 2.5	5.5
+physics/physics/gps_clock_correction	5 5	10
+physics/physics/gps_clock_correction	7.5 -1	6.5
+physics/physics/gps_clock_correction	100 0.5	100.5
+physics/physics/gps_clock_correction	0.25 5	5.25
+physics/physics/gps_clock_correction	0.25 0.25	0.5
+physics/physics/gps_clock_correction	7.5 0.5	8.0
+physics/physics/gps_clock_correction	2 3	5
+physics/physics/gps_clock_correction	-3 2	-1
+physics/physics/gps_clock_correction	1 3	4
+physics/physics/gps_clock_correction	5 1	6
+physics/physics/gps_clock_correction	2 10	12
+physics/physics/gps_clock_correction	2 0.5	2.5
+physics/physics/gps_clock_correction	10 -3	7
+physics/physics/gps_clock_correction	0.25 -3	-2.75
+physics/physics/gps_clock_correction	0.25 10	10.25
+physics/physics/gps_clock_correction	5 -1	4
+physics/physics/gps_clock_correction	1 2.5	3.5
+physics/physics/gps_clock_correction	2 -3	-1
+physics/physics/gps_clock_correction	0.25 0	0.25
+physics/physics/gps_clock_correction	10 100	110
+physics/physics/gps_clock_correction	1 -3	-2
+physics/physics/gps_clock_correction	100 0	100
+physics/physics/gps_clock_correction	-1 100	99
+physics/physics/gps_clock_correction	-1 0	-1
+physics/physics/gps_clock_correction	-1 -3	-4
+physics/physics/gps_clock_correction	0 2.5	2.5
+physics/physics/gps_clock_correction	100 0.25	100.25
+physics/physics/gps_gravitational_clock	7.5 -3	ERR
+physics/physics/gps_gravitational_clock	7.5 7.5	ERR
+physics/physics/gps_gravitational_clock	100 -1	ERR
+physics/physics/gps_gravitational_clock	7.5 5	ERR
+physics/physics/gps_gravitational_clock	7.5 0.25	ERR
+physics/physics/gps_gravitational_clock	5 1	ERR
+physics/physics/gps_gravitational_clock	1 1	ERR
+physics/physics/gps_gravitational_clock	2.5 1	ERR
+physics/physics/gps_gravitational_clock	-3 2.5	ERR
+physics/physics/gps_gravitational_clock	0 0.25	ERR
+physics/physics/gps_gravitational_clock	2.5 10	114955926.77393004
+physics/physics/gps_gravitational_clock	2 7.5	140501688.27924785
+physics/physics/gps_gravitational_clock	3 2.5	ERR
+physics/physics/gps_gravitational_clock	0 -3	ERR
+physics/physics/gps_gravitational_clock	0.5 2.5	613098276.1276268
+physics/physics/gps_gravitational_clock	3 -3	ERR
+physics/physics/gps_gravitational_clock	0.25 0	ERR
+physics/physics/gps_gravitational_clock	100 100	ERR
+physics/physics/gps_gravitational_clock	-1 3	ERR
+physics/physics/gps_gravitational_clock	2.5 0.25	ERR
+physics/physics/gps_gravitational_clock	3 0.5	ERR
+physics/physics/gps_gravitational_clock	0.25 0.5	766372845.1595335
+physics/physics/gps_gravitational_clock	2.5 5	76637284.51595335
+physics/physics/gps_gravitational_clock	-1 100	ERR
+physics/physics/gps_gravitational_clock	10 3	ERR
+physics/physics/gps_gravitational_clock	10 2.5	ERR
+physics/physics/gps_gravitational_clock	2 -3	ERR
+physics/physics/gps_gravitational_clock	10 2	ERR
+physics/physics/gps_gravitational_clock	7.5 0.5	ERR
+physics/physics/gps_gravitational_clock	0 10	ERR
+physics/physics/gps_gravitational_clock	2.5 0.5	ERR
+physics/physics/gps_gravitational_clock	2.5 100	149442704.80610904
+physics/physics/gps_gravitational_clock	7.5 100	47259658.7848379
+physics/physics/gps_gravitational_clock	2.5 -3	ERR
+physics/physics/gps_gravitational_clock	2 0.5	ERR
+physics/physics/gps_gravitational_clock	3 -1	ERR
+physics/physics/gps_gravitational_clock	0 5	ERR
+physics/physics/gps_kinematic_clock	0.25	ERR
+physics/physics/gps_kinematic_clock	0.5	ERR
+physics/physics/gps_kinematic_clock	3	-57600000000.00001
+physics/physics/gps_kinematic_clock	-1	ERR
+physics/physics/gps_kinematic_clock	7.5	-74880000000.0
+physics/physics/gps_kinematic_clock	2	-43200000000.0
+physics/physics/gps_kinematic_clock	10	-77760000000.0
+physics/physics/gps_kinematic_clock	0	ERR
+physics/physics/gps_kinematic_clock	2.5	-51840000000.0
+physics/physics/gps_kinematic_clock	5	-69120000000.0
+physics/physics/gps_kinematic_clock	100	-85536000000.0
+physics/physics/gps_kinematic_clock	-3	ERR
+physics/physics/gps_kinematic_clock	1	0.0
 physics/physics/gravitation	1 1 1	6.674e-11
 physics/physics/gravitation	0 1 0.25	0.0
 physics/physics/gravitation	7.5 -1 2	-1.251375e-10
@@ -6476,6 +6567,46 @@ physics/physics/lorentz_factor	0.25	1.0
 physics/physics/lorentz_factor	100	1.0000000000000557
 physics/physics/lorentz_factor	-1	1.0
 physics/physics/lorentz_factor	2.5	1.0000000000000002
+physics/physics/low_pass_step	7.5 10 2 100	7.549019607843137
+physics/physics/low_pass_step	7.5 3 10 2.5	3.9
+physics/physics/low_pass_step	3 0.25 7.5 100	2.808139534883721
+physics/physics/low_pass_step	1 2 -1 0	ERR
+physics/physics/low_pass_step	0 0 10 -1	ERR
+physics/physics/low_pass_step	5 0.5 2 5	3.7142857142857144
+physics/physics/low_pass_step	100 0 0 5	ERR
+physics/physics/low_pass_step	0.25 100 100 100	50.125
+physics/physics/low_pass_step	1 2.5 -3 10	ERR
+physics/physics/low_pass_step	2.5 1 -3 1	ERR
+physics/physics/low_pass_step	0.25 0.5 7.5 100	0.26744186046511625
+physics/physics/low_pass_step	0.25 0.25 100 -1	ERR
+physics/physics/low_pass_step	7.5 -1 5 7.5	4.1
+physics/physics/low_pass_step	0.25 10 -3 7.5	ERR
+physics/physics/low_pass_step	2 3 3 -3	ERR
+physics/physics/low_pass_step	2 0.5 0 2.5	ERR
+physics/physics/low_pass_step	0.25 0 0 100	ERR
+physics/physics/low_pass_step	1 1 -1 0.5	ERR
+physics/physics/low_pass_step	0.25 10 10 3	7.75
+physics/physics/low_pass_step	0 10 5 0.25	9.523809523809524
+physics/physics/low_pass_step	2 2.5 1 -3	ERR
+physics/physics/low_pass_step	2.5 0 0.25 0	ERR
+physics/physics/low_pass_step	1 3 100 2	2.9607843137254903
+physics/physics/low_pass_step	100 5 2.5 1	32.14285714285714
+physics/physics/low_pass_step	0.25 7.5 -3 2	ERR
+physics/physics/low_pass_step	2.5 0 3 10	1.923076923076923
+physics/physics/low_pass_step	7.5 0.5 100 10	1.1363636363636367
+physics/physics/low_pass_step	0.5 2 5 -1	ERR
+physics/physics/low_pass_step	100 0.5 1 0	ERR
+physics/physics/low_pass_step	3 2 1 2	2.6666666666666665
+physics/physics/low_pass_step	0.5 -1 0 10	ERR
+physics/physics/low_pass_step	0.25 100 0.25 5	5.0
+physics/physics/low_pass_step	1 10 3 1	7.75
+physics/physics/low_pass_step	10 100 5 100	14.285714285714285
+physics/physics/low_pass_step	0.5 -3 2 1	-1.833333333333333
+physics/physics/low_pass_step	5 5 2 1	5.0
+physics/physics/low_pass_step	2 5 3 2.5	3.6363636363636362
+physics/physics/low_pass_step	0 100 5 10	33.33333333333333
+physics/physics/low_pass_step	0.5 7.5 10 -1	ERR
+physics/physics/low_pass_step	5 10 2 1	8.333333333333332
 physics/physics/magnetic_field_solenoid	1000 2	0.0025132741228718345
 physics/physics/magnetic_field_solenoid	0 5	0.0
 physics/physics/magnetic_field_solenoid	2.5 7.5	2.356194490192345e-05
@@ -7026,6 +7157,7 @@ physics/physics/photon_momentum	2.5	2.65042806e-34
 physics/physics/photon_momentum	0	ERR
 physics/physics/photon_momentum	10	6.62607015e-35
 physics/physics/photon_momentum	0.5	1.32521403e-33
+physics/physics/pid_derivative	0.5 3 1 0.5	2.0
 physics/physics/pid_derivative	5 2 5 2	-7.5
 physics/physics/pid_derivative	-3 2 1 -1	ERR
 physics/physics/pid_derivative	3 0.25 0.5 -1	ERR
@@ -7066,6 +7198,7 @@ physics/physics/pid_derivative	0 0.25 100 0.5	-0.0
 physics/physics/pid_derivative	3 0 -3 0.25	36.0
 physics/physics/pid_derivative	3 0 100 0.25	-1200.0
 physics/physics/pid_derivative	3 0.5 5 10	-1.35
+physics/physics/pid_integral_state	1 3 0.5	2.5
 physics/physics/pid_integral_state	0.5 2 -1	ERR
 physics/physics/pid_integral_state	0.5 0 100	0.5
 physics/physics/pid_integral_state	2.5 5 -1	ERR
@@ -7106,6 +7239,7 @@ physics/physics/pid_integral_state	100 0 7.5	100.0
 physics/physics/pid_integral_state	-3 0 2	-3
 physics/physics/pid_integral_state	0 2.5 1	2.5
 physics/physics/pid_integral_state	100 0.5 0.5	100.25
+physics/physics/pid_integral_term	4 1 3 0.5	10.0
 physics/physics/pid_integral_term	5 -1 10 0	ERR
 physics/physics/pid_integral_term	3 2.5 100 -1	ERR
 physics/physics/pid_integral_term	3 2.5 0 5	7.5
@@ -7146,6 +7280,7 @@ physics/physics/pid_integral_term	3 5 10 3	105
 physics/physics/pid_integral_term	-1 7.5 7.5 0.5	-11.25
 physics/physics/pid_integral_term	0.5 -3 100 5	248.5
 physics/physics/pid_integral_term	10 100 100 -3	ERR
+physics/physics/pid_proportional	2 3	6
 physics/physics/pid_proportional	10 -1	-10
 physics/physics/pid_proportional	2 0	0
 physics/physics/pid_proportional	1 1	1
@@ -7185,6 +7320,7 @@ physics/physics/pid_proportional	2 2.5	5.0
 physics/physics/pid_proportional	1 10	10
 physics/physics/pid_proportional	0.5 1	0.5
 physics/physics/pid_proportional	100 0.5	50.0
+physics/physics/pid_sum	6 10 2	18
 physics/physics/pid_sum	7.5 7.5 0	15.0
 physics/physics/pid_sum	-1 -1 1	-1
 physics/physics/pid_sum	0.5 -3 0.25	-2.25
@@ -7889,6 +8025,46 @@ physics/physics/rydberg_formula	7.5 3	ERR
 physics/physics/rydberg_formula	7.5 10	1.1716290650344983e-05
 physics/physics/rydberg_formula	7.5 2.5	ERR
 physics/physics/rydberg_formula	0.25 2	5.785822543380238e-09
+physics/physics/saturation	0 0 0.25	0
+physics/physics/saturation	100 2.5 -3	ERR
+physics/physics/saturation	-1 1 10	1
+physics/physics/saturation	-3 0.5 7.5	0.5
+physics/physics/saturation	3 3 2	ERR
+physics/physics/saturation	0.5 2 5	2
+physics/physics/saturation	0 0 2	0
+physics/physics/saturation	100 -1 10	10
+physics/physics/saturation	0.5 0.5 5	0.5
+physics/physics/saturation	100 3 2.5	ERR
+physics/physics/saturation	7.5 0.25 -1	ERR
+physics/physics/saturation	0 5 0	ERR
+physics/physics/saturation	3 0.25 3	3
+physics/physics/saturation	100 -3 2	2
+physics/physics/saturation	0.5 7.5 2.5	ERR
+physics/physics/saturation	0.5 0.25 -1	ERR
+physics/physics/saturation	-3 2 -1	ERR
+physics/physics/saturation	-1 5 3	ERR
+physics/physics/saturation	2.5 1 1	1
+physics/physics/saturation	7.5 7.5 1	ERR
+physics/physics/saturation	1 7.5 0.5	ERR
+physics/physics/saturation	2 2 2.5	2
+physics/physics/saturation	100 2 10	10
+physics/physics/saturation	0.25 3 100	3
+physics/physics/saturation	7.5 1 -1	ERR
+physics/physics/saturation	0 0.5 2.5	0.5
+physics/physics/saturation	100 0.5 0.5	0.5
+physics/physics/saturation	3 -1 10	3
+physics/physics/saturation	7.5 -3 -1	-1
+physics/physics/saturation	1 3 100	3
+physics/physics/saturation	7.5 5 3	ERR
+physics/physics/saturation	0.25 -3 3	0.25
+physics/physics/saturation	-3 0.25 3	0.25
+physics/physics/saturation	0 2 0	ERR
+physics/physics/saturation	-1 100 0.5	ERR
+physics/physics/saturation	0.5 10 2.5	ERR
+physics/physics/saturation	0.5 2 2.5	2
+physics/physics/saturation	3 0.25 -1	ERR
+physics/physics/saturation	2 7.5 3	ERR
+physics/physics/saturation	0 2 0.5	ERR
 physics/physics/schwarzschild_radius	1	1.4851652948203698e-27
 physics/physics/schwarzschild_radius	1.989e+30	2953.9937713977156
 physics/physics/schwarzschild_radius	0.5	7.425826474101849e-28
@@ -8408,6 +8584,42 @@ physics/physics/torricelli_speed	10	14.007141035914502
 physics/physics/torricelli_speed	1	4.4294469180700204
 physics/physics/torricelli_speed	-3	ERR
 physics/physics/torricelli_speed	0.25	2.2147234590350102
+physics/physics/turn_radius	0 -3	ERR
+physics/physics/turn_radius	3 2	ERR
+physics/physics/turn_radius	0.5 0.25	0.09980421418567634
+physics/physics/turn_radius	-3 100	ERR
+physics/physics/turn_radius	0.5 100	ERR
+physics/physics/turn_radius	10 3	ERR
+physics/physics/turn_radius	0.25 1	0.0040908041280219845
+physics/physics/turn_radius	0.5 0.5	0.04664851482447634
+physics/physics/turn_radius	0.5 0	ERR
+physics/physics/turn_radius	7.5 -3	ERR
+physics/physics/turn_radius	1 0	ERR
+physics/physics/turn_radius	-3 -1	ERR
+physics/physics/turn_radius	-3 0.25	ERR
+physics/physics/turn_radius	2.5 2.5	ERR
+physics/physics/turn_radius	-3 0.5	ERR
+physics/physics/turn_radius	0 3	ERR
+physics/physics/turn_radius	5 2	ERR
+physics/physics/turn_radius	-3 5	ERR
+physics/physics/turn_radius	2 2.5	ERR
+physics/physics/turn_radius	0.25 -1	-0.0040908041280219845
+physics/physics/turn_radius	7.5 3	ERR
+physics/physics/turn_radius	0.25 0.5	0.011662128706119086
+physics/physics/turn_radius	-1 2.5	ERR
+physics/physics/turn_radius	-1 -1	ERR
+physics/physics/turn_radius	1 100	ERR
+physics/physics/turn_radius	0.25 0	ERR
+physics/physics/turn_radius	3 0	ERR
+physics/physics/turn_radius	0.5 3	ERR
+physics/physics/turn_radius	5 0.5	4.664851482447634
+physics/physics/turn_radius	-3 1	ERR
+physics/physics/turn_radius	1 3	ERR
+physics/physics/turn_radius	0.25 3	ERR
+physics/physics/turn_radius	100 0.25	3992.168567427054
+physics/physics/turn_radius	2.5 0.25	2.4951053546419084
+physics/physics/turn_radius	2.5 -1	-0.4090804128021984
+physics/physics/turn_radius	2.5 7.5	ERR
 physics/physics/velocity	10 2	5.0
 physics/physics/velocity	0 2.5	0.0
 physics/physics/velocity	0 3	0.0

@@ -306,6 +306,18 @@ static PID: Spec = Spec {
     links: &[((1, &[2]), (0, &[1])), ((2, &[1]), (0, &[1])), ((2, &[3]), (1, &[3]))],
 };
 
+static GPS_CLOCK: Spec = Spec {
+    title: "GPS satellite clock correction. Row 1 is the Lorentz factor γ at the satellite's speed (about 3874 m/s). Row 2 reads that γ and gives the special-relativity part: a moving clock runs slow, about −7 microseconds per day. Row 3 gives the gravitational part from the two radii typed there: a clock higher in the Earth's gravity runs fast, about +45 microseconds per day. Row 4 adds the two parts: the kinematic part from Row 2 and the gravitational part from Row 3, about +38 microseconds per day. The rows are joined by →: the answer is the last row's answer, the correction to add.",
+    rows: &[
+        RowSpec { title: "The Lorentz factor at the satellite's speed.", node: NodeSpec { op: "physics/physics/lorentz_factor", fill: &[] } },
+        RowSpec { title: "Special relativity, about −7 microseconds per day. The γ box reads Row 1.", node: NodeSpec { op: "physics/physics/gps_kinematic_clock", fill: &[(0, Fill::Row(0))] } },
+        RowSpec { title: "Gravity, about +45 microseconds per day. The two radii are typed here.", node: NodeSpec { op: "physics/physics/gps_gravitational_clock", fill: &[] } },
+        RowSpec { title: "The correction to add, about +38 microseconds per day. The kinematic part reads Row 2 and the gravitational part reads Row 3.", node: NodeSpec { op: "physics/physics/gps_clock_correction", fill: &[(0, Fill::Row(1)), (1, Fill::Row(2))] } },
+    ],
+    joins: &["→", "→", "→"],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -324,6 +336,7 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "physics/physics/gravitational_time_dilation" => &GRAVITATIONAL_TIME_DILATION,
         "physics/physics/kalman_update_state" => &KALMAN,
         "physics/physics/pid_sum" => &PID,
+        "physics/physics/gps_clock_correction" => &GPS_CLOCK,
         "physics/physics/relativistic_kinetic_energy" => &KINETIC_ENERGY,
         "physics/physics/relativistic_momentum" => &MOMENTUM,
         "physics/physics/length_contraction" => &LENGTH_CONTRACTION,

@@ -684,3 +684,56 @@ pub fn local_east_north_up(a: &[Value]) -> R {
     need(lat.abs() <= std::f64::consts::FRAC_PI_2, "latitude is past the pole")?;
     Ok(vlist(vec![6371000.0 * lat.cos() * dlon, 6371000.0 * dlat, dh]))
 }
+
+fn point3(v: &Value) -> Result<[f64; 3], String> {
+    let x = nums(v)?;
+    need(x.len() == 3, "a point has 3 numbers: x, y, z")?;
+    Ok([x[0], x[1], x[2]])
+}
+
+pub fn distance_3d(a: &[Value]) -> R {
+    let (p, q) = (point3(&a[0])?, point3(&a[1])?);
+    let (dx, dy, dz) = (q[0] - p[0], q[1] - p[1], q[2] - p[2]);
+    n((dx * dx + dy * dy + dz * dz).sqrt())
+}
+
+/// (distance, closing speed) of a fixed obstacle `position` from the robot that moves with `velocity`.
+fn closing(a: &[Value]) -> Result<(f64, f64), String> {
+    let (p, v) = (nums(&a[0])?, nums(&a[1])?);
+    need(p.len() == 3 && v.len() == 3, "a vector has 3 numbers: x, y, z")?;
+    let distance = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+    need(distance != 0.0, "the distance is zero")?;
+    Ok((distance, -(p[0] * v[0] + p[1] * v[1] + p[2] * v[2]) / distance))
+}
+
+pub fn time_to_collision(a: &[Value]) -> R {
+    let (distance, closing) = closing(a)?;
+    need(closing > 0.0, "not approaching")?;
+    n(distance / closing)
+}
+
+pub fn closing_speed(a: &[Value]) -> R {
+    n(closing(a)?.1)
+}
+
+pub fn point_inside_sphere(a: &[Value]) -> R {
+    // centre, radius, point
+    let (c, p) = (nums(&a[0])?, nums(&a[2])?);
+    need(c.len() == 3 && p.len() == 3, "a point has 3 numbers: x, y, z")?;
+    let radius = num(&a[1])?;
+    need(radius >= 0.0, "radius cannot be negative")?;
+    let (dx, dy, dz) = (p[0] - c[0], p[1] - c[1], p[2] - c[2]);
+    n(if dx * dx + dy * dy + dz * dz <= radius * radius { 1.0 } else { 0.0 })
+}
+
+pub fn point_inside_cylinder(a: &[Value]) -> R {
+    // centre, radius, height, point
+    let (c, p) = (nums(&a[0])?, nums(&a[3])?);
+    need(c.len() == 2, "a centre has 2 numbers: x, y")?;
+    need(p.len() == 3, "a point has 3 numbers: x, y, z")?;
+    let (radius, height) = (num(&a[1])?, num(&a[2])?);
+    need(radius >= 0.0, "radius cannot be negative")?;
+    need(height >= 0.0, "a length cannot be negative")?;
+    let (dx, dy) = (p[0] - c[0], p[1] - c[1]);
+    n(if dx * dx + dy * dy <= radius * radius && 0.0 <= p[2] && p[2] <= height { 1.0 } else { 0.0 })
+}

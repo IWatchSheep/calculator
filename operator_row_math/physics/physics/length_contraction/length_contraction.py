@@ -20,7 +20,7 @@ CALC = 'ready'
 INPUTS = ['L0', 'v']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
-WORDS = {0: ('moving length', 'metres, in the direction of motion'), 2: ('rest length', 'metres'), 8: ('speed', 'metres per second'), 11: ('speed of light', '299792458 m/s')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
+WORDS = {0: ('moving length', 'metres, in the direction of motion; negligible below about 1 percent of the speed of light'), 2: ('rest length', 'metres'), 8: ('speed', 'metres per second'), 11: ('speed of light', '299792458 m/s')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [], [], [], [], [], [], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [[1, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', '√'), ('op', '('), ('op', '1'), ('op', '−'), ('box', ''), ('op', '2'), ('op', '/'), ('op', 'c'), ('op', '2'), ('op', ')')]      # cards left of "="

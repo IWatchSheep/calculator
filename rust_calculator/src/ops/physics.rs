@@ -554,3 +554,44 @@ pub fn pid_derivative(a: &[f64]) -> R {
 pub fn pid_sum(a: &[f64]) -> R {
     n(a[0] + a[1] + a[2])
 }
+
+// ---------- saturation, the low-pass step, the turn radius and the GPS clock (batches 7 and 8; the same operations in the same order as the Python files) ----------
+
+pub fn saturation(a: &[f64]) -> R {
+    // value, low, high
+    need(a[1] <= a[2], "the low limit is above the high limit")?;
+    n(a[0].max(a[1]).min(a[2]))
+}
+
+pub fn low_pass_step(a: &[f64]) -> R {
+    // previous, sample, dt, tau
+    need(a[2] > 0.0, "time step must be positive")?;
+    need(a[3] > 0.0, "the time constant must be positive")?;
+    n(a[0] + a[2] / (a[2] + a[3]) * (a[1] - a[0]))
+}
+
+pub fn turn_radius(a: &[f64]) -> R {
+    // speed, bank, g
+    need(a[0] >= 0.0, "speed cannot be negative")?;
+    need(a[1] != 0.0, "no bank, the turn radius is infinite")?;
+    need(a[1].abs() < std::f64::consts::FRAC_PI_2, "the bank is past horizontal")?;
+    need(a[2] > 0.0, "gravity must pull downward")?;
+    n(a[0] * a[0] / (a[2] * a[1].tan()))
+}
+
+pub fn gps_kinematic_clock(a: &[f64]) -> R {
+    need(a[0] >= 1.0, "a Lorentz factor is at least 1")?;
+    n((1.0 / a[0] - 1.0) * 86400.0 * 1000000.0)
+}
+
+pub fn gps_gravitational_clock(a: &[f64]) -> R {
+    // ground_radius, satellite_radius
+    need(a[0] > 0.0 && a[1] > 0.0, "a radius must be positive")?;
+    need(a[1] > a[0], "the satellite must be above the ground")?;
+    let (gm, c) = (3.986004418e14, 299792458.0_f64);
+    n(gm * (1.0 / a[0] - 1.0 / a[1]) / (c * c) * 86400.0 * 1000000.0)
+}
+
+pub fn gps_clock_correction(a: &[f64]) -> R {
+    n(a[0] + a[1])
+}

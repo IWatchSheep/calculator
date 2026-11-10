@@ -239,6 +239,16 @@ SPECS = {
         "joins": ["→", "→", "→"],
         "links": [((1, (2,)), (0, (1,))), ((2, (1,)), (0, (1,))), ((2, (3,)), (1, (3,)))],
     },
+    "physics/physics/gps_clock_correction": {
+        "title": "GPS satellite clock correction. Row 1 is the Lorentz factor γ at the satellite's speed (about 3874 m/s). Row 2 reads that γ and gives the special-relativity part: a moving clock runs slow, about −7 microseconds per day. Row 3 gives the gravitational part from the two radii typed there: a clock higher in the Earth's gravity runs fast, about +45 microseconds per day. Row 4 adds the two parts: the kinematic part from Row 2 and the gravitational part from Row 3, about +38 microseconds per day. The rows are joined by →: the answer is the last row's answer, the correction to add.",
+        "rows": [
+            {"op": "physics/physics/lorentz_factor", "title": "The Lorentz factor at the satellite's speed."},
+            {"op": "physics/physics/gps_kinematic_clock", "title": "Special relativity, about −7 microseconds per day. The γ box reads Row 1.", "fill": {0: {"chain": 0}}},
+            {"op": "physics/physics/gps_gravitational_clock", "title": "Gravity, about +45 microseconds per day. The two radii are typed here."},
+            {"op": "physics/physics/gps_clock_correction", "title": "The correction to add, about +38 microseconds per day. The kinematic part reads Row 2 and the gravitational part reads Row 3.", "fill": {0: {"chain": 1}, 1: {"chain": 2}}},
+        ],
+        "joins": ["→", "→", "→"],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

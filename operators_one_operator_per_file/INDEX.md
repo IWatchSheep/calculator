@@ -601,6 +601,17 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | PID integral term | Iout = Ki (I + e t) | Iout = Ki (I + e t)   (the integral contribution: this step's error is added before multiplying by Ki) | Ready | `physics/physics/pid_integral_term/` |
 | PID derivative | D = Kd (e − e₀) / t | D = Kd (e − e₀) / t   (the derivative contribution) | Ready | `physics/physics/pid_derivative/` |
 | PID output | P + I + D | P + I + D   (the sum of the three terms; the menu operator opens four rows joined by →, the answer is the last row) | Ready | `physics/physics/pid_sum/` |
+| Saturation | clamp | clamp(value, low, high)   (the value limited to the low and high ends) | Ready | `physics/physics/saturation/` |
+| Low-pass step | y + (t/(t+τ))(x − y) | y + (t / (t + τ)) (x − y)   (one step of a low-pass filter with time constant τ; the weight is t / (t + τ), not a typed α) | Ready | `physics/physics/low_pass_step/` |
+| Distance in 3D | |b − a| | |b − a|   (the straight-line distance between two points, in metres) | Ready | `physics/physics/distance_3d/` |
+| Time to collision | distance / closing speed | t = |r| / (−(r · v) / |r|)   (r is the obstacle minus the robot, v the robot's velocity; only when the closing speed is positive) | Ready | `physics/physics/time_to_collision/` |
+| Point inside a sphere | |p − c| ≤ R | 1 if the point is inside or on the sphere, 0 if it is outside | Ready | `physics/physics/point_inside_sphere/` |
+| Point inside a tree trunk | a vertical cylinder | 1 if the point is inside or on the vertical cylinder standing on z = 0 at (cx, cy), out to radius R and up to height h; 0 otherwise | Ready | `physics/physics/point_inside_cylinder/` |
+| Turn radius | r = v² / (g tan φ) | r = v² / (g tan φ)   (a level banked turn; φ in radians, positive to the left; a negative radius turns the other way; g = 9.81 m/s²) | Ready | `physics/physics/turn_radius/` |
+| Closing speed | −(r · v) / |r| | −(r · v) / |r|   (how fast the distance to a fixed obstacle is shrinking; positive means approaching) | Ready | `physics/physics/closing_speed/` |
+| GPS kinematic clock | (1/γ − 1) per day | (1/γ − 1) · 86400 · 1000000   (microseconds per day by which a moving clock runs behind a clock at rest; the answer is negative) | Ready | `physics/physics/gps_kinematic_clock/` |
+| GPS gravitational clock | GM (1/R − 1/r) / c² per day | GM (1/R − 1/r) / c² · 86400 · 10⁶   (microseconds per day by which a clock at radius r runs ahead of a clock at radius R; GM = 3.986004418e14 m³/s², c = 299792458 m/s) | Ready | `physics/physics/gps_gravitational_clock/` |
+| GPS clock correction | special plus gravitational | special + gravitational   (about +38 microseconds per day; the menu operator opens four rows joined by →, the answer is the last row) | Ready | `physics/physics/gps_clock_correction/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

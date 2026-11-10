@@ -1,6 +1,6 @@
 {
- "count": 584,
- "ready": 512,
+ "count": 595,
+ "ready": 523,
  "reference": 72,
  "operators": [
   {
@@ -19862,6 +19862,41 @@
    ]
   },
   {
+   "key": "physics/physics/closing_speed",
+   "name": "Closing speed",
+   "symbol": "−(r · v) / |r|",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "−(r · v) / |r|   (how fast the distance to a fixed obstacle is shrinking; positive means approaching)",
+   "status": "Ready",
+   "inputs": [
+    "position",
+    "velocity"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = − □ · □ / | □ |",
+   "compute_signature": "compute(position, velocity)",
+   "compute_params": [
+    {
+     "name": "position",
+     "kind": "required"
+    },
+    {
+     "name": "velocity",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/complementary_filter",
    "name": "Complementary filter",
    "symbol": "α(θ + ωt) + (1 − α)θₘ",
@@ -19912,7 +19947,18 @@
    "max_args": 5,
    "varargs": false,
    "arity": 5,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0,
+      0.1,
+      0.1,
+      0.02,
+      0.98
+     ],
+     "expected": 0.010200000000000002
+    }
+   ]
   },
   {
    "key": "physics/physics/compton_shift",
@@ -20068,7 +20114,22 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      7
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      7,
+      10
+     ],
+     "expected": -3
+    }
+   ]
   },
   {
    "key": "physics/physics/coulomb_s_law",
@@ -20607,6 +20668,41 @@
    ]
   },
   {
+   "key": "physics/physics/distance_3d",
+   "name": "Distance in 3D",
+   "symbol": "|b − a|",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "|b − a|   (the straight-line distance between two points, in metres)",
+   "status": "Ready",
+   "inputs": [
+    "a",
+    "b"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = | □ − □ |",
+   "compute_signature": "compute(a, b)",
+   "compute_params": [
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "b",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/double_slit_fringe_spacing",
    "name": "Double-slit fringe spacing",
    "symbol": "Δy = λL/d",
@@ -20989,6 +21085,105 @@
      "expected": 2
     }
    ]
+  },
+  {
+   "key": "physics/physics/gps_clock_correction",
+   "name": "GPS clock correction",
+   "symbol": "special plus gravitational",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "special + gravitational   (about +38 microseconds per day; the menu operator opens four rows joined by →, the answer is the last row)",
+   "status": "Ready",
+   "inputs": [
+    "special",
+    "gravitational"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + □",
+   "compute_signature": "compute(special, gravitational)",
+   "compute_params": [
+    {
+     "name": "special",
+     "kind": "required"
+    },
+    {
+     "name": "gravitational",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/gps_gravitational_clock",
+   "name": "GPS gravitational clock",
+   "symbol": "GM (1/R − 1/r) / c² per day",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "GM (1/R − 1/r) / c² · 86400 · 10⁶   (microseconds per day by which a clock at radius r runs ahead of a clock at radius R; GM = 3.986004418e14 m³/s², c = 299792458 m/s)",
+   "status": "Ready",
+   "inputs": [
+    "ground_radius",
+    "satellite_radius"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = GM ( 1 / □ − 1 / □ ) / c ² · 86400 · 1000000",
+   "compute_signature": "compute(ground_radius, satellite_radius)",
+   "compute_params": [
+    {
+     "name": "ground_radius",
+     "kind": "required"
+    },
+    {
+     "name": "satellite_radius",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/gps_kinematic_clock",
+   "name": "GPS kinematic clock",
+   "symbol": "(1/γ − 1) per day",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "(1/γ − 1) · 86400 · 1000000   (microseconds per day by which a moving clock runs behind a clock at rest; the answer is negative)",
+   "status": "Ready",
+   "inputs": [
+    "gamma"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( 1 / □ − 1 ) · 86400 · 1000000",
+   "compute_signature": "compute(gamma)",
+   "compute_params": [
+    {
+     "name": "gamma",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
   },
   {
    "key": "physics/physics/gravitation",
@@ -22243,7 +22438,34 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0,
+      0,
+      0.017453292519943295,
+      5
+     ],
+     "expected": [
+      111194.92664455874,
+      0,
+      5
+     ]
+    },
+    {
+     "args": [
+      1.0471975511965976,
+      0,
+      0.017453292519943295,
+      0
+     ],
+     "expected": [
+      55597.463322279385,
+      0,
+      0
+     ]
+    }
+   ]
   },
   {
    "key": "physics/physics/lorentz_factor",
@@ -22306,6 +22528,53 @@
      "expected": 1.25
     }
    ]
+  },
+  {
+   "key": "physics/physics/low_pass_step",
+   "name": "Low-pass step",
+   "symbol": "y + (t/(t+τ))(x − y)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "y + (t / (t + τ)) (x − y)   (one step of a low-pass filter with time constant τ; the weight is t / (t + τ), not a typed α)",
+   "status": "Ready",
+   "inputs": [
+    "previous",
+    "sample",
+    "dt",
+    "tau"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ + ( □ / ( □ + □ ) ) ( □ − □ )",
+   "compute_signature": "compute(previous, sample, dt, tau)",
+   "compute_params": [
+    {
+     "name": "previous",
+     "kind": "required"
+    },
+    {
+     "name": "sample",
+     "kind": "required"
+    },
+    {
+     "name": "dt",
+     "kind": "required"
+    },
+    {
+     "name": "tau",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
   },
   {
    "key": "physics/physics/magnetic_field_solenoid",
@@ -23395,7 +23664,17 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      0.5,
+      3,
+      1,
+      0.5
+     ],
+     "expected": 2
+    }
+   ]
   },
   {
    "key": "physics/physics/pid_integral_state",
@@ -23436,7 +23715,16 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      1,
+      3,
+      0.5
+     ],
+     "expected": 2.5
+    }
+   ]
   },
   {
    "key": "physics/physics/pid_integral_term",
@@ -23483,7 +23771,17 @@
    "max_args": 4,
    "varargs": false,
    "arity": 4,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      4,
+      1,
+      3,
+      0.5
+     ],
+     "expected": 10
+    }
+   ]
   },
   {
    "key": "physics/physics/pid_proportional",
@@ -23518,7 +23816,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      2,
+      3
+     ],
+     "expected": 6
+    }
+   ]
   },
   {
    "key": "physics/physics/pid_sum",
@@ -23552,6 +23858,103 @@
     },
     {
      "name": "d",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      6,
+      10,
+      2
+     ],
+     "expected": 18
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/point_inside_cylinder",
+   "name": "Point inside a tree trunk",
+   "symbol": "a vertical cylinder",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "1 if the point is inside or on the vertical cylinder standing on z = 0 at (cx, cy), out to radius R and up to height h; 0 otherwise",
+   "status": "Ready",
+   "inputs": [
+    "centre",
+    "radius",
+    "height",
+    "point"
+   ],
+   "input_kinds": [
+    "list",
+    "number",
+    "number",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = □ ∈ cylinder ( □ , □ , □ )",
+   "compute_signature": "compute(centre, radius, height, point)",
+   "compute_params": [
+    {
+     "name": "centre",
+     "kind": "required"
+    },
+    {
+     "name": "radius",
+     "kind": "required"
+    },
+    {
+     "name": "height",
+     "kind": "required"
+    },
+    {
+     "name": "point",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/point_inside_sphere",
+   "name": "Point inside a sphere",
+   "symbol": "|p − c| ≤ R",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "1 if the point is inside or on the sphere, 0 if it is outside",
+   "status": "Ready",
+   "inputs": [
+    "centre",
+    "radius",
+    "point"
+   ],
+   "input_kinds": [
+    "list",
+    "number",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = | □ − □ | ≤ □",
+   "compute_signature": "compute(centre, radius, point)",
+   "compute_params": [
+    {
+     "name": "centre",
+     "kind": "required"
+    },
+    {
+     "name": "radius",
+     "kind": "required"
+    },
+    {
+     "name": "point",
      "kind": "required"
     }
    ],
@@ -24711,6 +25114,47 @@
    ]
   },
   {
+   "key": "physics/physics/saturation",
+   "name": "Saturation",
+   "symbol": "clamp",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "clamp(value, low, high)   (the value limited to the low and high ends)",
+   "status": "Ready",
+   "inputs": [
+    "value",
+    "low",
+    "high"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = clamp ( □ , □ , □ )",
+   "compute_signature": "compute(value, low, high)",
+   "compute_params": [
+    {
+     "name": "value",
+     "kind": "required"
+    },
+    {
+     "name": "low",
+     "kind": "required"
+    },
+    {
+     "name": "high",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
    "key": "physics/physics/schwarzschild_radius",
    "name": "Schwarzschild radius",
    "symbol": "rₛ = 2GM/c²",
@@ -25344,6 +25788,41 @@
    ]
   },
   {
+   "key": "physics/physics/time_to_collision",
+   "name": "Time to collision",
+   "symbol": "distance / closing speed",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "t = |r| / (−(r · v) / |r|)   (r is the obstacle minus the robot, v the robot's velocity; only when the closing speed is positive)",
+   "status": "Ready",
+   "inputs": [
+    "position",
+    "velocity"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = | □ | / ( − ( □ · □ ) / | □ | )",
+   "compute_signature": "compute(position, velocity)",
+   "compute_params": [
+    {
+     "name": "position",
+     "kind": "required"
+    },
+    {
+     "name": "velocity",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/time_to_distance",
    "name": "Time to a distance",
    "symbol": "s = ut + ½at²",
@@ -25579,6 +26058,46 @@
      "expected": 0
     }
    ]
+  },
+  {
+   "key": "physics/physics/turn_radius",
+   "name": "Turn radius",
+   "symbol": "r = v² / (g tan φ)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r = v² / (g tan φ)   (a level banked turn; φ in radians, positive to the left; a negative radius turns the other way; g = 9.81 m/s²)",
+   "status": "Ready",
+   "inputs": [
+    "speed",
+    "bank"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ ² / ( g tan □ )",
+   "compute_signature": "compute(speed, bank, g=9.81)",
+   "compute_params": [
+    {
+     "name": "speed",
+     "kind": "required"
+    },
+    {
+     "name": "bank",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/velocity",
