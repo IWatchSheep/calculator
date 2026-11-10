@@ -87,7 +87,7 @@ def find_operator(name):
 
 
 def _box_count(key):
-    return sum(1 for kind, _ in rows.get(key).LEFT if kind == "box")
+    return row_tree.slot_count(rows.get(key))
 
 
 def _tokens(text):
@@ -246,25 +246,43 @@ def parse_math(text):
 
 def describe(node):
     """How the template reads, with brackets around nested parts, e.g.  '(2 + □) × 4'  (□ = an empty box)."""
-    parts, j = [], 0
+    parts, smap, b = [], row_tree.slot_map(node["mod"]), 0
     for kind, text in node["mod"].LEFT:
         if kind == "box":
-            slot = node["slots"][j]
-            j += 1
+            slot = node["slots"][smap[b]]
+            b += 1
             if isinstance(slot, dict):
                 inner = describe(slot)
-                first = slot["mod"].LEFT[0]
+                first = next((c for c in slot["mod"].LEFT if c[0] != "out"), ("op", ""))
                 parts.append(inner if first[0] == "op" and first[1].endswith("(") else "(" + inner + ")")
             else:
                 parts.append(slot if slot else "□")
         else:
-            parts.append(text)
-    return " ".join(parts)
+            parts.append((kind, text))
+    cards = node["mod"].LEFT
+    if any(k == "out" for k, _ in cards):                 # a formula "A = pi r^2": the template reads the right-hand side
+        eq = next((n for n, (k, t) in enumerate(cards) if k == "op" and t == "="), None)
+        if eq is not None:
+            parts = parts[eq + 1:]
+    lv = list(getattr(node["mod"], "LEVELS", None) or [])
+    lv = (lv[eq + 1:] if (any(k == "out" for k, _ in cards) and eq is not None) else lv)
+    pieces = []
+    for n, p in enumerate(parts):
+        if isinstance(p, tuple) and p[0] == "out":
+            continue
+        text = p if isinstance(p, str) else p[1]
+        level = lv[n] if n < len(lv) else 0
+        if level and pieces:                              # an exponent / subscript is its own card; written here as x^2 / x_n, attached to what it belongs to
+            pieces[-1] += ("^" if level < 0 else "_") + text
+        else:
+            pieces.append(text)
+    return " ".join(pieces)
 
 
 def empty_boxes(node):
     """How many boxes are still empty."""
-    return sum(1 for kind, t, _path in row_tree.flatten(node) if kind == "box" and not t)
+    # a variable the picture writes twice has two box cards for one input: count it once (cards of one input share a path)
+    return len({path for kind, t, path in row_tree.flatten(node) if kind == "box" and not t})
 
 
 # ---------------------------------------------------------------- saved templates (a small JSON file)

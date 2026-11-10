@@ -846,12 +846,13 @@ class NewPhysicsRowTests(unittest.TestCase):
             row = self.rows.get(key)
             params = [p.name for p in self.inspect.signature(get(key).compute).parameters.values()
                       if p.default is p.empty]
-            boxes = sum(1 for kind, _ in row.LEFT if kind == "box")
+            from operator_row_math import row_tree
             self.assertEqual(row.INPUTS, params, n)
             self.assertEqual(len(row.KINDS), len(params), n)
-            self.assertEqual(boxes, len(params), n)
+            self.assertEqual(row_tree.slot_count(row), len(params), n)           # one input per parameter (the picture may write a variable twice)
             self.assertEqual((row.KEY, row.CALC), (key, "ready"), n)
-            self.assertTrue(any(k == "box" for k, _ in row.RIGHT), n)
+            # the answer is shown in the formula's own answer box ({} on the left) or in the result box right of the row
+            self.assertTrue(any(k == "out" for k, _ in row.LEFT) or any(k == "box" for k, _ in row.RIGHT), n)
 
     def test_every_operator_has_a_calculator_button(self):
         import main
@@ -908,8 +909,8 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
     def _type_into_boxes(self, args):
         """Click each square box of Row 1 in turn (left to right) and type its number on the keypad."""
         app = self.app
-        paths = [p for kind, _t, p in app._cards(0) if kind == "box"]
-        self.assertEqual(len(paths), len(args), "the row has a different number of boxes than the call")
+        paths = sorted({p for kind, _t, p in app._cards(0) if kind == "box"})     # one path per input (a variable written twice has two cards)
+        self.assertEqual(len(paths), len(args), "the row has a different number of inputs than the call")
         for path, a in zip(paths, args):
             app.rows[0]["sel"] = path
             for ch in self._keys(a):
@@ -923,7 +924,7 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         self._type_into_boxes(args)
         app._equals()
         said = app.results.get("1.0", "end")
-        m = re.search(r"=\s+(\S+)\s+\(printed", said)
+        m = re.search(r"=\s+(\S+)\s+\((?:printed|shown)", said)          # "=  24     (shown in Row 1's answer card ...)"
         self.assertIsNotNone(m, f"{key}: no result in the window, it said: {said!r}")
         return float(m.group(1))
 
@@ -1079,7 +1080,7 @@ class TemplateMathTests(unittest.TestCase):
         self.assertEqual(d("(2 + 3) × 4"), "(2 + 3) × 4")
         self.assertEqual(d("2 + 3 × 4"), "2 + (3 × 4)")
         self.assertEqual(d("(□ + 3) * 2"), "(□ + 3) × 2")
-        self.assertEqual(d("Time dilation(1, x)"), "Time dilation( 1 , □ )")
+        self.assertEqual(d("Time dilation(1, x)"), "1 / √ ( 1 − □^2 / c^2 )")      # the row is the picture's formula: the template reads its right-hand side
 
     def test_empty_boxes(self):
         n = lambda t: self.tm.empty_boxes(self.tm.parse_math(t))

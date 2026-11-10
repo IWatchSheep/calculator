@@ -1,6 +1,6 @@
 """Row for the operator: Euler-Mascheroni constant
 
-Picture:      γ = lim (1 + 1/2 + … + 1 / □ − ln □)
+Picture:      γ = lim ( 1 + 1 / 2 + ··· + 1 / n − ln ( n ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/constants_and_relations/euler_mascheroni_constant
 """
@@ -12,18 +12,19 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Euler-Mascheroni constant'
 KEY = 'math/constants_and_relations/euler_mascheroni_constant'
-PATTERN = 'γ = lim (1 + 1/2 + … + 1 / □ − ln □)'
+PATTERN = 'γ = lim ( 1 + 1 / 2 + ··· + 1 / n − ln ( n ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+FRAC = [[], [], [], [], [], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'γ')]      # cards left of "="
-RIGHT = [('op', 'lim (1 + 1/2 + … + 1 /'), ('box', ''), ('op', '− ln'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'γ'), ('op', '='), ('op', 'lim'), ('op', '('), ('op', '1'), ('op', '+'), ('op', '1'), ('op', '/'), ('op', '2'), ('op', '+'), ('op', '···'), ('op', '+'), ('op', '1'), ('op', '/'), ('op', 'n'), ('op', '−'), ('op', 'ln'), ('op', '('), ('op', 'n'), ('op', ')'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

@@ -1,6 +1,6 @@
 """Row for the operator: Angle sum
 
-Picture:      sin(□ + □) = sin □ cos □ + cos □ sin □
+Picture:      sin ( □ + □ ) = sin ( □ ) × cos ( □ ) + cos ( □ ) × sin ( □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/trigonometry/angle_sum
 """
@@ -12,18 +12,19 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Angle sum'
 KEY = 'math/trigonometry/angle_sum'
-PATTERN = 'sin(□ + □) = sin □ cos □ + cos □ sin □'
+PATTERN = 'sin ( □ + □ ) = sin ( □ ) × cos ( □ ) + cos ( □ ) × sin ( □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['a', 'b']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'sin('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'sin'), ('box', ''), ('op', 'cos'), ('box', ''), ('op', '+ cos'), ('box', ''), ('op', 'sin'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'sin'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', '='), ('op', 'sin'), ('op', '('), ('box', ''), ('op', ')'), ('op', '×'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', '+'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', '×'), ('op', 'sin'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

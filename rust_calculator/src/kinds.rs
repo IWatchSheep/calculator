@@ -116,3 +116,44 @@ pub fn parse_kind(kind: &str, text: &str) -> Result<Value, String> {
         other => Err(format!("Unknown input type '{other}'.")),
     }
 }
+
+/// What can be typed in a box (id, title, how to type it, example): the Python `advanced_input.KINDS`.
+pub const KINDS: &[(&str, &str, &str, &str)] = &[
+    ("number", "Number", "One number.", "3.5"),
+    ("list", "List / vector of numbers", "Numbers separated by commas or spaces.", "1, 2, 3, 4"),
+    ("matrix", "Matrix", "Rows separated by ;  (or a new line). Numbers in a row separated by spaces or commas.", "1 2; 3 4"),
+    ("function", "Function of x", "Type it with x.  + - * / ** %   sin cos tan sqrt exp log abs pi e", "x**2 + 3*x"),
+    ("multi", "Function of several variables (x, y, z)", "Use x, y, z in that order.  For a gradient, give a list: [2*x, 2*y].", "x**2 + y**2"),
+    ("predicate", "True / false test on x", "A test using x:  >  <  >=  <=  ==  !=  and  or  not", "x > 2"),
+    ("set", "Set / group of items", "Items separated by commas. Numbers or names.", "1, 2, 3"),
+    ("pairs", "List of pairs (edges)", "Pairs in brackets, separated by commas.", "(0,1), (1,2), (2,0)"),
+    ("graph", "Graph (each vertex and its neighbours)", "Vertex: neighbours, one vertex per ;", "A: B, C; B: C; C: A"),
+    ("wgraph", "Weighted graph (neighbour=weight)", "Vertex: neighbour=weight, one vertex per ;", "A: B=4, C=1; B: C=2; C:"),
+    ("text", "Text (a formula to rewrite)", "A polynomial in x written normally.", "(x+1)(x-1)"),
+    ("setfamily", "Several sets", "Each set in braces, separated by commas.", "{1,2}, {2,3}, {1,2,3}, {}"),
+    ("item", "A number or a name", "One number or one name (a vertex, a group element).", "A"),
+];
+
+pub fn kind_title(kind: &str) -> &str {
+    KINDS.iter().find(|k| k.0 == kind).map_or(kind, |k| k.1)
+}
+
+pub fn example(kind: &str) -> &'static str {
+    KINDS.iter().find(|k| k.0 == kind).map_or("", |k| k.3)
+}
+
+pub fn how_to_type(kind: &str) -> &'static str {
+    KINDS.iter().find(|k| k.0 == kind).map_or("", |k| k.2)
+}
+
+#[cfg(test)]
+mod kind_table_tests {
+    use super::*;
+
+    #[test]
+    fn every_example_parses_as_its_own_kind() {
+        for (id, _t, _h, ex) in KINDS {
+            assert!(parse_kind(id, ex).is_ok(), "{id}: {ex}");
+        }
+    }
+}

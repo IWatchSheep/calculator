@@ -1,6 +1,6 @@
 """Row for the operator: Omega ordinal
 
-Picture:      0, 1, 2, … → ω
+Picture:      0 , 1 , 2 , … → ω
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/category_theory_and_foundations/omega_ordinal
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Omega ordinal'
 KEY = 'math/category_theory_and_foundations/omega_ordinal'
-PATTERN = '0, 1, 2, … → ω'
+PATTERN = '0 , 1 , 2 , … → ω'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '0, 1, 2, … → ω')]      # cards left of "="
+LEFT = [('op', '0'), ('op', ','), ('op', '1'), ('op', ','), ('op', '2'), ('op', ','), ('op', '…'), ('op', '→'), ('op', 'ω')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

@@ -6,7 +6,7 @@ Equation: x + (4x + 20) = 90
 Solve   : 5x = 70 → x = 14
 Answer  : 14° and 76°
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: complementary_supplementary answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + (4x + 20) = 90'
 SOLVE = '5x = 70 → x = 14'
 ANSWER = '14° and 76°'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'complementary_supplementary'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two angles are complementary. One angle is {0} more than {1} times the other. Find both angles.'
 NUMBERS = ['20', '4']

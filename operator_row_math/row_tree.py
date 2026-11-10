@@ -9,7 +9,11 @@ import math
 import types
 
 import operator_row_math
+import operator_row_math_for_algebra_word_problems as word_rows
+import operators_one_algebra_word_problem_per_file as word_library
 import operators_one_operator_per_file as library
+
+WORD_PREFIX = "word:"      # a node key "word:savings/0848" is an algebra word problem, not an operator
 
 
 # a plain number used as a whole row (e.g. the "× □" after a bracket)
@@ -26,6 +30,8 @@ JOINS = {
 
 def join(symbol, a, b):
     """Combine two row results with a join symbol; raises ValueError for things like ÷ 0."""
+    if isinstance(a, (list, tuple, set, frozenset, dict)) or isinstance(b, (list, tuple, set, frozenset, dict)):
+        raise ValueError("Can't join those two results with %s: a list of answers can't be joined (Python would repeat or glue the lists)." % symbol)
     try:
         return JOINS[symbol](a, b)
     except ZeroDivisionError:
@@ -42,28 +48,101 @@ def build_node(spec):
     return node
 
 
+def slot_map(mod):
+    """For each box card of the row's LEFT cards (left to right): which input (slot) it shows.  A formula that writes a variable twice, like the r in
+    A = pi r (r + l), has two box cards for one input: mod.SLOTS = [0, 0, 1].  Without SLOTS the k-th box is slot k."""
+    n = sum(1 for kind, _ in mod.LEFT if kind == "box")
+    return list(getattr(mod, "SLOTS", None) or range(n))
+
+
+def slot_count(mod):
+    """How many inputs the operator has (the number of distinct slots, not of box cards)."""
+    m = slot_map(mod)
+    return max(m) + 1 if m else 0
+
+
+def inputs_in_box_order(mod):
+    """The operator's input names in the order its boxes appear on the row (a repeated variable is named once)."""
+    names, seen = [], set()
+    for j in slot_map(mod):
+        if j not in seen and j < len(mod.INPUTS):
+            seen.add(j)
+            names.append(mod.INPUTS[j])
+    return names
+
+
+def clear_outputs(node):
+    """Forget the answers shown in the answer boxes (something was changed)."""
+    if isinstance(node, dict) and "mod" in node:
+        node.pop("out", None)
+        for slot in node["slots"]:
+            clear_outputs(slot)
+
+
 def new_node(key):
     if key == "_number":
         return {"key": key, "mod": NUMBER, "slots": [""]}
-    mod = operator_row_math.get(key)
-    return {"key": key, "mod": mod, "slots": [""] * sum(1 for kind, _ in mod.LEFT if kind == "box")}
+    mod = word_rows.get(key[len(WORD_PREFIX):]) if key.startswith(WORD_PREFIX) else operator_row_math.get(key)
+    count = slot_count(mod)
+    # a word problem starts with its own numbers in the boxes (change them and press =); an operator starts empty
+    slots = [str(d) for d in mod.DEFAULTS] if key.startswith(WORD_PREFIX) and len(getattr(mod, "DEFAULTS", [])) == count else [""] * count
+    return {"key": key, "mod": mod, "slots": slots}
 
 
 def flatten(node, path=()):
     """Cards left to right: [(kind, text, path)].  Box cards carry the path of the slot they show."""
-    out, j = [], 0
-    for kind, text in node["mod"].LEFT:
+    return [card for card, _level in _walk(node, path)]
+
+
+def fracs(node):
+    """For every card of flatten(node): the fractions it is inside (see layout.group_fractions), as a list of (group, part)."""
+    return [frac for _card, _level, frac in _walk3(node)]
+
+
+def levels(node):
+    """The grid row of every card of flatten(node), as an offset from the main line: -1 above (an exponent), +1 below (a subscript), 0 on the line."""
+    return [level for _card, level, _frac in _walk3(node)]
+
+
+def _walk(node, path=()):
+    return [(card, level) for card, level, _frac in _walk3(node, path)]
+
+
+def _walk3(node, path=(), outer=()):
+    """[(card, level, fraction path)] for every card of the node, nested operators included.  `outer` = the fractions the node's own box sits in."""
+    out, smap, b, seen, o = [], slot_map(node["mod"]), 0, set(), 0
+    lv = getattr(node["mod"], "LEVELS", None) or []
+    fr = getattr(node["mod"], "FRAC", None) or []
+    for n, (kind, text) in enumerate(node["mod"].LEFT):
+        level = lv[n] if n < len(lv) else 0
+        own = tuple(outer) + tuple(((path, g), part) for g, part in (fr[n] if n < len(fr) else ()))
         if kind == "box":
+            j = smap[b]
+            b += 1
             slot = node["slots"][j]
+            if j in seen:                     # the same variable written again: a copy of the box, it shows (and selects) the same slot
+                if isinstance(slot, dict) and "adv" in slot:
+                    out.append((("box", slot["label"], path + (j,)), level, own))
+                elif isinstance(slot, dict):
+                    out.append((("box", slot["mod"].NAME, path + (j,)), level, own))
+                else:
+                    out.append((("box", slot, path + (j,)), level, own))
+                continue
+            seen.add(j)
             if isinstance(slot, dict) and "adv" in slot:
-                out.append(("box", slot["label"], path + (j,)))
+                out.append((("box", slot["label"], path + (j,)), level, own))
             elif isinstance(slot, dict):
-                out.extend(flatten(slot, path + (j,)))
+                out.extend((card, lvl + level, frac) for card, lvl, frac in _walk3(slot, path + (j,), own))
             else:
-                out.append(("box", slot, path + (j,)))
-            j += 1
+                out.append((("box", slot, path + (j,)), level, own))
+        elif kind == "dec":                   # a box the picture draws that is not an input (the second box of A (+) B): shown, never typed into
+            out.append((("dec", text, None), level, own))
+        elif kind == "out":                   # the answer box of the formula, e.g. the A of A = pi r^2: filled in by =, never typed into
+            shown = node.get("out", "")
+            out.append((("out", shown[o] if isinstance(shown, list) else shown, None), level, own))
+            o += 1
         else:
-            out.append(("op", text, None))
+            out.append((("op", text, None), level, own))
     return out
 
 
@@ -117,7 +196,17 @@ def fmt(x):
 
 
 def evaluate(node):
-    """Calculate the tree.  Raises ValueError(message) when it can't."""
+    """Calculate the tree and remember the answer in the node's answer box (if the formula has one).  Raises ValueError(message) when it can't."""
+    result = _evaluate(node)
+    outs = sum(1 for kind, _ in node["mod"].LEFT if kind == "out")
+    if outs > 1 and isinstance(result, (tuple, list)) and len(result) == outs:
+        node["out"] = [fmt(v) for v in result]        # (x1, x2) = ...: each answer box shows its own answer
+    elif outs:
+        node["out"] = fmt(result)
+    return result
+
+
+def _evaluate(node):
     mod = node["mod"]
     if mod.CALC == "reference":
         raise ValueError("%s is reference only: it shows the formula but can't calculate yet." % mod.NAME)
@@ -127,7 +216,7 @@ def evaluate(node):
             vals.append(slot["value"])
         elif isinstance(slot, dict):
             v = evaluate(slot)
-            if mod.CALC == "advanced":
+            if mod.CALC == "advanced" or node["key"] == "_number":      # the plain number around a row passes any result through (several answers come back as a list)
                 vals.append(v)
                 continue
             if isinstance(v, bool) or not isinstance(v, (int, float, complex)):
@@ -146,8 +235,17 @@ def evaluate(node):
     if node["key"] == "_number":
         return vals[0]
     try:
+        if node["key"].startswith(WORD_PREFIX):
+            # the boxes are the numbers of the equation that are also in the problem text; the other text numbers stay as written
+            problem = word_library.get(node["key"][len(WORD_PREFIX):])
+            full = list(problem.NUMBERS)
+            for place, value in zip(mod.BOX_INDEX, vals):
+                full[place] = value
+            return problem.compute(*full)
         return library.get(node["key"]).compute(*vals)
     except ZeroDivisionError:
         raise ValueError("Division by zero.")
+    except NotImplementedError as e:
+        raise ValueError("%s is reference only: %s" % (mod.NAME, e))
     except (ValueError, OverflowError, TypeError, KeyError, IndexError, AttributeError) as e:
         raise ValueError("%s can't calculate that: %s" % (mod.NAME, e))

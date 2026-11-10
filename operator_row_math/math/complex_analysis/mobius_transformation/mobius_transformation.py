@@ -1,6 +1,6 @@
 """Row for the operator: Mobius transformation
 
-Picture:      f(□) = (□□ + □) / (□□ + □)
+Picture:      f ( □ ) = ( □ □ + □ ) / ( □ □ + □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/complex_analysis/mobius_transformation
 """
@@ -12,18 +12,20 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Mobius transformation'
 KEY = 'math/complex_analysis/mobius_transformation'
-PATTERN = 'f(□) = (□□ + □) / (□□ + □)'
+PATTERN = 'f ( □ ) = ( □ □ + □ ) / ( □ □ + □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['a', 'b', 'c', 'd', 'z']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [4, 0, 4, 1, 2, 4, 3]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+FRAC = [[], [], [], [], [], [[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Mobius transformation('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '('), ('box', ''), ('box', ''), ('op', '+'), ('box', ''), ('op', ') / ('), ('box', ''), ('box', ''), ('op', '+'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', '('), ('box', ''), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', '/'), ('op', '('), ('box', ''), ('box', ''), ('op', '+'), ('box', ''), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

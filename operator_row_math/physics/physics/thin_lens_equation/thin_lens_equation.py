@@ -19,11 +19,12 @@ PATTERN = '1 / □ = 1 / □ + 1 / □'
 CALC = 'ready'
 INPUTS = ['f', 'd_o']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+FRAC = [[[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [], [[3, 'n']], [[3, 'bar']], [[3, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Thin lens equation('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '1 /'), ('box', ''), ('op', '+ 1 /'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '1'), ('op', '/'), ('box', ''), ('op', '='), ('op', '1'), ('op', '/'), ('box', ''), ('op', '+'), ('op', '1'), ('op', '/'), ('out', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

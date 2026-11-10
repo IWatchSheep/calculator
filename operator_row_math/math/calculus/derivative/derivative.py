@@ -1,6 +1,6 @@
 """Row for the operator: Derivative
 
-Picture:      f′(□) = lim{□→0} (f(□+□) − f(□−□)) / 2□
+Picture:      □ = lim ( h → 0 ) ( ( □ ( □ + h ) − □ ( □ ) ) / h )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/derivative
 """
@@ -12,18 +12,20 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Derivative'
 KEY = 'math/calculus/derivative'
-PATTERN = 'f′(□) = lim{□→0} (f(□+□) − f(□−□)) / 2□'
+PATTERN = '□ = lim ( h → 0 ) ( ( □ ( □ + h ) − □ ( □ ) ) / h )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['f', 'x']    # what each box (left to right) is
 KINDS = ['function', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+FRAC = [[], [], [], [], [], [], [], [], [], [[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'd/dx('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'lim{'), ('box', ''), ('op', '→0} (f('), ('box', ''), ('op', '+'), ('box', ''), ('op', ') − f('), ('box', ''), ('op', '−'), ('box', ''), ('op', ')) / 2'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', 'lim'), ('op', '('), ('op', 'h'), ('op', '→'), ('op', '0'), ('op', ')'), ('op', '('), ('op', '('), ('box', ''), ('op', '('), ('box', ''), ('op', '+'), ('op', 'h'), ('op', ')'), ('op', '−'), ('box', ''), ('op', '('), ('box', ''), ('op', ')'), ('op', ')'), ('op', '/'), ('op', 'h'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

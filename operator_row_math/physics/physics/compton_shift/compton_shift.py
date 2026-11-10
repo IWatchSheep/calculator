@@ -1,6 +1,6 @@
 """Row for the operator: Compton wavelength shift
 
-Picture:      □ = h / (m × c) × (1 − cos(□))
+Picture:      □ = h / ( m × c ) × ( 1 − cos ( □ ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/compton_shift
 """
@@ -12,18 +12,19 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Compton wavelength shift'
 KEY = 'physics/physics/compton_shift'
-PATTERN = '□ = h / (m × c) × (1 − cos(□))'
+PATTERN = '□ = h / ( m × c ) × ( 1 − cos ( □ ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['theta']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+FRAC = [[], [], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Compton wavelength shift('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'h / (m × c) × (1 − cos('), ('box', ''), ('op', '))')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', 'h'), ('op', '/'), ('op', '('), ('op', 'm'), ('op', '×'), ('op', 'c'), ('op', ')'), ('op', '×'), ('op', '('), ('op', '1'), ('op', '−'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

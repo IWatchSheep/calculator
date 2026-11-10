@@ -2972,6 +2972,12 @@ def kinematics_time(problem):
 # ---------------------------------------------------------------------------------------------------------
 _PIPE_IN = re.compile(r"\bin\s+(\d+(?:\.\d+)?)\s+(hours?|minutes?|days?)\b")
 _PIPE_FILL_WORD = re.compile(r"\b(?:pipe|fills?|inlet|tap|faucet|hose)\b")
+# what may stay in the "everything is open" statement once the phrase is taken out, and the words that hang another clause on the question
+_PIPE_FILLER = {"if", "when", "with", "then", "together", "now", "at", "the", "same", "time", "once", "all", "both", "are", "is", "be"}
+_PIPE_HANG_ON = {"if", "when", "while", "as", "with", "and", "also", "too", "but", "since", "because", "once", "after", "before", "until", "plus", "besides", "even", "still", "in", "through", "from", "into", "by"}
+_PIPE_VESSEL = {"tank", "pool", "tub", "bathtub", "cistern", "basin", "reservoir", "barrel", "drum", "bucket", "vat", "trough", "pond", "container", "bath", "sink", "pot"}
+_PIPE_ENDING = {"up", "it", "them", "the", "a", "an", "this", "that", "empty", "whole", "entire", "completely", "fully", "entirely", "one", "all", "swimming", "water", "storage", "big", "large", "small"}
+_PIPE_ASK = {"how", "long", "does", "do", "did", "will", "would", "should", "can", "could", "it", "they", "them", "take", "takes", "to", "for", "the", "a", "an", "this", "that", "all", "up", "empty", "whole", "entire", "tank", "pool", "tub", "bathtub", "cistern", "basin", "reservoir", "barrel", "drum", "bucket", "vat", "trough", "pond", "container", "bath", "sink", "pot"}
 _PIPE_DRAIN_WORD = re.compile(r"\b(?:drain|drains|empties|empty|leak\w*|outlet)\b")
 
 
@@ -3006,6 +3012,40 @@ def pipes_and_drain(problem):
     # ... and nothing in the problem may turn something off or negate it
     cue_phrase = re.compile(devices + r"\s+(?:(?:are|is|being|stay|stays|remain|remains)\s+)?(?:all\s+)?" + state + r"\b")
     for sent in re.split(r"[.?!]", t):
+        if not sent.strip():
+            continue
+        times = list(_PIPE_IN.finditer(sent))
+        if times:
+            # the time clause has to END the sentence: "A drain empties it in 12 hours and is pinched." / "... and is full of leaves." say more about the device
+            if sent[times[-1].end():].strip(" ,;"):
+                return None
+        else:
+            # a sentence that gives no time is the "everything is open" statement or the question, and nothing more: a sentence that is neither is something else going on
+            # ("Water also leaves through a crack." is another way out), and so is anything added to the statement ("... and water also leaves through a crack") or to the question
+            # ("... if rain also falls in").  What is left of the statement once the open phrase is taken out may only be small filler words; the question may not hang a clause on
+            # (no "if / when / while / and / also / as well" after "how long").
+            lead = r"(?:\b(?:with|if|when|once)\s+)?"
+            opened = re.sub(lead + cue_phrase.pattern, " ", sent)                       # the open phrase may sit in the question too: "... fill the pool with all three open?"
+            opened = re.sub(r"(?:^|" + lead + r")\s*all " + state + r"\b", " ", opened)
+            q = re.search(r"\bhow long\b", opened)
+            if opened == sent and not q:
+                return None                                      # it does not open the devices and asks nothing
+            if set(re.findall(r"[a-z']+", opened[:q.start()] if q else opened)) - _PIPE_FILLER:
+                return None
+            if q and set(re.findall(r"[a-z']+", opened[q.start():])) & _PIPE_HANG_ON:
+                return None
+            if q:
+                # once the question has named the thing being filled it has to END ("... fill the tank during a storm / under a downpour / amid the rain" is something else going on)
+                fm = re.search(r"\bfill\b(.*)$", opened[q.start():], flags=re.S)
+                if fm:
+                    # ... and so does the way in: between "how long" and "fill" only the plain question words may stand ("How long does it take to fill", "How long will it take for the tank to fill"),
+                    # not a storm named on the way ("How long does it take during a storm to fill the pool?", "How long, during a storm, does it take to fill the pool?")
+                    if set(re.findall(r"[a-z']+", opened[q.start():q.start() + fm.start()])) - _PIPE_ASK:
+                        return None
+                    tail = re.findall(r"[a-z']+", fm.group(1))
+                    named = [k for k, w in enumerate(tail) if w in _PIPE_VESSEL]
+                    if (set(tail[named[0] + 1:]) if named else set(tail)) - _PIPE_ENDING:
+                        return None
         if _PIPE_DRAIN_WORD.search(sent) and not _PIPE_IN.search(sent):
             # a sentence about the drain that is not the clause giving its time: it may only be the "everything is open" phrase itself, and nothing else about the drain may
             # remain once that phrase is taken out ("The drain is covered.", "The drain is pinched.", "All three are open and the drain is full of leaves.")
@@ -3025,6 +3065,83 @@ def pipes_and_drain(problem):
                   "%s = %s of the pool per %s, so it takes 1 / %s = %s %ss" % (eq, show_exact(rate), unit, show_exact(rate), show_exact(tt), unit))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# 56. a percent spent, with money or fuel left:   x - p% x = left      (the generator's "Yara spent 75% of a paycheck on rent and had $280 left")
+# ---------------------------------------------------------------------------------------------------------
+_SPENT_AT_FIRST = r"(?: at first| originally| to begin with)?"
+_SPENT_MONEY = re.compile(r"^[a-z]+ spent " + NUM + r"% of (?:a|the|his|her|their|my|our) ([a-z]+)(?: on [a-z]+)? and (?:had|has|have) \$" + NUM + r" left\. how much was the \2" + _SPENT_AT_FIRST + r"\?$")
+_SPENT_FUEL = re.compile(r"^after (?:using|burning) " + NUM + r"% of the ([a-z]+) in (?:a|the) ([a-z]+), " + NUM + r" (?:liters?|litres?|gallons?) (?:remain|remains|remained|are left|were left)\. how much \2 was there" + _SPENT_AT_FIRST + r"\?$")
+
+
+def percent_spent_left(problem):
+    t = clean(problem).strip()
+    if n_numbers(problem) != 2 or t.count("%") != 1:
+        return None
+    m = _SPENT_MONEY.match(t)
+    if m:
+        pct, left, what = fr(m.group(1)), fr(m.group(3)), "money"
+    else:
+        m = _SPENT_FUEL.match(t)
+        if not m:
+            return None
+        pct, left, what = fr(m.group(1)), fr(m.group(4)), m.group(2)
+    if not (0 < pct < 100) or left <= 0:
+        return None
+    x = left * 100 / (100 - pct)
+    eq = "x - %s%% of x = %s" % (show(pct), show(left))
+    return Result("percent_spent_left", [x], eq,
+                  "%s%% was not spent, so x = %s / %s%% = %s" % (show_exact(100 - pct), show(left), show_exact(100 - pct), show_exact(x)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 57. a price times a count, minus a coupon:   p n - c = paid      (the generator's "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00")
+# ---------------------------------------------------------------------------------------------------------
+_COUPON = re.compile(r"^([a-z]+(?: [a-z]+){0,3}) cost \$" + NUM + r" each\. with a \$" + NUM + r" coupon, [a-z]+ paid \$" + NUM + r"\. how many \1 were bought\?$")
+
+
+def price_minus_coupon(problem):
+    t = clean(problem).strip()
+    m = _COUPON.match(t)
+    if not m or n_numbers(problem) != 3:
+        return None
+    price, coupon, paid = fr(m.group(2)), fr(m.group(3)), fr(m.group(4))
+    if price <= 0 or coupon <= 0 or paid <= 0 or coupon > paid:
+        return None
+    n = (paid + coupon) / price
+    if n.denominator != 1 or n <= 0:
+        return None
+    eq = "%sn - %s = %s" % (show(price), show(coupon), show(paid))
+    return Result("price_minus_coupon", [n], eq, "%s, so %sn = %s and n = %s" % (eq, show(price), show(paid + coupon), show_exact(n)))
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 58. complementary and supplementary angles:   x + (k x +- c) = 90 or 180      (the generator's "Two angles are complementary. One angle is 12 less than 5 times the other.")
+# ---------------------------------------------------------------------------------------------------------
+_COMPSUPP = re.compile(r"^two angles are (complementary|supplementary)\. one angle is (?:" + NUM + r" (more|less) than )?" + NUM +
+                       r" times the other(?: angle)?\. (?:find (?:both|the two) angles\.?|what are (?:both|the two) angles\?)$")
+
+
+def complementary_supplementary(problem):
+    t = clean(problem).strip()
+    m = _COMPSUPP.match(t)
+    if not m:
+        return None
+    if n_numbers(problem) != (2 if m.group(2) else 1):
+        return None
+    total = Fraction(90 if m.group(1) == "complementary" else 180)
+    c = (fr(m.group(2)) * (1 if m.group(3) == "more" else -1)) if m.group(2) else Fraction(0)
+    k = fr(m.group(4))
+    if k <= 0:
+        return None
+    x = (total - c) / (k + 1)
+    other = k * x + c
+    if x <= 0 or other <= 0:
+        return None
+    eq = "x + (%sx %s %s) = %s" % (show(k), "-" if c < 0 else "+", show(abs(c)), show(total))
+    return Result("complementary_supplementary", [x, other], eq,
+                  "%s, so %sx = %s and x = %s; the angle described is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -3040,7 +3157,8 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             base_plus_extra_over_time, distance_speed_time,
             pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
             temperature_whole_hours, two_candles_equal, transversal_equal_angles,
-            class_ratio_after_join, kinematics_time, pipes_and_drain]
+            class_ratio_after_join, kinematics_time, pipes_and_drain,
+            percent_spent_left, price_minus_coupon, complementary_supplementary]
 
 
 def solve(problem):

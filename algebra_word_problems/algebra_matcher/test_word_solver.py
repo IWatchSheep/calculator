@@ -2387,6 +2387,111 @@ class FreshWordings(unittest.TestCase):
         self.assertEqual(s43, (2, 0, 5))
         self.assertEqual(s44, (2, 0, 7))
 
+    def test_pipes_the_time_clause_ends_the_sentence_and_nothing_else_goes_on(self):
+        """"A drain empties it in 12 hours and is pinched." and "... and is full of leaves." were answered 12/5, and so was "Water also leaves through a crack." (another way out
+        with no rate).  The time clause has to END its sentence, and a sentence that gives no time, asks nothing and does not open the devices declines the problem."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours"
+        ask = " How long does it take to fill the tank?"
+        self.assertEqual(answers(base + ". All three are open." + ask), values(Fraction(12, 5)))             # the time clause ends there
+        self.assertEqual(answers(base + ". With all three open, how long does it take to fill the tank?"), values(Fraction(12, 5)))
+        for q in (base + " and is pinched. All three are open." + ask, base + " and is full of leaves. All three are open." + ask,
+                  base + ", and it is old. All three are open." + ask,
+                  base + ". All three are open. Water also leaves through a crack." + ask, base + ". Water also leaves through a crack. All three are open." + ask,
+                  base + ". All three are open. Rain also falls in." + ask):
+            self.assertIsNone(answers(q), q)
+
+    def test_pipes_time_clause_set(self):
+        """Set 45 (9 wordings) was written after the batch-41 fixes and run once, untuned: 2 solved, 7 required declines, 0 wrong."""
+        from fresh_word_problems_45 import FRESH
+        self.assertEqual(score(FRESH), (2, 0, 7))
+
+    def test_pipes_the_open_statement_and_the_question_carry_nothing_else(self):
+        """The same extra water got through when it was said INSIDE the "all open" sentence or the question: "All three are open and water also leaves through a crack." and
+        "... how long does it take to fill the tank if water also leaves through a crack?" were answered 12/5.  What is left of the statement once the open phrase is taken out may
+        only be small filler words, and the question may not hang a clause on (if / when / while / and / also / as ...)."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours. "
+        ask = " How long does it take to fill the tank?"
+        for q in ("All three are open." + ask, "With all three open, how long does it take to fill the tank?", "All three are open, how long does it take to fill the tank?",
+                  "How long does it take to fill the tank with all three open?", "All three are open together." + ask):
+            self.assertEqual(answers(base + q), values(Fraction(12, 5)), q)
+        for q in ("All three are open and water also leaves through a crack." + ask,
+                  "All three are open. How long does it take to fill the tank if water also leaves through a crack?",
+                  "With all three open, how long does it take to fill the tank if rain also falls in?",
+                  "How long does it take to fill the tank with all three open and rain falling in?",
+                  "All three are open while it is raining." + ask):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_open_statement_set(self):
+        """Set 46 (9 wordings) was written after the batch-42 fixes and run once, untuned: 3 solved, 6 required declines, 0 wrong."""
+        from fresh_word_problems_46 import FRESH
+        self.assertEqual(score(FRESH), (3, 0, 6))
+
+    def test_pipes_the_question_ends_once_it_names_what_is_filled(self):
+        """Extra water said in a phrase the batch-42 list did not hold still got through: "How long does it take to fill the tank during a storm / under a downpour / amid the rain?"
+        was answered 12/5.  Once the question has named the tank, the pool or the tub, it has to END (only up / completely / the / empty ... may follow); the "with all three open" phrase is
+        taken out before this check, so "... fill the tank with all three open?" still answers."""
+        base = "Pipe A fills a tank in 6 hours, pipe B in 3 hours, and a drain empties it in 12 hours. "
+        for q in ("All three are open. How long does it take to fill the tank?", "With all three open, how long does it take to fill the tank?",
+                  "How long does it take to fill the tank with all three open?", "All three are open. How long does it take to fill it?"):
+            self.assertEqual(answers(base + q), values(Fraction(12, 5)), q)
+        for q in ("All three are open. How long does it take to fill the tank during a storm?", "All three are open. How long does it take to fill the tank under a downpour?",
+                  "All three are open. How long does it take to fill the tank amid the rain?", "All three are open. How long does it take to fill the tank overnight?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_question_end_set(self):
+        """Set 47 (9 wordings) was written after the batch-43 fix and run once, untuned: 2 solved, 1 declined (safe: "fill the EMPTY pool" is declined by the older rule against a
+        question that asks to empty), 6 required declines, 0 wrong."""
+        from fresh_word_problems_47 import FRESH
+        self.assertEqual(score(FRESH), (2, 1, 6))
+
+    def test_pipes_the_question_words_before_fill_are_the_plain_ones(self):
+        """A storm named BEFORE "fill" still got the plain answer: "How long does it take during a storm to fill the pool?" and "How long, during a storm, does it take to fill the pool?"
+        were answered 6.  Between "how long" and "fill" only the plain question words may stand (does / will / it / take / to / for / the / the vessel ...); the open phrase is taken out first."""
+        base = "Pipe A fills a pool in 4 hours, pipe B in 12 hours, and a drain empties it in 6 hours. "
+        for q in ("All three are open. How long does it take to fill the pool?", "How long does it take to fill the pool with all three open?",
+                  "All three are open. How long does it take to fill it?", "All three are open. How long will it take for the pool to fill?"):
+            self.assertEqual(answers(base + q), values(Fraction(6)), q)
+        for q in ("All three are open. How long does it take during a storm to fill the pool?", "All three are open. How long, during a storm, does it take to fill the pool?"):
+            self.assertIsNone(answers(base + q), q)
+
+    def test_pipes_question_words_set(self):
+        """Set 48 (9 wordings) was written after the batch-44 fix and run once, untuned: 3 solved, 6 required declines, 0 wrong."""
+        from fresh_word_problems_48 import FRESH
+        self.assertEqual(score(FRESH), (3, 0, 6))
+
+    def test_percent_spent_left(self):
+        """"Yara spent 75% of a paycheck on rent and had $280 left" is $1120 (the $280 is the 25% not spent); the same for fuel.  The percent is above 0 and below 100, the amount left is positive,
+        and a second amount, a different question word or a changed noun declines."""
+        self.assertEqual(answers("Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck?"), values(1120))
+        self.assertEqual(answers("After using 75% of the fuel in a tank, 280 liters remain. How much fuel was there at first?"), values(1120))
+        for bad in ("Yara spent 100% of a paycheck on rent and had $280 left. How much was the paycheck?", "Yara spent 0% of a paycheck on rent and had $280 left. How much was the paycheck?",
+                    "Yara spent 75% of a paycheck on rent and had $0 left. How much was the paycheck?", "Yara spent 75% of a paycheck on rent and $20 on food and had $280 left. How much was the paycheck?",
+                    "Yara spent 75% of a paycheck on rent and had $280 left. How much was the rent?", "After using 75% of the fuel in a tank, 280 liters remain. How much was used?"):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_price_minus_coupon(self):
+        """"Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00" is 14 (3.5n - 3 = 46).  The count is a positive whole number and a coupon larger than the amount paid declines."""
+        self.assertEqual(answers("Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?"), values(14))
+        self.assertEqual(answers("Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought?"), values(3))
+        for bad in ("Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?", "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $47.00. How many notebooks were bought?",
+                    "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many pens were bought?"):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_complementary_and_supplementary_angles(self):
+        """"Two angles are complementary. One angle is 12 less than 5 times the other." is 17 and 73; supplementary angles add to 180; "more than" adds and "less than" subtracts; both are positive."""
+        self.assertEqual(answers("Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles."), values(17, 73))
+        self.assertEqual(answers("Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles."), values(31, 149))
+        self.assertEqual(answers("Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles."), values(14, 76))
+        for bad in ("Two angles are complementary. One angle is 120 more than 4 times the other. Find both angles.", "Two angles are complementary. One angle is 12 less than 5 times the other. Find the smaller angle.",
+                    "Two angles are complementary. One angle is 12 less than 5 times the other, and the third is 4. Find both angles."):
+            self.assertIsNone(answers(bad), bad)
+
+    def test_percent_coupon_angle_set(self):
+        """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 6 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 8 required declines,
+        0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected."""
+        from fresh_word_problems_49 import FRESH
+        self.assertEqual(score(FRESH), (6, 1, 8))
+
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
         self.assertEqual(score(FRESH), (3, 1, 4))

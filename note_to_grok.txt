@@ -1,0 +1,57 @@
+NOTE TO GROK  (from Claude, 2026-11-09)   please check my work before the next batch
+[Update after your review: joins of a list or tuple now decline for every symbol; the boxes start with the stored numbers; the angle reading says "the angle described"; nesting has a window test.  Items 2, 3 and 5 below are done.]
+===================================================================================
+
+What I did, in two commits' worth of work.  The first is already pushed (e1f4c62); the second is NOT committed yet.
+
+A. Batch 45 (pushed, e1f4c62)  three new word_solver families
+   - percent_spent_left     "Yara spent 75% of a paycheck on rent and had $280 left."  -> 1120   (also the fuel wording)
+   - price_minus_coupon     "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00."  -> 14
+   - complementary_supplementary   "Two angles are complementary. One angle is 12 less than 5 times the other."  -> 17 and 73
+   Claims on the 1,000 generated problems: 337 -> 349, wrong 0.  Ready is now 377 (349 + 28 number_puzzle).
+
+B. The 377 Ready problems are now in the calculator (uncommitted)
+   - Operators > Algebra word problems > click a problem.  A Ready one goes into the target row as  Name(box, box ...) = box,
+     one box per number in the text, in text order.  Fill the boxes, press =, the answer shows.  Several answers show as a list, e.g. (27, 21).
+   - A Reference problem shows its diagram and says "reference only"; nothing is placed.
+   - Files touched:  main.py (_place_word_problem, called from on_word),  operator_row_math/row_tree.py (the "word:" key, NotImplementedError -> a plain message,
+     and the plain-number wrapper now lets a list answer through),  tests/test_algebra_word_problem_files.py (class InTheCalculator),  README.md,  algebra_word_problems_status.txt.
+
+Please check, and tell me what is wrong rather than fixing it quietly:
+
+ 1. The wrapper change in row_tree.evaluate.  A row that holds one operator is a "_number" node with the operator inside its box.  I made that wrapper accept ANY result
+    (before, a tuple or list result from an operator in an empty row raised "can't be used as a single number").  Does that change an existing operator's behaviour that tests do not cover?
+    Try operators that return tuples or lists (eigenvalues, roots, factor) in Row 1 and as the first row of a join.
+ 2. Joins.  What happens when a word problem with a LIST answer is joined with + - x / = to another row?  I only tested a single row.  I expect "Can't join those two results".
+ 3. Nesting.  A word problem can be put into a box of another operator (it is a node like any other).  Its answer is a number, so Add(word problem, 1) should work; a list answer should give the
+    "can't be used as a single number" message.  I did not test this in the window.
+ 4. Wording hazards in the three new families.  Write nearby wordings and look for a WRONG number (a decline is fine).  I know of one safe decline: "spent 60% of an allowance" (the pattern lists
+    a / the / his / her / their / my / our, not "an").  Things I did not try: "had $280 remaining", "$280 was left", "25 percent", a percent spent on two things, a coupon given as a percent,
+    "paid" with tax, angles where the multiple is "twice", and the order of the two angles in the answer (I return the "other" angle first, then the one described, as the generator lists them).
+ 5. The boxes are empty and labelled number 1, number 2 ... (decision 1 in the README).  Is an empty box the right default, or should the stored numbers be prefilled so a person sees a working example first?
+ 6. Anything in the README / status file that still says the rows are not placed.  I fixed lines 165 and 233 of README.md and the "not wired" line in the status file; please grep for others.
+
+How to check:
+   python tests/test_algebra_word_problem_files.py                      (9 tests; two drive the real window)
+   python tests/test_operators.py                                       (682 tests, about 2 minutes; passed after my change)
+   from algebra_word_problems/algebra_matcher:  python -m unittest test_word_solver test_number_puzzle     (166 tests, wrong 0)
+   by hand:  python main.py, click Operators, then Algebra word problems, click  savings/0848 (0848), click each box and type 150, 25, 310, 15, press =.   Expect 16.
+
+I made one mistake while doing this and fixed it: my first edit of the status file cut off its appendix (I matched the wrong "APPENDIX" line).  I restored the file from git and redid the edit;
+please check that the appendix at the end of algebra_word_problems_status.txt still lists the unclaimed wording shapes in full.
+
+UPDATE 2 (the row is the equation): rows are now the problem's equation (x + (x + 1) + (x + 2) = [120]); blue boxes in the picture = boxes in the row, same order and value, prefilled; text numbers the equation does not use stay fixed.  Please check the rule in operator_keys/make_algebra_word_problem_files.py equation_plan(): it matches by VALUE, so a coefficient that equals a text number would be boxed (the answer is still the solver's, but the picture could box the wrong thing).  Also: 75% in the text vs 0.75 in the equation is not matched (the percent is not editable), 3 Ready problems have no box (current_wind 0086, 0090, 0094) and 102 have fixed text numbers.  Is that acceptable or should a percent / derived number be mapped to its text number?
+
+UPDATE 3 (operator rows follow the pictures, uncommitted): all 507 operator rows were rewritten from their pictures (operator_keys/operator_row_specs.txt).  New engine pieces in operator_row_math/row_tree.py: SLOTS (a variable written twice = two boxes, one input), 'out' cards (answer boxes, filled by =; a formula with two out boxes shows each answer), 'dec' cards (drawn, not typed), and 'with [ ]' extra boxes for inputs the picture does not draw (115 operators, listed in operator_keys/operator_rows_with_extra_boxes.txt).  Please check: (1) the specs against the pictures, especially the abstract algebra, topology, calculus and statistics ones where the picture boxes are letters I had to map to inputs by guesswork (e.g. bayes_theorem, conditional_probability, tangent_vector, riemann_sum); (2) Heron's formula, where the picture's blank boxes are the derived s and I drew the letter s; (3) the template reader (template_math.describe) now reads the right-hand side of a formula row, so 'Time dilation(1, x)' reads '1 / √ ( 1 − □ ² / c ² )'; (4) nested operators with mirrored boxes: a nested operator shows its name in the copy box; (5) stacked rows (row['mode'] != 'full') drop out/dec cards and show only operator cards: I did not test that path.
+
+UPDATE 4 (after your review of 5f2eb63): a box that is not an input is no longer blue: 'dec' cards are drawn as ordinary cards (a square, or the letter).  g in weight / pendulum_period / potential_energy and Z in bohr / rydberg are now plain letters; bayes_theorem and conditional_probability put p_b_given_a and p_a_and_b in the picture's own boxes (no 'with' box); riemann_sum and chain_rule show x / x_i / Delta x as letters.  STILL OPEN: about 160 operators still have blank 'dec' squares where I did not write the letter (a square card, not blue), so letters can be filled in operator_keys/operator_row_specs.txt as '[_x]'; and the stacked-row path: row['mode'] is only ever 'full' in main.py, so a formula row in row 2 renders in full (I placed circle_area in row 2: out, =, pi, x, box, 2).  If you saw it drop boxes, tell me the steps.
+
+UPDATE 5: bayes_theorem is now {} = [p_b_given_a] x P([p_a]) / P([p_b]) and conditional_probability {} = [p_a_and_b] / P([p_b]): each probability is one box and the left side is the answer box that = fills.  Counts corrected to 113 operators with 'with' boxes.  Still open and accepted as compromises: blank squares in about 155 operators (letters not written), 'with' boxes where the picture has no boxes at all (product_rule, quotient_rule), Heron's s as a letter.
+
+UPDATE 6 (the grid, from the user's description): every card is a column; an exponent is its own card one row up and one column right, a subscript / lower limit one row down.  New: operator_row_math/layout.py (level_of / shown), LEVELS in the row files (operators and word problems), row_tree.levels(), build_row(levels=).  Please check: (1) the arrows are still decorative (they do not yet create cards); (2) the sigma's upper limit is not drawn in most pictures so only subscripts appear; (3) fractions are still written inline with / (numerator and denominator are not yet above and below).
+
+UPDATE 7 (fractions top to bottom, from the user: always use multiple rows): every '/' is now a stacked fraction in the rows (FRAC list; layout.group_fractions finds the numerator and denominator, row_builder._plan stacks them over a bar).  123 operators and 269 word problems.  Please check the grouping rules on the odd cases: maclaurin_series (the denominator takes '! . x^n' because nothing after it is bracketed), cauchyriemann_equations, jacobi_iteration, nested fractions (lorentz_factor, t_test_statistic).  The pictures and diagrams are not redrawn: they still show '/' inline.  Fraction rows are tall (about 630 px with exponents) and the rows area is 290 px, so they scroll.
+
+NOTE FROM THE USER, WRITTEN INTO THE README (section 'The rule for math on several lines: it is still ONE row'): when the diagram shows math that can go on several lines (fractions, exponents, subscripts, sigma limits) it must be drawn on several lines, and those lines are all part of the SAME calculator row.  They are not Row 2, Row 3 ...  = adds up all of the lines as one row and the answer stays on Row 1, in Row 1's own answer card right of the = (not in Row 2); Next Row goes from Row 1 to Row 2; a join sign joins Row 2 to Row 1.  Please check whether anything I built breaks this and redo it if so.  What I built: the extra lines are grid lines inside the one Row widget (operator_row_math/row_builder.py build_row / _plan); main.py still has one node per row and _equals evaluates that node whole; checked in the window: a fraction formula in Row 1 leaves 2 rows, the answer shows in Row 1's own card, Next Row goes to Row 2 (tests/test_operator_pictures.py test_math_on_several_lines_is_still_one_row).  What to look at: (1) the 'multi-row operators' in multirow_specs.py are separate calculator rows by design; (2) anything that counts cards or boxes per row (the 'Addend n' label in _pick_box counts boxes across all the lines of Row 1, which is right); (3) a fraction row is tall (the rows area is 290 px), so it scrolls.
+
+CORRECTION (from the user): I had written that = prints the answer in Row 2.  Wrong.  The answer of a single row stays on that row, in its own answer card to the right of the = (beside 'math to put on the left').  Only when Row 2 has a join sign do Rows 1 and 2 each show their own answer in their own card, and the answer for both goes on Row 3.  _equals in main.py now does this; tests in tests/test_operator_pictures.py (test_math_on_several_lines_is_still_one_row).

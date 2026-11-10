@@ -1,6 +1,6 @@
 """Row for the operator: Torricelli's law
 
-Picture:      □ = √(2 × g × □)
+Picture:      □ = √ ( 2 × g × □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/torricelli_speed
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = "Torricelli's law"
 KEY = 'physics/physics/torricelli_speed'
-PATTERN = '□ = √(2 × g × □)'
+PATTERN = '□ = √ ( 2 × g × □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'ready'
 INPUTS = ['h']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', "Torricelli's law("), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '√(2 × g ×'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('op', '2'), ('op', '×'), ('op', 'g'), ('op', '×'), ('box', ''), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

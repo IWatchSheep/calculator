@@ -1,6 +1,6 @@
 """Row for the operator: Neighborhood
 
-Picture:      N(□)
+Picture:      N ( □ ) with □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/topology/neighborhood
 """
@@ -12,18 +12,19 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Neighborhood'
 KEY = 'math/topology/neighborhood'
-PATTERN = 'N(□)'
+PATTERN = 'N ( □ ) with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['tau', 'x', 'N']    # what each box (left to right) is
 KINDS = ['setfamily', 'item', 'set']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0, 2]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Neighborhood('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'N'), ('op', '('), ('box', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

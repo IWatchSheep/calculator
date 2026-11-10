@@ -1,6 +1,6 @@
 """Row for the operator: Quaternions
 
-Picture:      □ + □i + □j + □k ∈ ℍ
+Picture:      □ + □ i + □ j + □ k ∈ ℍ
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/category_theory_and_foundations/quaternions
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Quaternions'
 KEY = 'math/category_theory_and_foundations/quaternions'
-PATTERN = '□ + □i + □j + □k ∈ ℍ'
+PATTERN = '□ + □ i + □ j + □ k ∈ ℍ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'ready'
 INPUTS = ['a', 'b', 'c', 'd']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '+'), ('box', ''), ('op', 'i +'), ('box', ''), ('op', 'j +'), ('box', ''), ('op', 'k ∈ ℍ')]      # cards left of "="
+LEFT = [('box', ''), ('op', '+'), ('box', ''), ('op', 'i'), ('op', '+'), ('box', ''), ('op', 'j'), ('op', '+'), ('box', ''), ('op', 'k'), ('op', '∈'), ('op', 'ℍ')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

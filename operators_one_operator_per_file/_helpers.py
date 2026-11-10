@@ -141,13 +141,30 @@ def circle_integral(f, center, radius, n=2000):
 
 
 # ---------------------------------------------------------------- graphs
+class _NeighbourSet(set):
+    """The neighbours of a vertex, kept in the order they were met (a plain set lists letters in a
+    different order every run, which changed which path / cycle the graph operators found).
+    The Rust version keeps the same order."""
+
+    def __init__(self):
+        super().__init__()
+        self._order = {}
+
+    def add(self, x):
+        self._order[x] = None
+        super().add(x)
+
+    def __iter__(self):
+        return iter(self._order)
+
+
 def undirected(graph):
     adj = {}
     for u, nbrs in graph.items():
-        adj.setdefault(u, set())
+        adj.setdefault(u, _NeighbourSet())
         for v in nbrs:
             v = v[0] if isinstance(v, tuple) else v
-            adj.setdefault(v, set())
+            adj.setdefault(v, _NeighbourSet())
             adj[u].add(v)
             adj[v].add(u)
     return adj

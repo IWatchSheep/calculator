@@ -64,6 +64,61 @@ def template_of(problem):
     return "".join(parts), numbers
 
 
+def equation_plan(equation, numbers):
+    """The equation as tokens: ('txt', text) or ('num', text, i).  A number of the equation is a BOX only when it is one of the numbers written in the problem text
+    (same value, matched left to right, each text number used once); i is that number's place in the text.  Any other number (the 1 and 2 of x + (x + 1) + (x + 2),
+    a 0.75 that stands for 75%) stays plain text: it is not blue in the picture and not a box in the row.  Text numbers that no equation number matches (the 3 in
+    "the sum of 3 consecutive integers") are not boxes either: compute() keeps them as written."""
+    used, out, last = set(), [], 0
+
+    def add(kind, text, index=None):
+        if kind == "txt" and out and out[-1][0] == "txt":
+            out[-1] = ("txt", out[-1][1] + text)
+        elif kind == "txt":
+            out.append(("txt", text))
+        else:
+            out.append(("num", text, index))
+
+    for m in NUMBER.finditer(equation):
+        if equation[last:m.start()]:
+            add("txt", equation[last:m.start()])
+        value = Fraction(m.group(0).replace(",", ""))
+        i = next((j for j, n in enumerate(numbers) if j not in used and Fraction(n) == value), None)
+        if i is None:
+            add("txt", m.group(0))
+        else:
+            used.add(i)
+            add("num", m.group(0), i)
+        last = m.end()
+    if equation[last:]:
+        add("txt", equation[last:])
+    return out
+
+
+def equation_parts(plan):
+    """The plan cut at each ';' (an equation with several parts is drawn one part per line)."""
+    parts = [[]]
+    for tok in plan:
+        if tok[0] == "txt" and ";" in tok[1]:
+            pieces = tok[1].split(";")
+            parts[-1].append(("txt", pieces[0]))
+            for piece in pieces[1:]:
+                parts.append([("txt", piece)])
+        else:
+            parts[-1].append(tok)
+    out = []
+    for part in parts:
+        part = [t for t in part]
+        if part and part[0][0] == "txt":
+            part[0] = ("txt", part[0][1].lstrip())
+        if part and part[-1][0] == "txt":
+            part[-1] = ("txt", part[-1][1].rstrip())
+        part = [t for t in part if t[0] == "num" or t[1]]
+        if part:
+            out.append(part)
+    return out
+
+
 def solver_of(problem):
     """('word_solver', family) / ('number_puzzle', 'number_puzzle') / (None, None): who answers this problem today."""
     r = WS.solve(problem)
@@ -108,32 +163,43 @@ def make_picture(path, p, numbers):
     problem_lines = wrap(p["Problem"], f_text, width - 2 * pad)
     let_lines = wrap("Let: " + p["Let"], f_small, width - 2 * pad)
     answer_lines = wrap("Answer: " + p["Answer"], f_bold, width - 2 * pad)
-    equations = [e.strip() for e in re.split(r";\s*", p["Equation"]) if e.strip()]
+    equations = equation_parts(equation_plan(p["Equation"], numbers))
 
-    def equation_rows(eq):
-        """Tokens: ('num', text) is drawn in a blue box, ('txt', text) plain.  Wrapped to the picture width."""
-        tokens, last = [], 0
-        for m in NUMBER.finditer(eq):
-            if eq[last:m.start()]:
-                tokens.append(("txt", eq[last:m.start()]))
-            tokens.append(("num", m.group(0)))
-            last = m.end()
-        if eq[last:]:
-            tokens.append(("txt", eq[last:]))
-        rows, row, x = [], [], 0
-        for kind, text in tokens:
-            w = probe.textlength(text, font=f_num if kind == "num" else f_text) + (22 if kind == "num" else 0)
-            if x + w > width - 2 * pad and row:
-                rows.append(row)
-                row, x = [], 0
-            row.append((kind, text, w))
-            x += w
-        rows.append(row)
-        return rows
+    sys.path.insert(0, ROOT)
+    from operator_row_math.row_builder import _plan
 
-    eq_blocks = [equation_rows(e) for e in equations]
+    def stacked_part(tokens):
+        """One part of the equation on a grid exactly like the row's: a fraction has its numerator above the bar and its denominator below, an exponent is one row up.
+        Returns (grid rows, [(grid row, column, kind, text, pixel width)], [(grid row, first column, last column)] of the bars, column widths)."""
+        cards, _, _, levels, fracs = row_cards(tokens)
+        texts = [t[1] for t in tokens if t[0] == "num"]
+        shown_texts, k = [], 0
+        for kind, text in cards:
+            if kind == "box":
+                shown_texts.append(texts[k])
+                k += 1
+            else:
+                shown_texts.append(text)
+        placed, bars, _end = _plan(len(cards), levels, fracs)
+        ncols = max([c for r, c in placed.values()] + [0]) + 1
+        colw = [0] * (ncols + 1)
+        for i, (r, c) in placed.items():
+            w = probe.textlength(shown_texts[i], font=f_num if cards[i][0] == "box" else f_text) + (22 if cards[i][0] == "box" else 6)
+            colw[c] = max(colw[c], w)
+        for r, c, w in bars:
+            for cc in range(c, c + w):
+                colw[cc] = max(colw[cc], 14)
+        top = min([r for r, c in placed.values()] + [r for r, c, w in bars])
+        bottom = max([r for r, c in placed.values()] + [r for r, c, w in bars])
+        items = [(r - top, c, cards[i][0], shown_texts[i]) for i, (r, c) in placed.items()]
+        return bottom - top + 1, items, [(r - top, c, c + w - 1) for r, c, w in bars], colw
+
+    eq_blocks = [stacked_part(e) for e in equations]
+    need = max([sum(blk[3]) + 10 * len(blk[3]) for blk in eq_blocks] + [width - 2 * pad]) + 2 * pad
+    width = max(width, int(need))
+    cell = 46
     height = pad + 24 + 14 + 30 * len(problem_lines) + 10 + 24 * len(let_lines) + 18
-    height += sum(52 * len(rows) + 10 for rows in eq_blocks) + 14 + 32 * len(answer_lines) + pad - 6
+    height += sum(cell * blk[0] + 16 for blk in eq_blocks) + 14 + 32 * len(answer_lines) + pad - 6
 
     img = Image.new("RGB", (width, height), "white")
     d = ImageDraw.Draw(img)
@@ -150,18 +216,24 @@ def make_picture(path, p, numbers):
         d.text((pad, y), line, font=f_small, fill="#4a5a78")
         y += 24
     y += 18
-    for rows in eq_blocks:
-        for row in rows:
-            x = pad
-            for kind, text, w in row:
-                if kind == "num":
-                    d.rounded_rectangle((x + 2, y, x + w - 2, y + 40), radius=5, fill="#d6e6fb", outline="#2a6ec9", width=2)
-                    d.text((x + w / 2, y + 20), text, font=f_num, fill="#1b3f7a", anchor="mm")
-                else:
-                    d.text((x, y + 20), text, font=f_text, fill="#222222", anchor="lm")
-                x += w
-            y += 52
-        y += 10
+    for nrows, items, bars, colw in eq_blocks:
+        xs, x = [], pad
+        for w in colw:
+            xs.append(x)
+            x += w + 10
+        for r, c, kind, text in items:
+            w, cy = colw[c], y + r * cell + 20
+            if kind == "box":
+                bw = probe.textlength(text, font=f_num) + 22
+                x0 = xs[c] + (w - bw) / 2
+                d.rounded_rectangle((x0 + 2, cy - 20, x0 + bw - 2, cy + 20), radius=5, fill="#d6e6fb", outline="#2a6ec9", width=2)
+                d.text((x0 + bw / 2, cy), text, font=f_num, fill="#1b3f7a", anchor="mm")
+            else:
+                d.text((xs[c] + w / 2, cy), text, font=f_text, fill="#222222", anchor="mm")
+        for r, c0, c1 in bars:
+            by = y + r * cell + 20
+            d.line((xs[c0], by, xs[c1] + colw[c1], by), fill="#222222", width=2)
+        y += cell * nrows + 16
     y += 14
     for line in answer_lines:
         d.text((pad, y), line, font=f_bold, fill="#2a6a20")
@@ -227,17 +299,37 @@ def compute(*numbers):
         "solver_r": py_str(solver), "family_r": py_str(family), "template_r": py_str(template), "numbers_r": py_str(numbers)}
 
 
+TOKEN = re.compile(NUMBER.pattern + r"|[A-Za-z]{2,}|\S")      # a word of 2+ letters (pay) is ONE card, never p a y
+
+
+def row_cards(plan):
+    """The row's cards from the plan, ONE TOKEN PER CARD (a card's centre shows one symbol): a blue box is a box card; a number that is not a box, a letter, + - x / = ( ) ;
+    each is an operator card of its own; an exponent or subscript is its own card one grid row up or down.  Returns (cards, box_index, pattern, levels)."""
+    sys.path.insert(0, ROOT)
+    from operator_row_math.layout import level_of, shown
+    cards, box_index, pattern, levels = [], [], [], []
+    for tok in plan:
+        if tok[0] == "txt":
+            for m in TOKEN.finditer(tok[1]):
+                cards.append(("op", shown(m.group(0))))
+                levels.append(level_of(m.group(0)))
+                pattern.append(m.group(0))
+        else:
+            cards.append(("box", ""))
+            levels.append(0)
+            box_index.append(tok[2])
+            pattern.append(BOX)
+    from operator_row_math.layout import group_fractions
+    return cards, box_index, " ".join(pattern), levels, group_fractions(cards, levels)
+
+
 def row_file(p, key, numbers, solver):
-    boxes = ", ".join([BOX] * len(numbers))
-    left = "[('op', %s)" % py_str("%s %s(" % (p["category"], p["id"]))
-    for i in range(len(numbers)):
-        if i:
-            left += ", ('op', ',')"
-        left += ", ('box', '')"
-    left += ", ('op', ')')]"
+    cards, box_index, pattern, levels, fracs = row_cards(equation_plan(p["Equation"], numbers))
+    boxes = pattern
+    left = repr(cards)
     return '''"""Row for the algebra word problem: %(category)s %(id)s
 
-Picture:      %(name)s(%(boxes)s) = %(box)s
+Picture:      %(boxes)s   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  %(calc_text)s
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py %(key)s
 """
@@ -254,23 +346,27 @@ PATTERN = %(pattern_r)s
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = %(calc_r)s
-INPUTS = %(inputs_r)s    # what each box (left to right) is: the numbers of the problem in the order they appear in its text
-DEFAULTS = %(defaults_r)s    # the numbers as written in the stored problem
+INPUTS = %(inputs_r)s    # what each box (left to right, as in the equation) is: which number of the problem text it holds
+BOX_INDEX = %(box_index_r)s    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
+DEFAULTS = %(defaults_r)s    # the boxes' numbers as written in the stored problem
 KINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
+FRAC = %(frac_r)s    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
+LEVELS = %(levels_r)s    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
 LEFT = %(left)s      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 
 def place(parent, stacked=False):
     """Create this problem's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=LEVELS, fracs=FRAC)
 ''' % {
         "category": p["category"], "id": p["id"], "name": "%s %s" % (p["category"], p["id"]), "boxes": boxes, "box": BOX, "key": key,
         "calc_text": "ready - fill the boxes, press = and the answer appears right of =" if solver else "reference - the problem is stored; no solver answers it yet",
         "name_r": py_str("%s %s" % (p["category"], p["id"])), "key_r": py_str(key),
-        "pattern_r": py_str("%s %s(%s) = %s" % (p["category"], p["id"], boxes, BOX)), "calc_r": py_str("ready" if solver else "reference"),
-        "inputs_r": py_str(["number %d" % (i + 1) for i in range(len(numbers))]), "defaults_r": py_str(numbers), "kinds_r": py_str(["number"] * len(numbers)), "left": left}
+        "pattern_r": py_str("%s  ->  answer %s" % (pattern, BOX)), "calc_r": py_str("ready" if solver else "reference"),
+        "inputs_r": py_str(["number %d" % (i + 1) for i in box_index]), "box_index_r": py_str(box_index), "defaults_r": py_str([numbers[i] for i in box_index]),
+        "kinds_r": py_str(["number"] * len(box_index)), "left": left, "levels_r": py_str(levels), "frac_r": py_str([[list(e) for e in f] for f in fracs])}
 
 
 def main():

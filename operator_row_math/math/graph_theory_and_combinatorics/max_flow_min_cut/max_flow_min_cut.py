@@ -1,6 +1,6 @@
 """Row for the operator: Max flow min cut
 
-Picture:      Max flow min cut( □ )
+Picture:      Max flow min cut ( □ ) with □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/graph_theory_and_combinatorics/max_flow_min_cut
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Max flow min cut'
 KEY = 'math/graph_theory_and_combinatorics/max_flow_min_cut'
-PATTERN = 'Max flow min cut( □ )'
+PATTERN = 'Max flow min cut ( □ ) with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'advanced'
 INPUTS = ['graph', 'source', 'sink']    # what each box (left to right) is
 KINDS = ['wgraph', 'item', 'item']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Max flow min cut('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'Max'), ('op', 'flow'), ('op', 'min'), ('op', 'cut'), ('op', '('), ('box', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

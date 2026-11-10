@@ -1,6 +1,6 @@
 """Row for the operator: Product
 
-Picture:      ∏ □ᵢ = □₁ · □₂ · … · □ₙ
+Picture:      product ( □ ) = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/product
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Product'
 KEY = 'math/calculus/product'
-PATTERN = '∏ □ᵢ = □₁ · □₂ · … · □ₙ'
+PATTERN = 'product ( □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'advanced'
 INPUTS = ['terms']    # what each box (left to right) is
 KINDS = ['list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∏('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '₁ ·'), ('box', ''), ('op', '₂ · … ·'), ('box', ''), ('op', 'ₙ')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'product'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
+RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

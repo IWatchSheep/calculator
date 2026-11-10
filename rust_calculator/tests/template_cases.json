@@ -1,0 +1,218 @@
+[
+ {
+  "text": "(□ + 3) × 2",
+  "ok": true,
+  "describe": "(□ + 3) × 2",
+  "empty": 1
+ },
+ {
+  "text": "(? + 3) * 2",
+  "ok": true,
+  "describe": "(□ + 3) × 2",
+  "empty": 1
+ },
+ {
+  "text": "sqrt(16) + abs(-3)",
+  "ok": true,
+  "describe": "(√ 16) + (| -3 |)",
+  "empty": 0
+ },
+ {
+  "text": "sqrt(x) + 4",
+  "ok": true,
+  "describe": "(√ □) + 4",
+  "empty": 1
+ },
+ {
+  "text": "Time dilation(1, x)",
+  "ok": true,
+  "describe": "1 / √ ( 1 − □^2 / c^2 )",
+  "empty": 1
+ },
+ {
+  "text": "sin(pi / 2)",
+  "ok": true,
+  "describe": "sin ((π =  / ) ÷ 2) =  / ",
+  "empty": 0
+ },
+ {
+  "text": "2^3^2",
+  "ok": true,
+  "describe": "2 ^ (3 ^ 2)",
+  "empty": 0
+ },
+ {
+  "text": "-5 + 2",
+  "ok": true,
+  "describe": "-5 + 2",
+  "empty": 0
+ },
+ {
+  "text": "-x",
+  "ok": true,
+  "describe": "− □",
+  "empty": 1
+ },
+ {
+  "text": "-2^2",
+  "ok": true,
+  "describe": "− (2 ^ 2)",
+  "empty": 0
+ },
+ {
+  "text": "3 + 4 * 5",
+  "ok": true,
+  "describe": "3 + (4 × 5)",
+  "empty": 0
+ },
+ {
+  "text": "(1 + 2",
+  "ok": false,
+  "incomplete": true,
+  "message": "A bracket ( is never closed."
+ },
+ {
+  "text": "1 +",
+  "ok": false,
+  "incomplete": true,
+  "message": "The math ends too soon: something is missing at the end."
+ },
+ {
+  "text": "",
+  "ok": false,
+  "incomplete": true,
+  "message": "Type some math first."
+ },
+ {
+  "text": "2 3",
+  "ok": false,
+  "incomplete": false,
+  "message": "Put an operator between '3' and what comes before it (for example 2 × 3)."
+ },
+ {
+  "text": "foo(1)",
+  "ok": false,
+  "incomplete": false,
+  "message": "There is no operator called 'foo'. Try its name from the Operators list, or a short name such as sqrt, sin, ln."
+ },
+ {
+  "text": "sqrt(1, 2)",
+  "ok": false,
+  "incomplete": false,
+  "message": "Square root needs 1 input(s) but was given 2."
+ },
+ {
+  "text": "ln(e)",
+  "ok": true,
+  "describe": "ln ( (e = lim ( 1 + 1 / n )^n) )",
+  "empty": 0
+ },
+ {
+  "text": "min(1, 2) + max(3, 4)",
+  "ok": false,
+  "incomplete": false,
+  "message": "Minimum needs 3 input(s) but was given 2."
+ },
+ {
+  "text": "10 % 3",
+  "ok": true,
+  "describe": "10 mod 3",
+  "empty": 0
+ },
+ {
+  "text": "2 × (3 + 4) ÷ 7",
+  "ok": true,
+  "describe": "(2 × (3 + 4)) ÷ 7",
+  "empty": 0
+ },
+ {
+  "text": "x + y",
+  "ok": true,
+  "describe": "□ + □",
+  "empty": 2
+ },
+ {
+  "text": "5",
+  "ok": false,
+  "incomplete": true,
+  "message": "A template needs at least one operator, for example (□ + 3) × 2."
+ },
+ {
+  "text": "pi",
+  "ok": true,
+  "describe": "π =  / ",
+  "empty": 0
+ },
+ {
+  "text": "Square root(9)",
+  "ok": true,
+  "describe": "√ 9",
+  "empty": 0
+ },
+ {
+  "text": "square_root(9)",
+  "ok": true,
+  "describe": "√ 9",
+  "empty": 0
+ },
+ {
+  "text": "1.5e-3 + .5",
+  "ok": true,
+  "describe": "1.5e-3 + .5",
+  "empty": 0
+ },
+ {
+  "text": "log(100) - ln(10)",
+  "ok": true,
+  "describe": "(log_10 ( 100 )) − (ln ( 10 ))",
+  "empty": 0
+ },
+ {
+  "text": "factorial(5) / 2",
+  "ok": true,
+  "describe": "(5 ! = 5 · ( 5 − 1 ) · ... · 2 · 1) ÷ 2",
+  "empty": 0
+ },
+ {
+  "text": "((1 + 2) × (3 + 4))",
+  "ok": true,
+  "describe": "(1 + 2) × (3 + 4)",
+  "empty": 0
+ },
+ {
+  "text": "1 $ 2",
+  "ok": false,
+  "incomplete": false,
+  "message": "I don't understand '$' in the math."
+ },
+ {
+  "text": "a b c",
+  "ok": false,
+  "incomplete": false,
+  "message": "Write 'a b c' with its inputs in brackets, like a b c( ... )."
+ },
+ {
+  "text": "sqrt 9",
+  "ok": false,
+  "incomplete": false,
+  "message": "Put an operator between '9' and what comes before it (for example 2 × 9)."
+ },
+ {
+  "text": "determinant(x)",
+  "ok": true,
+  "describe": "det ( □ )",
+  "empty": 1
+ },
+ {
+  "text": "gcd(12, 18)",
+  "ok": true,
+  "describe": "gcd ( 12 , 18 )",
+  "empty": 0
+ },
+ {
+  "text": "floor(2.5) + ceil(2.5)",
+  "ok": true,
+  "describe": "(floor ( 2.5 )) + (ceil ( 2.5 ))",
+  "empty": 0
+ }
+]

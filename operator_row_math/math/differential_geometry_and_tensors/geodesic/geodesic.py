@@ -1,6 +1,6 @@
 """Row for the operator: Geodesic
 
-Picture:      □″ = 0
+Picture:      ∇ ( along γ ′ ) γ ′ = 0
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/differential_geometry_and_tensors/geodesic
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Geodesic'
 KEY = 'math/differential_geometry_and_tensors/geodesic'
-PATTERN = '□″ = 0'
+PATTERN = '∇ ( along γ ′ ) γ ′ = 0'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '″')]      # cards left of "="
-RIGHT = [('op', '0')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '∇'), ('op', '('), ('op', 'along'), ('op', 'γ'), ('op', '′'), ('op', ')'), ('op', 'γ'), ('op', '′'), ('op', '='), ('op', '0')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

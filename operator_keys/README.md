@@ -33,6 +33,7 @@ Run from the project root, in this order, whenever Python operators or Rust func
 python operator_keys/make_operator_keys.py   # catalog + parity_examples.tsv + parity_differential.tsv
 python operator_keys/make_value_grid.py      # parity_values.tsv (about a minute: it runs the real Python operators)
 python operator_keys/make_rust_ops.py        # rust_calculator/src/ops/generated.rs
+python operator_keys/make_rust_layouts.py    # rust_calculator/src/layouts.rs: how each operator's row is drawn (from the Python row files)
 cd rust_calculator && cargo test --release
 ```
 

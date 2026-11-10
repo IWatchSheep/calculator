@@ -1,6 +1,6 @@
 """Row for the operator: Graph
 
-Picture:      □ = (□, □)
+Picture:      □ = ( □ , □ )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/graph_theory_and_combinatorics/graph
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Graph'
 KEY = 'math/graph_theory_and_combinatorics/graph'
-PATTERN = '□ = (□, □)'
+PATTERN = '□ = ( □ , □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,10 @@ CALC = 'advanced'
 INPUTS = ['graph']    # what each box (left to right) is
 KINDS = ['graph']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Graph('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '='), ('op', '('), ('dec', ''), ('op', ','), ('dec', ''), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

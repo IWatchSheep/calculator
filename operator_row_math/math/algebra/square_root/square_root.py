@@ -1,6 +1,6 @@
 """Row for the operator: Square root
 
-Picture:      √□ = □
+Picture:      √ □ = □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/algebra/square_root
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Square root'
 KEY = 'math/algebra/square_root'
-PATTERN = '√□ = □'
+PATTERN = '√ □ = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -26,4 +26,4 @@ RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

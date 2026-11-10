@@ -1,6 +1,6 @@
 """Row for the operator: Jacobi iteration
 
-Picture:      □ᵢ⁽ᵏ⁺¹⁾ = (□ᵢ − Σ{□≠i} □ᵢⱼ □ⱼ⁽ᵏ⁾) / □ᵢᵢ
+Picture:      □ ᵢ ⁽ᵏ⁺¹⁾ = ( □ ᵢ − Σ { □ = i } □ ᵢⱼ □ ⱼ ⁽ᵏ⁾ ) / □ ᵢᵢ
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/jacobi_iteration
 """
@@ -12,18 +12,21 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Jacobi iteration'
 KEY = 'math/optimization_and_numerical_methods/jacobi_iteration'
-PATTERN = '□ᵢ⁽ᵏ⁺¹⁾ = (□ᵢ − Σ{□≠i} □ᵢⱼ □ⱼ⁽ᵏ⁾) / □ᵢᵢ'
+PATTERN = '□ ᵢ ⁽ᵏ⁺¹⁾ = ( □ ᵢ − Σ { □ = i } □ ᵢⱼ □ ⱼ ⁽ᵏ⁾ ) / □ ᵢᵢ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['A', 'b']    # what each box (left to right) is
 KINDS = ['matrix', 'list']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+LEVELS = [0, 1, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, -1, 0, 0, 0, 1]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+FRAC = [[], [], [], [], [[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'd']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'x⁽ᵏ⁺¹⁾('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '('), ('box', ''), ('op', 'ᵢ − Σ{'), ('box', ''), ('op', '=i}'), ('box', ''), ('op', 'ᵢⱼ'), ('box', ''), ('op', 'ⱼ⁽ᵏ⁾) /'), ('box', ''), ('op', 'ᵢᵢ')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', 'i'), ('op', '(k+1)'), ('op', '='), ('op', '('), ('box', ''), ('op', 'i'), ('op', '−'), ('op', 'Σ'), ('op', '{'), ('dec', ''), ('op', '='), ('op', 'i'), ('op', '}'), ('box', ''), ('op', 'ij'), ('dec', ''), ('op', 'j'), ('op', '(k)'), ('op', ')'), ('op', '/'), ('box', ''), ('op', 'ii')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):
     """Create this operator's row inside `parent` and return the Frame (caller grids/packs it)."""
-    return build_row(parent, LEFT, RIGHT, stacked)
+    return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get("LEVELS"))

@@ -6,7 +6,7 @@ Equation: 3.5n − 2 = 33
 Solve   : 3.5n = 35 → n = 10
 Answer  : 10 notebooks
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: price_minus_coupon answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '3.5n − 2 = 33'
 SOLVE = '3.5n = 35 → n = 10'
 ANSWER = '10 notebooks'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'price_minus_coupon'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Notebooks cost ${0} each. With a ${1} coupon, Dev paid ${2}. How many notebooks were bought?'
 NUMBERS = ['3.50', '2', '33.00']

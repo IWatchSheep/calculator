@@ -105,6 +105,18 @@ impl Value {
         }
     }
 
+    /// How the calculator window shows an answer: the same as the Python program (a whole number as a whole number, otherwise 10 significant digits, so
+    /// `7.415555556e-11` and not `0.000000000074`).  `display()` is the exact parity form used by the tests.
+    pub fn show(&self) -> String {
+        match self {
+            Value::Number(n) => format_py(*n),
+            Value::Pair(a, b) => format!("{}, {}", format_py(*a), format_py(*b)),
+            Value::Tuple(v) if v.iter().all(|x| matches!(x, Value::Number(_))) => format!("({})", v.iter().map(|x| x.show()).collect::<Vec<_>>().join(", ")),
+            Value::List(v) if v.iter().all(|x| matches!(x, Value::Number(_))) => format!("[{}]", v.iter().map(|x| x.show()).collect::<Vec<_>>().join(", ")),
+            other => other.display(),
+        }
+    }
+
     pub fn display(&self) -> String {
         match self {
             Value::Number(n) => format_num(*n),
@@ -136,6 +148,35 @@ impl Value {
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.display())
+    }
+}
+
+/// Python's `str(int)` for whole numbers below 1e15, otherwise `"%.10g"`.
+pub fn format_py(n: f64) -> String {
+    if !n.is_finite() {
+        return n.to_string();
+    }
+    if n == 0.0 {
+        return "0".into();
+    }
+    if n.fract() == 0.0 && n.abs() < 1e15 {
+        return format!("{}", n as i64);
+    }
+    let sci = format!("{:.9e}", n);
+    let (mant, exp) = sci.split_once('e').unwrap();
+    let e: i32 = exp.parse().unwrap();
+    let trim = |t: String| -> String {
+        if t.contains('.') {
+            t.trim_end_matches('0').trim_end_matches('.').to_string()
+        } else {
+            t
+        }
+    };
+    if e < -4 || e >= 10 {
+        let sign = if e < 0 { '-' } else { '+' };
+        format!("{}e{}{:02}", trim(mant.to_string()), sign, e.abs())
+    } else {
+        trim(format!("{:.*}", (9 - e).max(0) as usize, n))
     }
 }
 
@@ -237,5 +278,22 @@ mod tests {
         );
         assert_eq!(format_complex(3.0, 4.0), "3+4j");
         assert_eq!(format_complex(1.0, -2.0), "1-2j");
+    }
+}
+
+#[cfg(test)]
+mod show_tests {
+    use super::*;
+
+    #[test]
+    fn answers_are_shown_like_python() {
+        assert_eq!(Value::Number(7.415555555555556e-11).show(), "7.415555556e-11");
+        assert_eq!(Value::Number(24.0).show(), "24");
+        assert_eq!(Value::Number(75.39822368615503).show(), "75.39822369");
+        assert_eq!(Value::Number(0.5).show(), "0.5");
+        assert_eq!(Value::Number(-1234567.891).show(), "-1234567.891");
+        assert_eq!(Value::Number(1.2345678901234e20).show(), "1.23456789e+20");
+        assert_eq!(Value::Number(1e-5).show(), "1e-05");
+        assert_eq!(Value::Pair(2.0, 1.0).show(), "2, 1");
     }
 }

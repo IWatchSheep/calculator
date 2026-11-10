@@ -421,6 +421,7 @@ class CalculatorGUI(tk.Tk):
     def _invalidate(self):
         """Something changed: the sums and the printed result row are out of date."""
         for k, row in enumerate(self.rows):
+            row_tree.clear_outputs(row["node"])
             if row["is_result"]:
                 self._reset_row(k)
             else:
@@ -537,7 +538,7 @@ class CalculatorGUI(tk.Tk):
         else:
             sel = next((n for n, c in enumerate(cards) if c[2] is not None and c[2] == row["sel"]), None)
             build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
-                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel
+                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"])
                       ).pack(anchor="w", padx=6, pady=4)
         row["refresh"]()
 
@@ -593,16 +594,18 @@ class CalculatorGUI(tk.Tk):
         self._sync_links()
 
     def _equals(self):
-        """Number pad =: calculate the rows, joined by the symbols in their helper cards, and print the
-        result in the row after the last one used.  With a multi-row operator, every row is calculated
-        and the results are joined by that operator's joins."""
+        """Number pad =: calculate the rows, joined by the symbols in their helper cards.  Each row shows its own
+        answer in its own answer card (right of its "=", beside "math to put on the left").  When rows are joined
+        (Row 2 has a join sign), the answer for all of them is printed in the row after the last one used (Row 3
+        for Rows 1 and 2).  A single row prints nothing further down.  With a multi-row operator, every row is
+        calculated and the results are joined by that operator's joins."""
         if self.template is not None:
             return self._equals_template()
         if self._is_blank(self.rows[0]):
             self._say("Type a number in Row 1 first: click its square box, then use the number pad "
                       "(or pick an operator with 'math to put on the left').")
             return
-        total, lines, last = None, [], 0
+        total, lines, last, used = None, [], 0, 0
         for k, row in enumerate(self.rows):
             if row["is_result"] or (k > 0 and self._is_blank(row) and not row["join"]):
                 continue
@@ -611,6 +614,7 @@ class CalculatorGUI(tk.Tk):
             except ValueError as e:
                 self._say("Row %d: %s" % (k + 1, e) if k else str(e))
                 return
+            self._render_row(k)                 # the formula's answer box shows the answer
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
             if k == 0:
                 total = v
@@ -626,10 +630,14 @@ class CalculatorGUI(tk.Tk):
                     self._say(str(e))
                     return
                 lines.append("Row %d:  %s %s" % (k + 1, row["join"], cards))
-            self._set_result(k, advanced_input.short_label(row_tree.fmt(total), 14))
+            self._set_result(k, advanced_input.short_label(row_tree.fmt(v), 14))      # the row's own answer, in its own card
             last = k
-        self._show_result_row(last + 1, total)
-        lines.append("=  %s     (printed in Row %d)" % (row_tree.fmt(total), last + 2))
+            used += 1
+        if used > 1:                                  # joined rows: the answer for all of them goes in the next row (Row 3 for Rows 1 and 2)
+            self._show_result_row(last + 1, total)
+            lines.append("=  %s     (all %d rows joined, shown in Row %d)" % (row_tree.fmt(total), used, last + 2))
+        else:
+            lines.append("=  %s     (shown in Row 1's answer card, right of the =)" % row_tree.fmt(total))
         self._say("\n".join(lines))
 
     def _sync_links(self):
@@ -669,6 +677,7 @@ class CalculatorGUI(tk.Tk):
             except ValueError as e:
                 self._say("Row %d (%s): %s" % (i + 1, rs["title"], e))
                 return
+            self._render_row(i)
             results.append(v)
             self._set_result(i, advanced_input.short_label(row_tree.fmt(v), 14))
         try:
@@ -741,7 +750,7 @@ class CalculatorGUI(tk.Tk):
                       % (n, "" if n == 1 else "es") if n else "Nothing to fill in: press ="))
         elif mod.CALC in ("ready", "advanced"):
             how = "number pad" if mod.CALC == "ready" else "number pad / Advanced Input"
-            self._say("%s: fill the boxes in order -> %s  (%s), then press =." % (mod.NAME, ", ".join(mod.INPUTS), how))
+            self._say("%s: fill the boxes in order -> %s  (%s), then press =." % (mod.NAME, ", ".join(row_tree.inputs_in_box_order(mod)), how))
         else:
             try:
                 row_tree.evaluate(new)
@@ -1269,6 +1278,18 @@ class CalculatorGUI(tk.Tk):
             self._word_catalog_items = catalog.load_catalog(os.path.join(WORD_DIR, "INDEX.md"))
         return self._word_catalog_items
 
+    def _place_word_problem(self, item):
+        """A Ready algebra word problem goes into the target row as `Name(□, □ ...) = □`, one box for every number
+        in its text (in the order they appear).  A Reference problem only shows its diagram: nothing answers it yet."""
+        if item["status"] != "Ready":
+            self._say("%s %s is reference only: its text, steps and diagram are stored, but no solver answers it yet, so it is not placed in a row.\n%s"
+                      % (item["category"], item["id"], item["problem"]))
+            return
+        key = row_tree.WORD_PREFIX + item["key"]
+        self._place_operator_row(key)
+        self._say("%s\n%s %s: the row is its equation. Each box holds a number from the text, already filled in: press =, or change a box first."
+                  % (item["problem"], item["category"], item["id"]))
+
     def _show_word_diagram(self, item):
         """Open the problem's diagram. Clicking another problem uses the same window."""
         import algebra_word_problem_catalog as catalog
@@ -1436,6 +1457,7 @@ class CalculatorGUI(tk.Tk):
                 return
             prev_title.configure(text="%s   %s   [%s]" % (item["id"], item["category"], item["status"]))
             self._show_word_diagram(item)
+            self._place_word_problem(item)
 
         word_list.bind("<<ListboxSelect>>", on_word)
 

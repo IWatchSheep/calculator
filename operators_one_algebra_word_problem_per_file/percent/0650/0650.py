@@ -6,7 +6,7 @@ Equation: x − 0.6x = 424
 Solve   : 0.4x = 424 → x = 1060
 Answer  : $1060
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: percent_spent_left answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x − 0.6x = 424'
 SOLVE = '0.4x = 424 → x = 1060'
 ANSWER = '$1060'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'percent_spent_left'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Kira spent {0}% of a paycheck on rent and had ${1} left. How much was the paycheck?'
 NUMBERS = ['60', '424']
