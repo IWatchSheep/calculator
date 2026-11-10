@@ -160,6 +160,18 @@ formula and picture but cannot calculate. Pressing `=` tells you so instead of f
 **Angles are in radians**, and physics operators use standard constants by default (g = 9.81 m/s²,
 c = 299 792 458 m/s, and so on). The constant is named in each operator's formula in `INDEX.md`.
 
+## Design rules for the rows
+
+These are the rules the operator rows and the algebra word problem rows are built by. If a row breaks one of them, the row is wrong and should be redone.
+
+1. **Math that can be written on several lines is always written on several lines.** A fraction has its numerator on the row above its bar and its denominator on the row below, an exponent sits on the line above its number, and a subscript or the limit of a sigma sits on the line below. Math is never put on one line when it can go on several. (`/` written inline is only for text such as `yes / no`.)
+2. **The lines of one operator are one row.** Several lines that extend out from one row are only how that row's math is drawn. They do not count as next rows and they are not Row 2, Row 3 and so on. The `Next Row (↓)` button on the number pad does not step through them: it goes from Row 1 to Row 2, and nowhere else.
+3. **The answer is put on the right side of the `=` sign, on the same row.** It is shown in that row's own answer card (the card to the right of the `=`, beside the **math to put on the left** button), and nothing is printed into the next row for a single row.
+4. **Rows are joined with a math sign, and the total is on the next row after them.** Row 1 is joined to Row 2 by a join sign in Row 2 (`+ − × ÷ = ≠ < > ≤ ≥`). Pressing `=` then shows Row 1's own answer on Row 1, Row 2's own answer on Row 2, and the answer for Rows 1 and 2 together on Row 3.
+5. **The math rows follow the diagrams, for all 507 operators and all the finished algebra word problems.** Each operator's row is its picture written as cards: one card for every number or symbol, the picture's blue boxes as boxes (in the picture's order, with a variable written twice sharing one value), the picture's answer box as an answer box that `=` fills in, and a letter or constant the picture shows (`g`, `Z`, `x`) as an ordinary card. Each algebra word problem's row is its diagram's equation: the blue numbers are the boxes, already filled in with the problem's own numbers, and every other symbol is its own card. Where a picture cannot show every input, the row adds `with` boxes after the picture (listed in `operator_keys/operator_rows_with_extra_boxes.txt`). The one place a row deliberately does not copy a picture is rule 1: the pictures and diagrams draw a `/` on one line, and the row writes it top to bottom.
+
+How each rule is carried out is described below under *How a row is laid out (the grid)* and *The rule for math on several lines*. The tests that keep the rules true are `tests/test_operator_pictures.py` and `tests/test_algebra_word_problem_files.py`.
+
 ## Using the operators from Python
 
 Every operator is a plain Python file you can use without the window:
