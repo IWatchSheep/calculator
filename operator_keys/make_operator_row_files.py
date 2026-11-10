@@ -138,7 +138,8 @@ def rewrite(key, dsl):
         extra += "FRAC = %r    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)\n" % [[list(e) for e in f] for f in fracs]
     if extra:
         src = re.sub(r"^(KINDS = .*\n)", lambda m: m.group(1) + extra, src, count=1, flags=re.M)
-    src = src.replace("return build_row(parent, LEFT, RIGHT, stacked)", "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"), fracs=globals().get(\"FRAC\"))")
+    call = "return build_row(parent, LEFT, RIGHT, stacked, levels=globals().get(\"LEVELS\"), fracs=globals().get(\"FRAC\"))"
+    src = re.sub(r"return build_row\(parent, LEFT, RIGHT, stacked[^\n]*\)", lambda m: call, src)     # also fixes files that only pass levels=
     src = re.sub(r"^Picture:      .*$", "Picture:      " + pattern.replace("\\", "\\\\"), src, count=1, flags=re.M)
     open(path, "w", encoding="utf-8", newline="").write(src.replace("\n", nl))
 
