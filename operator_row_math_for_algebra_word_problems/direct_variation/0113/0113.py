@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Direct variation 0113
 
-Picture:      □ = k · □ ; p a y = k · □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      □ = k · □ ; pay = k · □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py direct_variation/0113
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Direct variation 0113'
 KEY = 'direct_variation/0113'
 LIBRARY_KEY = 'direct_variation/0113'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = '□ = k · □ ; p a y = k · □  ->  answer □'
+PATTERN = '□ = k · □ ; pay = k · □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'ready'
@@ -22,9 +22,9 @@ BOX_INDEX = [0, 1, 2]    # the place of each box's number in the problem text (N
 DEFAULTS = ['765.00', '34', '28']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-FRAC = [[], [], [], [], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
-LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
-LEFT = [('box', ''), ('op', '='), ('op', 'k'), ('op', '·'), ('box', ''), ('op', ';'), ('op', 'p'), ('op', 'a'), ('op', 'y'), ('op', '='), ('op', 'k'), ('op', '·'), ('box', '')]      # cards left of "="
+FRAC = [[], [], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
+LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
+LEFT = [('box', ''), ('op', '='), ('op', 'k'), ('op', '·'), ('box', ''), ('op', ';'), ('op', 'pay'), ('op', '='), ('op', 'k'), ('op', '·'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

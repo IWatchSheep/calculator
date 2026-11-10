@@ -165,23 +165,41 @@ def make_picture(path, p, numbers):
     answer_lines = wrap("Answer: " + p["Answer"], f_bold, width - 2 * pad)
     equations = equation_parts(equation_plan(p["Equation"], numbers))
 
-    def equation_rows(tokens):
-        """Tokens: ('num', text, i) is drawn in a blue box (it is a box of the row), ('txt', text) plain.  Wrapped to the picture width."""
-        tokens = [(t[0], t[1]) for t in tokens]
-        rows, row, x = [], [], 0
-        for kind, text in tokens:
-            w = probe.textlength(text, font=f_num if kind == "num" else f_text) + (22 if kind == "num" else 0)
-            if x + w > width - 2 * pad and row:
-                rows.append(row)
-                row, x = [], 0
-            row.append((kind, text, w))
-            x += w
-        rows.append(row)
-        return rows
+    sys.path.insert(0, ROOT)
+    from operator_row_math.row_builder import _plan
 
-    eq_blocks = [equation_rows(e) for e in equations]
+    def stacked_part(tokens):
+        """One part of the equation on a grid exactly like the row's: a fraction has its numerator above the bar and its denominator below, an exponent is one row up.
+        Returns (grid rows, [(grid row, column, kind, text, pixel width)], [(grid row, first column, last column)] of the bars, column widths)."""
+        cards, _, _, levels, fracs = row_cards(tokens)
+        texts = [t[1] for t in tokens if t[0] == "num"]
+        shown_texts, k = [], 0
+        for kind, text in cards:
+            if kind == "box":
+                shown_texts.append(texts[k])
+                k += 1
+            else:
+                shown_texts.append(text)
+        placed, bars, _end = _plan(len(cards), levels, fracs)
+        ncols = max([c for r, c in placed.values()] + [0]) + 1
+        colw = [0] * (ncols + 1)
+        for i, (r, c) in placed.items():
+            w = probe.textlength(shown_texts[i], font=f_num if cards[i][0] == "box" else f_text) + (22 if cards[i][0] == "box" else 6)
+            colw[c] = max(colw[c], w)
+        for r, c, w in bars:
+            for cc in range(c, c + w):
+                colw[cc] = max(colw[cc], 14)
+        top = min([r for r, c in placed.values()] + [r for r, c, w in bars])
+        bottom = max([r for r, c in placed.values()] + [r for r, c, w in bars])
+        items = [(r - top, c, cards[i][0], shown_texts[i]) for i, (r, c) in placed.items()]
+        return bottom - top + 1, items, [(r - top, c, c + w - 1) for r, c, w in bars], colw
+
+    eq_blocks = [stacked_part(e) for e in equations]
+    need = max([sum(blk[3]) + 10 * len(blk[3]) for blk in eq_blocks] + [width - 2 * pad]) + 2 * pad
+    width = max(width, int(need))
+    cell = 46
     height = pad + 24 + 14 + 30 * len(problem_lines) + 10 + 24 * len(let_lines) + 18
-    height += sum(52 * len(rows) + 10 for rows in eq_blocks) + 14 + 32 * len(answer_lines) + pad - 6
+    height += sum(cell * blk[0] + 16 for blk in eq_blocks) + 14 + 32 * len(answer_lines) + pad - 6
 
     img = Image.new("RGB", (width, height), "white")
     d = ImageDraw.Draw(img)
@@ -198,18 +216,24 @@ def make_picture(path, p, numbers):
         d.text((pad, y), line, font=f_small, fill="#4a5a78")
         y += 24
     y += 18
-    for rows in eq_blocks:
-        for row in rows:
-            x = pad
-            for kind, text, w in row:
-                if kind == "num":
-                    d.rounded_rectangle((x + 2, y, x + w - 2, y + 40), radius=5, fill="#d6e6fb", outline="#2a6ec9", width=2)
-                    d.text((x + w / 2, y + 20), text, font=f_num, fill="#1b3f7a", anchor="mm")
-                else:
-                    d.text((x, y + 20), text, font=f_text, fill="#222222", anchor="lm")
-                x += w
-            y += 52
-        y += 10
+    for nrows, items, bars, colw in eq_blocks:
+        xs, x = [], pad
+        for w in colw:
+            xs.append(x)
+            x += w + 10
+        for r, c, kind, text in items:
+            w, cy = colw[c], y + r * cell + 20
+            if kind == "box":
+                bw = probe.textlength(text, font=f_num) + 22
+                x0 = xs[c] + (w - bw) / 2
+                d.rounded_rectangle((x0 + 2, cy - 20, x0 + bw - 2, cy + 20), radius=5, fill="#d6e6fb", outline="#2a6ec9", width=2)
+                d.text((x0 + bw / 2, cy), text, font=f_num, fill="#1b3f7a", anchor="mm")
+            else:
+                d.text((xs[c] + w / 2, cy), text, font=f_text, fill="#222222", anchor="mm")
+        for r, c0, c1 in bars:
+            by = y + r * cell + 20
+            d.line((xs[c0], by, xs[c1] + colw[c1], by), fill="#222222", width=2)
+        y += cell * nrows + 16
     y += 14
     for line in answer_lines:
         d.text((pad, y), line, font=f_bold, fill="#2a6a20")
@@ -275,7 +299,7 @@ def compute(*numbers):
         "solver_r": py_str(solver), "family_r": py_str(family), "template_r": py_str(template), "numbers_r": py_str(numbers)}
 
 
-TOKEN = re.compile(NUMBER.pattern + r"|\S")
+TOKEN = re.compile(NUMBER.pattern + r"|[A-Za-z]{2,}|\S")      # a word of 2+ letters (pay) is ONE card, never p a y
 
 
 def row_cards(plan):

@@ -67,8 +67,8 @@ class Folders(unittest.TestCase):
 
 class Rows(unittest.TestCase):
     def test_every_card_is_one_column_with_one_token(self):
-        """A card's centre shows one symbol: a blue box, a number that is not a box, or one character (a letter, + - x / = ( ) ;)."""
-        token = re.compile(r"\d+(?:\.\d+)?|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\S")
+        """A card's centre shows one symbol: a blue box, a number that is not a box, a word (pay), or one character (a letter, + - x / = ( ) ;)."""
+        token = re.compile(r"\d+(?:\.\d+)?|\d{1,3}(?:,\d{3})+(?:\.\d+)?|[A-Za-z]{2,}|\S")
         for key in rows.keys():
             for kind, text in rows.get(key).LEFT:
                 if kind == "op":
