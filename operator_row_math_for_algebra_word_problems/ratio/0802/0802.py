@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Ratio 0802
 
-Picture:      ( □ k − □ )/( □ k + 18) = □ / □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      ( □ k − □ ) / ( □ k + 18 ) = □ / □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  reference - the problem is stored; no solver answers it yet
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py ratio/0802
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Ratio 0802'
 KEY = 'ratio/0802'
 LIBRARY_KEY = 'ratio/0802'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = '( □ k − □ )/( □ k + 18) = □ / □  ->  answer □'
+PATTERN = '( □ k − □ ) / ( □ k + 18 ) = □ / □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'reference'
@@ -22,7 +22,7 @@ BOX_INDEX = [0, 2, 1, 3, 4]    # the place of each box's number in the problem t
 DEFAULTS = ['5', '18', '6', '2', '9']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '('), ('box', ''), ('op', 'k −'), ('box', ''), ('op', ')/('), ('box', ''), ('op', 'k + 18) ='), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="
+LEFT = [('op', '('), ('box', ''), ('op', 'k'), ('op', '−'), ('box', ''), ('op', ')'), ('op', '/'), ('op', '('), ('box', ''), ('op', 'k'), ('op', '+'), ('op', '18'), ('op', ')'), ('op', '='), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

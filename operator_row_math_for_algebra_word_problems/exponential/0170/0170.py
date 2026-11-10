@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Exponential 0170
 
-Picture:      □ × 3^(t/ □ ) = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      □ × 3 ^ ( t / □ ) = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py exponential/0170
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Exponential 0170'
 KEY = 'exponential/0170'
 LIBRARY_KEY = 'exponential/0170'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = '□ × 3^(t/ □ ) = □  ->  answer □'
+PATTERN = '□ × 3 ^ ( t / □ ) = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'ready'
@@ -22,7 +22,7 @@ BOX_INDEX = [1, 0, 2]    # the place of each box's number in the problem text (N
 DEFAULTS = ['20', '2', '1620']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '× 3^(t/'), ('box', ''), ('op', ') ='), ('box', '')]      # cards left of "="
+LEFT = [('box', ''), ('op', '×'), ('op', '3'), ('op', '^'), ('op', '('), ('op', 't'), ('op', '/'), ('box', ''), ('op', ')'), ('op', '='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

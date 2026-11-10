@@ -275,26 +275,22 @@ def compute(*numbers):
         "solver_r": py_str(solver), "family_r": py_str(family), "template_r": py_str(template), "numbers_r": py_str(numbers)}
 
 
+TOKEN = re.compile(NUMBER.pattern + r"|\S")
+
+
 def row_cards(plan):
-    """The row's cards from the plan: the plain text between boxes is one operator card, every box is a box card.  Returns (cards, box_index, pattern)."""
-    cards, box_index, pattern, text = [], [], [], ""
-
-    def flush():
-        nonlocal text
-        if text.strip():
-            cards.append(("op", " ".join(text.split())))
-            pattern.append(" ".join(text.split()))
-        text = ""
-
+    """The row's cards from the plan, ONE TOKEN PER CARD (a card's centre shows one symbol): a blue box is a box card; a number that is not a box, a letter, + - x / = ( ) ;
+    each is an operator card of its own.  Returns (cards, box_index, pattern)."""
+    cards, box_index, pattern = [], [], []
     for tok in plan:
         if tok[0] == "txt":
-            text += tok[1]
+            for m in TOKEN.finditer(tok[1]):
+                cards.append(("op", m.group(0)))
+                pattern.append(m.group(0))
         else:
-            flush()
             cards.append(("box", ""))
             box_index.append(tok[2])
             pattern.append(BOX)
-    flush()
     return cards, box_index, " ".join(pattern)
 
 

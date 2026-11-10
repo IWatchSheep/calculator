@@ -1,6 +1,6 @@
 """Row for the algebra word problem: System of equations (3 variables) 0952
 
-Picture:      a + b + c = □ ; 2a + b = □ ; b + 2c = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      a + b + c = □ ; 2 a + b = □ ; b + 2 c = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  reference - the problem is stored; no solver answers it yet
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py system_of_equations_3_variables/0952
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'System of equations (3 variables) 0952'
 KEY = 'system_of_equations_3_variables/0952'
 LIBRARY_KEY = 'system_of_equations_3_variables/0952'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = 'a + b + c = □ ; 2a + b = □ ; b + 2c = □  ->  answer □'
+PATTERN = 'a + b + c = □ ; 2 a + b = □ ; b + 2 c = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'reference'
@@ -22,7 +22,7 @@ BOX_INDEX = [0, 1, 2]    # the place of each box's number in the problem text (N
 DEFAULTS = ['3.85', '3.05', '4.65']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'a + b + c ='), ('box', ''), ('op', '; 2a + b ='), ('box', ''), ('op', '; b + 2c ='), ('box', '')]      # cards left of "="
+LEFT = [('op', 'a'), ('op', '+'), ('op', 'b'), ('op', '+'), ('op', 'c'), ('op', '='), ('box', ''), ('op', ';'), ('op', '2'), ('op', 'a'), ('op', '+'), ('op', 'b'), ('op', '='), ('box', ''), ('op', ';'), ('op', 'b'), ('op', '+'), ('op', '2'), ('op', 'c'), ('op', '='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

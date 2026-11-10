@@ -22,7 +22,7 @@ BOX_INDEX = [0, 1, 2, 3]    # the place of each box's number in the problem text
 DEFAULTS = ['36000', '700', '58000', '300']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '+'), ('box', ''), ('op', 'y ='), ('box', ''), ('op', '−'), ('box', ''), ('op', 'y')]      # cards left of "="
+LEFT = [('box', ''), ('op', '+'), ('box', ''), ('op', 'y'), ('op', '='), ('box', ''), ('op', '−'), ('box', ''), ('op', 'y')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

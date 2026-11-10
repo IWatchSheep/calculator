@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Geometry (quadratic) 0337
 
-Picture:      ( □ − 2x)( □ − 2x) = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      ( □ − 2 x ) ( □ − 2 x ) = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  reference - the problem is stored; no solver answers it yet
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py geometry_quadratic/0337
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Geometry (quadratic) 0337'
 KEY = 'geometry_quadratic/0337'
 LIBRARY_KEY = 'geometry_quadratic/0337'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = '( □ − 2x)( □ − 2x) = □  ->  answer □'
+PATTERN = '( □ − 2 x ) ( □ − 2 x ) = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'reference'
@@ -22,7 +22,7 @@ BOX_INDEX = [0, 1, 2]    # the place of each box's number in the problem text (N
 DEFAULTS = ['26', '13', '48']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '('), ('box', ''), ('op', '− 2x)('), ('box', ''), ('op', '− 2x) ='), ('box', '')]      # cards left of "="
+LEFT = [('op', '('), ('box', ''), ('op', '−'), ('op', '2'), ('op', 'x'), ('op', ')'), ('op', '('), ('box', ''), ('op', '−'), ('op', '2'), ('op', 'x'), ('op', ')'), ('op', '='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

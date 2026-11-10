@@ -66,6 +66,17 @@ class Folders(unittest.TestCase):
 
 
 class Rows(unittest.TestCase):
+    def test_every_card_is_one_column_with_one_token(self):
+        """A card's centre shows one symbol: a blue box, a number that is not a box, or one character (a letter, + - x / = ( ) ;)."""
+        token = re.compile(r"\d+(?:\.\d+)?|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\S")
+        for key in rows.keys():
+            for kind, text in rows.get(key).LEFT:
+                if kind == "op":
+                    self.assertTrue(token.fullmatch(text), "%s: %r" % (key, text))
+        self.assertEqual([t for _, t in rows.get("consecutive_integers/0070").LEFT],
+                         ["x", "+", "(", "x", "+", "1", ")", "+", "(", "x", "+", "2", ")", "=", ""])
+        self.assertEqual([t for _, t in rows.get("savings/0848").LEFT], ["", "+", "", "w", "=", "", "+", "", "w"])
+
     def test_a_row_is_the_equation_with_a_box_for_every_blue_number(self):
         """The row is the problem's equation.  A blue box of the picture is a box of the row: same order, same value, prefilled.  A number of the equation that is not
         written in the problem text (the 1 and 2 of x + (x + 1) + (x + 2)) is plain text on both; the answer is the result box."""

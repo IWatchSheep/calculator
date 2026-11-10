@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Simple interest 0878
 
-Picture:      □ × (r/100) × □ = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
+Picture:      □ × ( r / 100 ) × □ = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  reference - the problem is stored; no solver answers it yet
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py simple_interest/0878
 """
@@ -13,7 +13,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Simple interest 0878'
 KEY = 'simple_interest/0878'
 LIBRARY_KEY = 'simple_interest/0878'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = '□ × (r/100) × □ = □  ->  answer □'
+PATTERN = '□ × ( r / 100 ) × □ = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'reference'
@@ -22,7 +22,7 @@ BOX_INDEX = [0, 2, 1]    # the place of each box's number in the problem text (N
 DEFAULTS = ['4500.00', '8', '720.00']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '× (r/100) ×'), ('box', ''), ('op', '='), ('box', '')]      # cards left of "="
+LEFT = [('box', ''), ('op', '×'), ('op', '('), ('op', 'r'), ('op', '/'), ('op', '100'), ('op', ')'), ('op', '×'), ('box', ''), ('op', '='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 
