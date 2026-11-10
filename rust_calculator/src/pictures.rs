@@ -76,4 +76,19 @@ mod tests {
         assert!(word_picture("age/0001").is_some());
         assert!(picture_for("word:age/0001").is_some());
     }
+
+    #[test]
+    fn every_operator_picture_opens_and_decodes() {
+        if root().is_none() {
+            return; // built outside the project folder
+        }
+        let mut count = 0;
+        for layout in crate::layouts::LAYOUTS {
+            let path = operator_picture(layout.key).unwrap_or_else(|| panic!("no picture for {}", layout.key));
+            let img = image::open(&path).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+            assert!(img.width() > 100 && img.height() > 100, "{} is {}x{}", layout.key, img.width(), img.height());
+            count += 1;
+        }
+        assert_eq!(count, 508);
+    }
 }

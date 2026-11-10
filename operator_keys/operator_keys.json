@@ -1,7 +1,7 @@
 {
- "count": 507,
+ "count": 508,
  "ready": 446,
- "reference": 61,
+ "reference": 62,
  "operators": [
   {
    "key": "geometry/geometry/arc_length",
@@ -19867,6 +19867,31 @@
      "expected": 0
     }
    ]
+  },
+  {
+   "key": "physics/physics/navier_stokes_equation",
+   "name": "Navier–Stokes equation",
+   "symbol": "ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ρ(∂u/∂t + (u·∇)u) = −∇p + μ∇²u + f   (incompressible flow, ∇·u = 0)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "ρ ( ∂ u / ∂ t + ( u · ∇ ) u ) = − ∇ p + μ ∇ ² u + f",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
   },
   {
    "key": "physics/physics/newton_s_second_law",

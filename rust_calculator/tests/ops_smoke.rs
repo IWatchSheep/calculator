@@ -80,5 +80,5 @@ fn every_ready_operator_has_a_calculation() {
     use rust_calculator::operator::CalcKind;
     let ready = ops::all_operators().iter().filter(|o| o.calc == CalcKind::Ready).count();
     assert_eq!(ready, 446, "the Python library has 446 Ready operators");
-    assert_eq!(ops::all_operators().len(), 507);
+    assert_eq!(ops::all_operators().len(), 508);
 }
