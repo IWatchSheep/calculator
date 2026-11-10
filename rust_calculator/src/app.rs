@@ -29,6 +29,8 @@ pub struct CalculatorApp {
     adv_filter: String,
     /// The operator (or `word:` problem) whose picture is shown in the side panel.
     preview_key: Option<String>,
+    /// The word problem whose diagram is open in its own window (clicking another problem reuses the same window).
+    diagram: Option<&'static ops::words::Item>,
     /// Mathematical Templates: typed math kept for later.
     tpl_text: String,
     tpl_saved: Vec<String>,
@@ -90,6 +92,7 @@ impl Default for CalculatorApp {
             adv_msg: String::new(),
             adv_filter: String::new(),
             preview_key: None,
+            diagram: None,
             tpl_text: String::new(),
             tpl_saved: tpl_loaded.0,
             tpl_pick: String::new(),
@@ -110,6 +113,7 @@ impl CalculatorApp {
         let mut app = Self::default();
         if let Some(op) = ops::get(key) {
             app.preview_key = Some(key.to_string());
+            app.diagram = key.strip_prefix("word:").and_then(|k| ops::words::items().iter().find(|i| i.key == k));
             app.doc.rows[0].set_operator(op);
             for (i, t) in inputs.iter().enumerate() {
                 if let Some(slot) = app.doc.rows[0].inputs.get_mut(i) {
@@ -172,6 +176,7 @@ impl eframe::App for CalculatorApp {
             ui.label(&self.status);
         });
         self.ui_templates(ctx);
+        self.ui_diagram_window(ctx);
 
         if self.show_ops {
             egui::SidePanel::right("operators")
@@ -331,7 +336,37 @@ impl CalculatorApp {
         ui.separator();
     }
 
-    fn apply_word_problem(&mut self, it: &ops::words::Item) {
+    /// The diagram of the clicked word problem in a window of its own: id, category, status, the problem text and the picture.
+    fn ui_diagram_window(&mut self, ctx: &egui::Context) {
+        let Some(it) = self.diagram else { return };
+        let mut close = false;
+        let builder = egui::ViewportBuilder::default().with_title(format!("{}  {}", it.id, it.category)).with_inner_size([1000.0, 640.0]);
+        ctx.show_viewport_immediate(egui::ViewportId::from_hash_of("word_diagram"), builder, |ctx, _class| {
+            egui::CentralPanel::default().frame(egui::Frame::none().fill(Color32::WHITE).inner_margin(egui::Margin::same(12.0))).show(ctx, |ui| {
+                ui.label(RichText::new(format!("{}    {}    {}", it.id, it.category, if it.ready { "Ready" } else { "Reference" })).color(BLUE).strong().size(18.0));
+                ui.add_space(4.0);
+                ui.label(RichText::new(it.problem).color(Color32::BLACK).size(16.0));
+                ui.add_space(8.0);
+                match crate::pictures::word_picture(it.key) {
+                    Some(path) => {
+                        ui.add(egui::Image::new(crate::pictures::uri(&path)).max_width(960.0).max_height(480.0));
+                    }
+                    None => {
+                        ui.label("The diagram file is not in the folder.");
+                    }
+                }
+            });
+            if ctx.input(|i| i.viewport().close_requested()) {
+                close = true;
+            }
+        });
+        if close {
+            self.diagram = None;
+        }
+    }
+
+    fn apply_word_problem(&mut self, it: &'static ops::words::Item) {
+        self.diagram = Some(it);
         self.preview_key = Some(format!("word:{}", it.key));
         if !it.ready {
             self.status = format!(
