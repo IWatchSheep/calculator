@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 624)
+        self.assertEqual(len(self.ops), 627)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 624)
+        self.assertEqual(len(status), 627)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -303,6 +303,9 @@ CASES = [
     (PH + "bohr_radius", (1,), 5.29177210903e-11), (PH + "bohr_radius", (2,), 2.645886054515e-11),
     (PH + "electron_compton_wavelength", (), 2.426310238683092e-12),
     (PH + "rectangular_barrier_transmission", (1, 2, 0.7071067811865475, 1, 1), 0.4199743416140261),
+    (PH + "oscillator_level_gap", (1, 1), 1), (PH + "oscillator_level_gap", (2,), 2.109143634e-34),
+    (PH + "oscillator_ground_density", (1, 1, 0, 1), 0.5641895835477563), (PH + "oscillator_ground_density", (1, 1, 1, 1), 0.20755374871029736),
+    (PH + "oscillator_ground_variance", (1, 2, 1), 0.25),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1505,6 +1508,43 @@ class RectangularBarrierTests(unittest.TestCase):
         # opaque-barrier limit: T ~ 16 E (V-E) / V^2 * exp(-2 kappa L)
         e, v, l = 1.0, 2.0, 8.0
         self.assertAlmostEqual(t(e, v, l, 1, 1) / (16 * e * (v - e) / v ** 2 * math.exp(-2 * math.sqrt(2 * (v - e)) * l)), 1, places=6)
+
+
+class OscillatorGroundStateTests(unittest.TestCase):
+    """Quantum mechanics, job 3: the harmonic oscillator beyond its energies."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        omega, mass, hb = "the angular frequency must be positive", "mass must be positive", "hbar must be positive"
+        self.says("oscillator_level_gap", (0, 1), omega)
+        self.says("oscillator_level_gap", (-1, 1), omega)
+        self.says("oscillator_level_gap", (1, 0), hb)
+        self.says("oscillator_ground_density", (0, 1, 0, 1), mass)
+        self.says("oscillator_ground_density", (1, 0, 0, 1), omega)
+        self.says("oscillator_ground_density", (1, 1, 0, 0), hb)
+        self.says("oscillator_ground_variance", (0, 1, 1), mass)
+        self.says("oscillator_ground_variance", (1, -1, 1), omega)
+        self.says("oscillator_ground_variance", (1, 1, 0), hb)
+
+    def test_the_pieces_fit_together(self):
+        gap = get(PH + "oscillator_level_gap").compute
+        energy = get(PH + "quantum_harmonic_oscillator").compute
+        for n in (0, 1, 5):                                          # the gap is E(n+1) - E(n) for every n
+            self.assertAlmostEqual(gap(3.0) , energy(n + 1, 3.0) - energy(n, 3.0), delta=1e-12 * gap(3.0))
+        dens = get(PH + "oscillator_ground_density").compute
+        var = get(PH + "oscillator_ground_variance").compute
+        self.assertAlmostEqual(dens(2, 3, 0.4, 1), dens(2, 3, -0.4, 1), places=15)      # symmetric about the centre
+        steps, width = 40000, 12.0                                   # integrates to 1, and <x^2> is the variance
+        xs = [-width + (i + 0.5) * 2 * width / steps for i in range(steps)]
+        dx = 2 * width / steps
+        self.assertAlmostEqual(sum(dens(1.5, 2.0, x, 1) for x in xs) * dx, 1.0, places=9)
+        self.assertAlmostEqual(sum(x * x * dens(1.5, 2.0, x, 1) for x in xs) * dx, var(1.5, 2.0, 1), places=9)
+        h = 1.054571817e-34
+        self.assertAlmostEqual(var(1e-30, 1e15) , h / (2 * 1e-30 * 1e15), delta=1e-12 * var(1e-30, 1e15))
 
 
 class ErrorTests(unittest.TestCase):

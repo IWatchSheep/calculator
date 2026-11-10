@@ -1,6 +1,6 @@
 {
- "count": 624,
- "ready": 552,
+ "count": 627,
+ "ready": 555,
  "reference": 72,
  "operators": [
   {
@@ -24333,6 +24333,168 @@
       5
      ],
      "expected": 10
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/oscillator_ground_density",
+   "name": "Oscillator ground-state density",
+   "symbol": "|ψ₀|² = √(m ω / (π ħ)) exp(−m ω x² / ħ)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "|ψ₀|² = √(m ω / (π ħ)) exp(−m ω x² / ħ)   (the probability per metre of finding the particle at x in the ground state of a quantum harmonic oscillator; ħ = 1.054571817e-34 J s unless another is passed)",
+   "status": "Ready",
+   "inputs": [
+    "m",
+    "omega",
+    "x"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( □ □ / ( π ħ ) ) × exp ( − □ □ □ ² / ħ )",
+   "compute_signature": "compute(m, omega, x, hbar=1.054571817e-34)",
+   "compute_params": [
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "omega",
+     "kind": "required"
+    },
+    {
+     "name": "x",
+     "kind": "required"
+    },
+    {
+     "name": "hbar",
+     "kind": "optional",
+     "default": 1.054571817e-34
+    }
+   ],
+   "required_args": 3,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      1,
+      1,
+      0,
+      1
+     ],
+     "expected": 0.5641895835477563
+    },
+    {
+     "args": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "expected": 0.20755374871029736
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/oscillator_ground_variance",
+   "name": "Oscillator ground-state variance",
+   "symbol": "⟨x²⟩ = ħ / (2 m ω)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "⟨x²⟩ = ħ / (2 m ω)   (the mean of x is 0, so this is the spread of the ground state of a quantum harmonic oscillator, in square metres; ħ = 1.054571817e-34 J s unless another is passed)",
+   "status": "Ready",
+   "inputs": [
+    "m",
+    "omega"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ħ / ( 2 × □ × □ )",
+   "compute_signature": "compute(m, omega, hbar=1.054571817e-34)",
+   "compute_params": [
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "omega",
+     "kind": "required"
+    },
+    {
+     "name": "hbar",
+     "kind": "optional",
+     "default": 1.054571817e-34
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      1,
+      2,
+      1
+     ],
+     "expected": 0.25
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/oscillator_level_gap",
+   "name": "Oscillator level gap",
+   "symbol": "ΔE = ħ ω",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ΔE = ħ ω   (the energy between neighbouring levels of a quantum harmonic oscillator; it does not depend on n; ħ = 1.054571817e-34 J s unless another is passed)",
+   "status": "Ready",
+   "inputs": [
+    "omega"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ħ × □",
+   "compute_signature": "compute(omega, hbar=1.054571817e-34)",
+   "compute_params": [
+    {
+     "name": "omega",
+     "kind": "required"
+    },
+    {
+     "name": "hbar",
+     "kind": "optional",
+     "default": 1.054571817e-34
+    }
+   ],
+   "required_args": 1,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      1,
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2.109143634e-34
     }
    ]
   },

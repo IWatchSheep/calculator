@@ -391,6 +391,11 @@ physics/physics/motional_emf	0.5 2 3	3
 physics/physics/motional_emf	0 2 3	0
 physics/physics/newton_s_second_law	2 5	10
 physics/physics/ohm_s_law	2 5	10
+physics/physics/oscillator_ground_density	1 1 0 1	0.5641895835477563
+physics/physics/oscillator_ground_density	1 1 1 1	0.20755374871029736
+physics/physics/oscillator_ground_variance	1 2 1	0.25
+physics/physics/oscillator_level_gap	1 1	1
+physics/physics/oscillator_level_gap	2	2.109143634e-34
 physics/physics/particle_in_a_box	2 1 1	2.195240281636051e-67
 physics/physics/particle_in_a_box	1 2 1	2.7440503520450636e-68
 physics/physics/pendulum_period	9.81	6.283185307179586

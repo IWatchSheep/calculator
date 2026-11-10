@@ -1103,3 +1103,29 @@ fn the_rectangular_barrier_gives_the_number_of_the_work_plan_and_declines_with_i
     assert!(call(&[1., 2., 1., 0., 1.]).unwrap_err().contains("mass must be positive"));
     assert!(call(&[1., 2., 1., 1., 0.]).unwrap_err().contains("hbar must be positive"));
 }
+
+#[test]
+fn the_oscillator_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let hb = 1.054571817e-34;
+    assert_eq!(call("oscillator_level_gap", &[1., 1.]).unwrap(), 1.0);
+    assert_eq!(call("oscillator_level_gap", &[2., hb]).unwrap(), 2.109143634e-34);
+    assert_eq!(call("oscillator_ground_density", &[1., 1., 0., 1.]).unwrap(), 0.5641895835477563);
+    assert_eq!(call("oscillator_ground_density", &[1., 1., 1., 1.]).unwrap(), 0.20755374871029736);
+    assert_eq!(call("oscillator_ground_variance", &[1., 2., 1.]).unwrap(), 0.25);
+    let (omega, mass, hbar) = ("the angular frequency must be positive", "mass must be positive", "hbar must be positive");
+    assert!(call("oscillator_level_gap", &[0., 1.]).unwrap_err().contains(omega));
+    assert!(call("oscillator_level_gap", &[1., 0.]).unwrap_err().contains(hbar));
+    assert!(call("oscillator_ground_density", &[0., 1., 0., 1.]).unwrap_err().contains(mass));
+    assert!(call("oscillator_ground_density", &[1., 0., 0., 1.]).unwrap_err().contains(omega));
+    assert!(call("oscillator_ground_density", &[1., 1., 0., 0.]).unwrap_err().contains(hbar));
+    assert!(call("oscillator_ground_variance", &[0., 1., 1.]).unwrap_err().contains(mass));
+    assert!(call("oscillator_ground_variance", &[1., -1., 1.]).unwrap_err().contains(omega));
+    assert!(call("oscillator_ground_variance", &[1., 1., 0.]).unwrap_err().contains(hbar));
+}

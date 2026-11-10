@@ -816,3 +816,28 @@ pub fn rectangular_barrier_transmission(a: &[f64]) -> R {
     let s = (kappa * a[2]).sinh();
     n(1.0 / (1.0 + a[1].powi(2) * s.powi(2) / (4.0 * a[0] * (a[1] - a[0]))))
 }
+
+// ---------- quantum mechanics, job 3 (the same operations as the Python files) ----------
+
+pub fn oscillator_level_gap(a: &[f64]) -> R {
+    // omega, hbar
+    need(a[0] > 0.0, "the angular frequency must be positive")?;
+    need(a[1] > 0.0, "hbar must be positive")?;
+    n(a[1] * a[0])
+}
+
+pub fn oscillator_ground_density(a: &[f64]) -> R {
+    // m, omega, x, hbar
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[1] > 0.0, "the angular frequency must be positive")?;
+    need(a[3] > 0.0, "hbar must be positive")?;
+    n((a[0] * a[1] / (PI * a[3])).sqrt() * (-a[0] * a[1] * a[2].powi(2) / a[3]).exp())
+}
+
+pub fn oscillator_ground_variance(a: &[f64]) -> R {
+    // m, omega, hbar
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[1] > 0.0, "the angular frequency must be positive")?;
+    need(a[2] > 0.0, "hbar must be positive")?;
+    n(a[2] / (2.0 * a[0] * a[1]))
+}
