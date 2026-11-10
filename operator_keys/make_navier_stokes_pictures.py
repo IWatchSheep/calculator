@@ -3,8 +3,8 @@
     python operator_keys/make_navier_stokes_pictures.py
 
 One picture for each operator, written to operators_one_operator_per_file/physics/physics/<operator>/<operator>.jpg:
-    navier_stokes_equation (the whole set: vector form, the x, y, z momentum lines, continuity), navier_stokes_x_momentum, navier_stokes_y_momentum,
-    navier_stokes_z_momentum, navier_stokes_continuity.
+    navier_stokes_equation (the short vector form, the same cards as its row), navier_stokes_x_momentum, navier_stokes_y_momentum, navier_stokes_z_momentum,
+    navier_stokes_continuity.
 The rows of these operators are in operator_row_math/physics/physics/<operator>/<operator>.py (written by make_operator_row_files.py from operator_row_specs.txt)
 and follow these pictures: same columns, same grid rows.
 
@@ -111,36 +111,18 @@ def continuity(x, base):
     return put(op(x, base, "="), base, "0")
 
 
-def whole_set():
-    new(1320, 970)
-    d.text((44, 22), "Navier\u2013Stokes equations (incompressible Newtonian fluid)", font=TITLE, fill="#16233a")
-    d.line((40, 70, 1280, 70), fill=RULE, width=3)
-    put(44, 128, "Vector form", LABEL, GREY)
-    vector(44, 205)
-    d.line((40, 270, 1280, 270), fill=RULE, width=2)
-    put(44, 312, "Written out, one line for each direction (u, v, w are the velocity components along x, y, z)", LABEL, GREY)
-    base = 395
-    for q, axis in (("u", "x"), ("v", "y"), ("w", "z")):
-        component(44, base, q, axis)
-        base += 118
-    d.line((40, base - 62, 1280, base - 62), fill=RULE, width=2)
-    put(44, base - 28, "Continuity (the fluid is incompressible)", LABEL, GREY)
-    continuity(44, base + 52)
-    d.text((44, 970 - 42), "\u03c1 density     \u03bc dynamic viscosity     p pressure     f force per volume (gravity ...)     t time     x, y, z position     "
-           "\u2207 gradient     \u2207\u00b2 Laplacian", font=NOTE, fill=GREY)
-    return img
-
-
 def single(title, draw, description, base=185):
     """One equation, in the look of the other operator pictures: title, rule, the equation, a description line."""
     new(10, 10)
     end = draw(0, base)
     w = max(1040, int(end) + 88)
-    new(w, base + 130)
+    lines = description.split("\n")
+    new(w, base + 130 + 26 * (len(lines) - 1))
     d.text((40, 18), title, font=font("segoeuib.ttf", 30), fill="#16233a")
     d.line((36, 67, w - 36, 67), fill=RULE, width=3)
     draw((w - end) / 2, base)
-    d.text((40, base + 92), description, font=NOTE, fill=GREY)
+    for k, line in enumerate(lines):
+        d.text((40, base + 92 + 26 * k), line, font=NOTE, fill=GREY)
     return img
 
 
@@ -151,7 +133,10 @@ def save(image, path):
 
 
 if __name__ == "__main__":
-    save(whole_set(), os.path.join(OPS, "navier_stokes_equation", "navier_stokes_equation.jpg"))
+    save(single("Navier–Stokes equation", vector,
+                "Density times the fluid's acceleration equals the push of pressure, the friction of the fluid on itself and any outside force.\n"
+                "u velocity, ρ density, μ viscosity, p pressure, f force per volume (such as gravity)."),
+         os.path.join(OPS, "navier_stokes_equation", "navier_stokes_equation.jpg"))
     for q, axis in (("u", "x"), ("v", "y"), ("w", "z")):
         pic = single("Navier\u2013Stokes: %s momentum" % axis, lambda x, b, q=q, a=axis: component(x, b, q, a),
                      "Momentum balance along %s for an incompressible fluid. %s is the velocity along %s; \u03c1 density, \u03bc viscosity, p pressure, f_%s force per volume." % (axis, q, axis, axis))

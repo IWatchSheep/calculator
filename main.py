@@ -784,8 +784,8 @@ class CalculatorGUI(tk.Tk):
         steps = "   ".join("Row %d: %s." % (k + 1, rs["title"]) for k, rs in enumerate(spec["rows"]))
         self.target_label.configure(text="%s needs %d rows - Row 1 to Row %d are filled in; joined by %s"
                                          % (name, need, need, " ".join(spec["joins"])))
-        self._say("%s needs %d rows.\n%s\nJoined with %s. Fill the boxes in every row, then press =."
-                  % (name, need, steps, " ".join(spec["joins"])))
+        self._say("%s needs %d rows.\n%s\n%s\nJoined with %s. Fill the boxes in every row, then press =."
+                  % (name, need, steps, spec["title"], " ".join(spec["joins"])))
         self._refresh_adv_target()
 
     # ---------- mathematical templates (typed math saved for later) ----------

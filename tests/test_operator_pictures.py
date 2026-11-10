@@ -127,6 +127,18 @@ class RustPort(unittest.TestCase):
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
+    def test_the_rust_multi_row_texts_are_the_python_ones(self):
+        """The words that explain a multi-row operator (its title and each row's title) are the same in Python and in rust_calculator/src/multirow.rs."""
+        from operator_row_math import multirow_specs
+        with open(os.path.join(ROOT, "rust_calculator", "src", "multirow.rs"), encoding="utf-8") as f:
+            rust = f.read()
+        spec = multirow_specs.get("physics/physics/navier_stokes_equation")
+        self.assertIn('title: "%s"' % spec["title"], rust)
+        for row in spec["rows"]:
+            self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: &[] } }' % (row["title"], row["op"]), rust)
+        for word in ("density", "viscosity", "pressure", "incompressible"):          # the explanation really is in words
+            self.assertIn(word, spec["title"])
+
 
 class InTheWindow(unittest.TestCase):
     @classmethod

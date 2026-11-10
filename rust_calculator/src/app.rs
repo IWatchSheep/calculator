@@ -700,10 +700,11 @@ impl CalculatorApp {
                 Ok(()) => {
                     let steps: Vec<String> = spec.rows.iter().enumerate().map(|(k, r)| format!("Row {}: {}.", k + 1, r.title)).collect();
                     self.status = format!(
-                        "{} needs {} rows.\n{}\nJoined with {}. Fill the boxes in every row, then press =.",
+                        "{} needs {} rows.\n{}\n{}\nJoined with {}. Fill the boxes in every row, then press =.",
                         name,
                         spec.rows.len(),
                         steps.join("   "),
+                        spec.title,
                         spec.joins.join(" ")
                     );
                 }

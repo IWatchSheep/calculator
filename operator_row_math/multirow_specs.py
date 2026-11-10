@@ -70,14 +70,13 @@ SPECS = {
         "links": [((1, (0,)), (0, (0,))), ((1, (1,)), (0, (1,)))],
     },
     "physics/physics/navier_stokes_equation": {
-        "title": "Navier–Stokes equations (incompressible fluid): Row 1 is the vector form; Rows 2, 3 and 4 are the same equation written out for the x, y and z directions; "
-                 "Row 5 is continuity.  Each row is one equation, drawn on the same rows and columns as its diagram.  Reference only: nothing is calculated.",
+        "title": "Navier–Stokes equations for an incompressible fluid. u = (u, v, w) is the velocity of the fluid, ρ its density, μ its viscosity, p the pressure and f an outside force on each volume of fluid, such as gravity. Row 1 says: density × the fluid's acceleration = the push from pressure differences (−∇p) + the friction between layers of fluid (μ∇²u) + the outside force (f). The acceleration has two parts: ∂u/∂t is how the velocity changes in time at one point, and (u·∇)u is the change from being carried along by the flow. Rows 2, 3 and 4 are Row 1 written out for the x, y and z directions. Row 5, continuity, says ∂u/∂x + ∂v/∂y + ∂w/∂z = 0: the flow neither squeezes nor creates fluid. Each row is one equation, drawn on the same rows and columns as its diagram. Reference only: nothing is calculated.",
         "rows": [
-            {"op": "physics/physics/navier_stokes_equation", "title": "vector form"},
-            {"op": "physics/physics/navier_stokes_x_momentum", "title": "x momentum"},
-            {"op": "physics/physics/navier_stokes_y_momentum", "title": "y momentum"},
-            {"op": "physics/physics/navier_stokes_z_momentum", "title": "z momentum"},
-            {"op": "physics/physics/navier_stokes_continuity", "title": "continuity"},
+            {"op": "physics/physics/navier_stokes_equation", "title": "Vector form: density × acceleration = pressure push + friction + outside force"},
+            {"op": "physics/physics/navier_stokes_x_momentum", "title": "x direction: the same balance for the velocity u along x"},
+            {"op": "physics/physics/navier_stokes_y_momentum", "title": "y direction: the same balance for the velocity v along y"},
+            {"op": "physics/physics/navier_stokes_z_momentum", "title": "z direction: the same balance for the velocity w along z"},
+            {"op": "physics/physics/navier_stokes_continuity", "title": "Continuity: the fluid is incompressible, so none is created or lost"},
         ],
         "joins": ["=", "=", "=", "="],
     },
