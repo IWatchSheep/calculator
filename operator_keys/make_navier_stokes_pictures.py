@@ -136,9 +136,10 @@ def render(key, title, description):
     for n, ((text, small, r, c, is_box), label, context) in enumerate(word_rows):
         ly = words_y + 24 * n + 10
         if is_box:
-            small_box = Image.new("RGB", (88, 64), "white")
-            draw_box(ImageDraw.Draw(small_box), 44, 32, text)
-            small_box = small_box.resize((int(88 * 0.5), int(64 * 0.5)), Image.LANCZOS)
+            box_w = int(max(BOX_W, _probe.textlength(text, font=BIG) + 22)) + 8
+            small_box = Image.new("RGB", (box_w, BOX_H + 8), "white")
+            draw_box(ImageDraw.Draw(small_box), box_w / 2, (BOX_H + 8) / 2, text)
+            small_box = small_box.resize((max(1, int(box_w * 0.42)), int((BOX_H + 8) * 0.42)), Image.LANCZOS)
             img.paste(small_box, (40, ly - small_box.height // 2))
         else:
             d.text((40, ly), text, font=SYMBOL, fill=INK, anchor="lm")

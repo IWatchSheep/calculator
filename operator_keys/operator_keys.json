@@ -1,7 +1,7 @@
 {
- "count": 514,
+ "count": 518,
  "ready": 446,
- "reference": 68,
+ "reference": 72,
  "operators": [
   {
    "key": "geometry/geometry/arc_length",
@@ -1805,6 +1805,31 @@
    "input_kinds": [],
    "row_calc": "reference",
    "pattern": "□ / □",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "math/abstract_algebra/field_extension_degree",
+   "name": "Field extension: degree",
+   "symbol": "[K:F]",
+   "category": "Math",
+   "subcategory": "Abstract algebra",
+   "formula": "[K:F] = dim_F K   (the dimension of K as a vector space over F)",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "[ K : F ] = dim F K",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -11713,6 +11738,31 @@
    ]
   },
   {
+   "key": "math/optimization_and_numerical_methods/kkt_complementary_slackness",
+   "name": "KKT: complementary slackness",
+   "symbol": "λ·g(x) = 0",
+   "category": "Math",
+   "subcategory": "Optimization and numerical methods",
+   "formula": "λ·g(x) = 0",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "□ · □ = 0",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
    "key": "math/optimization_and_numerical_methods/kkt_conditions",
    "name": "KKT conditions",
    "symbol": "KKT",
@@ -11724,6 +11774,56 @@
    "input_kinds": [],
    "row_calc": "reference",
    "pattern": "∇ □ + □ · ∇ □ = 0",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "math/optimization_and_numerical_methods/kkt_dual_feasibility",
+   "name": "KKT: dual feasibility",
+   "symbol": "λ ≥ 0",
+   "category": "Math",
+   "subcategory": "Optimization and numerical methods",
+   "formula": "λ ≥ 0",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "□ ≥ 0",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "math/optimization_and_numerical_methods/kkt_primal_feasibility",
+   "name": "KKT: primal feasibility",
+   "symbol": "g(x) ≤ 0",
+   "category": "Math",
+   "subcategory": "Optimization and numerical methods",
+   "formula": "g(x) ≤ 0",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "□ ≤ 0",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {

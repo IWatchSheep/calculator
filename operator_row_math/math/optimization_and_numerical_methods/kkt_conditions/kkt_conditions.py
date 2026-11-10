@@ -19,6 +19,7 @@ PATTERN = '∇ □ + □ · ∇ □ = 0'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('gradient', 'the direction of steepest rise'), 1: ('objective', 'f, the function being minimized'), 3: ('multiplier', 'lambda, one weight for each constraint'), 5: ('gradient', 'the direction of steepest rise'), 6: ('constraint', 'g, the inequality being held'), 8: ('zero', 'the slopes cancel')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '∇'), ('dec', ''), ('op', '+'), ('dec', ''), ('op', '·'), ('op', '∇'), ('dec', ''), ('op', '='), ('op', '0')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

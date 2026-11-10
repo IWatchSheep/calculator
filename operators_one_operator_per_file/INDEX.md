@@ -243,6 +243,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Integral domain | ID | A commutative ring with 1 ≠ 0 and no zero divisors | Ready | `math/abstract_algebra/integral_domain/` |
 | Polynomial ring | R[x] | All polynomials a₀ + a₁x + … + aₙxⁿ with coefficients in R | Reference | `math/abstract_algebra/polynomial_ring/` |
 | Field extension | K/F | A field K that contains F as a subfield; [K:F] = dimension of K as an F-vector space | Reference | `math/abstract_algebra/field_extension/` |
+| Field extension: degree | [K:F] | [K:F] = dim_F K   (the dimension of K as a vector space over F) | Reference | `math/abstract_algebra/field_extension_degree/` |
 | Galois group | Gal(K/F) | The group of automorphisms of K that fix F | Reference | `math/abstract_algebra/galois_group/` |
 | Module | M | Like a vector space but over a ring R instead of a field | Reference | `math/abstract_algebra/module/` |
 | Vector space | V | A set with vector addition and scalar multiplication over a field satisfying the vector space axioms | Reference | `math/abstract_algebra/vector_space/` |
@@ -402,6 +403,9 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Simplex method | simplex | Algorithm that walks along vertices of the feasible region to solve a linear program | Ready | `math/optimization_and_numerical_methods/simplex_method/` |
 | Convex function | convex | f(tx + (1−t)y) ≤ t·f(x) + (1−t)·f(y) for t in [0, 1] | Ready | `math/optimization_and_numerical_methods/convex_function/` |
 | KKT conditions | KKT | Necessary conditions for optimality under inequality constraints: stationarity, feasibility, complementary slackness | Reference | `math/optimization_and_numerical_methods/kkt_conditions/` |
+| KKT: primal feasibility | g(x) ≤ 0 | g(x) ≤ 0 | Reference | `math/optimization_and_numerical_methods/kkt_primal_feasibility/` |
+| KKT: dual feasibility | λ ≥ 0 | λ ≥ 0 | Reference | `math/optimization_and_numerical_methods/kkt_dual_feasibility/` |
+| KKT: complementary slackness | λ·g(x) = 0 | λ·g(x) = 0 | Reference | `math/optimization_and_numerical_methods/kkt_complementary_slackness/` |
 | Newton's method | xₙ₊₁ = xₙ − f/f′ | xₙ₊₁ = xₙ − f(xₙ) / f′(xₙ) | Ready | `math/optimization_and_numerical_methods/newton_s_method/` |
 | Bisection method | bisect | Repeatedly halve [a, b] keeping the half where f changes sign | Ready | `math/optimization_and_numerical_methods/bisection_method/` |
 | Secant method | secant | xₙ₊₁ = xₙ − f(xₙ)(xₙ − xₙ₋₁) / (f(xₙ) − f(xₙ₋₁)) | Ready | `math/optimization_and_numerical_methods/secant_method/` |

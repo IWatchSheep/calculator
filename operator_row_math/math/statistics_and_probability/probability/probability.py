@@ -19,6 +19,7 @@ PATTERN = 'P ( □ ) with □ , □ = □'
 CALC = 'ready'
 INPUTS = ['favorable', 'total']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('probability', 'favorable outcomes divided by all outcomes'), 2: ('the event', 'the outcome being counted'), 5: ('favorable outcomes', 'how many outcomes count as the event'), 7: ('all outcomes', 'how many outcomes there are')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'P'), ('op', '('), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)

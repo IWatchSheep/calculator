@@ -61,8 +61,13 @@ def build(key, dsl, inputs, calc="ready"):
     left, slots, pattern, levels = [], [], [], []
     first_seen = set()
     card_words = {}
+    extra_words = {}          # with:NAME{label|context}  = the words of the "with" box the row adds for the input NAME (a picture does not draw it)
     WORDS_OF[key] = card_words
     for raw in re.findall(r"\S*?\{[^{}|]*\|[^{}]*\}|\S+", left_text):          # a token, or a token with {label|context}; a plain { } card has no |
+        mw = re.fullmatch(r"with:(\S+?)\{([^{}|]*)\|([^{}]*)\}", raw)
+        if mw:
+            extra_words[mw.group(1)] = (mw.group(2).strip(), mw.group(3).strip())
+            continue
         tok, words = raw, None
         m = re.fullmatch(r"\{sub:([^|}]+)(?:\|([^|}]*)\|([^}]*))?\}", raw)          # {sub:y|label|context}
         if m:
@@ -123,6 +128,8 @@ def build(key, dsl, inputs, calc="ready"):
         slots.append(inputs.index(name))
         pattern.append("with" if i == 0 else ",")
         pattern.append(BOX)
+        if name in extra_words:
+            card_words[len(left) - 1] = extra_words[name]
     EXTRAS[key] = missing
     right = []
     if arrow:

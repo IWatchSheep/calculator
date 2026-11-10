@@ -20,6 +20,7 @@ CALC = 'advanced'
 INPUTS = ['values', 'probs']    # what each box (left to right) is
 KINDS = ['list', 'list']    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('variance', 'how spread out the values are'), 2: ('random variable', 'the quantity X'), 5: ('expectation of the square', 'E of X squared'), 7: ('the value', 'X, the number being squared'), 8: ('two', 'square that value'), 12: ('expectation', 'E of X, the average of the values'), 14: ('the value', 'X'), 17: ('two', 'square that average'), 19: ('the values', 'the numbers X can take'), 21: ('the probabilities', 'the chance of each value, same order, adding to 1')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'Var'), ('op', '('), ('dec', ''), ('op', ')'), ('op', '='), ('dec', ''), ('op', '['), ('dec', ''), ('op', '2'), ('op', ']'), ('op', '−'), ('op', '('), ('dec', ''), ('op', '['), ('dec', ''), ('op', ']'), ('op', ')'), ('op', '2'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

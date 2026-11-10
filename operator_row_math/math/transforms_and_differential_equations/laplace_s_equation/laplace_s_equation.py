@@ -20,6 +20,7 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, -1, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('Laplacian', 'the sum of the second derivatives'), 1: ('two', 'the second derivatives'), 2: ('the function', 'u, the unknown'), 4: ('zero', 'u is harmonic')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '∇'), ('op', '2'), ('dec', ''), ('op', '='), ('op', '0')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

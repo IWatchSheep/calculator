@@ -96,6 +96,24 @@ SPECS = {
         ],
         "joins": ["=", "=", "=", "="],
     },
+    "math/optimization_and_numerical_methods/kkt_conditions": {
+        "title": "KKT conditions (Karush–Kuhn–Tucker): the conditions a best point must meet when the problem has inequality constraints g(x) ≤ 0. Row 1, stationarity: the slope of the objective and the slopes of the constraints cancel. Row 2, primal feasibility: the point is allowed, every constraint is satisfied. Row 3, dual feasibility: each multiplier λ is not negative. Row 4, complementary slackness: a constraint that is slack has multiplier zero. Reference only: nothing is calculated.",
+        "rows": [
+            {"op": "math/optimization_and_numerical_methods/kkt_conditions", "title": "Stationarity: the slope of the objective and the slopes of the constraints cancel."},
+            {"op": "math/optimization_and_numerical_methods/kkt_primal_feasibility", "title": "The point is allowed: every constraint is satisfied."},
+            {"op": "math/optimization_and_numerical_methods/kkt_dual_feasibility", "title": "The multiplier pushes the right way: it is not negative."},
+            {"op": "math/optimization_and_numerical_methods/kkt_complementary_slackness", "title": "A constraint that is slack has multiplier zero."},
+        ],
+        "joins": ["=", "=", "="],
+    },
+    "math/abstract_algebra/field_extension": {
+        "title": "Field extension: K is a field that contains F as a subfield. Row 1 says K sits over F. Row 2 says the degree [K:F] is the dimension of K as a vector space over F. Reference only: nothing is calculated.",
+        "rows": [
+            {"op": "math/abstract_algebra/field_extension", "title": "K contains F."},
+            {"op": "math/abstract_algebra/field_extension_degree", "title": "The degree is the dimension of K as a vector space over F."},
+        ],
+        "joins": ["="],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

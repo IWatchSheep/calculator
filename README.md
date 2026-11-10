@@ -1,7 +1,7 @@
 ﻿# Calculator
 
 A desktop calculator written in Python (Tkinter) that works with **operators instead of a single
-expression line**. You pick an operator from a library of 514 (arithmetic, algebra, calculus, linear
+expression line**. You pick an operator from a library of 518 (arithmetic, algebra, calculus, linear
 algebra, statistics, geometry, physics and more), fill in its square boxes, press `=`, and the answer
 appears. Every operator comes with a picture of its formula.
 
@@ -12,7 +12,7 @@ appears. Every operator comes with a picture of its formula.
 
 ## What it can do
 
-- **514 operators**, 446 of which calculate (the other 68 show their formula only, see below).
+- **518 operators**, 446 of which calculate (the other 72 show their formula only, see below).
 - **A picture of each formula** drawn with small square boxes for the inputs.
 - **Rows and joins:** results from several rows can be combined with `+ − × ÷ = ≠ < > ≤ ≥`.
 - **Operators inside operators:** put an operator into the box of another one.
@@ -154,7 +154,7 @@ given 1.` and nothing is saved.
 weighted graph, or a polynomial to factor. Pick the type, type the value, and it goes into the
 selected box.
 
-**Operators marked "reference"** (68 of them, such as `ring`, `manifold` or `open bracket`) show their
+**Operators marked "reference"** (72 of them, such as `ring`, `manifold` or `open bracket`) show their
 formula and picture but cannot calculate. Pressing `=` tells you so instead of failing.
 
 **Angles are in radians**, and physics operators use standard constants by default (g = 9.81 m/s²,
@@ -168,7 +168,7 @@ These are the rules the operator rows and the algebra word problem rows are buil
 2. **The lines of one operator are one row.** Several lines that extend out from one row are only how that row's math is drawn. They do not count as next rows and they are not Row 2, Row 3 and so on. The `Next Row (↓)` button on the number pad does not step through them: it goes from Row 1 to Row 2, and nowhere else.
 3. **The answer is put on the right side of the `=` sign, on the same row.** It is shown in that row's own answer card (the card to the right of the `=`, beside the **math to put on the left** button), and nothing is printed into the next row for a single row.
 4. **Rows are joined with a math sign, and the total is on the next row after them.** Row 1 is joined to Row 2 by a join sign in Row 2 (`+ − × ÷ = ≠ < > ≤ ≥`). Pressing `=` then shows Row 1's own answer on Row 1, Row 2's own answer on Row 2, and the answer for Rows 1 and 2 together on Row 3.
-5. **The math rows follow the diagrams, for all 514 operators and all the finished algebra word problems.** Each operator's row is its picture written as cards: one card for every number or symbol, the picture's blue boxes as boxes (in the picture's order, with a variable written twice sharing one value), the picture's answer box as an answer box that `=` fills in, and a letter or constant the picture shows (`g`, `Z`, `x`) as an ordinary card. Each algebra word problem's row is its diagram's equation: the blue numbers are the boxes, already filled in with the problem's own numbers, and every other symbol is its own card. Where a picture cannot show every input, the row adds `with` boxes after the picture (listed in `operator_keys/operator_rows_with_extra_boxes.txt`). The one place a row deliberately does not copy a picture is rule 1: every operator picture and word problem diagram with a fraction is now stacked like its row.
+5. **The math rows follow the diagrams, for all 518 operators and all the finished algebra word problems.** Each operator's row is its picture written as cards: one card for every number or symbol, the picture's blue boxes as boxes (in the picture's order, with a variable written twice sharing one value), the picture's answer box as an answer box that `=` fills in, and a letter or constant the picture shows (`g`, `Z`, `x`) as an ordinary card. Each algebra word problem's row is its diagram's equation: the blue numbers are the boxes, already filled in with the problem's own numbers, and every other symbol is its own card. Where a picture cannot show every input, the row adds `with` boxes after the picture (listed in `operator_keys/operator_rows_with_extra_boxes.txt`). The one place a row deliberately does not copy a picture is rule 1: every operator picture and word problem diagram with a fraction is now stacked like its row.
 
 6. **Every card has two boxes for words.** Under a card of a row (Rust) or beside it (Python) are a **Label** box (**Item** on a number card) and a **Context** box; they take the words you type to describe that card (`density`, `kg/m³`, `in the drawer`). In Python the Descriptive Columns Console (Unit / Context buttons, or type a word and press Apply Word) puts a word into the box you last clicked. In Rust the **Label / Context boxes** checkbox above the rows shows them. An operator can come with words already in them: in its spec line in `operator_keys/operator_row_specs.txt` write `symbol{label|context}` after a symbol (the five Navier–Stokes rows do), and `make_operator_row_files.py` puts them in the row file as `WORDS`, which `make_rust_layouts.py` copies into Rust. What you type replaces the operator's words for that row; when the row's math changes, the typed words are forgotten.
 
@@ -191,7 +191,7 @@ Keys look like `math/<area>/<operator>`, `geometry/geometry/<operator>` and
 
 ## Algebra word problems (work in progress)
 
-Besides the 514 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram, and if the problem is Ready (377 of them) it is also put into the target row as `Name(□, □ ...) = □`: fill one box for every number in the text, in the order they appear, and press `=` to get the answer. A Reference problem shows its diagram and says so, and is not placed. The operator that takes pasted text is not built. It is under *What is left*.
+Besides the 518 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram, and if the problem is Ready (377 of them) it is also put into the target row as `Name(□, □ ...) = □`: fill one box for every number in the text, in the order they appear, and press `=` to get the answer. A Reference problem shows its diagram and says so, and is not placed. The operator that takes pasted text is not built. It is under *What is left*.
 
 > Reviewed. The steps under *How a problem travels* and the decisions under *Decisions* are the ones to follow. A family answers only when its wording matches, every number has a role, and the answer passes its checks. Otherwise it declines. A decline is safe. A wrong number is a failure.
 
@@ -277,7 +277,7 @@ Read these at the start of every session. Update them every time a batch is fini
 | `main.py` | The calculator window |
 | `gui_style.py` | Colours and button styles |
 | `operator_links.py` | Connects each Operators pop-up button to its operator |
-| `operators_one_operator_per_file/` | The 514 operators: one folder each with `<name>.py` (formula and `compute()`) and `<name>.jpg` (picture). `INDEX.md` lists them all |
+| `operators_one_operator_per_file/` | The 518 operators: one folder each with `<name>.py` (formula and `compute()`) and `<name>.jpg` (picture). `INDEX.md` lists them all |
 | `operator_row_math/` | How each operator is laid out as cards in a row (following its picture), the Advanced Input parser, and the multi-row operators |
 | `operator_keys/operator_row_specs.txt` | One line per operator: its picture written as cards. `make_operator_row_files.py` turns it into the row files |
 | `operators_one_algebra_word_problem_per_file/` | The 1,000 algebra word problems: one folder each with `<id>.py` (problem, steps, answer, `compute()`) and `<id>.jpg` (diagram). `INDEX.md` lists them all |
@@ -297,7 +297,7 @@ Run the automated test suite (standard library only; Pillow adds the picture che
 python tests/test_operators.py
 ```
 
-It checks all 514 operators: 446 working operators against hand-calculated answers, plus structure,
+It checks all 518 operators: 446 working operators against hand-calculated answers, plus structure,
 error handling, input parsing, and the real calculator window for the newer physics operators
 (magnetism, fluid dynamics, quantum mechanics, optics, relativity). The full run takes about a
 minute because it drives the real window. See [`TESTING_GUIDE.md`](TESTING_GUIDE.md) for how to verify

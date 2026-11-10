@@ -229,7 +229,7 @@ def redraw(key, source, dest):
             d.text((40, y_line + 10), symbol, font=font(19), fill="#1c2b3a", anchor="lm")
         else:
             small = symbol.copy()
-            small.thumbnail((74, 24), Image.LANCZOS)
+            small.thumbnail((74, 21), Image.LANCZOS)
             out.paste(small, (40, y_line + 10 - small.height // 2))
         d.text((128, y_line + 10), "%s  -  %s" % (label, context), font=f_word, fill="#4a5a78", anchor="lm")
     if desc is not None:

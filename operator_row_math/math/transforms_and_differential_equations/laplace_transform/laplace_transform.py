@@ -19,6 +19,7 @@ PATTERN = 'L { □ } with □ = □'
 CALC = 'advanced'
 INPUTS = ['f', 's']    # what each box (left to right) is
 KINDS = ['function', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('Laplace transform', 'turns f of t into F of s'), 2: ('the function', 'f of t, the function of time')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'L'), ('op', '{'), ('box', ''), ('op', '}'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)

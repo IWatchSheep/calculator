@@ -136,6 +136,28 @@ static NAVIER_STOKES: Spec = Spec {
     links: &[],
 };
 
+static KKT: Spec = Spec {
+    title: "KKT conditions (Karush–Kuhn–Tucker): the conditions a best point must meet when the problem has inequality constraints g(x) ≤ 0. Row 1, stationarity: the slope of the objective and the slopes of the constraints cancel. Row 2, primal feasibility: the point is allowed, every constraint is satisfied. Row 3, dual feasibility: each multiplier λ is not negative. Row 4, complementary slackness: a constraint that is slack has multiplier zero. Reference only: nothing is calculated.",
+    rows: &[
+        RowSpec { title: "Stationarity: the slope of the objective and the slopes of the constraints cancel.", node: NodeSpec { op: "math/optimization_and_numerical_methods/kkt_conditions", fill: &[] } },
+        RowSpec { title: "The point is allowed: every constraint is satisfied.", node: NodeSpec { op: "math/optimization_and_numerical_methods/kkt_primal_feasibility", fill: &[] } },
+        RowSpec { title: "The multiplier pushes the right way: it is not negative.", node: NodeSpec { op: "math/optimization_and_numerical_methods/kkt_dual_feasibility", fill: &[] } },
+        RowSpec { title: "A constraint that is slack has multiplier zero.", node: NodeSpec { op: "math/optimization_and_numerical_methods/kkt_complementary_slackness", fill: &[] } },
+    ],
+    joins: &["=", "=", "="],
+    links: &[],
+};
+
+static FIELD_EXTENSION: Spec = Spec {
+    title: "Field extension: K is a field that contains F as a subfield. Row 1 says K sits over F. Row 2 says the degree [K:F] is the dimension of K as a vector space over F. Reference only: nothing is calculated.",
+    rows: &[
+        RowSpec { title: "K contains F.", node: NodeSpec { op: "math/abstract_algebra/field_extension", fill: &[] } },
+        RowSpec { title: "The degree is the dimension of K as a vector space over F.", node: NodeSpec { op: "math/abstract_algebra/field_extension_degree", fill: &[] } },
+    ],
+    joins: &["="],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -146,6 +168,8 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
         "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
+        "math/optimization_and_numerical_methods/kkt_conditions" => &KKT,
+        "math/abstract_algebra/field_extension" => &FIELD_EXTENSION,
         "math/constants_and_relations/open_bracket"
         | "math/constants_and_relations/close_bracket"
         | "math/constants_and_relations/square_brackets"

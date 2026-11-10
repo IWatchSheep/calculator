@@ -43,7 +43,8 @@ math/abstract_algebra/direct_product | [G] × [H] = { ( [] , [] ) : [] ∈ [G] ,
 math/abstract_algebra/direct_sum | []{first space|a vector space} ⊕ []{second space|a vector space}
 math/abstract_algebra/direct_sum_dimension | dim{dimension|the number of vectors in a basis} ( A{first space|a vector space} ⊕ B{second space|a vector space} ) = dim{dimension|the number of vectors in a basis} A{first space|a vector space} + dim{dimension|the number of vectors in a basis} B{second space|a vector space}
 math/abstract_algebra/field | Add, subtract, multiply, and divide by nonzero elements
-math/abstract_algebra/field_extension | [] / []
+math/abstract_algebra/field_extension | []{bigger field|K, the field that contains F} / []{smaller field|F, the field inside K}
+math/abstract_algebra/field_extension_degree | [ K{bigger field|the field that contains F} : F{smaller field|the field inside K} ] = dim{dimension|how many vectors are in a basis} {sub:F|smaller field|the dimension is counted over F} K{bigger field|the vector space whose dimension is taken}
 math/abstract_algebra/galois_group | Gal ( [] / [] )
 math/abstract_algebra/group | ( G , ∘ )
 math/abstract_algebra/homomorphism | [phi] : [G] → []
@@ -287,7 +288,10 @@ math/optimization_and_numerical_methods/gaussian_elimination | [A] | [b] → {}
 math/optimization_and_numerical_methods/gradient_descent | {} ₖ₊₁ = [x0] ₖ − [] ∇ [grad_f]
 math/optimization_and_numerical_methods/hessian | H = [ ∂ ² [f] / ∂ [] ∂ [] ]
 math/optimization_and_numerical_methods/jacobi_iteration | {} ᵢ ⁽ᵏ⁺¹⁾ = ( [b] ᵢ − Σ { [] = i } [A] ᵢⱼ [] ⱼ ⁽ᵏ⁾ ) / [A] ᵢᵢ
-math/optimization_and_numerical_methods/kkt_conditions | ∇ [] + [] · ∇ [] = 0
+math/optimization_and_numerical_methods/kkt_conditions | ∇{gradient|the direction of steepest rise} []{objective|f, the function being minimized} + []{multiplier|lambda, one weight for each constraint} · ∇{gradient|the direction of steepest rise} []{constraint|g, the inequality being held} = 0{zero|the slopes cancel}
+math/optimization_and_numerical_methods/kkt_primal_feasibility | []{constraint|g of x, the inequality} ≤ 0{zero|on the allowed side of the constraint}
+math/optimization_and_numerical_methods/kkt_dual_feasibility | []{multiplier|lambda} ≥ 0{zero|the multiplier is not negative}
+math/optimization_and_numerical_methods/kkt_complementary_slackness | []{multiplier|lambda} · []{constraint|g of x} = 0{zero|one of the two factors is zero}
 math/optimization_and_numerical_methods/lagrange_interpolation | L ( [x] ) = Σ ᵢ [ys] ᵢ ∏ { [] = i } ( [x] − [xs] ⱼ ) / ( [xs] ᵢ − [xs] ⱼ )
 math/optimization_and_numerical_methods/lagrange_multipliers | ∇ [f] = [] · ∇ [g]
 math/optimization_and_numerical_methods/least_squares | min Σ ( [y] ᵢ − [] ᵢ ) ² => {}
@@ -340,8 +344,8 @@ math/statistics_and_probability/correlation | {}{correlation|from -1 to 1, how t
 math/statistics_and_probability/covariance | cov ( [x]{first list|one number per pair} , [y]{second list|one number per pair} ) = Σ ( [x]{first list|one number per pair} ᵢ − [] ) ( [y]{second list|one number per pair} ᵢ − [] ) / ( [] − 1 )
 math/statistics_and_probability/expected_value | [] [ [] ] = Σ [values]{values|the possible numbers} ᵢ · [probs]{probabilities|same length as the values, they add to 1} ᵢ
 math/statistics_and_probability/exponential_distribution | f ( [x]{value|zero or greater} ) = [lam]{rate|how many events per unit of time} · e ^ ( − [lam]{rate|how many events per unit of time} [x]{value|zero or greater} ) for [x]{value|zero or greater} ≥ 0
-math/statistics_and_probability/interquartile_range | IQR = [] − []
-math/statistics_and_probability/linear_regression | [] = [] [] + []
+math/statistics_and_probability/interquartile_range | IQR{interquartile range|Q3 minus Q1} = []{upper quartile|the 75th percentile, Q3} − []{lower quartile|the 25th percentile, Q1} with:data{the numbers|the list the two quartiles are taken from}
+math/statistics_and_probability/linear_regression | []{predicted value|y on the fitted line} = []{slope|how much y changes for one step in x} []{input|x, the variable along the line} + []{intercept|y when x is 0} with:x{the x values|one list of inputs} with:y{the y values|one list of outputs, paired with the x values}
 math/statistics_and_probability/mean | mean ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/median | median ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/mode | mode ( [data]{data|the list of numbers} ) => {}
@@ -349,7 +353,7 @@ math/statistics_and_probability/normal_distribution | f ( [x]{value|where you re
 math/statistics_and_probability/p_value | p-value ( [z]{z score|how many standard deviations from the mean} ) => {}
 math/statistics_and_probability/percentile | [data]{data|the list of numbers} ₖ => {}
 math/statistics_and_probability/poisson_distribution | P ( [] = [k]{count|0, 1, 2, ...} ) = [lam]{average count|the expected number} ᵏ · e ^ ( − [lam]{average count|the expected number} ) / [k]{count|0, 1, 2, ...} !
-math/statistics_and_probability/probability | P ( [] ) => {}
+math/statistics_and_probability/probability | P{probability|favorable outcomes divided by all outcomes} ( []{the event|the outcome being counted} ) with:favorable{favorable outcomes|how many outcomes count as the event} with:total{all outcomes|how many outcomes there are} => {}
 math/statistics_and_probability/quartiles | quartiles ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/range | range ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/sample_standard_deviation | {}{sample standard deviation|spread, dividing by n - 1} = √ ( [] ² )
@@ -358,7 +362,7 @@ math/statistics_and_probability/standard_deviation | {}{standard deviation|the u
 math/statistics_and_probability/t_test_statistic | {}{t statistic|how far the mean is from the claimed value} = ( [mean]{sample mean|average of the data} − [mu0]{claimed mean|the value being tested} ₀ ) / ( [s]{sample standard deviation|spread of the data} / √ [n]{sample size|how many values} )
 math/statistics_and_probability/uniform_distribution | f ( [x]{value|where you read the density} ) = 1 / ( [b]{high end|the largest possible value} − [a]{low end|the smallest possible value} ) for [a]{low end|the smallest possible value} ≤ [x]{value|where you read the density} ≤ [b]{high end|the largest possible value} , else 0
 math/statistics_and_probability/variance | {}{variance|the square of the standard deviation} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / []
-math/statistics_and_probability/variance_of_random_variable | Var ( [] ) = [] [ [] ² ] − ( [] [ [] ] ) ²
+math/statistics_and_probability/variance_of_random_variable | Var{variance|how spread out the values are} ( []{random variable|the quantity X} ) = []{expectation of the square|E of X squared} [ []{the value|X, the number being squared} ²{two|square that value} ] − ( []{expectation|E of X, the average of the values} [ []{the value|X} ] ) ²{two|square that average} with:values{the values|the numbers X can take} with:probs{the probabilities|the chance of each value, same order, adding to 1}
 math/statistics_and_probability/z_score | {}{z score|how many standard deviations x is from the mean} = ( [x]{value|the number you measured} − [mean]{mean|the average} ) / [sd]{standard deviation|the spread}
 math/topology/basis_of_topology | ℬ ( [B] )
 math/topology/boundary | ∂ [A]
@@ -387,18 +391,18 @@ math/topology/path_connected | x → continuous path → y
 math/topology/product_topology | [] × []
 math/topology/subspace_topology | [tau] [A]
 math/transforms_and_differential_equations/characteristic_equation | [a] r ² + [b] r + [c] = 0
-math/transforms_and_differential_equations/convolution | ( [f] * [g] ) [ [] ] = Σ ⱼ [f] [ [] ] · [g] [ [] − [] ]
-math/transforms_and_differential_equations/dirac_delta | δ ( [x] ) => {}
-math/transforms_and_differential_equations/discrete_fourier_transform | {} ₖ = Σ ₙ [x] ₙ · e ^ ( − 2 π i · [] [] / [] )
+math/transforms_and_differential_equations/convolution | ( [f]{first signal|f} * [g]{second signal|g} ) [ []{output index|k, which place in the result} ] = Σ ⱼ{sum index|j} [f]{first signal|f} [ []{sum index|j} ] · [g]{second signal|g} [ []{output index|k} − []{sum index|j} ]
+math/transforms_and_differential_equations/dirac_delta | δ{Dirac delta|zero except at 0, where its area is 1} ( [x]{the point|where the delta is evaluated} ) => {}
+math/transforms_and_differential_equations/discrete_fourier_transform | {}{transform|X at frequency k} ₖ{frequency index|which frequency this value is} = Σ ₙ{sample index|which sample is being added} [x]{samples|the list of values} ₙ{sample index|which sample} · e{base of the exponential|about 2.718} ^ ( − 2{two|the 2 in 2 pi} π{pi|the circle constant} i{imaginary unit|the square root of minus 1} · []{frequency index|k} []{sample index|n} / []{length|N, how many samples} )
 math/transforms_and_differential_equations/first_order_ode | [] ′ = f ( [] , [] )
-math/transforms_and_differential_equations/fourier_series | f ( [] ) = Σ [] ₙ cos ( n [] ) + [] ₙ sin ( n [] )
+math/transforms_and_differential_equations/fourier_series | f{the function|the periodic function being expanded} ( []{the variable|x, the position along one period} ) = Σ []{cosine coefficient|a sub n} ₙ{the index|n, which harmonic} cos ( n []{the variable|x} ) + []{sine coefficient|b sub n} ₙ{the index|n} sin ( n []{the variable|x} )
 math/transforms_and_differential_equations/heat_equation | [] ₜ = [] [] ₓₓ
-math/transforms_and_differential_equations/heaviside_step | H ( [x] ) => {}
+math/transforms_and_differential_equations/heaviside_step | H{Heaviside step|0 when x is negative and 1 when x is positive} ( [x]{the point|where the step is evaluated} ) => {}
 math/transforms_and_differential_equations/integrating_factor | {} ( [x] ) = e ^ ∫ [P] d [x]
-math/transforms_and_differential_equations/inverse_discrete_fourier_transform | {} ₙ = ( 1 / [] ) Σ ₖ [X] ₖ · e ^ ( 2 π i · [] [] / [] )
-math/transforms_and_differential_equations/inverse_laplace_transform | L ⁻¹ { [] } = []
-math/transforms_and_differential_equations/laplace_s_equation | ∇ ² [] = 0
-math/transforms_and_differential_equations/laplace_transform | L { [f] } => {}
+math/transforms_and_differential_equations/inverse_discrete_fourier_transform | {}{samples|x at time n} ₙ{time index|which sample this value is} = ( 1 / []{length|N, how many values} ) Σ ₖ{frequency index|which frequency is being added} [X]{transform|the list of frequency values} ₖ{frequency index|which frequency} · e{base of the exponential|about 2.718} ^ ( 2{two|the 2 in 2 pi} π{pi|the circle constant} i{imaginary unit|the square root of minus 1} · []{frequency index|k} []{time index|n} / []{length|N, how many values} )
+math/transforms_and_differential_equations/inverse_laplace_transform | L{Laplace transform|the transform being undone} ⁻¹{inverse|go back from F of s to f of t} { []{the transform|F of s} } = []{the function|f of t, recovered from F}
+math/transforms_and_differential_equations/laplace_s_equation | ∇{Laplacian|the sum of the second derivatives} ²{two|the second derivatives} []{the function|u, the unknown} = 0{zero|u is harmonic}
+math/transforms_and_differential_equations/laplace_transform | L{Laplace transform|turns f of t into F of s} { [f]{the function|f of t, the function of time} } => {}
 math/transforms_and_differential_equations/partial_differential_equation | ∂ [] / ∂ [] + ∂ [] / ∂ [] = []
 math/transforms_and_differential_equations/power_series_solution | [] = Σ [] ₙ [] ⁿ
 math/transforms_and_differential_equations/second_order_ode | [] ″ = f ( [] , [] , [] ′ )
@@ -406,7 +410,7 @@ math/transforms_and_differential_equations/separable_equation | [] [] / [] [] = 
 math/transforms_and_differential_equations/variation_of_parameters | [] ₚ = [] + []
 math/transforms_and_differential_equations/wave_equation | [] ₜₜ = [] ² [] ₓₓ
 math/transforms_and_differential_equations/wronskian | {} ( [f] , [g] ) = [f] · g ′ − [g] · f ′
-math/transforms_and_differential_equations/z_transform | {} ( [z] ) = Σ ₙ [x] [ [] ] · [z] ⁻ⁿ
+math/transforms_and_differential_equations/z_transform | {}{the transform|X of z} ( [z]{the variable|z, a complex number} ) = Σ ₙ{time index|n} [x]{the sequence|x of n} [ []{the index|n} ] · [z]{the variable|z} ⁻ⁿ{the power|minus n, one over z to the n}
 math/trigonometry/angle_sum | sin ( [a] + [b] ) = sin ( [a] ) × cos ( [b] ) + cos ( [a] ) × sin ( [b] )
 math/trigonometry/cosecant | csc [theta] = 1 / sin [theta]
 math/trigonometry/cosine | cos [theta] = [] / []

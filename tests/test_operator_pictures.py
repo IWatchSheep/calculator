@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 514)
+        self.assertEqual(len(keys), 518)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 514)
+        self.assertEqual(count, 518)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -132,12 +132,14 @@ class RustPort(unittest.TestCase):
         from operator_row_math import multirow_specs
         with open(os.path.join(ROOT, "rust_calculator", "src", "multirow.rs"), encoding="utf-8") as f:
             rust = f.read()
-        spec = multirow_specs.get("physics/physics/navier_stokes_equation")
-        self.assertIn('title: "%s"' % spec["title"], rust)
-        for row in spec["rows"]:
-            self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: &[] } }' % (row["title"], row["op"]), rust)
+        for key in ("physics/physics/navier_stokes_equation", "math/differential_geometry_and_tensors/exterior_derivative", "math/abstract_algebra/direct_sum",
+                    "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions"):
+            spec = multirow_specs.get(key)
+            self.assertIn('title: "%s"' % spec["title"], rust, key)
+            for row in spec["rows"]:
+                self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: &[] } }' % (row["title"], row["op"]), rust, key)
         for word in ("density", "viscosity", "pressure", "incompressible"):          # the explanation really is in words
-            self.assertIn(word, spec["title"])
+            self.assertIn(word, multirow_specs.get("physics/physics/navier_stokes_equation")["title"])
 
 
 class CardWords(unittest.TestCase):

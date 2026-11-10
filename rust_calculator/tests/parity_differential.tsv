@@ -385,7 +385,7 @@ geometry/geometry/law_of_sines	7.5 100 100	7.5
 geometry/geometry/law_of_sines	0 1 7.5	0.0
 geometry/geometry/law_of_sines	10 0.5 1	17.551651237807455
 geometry/geometry/law_of_sines	0.5 5 0	-0.0
-geometry/geometry/law_of_sines	0.25 2.5 0.5	0.20027061548620934
+geometry/geometry/law_of_sines	0.25 2.5 0.5	0.2002706154862094
 geometry/geometry/law_of_sines	-1 0.5 0.5	-1.0
 geometry/geometry/law_of_sines	1 -1 -3	0.16770632690571521
 geometry/geometry/law_of_sines	10 -1 -3	1.6770632690571523
@@ -399,8 +399,8 @@ geometry/geometry/law_of_sines	2 0 2	ERR
 geometry/geometry/law_of_sines	0 100 2	-0.0
 geometry/geometry/law_of_sines	2 1 -3	-0.33541265381143043
 geometry/geometry/law_of_sines	-3 -3 -1	-17.88841277101373
-geometry/geometry/law_of_sines	-3 2.5 2	-4.558093985412295
-geometry/geometry/law_of_sines	7.5 2.5 5	-12.017154233204005
+geometry/geometry/law_of_sines	-3 2.5 2	-4.558093985412296
+geometry/geometry/law_of_sines	7.5 2.5 5	-12.017154233204007
 geometry/geometry/law_of_sines	10 1 0	0.0
 geometry/geometry/law_of_sines	0 5 100	0.0
 geometry/geometry/law_of_sines	-1 0.5 5	2.000152677420868
@@ -1434,11 +1434,11 @@ math/algebra/geometric_series_sum	2.5 0.5 -3	-35.0
 math/algebra/geometric_series_sum	100 2 -1	-50.0
 math/algebra/geometric_series_sum	3 0.5 100	6.0
 math/algebra/geometric_series_sum	-1 2.5 10	-6357.162109375
-math/algebra/geometric_series_sum	100 -3 0.25	1.7348785224475112-23.265121477552487j
+math/algebra/geometric_series_sum	100 -3 0.25	1.7348785224475112-23.26512147755249j
 math/algebra/geometric_series_sum	5 5 -1	-1.0
 math/algebra/geometric_series_sum	2 -1 10	0.0
 math/algebra/geometric_series_sum	5 100 0	-0.0
-math/algebra/geometric_series_sum	3 -3 0.25	0.05204635567342533-0.6979536443265746j
+math/algebra/geometric_series_sum	3 -3 0.25	0.05204635567342533-0.6979536443265747j
 math/algebra/geometric_series_sum	10 0.5 0	0.0
 math/algebra/geometric_series_sum	7.5 -1 0.5	3.7499999999999996-3.75j
 math/algebra/geometric_series_sum	3 7.5 -1	-0.4
@@ -2313,7 +2313,7 @@ math/complex_analysis/de_moivre_s_theorem	0.5 2.5 2.5	0.17667936526987335-0.0058
 math/complex_analysis/de_moivre_s_theorem	0.5 1 2	-0.1040367091367856+0.22732435670642043j
 math/complex_analysis/de_moivre_s_theorem	0.25 7.5 -1	1.3865412713401033-3.7519999070989556j
 math/complex_analysis/de_moivre_s_theorem	2 -1 7.5	62.74769506301465-169.79613294854195j
-math/complex_analysis/de_moivre_s_theorem	-1 0.5 5	0.8011436155469337-0.5984721441039565j
+math/complex_analysis/de_moivre_s_theorem	-1 0.5 5	0.8011436155469337-0.5984721441039564j
 math/complex_analysis/de_moivre_s_theorem	-3 -1 7.5	ERR
 math/complex_analysis/de_moivre_s_theorem	1 100 3	-0.022096619278683942-0.9997558399011495j
 math/complex_analysis/de_moivre_s_theorem	2 0.25 0.5	1.4031793975506641+0.1763166988386387j
@@ -2333,7 +2333,7 @@ math/complex_analysis/euler_s_formula	100	0.8623188722876839-0.5063656411097588j
 math/complex_analysis/euler_s_formula	3	-0.9899924966004454+0.1411200080598672j
 math/complex_analysis/euler_s_formula	5	0.28366218546322625-0.9589242746631385j
 math/complex_analysis/euler_s_formula	10	-0.8390715290764524-0.5440211108893698j
-math/complex_analysis/euler_s_formula	2.5	-0.8011436155469337+0.5984721441039565j
+math/complex_analysis/euler_s_formula	2.5	-0.8011436155469337+0.5984721441039564j
 math/complex_analysis/euler_s_formula	2	-0.4161468365471424+0.9092974268256817j
 math/complex_analysis/euler_s_formula	-3	-0.9899924966004454-0.1411200080598672j
 math/complex_analysis/imaginary_part	0	0.0
@@ -3624,14 +3624,14 @@ math/statistics_and_probability/normal_distribution	2.5	0.01752830049356854
 math/statistics_and_probability/normal_distribution	0.25	0.3866681168028493
 math/statistics_and_probability/normal_distribution	7.5	2.43432053302901e-13
 math/statistics_and_probability/p_value	0	1.0
-math/statistics_and_probability/p_value	1	0.31731050786291415
-math/statistics_and_probability/p_value	-1	0.31731050786291415
+math/statistics_and_probability/p_value	1	0.31731050786291437
+math/statistics_and_probability/p_value	-1	0.31731050786291437
 math/statistics_and_probability/p_value	-3	0.002699796063260207
 math/statistics_and_probability/p_value	10	0.0
 math/statistics_and_probability/p_value	0.25	0.8025873486341526
 math/statistics_and_probability/p_value	2.5	0.012419330651552318
-math/statistics_and_probability/p_value	2	0.04550026389635842
-math/statistics_and_probability/p_value	0.5	0.6170750774519738
+math/statistics_and_probability/p_value	2	0.045500263896358195
+math/statistics_and_probability/p_value	0.5	0.617075077451974
 math/statistics_and_probability/p_value	5	5.733031436250258e-07
 math/statistics_and_probability/p_value	7.5	6.394884621840902e-14
 math/statistics_and_probability/p_value	100	0.0
@@ -3948,7 +3948,7 @@ math/trigonometry/angle_sum	5 5	-0.5440211108893698
 math/trigonometry/angle_sum	0.25 -3	-0.38166099205233167
 math/trigonometry/angle_sum	0 10	-0.5440211108893698
 math/trigonometry/angle_sum	-3 3	0.0
-math/trigonometry/angle_sum	7.5 2.5	-0.5440211108893698
+math/trigonometry/angle_sum	7.5 2.5	-0.5440211108893699
 math/trigonometry/angle_sum	5 0.25	-0.858934493426592
 math/trigonometry/angle_sum	0 100	-0.5063656411097588
 math/trigonometry/angle_sum	2 10	-0.5365729180004349
@@ -3958,21 +3958,21 @@ math/trigonometry/angle_sum	3 10	0.42016703682664086
 math/trigonometry/angle_sum	0.5 -3	-0.5984721441039564
 math/trigonometry/angle_sum	0.25 100	-0.2772828564548513
 math/trigonometry/angle_sum	-1 3	0.9092974268256817
-math/trigonometry/angle_sum	2.5 7.5	-0.5440211108893698
+math/trigonometry/angle_sum	2.5 7.5	-0.5440211108893699
 math/trigonometry/angle_sum	0.25 0	0.24740395925452294
 math/trigonometry/angle_sum	0.5 0.25	0.6816387600233342
-math/trigonometry/angle_sum	10 2.5	-0.06632189735120081
+math/trigonometry/angle_sum	10 2.5	-0.0663218973512007
 math/trigonometry/angle_sum	10 2	-0.5365729180004349
 math/trigonometry/angle_sum	-1 0	-0.8414709848078965
-math/trigonometry/angle_sum	2.5 0.25	0.3816609920523317
+math/trigonometry/angle_sum	2.5 0.25	0.3816609920523316
 math/trigonometry/angle_sum	2.5 100	0.9217454249067292
 math/trigonometry/angle_sum	7.5 2	-0.07515112046180933
 math/trigonometry/angle_sum	1 0.25	0.9489846193555862
 math/trigonometry/angle_sum	2 0.25	0.7780731968879212
 math/trigonometry/angle_sum	0.5 -1	-0.47942553860420306
-math/trigonometry/angle_sum	0 2.5	0.5984721441039565
-math/trigonometry/angle_sum	2.5 -1	0.9974949866040544
-math/trigonometry/angle_sum	-3 2.5	-0.47942553860420306
+math/trigonometry/angle_sum	0 2.5	0.5984721441039564
+math/trigonometry/angle_sum	2.5 -1	0.9974949866040543
+math/trigonometry/angle_sum	-3 2.5	-0.47942553860420295
 math/trigonometry/angle_sum	-3 -1	0.7568024953079282
 math/trigonometry/angle_sum	0.25 1	0.9489846193555862
 math/trigonometry/angle_sum	0 1	0.8414709848078965
@@ -3983,7 +3983,7 @@ math/trigonometry/cosecant	100	-1.9748575314241
 math/trigonometry/cosecant	0.5	2.085829642933488
 math/trigonometry/cosecant	-3	-7.086167395737187
 math/trigonometry/cosecant	0.25	4.041972501221071
-math/trigonometry/cosecant	2.5	1.6709215455586797
+math/trigonometry/cosecant	2.5	1.67092154555868
 math/trigonometry/cosecant	7.5	1.0660981074204765
 math/trigonometry/cosecant	-1	-1.1883951057781212
 math/trigonometry/cosecant	10	-1.8381639608896658
@@ -4010,7 +4010,7 @@ math/trigonometry/cosine	2	-0.4161468365471424
 math/trigonometry/cotangent	0.7853981633974483	1.0000000000000002
 math/trigonometry/cotangent	2	-0.45765755436028577
 math/trigonometry/cotangent	10	1.5423510453569202
-math/trigonometry/cotangent	2.5	-1.3386481283041514
+math/trigonometry/cotangent	2.5	-1.3386481283041516
 math/trigonometry/cotangent	5	-0.2958129155327455
 math/trigonometry/cotangent	0	ERR
 math/trigonometry/cotangent	3	-7.015252551434534
@@ -4037,7 +4037,7 @@ math/trigonometry/degrees_to_radians	100	1.7453292519943295
 math/trigonometry/double_angle	0.5235987755982988	0.8660254037844386
 math/trigonometry/double_angle	2	-0.7568024953079283
 math/trigonometry/double_angle	3	-0.27941549819892586
-math/trigonometry/double_angle	2.5	-0.9589242746631386
+math/trigonometry/double_angle	2.5	-0.9589242746631383
 math/trigonometry/double_angle	1	0.9092974268256818
 math/trigonometry/double_angle	0.5	0.8414709848078965
 math/trigonometry/double_angle	0.25	0.479425538604203
@@ -4063,15 +4063,15 @@ math/trigonometry/half_angle	1	0.47942553860420295
 math/trigonometry/hyperbolic_cosine	0	1.0
 math/trigonometry/hyperbolic_cosine	1	1.5430806348152437
 math/trigonometry/hyperbolic_cosine	2	3.7621956910836314
-math/trigonometry/hyperbolic_cosine	7.5	904.0214837702166
+math/trigonometry/hyperbolic_cosine	7.5	904.0214837702167
 math/trigonometry/hyperbolic_cosine	5	74.20994852478785
-math/trigonometry/hyperbolic_cosine	10	11013.232920103324
+math/trigonometry/hyperbolic_cosine	10	11013.232920103323
 math/trigonometry/hyperbolic_cosine	100	1.3440585709080678e+43
 math/trigonometry/hyperbolic_cosine	-1	1.5430806348152437
 math/trigonometry/hyperbolic_cosine	-3	10.067661995777765
 math/trigonometry/hyperbolic_cosine	0.25	1.0314130998795732
 math/trigonometry/hyperbolic_cosine	0.5	1.1276259652063807
-math/trigonometry/hyperbolic_cosine	2.5	6.132289479663686
+math/trigonometry/hyperbolic_cosine	2.5	6.132289479663687
 math/trigonometry/hyperbolic_sine	0	0.0
 math/trigonometry/hyperbolic_sine	1	1.1752011936438014
 math/trigonometry/hyperbolic_sine	3	10.017874927409903
@@ -4081,8 +4081,8 @@ math/trigonometry/hyperbolic_sine	-3	-10.017874927409903
 math/trigonometry/hyperbolic_sine	2.5	6.0502044810397875
 math/trigonometry/hyperbolic_sine	10	11013.232874703393
 math/trigonometry/hyperbolic_sine	0.5	0.5210953054937474
-math/trigonometry/hyperbolic_sine	7.5	904.0209306858466
-math/trigonometry/hyperbolic_sine	2	3.626860407847019
+math/trigonometry/hyperbolic_sine	7.5	904.0209306858465
+math/trigonometry/hyperbolic_sine	2	3.6268604078470186
 math/trigonometry/hyperbolic_sine	0.25	0.2526123168081683
 math/trigonometry/hyperbolic_tangent	0	0.0
 math/trigonometry/hyperbolic_tangent	2	0.9640275800758169
@@ -4110,11 +4110,11 @@ math/trigonometry/inverse_cosine	5	ERR
 math/trigonometry/inverse_cosine	100	ERR
 math/trigonometry/inverse_cosine	-1	3.141592653589793
 math/trigonometry/inverse_hyperbolic_cosine	1	0.0
-math/trigonometry/inverse_hyperbolic_cosine	2.5	1.566799236972411
+math/trigonometry/inverse_hyperbolic_cosine	2.5	1.5667992369724109
 math/trigonometry/inverse_hyperbolic_cosine	7.5	2.703575830931402
 math/trigonometry/inverse_hyperbolic_cosine	0.5	ERR
 math/trigonometry/inverse_hyperbolic_cosine	0	ERR
-math/trigonometry/inverse_hyperbolic_cosine	100	5.298292365610484
+math/trigonometry/inverse_hyperbolic_cosine	100	5.298292365610485
 math/trigonometry/inverse_hyperbolic_cosine	-3	ERR
 math/trigonometry/inverse_hyperbolic_cosine	5	2.2924316695611777
 math/trigonometry/inverse_hyperbolic_cosine	-1	ERR
@@ -4131,7 +4131,7 @@ math/trigonometry/inverse_hyperbolic_sine	10	2.99822295029797
 math/trigonometry/inverse_hyperbolic_sine	-1	-0.881373587019543
 math/trigonometry/inverse_hyperbolic_sine	-3	-1.8184464592320668
 math/trigonometry/inverse_hyperbolic_sine	7.5	2.712465305184344
-math/trigonometry/inverse_hyperbolic_sine	5	2.3124383412727525
+math/trigonometry/inverse_hyperbolic_sine	5	2.312438341272753
 math/trigonometry/inverse_hyperbolic_sine	2	1.4436354751788103
 math/trigonometry/inverse_hyperbolic_sine	100	5.298342365610589
 math/trigonometry/inverse_hyperbolic_tangent	0	0.0
@@ -4142,7 +4142,7 @@ math/trigonometry/inverse_hyperbolic_tangent	7.5	ERR
 math/trigonometry/inverse_hyperbolic_tangent	5	ERR
 math/trigonometry/inverse_hyperbolic_tangent	2.5	ERR
 math/trigonometry/inverse_hyperbolic_tangent	1	ERR
-math/trigonometry/inverse_hyperbolic_tangent	0.5	0.5493061443340548
+math/trigonometry/inverse_hyperbolic_tangent	0.5	0.5493061443340549
 math/trigonometry/inverse_hyperbolic_tangent	3	ERR
 math/trigonometry/inverse_hyperbolic_tangent	10	ERR
 math/trigonometry/inverse_hyperbolic_tangent	-1	ERR
@@ -4183,7 +4183,7 @@ math/trigonometry/pythagorean_identity	1	1.0
 math/trigonometry/pythagorean_identity	-3	0.9999999999999999
 math/trigonometry/pythagorean_identity	100	0.9999999999999999
 math/trigonometry/pythagorean_identity	-1	1.0
-math/trigonometry/pythagorean_identity	2.5	1.0
+math/trigonometry/pythagorean_identity	2.5	0.9999999999999999
 math/trigonometry/pythagorean_identity	0	1.0
 math/trigonometry/pythagorean_identity	0.25	0.9999999999999999
 math/trigonometry/pythagorean_identity	3	0.9999999999999999
@@ -4218,7 +4218,7 @@ math/trigonometry/sine	0	0.0
 math/trigonometry/sine	0.5235987755982988	0.49999999999999994
 math/trigonometry/sine	5	-0.9589242746631385
 math/trigonometry/sine	0.5	0.479425538604203
-math/trigonometry/sine	2.5	0.5984721441039565
+math/trigonometry/sine	2.5	0.5984721441039564
 math/trigonometry/sine	3	0.1411200080598672
 math/trigonometry/sine	10	-0.5440211108893698
 math/trigonometry/sine	100	-0.5063656411097588
@@ -4231,7 +4231,7 @@ math/trigonometry/tangent	0.7853981633974483	0.9999999999999999
 math/trigonometry/tangent	0	0.0
 math/trigonometry/tangent	1	1.5574077246549023
 math/trigonometry/tangent	7.5	2.706013866772691
-math/trigonometry/tangent	2.5	-0.7470222972386603
+math/trigonometry/tangent	2.5	-0.7470222972386602
 math/trigonometry/tangent	10	0.6483608274590866
 math/trigonometry/tangent	100	-0.5872139151569291
 math/trigonometry/tangent	0.5	0.5463024898437905
@@ -5744,18 +5744,18 @@ physics/physics/magnetic_force_on_charge	100 2 1 -1	-168.2941969615793
 physics/physics/magnetic_force_on_charge	-3 100 3 100	455.7290769987829
 physics/physics/magnetic_force_on_charge	0 100 2.5 -3	-0.0
 physics/physics/magnetic_force_on_charge	1 1 0.5 -1	-0.42073549240394825
-physics/physics/magnetic_force_on_charge	2.5 3 10 2.5	44.88541080779674
+physics/physics/magnetic_force_on_charge	2.5 3 10 2.5	44.88541080779673
 physics/physics/magnetic_force_on_charge	-3 -3 0.25 3	0.3175200181347012
 physics/physics/magnetic_force_on_charge	10 1 1 2	9.092974268256818
 physics/physics/magnetic_force_on_wire	2 3 4 1.5707963267948966	24.0
 physics/physics/magnetic_force_on_wire	2 3 4 0.5235987755982988	11.999999999999998
 physics/physics/magnetic_force_on_wire	0.5 -3 7.5 1	-9.466548579088835
-physics/physics/magnetic_force_on_wire	-3 -1 1 2.5	1.7954164323118698
+physics/physics/magnetic_force_on_wire	-3 -1 1 2.5	1.7954164323118693
 physics/physics/magnetic_force_on_wire	2 3 10 5	-57.53545647978831
 physics/physics/magnetic_force_on_wire	7.5 2.5 -1 0.25	-4.638824236022305
 physics/physics/magnetic_force_on_wire	2 2 2 2	7.274379414605454
 physics/physics/magnetic_force_on_wire	0.25 5 2.5 0.5	1.4982048081381345
-physics/physics/magnetic_force_on_wire	-1 100 100 2.5	-5984.721441039565
+physics/physics/magnetic_force_on_wire	-1 100 100 2.5	-5984.7214410395645
 physics/physics/magnetic_force_on_wire	3 7.5 5 3	15.876000906735062
 physics/physics/magnetic_force_on_wire	3 100 5 0.5	719.1383079063045
 physics/physics/magnetic_force_on_wire	0.25 3 0.25 -1	-0.15777580965148058
@@ -5772,7 +5772,7 @@ physics/physics/magnetic_force_on_wire	0.5 100 100 10	-2720.105554446849
 physics/physics/magnetic_force_on_wire	0.25 10 0.5 10	-0.6800263886117122
 physics/physics/magnetic_force_on_wire	10 2.5 10 2	227.32435670642042
 physics/physics/magnetic_force_on_wire	100 5 0.5 0	0.0
-physics/physics/magnetic_force_on_wire	10 5 1 2.5	29.92360720519783
+physics/physics/magnetic_force_on_wire	10 5 1 2.5	29.923607205197822
 physics/physics/magnetic_force_on_wire	0.5 5 5 100	-6.329570513871985
 physics/physics/magnetic_force_on_wire	10 5 -3 -3	21.168001208980083
 physics/physics/magnetic_force_on_wire	10 5 7.5 0	0.0
@@ -5787,7 +5787,7 @@ physics/physics/magnetic_force_on_wire	0 3 -3 5	-0.0
 physics/physics/magnetic_force_on_wire	100 -3 2 0	-0.0
 physics/physics/magnetic_force_on_wire	3 1 10 -3	-4.233600241796016
 physics/physics/magnetic_force_on_wire	2.5 100 2.5 100	-316.47852569359924
-physics/physics/magnetic_force_on_wire	0.25 10 2.5 2.5	3.7404509006497286
+physics/physics/magnetic_force_on_wire	0.25 10 2.5 2.5	3.7404509006497277
 physics/physics/magnetic_force_on_wire	100 2.5 2.5 7.5	586.2499854842118
 physics/physics/malus_law	100 1.0471975511965976	25.00000000000001
 physics/physics/malus_law	100 0	100.0
@@ -6603,7 +6603,7 @@ physics/physics/snell_s_law	-1 0.25 7.5	-0.032993180028779816
 physics/physics/snell_s_law	-3 10 1	ERR
 physics/physics/snell_s_law	10 2.5 0.5	ERR
 physics/physics/snell_s_law	0.5 10 10	-0.027204410993613766
-physics/physics/snell_s_law	0.25 2.5 10	0.014962361872676322
+physics/physics/snell_s_law	0.25 2.5 10	0.014962361872676319
 physics/physics/snell_s_law	0.5 10 2.5	-0.10902005118016166
 physics/physics/snell_s_law	7.5 -1 2.5	ERR
 physics/physics/snell_s_law	3 0.5 100	0.014383262083625439
@@ -6618,8 +6618,8 @@ physics/physics/snell_s_law	10 1 0	ERR
 physics/physics/snell_s_law	1 3 10	0.014112469245423748
 physics/physics/snell_s_law	0 2.5 3	0.0
 physics/physics/snell_s_law	0.25 2 -1	-0.22932922036501602
-physics/physics/snell_s_law	2 2.5 3	0.41040576359570513
-physics/physics/snell_s_law	10 7.5 10	1.2168146928204135
+physics/physics/snell_s_law	2 2.5 3	0.4104057635957051
+physics/physics/snell_s_law	10 7.5 10	1.2168146928204138
 physics/physics/snell_s_law	2.5 100 0	ERR
 physics/physics/snell_s_law	100 3 7.5	ERR
 physics/physics/snell_s_law	-1 5 1	1.2831853071795865
@@ -6770,7 +6770,7 @@ physics/physics/torque	-1 0 5	-0.0
 physics/physics/torque	0 0.5 100	-0.0
 physics/physics/torque	3 2.5 1	6.311032386059224
 physics/physics/torque	3 2.5 100	-3.797742308323191
-physics/physics/torque	-3 0.25 2.5	-0.44885410807796744
+physics/physics/torque	-3 0.25 2.5	-0.44885410807796733
 physics/physics/torque	3 2 10	-3.2641266653362186
 physics/physics/torque	3 -3 -1	7.573238863271069
 physics/physics/torque	5 2 1	8.414709848078965
@@ -6780,7 +6780,7 @@ physics/physics/torque	2.5 10 -3	-3.5280002014966803
 physics/physics/torque	1 0.25 1	0.21036774620197413
 physics/physics/torque	0 7.5 10	-0.0
 physics/physics/torque	0 2.5 3	0.0
-physics/physics/torque	100 2.5 2.5	149.61803602598914
+physics/physics/torque	100 2.5 2.5	149.6180360259891
 physics/physics/torque	0.5 -1 -3	0.0705600040299336
 physics/physics/torque	1 -1 7.5	-0.9379999767747389
 physics/physics/torque	2 0 5	-0.0

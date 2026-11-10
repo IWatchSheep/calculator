@@ -21,6 +21,7 @@ INPUTS = ['x', 'z']    # what each box (left to right) is
 KINDS = ['list', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 LEVELS = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, -1]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('the transform', 'X of z'), 2: ('the variable', 'z, a complex number'), 6: ('time index', 'n'), 7: ('the sequence', 'x of n'), 9: ('the index', 'n'), 12: ('the variable', 'z'), 13: ('the power', 'minus n, one over z to the n')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', 'Σ'), ('op', 'n'), ('box', ''), ('op', '['), ('dec', ''), ('op', ']'), ('op', '·'), ('box', ''), ('op', '−n')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

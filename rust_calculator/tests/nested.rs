@@ -108,8 +108,13 @@ fn heat_equation_links_the_boxes_of_row_two_to_row_one() {
 }
 
 #[test]
-fn the_exterior_derivative_and_the_direct_sum_open_on_two_rows() {
-    for (key, rows) in [("math/differential_geometry_and_tensors/exterior_derivative", 2), ("math/abstract_algebra/direct_sum", 2)] {
+fn the_reference_formulas_that_are_several_equations_open_on_several_rows() {
+    for (key, rows) in [
+        ("math/differential_geometry_and_tensors/exterior_derivative", 2),
+        ("math/abstract_algebra/direct_sum", 2),
+        ("math/abstract_algebra/field_extension", 2),
+        ("math/optimization_and_numerical_methods/kkt_conditions", 4),
+    ] {
         let mut doc = Document::new();
         doc.apply_template(ops::get(key).unwrap().key, multirow::get(key).unwrap()).unwrap();
         let placed: Vec<_> = doc.rows.iter().filter(|r| r.operator().is_some()).collect();
