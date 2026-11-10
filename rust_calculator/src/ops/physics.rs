@@ -737,3 +737,24 @@ pub fn lense_thirring_rate(a: &[f64]) -> R {
     need(a[1] > 0.0, "a radius must be positive")?;
     n(2.0 * a[2] * a[0] / (a[3] * a[3] * (a[1] * a[1] * a[1])))
 }
+
+// ---------- gravitational waves from a circular binary (general relativity, job 9; the same operations as the Python files) ----------
+
+pub fn gravitational_wave_frequency(a: &[f64]) -> R {
+    need(a[0] >= 0.0, "a frequency cannot be negative")?;
+    n(2.0 * a[0])
+}
+
+pub fn chirp_mass(a: &[f64]) -> R {
+    // m1, m2
+    need(a[0] > 0.0 && a[1] > 0.0, "mass must be positive")?;
+    n((a[0] * a[1]).powf(3.0 / 5.0) / (a[0] + a[1]).powf(1.0 / 5.0))
+}
+
+pub fn gravitational_wave_strain(a: &[f64]) -> R {
+    // chirp_mass, f_gw, distance, G, c
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[2] > 0.0, "a distance must be positive")?;
+    need(a[1] >= 0.0, "a frequency cannot be negative")?;
+    n(4.0 * (a[3] * a[0]).powf(5.0 / 3.0) * (std::f64::consts::PI * a[1]).powf(2.0 / 3.0) / (a[4].powf(4.0) * a[2]))
+}

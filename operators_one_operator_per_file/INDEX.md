@@ -632,6 +632,9 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Kerr inner horizon | r− = Rs/2 − √((Rs/2)² − a²) | r− = Rs/2 − √((Rs/2)² − a²)   (the smaller horizon of a spinning mass; a = J/(M c) in metres; a = 0 gives r− = 0; |a| ≤ Rs/2) | Ready | `physics/physics/kerr_inner_horizon/` |
 | Kerr g_tφ | g_tφ = −Rs a / r | g_tφ = −Rs a / r   (the equator value of the frame-dragging coefficient of the Kerr metric; a = J/(M c) in metres; positive a gives a negative answer) | Ready | `physics/physics/kerr_frame_dragging_g_tphi/` |
 | Lense–Thirring rate | Ω = 2GJ / (c² r³) | Ω = 2 G J / (c² r³)   (radians per second by which local inertial frames are dragged around a slowly spinning mass; G = 6.674e-11, c = 299792458; positive J is a right-hand spin) | Ready | `physics/physics/lense_thirring_rate/` |
+| Gravitational-wave frequency | f_gw = 2 f_orb | f_gw = 2 f_orb   (a circular binary radiates at twice its orbital frequency) | Ready | `physics/physics/gravitational_wave_frequency/` |
+| Chirp mass | (m1 m2)^(3/5) / (m1 + m2)^(1/5) | Mc = (m1 m2)^(3/5) / (m1 + m2)^(1/5)   (the mass combination that sets the leading gravitational wave) | Ready | `physics/physics/chirp_mass/` |
+| Gravitational-wave strain | h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d) | h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d)   (leading-order amplitude of a face-on circular binary at distance d; f is the wave frequency, twice the orbital frequency; G = 6.674e-11, c = 299792458) | Ready | `physics/physics/gravitational_wave_strain/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

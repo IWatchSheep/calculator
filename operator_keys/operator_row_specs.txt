@@ -615,4 +615,7 @@ physics/physics/kerr_outer_horizon | {}{r+|metres, the outer horizon} = [Rs]{Sch
 physics/physics/kerr_inner_horizon | {}{r−|metres, the inner horizon} = [Rs]{Schwarzschild radius|metres, 2GM/c2} / 2 − √ ( ( [Rs] / 2 ) ² − [a]{spin length|metres, J/(M c), extreme when its size is Rs/2} ² )
 physics/physics/kerr_frame_dragging_g_tphi | {}{g_tφ|the frame-dragging coefficient on the equator} = − [Rs]{Schwarzschild radius|metres, 2GM/c2} [a]{spin length|metres, J/(M c)} / [r]{radius|metres from the centre}
 physics/physics/lense_thirring_rate | {}{rate|radians per second, the dragging of local inertial frames} = 2 × G{gravitational constant|6.674e-11 N m2/kg2} × [J]{angular momentum|kilogram metres squared per second, positive is a right-hand spin} / ( c{speed of light|299792458 m/s} ² [r]{radius|metres from the centre} ³ )
+physics/physics/gravitational_wave_frequency | {}{wave frequency|hertz} = 2 [f_orb]{orbital frequency|hertz, orbits per second}
+physics/physics/chirp_mass | {}{chirp mass|kilograms} = ⁵ √ ( ( [m1]{first mass|kilograms} [m2]{second mass|kilograms} ) ³ / ( [m1] + [m2] ) )
+physics/physics/gravitational_wave_strain | {}{strain h|dimensionless, face-on} = 4 ³ √ ( ( G{gravitational constant|6.674e-11 N m2/kg2} [chirp_mass]{chirp mass|kilograms} ) ⁵ ( π [f_gw]{wave frequency|hertz} ) ² ) / ( c{speed of light|299792458 m/s} ⁴ [distance]{distance|metres to the binary} )
 physics/physics/work | {}{work|joules} = [F]{force|newtons, along the motion} × [d]{distance|metres}

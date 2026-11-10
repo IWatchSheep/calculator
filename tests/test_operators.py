@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 615)
+        self.assertEqual(len(self.ops), 618)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 615)
+        self.assertEqual(len(status), 618)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -292,6 +292,10 @@ CASES = [
     (PH + "kerr_frame_dragging_g_tphi", (8, 10, 4), -5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, -4), 5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, 0), 0),
     (PH + "lense_thirring_rate", (0, 8), 0), (PH + "lense_thirring_rate", (8.074318974340423e+36, 8), 23421285.78125),
     (PH + "lense_thirring_rate", (-8.074318974340423e+36, 8), -23421285.78125),
+    (PH + "gravitational_wave_frequency", (10,), 20), (PH + "gravitational_wave_frequency", (0,), 0),
+    (PH + "chirp_mass", (1, 1), 0.8705505632961241), (PH + "chirp_mass", (2, 2), 1.7411011265922482),
+    (PH + "gravitational_wave_strain", (1, 1, 1), 1.166417692781491e-50), (PH + "gravitational_wave_strain", (1.3466514515085672e+27, 1, 1), 1.915488009903443e-05),
+    (PH + "gravitational_wave_strain", (1, 0, 1), 0),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1367,6 +1371,36 @@ class LenseThirringTests(unittest.TestCase):
         # the Earth's angular momentum 5.86e33 kg m^2/s at its surface: a few times 1e-14 rad/s
         earth = rate(5.86e33, 6.371e6)
         self.assertTrue(1e-15 < earth < 1e-13)
+
+
+class GravitationalWaveTests(unittest.TestCase):
+    """General relativity, job 9: the leading quadrupole wave from a circular binary."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says("gravitational_wave_frequency", (-1,), "a frequency cannot be negative")
+        self.says("chirp_mass", (0, 1), "mass must be positive")
+        self.says("chirp_mass", (1, -1), "mass must be positive")
+        self.says("gravitational_wave_strain", (0, 1, 1), "mass must be positive")
+        self.says("gravitational_wave_strain", (1, 1, 0), "a distance must be positive")
+        self.says("gravitational_wave_strain", (1, -1, 1), "a frequency cannot be negative")
+
+    def test_the_pieces_fit_together(self):
+        chirp, freq, strain = get(PH + "chirp_mass").compute, get(PH + "gravitational_wave_frequency").compute, get(PH + "gravitational_wave_strain").compute
+        self.assertEqual(chirp(5, 5), chirp(5, 5.0))
+        self.assertAlmostEqual(chirp(3, 7), chirp(7, 3), places=12)                    # symmetric in the two masses
+        for m in (1, 30, 1e30):
+            self.assertAlmostEqual(chirp(m, m), m * 2 ** (-1 / 5), delta=1e-12 * m)    # equal masses: Mc = m 2^(-1/5)
+        self.assertEqual(freq(35), 70)
+        # GW150914-like: two 30 solar-mass black holes, 1.3 billion light years away, near 150 Hz: a strain of the order 1e-21
+        sun, mpc = 1.989e30, 3.0857e22
+        h = strain(chirp(30 * sun, 30 * sun), freq(75), 410 * mpc)
+        self.assertTrue(1e-22 < h < 1e-20)
+        self.assertAlmostEqual(strain(1e30, 100, 2e22), 2 * strain(1e30, 100, 4e22), delta=1e-12 * strain(1e30, 100, 2e22))   # falls as 1 / distance
 
 
 # --------------------------------------------------------------------------- 3. error handling

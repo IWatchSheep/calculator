@@ -44,8 +44,11 @@ DONE
          +-23421285.78125 for J = +-8.074318974340423e+36 at r = 8).  Checked: equals -c g_tphi / r^2 for job 7's coefficient (with Rs = 2GM/c^2 and J = a M c);
          the sign follows the spin; it falls off as 1 / r^3.
 
+  Job 9  Gravitational waves, leading order (physics/physics): gravitational_wave_frequency(f_orb) = 2 f_orb, chirp_mass(m1, m2) = (m1 m2)^(3/5) /
+         (m1 + m2)^(1/5), gravitational_wave_strain(chirp_mass, f_gw, distance) = 4 (G Mc)^(5/3) (pi f)^(2/3) / (c^4 d) (G, c as in schwarzschild_radius).
+         618 operators, 546 calculating.  Grok's numbers match (20, 0, 0.8705505632961241, 1.166417692781491e-50, 1.915488009903443e-05).  Python and Rust tests pass.
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 9   gravitational waves, leading order for a circular binary: wave frequency, quadrupole strain
   Job 10  one radial step of the Tolman-Oppenheimer-Volkoff equation (pressure change over a thin shell)
 
 NOT ON THE LIST  a 3D numerical evolution of spacetime, a waveform synthesizer, a merger simulation, a full orbit integration.

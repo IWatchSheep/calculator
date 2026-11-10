@@ -1,6 +1,6 @@
 {
- "count": 615,
- "ready": 543,
+ "count": 618,
+ "ready": 546,
  "reference": 72,
  "operators": [
   {
@@ -19909,6 +19909,56 @@
    ]
   },
   {
+   "key": "physics/physics/chirp_mass",
+   "name": "Chirp mass",
+   "symbol": "(m1 m2)^(3/5) / (m1 + m2)^(1/5)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "Mc = (m1 m2)^(3/5) / (m1 + m2)^(1/5)   (the mass combination that sets the leading gravitational wave)",
+   "status": "Ready",
+   "inputs": [
+    "m1",
+    "m2"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( □ □ ) ^ ( 3 / 5 ) / ( □ + □ ) ^ ( 1 / 5 )",
+   "compute_signature": "compute(m1, m2)",
+   "compute_params": [
+    {
+     "name": "m1",
+     "kind": "required"
+    },
+    {
+     "name": "m2",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      1,
+      1
+     ],
+     "expected": 0.8705505632961241
+    },
+    {
+     "args": [
+      2,
+      2
+     ],
+     "expected": 1.7411011265922482
+    }
+   ]
+  },
+  {
    "key": "physics/physics/closing_speed",
    "name": "Closing speed",
    "symbol": "−(r · v) / |r|",
@@ -21601,6 +21651,124 @@
       20
      ],
      "expected": 86.60254037844386
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/gravitational_wave_frequency",
+   "name": "Gravitational-wave frequency",
+   "symbol": "f_gw = 2 f_orb",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "f_gw = 2 f_orb   (a circular binary radiates at twice its orbital frequency)",
+   "status": "Ready",
+   "inputs": [
+    "f_orb"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 □",
+   "compute_signature": "compute(f_orb)",
+   "compute_params": [
+    {
+     "name": "f_orb",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      10
+     ],
+     "expected": 20
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/gravitational_wave_strain",
+   "name": "Gravitational-wave strain",
+   "symbol": "h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d)   (leading-order amplitude of a face-on circular binary at distance d; f is the wave frequency, twice the orbital frequency; G = 6.674e-11, c = 299792458)",
+   "status": "Ready",
+   "inputs": [
+    "chirp_mass",
+    "f_gw",
+    "distance"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 4 ( G □ ) ^ ( 5 / 3 ) ( π □ ) ^ ( 2 / 3 ) / ( c ^ 4 □ )",
+   "compute_signature": "compute(chirp_mass, f_gw, distance, G=6.674e-11, c=299792458)",
+   "compute_params": [
+    {
+     "name": "chirp_mass",
+     "kind": "required"
+    },
+    {
+     "name": "f_gw",
+     "kind": "required"
+    },
+    {
+     "name": "distance",
+     "kind": "required"
+    },
+    {
+     "name": "G",
+     "kind": "optional",
+     "default": 6.674e-11
+    },
+    {
+     "name": "c",
+     "kind": "optional",
+     "default": 299792458
+    }
+   ],
+   "required_args": 3,
+   "max_args": 5,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      1,
+      1,
+      1
+     ],
+     "expected": 1.166417692781491e-50
+    },
+    {
+     "args": [
+      1.3466514515085672e+27,
+      1,
+      1
+     ],
+     "expected": 1.915488009903443e-05
+    },
+    {
+     "args": [
+      1,
+      0,
+      1
+     ],
+     "expected": 0
     }
    ]
   },

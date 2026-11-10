@@ -1009,3 +1009,28 @@ fn the_lense_thirring_operator_gives_the_numbers_of_the_work_plan_and_declines_w
     assert!(call(&[1e36, 0., 6.674e-11, 299792458.0]).unwrap_err().contains("a radius must be positive"));
     assert!(call(&[1e36, -8., 6.674e-11, 299792458.0]).unwrap_err().contains("a radius must be positive"));
 }
+
+#[test]
+fn the_gravitational_wave_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let (g, c) = (6.674e-11, 299792458.0);
+    assert_eq!(call("gravitational_wave_frequency", &[10.]).unwrap(), 20.0);
+    assert_eq!(call("gravitational_wave_frequency", &[0.]).unwrap(), 0.0);
+    assert_eq!(call("chirp_mass", &[1., 1.]).unwrap(), 0.8705505632961241);
+    assert_eq!(call("chirp_mass", &[2., 2.]).unwrap(), 1.7411011265922482);
+    assert_eq!(call("gravitational_wave_strain", &[1., 1., 1., g, c]).unwrap(), 1.166417692781491e-50);
+    assert_eq!(call("gravitational_wave_strain", &[1.3466514515085672e+27, 1., 1., g, c]).unwrap(), 1.915488009903443e-05);
+    assert_eq!(call("gravitational_wave_strain", &[1., 0., 1., g, c]).unwrap(), 0.0);
+    assert!(call("gravitational_wave_frequency", &[-1.]).unwrap_err().contains("a frequency cannot be negative"));
+    assert!(call("chirp_mass", &[0., 1.]).unwrap_err().contains("mass must be positive"));
+    assert!(call("chirp_mass", &[1., -1.]).unwrap_err().contains("mass must be positive"));
+    assert!(call("gravitational_wave_strain", &[0., 1., 1., g, c]).unwrap_err().contains("mass must be positive"));
+    assert!(call("gravitational_wave_strain", &[1., 1., 0., g, c]).unwrap_err().contains("a distance must be positive"));
+    assert!(call("gravitational_wave_strain", &[1., -1., 1., g, c]).unwrap_err().contains("a frequency cannot be negative"));
+}
