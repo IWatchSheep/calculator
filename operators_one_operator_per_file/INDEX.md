@@ -136,6 +136,14 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Vector magnitude | ‖v‖ | ‖v‖ = √(v₁² + v₂² + …) | Ready | `math/linear_algebra/vector_magnitude/` |
 | Unit vector | v̂ | v̂ = v / ‖v‖ | Ready | `math/linear_algebra/unit_vector/` |
 | Vector projection | proj_b a | proj_b(a) = (a·b / b·b) · b | Ready | `math/linear_algebra/vector_projection/` |
+| Quaternion multiply | q₁ q₂ | Hamilton product of two quaternions (w, x, y, z), the second turn done first | Ready | `math/linear_algebra/quaternion_multiply/` |
+| Quaternion conjugate | q* | q* = w − x i − y j − z k | Ready | `math/linear_algebra/quaternion_conjugate/` |
+| Quaternion inverse | q⁻¹ | q⁻¹ = q* / (w² + x² + y² + z²) | Ready | `math/linear_algebra/quaternion_inverse/` |
+| Quaternion normalise | q̂ | q̂ = q / √(w² + x² + y² + z²) | Ready | `math/linear_algebra/quaternion_normalize/` |
+| Quaternion from axis and angle | axis θ | q = cos(θ/2) + sin(θ/2) · (the unit axis) | Ready | `math/linear_algebra/quaternion_from_axis_angle/` |
+| Rotate a vector | q v q⁻¹ | v turned by q: q v q⁻¹ (the axes stay fixed; a q that is not unit length is allowed) | Ready | `math/linear_algebra/rotate_vector_by_quaternion/` |
+| Quaternion to yaw, pitch and roll | q → yaw pitch roll | yaw = atan2(2(wz + xy), 1 − 2(y² + z²)),  pitch = asin(2(wy − zx)),  roll = atan2(2(wx + yz), 1 − 2(x² + y²))  (q normalised first) | Ready | `math/linear_algebra/quaternion_to_yaw_pitch_roll/` |
+| Yaw, pitch and roll to quaternion | yaw pitch roll → q | q = q_yaw q_pitch q_roll, with q_roll = [cos(r/2), sin(r/2), 0, 0], q_pitch = [cos(p/2), 0, sin(p/2), 0], q_yaw = [cos(y/2), 0, 0, sin(y/2)] | Ready | `math/linear_algebra/quaternion_from_yaw_pitch_roll/` |
 | Norm | ‖v‖ₚ | ‖v‖ₚ = (Σ \|vᵢ\|ᵖ)^(1/p) | Ready | `math/linear_algebra/norm/` |
 | Null space | null(A) | null(A) = { x : A·x = 0 } | Ready | `math/linear_algebra/null_space/` |
 | Column space | col(A) | col(A) = span of the columns of A = { A·x : x } | Ready | `math/linear_algebra/column_space/` |

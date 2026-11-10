@@ -520,3 +520,95 @@ pub fn resistors_in_parallel(a: &[Value]) -> R {
 pub fn resistors_in_series(a: &[Value]) -> R {
     n(nums(&a[0])?.iter().sum())
 }
+
+// ---------- quaternions (w, x, y, z; real part first): the same operations in the same order as the Python files ----------
+
+fn quaternion(v: &Value) -> Result<[f64; 4], String> {
+    let q = nums(v)?;
+    need(q.len() == 4, "a quaternion has 4 numbers: w, x, y, z")?;
+    Ok([q[0], q[1], q[2], q[3]])
+}
+
+fn quat_multiply(p: &[f64; 4], q: &[f64; 4]) -> [f64; 4] {
+    [
+        p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3],
+        p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2],
+        p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1],
+        p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0],
+    ]
+}
+
+fn quat_size(q: &[f64; 4]) -> f64 {
+    (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]).sqrt()
+}
+
+fn vector3(v: &Value) -> Result<[f64; 3], String> {
+    let x = nums(v)?;
+    need(x.len() == 3, "a vector has 3 numbers: x, y, z")?;
+    Ok([x[0], x[1], x[2]])
+}
+
+pub fn quaternion_multiply(a: &[Value]) -> R {
+    let (p, q) = (quaternion(&a[0])?, quaternion(&a[1])?);
+    Ok(vlist(quat_multiply(&p, &q).to_vec()))
+}
+
+pub fn quaternion_conjugate(a: &[Value]) -> R {
+    let [w, x, y, z] = quaternion(&a[0])?;
+    Ok(vlist(vec![w, -x, -y, -z]))
+}
+
+pub fn quaternion_inverse(a: &[Value]) -> R {
+    let [w, x, y, z] = quaternion(&a[0])?;
+    let s = w * w + x * x + y * y + z * z;
+    need(s != 0.0, "the quaternion is zero, it has no inverse")?;
+    Ok(vlist(vec![w / s, -x / s, -y / s, -z / s]))
+}
+
+pub fn quaternion_normalize(a: &[Value]) -> R {
+    let q = quaternion(&a[0])?;
+    let s = quat_size(&q);
+    need(s != 0.0, "the quaternion is zero, it cannot be normalised")?;
+    Ok(vlist(q.iter().map(|c| c / s).collect()))
+}
+
+pub fn quaternion_from_axis_angle(a: &[Value]) -> R {
+    let axis = vector3(&a[0])?;
+    let angle = num(&a[1])?;
+    let size = (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]).sqrt();
+    need(size != 0.0, "the axis has length zero")?;
+    let s = (angle / 2.0).sin();
+    Ok(vlist(vec![(angle / 2.0).cos(), axis[0] / size * s, axis[1] / size * s, axis[2] / size * s]))
+}
+
+pub fn rotate_vector_by_quaternion(a: &[Value]) -> R {
+    let q = quaternion(&a[0])?;
+    let v = vector3(&a[1])?;
+    let s = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
+    need(s != 0.0, "the quaternion is zero, it cannot rotate a vector")?;
+    let r = quat_multiply(&quat_multiply(&q, &[0.0, v[0], v[1], v[2]]), &[q[0], -q[1], -q[2], -q[3]]);
+    Ok(vlist(vec![r[1] / s, r[2] / s, r[3] / s]))
+}
+
+pub fn quaternion_to_yaw_pitch_roll(a: &[Value]) -> R {
+    let q = quaternion(&a[0])?;
+    let s = quat_size(&q);
+    need(s != 0.0, "the quaternion is zero, it has no yaw, pitch and roll")?;
+    let (w, x, y, z) = (q[0] / s, q[1] / s, q[2] / s, q[3] / s);
+    let sine = 2.0 * (w * y - z * x);
+    need(sine.abs() <= 1.0 + 1e-9, "not a rotation: the pitch sine is outside -1 to 1")?;
+    need(sine.abs() < 1.0 - 1e-9, "gimbal lock: pitch is straight up or straight down, so roll and yaw are not separate")?;
+    Ok(vlist(vec![
+        (2.0 * (w * z + x * y)).atan2(1.0 - 2.0 * (y * y + z * z)),
+        sine.asin(),
+        (2.0 * (w * x + y * z)).atan2(1.0 - 2.0 * (x * x + y * y)),
+    ]))
+}
+
+pub fn quaternion_from_yaw_pitch_roll(a: &[Value]) -> R {
+    let (yaw, pitch, roll) = (num(&a[0])?, num(&a[1])?, num(&a[2])?);
+    let q_yaw = [(yaw / 2.0).cos(), 0.0, 0.0, (yaw / 2.0).sin()];
+    let q_pitch = [(pitch / 2.0).cos(), 0.0, (pitch / 2.0).sin(), 0.0];
+    let q_roll = [(roll / 2.0).cos(), (roll / 2.0).sin(), 0.0, 0.0];
+    Ok(vlist(quat_multiply(&quat_multiply(&q_yaw, &q_pitch), &q_roll).to_vec()))
+}

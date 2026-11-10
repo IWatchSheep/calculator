@@ -181,11 +181,13 @@ math/statistics_and_probability/bayes_theorem	0.9 0.01 0.1	0.09
 math/statistics_and_probability/binomial_distribution	5 2 0.5	0.3125
 math/statistics_and_probability/conditional_probability	0.2 0.5	0.4
 math/statistics_and_probability/exponential_distribution	0 2	2
+math/statistics_and_probability/interquartile_range_from_quartiles	6.75 2.25	4.5
 math/statistics_and_probability/normal_distribution	0	0.3989422804014327
 math/statistics_and_probability/p_value	0	1.0
 math/statistics_and_probability/poisson_distribution	0 1	0.36787944117144233
 math/statistics_and_probability/poisson_distribution	2 3	0.22404180765538775
 math/statistics_and_probability/probability	1 6	0.16666666666666666
+math/statistics_and_probability/range_from_ends	9 1	8
 math/statistics_and_probability/sample_standard_deviation_from_variance	9	3
 math/statistics_and_probability/sample_standard_deviation_from_variance	2.25	1.5
 math/statistics_and_probability/standard_deviation_from_variance	4	2
@@ -193,6 +195,7 @@ math/statistics_and_probability/standard_deviation_from_variance	0	0
 math/statistics_and_probability/t_test_statistic	52 50 4 16	2
 math/statistics_and_probability/uniform_distribution	1 0 4	0.25
 math/statistics_and_probability/uniform_distribution	5 0 4	0
+math/statistics_and_probability/variance_from_expectations	5.9 2.3	0.61
 math/statistics_and_probability/z_score	70 60 5	2
 math/topology/euler_characteristic	8 12 6	2
 math/transforms_and_differential_equations/dirac_delta	1	0

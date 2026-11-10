@@ -396,3 +396,39 @@ fn one_plus_one_is_two_and_a_second_join_key_with_no_number_only_changes_the_sym
     assert_eq!(doc.rows[1].join, rust_calculator::row::Join::Sub);
     assert_eq!(doc.rows.len(), rows);
 }
+
+#[test]
+fn the_quaternion_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let la = "math/linear_algebra/";
+    let run = |key: &str, args: Vec<Value>| -> Result<Vec<f64>, String> {
+        let op = ops::get(&format!("{la}{key}")).unwrap();
+        match (op.compute_v.unwrap())(&args)? {
+            Value::List(items) => Ok(items.iter().map(|v| match v { Value::Number(x) => *x, o => panic!("{o:?}") }).collect()),
+            o => panic!("{o:?}"),
+        }
+    };
+    let list = |xs: &[f64]| Value::List(xs.iter().map(|x| Value::Number(*x)).collect());
+    let near = |a: &[f64], b: &[f64]| a.len() == b.len() && a.iter().zip(b).all(|(p, q)| (p - q).abs() < 1e-12);
+    let r2 = 2f64.sqrt();
+    assert!(near(&run("quaternion_multiply", vec![list(&[0., 1., 0., 0.]), list(&[0., 0., 1., 0.])]).unwrap(), &[0., 0., 0., 1.]));
+    assert!(near(&run("quaternion_multiply", vec![list(&[0., 1., 0., 0.]), list(&[0., 1., 0., 0.])]).unwrap(), &[-1., 0., 0., 0.]));
+    assert!(near(&run("quaternion_conjugate", vec![list(&[0.5, 0.5, 0.5, 0.5])]).unwrap(), &[0.5, -0.5, -0.5, -0.5]));
+    assert!(near(&run("quaternion_inverse", vec![list(&[r2, 0., 0., r2])]).unwrap(), &[0.35355339059327373, 0., 0., -0.35355339059327373]));
+    assert!(near(&run("quaternion_normalize", vec![list(&[2., 0., 0., 2.])]).unwrap(), &[r2 / 2., 0., 0., r2 / 2.]));
+    assert!(near(&run("quaternion_from_axis_angle", vec![list(&[0., 0., 2.]), Value::Number(std::f64::consts::FRAC_PI_2)]).unwrap(), &[r2 / 2., 0., 0., r2 / 2.]));
+    assert!(near(&run("rotate_vector_by_quaternion", vec![list(&[r2, 0., 0., r2]), list(&[1., 0., 0.])]).unwrap(), &[0., 1., 0.]));
+    assert!(near(&run("rotate_vector_by_quaternion", vec![list(&[0., 1., 0., 0.]), list(&[0., 1., 0.])]).unwrap(), &[0., -1., 0.]));
+    assert!(near(&run("quaternion_to_yaw_pitch_roll", vec![list(&[r2, 0., 0., r2])]).unwrap(), &[std::f64::consts::FRAC_PI_2, 0., 0.]));
+    assert!(near(
+        &run("quaternion_from_yaw_pitch_roll", vec![Value::Number(std::f64::consts::FRAC_PI_2), Value::Number(0.), Value::Number(0.)]).unwrap(),
+        &[r2 / 2., 0., 0., r2 / 2.]
+    ));
+    let h = 0.7071067811865476;
+    let said = |key: &str, args: Vec<Value>| run(key, args).unwrap_err();
+    assert!(said("quaternion_to_yaw_pitch_roll", vec![list(&[h, 0., h, 0.])]).contains("gimbal lock"));
+    assert!(said("quaternion_inverse", vec![list(&[0., 0., 0., 0.])]).contains("the quaternion is zero, it has no inverse"));
+    assert!(said("quaternion_normalize", vec![list(&[1., 2., 3.])]).contains("a quaternion has 4 numbers: w, x, y, z"));
+    assert!(said("quaternion_from_axis_angle", vec![list(&[0., 0.]), Value::Number(1.)]).contains("a vector has 3 numbers: x, y, z"));
+    assert!(said("quaternion_from_axis_angle", vec![list(&[0., 0., 0.]), Value::Number(1.)]).contains("the axis has length zero"));
+}

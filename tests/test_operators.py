@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 537)
+        self.assertEqual(len(self.ops), 545)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 537)
+        self.assertEqual(len(status), 545)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -254,6 +254,17 @@ CASES = [
     (LA + "matrix_inverse", ([[1, 2], [3, 4]],), [[-2, 1], [1.5, -0.5]]),
     (LA + "matrix_rank", ([[1, 2], [2, 4]],), 1), (LA + "matrix_rank", ([[1, 0], [0, 1]],), 2),
     (LA + "norm", ([3, 4],), 5), (LA + "norm", ([3, 4], 1), 7), (LA + "vector_magnitude", ([2, 3, 6],), 7),
+    (LA + "quaternion_multiply", ([0, 1, 0, 0], [0, 0, 1, 0]), [0, 0, 0, 1]), (LA + "quaternion_multiply", ([0, 1, 0, 0], [0, 1, 0, 0]), [-1, 0, 0, 0]),
+    (LA + "quaternion_conjugate", ([0.5, 0.5, 0.5, 0.5],), [0.5, -0.5, -0.5, -0.5]),
+    (LA + "quaternion_inverse", ([2 ** 0.5, 0, 0, 2 ** 0.5],), [0.35355339059327373, 0, 0, -0.35355339059327373]),
+    (LA + "quaternion_normalize", ([0, 3, 0, 0],), [0, 1, 0, 0]), (LA + "quaternion_normalize", ([2, 0, 0, 2],), [0.7071067811865476, 0, 0, 0.7071067811865476]),
+    (LA + "quaternion_from_axis_angle", ([0, 0, 2], 1.5707963267948966), [0.7071067811865476, 0, 0, 0.7071067811865476]),
+    (LA + "rotate_vector_by_quaternion", ([0.7071067811865476, 0, 0, 0.7071067811865476], [1, 0, 0]), [0, 1, 0]),
+    (LA + "rotate_vector_by_quaternion", ([2 ** 0.5, 0, 0, 2 ** 0.5], [1, 0, 0]), [0, 1, 0]),
+    (LA + "rotate_vector_by_quaternion", ([0, 1, 0, 0], [0, 1, 0]), [0, -1, 0]),
+    (LA + "quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, 0, 0.7071067811865476],), [1.5707963267948966, 0, 0]),
+    (LA + "quaternion_to_yaw_pitch_roll", ([2 ** 0.5, 0, 0, 2 ** 0.5],), [1.5707963267948966, 0, 0]),
+    (LA + "quaternion_from_yaw_pitch_roll", (1.5707963267948966, 0, 0), [0.7071067811865476, 0, 0, 0.7071067811865476]),
     (LA + "unit_vector", ([3, 4],), [0.6, 0.8]), (LA + "vector_projection", ([3, 4], [1, 0]), [3, 0]),
     (LA + "solve_ax_b", ([[2, 1], [1, 3]], [5, 10]), [1, 3]),
     (LA + "characteristic_polynomial", ([[2, 0], [0, 3]],), [1, -5, 6]),
@@ -632,6 +643,47 @@ def _make(key, args, expected):
 
 for _i, (_k, _a, _e) in enumerate(CASES):
     setattr(NumericTests, f"test_{_i:03d}_{_k.replace('/', '.')}", _make(_k, _a, _e))
+
+
+class QuaternionDeclineTests(unittest.TestCase):
+    """The robot rotation operators decline with a clear message instead of a wrong number."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(LA + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_a_quaternion_has_four_numbers(self):
+        for key in ("quaternion_conjugate", "quaternion_inverse", "quaternion_normalize", "quaternion_to_yaw_pitch_roll"):
+            self.says(key, ([1, 2, 3],), "a quaternion has 4 numbers: w, x, y, z")
+        self.says("quaternion_multiply", ([1, 0, 0, 0], [1, 0, 0]), "a quaternion has 4 numbers")
+        self.says("rotate_vector_by_quaternion", ([1, 0, 0], [1, 0, 0]), "a quaternion has 4 numbers")
+
+    def test_a_vector_has_three_numbers(self):
+        self.says("quaternion_from_axis_angle", ([1, 0], 1.0), "a vector has 3 numbers: x, y, z")
+        self.says("rotate_vector_by_quaternion", ([1, 0, 0, 0], [1, 0]), "a vector has 3 numbers: x, y, z")
+
+    def test_the_zero_quaternion_and_the_zero_axis(self):
+        self.says("quaternion_inverse", ([0, 0, 0, 0],), "the quaternion is zero, it has no inverse")
+        self.says("quaternion_normalize", ([0, 0, 0, 0],), "the quaternion is zero, it cannot be normalised")
+        self.says("rotate_vector_by_quaternion", ([0, 0, 0, 0], [1, 0, 0]), "the quaternion is zero, it cannot rotate a vector")
+        self.says("quaternion_from_axis_angle", ([0, 0, 0], 1.0), "the axis has length zero")
+
+    def test_gimbal_lock_is_declined_not_guessed(self):
+        self.says("quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, 0.7071067811865476, 0],), "gimbal lock")
+        self.says("quaternion_to_yaw_pitch_roll", ([0.7071067811865476, 0, -0.7071067811865476, 0],), "gimbal lock")
+
+    def test_the_round_trip_and_a_composition(self):
+        import math
+        yaw_pitch_roll = get(LA + "quaternion_to_yaw_pitch_roll").compute
+        make = get(LA + "quaternion_from_yaw_pitch_roll").compute
+        for angles in ((0.3, 0.2, -0.4), (-2.0, 1.0, 3.0), (1.5, -0.7, 0.1)):
+            back = yaw_pitch_roll(make(*angles))
+            self.assertTrue(all(abs(p - q) < 1e-12 for p, q in zip(back, angles)), (angles, back))
+        mul = get(LA + "quaternion_multiply").compute
+        inv = get(LA + "quaternion_inverse").compute
+        q = [0.5, -0.5, 0.5, 0.5]
+        self.assertTrue(all(abs(a - b) < 1e-15 for a, b in zip(mul(q, inv(q)), [1, 0, 0, 0])))
 
 
 # --------------------------------------------------------------------------- 3. error handling

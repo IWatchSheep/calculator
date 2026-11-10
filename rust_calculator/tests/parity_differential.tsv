@@ -3707,6 +3707,7 @@ math/statistics_and_probability/exponential_distribution	2 0.25	0.15163266492815
 math/statistics_and_probability/exponential_distribution	0.5 -3	-13.445067211014194
 math/statistics_and_probability/exponential_distribution	2 10	2.061153622438558e-08
 math/statistics_and_probability/exponential_distribution	-1 1	0
+math/statistics_and_probability/interquartile_range_from_quartiles	6.75 2.25	4.5
 math/statistics_and_probability/interquartile_range_from_quartiles	0 2	-2
 math/statistics_and_probability/interquartile_range_from_quartiles	3 10	-7
 math/statistics_and_probability/interquartile_range_from_quartiles	-1 1	-2
@@ -3841,6 +3842,7 @@ math/statistics_and_probability/probability	10 -1	-10.0
 math/statistics_and_probability/probability	0.5 0.5	1.0
 math/statistics_and_probability/probability	0.5 2	0.25
 math/statistics_and_probability/probability	0 0	ERR
+math/statistics_and_probability/range_from_ends	9 1	8
 math/statistics_and_probability/range_from_ends	0 5	-5
 math/statistics_and_probability/range_from_ends	100 5	95
 math/statistics_and_probability/range_from_ends	7.5 2.5	5.0
@@ -3987,6 +3989,7 @@ math/statistics_and_probability/uniform_distribution	0.5 2 0	0
 math/statistics_and_probability/uniform_distribution	2 0 1	0
 math/statistics_and_probability/uniform_distribution	2 10 -1	0
 math/statistics_and_probability/uniform_distribution	0.25 2.5 2	0
+math/statistics_and_probability/variance_from_expectations	5.9 2.3	0.6100000000000012
 math/statistics_and_probability/variance_from_expectations	7.5 -1	6.5
 math/statistics_and_probability/variance_from_expectations	10 0.25	9.9375
 math/statistics_and_probability/variance_from_expectations	0.25 3	-8.75

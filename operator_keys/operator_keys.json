@@ -1,6 +1,6 @@
 {
- "count": 537,
- "ready": 465,
+ "count": 545,
+ "ready": 473,
  "reference": 72,
  "operators": [
   {
@@ -10256,6 +10256,268 @@
    "examples": []
   },
   {
+   "key": "math/linear_algebra/quaternion_conjugate",
+   "name": "Quaternion conjugate",
+   "symbol": "q*",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "q* = w − x i − y j − z k",
+   "status": "Ready",
+   "inputs": [
+    "q"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ * = □",
+   "compute_signature": "compute(q)",
+   "compute_params": [
+    {
+     "name": "q",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_from_axis_angle",
+   "name": "Quaternion from axis and angle",
+   "symbol": "axis θ",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "q = cos(θ/2) + sin(θ/2) · (the unit axis)",
+   "status": "Ready",
+   "inputs": [
+    "axis",
+    "angle"
+   ],
+   "input_kinds": [
+    "list",
+    "number"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ □ = □",
+   "compute_signature": "compute(axis, angle)",
+   "compute_params": [
+    {
+     "name": "axis",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_from_yaw_pitch_roll",
+   "name": "Yaw, pitch and roll to quaternion",
+   "symbol": "yaw pitch roll → q",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "q = q_yaw q_pitch q_roll, with q_roll = [cos(r/2), sin(r/2), 0, 0], q_pitch = [cos(p/2), 0, sin(p/2), 0], q_yaw = [cos(y/2), 0, 0, sin(y/2)]",
+   "status": "Ready",
+   "inputs": [
+    "yaw",
+    "pitch",
+    "roll"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ □ □ = □",
+   "compute_signature": "compute(yaw, pitch, roll)",
+   "compute_params": [
+    {
+     "name": "yaw",
+     "kind": "required"
+    },
+    {
+     "name": "pitch",
+     "kind": "required"
+    },
+    {
+     "name": "roll",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_inverse",
+   "name": "Quaternion inverse",
+   "symbol": "q⁻¹",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "q⁻¹ = q* / (w² + x² + y² + z²)",
+   "status": "Ready",
+   "inputs": [
+    "q"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ ⁻¹ = □",
+   "compute_signature": "compute(q)",
+   "compute_params": [
+    {
+     "name": "q",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_multiply",
+   "name": "Quaternion multiply",
+   "symbol": "q₁ q₂",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "Hamilton product of two quaternions (w, x, y, z), the second turn done first",
+   "status": "Ready",
+   "inputs": [
+    "q1",
+    "q2"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ □ = □",
+   "compute_signature": "compute(q1, q2)",
+   "compute_params": [
+    {
+     "name": "q1",
+     "kind": "required"
+    },
+    {
+     "name": "q2",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_normalize",
+   "name": "Quaternion normalise",
+   "symbol": "q̂",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "q̂ = q / √(w² + x² + y² + z²)",
+   "status": "Ready",
+   "inputs": [
+    "q"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ / ‖ □ ‖ = □",
+   "compute_signature": "compute(q)",
+   "compute_params": [
+    {
+     "name": "q",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/quaternion_to_yaw_pitch_roll",
+   "name": "Quaternion to yaw, pitch and roll",
+   "symbol": "q → yaw pitch roll",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "yaw = atan2(2(wz + xy), 1 − 2(y² + z²)),  pitch = asin(2(wy − zx)),  roll = atan2(2(wx + yz), 1 − 2(x² + y²))  (q normalised first)",
+   "status": "Ready",
+   "inputs": [
+    "q"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = □",
+   "compute_signature": "compute(q)",
+   "compute_params": [
+    {
+     "name": "q",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
+   "key": "math/linear_algebra/rotate_vector_by_quaternion",
+   "name": "Rotate a vector",
+   "symbol": "q v q⁻¹",
+   "category": "Math",
+   "subcategory": "Linear algebra",
+   "formula": "v turned by q: q v q⁻¹ (the axes stay fixed; a q that is not unit length is allowed)",
+   "status": "Ready",
+   "inputs": [
+    "q",
+    "v"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ □ □ ⁻¹ = □",
+   "compute_signature": "compute(q, v)",
+   "compute_params": [
+    {
+     "name": "q",
+     "kind": "required"
+    },
+    {
+     "name": "v",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "math/linear_algebra/row_reduce_rref",
    "name": "Row reduce (RREF)",
    "symbol": "RREF",
@@ -14110,7 +14372,23 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       0.2,
+       0.3,
+       0.5
+      ]
+     ],
+     "expected": 5.9
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/expected_value",
@@ -14233,7 +14511,23 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     ],
+     "expected": 2.25
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/interquartile_range",
@@ -14313,7 +14607,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      6.75,
+      2.25
+     ],
+     "expected": 4.5
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/linear_regression",
@@ -14377,7 +14679,18 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       4,
+       9,
+       1
+      ]
+     ],
+     "expected": 9
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/list_minimum",
@@ -14406,7 +14719,18 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       4,
+       9,
+       1
+      ]
+     ],
+     "expected": 1
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/mean",
@@ -14887,7 +15211,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      9,
+      1
+     ],
+     "expected": 8
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/sample_standard_deviation",
@@ -15186,7 +15518,23 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8
+      ]
+     ],
+     "expected": 6.75
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/uniform_distribution",
@@ -15324,7 +15672,15 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      5.9,
+      2.3
+     ],
+     "expected": 0.61
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/variance_of_random_variable",
