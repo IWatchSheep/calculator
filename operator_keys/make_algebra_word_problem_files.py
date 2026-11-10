@@ -64,6 +64,61 @@ def template_of(problem):
     return "".join(parts), numbers
 
 
+def equation_plan(equation, numbers):
+    """The equation as tokens: ('txt', text) or ('num', text, i).  A number of the equation is a BOX only when it is one of the numbers written in the problem text
+    (same value, matched left to right, each text number used once); i is that number's place in the text.  Any other number (the 1 and 2 of x + (x + 1) + (x + 2),
+    a 0.75 that stands for 75%) stays plain text: it is not blue in the picture and not a box in the row.  Text numbers that no equation number matches (the 3 in
+    "the sum of 3 consecutive integers") are not boxes either: compute() keeps them as written."""
+    used, out, last = set(), [], 0
+
+    def add(kind, text, index=None):
+        if kind == "txt" and out and out[-1][0] == "txt":
+            out[-1] = ("txt", out[-1][1] + text)
+        elif kind == "txt":
+            out.append(("txt", text))
+        else:
+            out.append(("num", text, index))
+
+    for m in NUMBER.finditer(equation):
+        if equation[last:m.start()]:
+            add("txt", equation[last:m.start()])
+        value = Fraction(m.group(0).replace(",", ""))
+        i = next((j for j, n in enumerate(numbers) if j not in used and Fraction(n) == value), None)
+        if i is None:
+            add("txt", m.group(0))
+        else:
+            used.add(i)
+            add("num", m.group(0), i)
+        last = m.end()
+    if equation[last:]:
+        add("txt", equation[last:])
+    return out
+
+
+def equation_parts(plan):
+    """The plan cut at each ';' (an equation with several parts is drawn one part per line)."""
+    parts = [[]]
+    for tok in plan:
+        if tok[0] == "txt" and ";" in tok[1]:
+            pieces = tok[1].split(";")
+            parts[-1].append(("txt", pieces[0]))
+            for piece in pieces[1:]:
+                parts.append([("txt", piece)])
+        else:
+            parts[-1].append(tok)
+    out = []
+    for part in parts:
+        part = [t for t in part]
+        if part and part[0][0] == "txt":
+            part[0] = ("txt", part[0][1].lstrip())
+        if part and part[-1][0] == "txt":
+            part[-1] = ("txt", part[-1][1].rstrip())
+        part = [t for t in part if t[0] == "num" or t[1]]
+        if part:
+            out.append(part)
+    return out
+
+
 def solver_of(problem):
     """('word_solver', family) / ('number_puzzle', 'number_puzzle') / (None, None): who answers this problem today."""
     r = WS.solve(problem)
@@ -108,18 +163,11 @@ def make_picture(path, p, numbers):
     problem_lines = wrap(p["Problem"], f_text, width - 2 * pad)
     let_lines = wrap("Let: " + p["Let"], f_small, width - 2 * pad)
     answer_lines = wrap("Answer: " + p["Answer"], f_bold, width - 2 * pad)
-    equations = [e.strip() for e in re.split(r";\s*", p["Equation"]) if e.strip()]
+    equations = equation_parts(equation_plan(p["Equation"], numbers))
 
-    def equation_rows(eq):
-        """Tokens: ('num', text) is drawn in a blue box, ('txt', text) plain.  Wrapped to the picture width."""
-        tokens, last = [], 0
-        for m in NUMBER.finditer(eq):
-            if eq[last:m.start()]:
-                tokens.append(("txt", eq[last:m.start()]))
-            tokens.append(("num", m.group(0)))
-            last = m.end()
-        if eq[last:]:
-            tokens.append(("txt", eq[last:]))
+    def equation_rows(tokens):
+        """Tokens: ('num', text, i) is drawn in a blue box (it is a box of the row), ('txt', text) plain.  Wrapped to the picture width."""
+        tokens = [(t[0], t[1]) for t in tokens]
         rows, row, x = [], [], 0
         for kind, text in tokens:
             w = probe.textlength(text, font=f_num if kind == "num" else f_text) + (22 if kind == "num" else 0)
@@ -227,17 +275,36 @@ def compute(*numbers):
         "solver_r": py_str(solver), "family_r": py_str(family), "template_r": py_str(template), "numbers_r": py_str(numbers)}
 
 
+def row_cards(plan):
+    """The row's cards from the plan: the plain text between boxes is one operator card, every box is a box card.  Returns (cards, box_index, pattern)."""
+    cards, box_index, pattern, text = [], [], [], ""
+
+    def flush():
+        nonlocal text
+        if text.strip():
+            cards.append(("op", " ".join(text.split())))
+            pattern.append(" ".join(text.split()))
+        text = ""
+
+    for tok in plan:
+        if tok[0] == "txt":
+            text += tok[1]
+        else:
+            flush()
+            cards.append(("box", ""))
+            box_index.append(tok[2])
+            pattern.append(BOX)
+    flush()
+    return cards, box_index, " ".join(pattern)
+
+
 def row_file(p, key, numbers, solver):
-    boxes = ", ".join([BOX] * len(numbers))
-    left = "[('op', %s)" % py_str("%s %s(" % (p["category"], p["id"]))
-    for i in range(len(numbers)):
-        if i:
-            left += ", ('op', ',')"
-        left += ", ('box', '')"
-    left += ", ('op', ')')]"
+    cards, box_index, pattern = row_cards(equation_plan(p["Equation"], numbers))
+    boxes = pattern
+    left = repr(cards)
     return '''"""Row for the algebra word problem: %(category)s %(id)s
 
-Picture:      %(name)s(%(boxes)s) = %(box)s
+Picture:      %(boxes)s   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  %(calc_text)s
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py %(key)s
 """
@@ -254,8 +321,9 @@ PATTERN = %(pattern_r)s
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = %(calc_r)s
-INPUTS = %(inputs_r)s    # what each box (left to right) is: the numbers of the problem in the order they appear in its text
-DEFAULTS = %(defaults_r)s    # the numbers as written in the stored problem
+INPUTS = %(inputs_r)s    # what each box (left to right, as in the equation) is: which number of the problem text it holds
+BOX_INDEX = %(box_index_r)s    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
+DEFAULTS = %(defaults_r)s    # the boxes' numbers as written in the stored problem
 KINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = %(left)s      # cards left of "="
@@ -269,8 +337,9 @@ def place(parent, stacked=False):
         "category": p["category"], "id": p["id"], "name": "%s %s" % (p["category"], p["id"]), "boxes": boxes, "box": BOX, "key": key,
         "calc_text": "ready - fill the boxes, press = and the answer appears right of =" if solver else "reference - the problem is stored; no solver answers it yet",
         "name_r": py_str("%s %s" % (p["category"], p["id"])), "key_r": py_str(key),
-        "pattern_r": py_str("%s %s(%s) = %s" % (p["category"], p["id"], boxes, BOX)), "calc_r": py_str("ready" if solver else "reference"),
-        "inputs_r": py_str(["number %d" % (i + 1) for i in range(len(numbers))]), "defaults_r": py_str(numbers), "kinds_r": py_str(["number"] * len(numbers)), "left": left}
+        "pattern_r": py_str("%s  ->  answer %s" % (pattern, BOX)), "calc_r": py_str("ready" if solver else "reference"),
+        "inputs_r": py_str(["number %d" % (i + 1) for i in box_index]), "box_index_r": py_str(box_index), "defaults_r": py_str([numbers[i] for i in box_index]),
+        "kinds_r": py_str(["number"] * len(box_index)), "left": left}
 
 
 def main():

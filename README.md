@@ -187,7 +187,7 @@ Keys look like `savings/0848` (category folder, then the four-digit problem numb
 
 A problem is **Ready** when a solver answers it (377 of the 1,000: 349 by `word_solver`, 28 by `number_puzzle`) and **Reference** when only the text and its steps are stored (623). Calling `compute()` on a Reference problem raises `NotImplementedError`. Calling it with numbers the solver will not accept raises `ValueError`. It never guesses.
 
-**The row file** lays the problem out as one row: `Savings 0848(□, □, □, □) = □`. There is one small box for every number in the problem, in the order they appear in the text, labelled `number 1`, `number 2`, and so on. The answer lands in the single box right of `=`. The file defines `PATTERN`, `CALC` (`ready` or `reference`), `INPUTS`, `DEFAULTS`, `KINDS`, `LEFT`, `RIGHT` and `place(parent, stacked=False)`, which builds the row with the same `build_row` the operator rows use. Try one: `python operator_row_math_for_algebra_word_problems/preview.py savings/0848`.
+**The row file** lays the problem out as one row that is its equation, for example `x + (x + 1) + (x + 2) = □` for `consecutive_integers/0070` (the 120 is the box) or `□ + □w = □ + □w` for `savings/0848`. A number of the equation is a box only when it is also written in the problem text (same value, matched left to right); the 1 and 2 above are plain text, and so is a 0.75 that stands for 75%. A text number that no equation number matches (the 3 in "the sum of 3 consecutive integers") is not a box: `compute()` keeps it as written. Each box starts with its stored number, labelled `number 1`, `number 2`, ... by its place in the text. The answer lands in the result box, printed in the next row. The file defines `PATTERN`, `CALC` (`ready` or `reference`), `INPUTS`, `BOX_INDEX` (the place of each box's number in the text), `DEFAULTS`, `KINDS`, `LEFT`, `RIGHT` and `place(parent, stacked=False)`, which builds the row with the same `build_row` the operator rows use. Try one: `python operator_row_math_for_algebra_word_problems/preview.py savings/0848`.
 
 ### Using them from Python
 
@@ -202,7 +202,7 @@ p.compute(200, 15, 350, 5)                  # 15        (your own numbers, in th
 get("system_of_equations/0920").compute()   # [27, 21]  (chickens and pigs: several answers come back as a list)
 
 import operator_row_math_for_algebra_word_problems as rows
-rows.get("savings/0848").PATTERN            # 'Savings 0848(□, □, □, □) = □'
+rows.get("savings/0848").PATTERN            # '□ + □ w = □ + □ w  ->  answer □'
 ```
 
 A problem that has several answers returns a list. Whole answers come back as `int`, the rest as `float`.
@@ -234,9 +234,9 @@ Read these at the start of every session. Update them every time a batch is fini
 
 ### Decisions
 
-1. **The row keeps one box per number, in the order the numbers appear in the text.** The labels stay `number 1`, `number 2`, and so on. `compute()` fills `{0}`, `{1}`, ... in that same order. A role label (`first rate`, `total`) is not shown until a family exports those roles, because a label on the wrong box would put a number in the wrong place.
+1. **The row is the equation, and a box is a blue number of the diagram.** A box is a number of the equation that is also written in the text; it keeps its place in the equation and its value, and starts filled. The labels stay `number 1`, `number 2`, and so on, by place in the text, and `compute()` fills `{0}`, `{1}`, ... from the boxes with the other text numbers as written. Known limits: three Ready problems (`current_wind` 0086, 0090, 0094) have no box, and 102 Ready problems have text numbers that are not boxes, so they cannot be changed in the row. A role label (`first rate`, `total`) is not shown until a family exports those roles, because a label on the wrong box would put a number in the wrong place.
 2. **Several answers share the one result box.** `compute()` returns a list, and that list is what the box shows. The row does not grow a box per answer. Advanced Input is for what the person types, not for splitting the result.
-3. **The diagram stays the equation with each number in a blue box and the answer in green.** Several equation parts are several lines. Bars, number lines and geometry figures are not added in this pass. The picture is drawn from the stored `Equation:` line, so it stays tied to the ground truth.
+3. **The diagram is the equation with each box number in blue and the answer in green; any other number in the equation is plain.** Several equation parts are several lines. Bars, number lines and geometry figures are not added in this pass. The picture is drawn from the stored `Equation:` line, so it stays tied to the ground truth.
 4. **The pictures stay in the repository.** The 1,000 diagrams are about 24 MB. The tests check that each jpg is there. They are not generated on demand.
 5. **The folder key stays `<category>/<id>`**, for example `savings/0848`. That is the same 55 categories as the ground-truth file. The problems are not split into the 216 wording types, and they are not regrouped by solver family. A Reference problem has no family.
 6. **`compute()` rebuilds the sentence and asks the solver.** Numbers that the solver will not accept raise `ValueError`. A Reference problem raises `NotImplementedError`. The row shows that message. It does not show a number when the solver declines.

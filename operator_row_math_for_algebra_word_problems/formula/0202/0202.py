@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Formula 0202
 
-Picture:      Formula 0202(□, □, □) = □
+Picture:      □ + □ t = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py formula/0202
 """
@@ -13,15 +13,16 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Formula 0202'
 KEY = 'formula/0202'
 LIBRARY_KEY = 'formula/0202'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = 'Formula 0202(□, □, □) = □'
+PATTERN = '□ + □ t = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'ready'
-INPUTS = ['number 1', 'number 2', 'number 3']    # what each box (left to right) is: the numbers of the problem in the order they appear in its text
-DEFAULTS = ['16', '106', '10']    # the numbers as written in the stored problem
+INPUTS = ['number 1', 'number 3', 'number 2']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
+BOX_INDEX = [0, 2, 1]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
+DEFAULTS = ['16', '10', '106']    # the boxes' numbers as written in the stored problem
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Formula 0202('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('box', ''), ('op', '+'), ('box', ''), ('op', 't ='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 

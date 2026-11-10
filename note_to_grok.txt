@@ -39,3 +39,5 @@ How to check:
 
 I made one mistake while doing this and fixed it: my first edit of the status file cut off its appendix (I matched the wrong "APPENDIX" line).  I restored the file from git and redid the edit;
 please check that the appendix at the end of algebra_word_problems_status.txt still lists the unclaimed wording shapes in full.
+
+UPDATE 2 (the row is the equation): rows are now the problem's equation (x + (x + 1) + (x + 2) = [120]); blue boxes in the picture = boxes in the row, same order and value, prefilled; text numbers the equation does not use stay fixed.  Please check the rule in operator_keys/make_algebra_word_problem_files.py equation_plan(): it matches by VALUE, so a coefficient that equals a text number would be boxed (the answer is still the solver's, but the picture could box the wrong thing).  Also: 75% in the text vs 0.75 in the equation is not matched (the percent is not editable), 3 Ready problems have no box (current_wind 0086, 0090, 0094) and 102 have fixed text numbers.  Is that acceptable or should a percent / derived number be mapped to its text number?

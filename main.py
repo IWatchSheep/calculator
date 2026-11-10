@@ -1278,7 +1278,7 @@ class CalculatorGUI(tk.Tk):
             return
         key = row_tree.WORD_PREFIX + item["key"]
         self._place_operator_row(key)
-        self._say("%s\n%s %s: the boxes hold the problem's own numbers, in the order of the text (number 1 is the first). Press =, or change them first."
+        self._say("%s\n%s %s: the row is its equation. Each box holds a number from the text, already filled in: press =, or change a box first."
                   % (item["problem"], item["category"], item["id"]))
 
     def _show_word_diagram(self, item):

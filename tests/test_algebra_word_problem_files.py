@@ -9,6 +9,7 @@ The folders are written by operator_keys/make_algebra_word_problem_files.py; if 
 """
 import os
 import re
+from fractions import Fraction
 import sys
 import unittest
 
@@ -65,15 +66,23 @@ class Folders(unittest.TestCase):
 
 
 class Rows(unittest.TestCase):
-    def test_a_row_has_one_box_for_every_number_and_one_result_box(self):
+    def test_a_row_is_the_equation_with_a_box_for_every_blue_number(self):
+        """The row is the problem's equation.  A blue box of the picture is a box of the row: same order, same value, prefilled.  A number of the equation that is not
+        written in the problem text (the 1 and 2 of x + (x + 1) + (x + 2)) is plain text on both; the answer is the result box."""
+        sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
+        import make_algebra_word_problem_files as generator
         for key in rows.keys():
             r, m = rows.get(key), library.get(key)
             self.assertEqual(r.KEY, key)
             self.assertEqual(r.LIBRARY_KEY, key)
-            self.assertEqual(r.DEFAULTS, m.NUMBERS, key)
-            self.assertEqual(len(r.INPUTS), len(m.NUMBERS), key)
-            self.assertEqual(len(r.KINDS), len(m.NUMBERS), key)
-            self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(m.NUMBERS), key)
+            blue = [t for t in generator.equation_plan(m.EQUATION, m.NUMBERS) if t[0] == "num"]       # what the picture draws in blue
+            self.assertEqual(r.BOX_INDEX, [t[2] for t in blue], key)
+            self.assertEqual([Fraction(d) for d in r.DEFAULTS], [Fraction(t[1].replace(",", "")) for t in blue], key)      # same value (the text may write 38.00 where the equation has 38)
+            self.assertEqual(r.DEFAULTS, [m.NUMBERS[i] for i in r.BOX_INDEX], key)
+            self.assertEqual(len(set(r.BOX_INDEX)), len(r.BOX_INDEX), key)                          # a text number is in one box at most
+            self.assertEqual(len(r.INPUTS), len(blue), key)
+            self.assertEqual(len(r.KINDS), len(blue), key)
+            self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)
             self.assertEqual(r.CALC, "ready" if m.SOLVER else "reference", key)
             self.assertTrue(callable(r.place))
@@ -129,13 +138,12 @@ class InTheCalculator(unittest.TestCase):
         for key in library.keys():
             lib = library.get(key)
             node = row_tree.new_node(row_tree.WORD_PREFIX + key)
-            node["slots"] = [str(n) for n in lib.NUMBERS]
             if lib.SOLVER is None:
                 with self.assertRaises(ValueError, msg=key):
                     row_tree.evaluate(node)               # a Reference problem says so, it never shows a number
             else:
                 ready += 1
-                self.assertEqual(row_tree.evaluate(node), lib.compute(), key)
+                self.assertEqual(row_tree.evaluate(node), lib.compute(), key)      # the boxes start with the stored numbers
         self.assertEqual(ready, 377)
 
     def test_a_list_of_answers_cannot_be_joined(self):

@@ -156,7 +156,12 @@ def evaluate(node):
         return vals[0]
     try:
         if node["key"].startswith(WORD_PREFIX):
-            return word_library.get(node["key"][len(WORD_PREFIX):]).compute(*vals)
+            # the boxes are the numbers of the equation that are also in the problem text; the other text numbers stay as written
+            problem = word_library.get(node["key"][len(WORD_PREFIX):])
+            full = list(problem.NUMBERS)
+            for place, value in zip(mod.BOX_INDEX, vals):
+                full[place] = value
+            return problem.compute(*full)
         return library.get(node["key"]).compute(*vals)
     except ZeroDivisionError:
         raise ValueError("Division by zero.")

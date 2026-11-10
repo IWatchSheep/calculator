@@ -1,6 +1,6 @@
 """Row for the algebra word problem: Proportion 0695
 
-Picture:      Proportion 0695(□, □, □) = □
+Picture:      □ d = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
 Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py proportion/0695
 """
@@ -13,15 +13,16 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 NAME = 'Proportion 0695'
 KEY = 'proportion/0695'
 LIBRARY_KEY = 'proportion/0695'    # the problem in operators_one_algebra_word_problem_per_file (its compute(...) feeds the result box)
-PATTERN = 'Proportion 0695(□, □, □) = □'
+PATTERN = '□ d = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'ready'
-INPUTS = ['number 1', 'number 2', 'number 3']    # what each box (left to right) is: the numbers of the problem in the order they appear in its text
-DEFAULTS = ['1', '1.25', '1875']    # the numbers as written in the stored problem
-KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+INPUTS = ['number 2', 'number 3']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
+BOX_INDEX = [1, 2]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
+DEFAULTS = ['1.25', '1875']    # the boxes' numbers as written in the stored problem
+KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Proportion 0695('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('box', ''), ('op', 'd ='), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card: the answer)
 
 
