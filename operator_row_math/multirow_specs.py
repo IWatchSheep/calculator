@@ -189,6 +189,36 @@ SPECS = {
         ],
         "joins": ["→"],
     },
+    "math/statistics_and_probability/range": {
+        "title": "Range of a list of numbers: the largest minus the smallest. Row 1 finds the largest number in the list you type there. Row 2 finds the smallest number in the same list (it is copied from Row 1). Row 3 reads both answers and subtracts: range = max − min. The rows are joined by →: the answer is the last row's answer, the range.",
+        "rows": [
+            {"op": "math/statistics_and_probability/list_maximum", "title": "The largest number in the list typed here."},
+            {"op": "math/statistics_and_probability/list_minimum", "title": "The smallest number in the same list: copied from Row 1."},
+            {"op": "math/statistics_and_probability/range_from_ends", "title": "Largest minus smallest. The first box reads Row 1, the second box reads Row 2.", "fill": {0: {"chain": 0}, 1: {"chain": 1}}},
+        ],
+        "joins": ["→", "→"],
+        "links": [((1, (0,)), (0, (0,)))],
+    },
+    "math/statistics_and_probability/interquartile_range": {
+        "title": "Interquartile range of a list of numbers: how wide the middle half of the numbers is. Row 1 finds the third quartile Q3 (the 75th percentile) of the list you type there. Row 2 finds the first quartile Q1 (the 25th percentile) of the same list (copied from Row 1). Row 3 reads both answers and subtracts: IQR = Q3 − Q1. The rows are joined by →: the answer is the last row's answer, the interquartile range.",
+        "rows": [
+            {"op": "math/statistics_and_probability/third_quartile", "title": "The upper quartile Q3, the 75th percentile of the list typed here."},
+            {"op": "math/statistics_and_probability/first_quartile", "title": "The lower quartile Q1, the 25th percentile of the same list: copied from Row 1."},
+            {"op": "math/statistics_and_probability/interquartile_range_from_quartiles", "title": "Q3 minus Q1. The first box reads Row 1, the second box reads Row 2.", "fill": {0: {"chain": 0}, 1: {"chain": 1}}},
+        ],
+        "joins": ["→", "→"],
+        "links": [((1, (0,)), (0, (0,)))],
+    },
+    "math/statistics_and_probability/variance_of_random_variable": {
+        "title": "Variance of a random variable: how spread out its values are, Var = E[X²] − (E[X])². Row 1 is the expected value E[X] of the values and probabilities you type there. Row 2 is the expected square E[X²]: the same values and probabilities (copied from Row 1), each value squared. Row 3 reads E[X²] from Row 2 and E[X] from Row 1 and gives the variance. The rows are joined by →: the answer is the last row's answer, the variance.",
+        "rows": [
+            {"op": "math/statistics_and_probability/expected_value", "title": "The expected value E[X] of the values and probabilities typed here."},
+            {"op": "math/statistics_and_probability/expected_square", "title": "The expected square E[X²]: the same values and probabilities, copied from Row 1, each value squared."},
+            {"op": "math/statistics_and_probability/variance_from_expectations", "title": "The variance E[X²] − (E[X])². The first box reads Row 2, the second box reads Row 1.", "fill": {0: {"chain": 1}, 1: {"chain": 0}}},
+        ],
+        "joins": ["→", "→"],
+        "links": [((1, (0,)), (0, (0,))), ((1, (1,)), (0, (1,)))],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

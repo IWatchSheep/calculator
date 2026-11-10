@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 529)
+        self.assertEqual(len(keys), 537)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 529)
+        self.assertEqual(count, 537)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -137,11 +137,13 @@ class RustPort(unittest.TestCase):
                     "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler",
                     "physics/physics/relativistic_kinetic_energy", "physics/physics/relativistic_momentum", "physics/physics/length_contraction",
                     "physics/physics/time_dilation", "math/statistics_and_probability/standard_deviation",
-                    "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation"):
+                    "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation",
+                    "math/statistics_and_probability/range", "math/statistics_and_probability/interquartile_range",
+                    "math/statistics_and_probability/variance_of_random_variable"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
-                fill = "&[(%d, Fill::Row(0))]" % list(row["fill"])[0] if "fill" in row else "&[]"          # a chained box: Fill::Row(k)
+                fill = "&[%s]" % ", ".join("(%d, Fill::Row(%d))" % (k, v["chain"]) for k, v in row["fill"].items()) if "fill" in row else "&[]"    # a chained box: Fill::Row(k)
                 self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: %s } }' % (row["title"], row["op"], fill), rust, key)
         for word in ("density", "viscosity", "pressure", "incompressible"):          # the explanation really is in words
             self.assertIn(word, multirow_specs.get("physics/physics/navier_stokes_equation")["title"])
@@ -481,6 +483,78 @@ class InTheWindow(unittest.TestCase):
         row_tree.set_slot(self.app.rows[1]["node"], (2,), "1e9")
         self.press_equals()
         self.assertIsNone(self.chained_values(1, (1,)))
+
+    # ---------- three rows: range, interquartile range, variance of a random variable ----------
+    def type_values(self, row, slot, values):
+        from operator_row_math import row_tree
+        text = ", ".join(str(v) for v in values)
+        row_tree.set_slot(self.app.rows[row]["node"], (slot,), row_tree.advanced_slot("list", text, list(values), "[%s]" % text))
+
+    def test_the_range_in_three_rows_is_exactly_todays_range(self):
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        today = library.get("math/statistics_and_probability/range").compute
+        for data in ([4, 9, 1], [2.5, -7.25, 10.125, 3], [5], [0.1, 0.2, 0.3, 0.7], [-3, -1, -2]):
+            self.app._clear_all()
+            self.app._place_operator_row("math/statistics_and_probability/range")
+            self.app.update()
+            self.type_values(0, 0, data)
+            self.press_equals()
+            self.assertEqual(row_tree.evaluate(self.app.rows[2]["node"]), today(data), data)                # the same float
+            self.assertEqual(self.chained_values(2, (0,)), max(data))                                        # Row 3 reads Row 1 ...
+            self.assertEqual(self.chained_values(2, (1,)), min(data))                                        # ... and Row 2
+            self.assertEqual(row_tree.get_slot(self.app.rows[1]["node"], (0,))["value"], list(data))        # Row 2's list is Row 1's list
+            self.assertTrue(self.app.results.get("1.0", "end").strip().endswith(row_tree.fmt(today(data))))   # the answer of the whole chain is the last row's
+
+    def test_an_empty_list_declines_in_the_range_and_nothing_is_chained(self):
+        self.app._place_operator_row("math/statistics_and_probability/range")
+        self.app.update()
+        self.type_values(0, 0, [])
+        text = self.press_equals()
+        self.assertIn("Row 1", text)
+        self.assertIsNone(self.chained_values(2, (0,)))
+        self.assertIsNone(self.chained_values(2, (1,)))
+
+    def test_the_interquartile_range_in_three_rows_is_exactly_todays(self):
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        today = library.get("math/statistics_and_probability/interquartile_range").compute
+        for data in ([1, 2, 3, 4, 5, 6, 7, 8], [10.5, 3.25, 7.0, 8.75, 1.5], [1, 1, 2, 2, 3, 3], [73.148457, -9.6, -63.067931, 26.0, -81.18], [5, 9]):
+            self.app._clear_all()
+            self.app._place_operator_row("math/statistics_and_probability/interquartile_range")
+            self.app.update()
+            self.type_values(0, 0, data)
+            self.press_equals()
+            self.assertEqual(row_tree.evaluate(self.app.rows[2]["node"]), today(data), data)
+            import statistics
+            q = statistics.quantiles(data, n=4)
+            self.assertEqual((self.chained_values(2, (0,)), self.chained_values(2, (1,))), (q[2], q[0]), data)    # Q3 from Row 1, Q1 from Row 2
+
+    def test_an_empty_list_declines_in_the_interquartile_range(self):
+        self.app._clear_all()
+        self.app._place_operator_row("math/statistics_and_probability/interquartile_range")
+        self.app.update()
+        self.type_values(0, 0, [])
+        text = self.press_equals()
+        self.assertIn("Row 1", text)
+        self.assertIsNone(self.chained_values(2, (0,)))
+
+    def test_the_variance_of_a_random_variable_in_three_rows_matches_todays(self):
+        """E[X²] from Row 2 and E[X] from Row 1.  Same operations as today's compute(), so the same float."""
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        today = library.get("math/statistics_and_probability/variance_of_random_variable").compute
+        for values, probs in (([0, 1], [0.5, 0.5]), ([1, 2, 3], [0.2, 0.3, 0.5]), ([-2.5, 0, 4.25, 10], [0.1, 0.4, 0.3, 0.2]), ([7], [1])):
+            self.app._clear_all()
+            self.app._place_operator_row("math/statistics_and_probability/variance_of_random_variable")
+            self.app.update()
+            self.type_values(0, 0, values)
+            self.type_values(0, 1, probs)
+            self.press_equals()
+            self.assertEqual(row_tree.evaluate(self.app.rows[2]["node"]), today(values, probs), (values, probs))
+            self.assertEqual(self.chained_values(2, (0,)), sum(x * x * p for x, p in zip(values, probs)))      # E[X²] is Row 2's answer
+            self.assertEqual(self.chained_values(2, (1,)), sum(x * p for x, p in zip(values, probs)))          # E[X] is Row 1's answer
+            self.assertEqual(row_tree.get_slot(self.app.rows[1]["node"], (1,))["value"], list(probs))          # Row 2 uses Row 1's probabilities
 
     def test_the_answer_of_the_chain_is_the_last_rows_answer(self):
         self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})

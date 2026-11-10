@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 529)
+        self.assertEqual(len(self.ops), 537)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 529)
+        self.assertEqual(len(status), 537)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -267,6 +267,10 @@ CASES = [
     (ST + "covariance", ([1, 2, 3], [2, 4, 6]), 2), (ST + "correlation", ([1, 2, 3], [2, 4, 6]), 1),
     (ST + "correlation", ([1, 2, 3], [6, 4, 2]), -1),
     (ST + "expected_value", ([1, 2, 3], [0.2, 0.3, 0.5]), 2.3),
+    (ST + "list_maximum", ([4, 9, 1],), 9), (ST + "list_minimum", ([4, 9, 1],), 1), (ST + "range_from_ends", (9, 1), 8),
+    (ST + "third_quartile", ([1, 2, 3, 4, 5, 6, 7, 8],), 6.75), (ST + "first_quartile", ([1, 2, 3, 4, 5, 6, 7, 8],), 2.25),
+    (ST + "interquartile_range_from_quartiles", (6.75, 2.25), 4.5),
+    (ST + "expected_square", ([1, 2, 3], [0.2, 0.3, 0.5]), 5.9), (ST + "variance_from_expectations", (5.9, 2.3), 0.61),
     (ST + "variance_of_random_variable", ([0, 1], [0.5, 0.5]), 0.25),
     (ST + "binomial_distribution", (5, 2, 0.5), 0.3125), (ST + "poisson_distribution", (0, 1), 1 / E),
     (ST + "poisson_distribution", (2, 3), 9 * math.exp(-3) / 2),

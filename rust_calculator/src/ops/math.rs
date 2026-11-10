@@ -293,6 +293,15 @@ pub fn sample_standard_deviation_from_variance(a: &[f64]) -> R {
     need(a[0] >= 0.0, "math domain error")?;
     n(a[0].sqrt())
 }
+pub fn range_from_ends(a: &[f64]) -> R {
+    n(a[0] - a[1])
+}
+pub fn interquartile_range_from_quartiles(a: &[f64]) -> R {
+    n(a[0] - a[1])
+}
+pub fn variance_from_expectations(a: &[f64]) -> R {
+    n(a[0] - a[1].powi(2))
+}
 pub fn binomial_distribution(a: &[f64]) -> R {
     let (nn, k) = (nat(a[0], "n")?, nat(a[1], "k")?);
     // k above n: Python's (1 - p) ** (n - k) has a NEGATIVE exponent, which is a division by zero when p is 1

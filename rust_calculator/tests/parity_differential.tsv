@@ -3707,6 +3707,40 @@ math/statistics_and_probability/exponential_distribution	2 0.25	0.15163266492815
 math/statistics_and_probability/exponential_distribution	0.5 -3	-13.445067211014194
 math/statistics_and_probability/exponential_distribution	2 10	2.061153622438558e-08
 math/statistics_and_probability/exponential_distribution	-1 1	0
+math/statistics_and_probability/interquartile_range_from_quartiles	0 2	-2
+math/statistics_and_probability/interquartile_range_from_quartiles	3 10	-7
+math/statistics_and_probability/interquartile_range_from_quartiles	-1 1	-2
+math/statistics_and_probability/interquartile_range_from_quartiles	3 -1	4
+math/statistics_and_probability/interquartile_range_from_quartiles	7.5 3	4.5
+math/statistics_and_probability/interquartile_range_from_quartiles	-3 -3	0
+math/statistics_and_probability/interquartile_range_from_quartiles	2.5 0.25	2.25
+math/statistics_and_probability/interquartile_range_from_quartiles	-3 1	-4
+math/statistics_and_probability/interquartile_range_from_quartiles	0.25 2.5	-2.25
+math/statistics_and_probability/interquartile_range_from_quartiles	-1 -3	2
+math/statistics_and_probability/interquartile_range_from_quartiles	5 0.25	4.75
+math/statistics_and_probability/interquartile_range_from_quartiles	2.5 2.5	0.0
+math/statistics_and_probability/interquartile_range_from_quartiles	2 2	0
+math/statistics_and_probability/interquartile_range_from_quartiles	2 100	-98
+math/statistics_and_probability/interquartile_range_from_quartiles	5 100	-95
+math/statistics_and_probability/interquartile_range_from_quartiles	10 100	-90
+math/statistics_and_probability/interquartile_range_from_quartiles	-3 2	-5
+math/statistics_and_probability/interquartile_range_from_quartiles	100 0.5	99.5
+math/statistics_and_probability/interquartile_range_from_quartiles	7.5 2.5	5.0
+math/statistics_and_probability/interquartile_range_from_quartiles	3 1	2
+math/statistics_and_probability/interquartile_range_from_quartiles	3 100	-97
+math/statistics_and_probability/interquartile_range_from_quartiles	2 10	-8
+math/statistics_and_probability/interquartile_range_from_quartiles	100 5	95
+math/statistics_and_probability/interquartile_range_from_quartiles	7.5 0	7.5
+math/statistics_and_probability/interquartile_range_from_quartiles	-1 -1	0
+math/statistics_and_probability/interquartile_range_from_quartiles	1 1	0
+math/statistics_and_probability/interquartile_range_from_quartiles	100 100	0
+math/statistics_and_probability/interquartile_range_from_quartiles	0 7.5	-7.5
+math/statistics_and_probability/interquartile_range_from_quartiles	5 10	-5
+math/statistics_and_probability/interquartile_range_from_quartiles	-1 0	-1
+math/statistics_and_probability/interquartile_range_from_quartiles	-3 0.25	-3.25
+math/statistics_and_probability/interquartile_range_from_quartiles	7.5 0.5	7.0
+math/statistics_and_probability/interquartile_range_from_quartiles	2.5 0	2.5
+math/statistics_and_probability/interquartile_range_from_quartiles	1 0.25	0.75
 math/statistics_and_probability/normal_distribution	0	0.3989422804014327
 math/statistics_and_probability/normal_distribution	7.5	2.43432053302901e-13
 math/statistics_and_probability/normal_distribution	0.25	0.3866681168028493
@@ -3807,6 +3841,43 @@ math/statistics_and_probability/probability	10 -1	-10.0
 math/statistics_and_probability/probability	0.5 0.5	1.0
 math/statistics_and_probability/probability	0.5 2	0.25
 math/statistics_and_probability/probability	0 0	ERR
+math/statistics_and_probability/range_from_ends	0 5	-5
+math/statistics_and_probability/range_from_ends	100 5	95
+math/statistics_and_probability/range_from_ends	7.5 2.5	5.0
+math/statistics_and_probability/range_from_ends	5 2	3
+math/statistics_and_probability/range_from_ends	0 100	-100
+math/statistics_and_probability/range_from_ends	-1 2.5	-3.5
+math/statistics_and_probability/range_from_ends	0.25 7.5	-7.25
+math/statistics_and_probability/range_from_ends	0.5 7.5	-7.0
+math/statistics_and_probability/range_from_ends	7.5 1	6.5
+math/statistics_and_probability/range_from_ends	7.5 -1	8.5
+math/statistics_and_probability/range_from_ends	-1 10	-11
+math/statistics_and_probability/range_from_ends	3 0.25	2.75
+math/statistics_and_probability/range_from_ends	7.5 0	7.5
+math/statistics_and_probability/range_from_ends	0 7.5	-7.5
+math/statistics_and_probability/range_from_ends	2 0.5	1.5
+math/statistics_and_probability/range_from_ends	7.5 0.5	7.0
+math/statistics_and_probability/range_from_ends	3 7.5	-4.5
+math/statistics_and_probability/range_from_ends	0 3	-3
+math/statistics_and_probability/range_from_ends	-3 -3	0
+math/statistics_and_probability/range_from_ends	0.25 2	-1.75
+math/statistics_and_probability/range_from_ends	-3 0	-3
+math/statistics_and_probability/range_from_ends	100 0.25	99.75
+math/statistics_and_probability/range_from_ends	10 0.5	9.5
+math/statistics_and_probability/range_from_ends	3 10	-7
+math/statistics_and_probability/range_from_ends	-1 7.5	-8.5
+math/statistics_and_probability/range_from_ends	1 7.5	-6.5
+math/statistics_and_probability/range_from_ends	7.5 0.25	7.25
+math/statistics_and_probability/range_from_ends	2.5 -3	5.5
+math/statistics_and_probability/range_from_ends	100 100	0
+math/statistics_and_probability/range_from_ends	1 3	-2
+math/statistics_and_probability/range_from_ends	0.25 -3	3.25
+math/statistics_and_probability/range_from_ends	7.5 3	4.5
+math/statistics_and_probability/range_from_ends	10 -1	11
+math/statistics_and_probability/range_from_ends	2.5 2	0.5
+math/statistics_and_probability/range_from_ends	0 1	-1
+math/statistics_and_probability/sample_standard_deviation_from_variance	9	3.0
+math/statistics_and_probability/sample_standard_deviation_from_variance	2.25	1.5
 math/statistics_and_probability/sample_standard_deviation_from_variance	0.5	0.7071067811865476
 math/statistics_and_probability/sample_standard_deviation_from_variance	2	1.4142135623730951
 math/statistics_and_probability/sample_standard_deviation_from_variance	2.5	1.5811388300841898
@@ -3820,8 +3891,9 @@ math/statistics_and_probability/sample_standard_deviation_from_variance	-3	ERR
 math/statistics_and_probability/sample_standard_deviation_from_variance	-1	ERR
 math/statistics_and_probability/sample_standard_deviation_from_variance	100	10.0
 math/statistics_and_probability/sample_standard_deviation_from_variance	3	1.7320508075688772
-math/statistics_and_probability/standard_deviation_from_variance	-3	ERR
+math/statistics_and_probability/standard_deviation_from_variance	4	2.0
 math/statistics_and_probability/standard_deviation_from_variance	0	0.0
+math/statistics_and_probability/standard_deviation_from_variance	-3	ERR
 math/statistics_and_probability/standard_deviation_from_variance	7.5	2.7386127875258306
 math/statistics_and_probability/standard_deviation_from_variance	2	1.4142135623730951
 math/statistics_and_probability/standard_deviation_from_variance	0.5	0.7071067811865476
@@ -3915,6 +3987,41 @@ math/statistics_and_probability/uniform_distribution	0.5 2 0	0
 math/statistics_and_probability/uniform_distribution	2 0 1	0
 math/statistics_and_probability/uniform_distribution	2 10 -1	0
 math/statistics_and_probability/uniform_distribution	0.25 2.5 2	0
+math/statistics_and_probability/variance_from_expectations	7.5 -1	6.5
+math/statistics_and_probability/variance_from_expectations	10 0.25	9.9375
+math/statistics_and_probability/variance_from_expectations	0.25 3	-8.75
+math/statistics_and_probability/variance_from_expectations	10 7.5	-46.25
+math/statistics_and_probability/variance_from_expectations	-1 2.5	-7.25
+math/statistics_and_probability/variance_from_expectations	5 -1	4
+math/statistics_and_probability/variance_from_expectations	0.25 0.25	0.1875
+math/statistics_and_probability/variance_from_expectations	2.5 2	-1.5
+math/statistics_and_probability/variance_from_expectations	100 10	0
+math/statistics_and_probability/variance_from_expectations	3 2.5	-3.25
+math/statistics_and_probability/variance_from_expectations	10 2	6
+math/statistics_and_probability/variance_from_expectations	7.5 -3	-1.5
+math/statistics_and_probability/variance_from_expectations	10 5	-15
+math/statistics_and_probability/variance_from_expectations	-3 1	-4
+math/statistics_and_probability/variance_from_expectations	1 1	0
+math/statistics_and_probability/variance_from_expectations	0.5 2	-3.5
+math/statistics_and_probability/variance_from_expectations	1 10	-99
+math/statistics_and_probability/variance_from_expectations	-3 0	-3
+math/statistics_and_probability/variance_from_expectations	-1 5	-26
+math/statistics_and_probability/variance_from_expectations	-1 3	-10
+math/statistics_and_probability/variance_from_expectations	2.5 3	-6.5
+math/statistics_and_probability/variance_from_expectations	2 7.5	-54.25
+math/statistics_and_probability/variance_from_expectations	0 0.25	-0.0625
+math/statistics_and_probability/variance_from_expectations	0.5 3	-8.5
+math/statistics_and_probability/variance_from_expectations	1 0.5	0.75
+math/statistics_and_probability/variance_from_expectations	7.5 0.25	7.4375
+math/statistics_and_probability/variance_from_expectations	2.5 10	-97.5
+math/statistics_and_probability/variance_from_expectations	100 3	91
+math/statistics_and_probability/variance_from_expectations	0 10	-100
+math/statistics_and_probability/variance_from_expectations	0.25 1	-0.75
+math/statistics_and_probability/variance_from_expectations	3 0.5	2.75
+math/statistics_and_probability/variance_from_expectations	0.5 0.5	0.25
+math/statistics_and_probability/variance_from_expectations	3 0	3
+math/statistics_and_probability/variance_from_expectations	0.5 100	-9999.5
+math/statistics_and_probability/variance_from_expectations	7.5 1	6.5
 math/statistics_and_probability/z_score	70 60 5	2.0
 math/statistics_and_probability/z_score	7.5 3 2	2.25
 math/statistics_and_probability/z_score	0.25 -3 1	3.25
@@ -5270,6 +5377,8 @@ physics/physics/gravitational_time_dilation	2 1 5	2.0
 physics/physics/gravitational_time_dilation	10 0 0	ERR
 physics/physics/gravitational_time_dilation	-3 2.5 0.5	-3.0
 physics/physics/gravitational_time_dilation	5 0.5 3	5.0
+physics/physics/gravitational_time_dilation_from_radius	100 0 10	100.0
+physics/physics/gravitational_time_dilation_from_radius	100 5 20	86.60254037844386
 physics/physics/gravitational_time_dilation_from_radius	10 0.5 -3	ERR
 physics/physics/gravitational_time_dilation_from_radius	100 -1 2	122.4744871391589
 physics/physics/gravitational_time_dilation_from_radius	1 5 5	ERR

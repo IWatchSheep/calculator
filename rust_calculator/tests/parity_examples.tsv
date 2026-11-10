@@ -186,6 +186,10 @@ math/statistics_and_probability/p_value	0	1.0
 math/statistics_and_probability/poisson_distribution	0 1	0.36787944117144233
 math/statistics_and_probability/poisson_distribution	2 3	0.22404180765538775
 math/statistics_and_probability/probability	1 6	0.16666666666666666
+math/statistics_and_probability/sample_standard_deviation_from_variance	9	3
+math/statistics_and_probability/sample_standard_deviation_from_variance	2.25	1.5
+math/statistics_and_probability/standard_deviation_from_variance	4	2
+math/statistics_and_probability/standard_deviation_from_variance	0	0
 math/statistics_and_probability/t_test_statistic	52 50 4 16	2
 math/statistics_and_probability/uniform_distribution	1 0 4	0.25
 math/statistics_and_probability/uniform_distribution	5 0 4	0
@@ -272,6 +276,8 @@ physics/physics/frequency	0.5	2
 physics/physics/gravitation	1 1 1	6.674e-11
 physics/physics/gravitational_time_dilation	100 1 4 1 1	70.71067811865476
 physics/physics/gravitational_time_dilation	100 0 4 1 1	100
+physics/physics/gravitational_time_dilation_from_radius	100 0 10	100
+physics/physics/gravitational_time_dilation_from_radius	100 5 20	86.60254037844386
 physics/physics/heat	2 4 5	40
 physics/physics/heisenberg_uncertainty	1e-10	5.272859085e-25
 physics/physics/heisenberg_uncertainty	1	5.272859085e-35

@@ -387,6 +387,33 @@ pub fn expected_value(a: &[Value]) -> R {
     n(v.iter().zip(&p).map(|(x, q)| x * q).sum())
 }
 
+pub fn list_maximum(a: &[Value]) -> R {
+    let d = nums(&a[0])?;
+    need(!d.is_empty(), "max() of an empty list")?;
+    n(d.iter().cloned().fold(f64::NEG_INFINITY, f64::max))
+}
+
+pub fn list_minimum(a: &[Value]) -> R {
+    let d = nums(&a[0])?;
+    need(!d.is_empty(), "min() of an empty list")?;
+    n(d.iter().cloned().fold(f64::INFINITY, f64::min))
+}
+
+pub fn third_quartile(a: &[Value]) -> R {
+    let q = st_quantiles(&nums(&a[0])?, 4)?;
+    n(q[2])
+}
+
+pub fn first_quartile(a: &[Value]) -> R {
+    let q = st_quantiles(&nums(&a[0])?, 4)?;
+    n(q[0])
+}
+
+pub fn expected_square(a: &[Value]) -> R {
+    let (v, p) = (nums(&a[0])?, nums(&a[1])?);
+    n(v.iter().zip(&p).map(|(x, q)| x * x * q).sum())
+}
+
 pub fn variance_of_random_variable(a: &[Value]) -> R {
     let (v, p) = (nums(&a[0])?, nums(&a[1])?);
     let ex2: f64 = v.iter().zip(&p).map(|(x, q)| x * x * q).sum();

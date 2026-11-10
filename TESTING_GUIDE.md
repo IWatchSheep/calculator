@@ -21,10 +21,10 @@ skipped (`test_diagrams_are_valid_jpegs`). With no display, the GUI smoke test i
 
 | Thing | Count | Where |
 |---|---|---|
-| Operators | 529 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
-| "Ready" operators (`compute()` calculates) | 457 | marked `Ready` in `operators_one_operator_per_file/INDEX.md` |
+| Operators | 537 | `operators_one_operator_per_file/<category>/<subcategory>/<operator>/<operator>.py` |
+| "Ready" operators (`compute()` calculates) | 465 | marked `Ready` in `operators_one_operator_per_file/INDEX.md` |
 | "Reference" operators (formula only) | 66 | marked `Reference`; `compute()` raises `NotImplementedError` |
-| Row modules (GUI placement of each operator) | 529 | `operator_row_math/` |
+| Row modules (GUI placement of each operator) | 537 | `operator_row_math/` |
 | Button-to-operator links | — | `operator_links.py` |
 | Input parser (typed text → Python values) | — | `operator_row_math/advanced_input.py` |
 
@@ -35,8 +35,8 @@ Keys look like `math/<subcategory>/<name>`, `geometry/geometry/<name>`, `physics
 
 | Group | Tests | What it proves |
 |---|---|---|
-| `StructureTests` | 9 | All 529 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
-| `NumericTests` | 604 | `compute()` returns a hand-calculated answer for known inputs. All 457 Ready operators are covered, most with 2+ cases |
+| `StructureTests` | 9 | All 537 operators load; each has NAME/SYMBOL/CATEGORY/SUBCATEGORY/FORMULA/`compute`; each has a valid `.jpg` diagram; INDEX.md lists every operator; "Reference" operators really raise `NotImplementedError`; every `operator_links.py` target exists; every operator has a row module; every `.py` file compiles |
+| `NumericTests` | 604 | `compute()` returns a hand-calculated answer for known inputs. All 465 Ready operators are covered, most with 2+ cases |
 | `ErrorTests` | 9 | Bad input raises a clear exception (`ZeroDivisionError`, `ValueError`, …) instead of returning a wrong number |
 | `IdentityTests` | 18 | Operators agree with each other: sin²+cos²=1, exp/ln inverse, M·M⁻¹=I, Pascal's rule, gcd·lcm=ab, A·v=λ·v, RK4 ≈ e, … |
 | `InputParserTests` | 4 | Typed text becomes the right Python value; unsafe function text (`__import__`, `x.__class__`, `open(...)`, `exec`) is rejected |

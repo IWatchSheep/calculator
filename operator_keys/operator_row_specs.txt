@@ -347,6 +347,9 @@ math/statistics_and_probability/covariance | cov ( [x]{first list|one number per
 math/statistics_and_probability/expected_value | [] [ [] ] = Σ [values]{values|the possible numbers} ᵢ · [probs]{probabilities|same length as the values, they add to 1} ᵢ
 math/statistics_and_probability/exponential_distribution | f ( [x]{value|zero or greater} ) = [lam]{rate|how many events per unit of time} · e ^ ( − [lam]{rate|how many events per unit of time} [x]{value|zero or greater} ) for [x]{value|zero or greater} ≥ 0
 math/statistics_and_probability/interquartile_range | IQR{interquartile range|Q3 minus Q1} = []{upper quartile|the 75th percentile, Q3} − []{lower quartile|the 25th percentile, Q1} with:data{the numbers|the list the two quartiles are taken from}
+math/statistics_and_probability/third_quartile | {}{upper quartile|the 75th percentile, Q3} = Q3 ( [data]{the numbers|the whole list} )
+math/statistics_and_probability/first_quartile | {}{lower quartile|the 25th percentile, Q1} = Q1 ( [data]{the numbers|the same list as the row above} )
+math/statistics_and_probability/interquartile_range_from_quartiles | {}{interquartile range|Q3 minus Q1} = [q3]{upper quartile|the answer of Row 1} − [q1]{lower quartile|the answer of Row 2}
 math/statistics_and_probability/linear_regression | []{predicted value|y on the fitted line} = []{slope|how much y changes for one step in x} []{input|x, the variable along the line} + []{intercept|y when x is 0} with:x{the x values|one list of inputs} with:y{the y values|one list of outputs, paired with the x values}
 math/statistics_and_probability/mean | mean ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/median | median ( [data]{data|the list of numbers} ) => {}
@@ -358,6 +361,9 @@ math/statistics_and_probability/poisson_distribution | P ( [] = [k]{count|0, 1, 
 math/statistics_and_probability/probability | P{probability|favorable outcomes divided by all outcomes} ( []{the event|the outcome being counted} ) with:favorable{favorable outcomes|how many outcomes count as the event} with:total{all outcomes|how many outcomes there are} => {}
 math/statistics_and_probability/quartiles | quartiles ( [data]{data|the list of numbers} ) => {}
 math/statistics_and_probability/range | range ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/list_maximum | {}{maximum|the largest number in the list} = max ( [data]{the numbers|the whole list} )
+math/statistics_and_probability/list_minimum | {}{minimum|the smallest number in the list} = min ( [data]{the numbers|the same list as the row above} )
+math/statistics_and_probability/range_from_ends | {}{range|largest minus smallest} = [maximum]{maximum|the answer of Row 1} − [minimum]{minimum|the answer of Row 2}
 math/statistics_and_probability/sample_standard_deviation | {}{sample standard deviation|spread, dividing by n - 1} = √ ( [] ² )
 math/statistics_and_probability/sample_standard_deviation_from_variance | {}{sample standard deviation|the spread of a sample} = √ ( [sample_variance]{sample variance|the answer of the row above} )
 math/statistics_and_probability/sample_variance | {}{sample variance|spread squared, dividing by n - 1} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / ( [] − 1 )
@@ -367,6 +373,8 @@ math/statistics_and_probability/t_test_statistic | {}{t statistic|how far the me
 math/statistics_and_probability/uniform_distribution | f ( [x]{value|where you read the density} ) = 1 / ( [b]{high end|the largest possible value} − [a]{low end|the smallest possible value} ) for [a]{low end|the smallest possible value} ≤ [x]{value|where you read the density} ≤ [b]{high end|the largest possible value} , else 0
 math/statistics_and_probability/variance | {}{variance|the square of the standard deviation} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / []
 math/statistics_and_probability/variance_of_random_variable | Var{variance|how spread out the values are} ( []{random variable|the quantity X} ) = []{expectation of the square|E of X squared} [ []{the value|X, the number being squared} ²{two|square that value} ] − ( []{expectation|E of X, the average of the values} [ []{the value|X} ] ) ²{two|square that average} with:values{the values|the numbers X can take} with:probs{the probabilities|the chance of each value, same order, adding to 1}
+math/statistics_and_probability/expected_square | {}{expectation of the square|E of X squared} = Σ [values]{the values|the same numbers as the row above} ²{two|square each value} · [probs]{the probabilities|the same chances as the row above}
+math/statistics_and_probability/variance_from_expectations | {}{variance|how spread out the values are} = [ex2]{expectation of the square|the answer of Row 2} − ( [ex]{expectation|the answer of Row 1} ) ²{two|square that average}
 math/statistics_and_probability/z_score | {}{z score|how many standard deviations x is from the mean} = ( [x]{value|the number you measured} − [mean]{mean|the average} ) / [sd]{standard deviation|the spread}
 math/topology/basis_of_topology | ℬ ( [B] )
 math/topology/boundary | ∂ [A]

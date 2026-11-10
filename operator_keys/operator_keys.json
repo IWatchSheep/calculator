@@ -1,6 +1,6 @@
 {
- "count": 529,
- "ready": 457,
+ "count": 537,
+ "ready": 465,
  "reference": 72,
  "operators": [
   {
@@ -14078,6 +14078,41 @@
    ]
   },
   {
+   "key": "math/statistics_and_probability/expected_square",
+   "name": "Expected square",
+   "symbol": "E[X²]",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "E[X²] = Σ xᵢ² · pᵢ",
+   "status": "Ready",
+   "inputs": [
+    "values",
+    "probs"
+   ],
+   "input_kinds": [
+    "list",
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = Σ □ ² · □",
+   "compute_signature": "compute(values, probs)",
+   "compute_params": [
+    {
+     "name": "values",
+     "kind": "required"
+    },
+    {
+     "name": "probs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "math/statistics_and_probability/expected_value",
    "name": "Expected value",
    "symbol": "E[X]",
@@ -14172,6 +14207,35 @@
    ]
   },
   {
+   "key": "math/statistics_and_probability/first_quartile",
+   "name": "First quartile",
+   "symbol": "Q1",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "Q1, the 25th percentile (quantiles of the list in four parts, the first cut)",
+   "status": "Ready",
+   "inputs": [
+    "data"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = Q1 ( □ )",
+   "compute_signature": "compute(data)",
+   "compute_params": [
+    {
+     "name": "data",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
    "key": "math/statistics_and_probability/interquartile_range",
    "name": "Interquartile range",
    "symbol": "IQR",
@@ -14217,6 +14281,41 @@
    ]
   },
   {
+   "key": "math/statistics_and_probability/interquartile_range_from_quartiles",
+   "name": "Interquartile range: from the quartiles",
+   "symbol": "IQR = Q3 − Q1",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "IQR = Q3 − Q1   (Q3 is the answer of Row 1, Q1 the answer of Row 2)",
+   "status": "Ready",
+   "inputs": [
+    "q3",
+    "q1"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ − □",
+   "compute_signature": "compute(q3, q1)",
+   "compute_params": [
+    {
+     "name": "q3",
+     "kind": "required"
+    },
+    {
+     "name": "q1",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "math/statistics_and_probability/linear_regression",
    "name": "Linear regression",
    "symbol": "y = mx + b",
@@ -14249,6 +14348,64 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "math/statistics_and_probability/list_maximum",
+   "name": "Maximum of a list",
+   "symbol": "max",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "max of the list",
+   "status": "Ready",
+   "inputs": [
+    "data"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = max ( □ )",
+   "compute_signature": "compute(data)",
+   "compute_params": [
+    {
+     "name": "data",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
+  },
+  {
+   "key": "math/statistics_and_probability/list_minimum",
+   "name": "Minimum of a list",
+   "symbol": "min",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "min of the list",
+   "status": "Ready",
+   "inputs": [
+    "data"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = min ( □ )",
+   "compute_signature": "compute(data)",
+   "compute_params": [
+    {
+     "name": "data",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
    "examples": []
   },
   {
@@ -14698,6 +14855,41 @@
    ]
   },
   {
+   "key": "math/statistics_and_probability/range_from_ends",
+   "name": "Range: from the ends",
+   "symbol": "range = max − min",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "range = max − min   (max is the answer of Row 1, min the answer of Row 2)",
+   "status": "Ready",
+   "inputs": [
+    "maximum",
+    "minimum"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ − □",
+   "compute_signature": "compute(maximum, minimum)",
+   "compute_params": [
+    {
+     "name": "maximum",
+     "kind": "required"
+    },
+    {
+     "name": "minimum",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "math/statistics_and_probability/sample_standard_deviation",
    "name": "Sample standard deviation",
    "symbol": "s",
@@ -14766,7 +14958,20 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      9
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      2.25
+     ],
+     "expected": 1.5
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/sample_variance",
@@ -14882,7 +15087,20 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      4
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "math/statistics_and_probability/t_test_statistic",
@@ -14940,6 +15158,35 @@
      "expected": 2
     }
    ]
+  },
+  {
+   "key": "math/statistics_and_probability/third_quartile",
+   "name": "Third quartile",
+   "symbol": "Q3",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "Q3, the 75th percentile (quantiles of the list in four parts, the third cut)",
+   "status": "Ready",
+   "inputs": [
+    "data"
+   ],
+   "input_kinds": [
+    "list"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = Q3 ( □ )",
+   "compute_signature": "compute(data)",
+   "compute_params": [
+    {
+     "name": "data",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
   },
   {
    "key": "math/statistics_and_probability/uniform_distribution",
@@ -15043,6 +15290,41 @@
      "expected": 4
     }
    ]
+  },
+  {
+   "key": "math/statistics_and_probability/variance_from_expectations",
+   "name": "Variance: from the expectations",
+   "symbol": "Var = E[X²] − (E[X])²",
+   "category": "Math",
+   "subcategory": "Statistics and probability",
+   "formula": "Var = E[X²] − (E[X])²   (E[X²] is the answer of Row 2, E[X] the answer of Row 1)",
+   "status": "Ready",
+   "inputs": [
+    "ex2",
+    "ex"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ − ( □ ) ²",
+   "compute_signature": "compute(ex2, ex)",
+   "compute_params": [
+    {
+     "name": "ex2",
+     "kind": "required"
+    },
+    {
+     "name": "ex",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "math/statistics_and_probability/variance_of_random_variable",
@@ -19060,7 +19342,24 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      100,
+      0,
+      10
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      100,
+      5,
+      20
+     ],
+     "expected": 86.60254037844386
+    }
+   ]
   },
   {
    "key": "physics/physics/heat",

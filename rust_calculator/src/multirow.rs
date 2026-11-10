@@ -250,6 +250,39 @@ static GRAVITATIONAL_TIME_DILATION: Spec = Spec {
     links: &[],
 };
 
+static RANGE: Spec = Spec {
+    title: "Range of a list of numbers: the largest minus the smallest. Row 1 finds the largest number in the list you type there. Row 2 finds the smallest number in the same list (it is copied from Row 1). Row 3 reads both answers and subtracts: range = max − min. The rows are joined by →: the answer is the last row's answer, the range.",
+    rows: &[
+        RowSpec { title: "The largest number in the list typed here.", node: NodeSpec { op: "math/statistics_and_probability/list_maximum", fill: &[] } },
+        RowSpec { title: "The smallest number in the same list: copied from Row 1.", node: NodeSpec { op: "math/statistics_and_probability/list_minimum", fill: &[] } },
+        RowSpec { title: "Largest minus smallest. The first box reads Row 1, the second box reads Row 2.", node: NodeSpec { op: "math/statistics_and_probability/range_from_ends", fill: &[(0, Fill::Row(0)), (1, Fill::Row(1))] } },
+    ],
+    joins: &["→", "→"],
+    links: &[((1, &[0]), (0, &[0]))],
+};
+
+static INTERQUARTILE_RANGE: Spec = Spec {
+    title: "Interquartile range of a list of numbers: how wide the middle half of the numbers is. Row 1 finds the third quartile Q3 (the 75th percentile) of the list you type there. Row 2 finds the first quartile Q1 (the 25th percentile) of the same list (copied from Row 1). Row 3 reads both answers and subtracts: IQR = Q3 − Q1. The rows are joined by →: the answer is the last row's answer, the interquartile range.",
+    rows: &[
+        RowSpec { title: "The upper quartile Q3, the 75th percentile of the list typed here.", node: NodeSpec { op: "math/statistics_and_probability/third_quartile", fill: &[] } },
+        RowSpec { title: "The lower quartile Q1, the 25th percentile of the same list: copied from Row 1.", node: NodeSpec { op: "math/statistics_and_probability/first_quartile", fill: &[] } },
+        RowSpec { title: "Q3 minus Q1. The first box reads Row 1, the second box reads Row 2.", node: NodeSpec { op: "math/statistics_and_probability/interquartile_range_from_quartiles", fill: &[(0, Fill::Row(0)), (1, Fill::Row(1))] } },
+    ],
+    joins: &["→", "→"],
+    links: &[((1, &[0]), (0, &[0]))],
+};
+
+static VARIANCE_OF_RANDOM_VARIABLE: Spec = Spec {
+    title: "Variance of a random variable: how spread out its values are, Var = E[X²] − (E[X])². Row 1 is the expected value E[X] of the values and probabilities you type there. Row 2 is the expected square E[X²]: the same values and probabilities (copied from Row 1), each value squared. Row 3 reads E[X²] from Row 2 and E[X] from Row 1 and gives the variance. The rows are joined by →: the answer is the last row's answer, the variance.",
+    rows: &[
+        RowSpec { title: "The expected value E[X] of the values and probabilities typed here.", node: NodeSpec { op: "math/statistics_and_probability/expected_value", fill: &[] } },
+        RowSpec { title: "The expected square E[X²]: the same values and probabilities, copied from Row 1, each value squared.", node: NodeSpec { op: "math/statistics_and_probability/expected_square", fill: &[] } },
+        RowSpec { title: "The variance E[X²] − (E[X])². The first box reads Row 2, the second box reads Row 1.", node: NodeSpec { op: "math/statistics_and_probability/variance_from_expectations", fill: &[(0, Fill::Row(1)), (1, Fill::Row(0))] } },
+    ],
+    joins: &["→", "→"],
+    links: &[((1, &[0]), (0, &[0])), ((1, &[1]), (0, &[1]))],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -260,6 +293,9 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
         "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
+        "math/statistics_and_probability/range" => &RANGE,
+        "math/statistics_and_probability/interquartile_range" => &INTERQUARTILE_RANGE,
+        "math/statistics_and_probability/variance_of_random_variable" => &VARIANCE_OF_RANDOM_VARIABLE,
         "math/statistics_and_probability/standard_deviation" => &STANDARD_DEVIATION,
         "math/statistics_and_probability/sample_standard_deviation" => &SAMPLE_STANDARD_DEVIATION,
         "physics/physics/gravitational_time_dilation" => &GRAVITATIONAL_TIME_DILATION,

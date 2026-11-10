@@ -152,6 +152,9 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Median | median | middle value of the sorted data (average of the two middle values if n is even) | Ready | `math/statistics_and_probability/median/` |
 | Mode | mode | most frequent value | Ready | `math/statistics_and_probability/mode/` |
 | Range | range | range = max − min | Ready | `math/statistics_and_probability/range/` |
+| Maximum of a list | max | max of the list | Ready | `math/statistics_and_probability/list_maximum/` |
+| Minimum of a list | min | min of the list | Ready | `math/statistics_and_probability/list_minimum/` |
+| Range: from the ends | range = max − min | range = max − min   (max is the answer of Row 1, min the answer of Row 2) | Ready | `math/statistics_and_probability/range_from_ends/` |
 | Variance | σ² | σ² = Σ(xᵢ − μ)² / n   (population) | Ready | `math/statistics_and_probability/variance/` |
 | Standard deviation | σ | σ = √(σ²)   (population) | Ready | `math/statistics_and_probability/standard_deviation/` |
 | Standard deviation: from the variance | σ = √(σ²) | σ = √(σ²)   (σ² is the answer of the row above) | Ready | `math/statistics_and_probability/standard_deviation_from_variance/` |
@@ -164,12 +167,17 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Linear regression | y = mx + b | least-squares line; returns (slope, intercept) | Ready | `math/statistics_and_probability/linear_regression/` |
 | Quartiles | Q1 Q2 Q3 | values that split sorted data into four equal parts | Ready | `math/statistics_and_probability/quartiles/` |
 | Interquartile range | IQR | IQR = Q3 − Q1 | Ready | `math/statistics_and_probability/interquartile_range/` |
+| Third quartile | Q3 | Q3, the 75th percentile (quantiles of the list in four parts, the third cut) | Ready | `math/statistics_and_probability/third_quartile/` |
+| First quartile | Q1 | Q1, the 25th percentile (quantiles of the list in four parts, the first cut) | Ready | `math/statistics_and_probability/first_quartile/` |
+| Interquartile range: from the quartiles | IQR = Q3 − Q1 | IQR = Q3 − Q1   (Q3 is the answer of Row 1, Q1 the answer of Row 2) | Ready | `math/statistics_and_probability/interquartile_range_from_quartiles/` |
 | Percentile | Pₖ | value below which k percent of the data fall (k = 1 … 99) | Ready | `math/statistics_and_probability/percentile/` |
 | Probability | P(A) | P(A) = favorable outcomes / total outcomes | Ready | `math/statistics_and_probability/probability/` |
 | Conditional probability | P(A\|B) | P(A\|B) = P(A ∩ B) / P(B) | Ready | `math/statistics_and_probability/conditional_probability/` |
 | Bayes' theorem | P(A\|B) | P(A\|B) = P(B\|A) · P(A) / P(B) | Ready | `math/statistics_and_probability/bayes_theorem/` |
 | Expected value | E[X] | E[X] = Σ xᵢ · pᵢ | Ready | `math/statistics_and_probability/expected_value/` |
 | Variance of random variable | Var(X) | Var(X) = E[X²] − (E[X])² | Ready | `math/statistics_and_probability/variance_of_random_variable/` |
+| Expected square | E[X²] | E[X²] = Σ xᵢ² · pᵢ | Ready | `math/statistics_and_probability/expected_square/` |
+| Variance: from the expectations | Var = E[X²] − (E[X])² | Var = E[X²] − (E[X])²   (E[X²] is the answer of Row 2, E[X] the answer of Row 1) | Ready | `math/statistics_and_probability/variance_from_expectations/` |
 | Normal distribution | N(μ, σ²) | f(x) = e^(−(x−μ)² / 2σ²) / (σ√(2π))   (probability density) | Ready | `math/statistics_and_probability/normal_distribution/` |
 | Binomial distribution | B(n, p) | P(X = k) = C(n,k) · pᵏ · (1−p)ⁿ⁻ᵏ | Ready | `math/statistics_and_probability/binomial_distribution/` |
 | Poisson distribution | Pois(λ) | P(X = k) = λᵏ · e^(−λ) / k! | Ready | `math/statistics_and_probability/poisson_distribution/` |

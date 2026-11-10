@@ -318,3 +318,46 @@ fn gravitational_time_dilation_in_two_rows_gives_todays_number_and_declines_insi
     assert!(doc.equals_all().is_err());
     assert_eq!(doc.rows[1].inputs[1], "");
 }
+
+#[test]
+fn range_interquartile_range_and_variance_in_three_rows_give_the_one_row_numbers() {
+    use rust_calculator::value::Value;
+    let st = "math/statistics_and_probability/";
+    let one = |key: &str, inputs: &[&str]| -> Result<f64, String> {
+        let mut single = Document::new();
+        single.rows[0].set_operator(ops::get(key).unwrap());
+        for (i, t) in inputs.iter().enumerate() {
+            single.rows[0].inputs[i] = t.to_string();
+        }
+        single.equals_all()?;
+        match single.rows[0].value {
+            Some(Value::Number(x)) => Ok(x),
+            ref other => panic!("{other:?}"),
+        }
+    };
+    for data in ["4, 9, 1", "2.5, -7.25, 10.125, 3", "5", "0.1, 0.2, 0.3, 0.7", "-3, -1, -2"] {
+        let key = format!("{st}range");
+        let mut doc = chain_doc(&key, &[(0, 0, data)]);
+        doc.equals_all().unwrap();
+        assert_eq!(doc.rows[1].inputs[0], data, "Row 2's list is copied from Row 1");
+        assert_eq!(number(&doc, 2), one(&key, &[data]).unwrap(), "range {data}");
+    }
+    for data in ["1, 2, 3, 4, 5, 6, 7, 8", "10.5, 3.25, 7.0, 8.75, 1.5", "1, 1, 2, 2, 3, 3", "73.148457, -9.6, -63.067931, 26.0, -81.18", "5, 9"] {
+        let key = format!("{st}interquartile_range");
+        let mut doc = chain_doc(&key, &[(0, 0, data)]);
+        doc.equals_all().unwrap();
+        assert_eq!(number(&doc, 2), one(&key, &[data]).unwrap(), "iqr {data}");
+    }
+    for (v, p) in [("0, 1", "0.5, 0.5"), ("1, 2, 3", "0.2, 0.3, 0.5"), ("-2.5, 0, 4.25, 10", "0.1, 0.4, 0.3, 0.2"), ("7", "1")] {
+        let key = format!("{st}variance_of_random_variable");
+        let mut doc = chain_doc(&key, &[(0, 0, v), (0, 1, p)]);
+        doc.equals_all().unwrap();
+        assert_eq!((doc.rows[1].inputs[0].as_str(), doc.rows[1].inputs[1].as_str()), (v, p));
+        assert_eq!(number(&doc, 2), one(&key, &[v, p]).unwrap(), "variance {v} / {p}");
+    }
+    // an empty list declines in Row 1 and nothing is chained
+    let key = format!("{st}range");
+    let mut doc = chain_doc(&key, &[(0, 0, "")]);
+    assert!(doc.equals_all().is_err());
+    assert_eq!(doc.rows[2].inputs[0], "");
+}
