@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 603)
+        self.assertEqual(len(self.ops), 607)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 603)
+        self.assertEqual(len(status), 607)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -280,6 +280,8 @@ CASES = [
     (PH + "potential_field_step", ([0, 0, 0], [3, 0, 0], [0, 10, 0], 2, 1, 1), [3, 0, 0]),
     (PH + "schwarzschild_g_tt", (4, 2), -0.5), (PH + "schwarzschild_g_rr", (4, 2), 2),
     (PH + "photon_sphere_radius", (2,), 3), (PH + "isco_radius", (2,), 6),
+    (PH + "schwarzschild_orbit_angular_speed", (4, 2), 37474057.25), (PH + "schwarzschild_orbit_period", (4, 2), 1.6766760175613453e-07),
+    (PH + "schwarzschild_coordinate_speed", (4, 2), 149896229.0), (PH + "schwarzschild_local_orbit_speed", (6, 2), 149896228.99999997),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1146,6 +1148,45 @@ class SchwarzschildGeometryTests(unittest.TestCase):
         self.assertEqual((photon(rs), isco(rs)), (1.5 * rs, 3 * rs))
         self.assertLess(rs, photon(rs))
         self.assertLess(photon(rs), isco(rs))                                                 # horizon < photon sphere < ISCO
+
+
+class SchwarzschildOrbitTests(unittest.TestCase):
+    """General relativity, job 2: circular orbits around a non-spinning mass."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        photon = "no circular orbit for a massive particle on or inside the photon sphere"
+        for key in ("schwarzschild_orbit_angular_speed", "schwarzschild_orbit_period", "schwarzschild_coordinate_speed"):
+            self.says(key, (0, 2), "a radius must be positive")
+            self.says(key, (4, 0), "the horizon radius must be positive")
+            self.says(key, (4, -2), "the horizon radius must be positive")
+            self.says(key, (3, 2), photon)                           # on the photon sphere
+            self.says(key, (2, 2), photon)                           # inside it
+        self.says("schwarzschild_local_orbit_speed", (4, 2), "no stable circular orbit inside the ISCO")     # r = 2 Rs: between the photon sphere and the ISCO
+        self.says("schwarzschild_local_orbit_speed", (5.9, 2), "no stable circular orbit inside the ISCO")
+        self.says("schwarzschild_local_orbit_speed", (0, 2), "a radius must be positive")
+        self.says("schwarzschild_local_orbit_speed", (6, 0), "the horizon radius must be positive")
+
+    def test_the_four_agree_with_each_other_and_with_kepler(self):
+        import math
+        c = 299792458
+        omega, period = get(PH + "schwarzschild_orbit_angular_speed").compute, get(PH + "schwarzschild_orbit_period").compute
+        speed, local = get(PH + "schwarzschild_coordinate_speed").compute, get(PH + "schwarzschild_local_orbit_speed").compute
+        self.assertAlmostEqual(omega(4, 2), c / 8, places=6)
+        self.assertAlmostEqual(speed(4, 2), c / 2, places=6)
+        rs = get(PH + "schwarzschild_radius").compute(5.972e24)                  # the Earth
+        for r in (6.371e6, 7.0e6, 4.2e7):
+            self.assertAlmostEqual(omega(r, rs) * period(r, rs), 2 * math.pi, places=12)
+            self.assertAlmostEqual(speed(r, rs), r * omega(r, rs), delta=1e-9 * speed(r, rs))               # r Omega is the coordinate speed
+            self.assertAlmostEqual(omega(r, rs), math.sqrt(6.674e-11 * 5.972e24 / r ** 3), delta=1e-12 * omega(r, rs))   # the Kepler form sqrt(GM / r^3)
+            self.assertAlmostEqual(local(r, rs) / speed(r, rs), 1, places=6)                              # weak field: the two speeds agree
+        self.assertAlmostEqual(local(6, 2), c / 2, delta=1e-6 * c)                          # at the ISCO the local speed is c/2
+        self.assertGreater(local(6, 2), speed(6, 2))                                          # a hovering observer sees it faster than the Kepler speed
+        self.assertLess(local(60, 2), c)
 
 
 # --------------------------------------------------------------------------- 3. error handling

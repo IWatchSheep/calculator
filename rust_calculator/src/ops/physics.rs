@@ -625,3 +625,34 @@ pub fn isco_radius(a: &[f64]) -> R {
     need(a[0] > 0.0, "the horizon radius must be positive")?;
     n(3.0 * a[0])
 }
+
+// ---------- circular orbits around a non-spinning mass (general relativity, job 2; the same operations as the Python files) ----------
+
+fn photon_sphere_check(r: f64, rs: f64) -> Result<(), String> {
+    need(r > 0.0, "a radius must be positive")?;
+    need(rs > 0.0, "the horizon radius must be positive")?;
+    need(r > 1.5 * rs, "no circular orbit for a massive particle on or inside the photon sphere")
+}
+
+pub fn schwarzschild_orbit_angular_speed(a: &[f64]) -> R {
+    // r, Rs
+    photon_sphere_check(a[0], a[1])?;
+    n(299792458.0 * (a[1] / (2.0 * a[0] * a[0] * a[0])).sqrt())
+}
+
+pub fn schwarzschild_orbit_period(a: &[f64]) -> R {
+    photon_sphere_check(a[0], a[1])?;
+    n(2.0 * std::f64::consts::PI / (299792458.0 * (a[1] / (2.0 * a[0] * a[0] * a[0])).sqrt()))
+}
+
+pub fn schwarzschild_coordinate_speed(a: &[f64]) -> R {
+    photon_sphere_check(a[0], a[1])?;
+    n(299792458.0 * (a[1] / (2.0 * a[0])).sqrt())
+}
+
+pub fn schwarzschild_local_orbit_speed(a: &[f64]) -> R {
+    need(a[0] > 0.0, "a radius must be positive")?;
+    need(a[1] > 0.0, "the horizon radius must be positive")?;
+    need(a[0] >= 3.0 * a[1], "no stable circular orbit inside the ISCO")?;
+    n(299792458.0 * ((a[1] / (2.0 * a[0])) / (1.0 - a[1] / a[0])).sqrt())
+}

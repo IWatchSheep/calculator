@@ -860,3 +860,27 @@ fn the_schwarzschild_geometry_operators_give_the_numbers_of_the_work_plan_and_de
         assert!(call(key, &[0.]).unwrap_err().contains("the horizon radius must be positive"));
     }
 }
+
+#[test]
+fn the_circular_orbit_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call("schwarzschild_orbit_angular_speed", &[4., 2.]).unwrap(), 37474057.25);
+    assert_eq!(call("schwarzschild_orbit_period", &[4., 2.]).unwrap(), 1.6766760175613453e-07);
+    assert_eq!(call("schwarzschild_coordinate_speed", &[4., 2.]).unwrap(), 149896229.0);
+    assert_eq!(call("schwarzschild_local_orbit_speed", &[6., 2.]).unwrap(), 149896228.99999997);
+    for key in ["schwarzschild_orbit_angular_speed", "schwarzschild_orbit_period", "schwarzschild_coordinate_speed"] {
+        assert!(call(key, &[0., 2.]).unwrap_err().contains("a radius must be positive"));
+        assert!(call(key, &[4., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+        assert!(call(key, &[3., 2.]).unwrap_err().contains("no circular orbit for a massive particle on or inside the photon sphere"));
+        assert!(call(key, &[2., 2.]).unwrap_err().contains("no circular orbit for a massive particle on or inside the photon sphere"));
+    }
+    assert!(call("schwarzschild_local_orbit_speed", &[4., 2.]).unwrap_err().contains("no stable circular orbit inside the ISCO"));
+    assert!(call("schwarzschild_local_orbit_speed", &[0., 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call("schwarzschild_local_orbit_speed", &[6., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+}

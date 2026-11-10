@@ -603,4 +603,8 @@ physics/physics/schwarzschild_g_tt | {}{g_tt|the time coefficient, negative outs
 physics/physics/schwarzschild_g_rr | {}{g_rr|the radial coefficient} = 1 / ( 1 − [Rs]{Schwarzschild radius|metres, 2GM/c2} / [r]{radius|metres from the centre} )
 physics/physics/photon_sphere_radius | {}{photon sphere|metres from the centre, where light can circle} = 1.5 × [Rs]{Schwarzschild radius|metres, 2GM/c2}
 physics/physics/isco_radius | {}{ISCO|metres from the centre, the closest stable orbit} = 3 × [Rs]{Schwarzschild radius|metres, 2GM/c2}
+physics/physics/schwarzschild_orbit_angular_speed | {}{Ω|radians per second of coordinate time} = c{speed of light|299792458 m/s} √ ( [Rs]{Schwarzschild radius|metres, 2GM/c2} / ( 2 [r]{orbital radius|metres from the centre, outside the photon sphere} ³ ) )
+physics/physics/schwarzschild_orbit_period | {}{period|seconds of coordinate time} = 2 π / ( c{speed of light|299792458 m/s} √ ( [Rs]{Schwarzschild radius|metres, 2GM/c2} / ( 2 [r]{orbital radius|metres from the centre, outside the photon sphere} ³ ) ) )
+physics/physics/schwarzschild_coordinate_speed | {}{speed|metres per second, the Kepler speed} = c{speed of light|299792458 m/s} √ ( [Rs]{Schwarzschild radius|metres, 2GM/c2} / ( 2 [r]{orbital radius|metres from the centre, outside the photon sphere} ) )
+physics/physics/schwarzschild_local_orbit_speed | {}{speed|metres per second, as measured by an observer hovering there} = c{speed of light|299792458 m/s} √ ( ( [Rs]{Schwarzschild radius|metres, 2GM/c2} / ( 2 [r]{orbital radius|metres from the centre, at or outside the ISCO} ) ) / ( 1 − [Rs] / [r] ) )
 physics/physics/work | {}{work|joules} = [F]{force|newtons, along the motion} × [d]{distance|metres}

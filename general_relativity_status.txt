@@ -10,9 +10,13 @@ DONE
          603 operators, 531 calculating after this job.  Checked against the existing operators: g_tt * g_rr = -1; sqrt(-g_tt) equals the factor that
          gravitational_time_dilation_from_radius gives; horizon < photon sphere < ISCO.
 
+  Job 2  Circular orbits around a non-spinning mass (physics/physics): schwarzschild_orbit_angular_speed, schwarzschild_orbit_period,
+         schwarzschild_coordinate_speed, schwarzschild_local_orbit_speed.  607 operators, 535 calculating after this job.  c = 299792458; a circular orbit
+         exists only for r > 1.5 Rs; the local speed (a hovering observer) is declined inside the ISCO (r < 3 Rs).  Grok's numbers match to the last digit
+         (c/8, c/2, 1.6766760175613453e-07, and 149896228.99999997 at the ISCO).  Checked: Omega * T = 2 pi; r Omega = coordinate speed; Omega is the
+         Kepler sqrt(GM/r^3) for the Earth; local / coordinate speed = 1 in the weak field.
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 2   circular orbits around a non-spinning mass (r > 3 Rs): angular speed sqrt(GM/r^3), period 2 pi sqrt(r^3/GM), coordinate orbital speed;
-          decline inside the ISCO for the stable-orbit speed
   Job 3   light deflection 4GM / (c^2 b), small angle
   Job 4   Mercury perihelion advance 6 pi GM / (c^2 a (1 - e^2)) radians per orbit (about 43 arcseconds per century; hand-check the inputs)
   Job 5   gravitational redshift between two finite radii: sqrt((1 - Rs/r_receiver) / (1 - Rs/r_source))

@@ -1,6 +1,6 @@
 {
- "count": 603,
- "ready": 531,
+ "count": 607,
+ "ready": 535,
  "reference": 72,
  "operators": [
   {
@@ -25860,6 +25860,49 @@
    ]
   },
   {
+   "key": "physics/physics/schwarzschild_coordinate_speed",
+   "name": "Circular-orbit coordinate speed",
+   "symbol": "r Ω = c √(Rs / (2 r))",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r Ω = c √(Rs / (2 r))   (the Kepler speed of a circular orbit: circumference radius times the angular speed; not the speed a hovering observer measures; r > 1.5 Rs)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = c √ ( □ / ( 2 □ ) )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      4,
+      2
+     ],
+     "expected": 149896229.0
+    }
+   ]
+  },
+  {
    "key": "physics/physics/schwarzschild_g_rr",
    "name": "Schwarzschild g_rr",
    "symbol": "g_rr = 1/(1 − Rs/r)",
@@ -25942,6 +25985,135 @@
       2
      ],
      "expected": -0.5
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_local_orbit_speed",
+   "name": "Circular-orbit local speed",
+   "symbol": "v = c √((Rs/2r) / (1 − Rs/r))",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "v = c √( (Rs / (2 r)) / (1 − Rs / r) )   (the speed an observer hovering at that radius measures; stable orbits only, r ≥ 3 Rs)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = c √ ( ( □ / ( 2 □ ) ) / ( 1 − □ / □ ) )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      6,
+      2
+     ],
+     "expected": 149896228.99999997
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_orbit_angular_speed",
+   "name": "Circular-orbit angular speed",
+   "symbol": "Ω = c √(Rs / (2 r³))",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "Ω = c √(Rs / (2 r³))   (radians per second of coordinate time for a circular orbit around a non-spinning mass; the Kepler form; r > 1.5 Rs; c = 299792458 m/s)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = c √ ( □ / ( 2 □ ³ ) )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      4,
+      2
+     ],
+     "expected": 37474057.25
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/schwarzschild_orbit_period",
+   "name": "Circular-orbit period",
+   "symbol": "T = 2π / Ω",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "T = 2π / Ω   (the coordinate-time period of a circular orbit around a non-spinning mass; r > 1.5 Rs)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 π / ( c √ ( □ / ( 2 □ ³ ) ) )",
+   "compute_signature": "compute(r, Rs)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      4,
+      2
+     ],
+     "expected": 1.6766760175613453e-07
     }
    ]
   },

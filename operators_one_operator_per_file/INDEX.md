@@ -620,6 +620,10 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Schwarzschild g_rr | g_rr = 1/(1 − Rs/r) | g_rr = 1 / (1 − Rs/r)   (the radial coefficient of the Schwarzschild metric outside a spherical mass; r and Rs in metres) | Ready | `physics/physics/schwarzschild_g_rr/` |
 | Photon sphere | r = 3GM/c² = 1.5 Rs | r = 3GM/c² = 1.5 Rs   (the radius of the unstable circular orbit of a light ray) | Ready | `physics/physics/photon_sphere_radius/` |
 | Innermost stable circular orbit | r = 6GM/c² = 3 Rs | r = 6GM/c² = 3 Rs   (the closest stable circular orbit of a massive particle around a non-spinning mass) | Ready | `physics/physics/isco_radius/` |
+| Circular-orbit angular speed | Ω = c √(Rs / (2 r³)) | Ω = c √(Rs / (2 r³))   (radians per second of coordinate time for a circular orbit around a non-spinning mass; the Kepler form; r > 1.5 Rs; c = 299792458 m/s) | Ready | `physics/physics/schwarzschild_orbit_angular_speed/` |
+| Circular-orbit period | T = 2π / Ω | T = 2π / Ω   (the coordinate-time period of a circular orbit around a non-spinning mass; r > 1.5 Rs) | Ready | `physics/physics/schwarzschild_orbit_period/` |
+| Circular-orbit coordinate speed | r Ω = c √(Rs / (2 r)) | r Ω = c √(Rs / (2 r))   (the Kepler speed of a circular orbit: circumference radius times the angular speed; not the speed a hovering observer measures; r > 1.5 Rs) | Ready | `physics/physics/schwarzschild_coordinate_speed/` |
+| Circular-orbit local speed | v = c √((Rs/2r) / (1 − Rs/r)) | v = c √( (Rs / (2 r)) / (1 − Rs / r) )   (the speed an observer hovering at that radius measures; stable orbits only, r ≥ 3 Rs) | Ready | `physics/physics/schwarzschild_local_orbit_speed/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |
