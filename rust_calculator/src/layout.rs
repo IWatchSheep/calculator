@@ -290,7 +290,7 @@ mod tests {
 
     #[test]
     fn the_navier_stokes_rows_have_the_columns_and_grid_rows_of_their_diagram() {
-        // (operator, columns, grid rows) as drawn in navier-stokes/navier_stokes_rows.jpg
+        // (operator, columns, grid rows) as drawn in operators_one_operator_per_file/physics/physics/<operator>/<operator>.jpg (the Python row files in operator_row_math/ hold the same cards)
         for (key, columns, rows) in [
             ("physics/physics/navier_stokes_equation", 22, 3),
             ("physics/physics/navier_stokes_x_momentum", 36, 5),

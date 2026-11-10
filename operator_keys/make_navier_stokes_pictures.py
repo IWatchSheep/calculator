@@ -1,16 +1,17 @@
-"""Draws the Navier-Stokes pictures.
+"""Draws the pictures of the five Navier-Stokes operators (incompressible Newtonian fluid).
 
-    python navier-stokes/make_navier_stokes_diagram.py
+    python operator_keys/make_navier_stokes_pictures.py
 
-navier-stokes/navier_stokes.jpg   the whole set of equations (incompressible Newtonian fluid): vector form, the x, y, z momentum lines, continuity.
-and one picture for each operator of the project (operators_one_operator_per_file/physics/physics/<operator>/<operator>.jpg):
-    navier_stokes_equation (the whole set), navier_stokes_x_momentum, navier_stokes_y_momentum, navier_stokes_z_momentum, navier_stokes_continuity.
+One picture for each operator, written to operators_one_operator_per_file/physics/physics/<operator>/<operator>.jpg:
+    navier_stokes_equation (the whole set: vector form, the x, y, z momentum lines, continuity), navier_stokes_x_momentum, navier_stokes_y_momentum,
+    navier_stokes_z_momentum, navier_stokes_continuity.
+The rows of these operators are in operator_row_math/physics/physics/<operator>/<operator>.py (written by make_operator_row_files.py from operator_row_specs.txt)
+and follow these pictures: same columns, same grid rows.
 
 Written the way the rows write math: every derivative is a fraction with its numerator on the line above the bar and its denominator on the line below,
 and an exponent sits one line up, over the symbol it powers.
 """
 import os
-import shutil
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -150,9 +151,7 @@ def save(image, path):
 
 
 if __name__ == "__main__":
-    whole = whole_set()
-    save(whole, os.path.join(HERE, "navier_stokes.jpg"))
-    shutil.copyfile(os.path.join(HERE, "navier_stokes.jpg"), os.path.join(OPS, "navier_stokes_equation", "navier_stokes_equation.jpg"))
+    save(whole_set(), os.path.join(OPS, "navier_stokes_equation", "navier_stokes_equation.jpg"))
     for q, axis in (("u", "x"), ("v", "y"), ("w", "z")):
         pic = single("Navier\u2013Stokes: %s momentum" % axis, lambda x, b, q=q, a=axis: component(x, b, q, a),
                      "Momentum balance along %s for an incompressible fluid. %s is the velocity along %s; \u03c1 density, \u03bc viscosity, p pressure, f_%s force per volume." % (axis, q, axis, axis))
