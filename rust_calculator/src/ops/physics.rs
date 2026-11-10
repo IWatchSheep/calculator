@@ -701,3 +701,31 @@ pub fn schwarzschild_radial_step(a: &[f64]) -> R {
     let acc = -(a[3] * c * c) / (2.0 * a[0] * a[0]);
     n(a[0] + a[1] * a[2] + 0.5 * acc * a[2] * a[2])
 }
+
+// ---------- the Kerr geometry of a spinning mass (general relativity, job 7; the same operations as the Python files) ----------
+
+fn kerr_check(rs: f64, a: f64) -> Result<(), String> {
+    need(rs > 0.0, "the horizon radius must be positive")?;
+    need(a.abs() <= rs / 2.0, "the spin is past the extreme Kerr limit")
+}
+
+pub fn kerr_outer_horizon(a: &[f64]) -> R {
+    // Rs, a
+    kerr_check(a[0], a[1])?;
+    let h = a[0] / 2.0;
+    n(h + (h * h - a[1] * a[1]).sqrt())
+}
+
+pub fn kerr_inner_horizon(a: &[f64]) -> R {
+    // Rs, a
+    kerr_check(a[0], a[1])?;
+    let h = a[0] / 2.0;
+    n(h - (h * h - a[1] * a[1]).sqrt())
+}
+
+pub fn kerr_frame_dragging_g_tphi(a: &[f64]) -> R {
+    // r, Rs, a
+    need(a[0] > 0.0, "a radius must be positive")?;
+    kerr_check(a[1], a[2])?;
+    n(-a[1] * a[2] / a[0] + 0.0)
+}

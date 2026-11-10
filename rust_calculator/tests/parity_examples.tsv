@@ -326,6 +326,16 @@ physics/physics/kalman_predict_variance	4 0	4
 physics/physics/kalman_update_state	10 4 14 4	12
 physics/physics/kalman_update_variance	4 4	2
 physics/physics/kalman_update_variance	0 1	0
+physics/physics/kerr_frame_dragging_g_tphi	8 10 4	-5
+physics/physics/kerr_frame_dragging_g_tphi	8 10 -4	5
+physics/physics/kerr_frame_dragging_g_tphi	8 10 0	0
+physics/physics/kerr_inner_horizon	10 0	0
+physics/physics/kerr_inner_horizon	10 4	2
+physics/physics/kerr_inner_horizon	10 5	5
+physics/physics/kerr_outer_horizon	10 0	10
+physics/physics/kerr_outer_horizon	10 4	8
+physics/physics/kerr_outer_horizon	10 5	5
+physics/physics/kerr_outer_horizon	10 -4	8
 physics/physics/kinetic_energy	2 3	9
 physics/physics/length_contraction	100 0.8 1	60
 physics/physics/length_contraction	100 0 1	100

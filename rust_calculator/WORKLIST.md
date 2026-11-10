@@ -1,6 +1,6 @@
 # Rust calculator - status
 
-**Full Ready parity reached.** All 539 Ready operators and all 72 Reference operators exist in Rust
+**Full Ready parity reached.** All 542 Ready operators and all 72 Reference operators exist in Rust
 (`operator_keys/rust_todo.json` is empty). Verify from the repo root (details in `operator_keys/README.md`):
 
 ```

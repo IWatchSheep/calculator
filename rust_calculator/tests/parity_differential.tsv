@@ -6347,6 +6347,124 @@ physics/physics/kalman_update_variance	5 5	2.5
 physics/physics/kalman_update_variance	2.5 1	0.7142857142857142
 physics/physics/kalman_update_variance	1 2	0.6666666666666667
 physics/physics/kalman_update_variance	7.5 0	ERR
+physics/physics/kerr_frame_dragging_g_tphi	8 10 4	-5.0
+physics/physics/kerr_frame_dragging_g_tphi	8 10 -4	5.0
+physics/physics/kerr_frame_dragging_g_tphi	8 10 0	0.0
+physics/physics/kerr_frame_dragging_g_tphi	1 0.25 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	-1 -1 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	-3 10 0	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.25 3 10	ERR
+physics/physics/kerr_frame_dragging_g_tphi	1 3 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.25 0.5 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	10 2 0	0.0
+physics/physics/kerr_frame_dragging_g_tphi	2.5 2.5 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	2 1 0	0.0
+physics/physics/kerr_frame_dragging_g_tphi	7.5 2 1	-0.26666666666666666
+physics/physics/kerr_frame_dragging_g_tphi	10 3 1	-0.3
+physics/physics/kerr_frame_dragging_g_tphi	10 3 0.5	-0.15
+physics/physics/kerr_frame_dragging_g_tphi	2 2.5 2	ERR
+physics/physics/kerr_frame_dragging_g_tphi	7.5 7.5 7.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	1 0.25 0.25	ERR
+physics/physics/kerr_frame_dragging_g_tphi	100 100 10	-10.0
+physics/physics/kerr_frame_dragging_g_tphi	2 0.5 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	-3 0.5 2	ERR
+physics/physics/kerr_frame_dragging_g_tphi	1 100 0	0.0
+physics/physics/kerr_frame_dragging_g_tphi	100 3 -1	0.03
+physics/physics/kerr_frame_dragging_g_tphi	3 1 2.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	100 100 0.25	-0.25
+physics/physics/kerr_frame_dragging_g_tphi	7.5 2 7.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	-1 10 0	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0 -3 1	ERR
+physics/physics/kerr_frame_dragging_g_tphi	3 2.5 7.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	10 100 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	10 10 1	-1.0
+physics/physics/kerr_frame_dragging_g_tphi	-1 -3 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.5 7.5 100	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.5 1 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	100 1 3	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.5 100 2.5	-500.0
+physics/physics/kerr_frame_dragging_g_tphi	-1 100 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	1 0 2	ERR
+physics/physics/kerr_frame_dragging_g_tphi	2 2.5 5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0 100 7.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	7.5 2 2.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	0.25 -1 0.5	ERR
+physics/physics/kerr_frame_dragging_g_tphi	2.5 1 -1	ERR
+physics/physics/kerr_inner_horizon	10 0	0.0
+physics/physics/kerr_inner_horizon	10 4	2.0
+physics/physics/kerr_inner_horizon	10 5	5.0
+physics/physics/kerr_inner_horizon	2.5 3	ERR
+physics/physics/kerr_inner_horizon	100 7.5	0.5657001667870318
+physics/physics/kerr_inner_horizon	1 -1	ERR
+physics/physics/kerr_inner_horizon	2 7.5	ERR
+physics/physics/kerr_inner_horizon	3 7.5	ERR
+physics/physics/kerr_inner_horizon	2.5 2.5	ERR
+physics/physics/kerr_inner_horizon	0.5 0	0.0
+physics/physics/kerr_inner_horizon	10 3	1.0
+physics/physics/kerr_inner_horizon	3 -3	ERR
+physics/physics/kerr_inner_horizon	3 0.25	0.020980054225095968
+physics/physics/kerr_inner_horizon	-1 0	ERR
+physics/physics/kerr_inner_horizon	7.5 1	0.13579192629975978
+physics/physics/kerr_inner_horizon	-3 10	ERR
+physics/physics/kerr_inner_horizon	0 5	ERR
+physics/physics/kerr_inner_horizon	1 7.5	ERR
+physics/physics/kerr_inner_horizon	0.5 2.5	ERR
+physics/physics/kerr_inner_horizon	3 3	ERR
+physics/physics/kerr_inner_horizon	7.5 0	0.0
+physics/physics/kerr_inner_horizon	10 7.5	ERR
+physics/physics/kerr_inner_horizon	7.5 3	1.5
+physics/physics/kerr_inner_horizon	0.25 -1	ERR
+physics/physics/kerr_inner_horizon	100 10	1.0102051443364388
+physics/physics/kerr_inner_horizon	-3 3	ERR
+physics/physics/kerr_inner_horizon	0 10	ERR
+physics/physics/kerr_inner_horizon	5 0.5	0.05051025721682212
+physics/physics/kerr_inner_horizon	5 2.5	2.5
+physics/physics/kerr_inner_horizon	0.5 -1	ERR
+physics/physics/kerr_inner_horizon	2 -1	1.0
+physics/physics/kerr_inner_horizon	-1 -1	ERR
+physics/physics/kerr_inner_horizon	2.5 0.5	0.10435607626104004
+physics/physics/kerr_inner_horizon	5 0.25	0.012531407233450143
+physics/physics/kerr_inner_horizon	0.5 1	ERR
+physics/physics/kerr_inner_horizon	100 0	0.0
+physics/physics/kerr_inner_horizon	0 1	ERR
+physics/physics/kerr_outer_horizon	10 0	10.0
+physics/physics/kerr_outer_horizon	10 4	8.0
+physics/physics/kerr_outer_horizon	10 5	5.0
+physics/physics/kerr_outer_horizon	10 -4	8.0
+physics/physics/kerr_outer_horizon	1 5	ERR
+physics/physics/kerr_outer_horizon	2.5 10	ERR
+physics/physics/kerr_outer_horizon	-1 2	ERR
+physics/physics/kerr_outer_horizon	-3 100	ERR
+physics/physics/kerr_outer_horizon	1 1	ERR
+physics/physics/kerr_outer_horizon	1 10	ERR
+physics/physics/kerr_outer_horizon	3 -1	2.618033988749895
+physics/physics/kerr_outer_horizon	-1 -3	ERR
+physics/physics/kerr_outer_horizon	0 7.5	ERR
+physics/physics/kerr_outer_horizon	-1 1	ERR
+physics/physics/kerr_outer_horizon	0.5 1	ERR
+physics/physics/kerr_outer_horizon	1 3	ERR
+physics/physics/kerr_outer_horizon	100 0	100.0
+physics/physics/kerr_outer_horizon	-1 5	ERR
+physics/physics/kerr_outer_horizon	2.5 -3	ERR
+physics/physics/kerr_outer_horizon	100 2	99.95998398718719
+physics/physics/kerr_outer_horizon	7.5 10	ERR
+physics/physics/kerr_outer_horizon	-3 3	ERR
+physics/physics/kerr_outer_horizon	100 3	99.90991885387112
+physics/physics/kerr_outer_horizon	7.5 1	7.36420807370024
+physics/physics/kerr_outer_horizon	10 2.5	9.330127018922195
+physics/physics/kerr_outer_horizon	10 0.5	9.9749371855331
+physics/physics/kerr_outer_horizon	2.5 3	ERR
+physics/physics/kerr_outer_horizon	0 0.25	ERR
+physics/physics/kerr_outer_horizon	3 5	ERR
+physics/physics/kerr_outer_horizon	-3 7.5	ERR
+physics/physics/kerr_outer_horizon	100 0.25	99.9993749960937
+physics/physics/kerr_outer_horizon	0.25 0.25	ERR
+physics/physics/kerr_outer_horizon	-3 2.5	ERR
+physics/physics/kerr_outer_horizon	100 100	ERR
+physics/physics/kerr_outer_horizon	10 100	ERR
+physics/physics/kerr_outer_horizon	-1 100	ERR
+physics/physics/kerr_outer_horizon	0.5 0.25	0.25
+physics/physics/kerr_outer_horizon	0 -1	ERR
 physics/physics/kinetic_energy	2 3	9.0
 physics/physics/kinetic_energy	100 1	50.0
 physics/physics/kinetic_energy	0 2	0.0

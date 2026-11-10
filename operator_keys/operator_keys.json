@@ -1,6 +1,6 @@
 {
- "count": 611,
- "ready": 539,
+ "count": 614,
+ "ready": 542,
  "reference": 72,
  "operators": [
   {
@@ -22410,6 +22410,193 @@
       1
      ],
      "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/kerr_frame_dragging_g_tphi",
+   "name": "Kerr g_tφ",
+   "symbol": "g_tφ = −Rs a / r",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "g_tφ = −Rs a / r   (the equator value of the frame-dragging coefficient of the Kerr metric; a = J/(M c) in metres; positive a gives a negative answer)",
+   "status": "Ready",
+   "inputs": [
+    "r",
+    "Rs",
+    "a"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = − □ □ / □",
+   "compute_signature": "compute(r, Rs, a)",
+   "compute_params": [
+    {
+     "name": "r",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      8,
+      10,
+      4
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      8,
+      10,
+      -4
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      8,
+      10,
+      0
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/kerr_inner_horizon",
+   "name": "Kerr inner horizon",
+   "symbol": "r− = Rs/2 − √((Rs/2)² − a²)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r− = Rs/2 − √((Rs/2)² − a²)   (the smaller horizon of a spinning mass; a = J/(M c) in metres; a = 0 gives r− = 0; |a| ≤ Rs/2)",
+   "status": "Ready",
+   "inputs": [
+    "Rs",
+    "a"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ / 2 − √ ( ( □ / 2 ) ² − □ ² )",
+   "compute_signature": "compute(Rs, a)",
+   "compute_params": [
+    {
+     "name": "Rs",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      10,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      4
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      10,
+      5
+     ],
+     "expected": 5
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/kerr_outer_horizon",
+   "name": "Kerr outer horizon",
+   "symbol": "r+ = Rs/2 + √((Rs/2)² − a²)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "r+ = Rs/2 + √((Rs/2)² − a²)   (the larger horizon of a spinning mass; a = J/(M c) in metres; a = 0 gives r+ = Rs; |a| ≤ Rs/2)",
+   "status": "Ready",
+   "inputs": [
+    "Rs",
+    "a"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ / 2 + √ ( ( □ / 2 ) ² − □ ² )",
+   "compute_signature": "compute(Rs, a)",
+   "compute_params": [
+    {
+     "name": "Rs",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      10,
+      0
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      10,
+      4
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      10,
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      10,
+      -4
+     ],
+     "expected": 8
     }
    ]
   },

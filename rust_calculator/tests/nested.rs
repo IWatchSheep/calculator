@@ -965,3 +965,30 @@ fn the_radial_step_operator_gives_the_numbers_of_the_work_plan_and_declines_with
     assert!(call(&[2., 0., 1e-8, 2.]).unwrap_err().contains("r is not outside the horizon"));
     assert!(call(&[4., 0., 0., 2.]).unwrap_err().contains("time step must be positive"));
 }
+
+#[test]
+fn the_kerr_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    for (rs, a, outer, inner) in [(10., 0., 10., 0.), (10., 4., 8., 2.), (10., 5., 5., 5.), (10., -4., 8., 2.)] {
+        assert_eq!(call("kerr_outer_horizon", &[rs, a]).unwrap(), outer);
+        assert_eq!(call("kerr_inner_horizon", &[rs, a]).unwrap(), inner);
+    }
+    assert_eq!(call("kerr_frame_dragging_g_tphi", &[8., 10., 4.]).unwrap(), -5.0);
+    assert_eq!(call("kerr_frame_dragging_g_tphi", &[8., 10., -4.]).unwrap(), 5.0);
+    let zero = call("kerr_frame_dragging_g_tphi", &[8., 10., 0.]).unwrap();
+    assert!(zero == 0.0 && zero.is_sign_positive());
+    for key in ["kerr_outer_horizon", "kerr_inner_horizon"] {
+        assert!(call(key, &[0., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+        assert!(call(key, &[10., 5.1]).unwrap_err().contains("the spin is past the extreme Kerr limit"));
+        assert!(call(key, &[10., -5.1]).unwrap_err().contains("the spin is past the extreme Kerr limit"));
+    }
+    assert!(call("kerr_frame_dragging_g_tphi", &[0., 10., 4.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call("kerr_frame_dragging_g_tphi", &[8., 0., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+    assert!(call("kerr_frame_dragging_g_tphi", &[8., 10., 6.]).unwrap_err().contains("the spin is past the extreme Kerr limit"));
+}

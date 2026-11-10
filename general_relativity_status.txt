@@ -34,8 +34,12 @@ DONE
          returns r only.  611 operators, 539 calculating.  Grok's numbers match exactly (3.7191390066447445 from rest, 3.7191389966447446 with v = -1).
          Checked: far from the mass it is the Newtonian drop 1/2 GM/r^2 dt^2 (4.9 m in a second at the Earth); no mass gives a straight line.
 
+  Job 7  Kerr geometry (physics/physics): kerr_outer_horizon(Rs, a), kerr_inner_horizon(Rs, a) (the two roots of r^2 - Rs r + a^2; a = J/(M c) in metres,
+         |a| <= Rs/2 or "the spin is past the extreme Kerr limit"), kerr_frame_dragging_g_tphi(r, Rs, a) = -Rs a / r on the equator (Grok noted that Kerr's
+         equatorial g_tt equals Schwarzschild's, so g_tphi is the piece that shows the spin).  614 operators, 542 calculating.  Grok's numbers match exactly.
+         Checked: the horizons add to Rs and multiply to a^2; a = 0 gives Rs and 0; the extreme spin makes them meet; no negative zero for a = 0.
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 7   Kerr metric: outer and inner horizon, g_tt on the equator; decline "the spin is past the extreme Kerr limit"
   Job 8   frame dragging, Lense-Thirring rate 2 G J / (c^2 r^3)
   Job 9   gravitational waves, leading order for a circular binary: wave frequency, quadrupole strain
   Job 10  one radial step of the Tolman-Oppenheimer-Volkoff equation (pressure change over a thin shell)

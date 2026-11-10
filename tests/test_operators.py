@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 611)
+        self.assertEqual(len(self.ops), 614)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 611)
+        self.assertEqual(len(status), 614)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -287,6 +287,9 @@ CASES = [
     (PH + "schwarzschild_frequency_ratio", (4, 4, 2), 1), (PH + "schwarzschild_frequency_ratio", (4, 8, 2), 0.816496580927726),
     (PH + "schwarzschild_frequency_ratio", (8, 4, 2), 1.224744871391589),
     (PH + "schwarzschild_radial_step", (4, 0, 1e-08, 2), 3.7191390066447445), (PH + "schwarzschild_radial_step", (4, -1, 1e-08, 2), 3.7191389966447446),
+    (PH + "kerr_outer_horizon", (10, 0), 10), (PH + "kerr_outer_horizon", (10, 4), 8), (PH + "kerr_outer_horizon", (10, 5), 5), (PH + "kerr_outer_horizon", (10, -4), 8),
+    (PH + "kerr_inner_horizon", (10, 0), 0), (PH + "kerr_inner_horizon", (10, 4), 2), (PH + "kerr_inner_horizon", (10, 5), 5),
+    (PH + "kerr_frame_dragging_g_tphi", (8, 10, 4), -5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, -4), 5), (PH + "kerr_frame_dragging_g_tphi", (8, 10, 0), 0),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1307,6 +1310,37 @@ class RadialStepTests(unittest.TestCase):
         r, dt = 6.371e6, 1.0
         drop = r - step(r, 0, dt, rs)
         self.assertAlmostEqual(drop, 0.5 * 6.674e-11 * 5.972e24 / r ** 2 * dt * dt, delta=1e-8 * drop)       # 4.9 m in one second
+
+
+class KerrTests(unittest.TestCase):
+    """General relativity, job 7: the Kerr geometry of a spinning mass."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        for key in ("kerr_outer_horizon", "kerr_inner_horizon"):
+            self.says(key, (0, 0), "the horizon radius must be positive")
+            self.says(key, (-10, 0), "the horizon radius must be positive")
+            self.says(key, (10, 5.1), "the spin is past the extreme Kerr limit")
+            self.says(key, (10, -5.1), "the spin is past the extreme Kerr limit")
+        self.says("kerr_frame_dragging_g_tphi", (0, 10, 4), "a radius must be positive")
+        self.says("kerr_frame_dragging_g_tphi", (8, 0, 0), "the horizon radius must be positive")
+        self.says("kerr_frame_dragging_g_tphi", (8, 10, 6), "the spin is past the extreme Kerr limit")
+
+    def test_the_horizons_agree_with_each_other_and_with_schwarzschild(self):
+        outer, inner, drag = get(PH + "kerr_outer_horizon").compute, get(PH + "kerr_inner_horizon").compute, get(PH + "kerr_frame_dragging_g_tphi").compute
+        for rs, a in ((10, 3), (2953.2, 1000), (1, 0.25), (10, 5)):
+            self.assertAlmostEqual(outer(rs, a) + inner(rs, a), rs, places=9)                    # the two roots add up to Rs
+            self.assertAlmostEqual(outer(rs, a) * inner(rs, a), a * a, places=9)                 # and multiply to a^2
+            self.assertLessEqual(inner(rs, a), outer(rs, a))
+        self.assertEqual((outer(10, 0), inner(10, 0)), (10, 0))                                       # no spin: the Schwarzschild horizon Rs and nothing inside
+        self.assertEqual(outer(10, 5), inner(10, 5))                                              # extreme Kerr: the horizons meet
+        self.assertEqual(drag(8, 10, 4), -drag(8, 10, -4))                                        # the sign follows the spin
+        self.assertEqual(str(drag(8, 10, 0)), "0.0")                                              # no negative zero
+        self.assertAlmostEqual(drag(8, 10, 4) * 8, -10 * 4, places=12)
 
 
 # --------------------------------------------------------------------------- 3. error handling
