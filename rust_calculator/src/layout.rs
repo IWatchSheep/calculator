@@ -65,7 +65,35 @@ pub struct Layout {
     pub cards: &'static [Card],
 }
 
+/// One card of a row once the operators inside its boxes are written out in place (Python `row_tree.flatten`).
+#[derive(Clone, Debug)]
+pub struct FlatCard {
+    pub kind: CardKind,
+    /// Operator cards: the symbol; a box that holds an operator it copies: the operator's name.
+    pub text: String,
+    /// Box cards: the path of the slot it shows (the first number is the slot of the row's own operator, the next one a slot of the operator inside it ...).
+    pub path: Vec<usize>,
+    pub level: i8,
+    pub frac: Vec<(u32, u8)>,
+    /// Out cards: which answer box of its operator this is.
+    pub out_k: usize,
+    /// Out cards: which operator (by walking order) owns this answer box, so the screen can ask for its answer.
+    pub owner: Vec<usize>,
+}
+
+impl FlatCard {
+    pub fn pc(&self) -> PC {
+        PC { level: self.level, frac: self.frac.clone() }
+    }
+}
+
+/// The layout of the plain number `_number` (a row around a bracket: one box, nothing else).
+static NUMBER_LAYOUT: Layout = Layout { key: "_number", right_box: false, cards: &[card(B, "", 0, 0, N)] };
+
 pub fn get(key: &str) -> Option<&'static Layout> {
+    if key == "_number" {
+        return Some(&NUMBER_LAYOUT);
+    }
     static MAP: OnceLock<HashMap<&'static str, &'static Layout>> = OnceLock::new();
     MAP.get_or_init(|| crate::layouts::LAYOUTS.iter().chain(crate::word_layouts::WORD_LAYOUTS.iter()).map(|l| (l.key, l)).collect()).get(key).copied()
 }
@@ -81,17 +109,24 @@ pub struct Plan {
     pub columns: i32,
 }
 
+/// What the placing code needs to know about a card: its grid level and the fractions it is inside (outermost first).
+#[derive(Clone, Debug)]
+pub struct PC {
+    pub level: i8,
+    pub frac: Vec<(u32, u8)>,
+}
+
 enum Item {
     Card(usize),
     Frac(Vec<Item>, Vec<Item>),
 }
 
-fn parse(cards: &[Card], indices: &[usize], depth: usize) -> Vec<Item> {
+fn parse(cards: &[PC], indices: &[usize], depth: usize) -> Vec<Item> {
     let mut items = Vec::new();
     let mut k = 0;
     while k < indices.len() {
         let i = indices[k];
-        let path = cards[i].frac;
+        let path = &cards[i].frac;
         if path.len() > depth {
             let gid = path[depth].0;
             let mut num = Vec::new();
@@ -125,7 +160,7 @@ fn width(items: &[Item]) -> i32 {
 }
 
 /// (highest, lowest) grid offset of an item list relative to its own line: exponents and nested fractions included.
-fn reach(cards: &[Card], items: &[Item]) -> (i32, i32) {
+fn reach(cards: &[PC], items: &[Item]) -> (i32, i32) {
     let (mut hi, mut lo) = (0, 0);
     for it in items {
         match it {
@@ -144,11 +179,11 @@ fn reach(cards: &[Card], items: &[Item]) -> (i32, i32) {
 }
 
 /// Where a fraction's numerator and denominator lines are, relative to its bar: one row off, or more when an exponent / nested fraction needs the room.
-fn bases(cards: &[Card], n: &[Item], d: &[Item]) -> (i32, i32) {
+fn bases(cards: &[PC], n: &[Item], d: &[Item]) -> (i32, i32) {
     (-1 - reach(cards, n).1.max(0), 1 + (-reach(cards, d).0).max(0))
 }
 
-fn place(cards: &[Card], items: &[Item], mut col: i32, base: i32, plan: &mut Plan) -> i32 {
+fn place(cards: &[PC], items: &[Item], mut col: i32, base: i32, plan: &mut Plan) -> i32 {
     for it in items {
         match it {
             Item::Card(i) => {
@@ -171,6 +206,12 @@ fn place(cards: &[Card], items: &[Item], mut col: i32, base: i32, plan: &mut Pla
 /// Place the cards of a layout: every card is its own column; a numerator is on the row above its bar and a denominator on the row below, centred over the bar.
 /// The grid rows are shifted so the highest one is 0.
 pub fn plan(cards: &[Card]) -> Plan {
+    let pcs: Vec<PC> = cards.iter().map(|c| PC { level: c.level, frac: c.frac.iter().map(|&(g, p)| (g as u32, p)).collect() }).collect();
+    plan_pc(&pcs)
+}
+
+/// Place cards given only by level and fractions (see `plan`).
+pub fn plan_pc(cards: &[PC]) -> Plan {
     let shown: Vec<usize> = (0..cards.len())
         .filter(|&i| !matches!(cards[i].frac.last(), Some(&(_, p)) if p == BAR || p == HIDE))
         .collect();

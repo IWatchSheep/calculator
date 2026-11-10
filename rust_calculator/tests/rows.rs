@@ -85,7 +85,7 @@ fn an_answer_is_forgotten_when_a_number_changes() {
     fill(&mut doc.rows[0], "math/arithmetic/addition", &["1", "2"]);
     doc.equals_all().unwrap();
     doc.target_row = 0;
-    doc.target_box = 1;
+    doc.target_path = vec![1];
     doc.append_digit('5');
     assert!(doc.rows[0].result.is_empty());
     assert!(doc.rows[0].outs.is_empty());

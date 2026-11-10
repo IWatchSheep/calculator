@@ -48,7 +48,28 @@ pub fn all_operators() -> &'static [Operator] {
     ALL.get_or_init(|| OPS.iter().chain(generated::GENERATED.iter()).copied().collect())
 }
 
+/// The plain number a row can hold around a bracket: one box, any value passes through.
+static NUMBER_OP: Operator = Operator {
+    key: "_number",
+    name: "Number",
+    symbol: "",
+    category: "",
+    subcategory: "",
+    formula: "□",
+    pattern: "□",
+    inputs: &["value"],
+    calc: CalcKind::Ready,
+    extra: &[],
+    variadic: false,
+    kinds: &[],
+    compute: |a: &[f64]| -> Result<Value, String> { Ok(Value::Number(a[0])) },
+    compute_v: Some(|a: &[Value]| -> Result<Value, String> { Ok(a[0].clone()) }),
+};
+
 pub fn get(key: &str) -> Option<&'static Operator> {
+    if key == "_number" {
+        return Some(&NUMBER_OP);
+    }
     all_operators().iter().find(|o| o.key == key).or_else(|| if key.starts_with("word:") { words::get(key) } else { None })
 }
 
