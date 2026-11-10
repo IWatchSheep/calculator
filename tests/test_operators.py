@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 552)
+        self.assertEqual(len(self.ops), 560)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 552)
+        self.assertEqual(len(status), 560)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -229,6 +229,13 @@ CASES = [
     (PH + "resistors_in_series", ([1, 2, 3],), 6), (PH + "snell_s_law", (1, PI / 6, 1), PI / 6),
     (PH + "snell_s_law", (1, PI / 6, 2), math.asin(0.25)), (PH + "torque", (2, 3, PI / 2), 6),
     (PH + "velocity", (10, 2), 5), (PH + "velocity_squared", (0, 2, 4), 4), (PH + "wave_speed", (2, 3), 6),
+    (PH + "speed_after_distance", (0, 2, 8), 5.656854249492381), (PH + "speed_after_distance", (3, 0, 10), 3), (PH + "speed_after_distance", (10, -2, 9), 8), (PH + "speed_after_distance", (10, -2, 5), 8.94427190999916),
+    (PH + "time_to_distance", (0, 2, 4), 2), (PH + "time_to_distance", (4, 0, 10), 2.5), (PH + "time_to_distance", (10, -2, 9), 1), (PH + "time_to_distance", (0, 0, 0), 0),
+    (PH + "stopping_distance", (10, -2), 25), (PH + "stopping_distance", (-8, 2), -16), (PH + "stopping_distance", (0, -2), 0),
+    (PH + "braking_time", (10, -2), 5), (PH + "braking_time", (-8, 2), 4), (PH + "braking_time", (0, -2), 0),
+    (PH + "projectile_range", (10, 0.7853981633974483), 10.19367991845056),
+    (PH + "projectile_time_of_flight", (10, 1.5707963267948966), 2.038735983690112), (PH + "projectile_time_of_flight", (10, 0.7853981633974483), 1.4416040391163047),
+    (PH + "projectile_position", (10, 1.5707963267948966, 1), [0, 5.095]), (PH + "hover_thrust", (2,), 19.62),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -740,6 +747,48 @@ class QuaternionDeclineTests(unittest.TestCase):
         inv = get(LA + "quaternion_inverse").compute
         q = [0.5, -0.5, 0.5, 0.5]
         self.assertTrue(all(abs(a - b) < 1e-15 for a, b in zip(mul(q, inv(q)), [1, 0, 0, 0])))
+
+
+class MotionDeclineTests(unittest.TestCase):
+    """The motion operators for a walking or flying robot decline with the plan's messages."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_motion_declines(self):
+        self.says("speed_after_distance", (1, -2, 5), "the motion stops before that distance")
+        self.says("time_to_distance", (0, 0, 5), "not moving")
+        self.says("time_to_distance", (1, 0, -5), "that distance is not reached")
+        self.says("time_to_distance", (1, -2, 5), "that distance is not reached")
+        for key in ("stopping_distance", "braking_time"):
+            self.says(key, (5, 0), "no acceleration, it does not stop")
+            self.says(key, (5, 2), "it is speeding up, it does not stop")
+            self.says(key, (-5, -2), "it is speeding up, it does not stop")
+
+    def test_the_projectile_and_hover_declines(self):
+        for key, args in (("projectile_range", (10, 0.5)), ("projectile_time_of_flight", (10, 0.5)), ("projectile_position", (10, 0.5, 1))):
+            self.says(key, (-1,) + args[1:], "speed cannot be negative")
+            self.says(key, (args[0], 1.6) + args[2:], "the angle is past straight up")
+            self.says(key, (args[0], -1.6) + args[2:], "the angle is past straight up")
+            self.says(key, args + (0,), "gravity must pull downward")
+        self.says("projectile_position", (10, 0.5, -1), "time cannot be negative")
+        self.says("hover_thrust", (0,), "mass must be positive")
+        self.says("hover_thrust", (2, 0), "gravity must pull downward")
+
+    def test_the_physics_agrees_with_itself(self):
+        import math
+        speed, time, stop, brake = (get(PH + k).compute for k in ("speed_after_distance", "time_to_distance", "stopping_distance", "braking_time"))
+        pos, rng, flight = (get(PH + k).compute for k in ("projectile_position", "projectile_range", "projectile_time_of_flight"))
+        for u, a in ((10, -2), (-8, 2), (3.5, -0.7)):
+            self.assertAlmostEqual(speed(u, a, stop(u, a)), 0, places=6)                      # the speed at the stopping distance is 0
+            self.assertAlmostEqual(time(u, a, stop(u, a)), brake(u, a), places=9)             # and it is reached at the braking time
+        for v, th in ((10, 0.6), (25, 1.1), (7, 0.2)):
+            x, y = pos(v, th, flight(v, th))
+            self.assertAlmostEqual(y, 0, places=9)                                              # back on the ground at the time of flight
+            self.assertAlmostEqual(x, rng(v, th), places=9)                                     # at the range
+        self.assertEqual(get(PH + "hover_thrust").compute(2), get(PH + "weight").compute(2))      # hover thrust balances the weight
 
 
 # --------------------------------------------------------------------------- 3. error handling

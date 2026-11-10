@@ -647,3 +647,13 @@ pub fn angle_between_quaternions(a: &[Value]) -> R {
     let d = (ua[0] * ub[0] + ua[1] * ub[1] + ua[2] * ub[2] + ua[3] * ub[3]).abs().min(1.0);
     n(2.0 * d.acos())
 }
+
+pub fn projectile_position(a: &[Value]) -> R {
+    // v, angle, t, g
+    let (v, angle, t, g) = (num(&a[0])?, num(&a[1])?, num(&a[2])?, num(&a[3])?);
+    need(v >= 0.0, "speed cannot be negative")?;
+    need(angle.abs() <= std::f64::consts::FRAC_PI_2, "the angle is past straight up")?;
+    need(g > 0.0, "gravity must pull downward")?;
+    need(t >= 0.0, "time cannot be negative")?;
+    Ok(vlist(vec![v * angle.cos() * t, v * angle.sin() * t - 0.5 * g * t * t]))
+}

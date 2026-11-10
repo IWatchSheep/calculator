@@ -478,3 +478,58 @@ fn the_rotation_matrix_operators_give_the_numbers_of_the_work_plan_and_decline_w
     assert!(said("quaternion_slerp", vec![list(&[1., 0., 0., 0.]), list(&[0., 1., 0., 0.]), Value::Number(1.5)]).contains("the blend is outside 0 to 1"));
     assert!(said("rotation_matrix_from_quaternion", vec![list(&[0., 0., 0., 0.])]).contains("the quaternion is zero, it cannot be a rotation"));
 }
+
+#[test]
+fn the_motion_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let ph = "physics/physics/";
+    // the optional gravity box is filled in by the calculator, so the operator is called the way the rows call it: with every number, g last
+    let call = |key: &str, nums: &[f64]| -> Result<Value, String> {
+        let op = ops::get(&format!("{ph}{key}")).unwrap();
+        match op.compute_v {
+            Some(f) => f(&nums.iter().map(|x| Value::Number(*x)).collect::<Vec<_>>()),
+            None => (op.compute)(nums),
+        }
+    };
+    let one = |key: &str, nums: &[f64]| -> f64 {
+        match call(key, nums).unwrap() {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let said = |key: &str, nums: &[f64]| call(key, nums).unwrap_err();
+    let (g, half_pi, quarter_pi) = (9.81, std::f64::consts::FRAC_PI_2, std::f64::consts::FRAC_PI_4);
+    assert_eq!(one("speed_after_distance", &[0., 2., 8.]), 5.656854249492381);
+    assert_eq!(one("speed_after_distance", &[3., 0., 10.]), 3.0);
+    assert_eq!(one("speed_after_distance", &[10., -2., 9.]), 8.0);
+    assert_eq!(one("time_to_distance", &[0., 2., 4.]), 2.0);
+    assert_eq!(one("time_to_distance", &[4., 0., 10.]), 2.5);
+    assert_eq!(one("time_to_distance", &[10., -2., 9.]), 1.0);
+    assert_eq!(one("time_to_distance", &[0., 0., 0.]), 0.0);
+    assert_eq!(one("stopping_distance", &[10., -2.]), 25.0);
+    assert_eq!(one("stopping_distance", &[-8., 2.]), -16.0);
+    assert_eq!(one("stopping_distance", &[0., -2.]), 0.0);
+    assert_eq!(one("braking_time", &[10., -2.]), 5.0);
+    assert_eq!(one("braking_time", &[-8., 2.]), 4.0);
+    assert_eq!(one("projectile_range", &[10., quarter_pi, g]), 10.19367991845056);
+    assert_eq!(one("projectile_time_of_flight", &[10., half_pi, g]), 2.038735983690112);
+    assert_eq!(one("projectile_time_of_flight", &[10., quarter_pi, g]), 1.4416040391163047);
+    assert!((one("hover_thrust", &[2., g]) - 19.62).abs() < 1e-12);
+    match call("projectile_position", &[10., half_pi, 1., g]).unwrap() {
+        Value::List(p) => match (&p[0], &p[1]) {
+            (Value::Number(x), Value::Number(y)) => assert!(x.abs() < 1e-12 && (y - 5.095).abs() < 1e-12, "{x} {y}"),
+            o => panic!("{o:?}"),
+        },
+        o => panic!("{o:?}"),
+    }
+    assert!(said("speed_after_distance", &[1., -2., 5.]).contains("the motion stops before that distance"));
+    assert!(said("time_to_distance", &[0., 0., 5.]).contains("not moving"));
+    assert!(said("time_to_distance", &[1., -2., 5.]).contains("that distance is not reached"));
+    assert!(said("stopping_distance", &[5., 0.]).contains("no acceleration, it does not stop"));
+    assert!(said("braking_time", &[5., 2.]).contains("it is speeding up, it does not stop"));
+    assert!(said("projectile_range", &[-1., 0.5, g]).contains("speed cannot be negative"));
+    assert!(said("projectile_range", &[10., 1.6, g]).contains("the angle is past straight up"));
+    assert!(said("projectile_time_of_flight", &[10., 0.5, 0.]).contains("gravity must pull downward"));
+    assert!(said("projectile_position", &[10., 0.5, -1., g]).contains("time cannot be negative"));
+    assert!(said("hover_thrust", &[0., g]).contains("mass must be positive"));
+}

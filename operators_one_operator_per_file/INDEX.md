@@ -569,6 +569,14 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Velocity squared | v² = u² + 2as | v = √(u² + 2 a s) | Ready | `physics/physics/velocity_squared/` |
 | Newton's second law | F = ma | F = m a | Ready | `physics/physics/newton_s_second_law/` |
 | Weight | W = mg | W = m g   (g = 9.81 m/s²) | Ready | `physics/physics/weight/` |
+| Speed after a distance | v² = u² + 2as | v = √(u² + 2 a s)   (u in m/s, a in m/s², s in metres along the line) | Ready | `physics/physics/speed_after_distance/` |
+| Time to a distance | s = ut + ½at² | the smallest t ≥ 0 with s = u t + ½ a t²   (s is the signed displacement) | Ready | `physics/physics/time_to_distance/` |
+| Stopping distance | s = −u²/2a | s = −u² / (2 a)   (the signed displacement until the speed is 0; a must oppose u) | Ready | `physics/physics/stopping_distance/` |
+| Braking time | t = −u/a | t = −u / a   (the time until the speed is 0; a must oppose u) | Ready | `physics/physics/braking_time/` |
+| Projectile range | R = v² sin 2θ / g | R = v² sin(2θ) / g   (level ground, no drag, g = 9.81 m/s², θ in radians) | Ready | `physics/physics/projectile_range/` |
+| Projectile time of flight | T = 2v sin θ / g | T = 2 v sin θ / g   (back to the same height, no drag, g = 9.81 m/s², θ in radians) | Ready | `physics/physics/projectile_time_of_flight/` |
+| Projectile position | x, y at t | x = v cos θ · t,  y = v sin θ · t − ½ g t²   (y is up, no drag, g = 9.81 m/s²) | Ready | `physics/physics/projectile_position/` |
+| Hover thrust | T = mg | T = m g   (the upward force that balances the weight, g = 9.81 m/s²) | Ready | `physics/physics/hover_thrust/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

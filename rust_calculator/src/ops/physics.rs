@@ -315,3 +315,85 @@ pub fn weight(a: &[f64]) -> R {
 pub fn work(a: &[f64]) -> R {
     n(a[0] * a[1])
 }
+
+// ---------- motion for a walking or flying robot (the same operations in the same order as the Python files) ----------
+
+pub fn speed_after_distance(a: &[f64]) -> R {
+    // u, a, s
+    let v2 = a[0] * a[0] + 2.0 * a[1] * a[2];
+    need(v2 >= 0.0, "the motion stops before that distance")?;
+    n(v2.sqrt())
+}
+
+pub fn time_to_distance(a: &[f64]) -> R {
+    // u, a, s
+    let (u, acc, s) = (a[0], a[1], a[2]);
+    if acc == 0.0 {
+        if u == 0.0 {
+            need(s == 0.0, "not moving")?;
+            return n(0.0);
+        }
+        let t = s / u;
+        need(t >= 0.0, "that distance is not reached")?;
+        return n(t + 0.0);
+    }
+    let disc = u * u + 2.0 * acc * s;
+    need(disc >= 0.0, "that distance is not reached")?;
+    let root = disc.sqrt();
+    let mut best: Option<f64> = None;
+    for t in [(-u + root) / acc, (-u - root) / acc] {
+        if t >= 0.0 && best.map_or(true, |b| t < b) {
+            best = Some(t);
+        }
+    }
+    let t = best.ok_or_else(|| "that distance is not reached".to_string())?;
+    n(t + 0.0)
+}
+
+fn opposes(u: f64, a: f64) -> Result<(), String> {
+    need(!(u != 0.0 && a == 0.0), "no acceleration, it does not stop")?;
+    need(u * a <= 0.0, "it is speeding up, it does not stop")
+}
+
+pub fn stopping_distance(a: &[f64]) -> R {
+    // u, a
+    opposes(a[0], a[1])?;
+    if a[0] == 0.0 {
+        return n(0.0);
+    }
+    n(-a[0] * a[0] / (2.0 * a[1]))
+}
+
+pub fn braking_time(a: &[f64]) -> R {
+    // u, a
+    opposes(a[0], a[1])?;
+    if a[0] == 0.0 {
+        return n(0.0);
+    }
+    n(-a[0] / a[1])
+}
+
+fn launch(v: f64, angle: f64, g: f64) -> Result<(), String> {
+    need(v >= 0.0, "speed cannot be negative")?;
+    need(angle.abs() <= std::f64::consts::FRAC_PI_2, "the angle is past straight up")?;
+    need(g > 0.0, "gravity must pull downward")
+}
+
+pub fn projectile_range(a: &[f64]) -> R {
+    // v, angle, g
+    launch(a[0], a[1], a[2])?;
+    n(a[0] * a[0] * (2.0 * a[1]).sin() / a[2])
+}
+
+pub fn projectile_time_of_flight(a: &[f64]) -> R {
+    // v, angle, g
+    launch(a[0], a[1], a[2])?;
+    n(2.0 * a[0] * a[1].sin() / a[2])
+}
+
+pub fn hover_thrust(a: &[f64]) -> R {
+    // m, g
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[1] > 0.0, "gravity must pull downward")?;
+    n(a[0] * a[1])
+}

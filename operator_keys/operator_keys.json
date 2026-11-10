@@ -1,6 +1,6 @@
 {
- "count": 552,
- "ready": 480,
+ "count": 560,
+ "ready": 488,
  "reference": 72,
  "operators": [
   {
@@ -9401,7 +9401,59 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       0.7071067811865476,
+       0,
+       0,
+       0.7071067811865476
+      ]
+     ],
+     "expected": 1.5707963267948966
+    },
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       0,
+       1,
+       0,
+       0
+      ]
+     ],
+     "expected": 3.141592653589793
+    },
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       -1,
+       0,
+       0,
+       0
+      ]
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/characteristic_polynomial",
@@ -10670,7 +10722,100 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       0.7071067811865476,
+       0,
+       0,
+       0.7071067811865476
+      ],
+      0.5
+     ],
+     "expected": [
+      0.9238795325112868,
+      0,
+      0,
+      0.38268343236508984
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       -0.7071067811865476,
+       0,
+       0,
+       -0.7071067811865476
+      ],
+      0.5
+     ],
+     "expected": [
+      0.9238795325112868,
+      0,
+      0,
+      0.38268343236508984
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       0.7071067811865476,
+       0,
+       0,
+       0.7071067811865476
+      ],
+      0
+     ],
+     "expected": [
+      1,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       0.7071067811865476,
+       0,
+       0,
+       0.7071067811865476
+      ],
+      1
+     ],
+     "expected": [
+      0.7071067811865476,
+      0,
+      0,
+      0.7071067811865476
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/quaternion_to_yaw_pitch_roll",
@@ -10765,7 +10910,39 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       [
+        0,
+        -1,
+        0
+       ],
+       [
+        1,
+        0,
+        0
+       ],
+       [
+        0,
+        0,
+        1
+       ]
+      ],
+      [
+       1,
+       0,
+       0
+      ]
+     ],
+     "expected": [
+      0,
+      1,
+      0
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/rotate_vector_by_quaternion",
@@ -10896,7 +11073,35 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       0,
+       0,
+       2
+      ],
+      1.5707963267948966
+     ],
+     "expected": [
+      [
+       0,
+       -1,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       0,
+       1
+      ]
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/rotation_matrix_from_quaternion",
@@ -10925,7 +11130,116 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       1,
+       0,
+       0,
+       0
+      ]
+     ],
+     "expected": [
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       1,
+       0
+      ],
+      [
+       0,
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "args": [
+      [
+       0.7071067811865476,
+       0,
+       0,
+       0.7071067811865476
+      ]
+     ],
+     "expected": [
+      [
+       0,
+       -1,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "args": [
+      [
+       1.4142135623730951,
+       0,
+       0,
+       1.4142135623730951
+      ]
+     ],
+     "expected": [
+      [
+       0,
+       -1,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       1,
+       0,
+       0
+      ]
+     ],
+     "expected": [
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       -1,
+       0
+      ],
+      [
+       0,
+       0,
+       -1
+      ]
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/rotation_matrix_from_yaw_pitch_roll",
@@ -10966,7 +11280,32 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      1.5707963267948966,
+      0,
+      0
+     ],
+     "expected": [
+      [
+       0,
+       -1,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ],
+      [
+       0,
+       0,
+       1
+      ]
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/rotation_matrix_to_quaternion",
@@ -10995,7 +11334,89 @@
    "max_args": 1,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      [
+       [
+        1,
+        0,
+        0
+       ],
+       [
+        0,
+        1,
+        0
+       ],
+       [
+        0,
+        0,
+        1
+       ]
+      ]
+     ],
+     "expected": [
+      1,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        0,
+        -1,
+        0
+       ],
+       [
+        1,
+        0,
+        0
+       ],
+       [
+        0,
+        0,
+        1
+       ]
+      ]
+     ],
+     "expected": [
+      0.7071067811865476,
+      0,
+      0,
+      0.7071067811865476
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        0,
+        0
+       ],
+       [
+        0,
+        -1,
+        0
+       ],
+       [
+        0,
+        0,
+        -1
+       ]
+      ]
+     ],
+     "expected": [
+      0,
+      1,
+      0,
+      0
+     ]
+    }
+   ]
   },
   {
    "key": "math/linear_algebra/row_reduce_rref",
@@ -18998,6 +19419,41 @@
    ]
   },
   {
+   "key": "physics/physics/braking_time",
+   "name": "Braking time",
+   "symbol": "t = −u/a",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "t = −u / a   (the time until the speed is 0; a must oppose u)",
+   "status": "Ready",
+   "inputs": [
+    "u",
+    "a"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = − □ / □",
+   "compute_signature": "compute(u, a)",
+   "compute_params": [
+    {
+     "name": "u",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/brewster_angle",
    "name": "Brewster's angle",
    "symbol": "θB = arctan(n₂/n₁)",
@@ -20336,6 +20792,40 @@
      "expected": -5
     }
    ]
+  },
+  {
+   "key": "physics/physics/hover_thrust",
+   "name": "Hover thrust",
+   "symbol": "T = mg",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "T = m g   (the upward force that balances the weight, g = 9.81 m/s²)",
+   "status": "Ready",
+   "inputs": [
+    "m"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ × g",
+   "compute_signature": "compute(m, g=9.81)",
+   "compute_params": [
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 1,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 1,
+   "examples": []
   },
   {
    "key": "physics/physics/hydraulic_press",
@@ -22091,6 +22581,132 @@
    ]
   },
   {
+   "key": "physics/physics/projectile_position",
+   "name": "Projectile position",
+   "symbol": "x, y at t",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "x = v cos θ · t,  y = v sin θ · t − ½ g t²   (y is up, no drag, g = 9.81 m/s²)",
+   "status": "Ready",
+   "inputs": [
+    "v",
+    "angle",
+    "t"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( □ cos □ · □ , □ sin □ · □ − ½ g □ ² )",
+   "compute_signature": "compute(v, angle, t, g=9.81)",
+   "compute_params": [
+    {
+     "name": "v",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    },
+    {
+     "name": "t",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 3,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/projectile_range",
+   "name": "Projectile range",
+   "symbol": "R = v² sin 2θ / g",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "R = v² sin(2θ) / g   (level ground, no drag, g = 9.81 m/s², θ in radians)",
+   "status": "Ready",
+   "inputs": [
+    "v",
+    "angle"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ ² sin ( 2 □ ) / g",
+   "compute_signature": "compute(v, angle, g=9.81)",
+   "compute_params": [
+    {
+     "name": "v",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
+   "key": "physics/physics/projectile_time_of_flight",
+   "name": "Projectile time of flight",
+   "symbol": "T = 2v sin θ / g",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "T = 2 v sin θ / g   (back to the same height, no drag, g = 9.81 m/s², θ in radians)",
+   "status": "Ready",
+   "inputs": [
+    "v",
+    "angle"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 □ sin □ / g",
+   "compute_signature": "compute(v, angle, g=9.81)",
+   "compute_params": [
+    {
+     "name": "v",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/quantum_harmonic_oscillator",
    "name": "Quantum harmonic oscillator",
    "symbol": "Eₙ = ħω(n + ½)",
@@ -23049,6 +23665,47 @@
    ]
   },
   {
+   "key": "physics/physics/speed_after_distance",
+   "name": "Speed after a distance",
+   "symbol": "v² = u² + 2as",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "v = √(u² + 2 a s)   (u in m/s, a in m/s², s in metres along the line)",
+   "status": "Ready",
+   "inputs": [
+    "u",
+    "a",
+    "s"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( □ ² + 2 □ □ )",
+   "compute_signature": "compute(u, a, s)",
+   "compute_params": [
+    {
+     "name": "u",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "s",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
    "key": "physics/physics/stokes_drag",
    "name": "Stokes' drag force",
    "symbol": "F = 6πμrv",
@@ -23105,6 +23762,41 @@
      "expected": 0
     }
    ]
+  },
+  {
+   "key": "physics/physics/stopping_distance",
+   "name": "Stopping distance",
+   "symbol": "s = −u²/2a",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "s = −u² / (2 a)   (the signed displacement until the speed is 0; a must oppose u)",
+   "status": "Ready",
+   "inputs": [
+    "u",
+    "a"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = − □ ² / ( 2 □ )",
+   "compute_signature": "compute(u, a)",
+   "compute_params": [
+    {
+     "name": "u",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/thin_lens_equation",
@@ -23269,6 +23961,47 @@
      "expected": 10
     }
    ]
+  },
+  {
+   "key": "physics/physics/time_to_distance",
+   "name": "Time to a distance",
+   "symbol": "s = ut + ½at²",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "the smallest t ≥ 0 with s = u t + ½ a t²   (s is the signed displacement)",
+   "status": "Ready",
+   "inputs": [
+    "u",
+    "a",
+    "s"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ : □ t + ½ □ t ² = □",
+   "compute_signature": "compute(u, a, s)",
+   "compute_params": [
+    {
+     "name": "u",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "s",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
   },
   {
    "key": "physics/physics/torque",
