@@ -1,0 +1,377 @@
+word:age/0002	36.0 49.0
+word:age/0006	11.0 13.0
+word:age/0008	31.0 36.0
+word:age/0009	5.0 35.0
+word:average/0011	99.0
+word:average/0013	90.0
+word:average/0014	98.0
+word:average/0016	78.0
+word:average/0018	85.0
+word:consecutive_integers/0070	39.0 40.0 41.0
+word:consecutive_integers/0074	37.0 39.0 41.0 43.0
+word:consecutive_integers/0077	31.0 32.0 33.0
+word:consecutive_integers/0081	9.0 11.0 13.0
+word:consecutive_integers/0084	58.0 60.0 62.0 64.0
+word:current_wind/0086	12.0 5.0
+word:current_wind/0088	11.0 8.0
+word:current_wind/0090	17.0 12.0
+word:current_wind/0093	30.0 15.0
+word:current_wind/0094	14.0 6.0
+word:direct_variation/0105	5.0
+word:direct_variation/0106	945.0
+word:direct_variation/0107	20.0
+word:direct_variation/0108	90.0
+word:direct_variation/0109	178.75
+word:direct_variation/0110	22.5
+word:direct_variation/0111	5.0
+word:direct_variation/0112	229.5
+word:direct_variation/0113	630.0
+word:direct_variation/0114	7.5
+word:distance_catch_up/0126	3.25
+word:distance_catch_up/0128	6.5
+word:distance_catch_up/0130	2.0
+word:distance_catch_up/0132	9.5
+word:distance_catch_up/0134	11.75
+word:distance_opposite_directions/0135	2.5
+word:distance_opposite_directions/0136	4.0
+word:distance_opposite_directions/0137	1.0
+word:distance_opposite_directions/0138	1.0
+word:distance_opposite_directions/0139	3.0
+word:distance_toward_each_other/0150	2.0
+word:distance_toward_each_other/0151	2.0
+word:distance_toward_each_other/0153	1.0
+word:distance_toward_each_other/0155	5.0
+word:distance_toward_each_other/0158	5.0
+word:exponential/0164	6.0
+word:exponential/0165	40.0
+word:exponential/0166	10.0
+word:exponential/0167	12.0
+word:exponential/0168	10.0
+word:exponential/0169	16.0
+word:exponential/0170	8.0
+word:exponential/0171	30.0
+word:exponential/0172	18.0
+word:exponential/0173	18.0
+word:exponential/0174	12.0
+word:exponential/0175	5.0
+word:exponential/0176	4.0
+word:exponential/0177	15.0
+word:formula/0178	4.0
+word:formula/0179	6.0
+word:formula/0186	9.8
+word:formula/0191	1.0
+word:formula/0194	25.2
+word:formula/0197	8.0
+word:formula/0202	9.0
+word:formula/0205	13.2
+word:formula/0209	8.0
+word:geometry_angles/0237	36.0 60.0 84.0
+word:geometry_angles/0238	80.0
+word:geometry_angles/0239	25.0 74.0
+word:geometry_angles/0240	17.0 73.0
+word:geometry_angles/0247	50.0 60.0 70.0
+word:geometry_angles/0248	34.0 144.0
+word:geometry_angles/0249	14.0 76.0
+word:geometry_angles/0252	98.0
+word:geometry_angles/0257	29.0 120.0
+word:geometry_angles/0258	24.0 72.0 84.0
+word:geometry_angles/0259	15.0 75.0
+word:geometry_angles/0263	31.0 149.0
+word:geometry_angles/0265	55.0
+word:geometry_angles/0266	30.0 45.0 105.0
+word:geometry_angles/0268	17.0 83.0
+word:geometry_angles/0272	116.0
+word:geometry_angles/0273	32.0 65.0
+word:geometry_polygons/0301	6.0
+word:geometry_polygons/0303	13.0
+word:geometry_polygons/0305	7.0
+word:geometry_polygons/0306	17.0
+word:geometry_polygons/0308	5.0
+word:geometry_quadratic/0309	18.0 2.0
+word:geometry_quadratic/0319	31.0 21.0
+word:geometry_quadratic/0325	21.0 9.0
+word:geometry_quadratic/0335	27.0 15.0
+word:inequality/0359	313.0
+word:inequality/0360	16.0
+word:inequality/0361	8.0
+word:inequality/0363	11.0
+word:inequality/0368	3.0
+word:inequality/0371	17.0
+word:inequality/0372	10.0
+word:inequality/0376	91.0
+word:inequality/0377	1.0
+word:inequality/0381	519.0
+word:inequality/0382	17.0
+word:inequality/0383	33.0
+word:inequality/0388	10.0
+word:inequality/0390	33.0
+word:inequality/0392	8.0
+word:inequality/0393	144.0
+word:inequality/0395	9.0
+word:inequality/0398	463.0
+word:linear_cost/0420	51.0
+word:linear_cost/0421	14.0
+word:linear_cost/0422	31.0 30.0
+word:linear_cost/0423	13.0
+word:linear_cost/0424	10.0
+word:linear_cost/0425	14.0
+word:linear_cost/0426	2.0
+word:linear_cost/0430	24.0
+word:linear_cost/0433	25.0 28.0
+word:linear_cost/0434	23.0
+word:linear_cost/0435	4.0
+word:linear_cost/0437	4.0
+word:linear_cost/0440	13.0
+word:linear_cost/0441	3.0
+word:linear_cost/0443	3.0
+word:linear_cost/0444	13.0
+word:linear_cost/0446	3.5
+word:linear_cost/0449	88.0
+word:linear_cost/0450	4.0
+word:linear_cost/0454	12.0 9.0
+word:linear_cost/0455	19.0
+word:linear_cost/0456	11.0
+word:linear_cost/0457	18.0
+word:linear_cost/0459	10.0
+word:linear_cost/0460	17.0
+word:linear_cost/0461	8.0
+word:linear_cost/0465	10.0
+word:linear_cost/0466	15.0 9.0
+word:linear_cost/0467	2.0
+word:linear_cost/0469	3.0
+word:linear_cost/0470	78.0
+word:linear_cost/0472	9.0
+word:linear_cost/0473	8.0
+word:linear_cost/0474	26.0 27.0
+word:linear_cost/0476	8.0
+word:linear_cost/0477	5.0
+word:linear_cost/0478	3.0
+word:linear_model/0480	18.0
+word:linear_model/0481	176.0
+word:linear_model/0482	6.0 22.0 19.0
+word:linear_model/0483	7.5
+word:linear_model/0484	53.0
+word:linear_model/0485	4.5
+word:linear_model/0491	10.0
+word:linear_model/0493	24.0
+word:linear_model/0494	6.0 74.0 14.0
+word:linear_model/0496	74.0
+word:linear_model/0498	4.0
+word:linear_model/0501	22.0
+word:linear_model/0502	36.0
+word:linear_model/0504	5.0 94.0 13.0
+word:linear_model/0506	6.0
+word:linear_model/0507	14.0
+word:linear_model/0511	5.0
+word:linear_model/0512	6.0
+word:linear_model/0514	107.0
+word:linear_model/0516	3.0
+word:linear_model/0518	10.0
+word:linear_model/0519	20.0
+word:linear_model/0520	20.0
+word:linear_model/0522	7.0 72.0 10.0
+word:linear_model/0525	14.0
+word:linear_model/0527	5.0
+word:linear_model/0529	3.0
+word:linear_model/0530	14.0 52.0 13.0
+word:linear_model/0531	22.0
+word:mixture/0532	14.0
+word:mixture/0533	44.0 56.0
+word:mixture/0534	22.0 3.0
+word:mixture/0537	10.0 40.0
+word:mixture/0540	10.0
+word:mixture/0544	17.0 3.0
+word:mixture/0545	26.0 14.0
+word:mixture/0547	20.0 20.0
+word:mixture/0549	7.0 43.0
+word:mixture/0550	15.0 5.0
+word:mixture/0553	3.0 17.0
+word:mixture/0555	12.0
+word:mixture/0558	12.0
+word:mixture/0561	18.0 12.0
+word:mixture/0562	49.0 1.0
+word:mixture/0563	6.0 34.0
+word:mixture/0566	9.0 11.0
+word:mixture/0569	10.0 10.0
+word:number_puzzle/0570	35.0
+word:number_puzzle/0573	-28.0
+word:number_puzzle/0574	25.0
+word:number_puzzle/0575	64.0
+word:number_puzzle/0577	24.0
+word:number_puzzle/0578	10.0
+word:number_puzzle/0580	21.0
+word:number_puzzle/0581	30.0
+word:number_puzzle/0582	9.0
+word:number_puzzle/0584	16.0
+word:number_puzzle/0586	22.0
+word:number_puzzle/0587	16.0
+word:number_puzzle/0588	12.0
+word:number_puzzle/0589	20.0
+word:number_puzzle/0590	13.0
+word:number_puzzle/0592	13.0
+word:number_puzzle/0593	30.0
+word:number_puzzle/0596	40.0
+word:number_puzzle/0598	40.0
+word:number_puzzle/0599	33.0
+word:number_puzzle/0601	13.0
+word:number_puzzle/0602	40.0
+word:number_puzzle/0603	80.0
+word:number_puzzle/0604	29.0
+word:number_puzzle/0606	10.0
+word:number_puzzle/0608	-7.0
+word:number_puzzle/0609	30.0
+word:number_puzzle/0610	24.0
+word:percent/0612	860.0
+word:percent/0613	13.0
+word:percent/0614	60.0
+word:percent/0615	162.65
+word:percent/0616	21200.0
+word:percent/0617	76000.0
+word:percent/0618	1120.0
+word:percent/0619	43.6
+word:percent/0622	25.0
+word:percent/0626	197.48
+word:percent/0627	6800.0
+word:percent/0629	320.0
+word:percent/0631	54000.0
+word:percent/0633	13.0
+word:percent/0634	25.0
+word:percent/0635	92.4
+word:percent/0637	45.0
+word:percent/0638	730.0
+word:percent/0643	4200.0
+word:percent/0645	66000.0
+word:percent/0646	184.8
+word:percent/0647	38.0
+word:percent/0648	790.0
+word:percent/0649	-40.0
+word:percent/0650	1060.0
+word:percent/0651	25.0
+word:percent/0653	195.16
+word:percent/0655	-40.0
+word:percent/0656	76.0
+word:percent/0658	302.8
+word:percent/0659	345.0
+word:percent/0662	137.9
+word:percent/0663	89000.0
+word:percent/0665	400.0
+word:percent/0666	580.0
+word:percent/0667	35000.0
+word:percent/0669	680.0
+word:percent/0670	56.0
+word:percent/0671	10000.0
+word:percent/0673	212.0
+word:percent/0674	80.0
+word:percent/0675	154.4
+word:percent_markup/0682	770.0
+word:percent_markup/0683	340.0
+word:percent_markup/0684	295.0
+word:percent_markup/0685	85.0
+word:proportion/0692	64.0
+word:proportion/0693	9.0
+word:proportion/0694	1.0
+word:proportion/0695	1500.0
+word:proportion/0696	10.0
+word:proportion/0698	45.0
+word:proportion/0699	6.0
+word:proportion/0701	20.0
+word:proportion/0702	1.25
+word:proportion/0703	880.0
+word:proportion/0705	60.0
+word:proportion/0706	30.0
+word:proportion/0708	40.0
+word:proportion/0710	1.0
+word:proportion/0711	5.0
+word:proportion/0714	54.0
+word:proportion/0715	780.0
+word:proportion/0716	2.5
+word:proportion/0717	20.0
+word:proportion/0718	2.0
+word:proportion/0719	6.0
+word:proportion/0720	24.0
+word:proportion/0721	84.0
+word:proportion/0722	0.625
+word:quadratic/0733	3.0 4.0
+word:quadratic/0738	14.0 15.0
+word:quadratic/0741	14.0 16.0
+word:quadratic/0747	12.0 14.0
+word:quadratic/0753	5.0 7.0
+word:rate/0774	14.0
+word:rate/0775	25.0
+word:rate/0776	24.0
+word:rate/0777	12.0
+word:rate/0778	25.0
+word:ratio/0779	44.0
+word:ratio/0785	56.0 49.0
+word:ratio/0789	72.0
+word:ratio/0791	59.0 33.0
+word:ratio/0795	98.0
+word:ratio/0798	45.0 24.0
+word:ratio/0801	18.0
+word:ratio/0806	43.0 21.0
+word:ratio/0807	63.0
+word:rational_equation/0812	20.0
+word:rational_equation/0813	490.0
+word:rational_equation/0820	44.0
+word:rational_equation/0824	150.0
+word:rational_equation/0829	570.0
+word:rational_equation/0830	50.0
+word:rational_equation/0836	20.0
+word:rational_equation/0841	300.0
+word:rational_equation/0845	360.0
+word:savings/0848	16.0
+word:savings/0850	12.0
+word:savings/0853	56.0
+word:savings/0855	22.0
+word:simple_interest/0863	16000.0 15000.0
+word:simple_interest/0867	19000.0 1500.0
+word:simple_interest/0872	19500.0 11000.0
+word:simple_interest/0875	7500.0 6000.0
+word:simple_interest/0881	20000.0 20000.0
+word:system_of_equations/0882	28.0 12.0
+word:system_of_equations/0883	9.0 21.0
+word:system_of_equations/0884	11.05 10.65
+word:system_of_equations/0885	75.0 15.0
+word:system_of_equations/0886	19.0 12.0
+word:system_of_equations/0887	495.0 133.0
+word:system_of_equations/0892	113.0 13.0
+word:system_of_equations/0898	123.0 67.0
+word:system_of_equations/0899	13.0 17.0
+word:system_of_equations/0901	15.0 9.0
+word:system_of_equations/0904	90.0 18.0
+word:system_of_equations/0905	20.0 3.0
+word:system_of_equations/0908	4.05 5.15
+word:system_of_equations/0909	440.0 205.0
+word:system_of_equations/0915	12.0 6.0
+word:system_of_equations/0916	43.0 23.0
+word:system_of_equations/0918	512.0 523.0
+word:system_of_equations/0919	29.0 1.0
+word:system_of_equations/0920	27.0 21.0
+word:system_of_equations/0921	5.55 4.55
+word:system_of_equations/0923	26.0 10.0
+word:system_of_equations/0924	30.0 6.0
+word:system_of_equations/0929	4.85 4.8
+word:system_of_equations/0930	692.0 175.0
+word:system_of_equations/0931	16.0 4.0
+word:system_of_equations/0933	26.0 7.0
+word:system_of_equations/0935	14.0 2.0
+word:system_of_equations/0939	8.0 10.0
+word:system_of_equations/0941	25.0 14.0
+word:system_of_equations/0942	17.0 23.0
+word:system_of_equations/0943	80.0 16.0
+word:system_of_equations/0944	30.0 6.0
+word:system_of_equations/0948	5.0 12.0
+word:system_of_equations/0949	501.0 661.0
+word:work_rate/0964	16.0
+word:work_rate/0965	2.5
+word:work_rate/0966	2.5
+word:work_rate/0976	3.3333333333333335
+word:work_rate/0977	2.5
+word:work_rate/0979	38.0
+word:work_rate/0981	7.5
+word:work_rate/0983	7.2
+word:work_rate/0985	58.0
+word:work_rate/0988	41.0
+word:work_rate/0992	6.666666666666667
+word:work_rate/0994	6.0
+word:work_rate/0999	6.0

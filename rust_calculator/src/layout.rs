@@ -67,7 +67,7 @@ pub struct Layout {
 
 pub fn get(key: &str) -> Option<&'static Layout> {
     static MAP: OnceLock<HashMap<&'static str, &'static Layout>> = OnceLock::new();
-    MAP.get_or_init(|| crate::layouts::LAYOUTS.iter().map(|l| (l.key, l)).collect()).get(key).copied()
+    MAP.get_or_init(|| crate::layouts::LAYOUTS.iter().chain(crate::word_layouts::WORD_LAYOUTS.iter()).map(|l| (l.key, l)).collect()).get(key).copied()
 }
 
 /// Where every card goes on the grid.

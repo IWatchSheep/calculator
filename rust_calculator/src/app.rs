@@ -18,6 +18,9 @@ pub struct CalculatorApp {
     show_ops: bool,
     op_filter: String,
     selected_category: String,
+    /// The list shows the 1,000 algebra word problems instead of the operators.
+    show_words: bool,
+    word_category: String,
 }
 
 impl Default for CalculatorApp {
@@ -28,6 +31,8 @@ impl Default for CalculatorApp {
             show_ops: true,
             op_filter: String::new(),
             selected_category: "All".into(),
+            show_words: false,
+            word_category: "All".into(),
         }
     }
 }
@@ -111,6 +116,14 @@ impl eframe::App for CalculatorApp {
 
 impl CalculatorApp {
     fn ui_operators(&mut self, ui: &mut Ui) {
+        ui.horizontal(|ui| {
+            ui.selectable_value(&mut self.show_words, false, "Operators");
+            ui.selectable_value(&mut self.show_words, true, "Algebra word problems");
+        });
+        if self.show_words {
+            self.ui_word_problems(ui);
+            return;
+        }
         ui.heading("Operators");
         ui.label("Click an operator to put it on the target row.");
         ui.horizontal(|ui| {
@@ -169,6 +182,70 @@ impl CalculatorApp {
                 self.apply_operator(key);
             }
         });
+    }
+
+    /// The 1,000 algebra word problems: a Ready one goes into the target row as its equation (the boxes hold the numbers of the text, press `=`);
+    /// a Reference one only says that nothing answers it yet.
+    fn ui_word_problems(&mut self, ui: &mut Ui) {
+        ui.heading("Algebra word problems");
+        ui.label("Click a problem. Ready ones go into the target row as their equation.");
+        ui.horizontal(|ui| {
+            ui.label("Filter:");
+            ui.text_edit_singleline(&mut self.op_filter);
+        });
+        let items = ops::words::items();
+        let cats = {
+            let mut c = vec!["All".to_string()];
+            for it in items {
+                if !c.iter().any(|x| x == it.category) {
+                    c.push(it.category.to_string());
+                }
+            }
+            c
+        };
+        egui::ComboBox::from_id_salt("wordcat").selected_text(&self.word_category).show_ui(ui, |ui| {
+            for c in &cats {
+                ui.selectable_value(&mut self.word_category, c.clone(), c);
+            }
+        });
+        let ready = items.iter().filter(|i| i.ready).count();
+        ui.weak(format!("{} problems: {} ready, {} reference only.", items.len(), ready, items.len() - ready));
+        ui.separator();
+        let filter = self.op_filter.to_ascii_lowercase();
+        ScrollArea::vertical().show(ui, |ui| {
+            let mut pick: Option<&'static ops::words::Item> = None;
+            for it in items {
+                if self.word_category != "All" && it.category != self.word_category {
+                    continue;
+                }
+                if !filter.is_empty() && !format!("{} {} {}", it.id, it.category, it.problem).to_ascii_lowercase().contains(&filter) {
+                    continue;
+                }
+                let tag = if it.ready { "Ready" } else { "Reference" };
+                if ui.selectable_label(false, format!("{}  {}  [{}]", it.id, it.category, tag)).clicked() {
+                    pick = Some(it);
+                }
+                ui.weak(it.problem);
+            }
+            if let Some(it) = pick {
+                self.apply_word_problem(it);
+            }
+        });
+    }
+
+    fn apply_word_problem(&mut self, it: &ops::words::Item) {
+        if !it.ready {
+            self.status = format!(
+                "{} {} is reference only: its text and steps are stored, but no solver answers it yet, so it is not placed in a row.  {}",
+                it.category, it.id, it.problem
+            );
+            return;
+        }
+        self.apply_operator(&format!("word:{}", it.key));
+        self.status = format!(
+            "{}  {} {}: the row is its equation. Each box holds a number from the text, already filled in: press =, or change a box first.",
+            it.problem, it.category, it.id
+        );
     }
 
     fn apply_operator(&mut self, key: &str) {

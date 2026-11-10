@@ -38,6 +38,8 @@ mod misc;
 mod sets;
 mod vals;
 mod physics;
+pub mod words;
+mod words_data;
 
 /// Every operator: the hand-written ones below, then the ones generated from the catalog
 /// (`operator_keys/make_rust_ops.py`).
@@ -47,7 +49,7 @@ pub fn all_operators() -> &'static [Operator] {
 }
 
 pub fn get(key: &str) -> Option<&'static Operator> {
-    all_operators().iter().find(|o| o.key == key)
+    all_operators().iter().find(|o| o.key == key).or_else(|| if key.starts_with("word:") { words::get(key) } else { None })
 }
 
 const OPS: &[Operator] = &[

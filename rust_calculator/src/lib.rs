@@ -10,3 +10,5 @@ pub mod ops;
 pub mod row;
 pub mod value;
 pub mod valuejson;
+pub mod word_layouts;
+pub mod word_solver;

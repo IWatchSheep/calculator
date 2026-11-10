@@ -118,6 +118,10 @@ impl Row {
     pub fn set_operator(&mut self, op: &Operator) {
         self.op_key = Some(op.key.to_string());
         self.inputs = vec![String::new(); op.arity()];
+        if let Some(d) = crate::ops::words::defaults(op.key) {
+            // a word problem starts with its own numbers in the boxes
+            self.inputs = d.iter().map(|s| s.to_string()).collect();
+        }
         self.clear_result();
         self.is_result = false;
         self.error = None;
