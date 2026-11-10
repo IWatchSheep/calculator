@@ -3139,7 +3139,7 @@ def complementary_supplementary(problem):
         return None
     eq = "x + (%sx %s %s) = %s" % (show(k), "-" if c < 0 else "+", show(abs(c)), show(total))
     return Result("complementary_supplementary", [x, other], eq,
-                  "%s, so %sx = %s and x = %s; the other angle is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
+                  "%s, so %sx = %s and x = %s; the angle described is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
 
 
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,

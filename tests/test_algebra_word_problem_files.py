@@ -138,6 +138,20 @@ class InTheCalculator(unittest.TestCase):
                 self.assertEqual(row_tree.evaluate(node), lib.compute(), key)
         self.assertEqual(ready, 377)
 
+    def test_a_list_of_answers_cannot_be_joined(self):
+        from operator_row_math import row_tree
+        for symbol in ("+", "−", "×", "÷", "=", "≠", "<", ">", "≤", "≥"):
+            for a, b in (([27, 21], 2), (2, [27, 21]), ([27, 21], [1, 2]), ((1, 2), 3)):
+                with self.assertRaises(ValueError, msg=symbol):
+                    row_tree.join(symbol, a, b)
+        self.assertEqual(row_tree.join("+", 2, 3), 5)                       # plain numbers still join
+
+    def test_the_boxes_start_with_the_problems_own_numbers(self):
+        from operator_row_math import row_tree
+        for key in library.keys():
+            node = row_tree.new_node(row_tree.WORD_PREFIX + key)
+            self.assertEqual(node["slots"], [str(d) for d in rows.get(key).DEFAULTS], key)
+
     def test_the_window_places_a_problem_and_equals_answers_it(self):
         try:
             import tkinter
@@ -149,26 +163,43 @@ class InTheCalculator(unittest.TestCase):
         try:
             import algebra_word_problem_catalog as catalog
             items = {i["key"]: i for i in catalog.load_catalog(os.path.join(LIB, "INDEX.md"))}
-
-            def fill(key):
-                boxes = [k for k, c in enumerate(app._cards(0)) if c[0] == "box"]
-                for k, number in zip(boxes, library.get(key).NUMBERS):
-                    app._pick_box(0, k)
-                    for ch in str(number):
-                        app._key(ch)
+            say = lambda: app.results.get("1.0", "end")                                # noqa: E731
+            boxes = lambda: [k for k, c in enumerate(app._cards(0)) if c[0] == "box"]  # noqa: E731
 
             for key, shown in (("savings/0848", "16"), ("system_of_equations/0920", "(27, 21)")):
                 app._clear_all()
                 app._place_word_problem(items[key])
-                self.assertIn(items[key]["problem"], app.results.get("1.0", "end"))
-                fill(key)
+                self.assertIn(items[key]["problem"], say())
+                app._equals()                                                      # the boxes already hold the stored numbers
+                self.assertIn("=  " + shown, say(), key)
+            # change a number: 200 saved at $15 a week against 350 at $5 is 15 weeks
+            app._clear_all()
+            app._place_word_problem(items["savings/0848"])
+            for k, text in zip(boxes(), ("200", "15", "350", "5")):
+                app._pick_box(0, k)
+                for _ in range(6):
+                    app._key("⌫")
+                for ch in text:
+                    app._key(ch)
+            app._equals()
+            self.assertIn("=  15", say())
+            # nesting: Addition( word problem, 1 ) -> 16 + 1;  a list answer inside an operator that wants one number says so
+            for key, expect in (("savings/0848", "=  17"), ("system_of_equations/0920", "single number")):
+                app._clear_all()
+                app._place_operator_row("math/arithmetic/addition")
+                app._pick_box(0, boxes()[0])
+                app._place_word_problem(items[key])
+                self.assertEqual(app.rows[0]["node"]["slots"][0]["slots"][0]["key"], "word:" + key)
+                last = [k for k, c in enumerate(app._cards(0)) if c[0] == "box"][-1]
+                app._pick_box(0, last)
+                app._key("1")
                 app._equals()
-                self.assertIn("=  " + shown, app.results.get("1.0", "end"), key)
+                self.assertIn(expect, say(), key)
             reference = next(i for i in items.values() if i["status"] != "Ready")
             app._clear_all()
             app._place_word_problem(reference)
-            self.assertIn("reference only", app.results.get("1.0", "end"))
-            self.assertTrue(app._is_blank(app.rows[0]))          # nothing was placed
+            self.assertIn("reference only", say())
+            self.assertTrue(app._is_blank(app.rows[0]))                              # nothing was placed
         finally:
             app.destroy()
 

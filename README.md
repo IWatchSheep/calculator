@@ -230,7 +230,7 @@ Read these at the start of every session. Update them every time a batch is fini
 
 - **The solver covers 349 of the 1,000 generated problems**, and the number-puzzle reader covers 28 more. The other 623 are Reference. The missing wordings are the appendix of `algebra_word_problems_status.txt`.
 - **The operator is not built.** Text pasted in the Templates box should be split into word boxes and number boxes, matched to a family, and answered with the reading the solver already produces. When no family is sure, it falls back to the trained matcher. The open window decisions are in `algebra_word_problems/chess_test_results.txt`, section 7.4.
-- **The rows are in the window.** A Ready problem clicked in Operators > Algebra word problems goes into the target row (or into a box of a row that already has math), and `=` calls its `compute()`. Several answers show as a list in the result. Reference problems are not placed. The boxes are empty: the stored numbers are not prefilled, and the boxes are labelled `number 1`, `number 2`, ... rather than by role.
+- **The rows are in the window.** A Ready problem clicked in Operators > Algebra word problems goes into the target row (or into a box of a row that already has math), and `=` calls its `compute()`. Several answers show as a list in the result. Reference problems are not placed. The boxes start with the problem's own numbers, so the first `=` works at once; change them and press `=` again. They are labelled `number 1`, `number 2`, ... rather than by role. A list of answers cannot be joined to another row with any join symbol, and inside an operator that wants one number it says so.
 
 ### Decisions
 

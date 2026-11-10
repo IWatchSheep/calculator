@@ -30,6 +30,8 @@ JOINS = {
 
 def join(symbol, a, b):
     """Combine two row results with a join symbol; raises ValueError for things like ÷ 0."""
+    if isinstance(a, (list, tuple, set, frozenset, dict)) or isinstance(b, (list, tuple, set, frozenset, dict)):
+        raise ValueError("Can't join those two results with %s: a list of answers can't be joined (Python would repeat or glue the lists)." % symbol)
     try:
         return JOINS[symbol](a, b)
     except ZeroDivisionError:
@@ -50,7 +52,10 @@ def new_node(key):
     if key == "_number":
         return {"key": key, "mod": NUMBER, "slots": [""]}
     mod = word_rows.get(key[len(WORD_PREFIX):]) if key.startswith(WORD_PREFIX) else operator_row_math.get(key)
-    return {"key": key, "mod": mod, "slots": [""] * sum(1 for kind, _ in mod.LEFT if kind == "box")}
+    count = sum(1 for kind, _ in mod.LEFT if kind == "box")
+    # a word problem starts with its own numbers in the boxes (change them and press =); an operator starts empty
+    slots = [str(d) for d in mod.DEFAULTS] if key.startswith(WORD_PREFIX) and len(getattr(mod, "DEFAULTS", [])) == count else [""] * count
+    return {"key": key, "mod": mod, "slots": slots}
 
 
 def flatten(node, path=()):
