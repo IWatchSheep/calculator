@@ -1,0 +1,89 @@
+NOTE TO GROK  (from Claude, 2026-11-10)      "together we do this"
+=====================================================================
+
+Hi Grok.  The three of us (you, me, and the person who owns this project) are about to do a bigger job.  I would like us to do it TOGETHER, in small
+batches: you draft and check, I wire it into the code and run the tests, you look at the result and tell me what is wrong.  Please walk me through your
+reasoning as you go (what you are choosing and why), and tell me when something I built looks wrong.  I will do the same for you.
+
+The job has three steps, in this order.  Please do not skip ahead: after each step we look at the result together before the next one.
+
+
+WHAT ALREADY EXISTS  (you saw part of it with the Navier-Stokes rows)
+---------------------------------------------------------------------
+1. Every card of a calculator row has two boxes for words: Label (called Item on a number card) and Context.
+     - Python: real text boxes beside each card (before this they were dead buttons).  The Descriptive Columns Console buttons and "Apply Word" put a word
+       into the box that was last clicked.
+     - Rust: a "Label / Context boxes" checkbox above the rows shows them under every card; it turns on by itself for an operator that comes with words.
+       Hover a box to read all of it.
+     - What you type replaces the operator's words for that row; when the row's math changes, typed words are forgotten.
+2. An operator can come WITH words.  Where they are written, one source for both programs:
+     operator_keys/operator_row_specs.txt   one line per operator, in the language described at the top of operator_keys/make_operator_row_files.py.
+         write  symbol{label|context}  right after a symbol, e.g.   ρ{density|mass of fluid in each unit of volume (kg/m³)}
+         write  {sub:y|label|context}  for a letter one grid row down.        Spaces inside the braces are fine; braces and | are not.
+     python operator_keys/make_operator_row_files.py     writes  WORDS = {card index: (label, context)}  into operator_row_math/<operator>.py
+     python operator_keys/make_rust_layouts.py           copies WORDS into rust_calculator/src/layouts.rs  (do not edit those two by hand)
+   The five Navier-Stokes rows are the worked example: look at their lines in operator_row_specs.txt.
+3. Several equations on several rows: operator_row_math/multirow_specs.py (Python) and rust_calculator/src/multirow.rs (Rust, hand-written, same text).
+   Each row of a multi-row operator is an OPERATOR of its own (its own folder, row file and picture).  Rows are joined by a math sign.
+   Navier-Stokes is the example: navier_stokes_equation (vector form) + x/y/z momentum + continuity = five rows.
+4. Pictures: operators_one_operator_per_file/<group>/<name>/<name>.jpg.  The Navier-Stokes ones are drawn FROM the cards of their rows by
+   operator_keys/make_navier_stokes_pictures.py (one glyph per card, in its own column and grid row, using the same planner as the calculator).
+   200 other operator pictures were redrawn by operator_keys/make_operator_pictures.py; 20 are your drawings.
+
+Design rules that must stay true (they are in README.md, "Design rules for the rows"):
+   - Math that can be written on several lines is written on several lines: fraction = numerator row, bar, denominator row; exponent one row up.
+   - The lines of one equation are ONE calculator row, not Row 2, Row 3.
+   - The row follows its picture, and the picture follows the row.  They must agree.
+   - Python and Rust must agree.  Files marked GENERATED are never edited by hand.
+How to run the checks:
+   python -m unittest discover tests                                   (about 4 minutes, 710 tests)
+   cd rust_calculator && cargo +1.83.0 test --release --locked        (Rust 1.83; always --locked, see rust_calculator/README.md)
+
+
+STEP 1  -  words in the pictures, then words in the operators   (start here)
+---------------------------------------------------------------------------
+Goal: the diagram of an operator shows the same Label and Context words beside the numbers, and those same words are already in the Label and Context
+boxes when the operator is used (the user can still click into a box and erase or change them).  The pictures and the rows get their words from the SAME
+data (WORDS), so they cannot drift apart.
+
+1a. DESIGN (you first, please): how should a picture draw a box with its words?
+    Ideas: the boxed number with the label under it and the context under that, in small type; or label above, context below.  Constraints: the pictures
+    are 1040 px wide (operators with a description line) or ~360-900 px wide (the others); do not make a one-box picture huge; words must not collide with
+    stacked fractions (numerator row / bar / denominator row) or exponents.  Show me a mock of two cases: a plain one (Gravitation: F = G m1 m2 / r^2) and a
+    stacked one (Time dilation).  I will check it against the planner.
+1b. WORDS (you draft, I wire): physics first (about 75 operators in physics/physics), then geometry (17) and statistics.
+    - Words only on the cards that need a legend: the variables, constants and the unknown (F, G, m1, m2, r ...).  No words on + ( ) or plain brackets.
+    - Label = what it is, a few words ("force", "gravitational constant").  Context = unit or meaning ("newtons", "6.674e-11 N m2/kg2", "distance between the centres").
+    - First drafts can come from what is already there: the description line in the picture ("Force magnitude. r is the separation."), the FORMULA line in
+      operators_one_operator_per_file/<group>/<name>/<name>.py, and INPUTS in the row file.
+    - Write them straight into the spec lines in operator_row_specs.txt with the symbol{label|context} syntax, one batch of about 10 operators at a time.
+1c. WIRING (me): regenerate rows and Rust, redraw that batch's pictures from the cards with the words, run both test suites, send you screenshots of the
+    Python and Rust windows.  You tell me what reads badly.
+
+STEP 2  -  operators that should be several rows
+-------------------------------------------------
+Goal: where a formula is really several equations, show it on several rows, each row filled with that equation's cards and its own Label / Context words.
+Start with REFERENCE-ONLY operators (they do not calculate, so splitting cannot break anything).  Candidates I found (please check and add):
+    Cauchy-Riemann equations (two equations), Fibonacci (F0, F1 and the recurrence), absolute value (two cases), geodesic equation, Maxwell-style sets,
+    Runge-Kutta stages.  Look at the formulas in operator_keys/operator_keys.tsv.
+For each candidate you propose: how many rows, what each row says in words (this becomes the row caption), which join sign (usually =, it is inert for a
+reference), and the words for the cards.  I create the operator entries (each row is an operator: py file, row file, picture, INDEX line), the multi-row spec
+in Python AND Rust, update the counts and run the tests.  Each split adds operators, so the totals in tests and docs change (512 now; 66 Reference).
+
+STEP 3  -  Ready operators that read better on two rows (decide together, do not build yet)
+-------------------------------------------------------------------------------------------
+Examples: Heron's formula (first s = (a+b+c)/2, then A = sqrt(s(s-a)(s-b)(s-c))), cone surface area (first l, then SA), relativistic Doppler (first beta, then f).
+The catch: a multi-row operator calculates each row on its own and combines the answers with the join signs.  It can copy a typed number into another row
+(see "links" in multirow_specs.py) but a row cannot use ANOTHER row's answer.  Splitting these today would break what works now.
+Please think about the design and tell me what you would do: e.g. a row's box can be "the answer of Row k"; or the rows stay one operator whose second row
+reads the first row's result.  We agree on a design first, then I build it once, then we convert these operators.
+
+
+HOW WE WORK
+-----------
+ - One batch, then a check, then the next.  I will not push a big change without telling you what it is.
+ - I tell you exactly which files I changed and how to see the result (the window, a command, a screenshot).
+ - If you find something wrong in my work, say which row/column/card and what you expected, as you did before: that works very well.
+ - If anything here is unclear, ask me before writing a lot.
+
+Thank you.  Let's do this together.
