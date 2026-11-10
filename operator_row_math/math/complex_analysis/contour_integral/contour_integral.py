@@ -1,6 +1,6 @@
 """Row for the operator: Contour integral
 
-Picture:      ∮ f(□) d□ = □
+Picture:      ∫ □ dz along □ with □ = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/complex_analysis/contour_integral
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Contour integral'
 KEY = 'math/complex_analysis/contour_integral'
-PATTERN = '∮ f(□) d□ = □'
+PATTERN = '∫ □ dz along □ with □ = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'center', 'radius']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Contour integral('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', '∫'), ('box', ''), ('op', 'dz'), ('op', 'along'), ('box', ''), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

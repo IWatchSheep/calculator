@@ -1,6 +1,6 @@
 """Row for the operator: Scalar multiply
 
-Picture:      (□□)ᵢⱼ = □ · □ᵢⱼ
+Picture:      ( □ □ ) ᵢⱼ = □ · □ ᵢⱼ
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/linear_algebra/scalar_multiply
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Scalar multiply'
 KEY = 'math/linear_algebra/scalar_multiply'
-PATTERN = '(□□)ᵢⱼ = □ · □ᵢⱼ'
+PATTERN = '( □ □ ) ᵢⱼ = □ · □ ᵢⱼ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['k', 'A']    # what each box (left to right) is
 KINDS = ['number', 'matrix']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'kA('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '·'), ('box', ''), ('op', 'ᵢⱼ')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '('), ('box', ''), ('box', ''), ('op', ')'), ('op', 'ᵢⱼ'), ('op', '='), ('box', ''), ('op', '·'), ('box', ''), ('op', 'ᵢⱼ')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

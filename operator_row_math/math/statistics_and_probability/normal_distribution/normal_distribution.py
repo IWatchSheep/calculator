@@ -1,6 +1,6 @@
 """Row for the operator: Normal distribution
 
-Picture:      f(□) = e^(−(□−□)² / 2□²) / (□√(2π))
+Picture:      f ( □ ) = e ^ ( − ( □ − □ ) ² / 2 □ ² ) / ( □ √ ( 2 π ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/normal_distribution
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Normal distribution'
 KEY = 'math/statistics_and_probability/normal_distribution'
-PATTERN = 'f(□) = e^(−(□−□)² / 2□²) / (□√(2π))'
+PATTERN = 'f ( □ ) = e ^ ( − ( □ − □ ) ² / 2 □ ² ) / ( □ √ ( 2 π ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'f('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'e^(−('), ('box', ''), ('op', '−'), ('box', ''), ('op', ')² / 2'), ('box', ''), ('op', '²) / ('), ('box', ''), ('op', '√(2π))')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', 'e'), ('op', '^'), ('op', '('), ('op', '−'), ('op', '('), ('box', ''), ('op', '−'), ('dec', ''), ('op', ')'), ('op', '²'), ('op', '/'), ('op', '2'), ('dec', ''), ('op', '²'), ('op', ')'), ('op', '/'), ('op', '('), ('dec', ''), ('op', '√'), ('op', '('), ('op', '2'), ('op', 'π'), ('op', ')'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

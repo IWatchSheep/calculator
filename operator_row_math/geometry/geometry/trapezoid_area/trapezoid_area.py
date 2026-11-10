@@ -1,6 +1,6 @@
 """Row for the operator: Trapezoid area
 
-Picture:      □ = ½ (□ + □) □
+Picture:      □ = ½ × ( □ + □ ) × □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py geometry/geometry/trapezoid_area
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Trapezoid area'
 KEY = 'geometry/geometry/trapezoid_area'
-PATTERN = '□ = ½ (□ + □) □'
+PATTERN = '□ = ½ × ( □ + □ ) × □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['a', 'b', 'h']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Trapezoid area('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '½ ('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '½'), ('op', '×'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', '×'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

@@ -1,6 +1,6 @@
 """Row for the operator: Aleph-null
 
-Picture:      |ℕ| = ℵ₀
+Picture:      | ℕ | = ℵ ₀
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/category_theory_and_foundations/aleph_null
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Aleph-null'
 KEY = 'math/category_theory_and_foundations/aleph_null'
-PATTERN = '|ℕ| = ℵ₀'
+PATTERN = '| ℕ | = ℵ ₀'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '|ℕ|')]      # cards left of "="
-RIGHT = [('op', 'ℵ₀')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '|'), ('op', 'ℕ'), ('op', '|'), ('op', '='), ('op', 'ℵ'), ('op', '₀')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

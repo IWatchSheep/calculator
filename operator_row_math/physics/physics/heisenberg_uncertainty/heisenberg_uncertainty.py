@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['delta_x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Heisenberg uncertainty principle('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'ħ / ( 2 ×'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '×'), ('out', ''), ('op', '≥'), ('op', 'ħ'), ('op', '/'), ('op', '2')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

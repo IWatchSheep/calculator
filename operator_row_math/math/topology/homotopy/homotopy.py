@@ -20,7 +20,7 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', '≃'), ('box', '')]      # cards left of "="
+LEFT = [('dec', ''), ('op', '≃'), ('dec', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

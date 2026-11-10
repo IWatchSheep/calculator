@@ -19,9 +19,10 @@ PATTERN = '□ = □ × □ / □'
 CALC = 'ready'
 INPUTS = ['F1', 'A1', 'A2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 2, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Hydraulic press('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '×'), ('box', ''), ('op', '/'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

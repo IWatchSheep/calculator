@@ -1,6 +1,6 @@
 """Row for the operator: Ratio test
 
-Picture:      □ = lim |□ₙ₊₁ / □ₙ|
+Picture:      □ = lim | □ ₙ₊₁ / □ ₙ |
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/real_analysis/ratio_test
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Ratio test'
 KEY = 'math/real_analysis/ratio_test'
-PATTERN = '□ = lim |□ₙ₊₁ / □ₙ|'
+PATTERN = '□ = lim | □ ₙ₊₁ / □ ₙ |'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['a_n', 'a_next']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Ratio test('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'lim |'), ('box', ''), ('op', 'ₙ₊₁ /'), ('box', ''), ('op', 'ₙ|')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', 'lim'), ('op', '|'), ('box', ''), ('op', 'ₙ₊₁'), ('op', '/'), ('box', ''), ('op', 'ₙ'), ('op', '|')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

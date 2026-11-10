@@ -1,6 +1,6 @@
 """Row for the operator: Bisection method
 
-Picture:      bisect(□, □, □) = □
+Picture:      bisect ( □ , □ , □ ) = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/bisection_method
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Bisection method'
 KEY = 'math/optimization_and_numerical_methods/bisection_method'
-PATTERN = 'bisect(□, □, □) = □'
+PATTERN = 'bisect ( □ , □ , □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'a', 'b']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'bisect('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'bisect'), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

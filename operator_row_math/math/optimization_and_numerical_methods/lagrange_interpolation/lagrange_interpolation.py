@@ -1,6 +1,6 @@
 """Row for the operator: Lagrange interpolation
 
-Picture:      L(□) = Σᵢ □ᵢ ∏{□≠i} (□ − □ⱼ) / (□ᵢ − □ⱼ)
+Picture:      L ( □ ) = Σ ᵢ □ ᵢ ∏ { □ = i } ( □ − □ ⱼ ) / ( □ ᵢ − □ ⱼ )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/lagrange_interpolation
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Lagrange interpolation'
 KEY = 'math/optimization_and_numerical_methods/lagrange_interpolation'
-PATTERN = 'L(□) = Σᵢ □ᵢ ∏{□≠i} (□ − □ⱼ) / (□ᵢ − □ⱼ)'
+PATTERN = 'L ( □ ) = Σ ᵢ □ ᵢ ∏ { □ = i } ( □ − □ ⱼ ) / ( □ ᵢ − □ ⱼ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['xs', 'ys', 'x']    # what each box (left to right) is
 KINDS = ['list', 'list', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [2, 1, 2, 0, 0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Lagrange interpolation('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'Σᵢ'), ('box', ''), ('op', 'ᵢ ∏{'), ('box', ''), ('op', '=i} ('), ('box', ''), ('op', '−'), ('box', ''), ('op', 'ⱼ) / ('), ('box', ''), ('op', 'ᵢ −'), ('box', ''), ('op', 'ⱼ)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'L'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', 'Σ'), ('op', 'ᵢ'), ('box', ''), ('op', 'ᵢ'), ('op', '∏'), ('op', '{'), ('dec', ''), ('op', '='), ('op', 'i'), ('op', '}'), ('op', '('), ('box', ''), ('op', '−'), ('box', ''), ('op', 'ⱼ'), ('op', ')'), ('op', '/'), ('op', '('), ('box', ''), ('op', 'ᵢ'), ('op', '−'), ('box', ''), ('op', 'ⱼ'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

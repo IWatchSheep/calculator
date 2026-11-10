@@ -1,6 +1,6 @@
 """Row for the operator: Manifold
 
-Picture:      Manifold( □ )
+Picture:      Locally looks like ℝ ⁿ
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/topology/manifold
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Manifold'
 KEY = 'math/topology/manifold'
-PATTERN = 'Manifold( □ )'
+PATTERN = 'Locally looks like ℝ ⁿ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Manifold('), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'Locally'), ('op', 'looks'), ('op', 'like'), ('op', 'ℝ'), ('op', 'ⁿ')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

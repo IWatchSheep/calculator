@@ -1,6 +1,6 @@
 """Row for the operator: Cross product
 
-Picture:      □ × □ = (□₂□₃ − □₃□₂, □₃□₁ − □₁□₃, □₁□₂ − □₂□₁)
+Picture:      □ × □ = ( □ ₂ □ ₃ − □ ₃ □ ₂ , □ ₃ □ ₁ − □ ₁ □ ₃ , □ ₁ □ ₂ − □ ₂ □ ₁ )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/linear_algebra/cross_product
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Cross product'
 KEY = 'math/linear_algebra/cross_product'
-PATTERN = '□ × □ = (□₂□₃ − □₃□₂, □₃□₁ − □₁□₃, □₁□₂ − □₂□₁)'
+PATTERN = '□ × □ = ( □ ₂ □ ₃ − □ ₃ □ ₂ , □ ₃ □ ₁ − □ ₁ □ ₃ , □ ₁ □ ₂ − □ ₂ □ ₁ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['a', 'b']    # what each box (left to right) is
 KINDS = ['list', 'list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'a×b('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '('), ('box', ''), ('op', '₂'), ('box', ''), ('op', '₃ −'), ('box', ''), ('op', '₃'), ('box', ''), ('op', '₂,'), ('box', ''), ('op', '₃'), ('box', ''), ('op', '₁ −'), ('box', ''), ('op', '₁'), ('box', ''), ('op', '₃,'), ('box', ''), ('op', '₁'), ('box', ''), ('op', '₂ −'), ('box', ''), ('op', '₂'), ('box', ''), ('op', '₁)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '×'), ('box', ''), ('op', '='), ('op', '('), ('dec', ''), ('op', '₂'), ('dec', ''), ('op', '₃'), ('op', '−'), ('dec', ''), ('op', '₃'), ('dec', ''), ('op', '₂'), ('op', ','), ('dec', ''), ('op', '₃'), ('dec', ''), ('op', '₁'), ('op', '−'), ('dec', ''), ('op', '₁'), ('dec', ''), ('op', '₃'), ('op', ','), ('dec', ''), ('op', '₁'), ('dec', ''), ('op', '₂'), ('op', '−'), ('dec', ''), ('op', '₂'), ('dec', ''), ('op', '₁'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

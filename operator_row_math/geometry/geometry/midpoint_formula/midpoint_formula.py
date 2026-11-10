@@ -1,6 +1,6 @@
 """Row for the operator: Midpoint formula
 
-Picture:      □ = ((□₁ + □₂)/2, (□₁ + □₂)/2)
+Picture:      □ = ( ( □ ₁ + □ ₂ ) / 2 , ( □ ₁ + □ ₂ ) / 2 )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py geometry/geometry/midpoint_formula
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Midpoint formula'
 KEY = 'geometry/geometry/midpoint_formula'
-PATTERN = '□ = ((□₁ + □₂)/2, (□₁ + □₂)/2)'
+PATTERN = '□ = ( ( □ ₁ + □ ₂ ) / 2 , ( □ ₁ + □ ₂ ) / 2 )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['x1', 'y1', 'x2', 'y2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 2, 1, 3]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Midpoint formula('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '(('), ('box', ''), ('op', '₁ +'), ('box', ''), ('op', '₂)/2, ('), ('box', ''), ('op', '₁ +'), ('box', ''), ('op', '₂)/2)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '('), ('op', '('), ('box', ''), ('op', '₁'), ('op', '+'), ('box', ''), ('op', '₂'), ('op', ')'), ('op', '/'), ('op', '2'), ('op', ','), ('op', '('), ('box', ''), ('op', '₁'), ('op', '+'), ('box', ''), ('op', '₂'), ('op', ')'), ('op', '/'), ('op', '2'), ('op', ')')]      # cards left of "="
+RIGHT = []
 
 
 def place(parent, stacked=False):

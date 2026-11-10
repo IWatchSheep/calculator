@@ -1,6 +1,6 @@
 """Row for the operator: Trapezoid rule
 
-Picture:      ∫ₐᵇ □ ≈ □ · (f(□)/2 + Σ f(□ᵢ) + f(□)/2)
+Picture:      ∫ ₐ ᵇ □ ≈ □ · ( f ( □ ) / 2 + Σ f ( □ ᵢ ) + f ( □ ) / 2 )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/trapezoid_rule
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Trapezoid rule'
 KEY = 'math/optimization_and_numerical_methods/trapezoid_rule'
-PATTERN = '∫ₐᵇ □ ≈ □ · (f(□)/2 + Σ f(□ᵢ) + f(□)/2)'
+PATTERN = '∫ ₐ ᵇ □ ≈ □ · ( f ( □ ) / 2 + Σ f ( □ ᵢ ) + f ( □ ) / 2 )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'a', 'b']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'T('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', '∫'), ('op', 'ₐ'), ('op', 'ᵇ'), ('box', ''), ('op', '≈'), ('dec', ''), ('op', '·'), ('op', '('), ('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '/'), ('op', '2'), ('op', '+'), ('op', 'Σ'), ('op', 'f'), ('op', '('), ('dec', ''), ('op', 'ᵢ'), ('op', ')'), ('op', '+'), ('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '/'), ('op', '2'), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

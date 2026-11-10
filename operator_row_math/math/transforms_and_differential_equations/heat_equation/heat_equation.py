@@ -1,6 +1,6 @@
 """Row for the operator: Heat equation
 
-Picture:      □ₜ = □ □ₓₓ
+Picture:      □ ₜ = □ □ ₓₓ
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/transforms_and_differential_equations/heat_equation
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Heat equation'
 KEY = 'math/transforms_and_differential_equations/heat_equation'
-PATTERN = '□ₜ = □ □ₓₓ'
+PATTERN = '□ ₜ = □ □ ₓₓ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', 'ₜ')]      # cards left of "="
-RIGHT = [('box', ''), ('box', ''), ('op', 'ₓₓ')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('dec', ''), ('op', 'ₜ'), ('op', '='), ('dec', ''), ('dec', ''), ('op', 'ₓₓ')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

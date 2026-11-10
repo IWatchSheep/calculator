@@ -1,6 +1,6 @@
 """Row for the operator: Geometric sequence
 
-Picture:      □ₙ = □₁ · □ⁿ⁻¹
+Picture:      □ ₙ = □ ₁ · □ ⁿ⁻¹ with □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/algebra/geometric_sequence
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Geometric sequence'
 KEY = 'math/algebra/geometric_sequence'
-PATTERN = '□ₙ = □₁ · □ⁿ⁻¹'
+PATTERN = '□ ₙ = □ ₁ · □ ⁿ⁻¹ with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['a1', 'r', 'n']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'aₙ('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '₁ ·'), ('box', ''), ('op', 'ⁿ⁻¹')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', 'ₙ'), ('op', '='), ('box', ''), ('op', '₁'), ('op', '·'), ('box', ''), ('op', 'ⁿ⁻¹'), ('op', 'with'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

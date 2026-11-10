@@ -1,6 +1,6 @@
 """Row for the operator: Definite integral
 
-Picture:      ∫ □ d□ = □   (from □ to □)
+Picture:      ∫ □ dx from □ to □ → □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/definite_integral
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Definite integral'
 KEY = 'math/calculus/definite_integral'
-PATTERN = '∫ □ d□ = □   (from □ to □)'
+PATTERN = '∫ □ dx from □ to □ → □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['f', 'a', 'b']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∫ₐᵇ('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '(from'), ('box', ''), ('op', 'to'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '∫'), ('box', ''), ('op', 'dx'), ('op', 'from'), ('box', ''), ('op', 'to'), ('box', ''), ('op', '→'), ('out', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

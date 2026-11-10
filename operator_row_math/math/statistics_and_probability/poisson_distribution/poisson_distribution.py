@@ -1,6 +1,6 @@
 """Row for the operator: Poisson distribution
 
-Picture:      P(□ = □) = □ᵏ · e^(−□) / □!
+Picture:      P ( □ = □ ) = □ ᵏ · e ^ ( − □ ) / □ !
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/poisson_distribution
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Poisson distribution'
 KEY = 'math/statistics_and_probability/poisson_distribution'
-PATTERN = 'P(□ = □) = □ᵏ · e^(−□) / □!'
+PATTERN = 'P ( □ = □ ) = □ ᵏ · e ^ ( − □ ) / □ !'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['k', 'lam']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Poisson distribution('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', ') ='), ('box', ''), ('op', 'ᵏ · e^(−'), ('box', ''), ('op', ') /'), ('box', ''), ('op', '!')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'P'), ('op', '('), ('dec', ''), ('op', '='), ('box', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', 'ᵏ'), ('op', '·'), ('op', 'e'), ('op', '^'), ('op', '('), ('op', '−'), ('box', ''), ('op', ')'), ('op', '/'), ('box', ''), ('op', '!')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

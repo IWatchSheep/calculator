@@ -1,6 +1,6 @@
 """Row for the operator: Inverse hyperbolic tangent
 
-Picture:      atanh □ = ½ ln((1 + □)/(1 − □))
+Picture:      atanh □ = ½ ln ( ( 1 + □ ) / ( 1 − □ ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/trigonometry/inverse_hyperbolic_tangent
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Inverse hyperbolic tangent'
 KEY = 'math/trigonometry/inverse_hyperbolic_tangent'
-PATTERN = 'atanh □ = ½ ln((1 + □)/(1 − □))'
+PATTERN = 'atanh □ = ½ ln ( ( 1 + □ ) / ( 1 − □ ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'atanh'), ('box', '')]      # cards left of "="
-RIGHT = [('op', '½ ln((1 +'), ('box', ''), ('op', ')/(1 −'), ('box', ''), ('op', '))')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'atanh'), ('box', ''), ('op', '='), ('op', '½'), ('op', 'ln'), ('op', '('), ('op', '('), ('op', '1'), ('op', '+'), ('box', ''), ('op', ')'), ('op', '/'), ('op', '('), ('op', '1'), ('op', '−'), ('box', ''), ('op', ')'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

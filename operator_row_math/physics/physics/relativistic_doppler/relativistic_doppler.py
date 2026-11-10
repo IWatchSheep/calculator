@@ -1,6 +1,6 @@
 """Row for the operator: Relativistic Doppler effect
 
-Picture:      □ = □ × √( (1 − β) / (1 + β) ), β = □ / c
+Picture:      □ = □ × √ ( ( 1 − β ) / ( 1 + β ) ) , β = □ / c
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/relativistic_doppler
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Relativistic Doppler effect'
 KEY = 'physics/physics/relativistic_doppler'
-PATTERN = '□ = □ × √( (1 − β) / (1 + β) ), β = □ / c'
+PATTERN = '□ = □ × √ ( ( 1 − β ) / ( 1 + β ) ) , β = □ / c'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['f0', 'v']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Relativistic Doppler effect('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '× √( (1 − β) / (1 + β) ), β ='), ('box', ''), ('op', '/ c')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', '√'), ('op', '('), ('op', '('), ('op', '1'), ('op', '−'), ('op', 'β'), ('op', ')'), ('op', '/'), ('op', '('), ('op', '1'), ('op', '+'), ('op', 'β'), ('op', ')'), ('op', ')'), ('op', ','), ('op', 'β'), ('op', '='), ('box', ''), ('op', '/'), ('op', 'c')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

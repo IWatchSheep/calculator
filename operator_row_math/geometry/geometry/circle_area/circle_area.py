@@ -1,6 +1,6 @@
 """Row for the operator: Circle area
 
-Picture:      □ = π □²
+Picture:      □ = π × □ ²
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py geometry/geometry/circle_area
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Circle area'
 KEY = 'geometry/geometry/circle_area'
-PATTERN = '□ = π □²'
+PATTERN = '□ = π × □ ²'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['r']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', '')]      # cards left of "="
-RIGHT = [('op', 'π'), ('box', ''), ('op', '²')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', 'π'), ('op', '×'), ('box', ''), ('op', '²')]      # cards left of "="
+RIGHT = []
 
 
 def place(parent, stacked=False):

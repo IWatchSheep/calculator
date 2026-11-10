@@ -1,6 +1,6 @@
 """Row for the operator: Geometric series sum
 
-Picture:      □ₙ = □₁(1 − □ⁿ) / (1 − □)
+Picture:      □ ₙ = □ ₁ ( 1 − □ ⁿ ) / ( 1 − □ ) with □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/algebra/geometric_series_sum
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Geometric series sum'
 KEY = 'math/algebra/geometric_series_sum'
-PATTERN = '□ₙ = □₁(1 − □ⁿ) / (1 − □)'
+PATTERN = '□ ₙ = □ ₁ ( 1 − □ ⁿ ) / ( 1 − □ ) with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['a1', 'r', 'n']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 1, 2]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Sₙ('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '₁(1 −'), ('box', ''), ('op', 'ⁿ) / (1 −'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', 'ₙ'), ('op', '='), ('box', ''), ('op', '₁'), ('op', '('), ('op', '1'), ('op', '−'), ('box', ''), ('op', 'ⁿ'), ('op', ')'), ('op', '/'), ('op', '('), ('op', '1'), ('op', '−'), ('box', ''), ('op', ')'), ('op', 'with'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

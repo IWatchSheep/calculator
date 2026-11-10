@@ -1,6 +1,6 @@
 """Row for the operator: Gravitational time dilation
 
-Picture:      □ = □ × √(1 − 2 × G × □ / (□ × c²))
+Picture:      □ = □ × √ ( 1 − 2 × G × □ / ( □ × c ² ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/gravitational_time_dilation
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Gravitational time dilation'
 KEY = 'physics/physics/gravitational_time_dilation'
-PATTERN = '□ = □ × √(1 − 2 × G × □ / (□ × c²))'
+PATTERN = '□ = □ × √ ( 1 − 2 × G × □ / ( □ × c ² ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['dt', 'M', 'r']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Gravitational time dilation('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '× √(1 − 2 × G ×'), ('box', ''), ('op', '/ ('), ('box', ''), ('op', '× c²))')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', '√'), ('op', '('), ('op', '1'), ('op', '−'), ('op', '2'), ('op', '×'), ('op', 'G'), ('op', '×'), ('box', ''), ('op', '/'), ('op', '('), ('box', ''), ('op', '×'), ('op', 'c'), ('op', '²'), ('op', ')'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

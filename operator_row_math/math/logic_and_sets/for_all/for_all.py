@@ -1,6 +1,6 @@
 """Row for the operator: For all
 
-Picture:      ∀□ ∈ □: P(□)
+Picture:      ∀ □ ∈ □ : P ( □ ) with □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/logic_and_sets/for_all
 """
@@ -12,15 +12,16 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'For all'
 KEY = 'math/logic_and_sets/for_all'
-PATTERN = '∀□ ∈ □: P(□)'
+PATTERN = '∀ □ ∈ □ : P ( □ ) with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['predicate', 'domain']    # what each box (left to right) is
 KINDS = ['predicate', 'set']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∀('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', '∀'), ('dec', ''), ('op', '∈'), ('box', ''), ('op', ':'), ('op', 'P'), ('op', '('), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

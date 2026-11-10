@@ -1,6 +1,6 @@
 """Row for the operator: Homomorphism
 
-Picture:      □: □ → □
+Picture:      □ : □ → □ with □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/abstract_algebra/homomorphism
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Homomorphism'
 KEY = 'math/abstract_algebra/homomorphism'
-PATTERN = '□: □ → □'
+PATTERN = '□ : □ → □ with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['phi', 'G', 'op1', 'op2']    # what each box (left to right) is
 KINDS = ['multi', 'set', 'multi', 'multi']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Homomorphism('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('box', ''), ('op', ':'), ('box', ''), ('op', '→'), ('dec', ''), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

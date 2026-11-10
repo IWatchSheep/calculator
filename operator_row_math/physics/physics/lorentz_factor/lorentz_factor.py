@@ -1,6 +1,6 @@
 """Row for the operator: Lorentz factor
 
-Picture:      □ = 1 / √(1 − □² / c²)
+Picture:      □ = 1 / √ ( 1 − □ ² / c ² )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/lorentz_factor
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Lorentz factor'
 KEY = 'physics/physics/lorentz_factor'
-PATTERN = '□ = 1 / √(1 − □² / c²)'
+PATTERN = '□ = 1 / √ ( 1 − □ ² / c ² )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['v']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Lorentz factor('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '1 / √(1 −'), ('box', ''), ('op', '² / c²)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '1'), ('op', '/'), ('op', '√'), ('op', '('), ('op', '1'), ('op', '−'), ('box', ''), ('op', '²'), ('op', '/'), ('op', 'c'), ('op', '²'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

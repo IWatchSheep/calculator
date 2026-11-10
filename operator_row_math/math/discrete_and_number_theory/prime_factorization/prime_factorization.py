@@ -1,6 +1,6 @@
 """Row for the operator: Prime factorization
 
-Picture:      □ = □ · □ · □ · …
+Picture:      factor ( □ ) = □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/discrete_and_number_theory/prime_factorization
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Prime factorization'
 KEY = 'math/discrete_and_number_theory/prime_factorization'
-PATTERN = '□ = □ · □ · □ · …'
+PATTERN = 'factor ( □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['n']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', '')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '·'), ('box', ''), ('op', '·'), ('box', ''), ('op', '· …')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'factor'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('out', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

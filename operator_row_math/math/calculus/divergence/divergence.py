@@ -1,6 +1,6 @@
 """Row for the operator: Divergence
 
-Picture:      ∇ · □ = □
+Picture:      ∇ · □ with □ = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/divergence
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Divergence'
 KEY = 'math/calculus/divergence'
-PATTERN = '∇ · □ = □'
+PATTERN = '∇ · □ with □ = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['F', 'point']    # what each box (left to right) is
 KINDS = ['multi', 'list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∇·('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', '∇'), ('op', '·'), ('box', ''), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

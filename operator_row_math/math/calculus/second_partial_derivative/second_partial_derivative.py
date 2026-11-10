@@ -1,6 +1,6 @@
 """Row for the operator: Second partial derivative
 
-Picture:      ∂²□/∂□ᵢ² ≈ (f(…□ᵢ+□…) − 2f + f(…□ᵢ−□…)) / □²
+Picture:      ∂ ² □ / ∂ □ ᵢ ² ≈ ( f ( … □ ᵢ + □ … ) − 2 f + f ( … □ ᵢ − □ … ) ) / □ ² with □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/second_partial_derivative
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Second partial derivative'
 KEY = 'math/calculus/second_partial_derivative'
-PATTERN = '∂²□/∂□ᵢ² ≈ (f(…□ᵢ+□…) − 2f + f(…□ᵢ−□…)) / □²'
+PATTERN = '∂ ² □ / ∂ □ ᵢ ² ≈ ( f ( … □ ᵢ + □ … ) − 2 f + f ( … □ ᵢ − □ … ) ) / □ ² with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'point', 'i']    # what each box (left to right) is
 KINDS = ['multi', 'list', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '∂²/∂x²('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', '∂'), ('op', '²'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', 'ᵢ'), ('op', '²'), ('op', '≈'), ('op', '('), ('op', 'f'), ('op', '('), ('op', '…'), ('box', ''), ('op', 'ᵢ'), ('op', '+'), ('dec', ''), ('op', '…'), ('op', ')'), ('op', '−'), ('op', '2'), ('op', 'f'), ('op', '+'), ('op', 'f'), ('op', '('), ('op', '…'), ('dec', ''), ('op', 'ᵢ'), ('op', '−'), ('dec', ''), ('op', '…'), ('op', ')'), ('op', ')'), ('op', '/'), ('dec', ''), ('op', '²'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

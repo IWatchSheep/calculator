@@ -1,6 +1,6 @@
 """Row for the operator: Least squares
 
-Picture:      min Σ(□ᵢ − □̂ᵢ)² = □
+Picture:      min Σ ( □ ᵢ − □ ᵢ ) ² with □ = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/least_squares
 """
@@ -12,15 +12,16 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Least squares'
 KEY = 'math/optimization_and_numerical_methods/least_squares'
-PATTERN = 'min Σ(□ᵢ − □̂ᵢ)² = □'
+PATTERN = 'min Σ ( □ ᵢ − □ ᵢ ) ² with □ = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['x', 'y']    # what each box (left to right) is
 KINDS = ['list', 'list']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Least squares('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'min'), ('op', 'Σ'), ('op', '('), ('box', ''), ('op', 'ᵢ'), ('op', '−'), ('dec', ''), ('op', 'ᵢ'), ('op', ')'), ('op', '²'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

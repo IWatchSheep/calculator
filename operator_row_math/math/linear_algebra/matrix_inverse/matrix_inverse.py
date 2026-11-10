@@ -1,6 +1,6 @@
 """Row for the operator: Matrix inverse
 
-Picture:      □ · □⁻¹ = I
+Picture:      □ · □ ⁻¹ = I
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/linear_algebra/matrix_inverse
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Matrix inverse'
 KEY = 'math/linear_algebra/matrix_inverse'
-PATTERN = '□ · □⁻¹ = I'
+PATTERN = '□ · □ ⁻¹ = I'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['A']    # what each box (left to right) is
 KINDS = ['matrix']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'A⁻¹('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'I')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '·'), ('box', ''), ('op', '⁻¹'), ('op', '='), ('op', 'I')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

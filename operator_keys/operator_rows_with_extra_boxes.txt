@@ -1,0 +1,118 @@
+Operators whose picture does not draw every input.  The row follows the picture, then adds  with [ ] , [ ]  for the inputs listed here (so the operator still calculates).
+Written by make_operator_row_files.py.  115 operators.
+
+math/abstract_algebra/coset   extra boxes for: op
+math/abstract_algebra/cyclic_group   extra boxes for: op, identity
+math/abstract_algebra/field   extra boxes for: n
+math/abstract_algebra/group   extra boxes for: G, op
+math/abstract_algebra/homomorphism   extra boxes for: op1, op2
+math/abstract_algebra/image   extra boxes for: G
+math/abstract_algebra/integral_domain   extra boxes for: n
+math/abstract_algebra/isomorphism   extra boxes for: phi, op1, op2
+math/abstract_algebra/kernel   extra boxes for: G, identity
+math/abstract_algebra/normal_subgroup   extra boxes for: op
+math/abstract_algebra/order_of_element   extra boxes for: op, identity
+math/abstract_algebra/subgroup   extra boxes for: op
+math/algebra/complex_conjugate   extra boxes for: z
+math/algebra/expand   extra boxes for: expr
+math/algebra/geometric_sequence   extra boxes for: n
+math/algebra/geometric_series_sum   extra boxes for: n
+math/algebra/modulus_of_complex_number   extra boxes for: z
+math/algebra/solve_system_of_equations   extra boxes for: A, b
+math/arithmetic/maximum   extra boxes for: x2, x3
+math/arithmetic/minimum   extra boxes for: x2, x3
+math/calculus/chain_rule   extra boxes for: fprime_at_gx, gprime_at_x
+math/calculus/curl   extra boxes for: point
+math/calculus/differential_equation   extra boxes for: f, x0, y0, x_end
+math/calculus/divergence   extra boxes for: point
+math/calculus/double_integral   extra boxes for: x0, x1, y0, y1
+math/calculus/gradient   extra boxes for: point
+math/calculus/l_hopital_s_rule   extra boxes for: a
+math/calculus/laplacian   extra boxes for: point
+math/calculus/limit   extra boxes for: f
+math/calculus/line_integral   extra boxes for: a, b
+math/calculus/partial_derivative   extra boxes for: i
+math/calculus/product_rule   extra boxes for: f, fprime, g, gprime
+math/calculus/quotient_rule   extra boxes for: f, fprime, g, gprime
+math/calculus/second_derivative   extra boxes for: f
+math/calculus/second_partial_derivative   extra boxes for: i
+math/calculus/triple_integral   extra boxes for: x0, x1, y0, y1, z0, z1
+math/category_theory_and_foundations/function   extra boxes for: x
+math/category_theory_and_foundations/injective   extra boxes for: f, domain
+math/complex_analysis/argument   extra boxes for: z
+math/complex_analysis/cauchy_integral_formula   extra boxes for: f, radius
+math/complex_analysis/cauchyriemann_equations   extra boxes for: x0, y0
+math/complex_analysis/contour_integral   extra boxes for: radius
+math/complex_analysis/imaginary_part   extra boxes for: z
+math/complex_analysis/real_part   extra boxes for: z
+math/complex_analysis/residue_theorem   extra boxes for: f, center, radius
+math/differential_geometry_and_tensors/lie_bracket   extra boxes for: point
+math/differential_geometry_and_tensors/tangent_vector   extra boxes for: curve, t
+math/discrete_and_number_theory/fibonacci   extra boxes for: n
+math/discrete_and_number_theory/inclusion_exclusion   extra boxes for: a_and_b
+math/graph_theory_and_combinatorics/bipartite_graph   extra boxes for: graph
+math/graph_theory_and_combinatorics/burnside_s_lemma   extra boxes for: fixed_counts
+math/graph_theory_and_combinatorics/max_flow_min_cut   extra boxes for: source, sink
+math/graph_theory_and_combinatorics/path   extra boxes for: start, end
+math/graph_theory_and_combinatorics/recurrence_relation   extra boxes for: coeffs, start, n
+math/graph_theory_and_combinatorics/tree   extra boxes for: graph
+math/graph_theory_and_combinatorics/vertex_degree   extra boxes for: graph
+math/linear_algebra/identity_matrix   extra boxes for: n
+math/logic_and_sets/complement   extra boxes for: universe
+math/logic_and_sets/for_all   extra boxes for: predicate
+math/logic_and_sets/there_exists   extra boxes for: predicate
+math/optimization_and_numerical_methods/convex_function   extra boxes for: f
+math/optimization_and_numerical_methods/euler_s_method   extra boxes for: f, x0, y0, steps
+math/optimization_and_numerical_methods/fixed_point_iteration   extra boxes for: g
+math/optimization_and_numerical_methods/gauss_seidel_iteration   extra boxes for: A, b
+math/optimization_and_numerical_methods/hessian   extra boxes for: point
+math/optimization_and_numerical_methods/lagrange_multipliers   extra boxes for: point
+math/optimization_and_numerical_methods/least_squares   extra boxes for: x
+math/optimization_and_numerical_methods/maximize   extra boxes for: lo, hi
+math/optimization_and_numerical_methods/minimize   extra boxes for: lo, hi
+math/optimization_and_numerical_methods/newton_interpolation   extra boxes for: ys
+math/optimization_and_numerical_methods/newton_s_method   extra boxes for: f, fprime
+math/optimization_and_numerical_methods/runge_kutta_rk4   extra boxes for: f, x0, steps
+math/optimization_and_numerical_methods/secant_method   extra boxes for: f
+math/optimization_and_numerical_methods/simplex_method   extra boxes for: c
+math/optimization_and_numerical_methods/simpson_s_rule   extra boxes for: a, b
+math/optimization_and_numerical_methods/spline   extra boxes for: xs, ys
+math/real_analysis/convergence   extra boxes for: eps
+math/real_analysis/epsilon_delta_continuity   extra boxes for: f
+math/real_analysis/integral_test   extra boxes for: f, N
+math/real_analysis/intermediate_value_theorem   extra boxes for: f
+math/real_analysis/lebesgue_integral   extra boxes for: a, b
+math/real_analysis/lipschitz_ratio   extra boxes for: f
+math/real_analysis/lp_norm   extra boxes for: a, b
+math/real_analysis/mean_value_theorem   extra boxes for: f, a, b
+math/real_analysis/riemann_sum   extra boxes for: f, a, b, n
+math/real_analysis/riemannstieltjes_sum   extra boxes for: f, g
+math/real_analysis/root_test   extra boxes for: n
+math/statistics_and_probability/bayes_theorem   extra boxes for: p_b_given_a
+math/statistics_and_probability/conditional_probability   extra boxes for: p_a_and_b
+math/statistics_and_probability/interquartile_range   extra boxes for: data
+math/statistics_and_probability/linear_regression   extra boxes for: x, y
+math/statistics_and_probability/percentile   extra boxes for: k
+math/statistics_and_probability/probability   extra boxes for: favorable, total
+math/statistics_and_probability/sample_standard_deviation   extra boxes for: data
+math/statistics_and_probability/standard_deviation   extra boxes for: data
+math/statistics_and_probability/variance_of_random_variable   extra boxes for: values, probs
+math/topology/basis_of_topology   extra boxes for: tau
+math/topology/boundary   extra boxes for: tau
+math/topology/cauchy_sequence   extra boxes for: eps
+math/topology/closed_set   extra boxes for: tau, A
+math/topology/closure   extra boxes for: tau
+math/topology/connected   extra boxes for: tau
+math/topology/hausdorff   extra boxes for: tau
+math/topology/interior   extra boxes for: tau
+math/topology/neighborhood   extra boxes for: tau, N
+math/topology/open_set   extra boxes for: tau, U
+math/transforms_and_differential_equations/first_order_ode   extra boxes for: f, x0, y0, x_end
+math/transforms_and_differential_equations/fourier_series   extra boxes for: f, n
+math/transforms_and_differential_equations/integrating_factor   extra boxes for: x0
+math/transforms_and_differential_equations/laplace_transform   extra boxes for: s
+math/transforms_and_differential_equations/second_order_ode   extra boxes for: f, x0, y0, v0, x_end
+math/transforms_and_differential_equations/separable_equation   extra boxes for: g, h, x0, y0, x_end
+math/transforms_and_differential_equations/variation_of_parameters   extra boxes for: y1, y2, g, x0, x
+math/transforms_and_differential_equations/wronskian   extra boxes for: fprime, gprime
+physics/physics/relativistic_kinetic_energy   extra boxes for: v

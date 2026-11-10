@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['f', 'd_o']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Thin lens equation('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '1 /'), ('box', ''), ('op', '+ 1 /'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '1'), ('op', '/'), ('box', ''), ('op', '='), ('op', '1'), ('op', '/'), ('box', ''), ('op', '+'), ('op', '1'), ('op', '/'), ('out', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

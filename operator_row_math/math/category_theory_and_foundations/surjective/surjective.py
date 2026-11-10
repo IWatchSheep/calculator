@@ -1,6 +1,6 @@
 """Row for the operator: Surjective
 
-Picture:      onto(□, □, □) = □
+Picture:      onto ( □ , □ , □ ) = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/category_theory_and_foundations/surjective
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Surjective'
 KEY = 'math/category_theory_and_foundations/surjective'
-PATTERN = 'onto(□, □, □) = □'
+PATTERN = 'onto ( □ , □ , □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'domain', 'codomain']    # what each box (left to right) is
 KINDS = ['function', 'set', 'set']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'onto('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'onto'), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

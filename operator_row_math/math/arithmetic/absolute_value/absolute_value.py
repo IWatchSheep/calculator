@@ -1,6 +1,6 @@
 """Row for the operator: Absolute value
 
-Picture:      |□| = □
+Picture:      | □ | = □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/arithmetic/absolute_value
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Absolute value'
 KEY = 'math/arithmetic/absolute_value'
-PATTERN = '|□| = □'
+PATTERN = '| □ | = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window

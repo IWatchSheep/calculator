@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['f']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Photon energy('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'h ×'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', 'h'), ('op', '×'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

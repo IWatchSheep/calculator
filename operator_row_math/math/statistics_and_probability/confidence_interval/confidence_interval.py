@@ -1,6 +1,6 @@
 """Row for the operator: Confidence interval
 
-Picture:      □̄ ± □ · □ / √□ = □
+Picture:      □ = □ ± □ × □ / √ ( □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/confidence_interval
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Confidence interval'
 KEY = 'math/statistics_and_probability/confidence_interval'
-PATTERN = '□̄ ± □ · □ / √□ = □'
+PATTERN = '□ = □ ± □ × □ / √ ( □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['mean', 'sd', 'n']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'CI('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '±'), ('dec', ''), ('op', '×'), ('box', ''), ('op', '/'), ('op', '√'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

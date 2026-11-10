@@ -1,6 +1,6 @@
 """Row for the operator: Product rule
 
-Picture:      (f · g)′ = f′ · g + f · g′
+Picture:      ( f · g ) ′ = f ′ · g + f · g ′ with □ , □ , □ , □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/calculus/product_rule
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Product rule'
 KEY = 'math/calculus/product_rule'
-PATTERN = '(f · g)′ = f′ · g + f · g′'
+PATTERN = '( f · g ) ′ = f ′ · g + f · g ′ with □ , □ , □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['f', 'fprime', 'g', 'gprime']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Product rule('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'f′ · g + f · g′')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '('), ('op', 'f'), ('op', '·'), ('op', 'g'), ('op', ')'), ('op', '′'), ('op', '='), ('op', 'f'), ('op', '′'), ('op', '·'), ('op', 'g'), ('op', '+'), ('op', 'f'), ('op', '·'), ('op', 'g'), ('op', '′'), ('op', 'with'), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

@@ -57,7 +57,7 @@ def make_component(parent, center, kind, lead="+", on_pick=None, selected=False)
 
 def _card(parent, item, on_pick=None, selected=False):
     kind, text = item
-    if kind == "box":
+    if kind in ("box", "out", "dec"):             # "out" is the formula's answer box: it shows the answer after =, nothing is typed into it
         return make_component(parent, text or BOX, "number", on_pick=on_pick, selected=selected)
     return make_component(parent, text, "helper")
 

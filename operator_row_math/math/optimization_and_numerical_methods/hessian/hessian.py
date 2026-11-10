@@ -1,6 +1,6 @@
 """Row for the operator: Hessian
 
-Picture:      H = [ ∂²□ / ∂□∂□ ]
+Picture:      H = [ ∂ ² □ / ∂ □ ∂ □ ] with □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/optimization_and_numerical_methods/hessian
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Hessian'
 KEY = 'math/optimization_and_numerical_methods/hessian'
-PATTERN = 'H = [ ∂²□ / ∂□∂□ ]'
+PATTERN = 'H = [ ∂ ² □ / ∂ □ ∂ □ ] with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['f', 'point']    # what each box (left to right) is
 KINDS = ['multi', 'list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'H('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '[ ∂²'), ('box', ''), ('op', '/ ∂'), ('box', ''), ('op', '∂'), ('box', ''), ('op', ']')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'H'), ('op', '='), ('op', '['), ('op', '∂'), ('op', '²'), ('box', ''), ('op', '/'), ('op', '∂'), ('dec', ''), ('op', '∂'), ('dec', ''), ('op', ']'), ('op', 'with'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

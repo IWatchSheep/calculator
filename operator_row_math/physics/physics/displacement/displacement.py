@@ -1,6 +1,6 @@
 """Row for the operator: Displacement
 
-Picture:      □ = □ □ + ½ □ □²
+Picture:      □ = □ × □ + ½ × □ × □ ²
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/displacement
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Displacement'
 KEY = 'physics/physics/displacement'
-PATTERN = '□ = □ □ + ½ □ □²'
+PATTERN = '□ = □ × □ + ½ × □ × □ ²'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['u', 'a', 't']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 2, 1, 2]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Displacement('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('box', ''), ('op', '+ ½'), ('box', ''), ('box', ''), ('op', '²')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '+'), ('op', '½'), ('op', '×'), ('box', ''), ('op', '×'), ('box', ''), ('op', '²')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

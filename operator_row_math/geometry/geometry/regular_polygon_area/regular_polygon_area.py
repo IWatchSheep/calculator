@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['perimeter', 'apothem']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '½·p·a('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '½ ·'), ('box', ''), ('op', '·'), ('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '½'), ('op', '·'), ('box', ''), ('op', '·'), ('box', '')]      # cards left of "="
+RIGHT = []
 
 
 def place(parent, stacked=False):

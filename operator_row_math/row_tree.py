@@ -48,11 +48,42 @@ def build_node(spec):
     return node
 
 
+def slot_map(mod):
+    """For each box card of the row's LEFT cards (left to right): which input (slot) it shows.  A formula that writes a variable twice, like the r in
+    A = pi r (r + l), has two box cards for one input: mod.SLOTS = [0, 0, 1].  Without SLOTS the k-th box is slot k."""
+    n = sum(1 for kind, _ in mod.LEFT if kind == "box")
+    return list(getattr(mod, "SLOTS", None) or range(n))
+
+
+def slot_count(mod):
+    """How many inputs the operator has (the number of distinct slots, not of box cards)."""
+    m = slot_map(mod)
+    return max(m) + 1 if m else 0
+
+
+def inputs_in_box_order(mod):
+    """The operator's input names in the order its boxes appear on the row (a repeated variable is named once)."""
+    names, seen = [], set()
+    for j in slot_map(mod):
+        if j not in seen and j < len(mod.INPUTS):
+            seen.add(j)
+            names.append(mod.INPUTS[j])
+    return names
+
+
+def clear_outputs(node):
+    """Forget the answers shown in the answer boxes (something was changed)."""
+    if isinstance(node, dict) and "mod" in node:
+        node.pop("out", None)
+        for slot in node["slots"]:
+            clear_outputs(slot)
+
+
 def new_node(key):
     if key == "_number":
         return {"key": key, "mod": NUMBER, "slots": [""]}
     mod = word_rows.get(key[len(WORD_PREFIX):]) if key.startswith(WORD_PREFIX) else operator_row_math.get(key)
-    count = sum(1 for kind, _ in mod.LEFT if kind == "box")
+    count = slot_count(mod)
     # a word problem starts with its own numbers in the boxes (change them and press =); an operator starts empty
     slots = [str(d) for d in mod.DEFAULTS] if key.startswith(WORD_PREFIX) and len(getattr(mod, "DEFAULTS", [])) == count else [""] * count
     return {"key": key, "mod": mod, "slots": slots}
@@ -60,17 +91,33 @@ def new_node(key):
 
 def flatten(node, path=()):
     """Cards left to right: [(kind, text, path)].  Box cards carry the path of the slot they show."""
-    out, j = [], 0
+    out, smap, b, seen, o = [], slot_map(node["mod"]), 0, set(), 0
     for kind, text in node["mod"].LEFT:
         if kind == "box":
+            j = smap[b]
+            b += 1
             slot = node["slots"][j]
+            if j in seen:                     # the same variable written again: a copy of the box, it shows (and selects) the same slot
+                if isinstance(slot, dict) and "adv" in slot:
+                    out.append(("box", slot["label"], path + (j,)))
+                elif isinstance(slot, dict):
+                    out.append(("box", slot["mod"].NAME, path + (j,)))
+                else:
+                    out.append(("box", slot, path + (j,)))
+                continue
+            seen.add(j)
             if isinstance(slot, dict) and "adv" in slot:
                 out.append(("box", slot["label"], path + (j,)))
             elif isinstance(slot, dict):
                 out.extend(flatten(slot, path + (j,)))
             else:
                 out.append(("box", slot, path + (j,)))
-            j += 1
+        elif kind == "dec":                   # a box the picture draws that is not an input (the second box of A (+) B): shown, never typed into
+            out.append(("dec", "", None))
+        elif kind == "out":                   # the answer box of the formula, e.g. the A of A = pi r^2: filled in by =, never typed into
+            shown = node.get("out", "")
+            out.append(("out", shown[o] if isinstance(shown, list) else shown, None))
+            o += 1
         else:
             out.append(("op", text, None))
     return out
@@ -126,7 +173,17 @@ def fmt(x):
 
 
 def evaluate(node):
-    """Calculate the tree.  Raises ValueError(message) when it can't."""
+    """Calculate the tree and remember the answer in the node's answer box (if the formula has one).  Raises ValueError(message) when it can't."""
+    result = _evaluate(node)
+    outs = sum(1 for kind, _ in node["mod"].LEFT if kind == "out")
+    if outs > 1 and isinstance(result, (tuple, list)) and len(result) == outs:
+        node["out"] = [fmt(v) for v in result]        # (x1, x2) = ...: each answer box shows its own answer
+    elif outs:
+        node["out"] = fmt(result)
+    return result
+
+
+def _evaluate(node):
     mod = node["mod"]
     if mod.CALC == "reference":
         raise ValueError("%s is reference only: it shows the formula but can't calculate yet." % mod.NAME)

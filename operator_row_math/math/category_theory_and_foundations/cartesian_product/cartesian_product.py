@@ -1,6 +1,6 @@
 """Row for the operator: Cartesian product
 
-Picture:      □ × □ = { (□, □) : □ ∈ □, □ ∈ □ }
+Picture:      □ × □ = { ( □ , □ ) : □ ∈ □ , □ ∈ □ }
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/category_theory_and_foundations/cartesian_product
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Cartesian product'
 KEY = 'math/category_theory_and_foundations/cartesian_product'
-PATTERN = '□ × □ = { (□, □) : □ ∈ □, □ ∈ □ }'
+PATTERN = '□ × □ = { ( □ , □ ) : □ ∈ □ , □ ∈ □ }'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['a', 'b']    # what each box (left to right) is
 KINDS = ['set', 'set']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Cartesian product('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '{ ('), ('box', ''), ('op', ','), ('box', ''), ('op', ') :'), ('box', ''), ('op', '∈'), ('box', ''), ('op', ','), ('box', ''), ('op', '∈'), ('box', ''), ('op', '}')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '×'), ('box', ''), ('op', '='), ('op', '{'), ('op', '('), ('dec', ''), ('op', ','), ('dec', ''), ('op', ')'), ('op', ':'), ('dec', ''), ('op', '∈'), ('box', ''), ('op', ','), ('dec', ''), ('op', '∈'), ('box', ''), ('op', '}')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

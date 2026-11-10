@@ -1,6 +1,6 @@
 """Row for the operator: Exponential distribution
 
-Picture:      f(□) = □ · e^(−□□) for □ ≥ 0
+Picture:      f ( □ ) = □ · e ^ ( − □ □ ) for □ ≥ 0
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/exponential_distribution
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Exponential distribution'
 KEY = 'math/statistics_and_probability/exponential_distribution'
-PATTERN = 'f(□) = □ · e^(−□□) for □ ≥ 0'
+PATTERN = 'f ( □ ) = □ · e ^ ( − □ □ ) for □ ≥ 0'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['x', 'lam']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 1, 0, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Exponential distribution('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '· e^(−'), ('box', ''), ('box', ''), ('op', ') for'), ('box', ''), ('op', '≥ 0')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', '·'), ('op', 'e'), ('op', '^'), ('op', '('), ('op', '−'), ('box', ''), ('box', ''), ('op', ')'), ('op', 'for'), ('box', ''), ('op', '≥'), ('op', '0')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

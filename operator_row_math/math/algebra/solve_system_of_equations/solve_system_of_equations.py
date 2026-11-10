@@ -1,6 +1,6 @@
 """Row for the operator: Solve system of equations
 
-Picture:      □ = □ and □ = □ → (□, □)
+Picture:      □ = □ and □ = □ → ( □ , □ ) with □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/algebra/solve_system_of_equations
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Solve system of equations'
 KEY = 'math/algebra/solve_system_of_equations'
-PATTERN = '□ = □ and □ = □ → (□, □)'
+PATTERN = '□ = □ and □ = □ → ( □ , □ ) with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['A', 'b']    # what each box (left to right) is
 KINDS = ['matrix', 'list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'system('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', 'and'), ('box', ''), ('op', '='), ('box', ''), ('op', '→ ('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('dec', ''), ('op', '='), ('dec', ''), ('op', 'and'), ('dec', ''), ('op', '='), ('dec', ''), ('op', '→'), ('op', '('), ('out', ''), ('op', ','), ('out', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

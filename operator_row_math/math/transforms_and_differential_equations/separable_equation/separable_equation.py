@@ -1,6 +1,6 @@
 """Row for the operator: Separable equation
 
-Picture:      □□/□□ = g(□)□(□)
+Picture:      □ □ / □ □ = g ( □ ) □ ( □ ) with □ , □ , □ , □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/transforms_and_differential_equations/separable_equation
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Separable equation'
 KEY = 'math/transforms_and_differential_equations/separable_equation'
-PATTERN = '□□/□□ = g(□)□(□)'
+PATTERN = '□ □ / □ □ = g ( □ ) □ ( □ ) with □ , □ , □ , □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['g', 'h', 'x0', 'y0', 'x_end']    # what each box (left to right) is
 KINDS = ['function', 'function', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Separable equation('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'g('), ('box', ''), ('op', ')'), ('box', ''), ('op', '('), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('dec', ''), ('dec', ''), ('op', '/'), ('dec', ''), ('dec', ''), ('op', '='), ('op', 'g'), ('op', '('), ('dec', ''), ('op', ')'), ('dec', ''), ('op', '('), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

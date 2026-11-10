@@ -1,6 +1,6 @@
 """Row for the operator: Galois group
 
-Picture:      Gal(□/□)
+Picture:      Gal ( □ / □ )
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/abstract_algebra/galois_group
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Galois group'
 KEY = 'math/abstract_algebra/galois_group'
-PATTERN = 'Gal(□/□)'
+PATTERN = 'Gal ( □ / □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Gal('), ('box', ''), ('op', '/'), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'Gal'), ('op', '('), ('dec', ''), ('op', '/'), ('dec', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

@@ -1,6 +1,6 @@
 """Row for the operator: Generating function
 
-Picture:      G(□) = Σ □ₙ □ⁿ
+Picture:      G ( □ ) = Σ □ ₙ □ ⁿ
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/graph_theory_and_combinatorics/generating_function
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Generating function'
 KEY = 'math/graph_theory_and_combinatorics/generating_function'
-PATTERN = 'G(□) = Σ □ₙ □ⁿ'
+PATTERN = 'G ( □ ) = Σ □ ₙ □ ⁿ'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['terms', 'x']    # what each box (left to right) is
 KINDS = ['list', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Generating function('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', 'Σ'), ('box', ''), ('op', 'ₙ'), ('box', ''), ('op', 'ⁿ')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'G'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', 'Σ'), ('box', ''), ('op', 'ₙ'), ('box', ''), ('op', 'ⁿ')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

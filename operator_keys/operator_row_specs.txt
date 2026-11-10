@@ -1,0 +1,510 @@
+# One line per operator, written from its picture.  Format and symbols: see make_operator_row_files.py.
+# [name] = an input box (repeat the name for a variable the picture writes twice)   {} = the answer box inside the formula   => {} = result box right of the row
+geometry/geometry/arc_length | {} = [r] × [theta]
+geometry/geometry/circle_area | {} = π × [r] ²
+geometry/geometry/circle_circumference | {} = 2 × π × [r]
+geometry/geometry/cone_surface_area | {} = π × [r] × ( [r] + [l] )
+geometry/geometry/cone_volume | {} = ⅓ × π × [r] ² × [h]
+geometry/geometry/cube_surface_area | {} = 6 [s] ²
+geometry/geometry/cube_volume | {} = [s] ³
+geometry/geometry/cylinder_surface_area | {} = 2 × π × [r] × ( [r] + [h] )
+geometry/geometry/cylinder_volume | {} = π × [r] ² × [h]
+geometry/geometry/degrees_to_radians_geometry | [degrees] ° → {} rad
+geometry/geometry/distance_formula | {} = √ ( ( [x2] ₂ − [x1] ₁ ) ² + ( [y2] ₂ − [y1] ₁ ) ² )
+# Heron: the picture's s boxes are the semi-perimeter s = (a+b+c)/2, which is not an input: drawn as the plain letter s
+geometry/geometry/heron_s_formula | {} = √ ( s ( s − [a] ) ( s − [b] ) ( s − [c] ) )
+geometry/geometry/law_of_cosines | {} = √ ( [a] ² + [b] ² − 2 × [a] × [b] × cos ( [C] ) )
+geometry/geometry/law_of_sines | {} = [a] · sin [B] / sin [A]
+geometry/geometry/midpoint_formula | {} = ( ( [x1] ₁ + [x2] ₂ ) / 2 , ( [y1] ₁ + [y2] ₂ ) / 2 )
+geometry/geometry/parallelogram_area | {} = [b] · [h]
+geometry/geometry/polygon_interior_angle_sum | ( [n] − 2 ) · 180 ° => {}
+geometry/geometry/pyramid_volume | {} = ⅓ × [base_area] × [h]
+geometry/geometry/pythagorean_theorem | {} = √ ( [a] ² + [b] ² )
+geometry/geometry/radians_to_degrees_geometry | [radians] rad → {} °
+geometry/geometry/rectangle_area | {} = [l] · [w]
+geometry/geometry/rectangle_perimeter | {} = 2 ( [l] + [w] )
+geometry/geometry/rectangular_prism_surface_area | {} = 2 × ( [l] × [w] + [l] × [h] + [w] × [h] )
+geometry/geometry/rectangular_prism_volume | {} = [l] · [w] · [h]
+geometry/geometry/regular_polygon_area | {} = ½ · [perimeter] · [apothem]
+geometry/geometry/rhombus_area | {} = ½ × [d1] × [d2]
+geometry/geometry/sector_area | {} = ½ × [r] ² × [theta]
+geometry/geometry/slope | {} = ( [y2] ₂ − [y1] ₁ ) / ( [x2] ₂ − [x1] ₁ )
+geometry/geometry/sphere_surface_area | {} = 4 × π × [r] ²
+geometry/geometry/sphere_volume | {} = ( 4 / 3 ) × π × [r] ³
+geometry/geometry/square_area | {} = [s] ²
+geometry/geometry/trapezoid_area | {} = ½ × ( [a] + [b] ) × [h]
+geometry/geometry/triangle_area | {} = ½ · [b] · [h]
+math/abstract_algebra/alternating_group_order | | [] ₙ | = [n] ! / 2
+math/abstract_algebra/basis | Basis ( [vectors] )
+math/abstract_algebra/coset | [g] [H] = { [g] ∘ [] : [] ∈ [H] }
+math/abstract_algebra/cyclic_group | ⟨ [g] ⟩
+math/abstract_algebra/dimension | Dimension ( [vectors] )
+math/abstract_algebra/direct_product | [G] × [H] = { ( [] , [] ) : [] ∈ [G] , [] ∈ [H] }
+math/abstract_algebra/direct_sum | [] ⊕ []
+math/abstract_algebra/field | Add, subtract, multiply, and divide by nonzero elements
+math/abstract_algebra/field_extension | [] / []
+math/abstract_algebra/galois_group | Gal ( [] / [] )
+math/abstract_algebra/group | ( G , ∘ )
+math/abstract_algebra/homomorphism | [phi] : [G] → []
+math/abstract_algebra/ideal | [] ◁ []
+math/abstract_algebra/image | im [phi]
+math/abstract_algebra/integral_domain | a × b = 0 ⇒ a = 0 or b = 0
+math/abstract_algebra/isomorphism | [G] ≅ [H_]
+math/abstract_algebra/kernel | ker [phi]
+math/abstract_algebra/module | Module ( [] )
+math/abstract_algebra/normal_subgroup | [N] ◁ [G]
+math/abstract_algebra/order_of_element | ord ( [g] ) => {}
+math/abstract_algebra/order_of_group | | [elements] | => {}
+math/abstract_algebra/polynomial_ring | [] [ [] ]
+math/abstract_algebra/quotient_group_order | | [] / [] | = | [order_g] | / | [order_n] |
+math/abstract_algebra/ring | ( [] , + , · )
+math/abstract_algebra/subgroup | [H_] ≤ [G]
+math/abstract_algebra/symmetric_group_order | | [] ₙ | = [n] !
+math/abstract_algebra/tensor_product | ( [a] ⊗ [b] ) = ( [] ₁ [] ₁ , [] ₁ [] ₂ , … , [] ₘ [] ₙ )
+math/abstract_algebra/vector_space | Vector addition + scalar multiplication
+math/algebra/arithmetic_sequence | {} = [a1] + ( [n] − 1 ) × [d]
+math/algebra/arithmetic_series_sum | {} = ( [n] / 2 ) × ( 2 × [a1] + ( [n] − 1 ) × [d] )
+math/algebra/binomial_theorem | ( [a] + [b] ) ⁿ = Σ ₖ C ( [n] , [] ) · [a] ⁿ⁻ᵏ · [b] ᵏ
+math/algebra/complex_conjugate | conj ( [] + [] i ) = [] − [] i
+math/algebra/complex_number | [a] + [b] i
+math/algebra/cube | {} = [x] × [x] × [x]
+math/algebra/cube_root | ³ √ [x] => {}
+math/algebra/difference_of_squares | [a] ² − [b] ² = ( [a] − [b] ) ( [a] + [b] )
+math/algebra/discriminant | {} = [b] ² − 4 × [a] × [c]
+math/algebra/expand | ( [] + [] ) ( [] + [] ) = [] [] + [] [] + [] [] + [] []
+math/algebra/exponential | e ^ [x] => {}
+math/algebra/factor | factor ( [expr] ) = [] · []
+math/algebra/geometric_sequence | {} ₙ = [a1] ₁ · [r] ⁿ⁻¹
+math/algebra/geometric_series_sum | {} ₙ = [a1] ₁ ( 1 − [r] ⁿ ) / ( 1 − [r] )
+math/algebra/imaginary_unit | i · i = −1
+math/algebra/log_any_base | log base [base] of [x] => {}
+math/algebra/log_base_10 | log ₁₀ ( [x] ) => {}
+math/algebra/modulus_of_complex_number | | [] + [] i | => {}
+math/algebra/natural_log | ln ( [x] ) => {}
+math/algebra/nth_root | ⁿ √ [x] = [x] ^ ( 1 / [n] )
+math/algebra/power | [a] ^ [b] => {}
+math/algebra/power_of_ten | 10 ^ [x] => {}
+math/algebra/quadratic_formula | ( {} , {} ) = ( − [b] ± √ ( [b] ² − 4 × [a] × [c] ) ) / ( 2 × [a] )
+math/algebra/simplify | simplify ( [expr] ) => {}
+math/algebra/slope_intercept_form | {} = [m] · [x] + [b]
+math/algebra/solve_for_x | solve ( [f] = [] ) → {}
+math/algebra/solve_system_of_equations | [] = [] and [] = [] → ( {} , {} )
+math/algebra/square | {} = [x] × [x]
+math/algebra/square_root | √ [x] => {}
+math/arithmetic/absolute_value | | [x] | => {}
+math/arithmetic/addition | [a] + [b] => {}
+math/arithmetic/division | [a] ÷ [b] => {}
+math/arithmetic/fraction | [numerator] / [denominator] => {}
+math/arithmetic/maximum | max ( [x1] ) => {}
+math/arithmetic/minimum | min ( [x1] ) => {}
+math/arithmetic/modulo | [a] mod [b] => {}
+math/arithmetic/multiplication | [a] × [b] => {}
+math/arithmetic/negate | − [x] => {}
+math/arithmetic/reciprocal | 1 / [x] => {}
+math/arithmetic/round_down | floor ( [x] ) => {}
+math/arithmetic/round_nearest | round ( [x] ) => {}
+math/arithmetic/round_up | ceil ( [x] ) => {}
+math/arithmetic/subtraction | [a] − [b] => {}
+math/calculus/chain_rule | ( f ∘ g ) ′ ( [] ) = f ′ ( g ( [] ) ) · g ′ ( [] )
+math/calculus/curl | ∇ × [F] => {}
+math/calculus/definite_integral | ∫ [f] dx from [a] to [b] → {}
+math/calculus/derivative | {} = lim ( h → 0 ) ( ( [f] ( [x] + h ) − [f] ( [x] ) ) / h )
+math/calculus/differential_equation | d [] / d [] = f ( [] , [] )
+math/calculus/divergence | ∇ · [F] => {}
+math/calculus/double_integral | ∬ [f] dA => {}
+math/calculus/gradient | ∇ [f] = ( ∂ [f] / ∂ [] ₁ , … , ∂ [f] / ∂ [] ₙ )
+math/calculus/indefinite_integral | ∫ [f] d [x] = {} + []
+math/calculus/infinity | ∞
+math/calculus/l_hopital_s_rule | lim [f] / [g] = lim [f] ′ / [g] ′
+math/calculus/laplacian | Δ [f] => {}
+math/calculus/limit | lim ( [] → [a] ) f ( [] ) => {}
+math/calculus/line_integral | ∫ [F] · dr along [r] => {}
+math/calculus/maclaurin_series | f ( [x] ) ≈ Σ ₙ [derivs] ⁽ⁿ⁾ ( 0 ) / [] ! · [x] ⁿ
+math/calculus/partial_derivative | ∂ [f] / ∂ [] ᵢ ≈ ( f ( … [point] ᵢ + [] … ) − f ( … [] ᵢ − [] … ) ) / 2 []
+math/calculus/product | product ( [terms] ) => {}
+math/calculus/product_rule | ( f · g ) ′ = f ′ · g + f · g ′
+math/calculus/quotient_rule | ( f / g ) ′ = ( f ′ · g − f · g ′ ) / g ²
+math/calculus/second_derivative | f ″ ( [x] ) ≈ ( f ( [x] + [] ) − 2 f ( [x] ) + f ( [x] − [] ) ) / [] ²
+math/calculus/second_partial_derivative | ∂ ² [f] / ∂ [] ᵢ ² ≈ ( f ( … [point] ᵢ + [] … ) − 2 f + f ( … [] ᵢ − [] … ) ) / [] ²
+math/calculus/summation | sum ( [terms] ) => {}
+math/calculus/taylor_series | f ( [x] ) ≈ Σ ₙ [derivs] ⁽ⁿ⁾ ( [a] ) / [] ! · ( [x] − [a] ) ⁿ
+math/calculus/triple_integral | ∭ [f] dV => {}
+math/category_theory_and_foundations/adjunction | [] ⊣ []
+math/category_theory_and_foundations/aleph_null | | ℕ | = ℵ ₀
+math/category_theory_and_foundations/axiom_of_choice | { [sets] , [] , [] } → pick one from each
+math/category_theory_and_foundations/bijective | Bijective ( [f] , [domain] , [codomain] ) => {}
+math/category_theory_and_foundations/cartesian_product | [a] × [b] = { ( [] , [] ) : [] ∈ [a] , [] ∈ [b] }
+math/category_theory_and_foundations/category | objects [] , [] and morphism [] → []
+math/category_theory_and_foundations/complex_numbers | [a] + [b] i ∈ ℂ
+math/category_theory_and_foundations/function | [f] : [] → []
+math/category_theory_and_foundations/functor | [] : 𝒞 → 𝒟
+math/category_theory_and_foundations/injective | f ( [] ) = f ( [] ) ⇒ [] = []
+math/category_theory_and_foundations/integers | [x] ∈ ℤ
+math/category_theory_and_foundations/limit_and_colimit | Limit and colimit ( [] )
+math/category_theory_and_foundations/morphism | [] : [] → []
+math/category_theory_and_foundations/natural_numbers | [x] ∈ ℕ
+math/category_theory_and_foundations/natural_transformation | [] : [] ⇒ []
+math/category_theory_and_foundations/omega_ordinal | 0 , 1 , 2 , … → ω
+math/category_theory_and_foundations/power_set | 𝒫 ( [A] ) => {}
+math/category_theory_and_foundations/product_and_coproduct | [] × [] , [] ⊔ []
+math/category_theory_and_foundations/quaternions | [a] + [b] i + [c] j + [d] k ∈ ℍ
+math/category_theory_and_foundations/rational_numbers | [p] / [q] ∈ ℚ
+math/category_theory_and_foundations/real_numbers | [x] ∈ ℝ
+math/category_theory_and_foundations/surjective | onto ( [f] , [domain] , [codomain] ) => {}
+math/category_theory_and_foundations/zorn_s_lemma | Chains have upper bounds ⇒ a maximal element exists
+math/complex_analysis/analytic_function | Locally equal to a convergent power series
+math/complex_analysis/argument | arg ( [] + [] i ) => {}
+math/complex_analysis/branch_cut | Branch cut ( [] )
+math/complex_analysis/cauchy_integral_formula | f ( [a] ) = ∮ f ( [] ) / ( [] − [a] ) dz
+math/complex_analysis/cauchyriemann_equations | ∂ [u] / ∂ [] = ∂ [v] / ∂ [] and ∂ [u] / ∂ [] = − ∂ [v] / ∂ []
+math/complex_analysis/conformal_map | conformal ( [] )
+math/complex_analysis/contour_integral | ∫ [f] dz along [center] => {}
+math/complex_analysis/de_moivre_s_theorem | ( [r] ( cos [theta] + i sin [theta] ) ) ⁿ = [r] ⁿ ( cos [n] [theta] + i sin [n] [theta] )
+math/complex_analysis/euler_s_formula | e ^ ( i [theta] ) = cos [theta] + i sin [theta]
+math/complex_analysis/imaginary_part | Im ( [] + [] i ) => {}
+math/complex_analysis/laurent_series | Σ [] ₙ ( [] − [] ) ⁿ
+math/complex_analysis/mobius_transformation | f ( [z] ) = ( [a] [z] + [b] ) / ( [c] [z] + [d] )
+math/complex_analysis/real_part | Re ( [] + [] i ) => {}
+math/complex_analysis/residue | Res ( [f] , [a] )
+math/complex_analysis/residue_theorem | ∮ f ( [] ) d [] = 2 π i · Σ []
+math/constants_and_relations/approximately_equal | [a] ≈ [b]
+math/constants_and_relations/close_bracket | ( [] + [] ) × []
+math/constants_and_relations/curly_braces | { [] , [] , [] }
+math/constants_and_relations/equals | [a] = [b]
+math/constants_and_relations/euler_mascheroni_constant | γ = lim ( 1 + 1 / 2 + ··· + 1 / n − ln ( n ) )
+math/constants_and_relations/euler_s_number | e = lim ( 1 + 1 / n ) ⁿ
+math/constants_and_relations/golden_ratio | φ = ( 1 + √ 5 ) / 2
+math/constants_and_relations/greater_than | [a] > [b]
+math/constants_and_relations/greater_than_or_equal | [a] ≥ [b]
+math/constants_and_relations/less_than | [a] < [b]
+math/constants_and_relations/less_than_or_equal | [a] ≤ [b]
+math/constants_and_relations/not_equal | [a] ≠ [b]
+math/constants_and_relations/open_bracket | ( [] + [] ) × []
+math/constants_and_relations/pi | π = [] / []
+math/constants_and_relations/proportional_to | [y] ∝ [x]
+math/constants_and_relations/square_brackets | [ [] , [] ]
+math/differential_geometry_and_tensors/christoffel_symbol | Γ ᵏ ᵢⱼ ( [] )
+math/differential_geometry_and_tensors/differential_form | ω = [] d [] + [] d []
+math/differential_geometry_and_tensors/exterior_derivative | d ( [] d [] ) = d [] ∧ d []
+math/differential_geometry_and_tensors/gaussian_curvature | {} = [k1] ₁ · [k2] ₂
+math/differential_geometry_and_tensors/geodesic | ∇ ( along γ ′ ) γ ′ = 0
+math/differential_geometry_and_tensors/lie_bracket | [ [X] , [Y] ]
+math/differential_geometry_and_tensors/lie_derivative | [] []
+math/differential_geometry_and_tensors/metric_tensor | ds ² = [g] d [v] d [w]
+math/differential_geometry_and_tensors/pullback | [] *
+math/differential_geometry_and_tensors/ricci_tensor | [] ᵢⱼ
+math/differential_geometry_and_tensors/riemann_curvature | [] ᵃ βγ []
+math/differential_geometry_and_tensors/stokes_theorem | ∫ [] [] [] = ∫ ∂ [] []
+math/differential_geometry_and_tensors/tangent_space | [] ₚ []
+math/differential_geometry_and_tensors/tangent_vector | [] ∈ [] ₚ []
+math/differential_geometry_and_tensors/tensor_contraction | T ⁱ ᵢ = Σ [T]
+math/differential_geometry_and_tensors/wedge_product | [a] ∧ [b] = − ( [b] ∧ [a] )
+math/discrete_and_number_theory/combinations | C ( [n] , [r] ) = [n] ! / ( [r] ! ( [n] − [r] ) ! )
+math/discrete_and_number_theory/euler_s_totient | φ ( [n] ) => {}
+math/discrete_and_number_theory/factorial | [n] ! = [n] · ( [n] − 1 ) · ... · 2 · 1
+math/discrete_and_number_theory/fibonacci | [] ₀ = 0 , [] ₁ = 1 , [] ₙ = [] ₙ₋₁ + [] ₙ₋₂
+math/discrete_and_number_theory/greatest_common_divisor | gcd ( [a] , [b] ) => {}
+math/discrete_and_number_theory/inclusion_exclusion | | [] ∪ [] | = | [a] | + | [b] | − | [] ∩ [] |
+math/discrete_and_number_theory/least_common_multiple | lcm ( [a] , [b] ) = | [a] · [b] | / gcd ( [a] , [b] )
+math/discrete_and_number_theory/modular_arithmetic | [a] mod [m] => {}
+math/discrete_and_number_theory/permutations | P ( [n] , [r] ) = [n] ! / ( [n] − [r] ) !
+math/discrete_and_number_theory/pigeonhole_principle | ⌈ [n] / [m] ⌉ => {}
+math/discrete_and_number_theory/prime_check | prime ( [n] ) = yes / no
+math/discrete_and_number_theory/prime_factorization | factor ( [n] ) = {}
+math/graph_theory_and_combinatorics/adjacency_matrix | Adjacency matrix ( [n] , [edges] ) => {}
+math/graph_theory_and_combinatorics/bell_number | {} ₙ = Σ ₖ S ( [n] , [] )
+math/graph_theory_and_combinatorics/bipartite_graph | Vertices in two sets
+math/graph_theory_and_combinatorics/burnside_s_lemma | | [] / [] | => {}
+math/graph_theory_and_combinatorics/catalan_number | {} ₙ = C ( 2 [n] , [n] ) / ( [n] + 1 )
+math/graph_theory_and_combinatorics/chromatic_number | χ ( [graph] ) => {}
+math/graph_theory_and_combinatorics/cycle | cycle ( [graph] )
+math/graph_theory_and_combinatorics/euler_path | Euler path ( [graph] )
+math/graph_theory_and_combinatorics/generating_function | G ( [x] ) = Σ [terms] ₙ [x] ⁿ
+math/graph_theory_and_combinatorics/graph | [graph] = ( [] , [] )
+math/graph_theory_and_combinatorics/hamiltonian_path | Hamiltonian path ( [graph] )
+math/graph_theory_and_combinatorics/max_flow_min_cut | Max flow min cut ( [graph] )
+math/graph_theory_and_combinatorics/partition_number | [] ( [n] ) => {}
+math/graph_theory_and_combinatorics/path | path ( [graph] )
+math/graph_theory_and_combinatorics/planar_graph | planar ( [graph] )
+math/graph_theory_and_combinatorics/recurrence_relation | [] ₙ = f ( [] ₙ₋₁ , … )
+math/graph_theory_and_combinatorics/shortest_path_dijkstra | [] ( [graph] , [start] ) => {}
+math/graph_theory_and_combinatorics/spanning_tree | [] ⊆ [graph]
+math/graph_theory_and_combinatorics/stirling_number_second_kind | S ( [n] , [k] ) = ( 1 / [k] ! ) Σ ⱼ ( − 1 ) ʲ C ( [k] , [] ) ( [k] − [] ) ⁿ
+math/graph_theory_and_combinatorics/tree | Connected + no cycles
+math/graph_theory_and_combinatorics/vertex_degree | deg ( [v] ) => {}
+math/linear_algebra/characteristic_polynomial | p ( [] ) = det ( [A] − [] · I )
+math/linear_algebra/column_space | col ( [A] ) = { [A] · [] }
+math/linear_algebra/cross_product | [a] × [b] = ( [] ₂ [] ₃ − [] ₃ [] ₂ , [] ₃ [] ₁ − [] ₁ [] ₃ , [] ₁ [] ₂ − [] ₂ [] ₁ )
+math/linear_algebra/determinant | det ( [A] ) => {}
+math/linear_algebra/dot_product | [a] · [b] = Σ [a] ᵢ [b] ᵢ = | [a] | | [b] | cos []
+math/linear_algebra/eigenvalues | [A] → {}
+math/linear_algebra/eigenvectors | [A] × [] = [] × []
+math/linear_algebra/identity_matrix | I ᵢⱼ = 1 when i = j , 0 otherwise
+math/linear_algebra/lu_decomposition | [A] = {} × {}
+math/linear_algebra/matrix_add | ( [A] + [B] ) ᵢⱼ = [A] ᵢⱼ + [B] ᵢⱼ
+math/linear_algebra/matrix_inverse | [A] · [A] ⁻¹ = I
+math/linear_algebra/matrix_multiply | {} ᵢⱼ = Σ ₖ [A] ᵢₖ × [B] ₖⱼ
+math/linear_algebra/matrix_rank | rank ( [A] ) => {}
+math/linear_algebra/matrix_subtract | ( [A] − [B] ) ᵢⱼ = [A] ᵢⱼ − [B] ᵢⱼ
+math/linear_algebra/norm | ‖ [v] ‖ ₚ = ( Σ | [v] ᵢ | ᵖ ) ^ ( 1 / [] )
+math/linear_algebra/null_space | null ( [A] ) = { [] : [A] · [] = 0 }
+math/linear_algebra/qr_decomposition | [A] = {} × {}
+math/linear_algebra/row_reduce_rref | [A] → RREF → {}
+math/linear_algebra/scalar_multiply | ( [k] [A] ) ᵢⱼ = [k] · [A] ᵢⱼ
+math/linear_algebra/singular_value_decomposition | [A] = {} × {} × {} ᵀ
+math/linear_algebra/solve_ax_b | [A] · {} = [b]
+math/linear_algebra/trace | tr ( [A] ) = Σ ᵢ [A] ᵢᵢ
+math/linear_algebra/transpose | ( [A] ᵀ ) ᵢⱼ = [A] ⱼᵢ
+math/linear_algebra/unit_vector | {} = [v] / ‖ [v] ‖
+math/linear_algebra/vector_magnitude | ‖ [v] ‖ = √ ( [v] ₁ ² + [v] ₂ ² + ... )
+math/linear_algebra/vector_projection | proj [b] ( [a] ) = ( [a] · [b] / [b] · [b] ) · [b]
+math/logic_and_sets/and | [a] ∧ [b] => {}
+math/logic_and_sets/cardinality | | [a] | => {}
+math/logic_and_sets/complement | [a] ᶜ => {}
+math/logic_and_sets/element_of | [x] ∈ [s]
+math/logic_and_sets/empty_set | ∅ = { }
+math/logic_and_sets/for_all | ∀ [] ∈ [domain] : P ( [] )
+math/logic_and_sets/if_and_only_if | [a] ↔ [b] => {}
+math/logic_and_sets/implies | [a] → [b] => {}
+math/logic_and_sets/intersection | [a] ∩ [b] => {}
+math/logic_and_sets/not | ¬ ( [a] ) => {}
+math/logic_and_sets/not_element_of | [x] ∉ [s]
+math/logic_and_sets/or | [a] ∨ [b] => {}
+math/logic_and_sets/proper_subset | [a] ⊂ [b]
+math/logic_and_sets/set_difference | [a] − [b] => {}
+math/logic_and_sets/subset_or_equal | [a] ⊆ [b]
+math/logic_and_sets/there_exists | ∃ [] ∈ [domain] : P ( [] )
+math/logic_and_sets/union | [a] ∪ [b] => {}
+math/logic_and_sets/xor | [a] ⊕ [b] => {}
+math/optimization_and_numerical_methods/bisection_method | bisect ( [f] , [a] , [b] ) => {}
+math/optimization_and_numerical_methods/convex_function | f ( [] [x] + ( 1 − [] ) [y] ) ≤ [] f ( [x] ) + ( 1 − [] ) f ( [y] )
+math/optimization_and_numerical_methods/euler_s_method | [] ₙ₊₁ = [] ₙ + [h] · f ( [] ₙ , [] ₙ )
+math/optimization_and_numerical_methods/fixed_point_iteration | {} ₙ₊₁ = g ( [x0] ₙ )
+math/optimization_and_numerical_methods/gauss_seidel_iteration | [] ⁽ᵏ⁺¹⁾ => {}
+math/optimization_and_numerical_methods/gaussian_elimination | [A] | [b] → {}
+math/optimization_and_numerical_methods/gradient_descent | {} ₖ₊₁ = [x0] ₖ − [] ∇ [grad_f]
+math/optimization_and_numerical_methods/hessian | H = [ ∂ ² [f] / ∂ [] ∂ [] ]
+math/optimization_and_numerical_methods/jacobi_iteration | {} ᵢ ⁽ᵏ⁺¹⁾ = ( [b] ᵢ − Σ { [] = i } [A] ᵢⱼ [] ⱼ ⁽ᵏ⁾ ) / [A] ᵢᵢ
+math/optimization_and_numerical_methods/kkt_conditions | ∇ [] + [] · ∇ [] = 0
+math/optimization_and_numerical_methods/lagrange_interpolation | L ( [x] ) = Σ ᵢ [ys] ᵢ ∏ { [] = i } ( [x] − [xs] ⱼ ) / ( [xs] ᵢ − [xs] ⱼ )
+math/optimization_and_numerical_methods/lagrange_multipliers | ∇ [f] = [] · ∇ [g]
+math/optimization_and_numerical_methods/least_squares | min Σ ( [y] ᵢ − [] ᵢ ) ² => {}
+math/optimization_and_numerical_methods/linear_programming | max [c] · [] subject to [A] · [] ≤ [b]
+math/optimization_and_numerical_methods/maximize | max [f] ( [] )
+math/optimization_and_numerical_methods/minimize | min [f] ( [] )
+math/optimization_and_numerical_methods/newton_interpolation | N ( [x] ) = [] ₀ + [] ₁ ( [x] − [xs] ₀ ) + [] ₂ ( [x] − [xs] ₀ ) ( [x] − [xs] ₁ ) + ...
+math/optimization_and_numerical_methods/newton_s_method | {} = [x0] − f ( [x0] ) / f ′ ( [x0] )
+math/optimization_and_numerical_methods/runge_kutta_rk4 | {} ₙ₊₁ = [y0] ₙ + [h] / 6 · ( [] ₁ + 2 [] ₂ + 2 [] ₃ + [] ₄ )
+math/optimization_and_numerical_methods/secant_method | {} ₙ₊₁ = [x1] ₙ − f ( [x1] ₙ ) ( [x1] ₙ − [x0] ₙ₋₁ ) / ( f ( [x1] ₙ ) − f ( [x0] ₙ₋₁ ) )
+math/optimization_and_numerical_methods/simplex_method | simplex ( [A] · [] ≤ [b] ) => {}
+math/optimization_and_numerical_methods/simpson_s_rule | ∫ ₐ ᵇ [f] ≈ [] / 3 · ( [] ₀ + 4 [] ₁ + 2 [] ₂ + ... + [] ₙ )
+math/optimization_and_numerical_methods/spline | S ( [x] )
+math/optimization_and_numerical_methods/trapezoid_rule | ∫ ₐ ᵇ [f] ≈ [] · ( f ( [a] ) / 2 + Σ f ( [] ᵢ ) + f ( [b] ) / 2 )
+math/real_analysis/almost_everywhere | Almost everywhere ( [] )
+math/real_analysis/alternating_series_test | Σ ( − 1 ) ⁿ [terms] ₙ
+math/real_analysis/banach_space | Normed vector space + completeness
+math/real_analysis/comparison_test | [a] ₙ ≤ [b] ₙ
+math/real_analysis/convergence | [terms] ₙ → [L]
+math/real_analysis/epsilon_delta_continuity | ∀ [eps] ∃ [] : | [] − [a] | < [] → | f ( [] ) − f ( [a] ) | < [eps]
+math/real_analysis/hilbert_space | Inner product space + completeness
+math/real_analysis/infimum | inf ( [values] ) => {}
+math/real_analysis/inner_product | ⟨ [x] , [y] ⟩ = Σ [x] ᵢ [y] ᵢ
+math/real_analysis/integral_test | Σ [] ₙ ↔ ∫ f ( [] ) d []
+math/real_analysis/intermediate_value_theorem | f ( [a] ) < [y] < f ( [b] ) → f ( [] ) => {}
+math/real_analysis/lebesgue_integral | ∫ [f] dμ => {}
+math/real_analysis/limit_inferior | Limit inferior ( [terms] )
+math/real_analysis/limit_superior | Limit superior ( [terms] )
+math/real_analysis/lipschitz_ratio | | f ( [x] ) − f ( [y] ) | ≤ [] | [x] − [y] |
+math/real_analysis/lp_norm | ‖ [f] ‖ ₚ = ( ∫ | [f] | ᵖ [] [] ) ^ ( 1 / [] )
+math/real_analysis/mean_value_theorem | f ′ ( [] ) => {}
+math/real_analysis/measure | μ ( [intervals] ) => {}
+math/real_analysis/outer_measure | [intervals] *
+math/real_analysis/radius_of_convergence | {} = 1 / [L]
+math/real_analysis/ratio_test | {} = lim | [a_next] ₙ₊₁ / [a_n] ₙ |
+math/real_analysis/riemann_sum | Σ f ( [] ᵢ ) · [] => {}
+math/real_analysis/riemannstieltjes_sum | Σ f ( [xs] ᵢ ) · ( g ( [xs] ᵢ₊₁ ) − g ( [xs] ᵢ ) ) => {}
+math/real_analysis/root_test | {} = lim ⁿ √ | [a_n] ₙ |
+math/real_analysis/series_convergence_test | Σ [terms] ₙ
+math/real_analysis/sigma_algebra | Sigma-algebra ( [] )
+math/real_analysis/supremum | sup ( [values] ) => {}
+math/real_analysis/uniform_continuity | ∀ ε > 0 , ∃ δ > 0 , ∀ x , y ∈ D · | x − y | < δ ⇒ | f ( x ) − f ( y ) | < ε
+math/real_analysis/uniform_convergence | [] ₙ ⇉ []
+math/statistics_and_probability/bayes_theorem | P ( [] | [] ) = P ( [] | [] ) × P ( [p_a] ) / P ( [p_b] )
+math/statistics_and_probability/binomial_distribution | P ( [] = [k] ) = C ( [n] , [k] ) · [p] ᵏ · ( 1 − [p] ) ⁿ⁻ᵏ
+math/statistics_and_probability/chi_square_statistic | {} ² = Σ ( [observed] ᵢ − [expected] ᵢ ) ² / [expected] ᵢ
+math/statistics_and_probability/conditional_probability | P ( [] | [] ) = P ( [] ∩ [] ) / P ( [p_b] )
+math/statistics_and_probability/confidence_interval | {} = [mean] ± [] × [sd] / √ ( [n] )
+math/statistics_and_probability/correlation | {} = cov ( [x] , [y] ) / ( [] ₓ · [] [] )
+math/statistics_and_probability/covariance | cov ( [x] , [y] ) = Σ ( [x] ᵢ − [] ) ( [y] ᵢ − [] ) / ( [] − 1 )
+math/statistics_and_probability/expected_value | [] [ [] ] = Σ [values] ᵢ · [probs] ᵢ
+math/statistics_and_probability/exponential_distribution | f ( [x] ) = [lam] · e ^ ( − [lam] [x] ) for [x] ≥ 0
+math/statistics_and_probability/interquartile_range | IQR = [] − []
+math/statistics_and_probability/linear_regression | [] = [] [] + []
+math/statistics_and_probability/mean | mean ( [data] ) => {}
+math/statistics_and_probability/median | median ( [data] ) => {}
+math/statistics_and_probability/mode | mode ( [data] ) => {}
+math/statistics_and_probability/normal_distribution | f ( [x] ) = e ^ ( − ( [x] − [] ) ² / 2 [] ² ) / ( [] √ ( 2 π ) )
+math/statistics_and_probability/p_value | p-value ( [z] ) => {}
+math/statistics_and_probability/percentile | [data] ₖ => {}
+math/statistics_and_probability/poisson_distribution | P ( [] = [k] ) = [lam] ᵏ · e ^ ( − [lam] ) / [k] !
+math/statistics_and_probability/probability | P ( [] ) => {}
+math/statistics_and_probability/quartiles | quartiles ( [data] ) => {}
+math/statistics_and_probability/range | range ( [data] ) => {}
+math/statistics_and_probability/sample_standard_deviation | {} = √ ( [] ² )
+math/statistics_and_probability/sample_variance | {} ² = Σ ( [data] ᵢ − [] ) ² / ( [] − 1 )
+math/statistics_and_probability/standard_deviation | {} = √ ( [] ² )
+math/statistics_and_probability/t_test_statistic | {} = ( [mean] − [mu0] ₀ ) / ( [s] / √ [n] )
+math/statistics_and_probability/uniform_distribution | f ( [x] ) = 1 / ( [b] − [a] ) for [a] ≤ [x] ≤ [b] , else 0
+math/statistics_and_probability/variance | {} ² = Σ ( [data] ᵢ − [] ) ² / []
+math/statistics_and_probability/variance_of_random_variable | Var ( [] ) = [] [ [] ² ] − ( [] [ [] ] ) ²
+math/statistics_and_probability/z_score | {} = ( [x] − [mean] ) / [sd]
+math/topology/basis_of_topology | ℬ ( [B] )
+math/topology/boundary | ∂ [A]
+math/topology/cauchy_sequence | ( [terms] ₙ )
+math/topology/closed_set | X ∖ A is open
+math/topology/closure | ‾ [A]
+math/topology/cohomology | [] ⁿ ( [] )
+math/topology/compact | compact ( [] )
+math/topology/complete_space | complete ( [] )
+math/topology/connected | No separation into two open pieces
+math/topology/continuous_map | [] : [] → []
+math/topology/covering_space | [] : ‾ [] → []
+math/topology/euler_characteristic | {} = [v] − [e] + [f]
+math/topology/fundamental_group | π ₁ ( [] )
+math/topology/hausdorff | x ≠ y ⇒ ∃ open U , V with x ∈ U , y ∈ V , U ∩ V = ∅
+math/topology/homeomorphism | [] ≈ []
+math/topology/homology | [] ₙ ( [] )
+math/topology/homotopy | [] ≃ []
+math/topology/interior | [A] °
+math/topology/manifold | Locally looks like ℝ ⁿ
+math/topology/metric_space_distance | d ( [x] , [y] ) = √ ( Σ ᵢ ( [x] ᵢ − [y] ᵢ ) ² )
+math/topology/neighborhood | N ( [x] )
+math/topology/open_ball | [] ( [x] , [r] ) = { [y] : [d] ( [x] , [y] ) < [r] }
+math/topology/open_set | x ∈ U ⇒ some ball around x lies in U
+math/topology/path_connected | x → continuous path → y
+math/topology/product_topology | [] × []
+math/topology/subspace_topology | [tau] [A]
+math/transforms_and_differential_equations/characteristic_equation | [a] r ² + [b] r + [c] = 0
+math/transforms_and_differential_equations/convolution | ( [f] * [g] ) [ [] ] = Σ ⱼ [f] [ [] ] · [g] [ [] − [] ]
+math/transforms_and_differential_equations/dirac_delta | δ ( [x] ) => {}
+math/transforms_and_differential_equations/discrete_fourier_transform | {} ₖ = Σ ₙ [x] ₙ · e ^ ( − 2 π i · [] [] / [] )
+math/transforms_and_differential_equations/first_order_ode | [] ′ = f ( [] , [] )
+math/transforms_and_differential_equations/fourier_series | f ( [] ) = Σ [] ₙ cos ( n [] ) + [] ₙ sin ( n [] )
+math/transforms_and_differential_equations/heat_equation | [] ₜ = [] [] ₓₓ
+math/transforms_and_differential_equations/heaviside_step | H ( [x] ) => {}
+math/transforms_and_differential_equations/integrating_factor | {} ( [x] ) = e ^ ∫ [P] d [x]
+math/transforms_and_differential_equations/inverse_discrete_fourier_transform | {} ₙ = ( 1 / [] ) Σ ₖ [X] ₖ · e ^ ( 2 π i · [] [] / [] )
+math/transforms_and_differential_equations/inverse_laplace_transform | L ⁻¹ { [] } = []
+math/transforms_and_differential_equations/laplace_s_equation | ∇ ² [] = 0
+math/transforms_and_differential_equations/laplace_transform | L { [f] } => {}
+math/transforms_and_differential_equations/partial_differential_equation | ∂ [] / ∂ [] + ∂ [] / ∂ [] = []
+math/transforms_and_differential_equations/power_series_solution | [] = Σ [] ₙ [] ⁿ
+math/transforms_and_differential_equations/second_order_ode | [] ″ = f ( [] , [] , [] ′ )
+math/transforms_and_differential_equations/separable_equation | [] [] / [] [] = g ( [] ) [] ( [] )
+math/transforms_and_differential_equations/variation_of_parameters | [] ₚ = [] + []
+math/transforms_and_differential_equations/wave_equation | [] ₜₜ = [] ² [] ₓₓ
+math/transforms_and_differential_equations/wronskian | {} ( [f] , [g] ) = [f] · g ′ − [g] · f ′
+math/transforms_and_differential_equations/z_transform | {} ( [z] ) = Σ ₙ [x] [ [] ] · [z] ⁻ⁿ
+math/trigonometry/angle_sum | sin ( [a] + [b] ) = sin ( [a] ) × cos ( [b] ) + cos ( [a] ) × sin ( [b] )
+math/trigonometry/cosecant | csc [theta] = 1 / sin [theta]
+math/trigonometry/cosine | cos [theta] = [] / []
+math/trigonometry/cotangent | cot [theta] = cos [theta] / sin [theta]
+math/trigonometry/degrees_to_radians | [degrees] ° → {} rad
+math/trigonometry/double_angle | sin ( 2 × [theta] ) = 2 × sin ( [theta] ) × cos ( [theta] )
+math/trigonometry/half_angle | sin ( [theta] / 2 ) = √ ( ( 1 − cos ( [theta] ) ) / 2 )
+math/trigonometry/hyperbolic_cosine | cosh ( [x] ) = ( exp ( [x] ) + exp ( − [x] ) ) / 2
+math/trigonometry/hyperbolic_sine | sinh ( [x] ) = ( exp ( [x] ) − exp ( − [x] ) ) / 2
+math/trigonometry/hyperbolic_tangent | tanh [x] = sinh [x] / cosh [x]
+math/trigonometry/inverse_cosine | acos ( [x] ) => {}
+math/trigonometry/inverse_hyperbolic_cosine | acosh [x] = ln ( [x] + √ ( [x] ² − 1 ) )
+math/trigonometry/inverse_hyperbolic_sine | asinh [x] = ln ( [x] + √ ( [x] ² + 1 ) )
+math/trigonometry/inverse_hyperbolic_tangent | atanh [x] = ½ ln ( ( 1 + [x] ) / ( 1 − [x] ) )
+math/trigonometry/inverse_sine | asin ( [x] ) => {}
+math/trigonometry/inverse_tangent | atan ( [x] ) => {}
+math/trigonometry/pythagorean_identity | sin ² ( [theta] ) + cos ² ( [theta] ) = 1
+math/trigonometry/radians_to_degrees | [radians] rad → {} °
+math/trigonometry/secant | sec [theta] = 1 / cos [theta]
+math/trigonometry/sine | sin [theta] = [] / []
+math/trigonometry/tangent | tan [theta] = sin [theta] / cos [theta]
+math/trigonometry/two_argument_arctangent | atan2 ( [y] , [x] ) => {}
+physics/physics/acceleration | {} = [delta_v] / [t]
+physics/physics/bernoulli_equation | {} = [P1] + ½ × [rho] × ( [v1] ² − [v2] ² ) + [rho] × g × ( [h1] − [h2] )
+physics/physics/bohr_energy_level | {} = − 13.6 eV × [] ² / [n] ²
+physics/physics/brewster_angle | tan ( {} ) = [n2] / [n1]
+physics/physics/buoyant_force | {} = [rho] × g × [V]
+physics/physics/capacitance | {} = [C] × [V]
+physics/physics/centripetal_acceleration | {} = [v] ² / [r]
+physics/physics/compton_shift | {} = h / ( m × c ) × ( 1 − cos ( [theta] ) )
+physics/physics/continuity_equation | [A1] × [v1] = [A2] × {}
+physics/physics/coulomb_s_law | {} = kₑ × [q1] × [q2] / [r] ²
+physics/physics/critical_angle | sin ( {} ) = [n2] / [n1]
+physics/physics/cyclotron_radius | {} = [m] × [v] / ( | [q] | × [B] )
+physics/physics/de_broglie_wavelength | {} = h / ( [m] × [v] )
+physics/physics/density | {} = [m] / [V]
+physics/physics/diffraction_grating | [d] × sin ( {} ) = [m] × [wavelength]
+physics/physics/displacement | {} = [u] × [t] + ½ × [a] × [t] ²
+physics/physics/double_slit_fringe_spacing | {} = [wavelength] × [L] / [d]
+physics/physics/electric_power | {} = [V] × [I]
+physics/physics/energy_momentum_relation | {} ² = ( [p] × c ) ² + ( [m] × c ² ) ²
+physics/physics/faradays_law | {} = − [N] × [delta_flux] / [dt]
+physics/physics/final_velocity | {} = [u] + [a] × [t]
+physics/physics/frequency | {} = 1 / [T]
+physics/physics/gravitation | {} = G × [m1] × [m2] / [r] ²
+physics/physics/gravitational_time_dilation | {} = [dt] × √ ( 1 − 2 × G × [M] / ( [r] × c ² ) )
+physics/physics/heat | {} = [m] × [c] × [delta_T]
+physics/physics/heisenberg_uncertainty | [delta_x] × {} ≥ ħ / 2
+physics/physics/hooke_s_law | {} = − [k] × [x]
+physics/physics/hydraulic_press | {} = [F1] × [A2] / [A1]
+physics/physics/hydrostatic_pressure | {} = [rho] × g × [h]
+physics/physics/ideal_gas_law | {} = ( [n] × R × [T] ) / [V]
+physics/physics/impulse | {} = [F] × [dt]
+physics/physics/inductor_energy | {} = ½ × [L] × [I] ²
+physics/physics/kinetic_energy | {} = ½ × [m] × [v] ²
+physics/physics/length_contraction | {} = [L0] × √ ( 1 − [v] ² / c ² )
+physics/physics/lens_magnification | {} = − [d_i] / [d_o]
+physics/physics/lensmakers_equation | 1 / {} = ( [n] − 1 ) × ( 1 / [R1] − 1 / [R2] )
+physics/physics/lorentz_factor | {} = 1 / √ ( 1 − [v] ² / c ² )
+physics/physics/magnetic_field_solenoid | {} = μ₀ × [n] × [I]
+physics/physics/magnetic_field_straight_wire | {} = μ₀ × [I] / ( 2 π × [r] )
+physics/physics/magnetic_flux | {} = [B] × [A] × cos ( [theta] )
+physics/physics/magnetic_force_on_charge | {} = [q] × [v] × [B] × sin ( [theta] )
+physics/physics/magnetic_force_on_wire | {} = [B] × [I] × [L] × sin ( [theta] )
+physics/physics/malus_law | {} = [I0] × cos ( [theta] ) ²
+physics/physics/mass_energy_equivalence | {} = [m] × c ²
+physics/physics/momentum | {} = [m] × [v]
+physics/physics/motional_emf | {} = [B] × [L] × [v]
+physics/physics/newton_s_second_law | {} = [m] × [a]
+physics/physics/ohm_s_law | {} = [I] × [R]
+physics/physics/particle_in_a_box | {} = [n] ² × h ² / ( 8 × [m] × [L] ² )
+physics/physics/pendulum_period | {} = 2 π √ ( [L] / [] )
+physics/physics/photoelectric_effect | {} = h × [f] − [work_function]
+physics/physics/photon_energy | {} = h × [f]
+physics/physics/photon_momentum | {} = h / [wavelength]
+physics/physics/poiseuille_flow | {} = π × [r] ⁴ × [delta_P] / ( 8 × [mu] × [L] )
+physics/physics/potential_energy | {} = [m] × [] × [h]
+physics/physics/power_physics | {} = [W] / [t]
+physics/physics/pressure | {} = [F] / [A]
+physics/physics/quantum_harmonic_oscillator | {} = ħ × [omega] × ( [n] + ½ )
+physics/physics/refractive_index | {} = c / [v]
+physics/physics/relativistic_doppler | {} = [f0] × √ ( ( 1 − β ) / ( 1 + β ) ) , β = [v] / c
+physics/physics/relativistic_kinetic_energy | {} = ( γ − 1 ) × [m] × c ²
+physics/physics/relativistic_momentum | {} = [m] × [v] / √ ( 1 − [v] ² / c ² )
+physics/physics/relativistic_velocity_addition | {} = ( [u] + [v] ) / ( 1 + [u] × [v] / c ² )
+physics/physics/resistors_in_parallel | 1 / {} = Σ 1 / [resistors] ᵢ
+physics/physics/resistors_in_series | [resistors] ₁ + [] ₂ + … => {}
+physics/physics/reynolds_number | {} = [rho] × [v] × [L] / [mu]
+physics/physics/rydberg_formula | 1 / {} = R × [] ² × ( 1 / [n1] ² − 1 / [n2] ² )
+physics/physics/schwarzschild_radius | {} = 2 × G × [M] / c ²
+physics/physics/self_induced_emf | {} = − [L] × [delta_I] / [dt]
+physics/physics/snell_s_law | [n1] × sin ( [theta1] ) = [n2] × sin ( {} )
+physics/physics/stokes_drag | {} = 6 π × [mu] × [r] × [v]
+physics/physics/thin_lens_equation | 1 / [f] = 1 / [d_o] + 1 / {}
+physics/physics/time_dilation | {} = [dt0] / √ ( 1 − [v] ² / c ² )
+physics/physics/torque | {} = [r] × [F] × sin ( [theta] )
+physics/physics/torricelli_speed | {} = √ ( 2 × g × [h] )
+physics/physics/velocity | {} = [d] / [t]
+physics/physics/velocity_squared | {} = √ ( [u] ² + 2 × [a] × [s] )
+physics/physics/volume_flow_rate | {} = [A] × [v]
+physics/physics/wave_speed | {} = [f] × [wavelength]
+physics/physics/weight | {} = [m] × []
+physics/physics/work | {} = [F] × [d]

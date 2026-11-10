@@ -19,6 +19,7 @@ PATTERN = '□ ∝ □'
 CALC = 'ready'
 INPUTS = ['x', 'y']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('box', ''), ('op', '∝'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

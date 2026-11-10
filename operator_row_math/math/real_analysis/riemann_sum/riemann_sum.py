@@ -1,6 +1,6 @@
 """Row for the operator: Riemann sum
 
-Picture:      Σ f(□ᵢ) · □ = □
+Picture:      Σ f ( □ ᵢ ) · □ with □ , □ , □ , □ = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/real_analysis/riemann_sum
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Riemann sum'
 KEY = 'math/real_analysis/riemann_sum'
-PATTERN = 'Σ f(□ᵢ) · □ = □'
+PATTERN = 'Σ f ( □ ᵢ ) · □ with □ , □ , □ , □ = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['f', 'a', 'b', 'n']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Riemann sum('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'Σ'), ('op', 'f'), ('op', '('), ('dec', ''), ('op', 'ᵢ'), ('op', ')'), ('op', '·'), ('dec', ''), ('op', 'with'), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

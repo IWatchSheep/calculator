@@ -1,6 +1,6 @@
 """Row for the operator: Golden ratio
 
-Picture:      φ = (1 + √5) / 2
+Picture:      φ = ( 1 + √ 5 ) / 2
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/constants_and_relations/golden_ratio
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Golden ratio'
 KEY = 'math/constants_and_relations/golden_ratio'
-PATTERN = 'φ = (1 + √5) / 2'
+PATTERN = 'φ = ( 1 + √ 5 ) / 2'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'φ')]      # cards left of "="
-RIGHT = [('op', '(1 + √5) / 2')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'φ'), ('op', '='), ('op', '('), ('op', '1'), ('op', '+'), ('op', '√'), ('op', '5'), ('op', ')'), ('op', '/'), ('op', '2')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

@@ -1,6 +1,6 @@
 """Row for the operator: Second derivative
 
-Picture:      f″(□) ≈ (f(□+□) − 2f(□) + f(□−□)) / □²
+Picture:      f ″ ( □ ) ≈ ( f ( □ + □ ) − 2 f ( □ ) + f ( □ − □ ) ) / □ ² with □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/calculus/second_derivative
 """
@@ -12,15 +12,16 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Second derivative'
 KEY = 'math/calculus/second_derivative'
-PATTERN = 'f″(□) ≈ (f(□+□) − 2f(□) + f(□−□)) / □²'
+PATTERN = 'f ″ ( □ ) ≈ ( f ( □ + □ ) − 2 f ( □ ) + f ( □ − □ ) ) / □ ² with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['f', 'x']    # what each box (left to right) is
 KINDS = ['function', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 1, 1, 1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'd²/dx²('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'f'), ('op', '″'), ('op', '('), ('box', ''), ('op', ')'), ('op', '≈'), ('op', '('), ('op', 'f'), ('op', '('), ('box', ''), ('op', '+'), ('dec', ''), ('op', ')'), ('op', '−'), ('op', '2'), ('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '+'), ('op', 'f'), ('op', '('), ('box', ''), ('op', '−'), ('dec', ''), ('op', ')'), ('op', ')'), ('op', '/'), ('dec', ''), ('op', '²'), ('op', 'with'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

@@ -1,6 +1,6 @@
 """Row for the operator: Metric space distance
 
-Picture:      □(□, □) = √Σ(□ᵢ − □ᵢ)²
+Picture:      d ( □ , □ ) = √ ( Σ ᵢ ( □ ᵢ − □ ᵢ ) ² )
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/topology/metric_space_distance
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Metric space distance'
 KEY = 'math/topology/metric_space_distance'
-PATTERN = '□(□, □) = √Σ(□ᵢ − □ᵢ)²'
+PATTERN = 'd ( □ , □ ) = √ ( Σ ᵢ ( □ ᵢ − □ ᵢ ) ² )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['x', 'y']    # what each box (left to right) is
 KINDS = ['list', 'list']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Metric space distance('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '√Σ('), ('box', ''), ('op', 'ᵢ −'), ('box', ''), ('op', 'ᵢ)²')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', 'd'), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ')'), ('op', '='), ('op', '√'), ('op', '('), ('op', 'Σ'), ('op', 'ᵢ'), ('op', '('), ('box', ''), ('op', 'ᵢ'), ('op', '−'), ('box', ''), ('op', 'ᵢ'), ('op', ')'), ('op', '²'), ('op', ')')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

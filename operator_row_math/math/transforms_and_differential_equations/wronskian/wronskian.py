@@ -1,6 +1,6 @@
 """Row for the operator: Wronskian
 
-Picture:      □(□, □) = □·g′ − □·f′
+Picture:      □ ( □ , □ ) = □ · g ′ − □ · f ′ with □ , □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/transforms_and_differential_equations/wronskian
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Wronskian'
 KEY = 'math/transforms_and_differential_equations/wronskian'
-PATTERN = '□(□, □) = □·g′ − □·f′'
+PATTERN = '□ ( □ , □ ) = □ · g ′ − □ · f ′ with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['f', 'fprime', 'g', 'gprime']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 2, 0, 2, 1, 3]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Wronskian('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '·g′ −'), ('box', ''), ('op', '·f′')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '('), ('box', ''), ('op', ','), ('box', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', '·'), ('op', 'g'), ('op', '′'), ('op', '−'), ('box', ''), ('op', '·'), ('op', 'f'), ('op', '′'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

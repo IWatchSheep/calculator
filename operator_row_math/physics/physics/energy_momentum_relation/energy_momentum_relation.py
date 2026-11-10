@@ -1,6 +1,6 @@
 """Row for the operator: Energy-momentum relation
 
-Picture:      □² = (□ × c)² + (□ × c²)²
+Picture:      □ ² = ( □ × c ) ² + ( □ × c ² ) ²
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/energy_momentum_relation
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Energy-momentum relation'
 KEY = 'physics/physics/energy_momentum_relation'
-PATTERN = '□² = (□ × c)² + (□ × c²)²'
+PATTERN = '□ ² = ( □ × c ) ² + ( □ × c ² ) ²'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['m', 'p']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Energy-momentum relation('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '('), ('box', ''), ('op', '× c)² + ('), ('box', ''), ('op', '× c²)²')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '²'), ('op', '='), ('op', '('), ('box', ''), ('op', '×'), ('op', 'c'), ('op', ')'), ('op', '²'), ('op', '+'), ('op', '('), ('box', ''), ('op', '×'), ('op', 'c'), ('op', '²'), ('op', ')'), ('op', '²')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

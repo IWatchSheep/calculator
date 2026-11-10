@@ -1,6 +1,6 @@
 """Row for the operator: Log base 10
 
-Picture:      log₁₀(□) = □
+Picture:      log ₁₀ ( □ ) = □
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/algebra/log_base_10
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Log base 10'
 KEY = 'math/algebra/log_base_10'
-PATTERN = 'log₁₀(□) = □'
+PATTERN = 'log ₁₀ ( □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'ready'
 INPUTS = ['x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'log₁₀('), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'log'), ('op', '₁₀'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

@@ -1,6 +1,6 @@
 """Row for the operator: Distance formula
 
-Picture:      □ = √((□₂ − □₁)² + (□₂ − □₁)²)
+Picture:      □ = √ ( ( □ ₂ − □ ₁ ) ² + ( □ ₂ − □ ₁ ) ² )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py geometry/geometry/distance_formula
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Distance formula'
 KEY = 'geometry/geometry/distance_formula'
-PATTERN = '□ = √((□₂ − □₁)² + (□₂ − □₁)²)'
+PATTERN = '□ = √ ( ( □ ₂ − □ ₁ ) ² + ( □ ₂ − □ ₁ ) ² )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['x1', 'y1', 'x2', 'y2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [2, 0, 3, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Distance formula('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '√(('), ('box', ''), ('op', '₂ −'), ('box', ''), ('op', '₁)² + ('), ('box', ''), ('op', '₂ −'), ('box', ''), ('op', '₁)²)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('op', '('), ('box', ''), ('op', '₂'), ('op', '−'), ('box', ''), ('op', '₁'), ('op', ')'), ('op', '²'), ('op', '+'), ('op', '('), ('box', ''), ('op', '₂'), ('op', '−'), ('box', ''), ('op', '₁'), ('op', ')'), ('op', '²'), ('op', ')')]      # cards left of "="
+RIGHT = []
 
 
 def place(parent, stacked=False):

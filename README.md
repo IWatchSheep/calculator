@@ -50,6 +50,8 @@ appears. Every operator comes with a picture of its formula.
 The full list, with each formula and whether it calculates, is in
 [`operators_one_operator_per_file/INDEX.md`](operators_one_operator_per_file/INDEX.md).
 
+**The rows look like the pictures.** Each operator's row (`operator_row_math/`) is laid out from its picture, one card per symbol: `Cone surface area` is `[A] = π × [r] × ( [r] + [ℓ] )`. The answer box (`A`) cannot be typed into and fills in when you press `=`. A variable the picture writes twice (the two `r`) has two boxes that share one value. A formula with two answers (the quadratic formula's `x₁`, `x₂`) shows each answer in its own box. A box the picture draws that is not an input (the second box of `A ⊕ B`) is drawn but not typed into. If a picture does not draw every input of the operator (`ker [ ]` needs three), the row follows the picture and then adds `with [ ] , [ ]` for the missing inputs so it still calculates; those 115 operators are listed in `operator_keys/operator_rows_with_extra_boxes.txt`. The rows are written by `operator_keys/make_operator_row_files.py` from `operator_keys/operator_row_specs.txt` (one line per operator, written by reading the picture).
+
 ## Requirements
 
 - **Python 3** with **Tkinter**. It was developed and tested with Python 3.15 on Windows 11.
@@ -249,7 +251,8 @@ Read these at the start of every session. Update them every time a batch is fini
 | `gui_style.py` | Colours and button styles |
 | `operator_links.py` | Connects each Operators pop-up button to its operator |
 | `operators_one_operator_per_file/` | The 507 operators: one folder each with `<name>.py` (formula and `compute()`) and `<name>.jpg` (picture). `INDEX.md` lists them all |
-| `operator_row_math/` | How each operator is laid out as cards in a row, the Advanced Input parser, and the multi-row operators |
+| `operator_row_math/` | How each operator is laid out as cards in a row (following its picture), the Advanced Input parser, and the multi-row operators |
+| `operator_keys/operator_row_specs.txt` | One line per operator: its picture written as cards. `make_operator_row_files.py` turns it into the row files |
 | `operators_one_algebra_word_problem_per_file/` | The 1,000 algebra word problems: one folder each with `<id>.py` (problem, steps, answer, `compute()`) and `<id>.jpg` (diagram). `INDEX.md` lists them all |
 | `operator_row_math_for_algebra_word_problems/` | How each algebra word problem is laid out as a row of cards in the calculator |
 | `algebra_word_problems/` | The problem list, the generator, and the word solver (`algebra_matcher/`) that answers the problems from their wording |
@@ -275,6 +278,8 @@ the calculator independently, including a manual GUI checklist.
 
 Numerical results are checked to about 1e-6, and only the newer physics operators are tested through
 the window, so independent verification is still welcome.
+
+The operator rows are checked against their pictures by `python tests/test_operator_pictures.py`.
 
 The algebra word problem folders have their own tests:
 

@@ -421,6 +421,7 @@ class CalculatorGUI(tk.Tk):
     def _invalidate(self):
         """Something changed: the sums and the printed result row are out of date."""
         for k, row in enumerate(self.rows):
+            row_tree.clear_outputs(row["node"])
             if row["is_result"]:
                 self._reset_row(k)
             else:
@@ -611,6 +612,7 @@ class CalculatorGUI(tk.Tk):
             except ValueError as e:
                 self._say("Row %d: %s" % (k + 1, e) if k else str(e))
                 return
+            self._render_row(k)                 # the formula's answer box shows the answer
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
             if k == 0:
                 total = v
@@ -669,6 +671,7 @@ class CalculatorGUI(tk.Tk):
             except ValueError as e:
                 self._say("Row %d (%s): %s" % (i + 1, rs["title"], e))
                 return
+            self._render_row(i)
             results.append(v)
             self._set_result(i, advanced_input.short_label(row_tree.fmt(v), 14))
         try:
@@ -741,7 +744,7 @@ class CalculatorGUI(tk.Tk):
                       % (n, "" if n == 1 else "es") if n else "Nothing to fill in: press ="))
         elif mod.CALC in ("ready", "advanced"):
             how = "number pad" if mod.CALC == "ready" else "number pad / Advanced Input"
-            self._say("%s: fill the boxes in order -> %s  (%s), then press =." % (mod.NAME, ", ".join(mod.INPUTS), how))
+            self._say("%s: fill the boxes in order -> %s  (%s), then press =." % (mod.NAME, ", ".join(row_tree.inputs_in_box_order(mod)), how))
         else:
             try:
                 row_tree.evaluate(new)

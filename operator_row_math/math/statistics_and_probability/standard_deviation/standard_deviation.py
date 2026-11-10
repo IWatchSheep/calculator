@@ -1,6 +1,6 @@
 """Row for the operator: Standard deviation
 
-Picture:      □ = √(□²)
+Picture:      □ = √ ( □ ² ) with □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/standard_deviation
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Standard deviation'
 KEY = 'math/statistics_and_probability/standard_deviation'
-PATTERN = '□ = √(□²)'
+PATTERN = '□ = √ ( □ ² ) with □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['data']    # what each box (left to right) is
 KINDS = ['list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'σ('), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '√('), ('box', ''), ('op', '²)')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('dec', ''), ('op', '²'), ('op', ')'), ('op', 'with'), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

@@ -1,6 +1,6 @@
 """Row for the operator: Cube volume
 
-Picture:      □ = □³
+Picture:      □ = □ ³
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py geometry/geometry/cube_volume
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Cube volume'
 KEY = 'geometry/geometry/cube_volume'
-PATTERN = '□ = □³'
+PATTERN = '□ = □ ³'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,8 +20,8 @@ CALC = 'ready'
 INPUTS = ['s']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', '')]      # cards left of "="
-RIGHT = [('box', ''), ('op', '³')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '³')]      # cards left of "="
+RIGHT = []
 
 
 def place(parent, stacked=False):

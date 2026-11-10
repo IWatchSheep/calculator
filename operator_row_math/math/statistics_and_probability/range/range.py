@@ -1,6 +1,6 @@
 """Row for the operator: Range
 
-Picture:      range(□) = □
+Picture:      range ( □ ) = □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/range
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Range'
 KEY = 'math/statistics_and_probability/range'
-PATTERN = 'range(□) = □'
+PATTERN = 'range ( □ ) = □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'advanced'
 INPUTS = ['data']    # what each box (left to right) is
 KINDS = ['list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'range('), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('op', 'range'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
 
 

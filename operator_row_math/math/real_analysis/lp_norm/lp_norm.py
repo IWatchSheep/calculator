@@ -1,6 +1,6 @@
 """Row for the operator: Lp norm
 
-Picture:      ‖□‖ₚ = (∫|□|ᵖ □□)^(1/□)
+Picture:      ‖ □ ‖ ₚ = ( ∫ | □ | ᵖ □ □ ) ^ ( 1 / □ ) with □ , □
 Calculation:  type the boxes with the number pad or Advanced Input (lists, matrices, functions...)
 Try it:       python operator_row_math/preview.py math/real_analysis/lp_norm
 """
@@ -12,16 +12,17 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Lp norm'
 KEY = 'math/real_analysis/lp_norm'
-PATTERN = '‖□‖ₚ = (∫|□|ᵖ □□)^(1/□)'
+PATTERN = '‖ □ ‖ ₚ = ( ∫ | □ | ᵖ □ □ ) ^ ( 1 / □ ) with □ , □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'advanced'
 INPUTS = ['f', 'a', 'b']    # what each box (left to right) is
 KINDS = ['function', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+SLOTS = [0, 0, 1, 2]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', '‖f‖ₚ('), ('box', ''), ('op', ','), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('op', '(∫|'), ('box', ''), ('op', '|ᵖ'), ('box', ''), ('box', ''), ('op', ')^(1/'), ('box', ''), ('op', ')')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('op', '‖'), ('box', ''), ('op', '‖'), ('op', 'ₚ'), ('op', '='), ('op', '('), ('op', '∫'), ('op', '|'), ('box', ''), ('op', '|'), ('op', 'ᵖ'), ('dec', ''), ('dec', ''), ('op', ')'), ('op', '^'), ('op', '('), ('op', '1'), ('op', '/'), ('dec', ''), ('op', ')'), ('op', 'with'), ('box', ''), ('op', ','), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

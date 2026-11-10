@@ -20,8 +20,8 @@ CALC = 'advanced'
 INPUTS = ['A', 'b']    # what each box (left to right) is
 KINDS = ['matrix', 'list']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'Solve Ax = b('), ('box', ''), ('op', ','), ('box', ''), ('op', ')')]      # cards left of "="
-RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)
+LEFT = [('box', ''), ('op', '·'), ('out', ''), ('op', '='), ('box', '')]      # cards left of "="
+RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
 def place(parent, stacked=False):

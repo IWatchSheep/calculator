@@ -1,6 +1,6 @@
 """Row for the operator: Riemann curvature
 
-Picture:      □ᵃᵦᵧ□
+Picture:      □ ᵃ βγ □
 Calculation:  reference only (formula, no calculation yet)
 Try it:       python operator_row_math/preview.py math/differential_geometry_and_tensors/riemann_curvature
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Riemann curvature'
 KEY = 'math/differential_geometry_and_tensors/riemann_curvature'
-PATTERN = '□ᵃᵦᵧ□'
+PATTERN = '□ ᵃ βγ □'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('box', ''), ('op', 'ᵃᵦᵧ'), ('box', '')]      # cards left of "="
+LEFT = [('dec', ''), ('op', 'ᵃ'), ('op', 'βγ'), ('dec', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
