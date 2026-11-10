@@ -428,6 +428,8 @@ physics/physics/schwarzschild_g_tt	4 2	-0.5
 physics/physics/schwarzschild_local_orbit_speed	6 2	149896228.99999997
 physics/physics/schwarzschild_orbit_angular_speed	4 2	37474057.25
 physics/physics/schwarzschild_orbit_period	4 2	1.6766760175613453e-07
+physics/physics/schwarzschild_radial_step	4 0 1e-08 2	3.7191390066447445
+physics/physics/schwarzschild_radial_step	4 -1 1e-08 2	3.7191389966447446
 physics/physics/schwarzschild_radius	1 1 1	2
 physics/physics/schwarzschild_radius	1.989e+30	2953.9937713977156
 physics/physics/self_induced_emf	2 3 0.5	-12

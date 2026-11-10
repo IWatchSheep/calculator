@@ -947,3 +947,21 @@ fn the_frequency_ratio_operator_gives_the_numbers_of_the_work_plan_and_declines_
     assert!(call(&[2., 8., 2.]).unwrap_err().contains("r is not outside the horizon"));
     assert!(call(&[4., 2., 2.]).unwrap_err().contains("r is not outside the horizon"));
 }
+
+#[test]
+fn the_radial_step_operator_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/schwarzschild_radial_step").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call(&[4., 0., 1e-08, 2.]).unwrap(), 3.7191390066447445);
+    assert_eq!(call(&[4., -1., 1e-08, 2.]).unwrap(), 3.7191389966447446);
+    assert_eq!(call(&[4., 3., 0.5, 0.]).unwrap(), 5.5);
+    assert!(call(&[0., 0., 1e-8, 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[4., 0., 1e-8, -2.]).unwrap_err().contains("the horizon radius cannot be negative"));
+    assert!(call(&[2., 0., 1e-8, 2.]).unwrap_err().contains("r is not outside the horizon"));
+    assert!(call(&[4., 0., 0., 2.]).unwrap_err().contains("time step must be positive"));
+}

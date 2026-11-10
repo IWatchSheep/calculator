@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 610)
+        self.assertEqual(len(self.ops), 611)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 610)
+        self.assertEqual(len(status), 611)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -286,6 +286,7 @@ CASES = [
     (PH + "perihelion_advance", (18.84955592153876, 0, 365.25, 2), 20626480.624709636),
     (PH + "schwarzschild_frequency_ratio", (4, 4, 2), 1), (PH + "schwarzschild_frequency_ratio", (4, 8, 2), 0.816496580927726),
     (PH + "schwarzschild_frequency_ratio", (8, 4, 2), 1.224744871391589),
+    (PH + "schwarzschild_radial_step", (4, 0, 1e-08, 2), 3.7191390066447445), (PH + "schwarzschild_radial_step", (4, -1, 1e-08, 2), 3.7191389966447446),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1275,6 +1276,37 @@ class FrequencyRatioTests(unittest.TestCase):
         self.assertGreater(ratio(8, 4, 2), 1)                    # falling in, it arrives at a higher one
         self.assertEqual(ratio(5, 9, 0), 1)                      # no mass, no shift
         self.assertAlmostEqual(ratio(6.957e8, 1.496e11, 2953.2), 1 - 2953.2 / 2 * (1 / 6.957e8 - 1 / 1.496e11), delta=1e-9)   # weak field: 1 - GM/c2 (1/r_s - 1/r_r)
+
+
+class RadialStepTests(unittest.TestCase):
+    """General relativity, job 6: one step of a radial fall."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "schwarzschild_radial_step").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 0, 1e-8, 2), "a radius must be positive")
+        self.says((-4, 0, 1e-8, 2), "a radius must be positive")
+        self.says((4, 0, 1e-8, -2), "the horizon radius cannot be negative")
+        self.says((2, 0, 1e-8, 2), "r is not outside the horizon")
+        self.says((1, 0, 1e-8, 2), "r is not outside the horizon")
+        self.says((4, 0, 0, 2), "time step must be positive")
+        self.says((4, 0, -1e-8, 2), "time step must be positive")
+
+    def test_the_fall_and_the_no_mass_limit(self):
+        step = get(PH + "schwarzschild_radial_step").compute
+        self.assertLess(step(4, 0, 1e-8, 2), 4)                                  # dropped from rest, it falls inward
+        self.assertLess(step(4, -1, 1e-8, 2), step(4, 0, 1e-8, 2))               # an inward speed takes it further in
+        self.assertGreater(step(4, 1, 1e-8, 2), step(4, 0, 1e-8, 2))             # an outward one less far
+        self.assertEqual(step(4, 3, 0.5, 0), 4 + 3 * 0.5)                        # no mass: a straight line
+        self.assertAlmostEqual(step(1e12, 0, 1.0, 2), 1e12, delta=1e-9 * 1e12)  # far away the pull is negligible
+        # the pull is Newtonian far away: a = -GM / r^2 with GM = Rs c^2 / 2
+        rs = get(PH + "schwarzschild_radius").compute(5.972e24)                  # the Earth
+        r, dt = 6.371e6, 1.0
+        drop = r - step(r, 0, dt, rs)
+        self.assertAlmostEqual(drop, 0.5 * 6.674e-11 * 5.972e24 / r ** 2 * dt * dt, delta=1e-8 * drop)       # 4.9 m in one second
 
 
 # --------------------------------------------------------------------------- 3. error handling

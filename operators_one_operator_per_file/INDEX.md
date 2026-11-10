@@ -627,6 +627,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Light deflection | δ = 2 Rs / b | δ = 4GM / (c² b) = 2 Rs / b   (the weak-field bend of a ray with closest approach b, in radians; only accurate when Rs/b is small; b ≤ (3√3/2) Rs falls into the mass) | Ready | `physics/physics/light_deflection_angle/` |
 | Perihelion advance | 3π Rs / (a (1 − e²)) per orbit | 3π Rs / (a (1 − e²)) radians per orbit, times 36525 / period_days orbits per century, times 648000/π: arcseconds per century (the general-relativity part only, not the pull of other planets) | Ready | `physics/physics/perihelion_advance/` |
 | Schwarzschild frequency ratio | ν_receiver / ν_source | ν_receiver / ν_source = √((1 − Rs/r_source) / (1 − Rs/r_receiver))   (between two static clocks outside the horizon; below 1 when the source is deeper, above 1 when the receiver is deeper) | Ready | `physics/physics/schwarzschild_frequency_ratio/` |
+| Schwarzschild radial step | one proper-time step of r | r_next = r + v Δτ + ½ a Δτ²  with  a = −Rs c² / (2 r²)   (one step of a radial fall outside the horizon; returns r only, not the new speed; c = 299792458 m/s) | Ready | `physics/physics/schwarzschild_radial_step/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

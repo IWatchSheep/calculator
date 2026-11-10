@@ -688,3 +688,16 @@ pub fn schwarzschild_frequency_ratio(a: &[f64]) -> R {
     need(a[0] > a[2] && a[1] > a[2], "r is not outside the horizon")?;
     n(((1.0 - a[2] / a[0]) / (1.0 - a[2] / a[1])).sqrt())
 }
+
+// ---------- one step of a radial fall (general relativity, job 6; the same operations as the Python file) ----------
+
+pub fn schwarzschild_radial_step(a: &[f64]) -> R {
+    // r, v, dt, Rs
+    need(a[0] > 0.0, "a radius must be positive")?;
+    need(a[3] >= 0.0, "the horizon radius cannot be negative")?;
+    need(a[0] > a[3], "r is not outside the horizon")?;
+    need(a[2] > 0.0, "time step must be positive")?;
+    let c = 299792458.0_f64;
+    let acc = -(a[3] * c * c) / (2.0 * a[0] * a[0]);
+    n(a[0] + a[1] * a[2] + 0.5 * acc * a[2] * a[2])
+}
