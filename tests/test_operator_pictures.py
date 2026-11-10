@@ -502,6 +502,30 @@ class InTheWindow(unittest.TestCase):
             multirow_specs.SPECS.clear()
             multirow_specs.SPECS.update(saved)
 
+    def test_a_join_key_moves_on_to_the_next_row_so_one_plus_one_is_two(self):
+        """1  +  1  =  : after the + the next digits are Row 2's number, not more digits of Row 1's (which made 11)."""
+        app = self.app
+        app._key("1")
+        app._join_key("+")
+        app._key("1")
+        self.assertEqual(app.rows[0]["node"]["slots"], ["1"])
+        self.assertEqual(app.rows[1]["node"]["slots"], ["1"])
+        self.assertEqual(app.rows[1]["join"], "+")
+        self.assertEqual(app.op_target, 1)
+        app._equals()
+        self.assertIn("=  2", app.results.get("1.0", "end"))
+
+    def test_the_old_way_still_works_next_row_then_the_join_key(self):
+        app = self.app
+        app._key("1")
+        app._next_row()
+        app._key("2")
+        app._join_key("×")
+        app._equals()
+        self.assertIn("=  2", app.results.get("1.0", "end"))                     # 1 x 2
+        self.assertEqual(app.rows[0]["node"]["slots"], ["1"])
+        self.assertEqual(app.rows[1]["node"]["slots"], ["2"])
+
     def test_the_answer_box_fills_in_and_a_repeated_variable_is_one_input(self):
         app = self.app
         app._place_operator_row("geometry/geometry/cone_surface_area")

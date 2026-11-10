@@ -516,7 +516,18 @@ class CalculatorGUI(tk.Tk):
             self._reset_row(i)
         self._invalidate()
         self._set_join(i, symbol)
-        self._say("Row %d is joined to the rows above with  %s .  Press = to calculate." % (i + 1, symbol))
+        # like pressing + on a calculator: carry on in that row, so the next digits are ITS number, not more digits of the row above
+        self._set_target_row(i)
+        row = self.rows[i]
+        if self._is_blank(row):
+            if row["node"] is None:
+                row["node"] = row_tree.new_node("_number")
+            self._select_only(i, (0,))
+            self._render_row(i)
+            self._scroll_to_row(i)
+            self._say("Row %d is joined to the rows above with  %s .  Type its number, then press =." % (i + 1, symbol))
+        else:
+            self._say("Row %d is joined to the rows above with  %s .  Press = to calculate." % (i + 1, symbol))
 
     def _set_join(self, i, symbol):
         """Show the join operator in row i's helper card (None puts the small box back)."""
