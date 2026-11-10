@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 518)
+        self.assertEqual(len(self.ops), 522)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 518)
+        self.assertEqual(len(status), 522)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -203,6 +203,8 @@ CASES = [
     (GE + "distance_formula", (0, 0, 3, 4), 5), (GE + "midpoint_formula", (0, 0, 4, 6), (2, 3)),
     (GE + "slope", (0, 0, 2, 4), 2), (GE + "slope", (1, 5, 3, 1), -2),
     (GE + "heron_s_formula", (3, 4, 5), 6),
+    (GE + "heron_semiperimeter", (3, 4, 5), 6), (GE + "heron_semiperimeter", (7, 8, 9), 12),
+    (GE + "heron_area", (6, 3, 4, 5), 6), (GE + "heron_area", (12, 7, 8, 9), 26.832815729997478),
     (GE + "law_of_cosines", (3, 4, PI / 2), 5), (GE + "law_of_sines", (1, PI / 6, PI / 2), 2),
     (GE + "parallelogram_area", (4, 3), 12), (GE + "polygon_interior_angle_sum", (5,), 540),
     (GE + "polygon_interior_angle_sum", (3,), 180), (GE + "pyramid_volume", (9, 4), 12),
@@ -589,6 +591,8 @@ CASES += [
     (PH + "relativistic_doppler", (100, 0.6, 1), 50),
     (PH + "relativistic_doppler", (100, -0.6, 1), 200),
     (PH + "relativistic_doppler", (100, 0, 1), 100),
+    (PH + "relativistic_beta", (0.6, 1), 0.6), (PH + "relativistic_beta", (-0.6, 1), -0.6), (PH + "relativistic_beta", (0, 1), 0),
+    (PH + "relativistic_doppler_frequency", (100, 0.6), 50), (PH + "relativistic_doppler_frequency", (100, -0.6), 200), (PH + "relativistic_doppler_frequency", (100, 0), 100),
     (PH + "schwarzschild_radius", (1, 1, 1), 2),
     (PH + "schwarzschild_radius", (1.989e30,), 2 * 6.674e-11 * 1.989e30 / 299792458 ** 2),
     (PH + "gravitational_time_dilation", (100, 1, 4, 1, 1), 100 * math.sqrt(0.5)),
@@ -819,7 +823,7 @@ NEW_PHYSICS = [
     'diffraction_grating', 'malus_law', 'refractive_index',
     'lorentz_factor', 'time_dilation', 'length_contraction',
     'relativistic_momentum', 'relativistic_kinetic_energy', 'energy_momentum_relation',
-    'relativistic_velocity_addition', 'relativistic_doppler', 'schwarzschild_radius',
+    'relativistic_velocity_addition', 'schwarzschild_radius',
     'gravitational_time_dilation',
 ]
 
@@ -949,7 +953,6 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
             ("relativistic_kinetic_energy", (1, 0.6 * c), 0.25 * c * c),
             ("energy_momentum_relation", (1, 0), c * c),
             ("relativistic_velocity_addition", (0.5 * c, 0.5 * c), 0.8 * c),
-            ("relativistic_doppler", (100, 0.6 * c), 50),
             ("gravitational_time_dilation", (1000, 1.989e30, 6.957e8),
              1000 * math.sqrt(1 - 2 * 6.674e-11 * 1.989e30 / (6.957e8 * c * c))),
         ]

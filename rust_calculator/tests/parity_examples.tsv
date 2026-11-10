@@ -10,7 +10,11 @@ geometry/geometry/cylinder_surface_area	2 5	87.96459430051421
 geometry/geometry/cylinder_volume	2 5	62.83185307179586
 geometry/geometry/degrees_to_radians_geometry	180	3.141592653589793
 geometry/geometry/distance_formula	0 0 3 4	5
+geometry/geometry/heron_area	6 3 4 5	6
+geometry/geometry/heron_area	12 7 8 9	26.832815729997478
 geometry/geometry/heron_s_formula	3 4 5	6
+geometry/geometry/heron_semiperimeter	3 4 5	6
+geometry/geometry/heron_semiperimeter	7 8 9	12
 geometry/geometry/law_of_cosines	3 4 1.5707963267948966	5
 geometry/geometry/law_of_sines	1 0.5235987755982988 1.5707963267948966	2
 geometry/geometry/parallelogram_area	4 3	12
@@ -329,9 +333,15 @@ physics/physics/quantum_harmonic_oscillator	0 2	1.054571817e-34
 physics/physics/quantum_harmonic_oscillator	2 2	5.272859085e-34
 physics/physics/refractive_index	200000000.0	1.49896229
 physics/physics/refractive_index	299792458	1
+physics/physics/relativistic_beta	0.6 1	0.6
+physics/physics/relativistic_beta	-0.6 1	-0.6
+physics/physics/relativistic_beta	0 1	0
 physics/physics/relativistic_doppler	100 0.6 1	50
 physics/physics/relativistic_doppler	100 -0.6 1	200
 physics/physics/relativistic_doppler	100 0 1	100
+physics/physics/relativistic_doppler_frequency	100 0.6	50
+physics/physics/relativistic_doppler_frequency	100 -0.6	200
+physics/physics/relativistic_doppler_frequency	100 0	100
 physics/physics/relativistic_kinetic_energy	1 0.6 1	0.25
 physics/physics/relativistic_kinetic_energy	2 0.8 1	1.3333333333333335
 physics/physics/relativistic_momentum	2 0.6 1	1.5

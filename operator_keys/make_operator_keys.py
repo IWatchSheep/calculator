@@ -149,7 +149,7 @@ def write_differential(rows):
     path = os.path.join(ROOT, "rust_calculator", "tests", "parity_differential.tsv")
     if not os.path.isdir(os.path.dirname(path)):
         return
-    rng = random.Random(20261109)
+    seed = 20261109          # every operator draws its inputs from its OWN stream, so adding an operator never changes the inputs of the others
     pool = [-3, -1, 0, 1, 2, 3, 5, 10, 0.5, 2.5, 0.25, 7.5, 100]
     lines = 0
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
@@ -162,6 +162,7 @@ def write_differential(rows):
             k = len(r["inputs"])
             tries = [tuple(e["args"][:k]) for e in r["examples"]
                      if len(e["args"]) >= k and all(arg_token(v) for v in e["args"][:k])]
+            rng = random.Random("%d/%s" % (seed, r["key"]))
             tries += [tuple(rng.choice(pool) for _ in range(k)) for _ in range(40)]
             seen = set()
             for args in tries:

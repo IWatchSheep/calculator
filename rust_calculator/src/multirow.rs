@@ -9,6 +9,8 @@
 pub enum Fill {
     Text(&'static str),
     Node(&'static NodeSpec),
+    /// The box reads the answer of an EARLIER row (counting from 0): `=` fills it in from that row's answer; it is never typed.
+    Row(usize),
 }
 
 /// An operator with some of its boxes pre-filled.
@@ -158,6 +160,26 @@ static FIELD_EXTENSION: Spec = Spec {
     links: &[],
 };
 
+static HERON: Spec = Spec {
+    title: "Heron's formula for the area of a triangle with sides a, b and c. Row 1 finds the semi-perimeter s, half the distance round the triangle. Row 2 reads that s (its four s boxes hold the answer of Row 1) and the same three sides, and gives the area A = √(s(s−a)(s−b)(s−c)). The rows are joined by →: the answer is the last row's answer, the area.",
+    rows: &[
+        RowSpec { title: "Half the distance around the triangle.", node: NodeSpec { op: "geometry/geometry/heron_semiperimeter", fill: &[] } },
+        RowSpec { title: "The area from that semi-perimeter. The s boxes read Row 1; the sides are the ones typed in Row 1.", node: NodeSpec { op: "geometry/geometry/heron_area", fill: &[(0, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[((1, &[1]), (0, &[0])), ((1, &[2]), (0, &[1])), ((1, &[3]), (0, &[2]))],
+};
+
+static DOPPLER: Spec = Spec {
+    title: "Relativistic Doppler effect. Row 1 turns the speed v into β, the fraction of the speed of light (positive when the source moves away). Row 2 reads that β and gives the frequency f = f₀ √((1−β)/(1+β)) that the observer hears. The rows are joined by →: the answer is the last row's answer, the frequency.",
+    rows: &[
+        RowSpec { title: "The speed as a fraction of the speed of light.", node: NodeSpec { op: "physics/physics/relativistic_beta", fill: &[] } },
+        RowSpec { title: "The frequency the observer hears. The β boxes read Row 1; f₀ is typed here.", node: NodeSpec { op: "physics/physics/relativistic_doppler_frequency", fill: &[(1, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -168,6 +190,8 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
         "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
+        "geometry/geometry/heron_s_formula" => &HERON,
+        "physics/physics/relativistic_doppler" => &DOPPLER,
         "math/optimization_and_numerical_methods/kkt_conditions" => &KKT,
         "math/abstract_algebra/field_extension" => &FIELD_EXTENSION,
         "math/constants_and_relations/open_bracket"

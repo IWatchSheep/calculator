@@ -17,6 +17,8 @@ pub enum Join {
     Gt,
     Le,
     Ge,
+    /// "then" (→): the rows read each other's answers; the answer of the whole chain is the LAST row's answer.
+    Then,
 }
 
 impl Join {
@@ -32,6 +34,7 @@ impl Join {
             ">" => Join::Gt,
             "≤" => Join::Le,
             "≥" => Join::Ge,
+            "→" => Join::Then,
             _ => Join::None,
         }
     }
@@ -49,11 +52,15 @@ impl Join {
             Join::Gt => ">",
             Join::Le => "≤",
             Join::Ge => "≥",
+            Join::Then => "→",
         }
     }
 
     /// Combine the answer so far with the next row's answer.  Lists and the like cannot be joined (the same rule as the Python program).
     pub fn apply(self, a: &Value, b: &Value) -> Result<Value, String> {
+        if self == Join::Then {
+            return Ok(b.clone());
+        }
         let (x, y) = match (a, b) {
             (Value::Number(x), Value::Number(y)) => (*x, *y),
             _ => return Err(format!("Can't join those two results with {}.", self.symbol())),
@@ -76,6 +83,7 @@ impl Join {
             Join::Gt => Value::Bool(x > y),
             Join::Le => Value::Bool(x <= y),
             Join::Ge => Value::Bool(x >= y),
+            Join::Then => unreachable!(),
         })
     }
 }
@@ -493,6 +501,7 @@ impl Document {
                             *slot = t.to_string();
                         }
                     }
+                    Fill::Row(_) => {} // a chained box starts empty: `=` fills it from the earlier row's answer
                     Fill::Node(sub) => {
                         let child = build(sub)?;
                         if *j < row.children.len() {
@@ -532,13 +541,59 @@ impl Document {
         }
     }
 
+    /// Empty every box that reads an earlier row's answer (they show "row k" until `=` fills them in).
+    pub fn forget_chains(&mut self) {
+        use crate::multirow::Fill;
+        let Some(t) = self.template else { return };
+        for (i, rs) in t.spec.rows.iter().enumerate() {
+            for (j, fill) in rs.node.fill {
+                if let Fill::Row(_) = fill {
+                    if let Some(slot) = self.rows.get_mut(i).and_then(|r| r.inputs.get_mut(*j)) {
+                        slot.clear();
+                    }
+                }
+            }
+        }
+    }
+
+    /// The row that the box at `path` of row `row` reads the answer of (a chained box), if it is one.
+    pub fn chain_source(&self, row: usize, path: &[usize]) -> Option<usize> {
+        use crate::multirow::Fill;
+        let t = self.template?;
+        if path.len() != 1 {
+            return None;
+        }
+        t.spec.rows.get(row)?.node.fill.iter().find_map(|(j, f)| match f {
+            Fill::Row(k) if *j == path[0] => Some(*k),
+            _ => None,
+        })
+    }
+
     /// `=` for a multi-row operator: every row is calculated and the results are joined with the operator's joins.
     fn equals_template(&mut self, t: crate::multirow::Template) -> Result<String, String> {
+        use crate::multirow::Fill;
         self.sync_links();
-        let mut results = Vec::new();
+        self.forget_chains(); // a chained box never keeps an old answer
+        let mut results: Vec<Value> = Vec::new();
         for (i, rs) in t.spec.rows.iter().enumerate() {
             if self.rows[i].is_blank() {
                 return Err(format!("Row {} ({}) is empty: pick an operator for it.", i + 1, rs.title));
+            }
+            for (j, fill) in rs.node.fill {
+                if let Fill::Row(k) = fill {
+                    // the boxes that read an earlier row get its answer, as the exact number it is
+                    match results.get(*k) {
+                        Some(Value::Number(x)) => {
+                            if let Some(slot) = self.rows[i].inputs.get_mut(*j) {
+                                *slot = format!("{}", x);
+                            }
+                        }
+                        Some(other) => {
+                            return Err(format!("Row {} ({}) reads the answer of Row {}, which is {}: it needs a single number.", i + 1, rs.title, k + 1, other.show()))
+                        }
+                        None => return Err(format!("Row {} ({}) reads Row {}, which has no answer yet.", i + 1, rs.title, k + 1)),
+                    }
+                }
             }
             self.rows[i].compute();
             if let Some(e) = self.rows[i].error.clone() {

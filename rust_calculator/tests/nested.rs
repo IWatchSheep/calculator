@@ -122,3 +122,95 @@ fn the_reference_formulas_that_are_several_equations_open_on_several_rows() {
         assert_eq!(doc.rows[1].join, Join::Eq, "{key}");
     }
 }
+
+// ---------- chaining: a row reads the answer of an earlier row ----------
+
+fn chain_doc(key: &str, typed: &[(usize, usize, &str)]) -> Document {
+    let mut doc = Document::new();
+    doc.apply_template(ops::get(key).unwrap().key, multirow::get(key).unwrap()).unwrap();
+    for (row, slot, text) in typed {
+        doc.rows[*row].inputs[*slot] = text.to_string();
+    }
+    doc
+}
+
+fn number(doc: &Document, row: usize) -> f64 {
+    match doc.rows[row].value {
+        Some(rust_calculator::value::Value::Number(x)) => x,
+        ref other => panic!("row {row} has {other:?}"),
+    }
+}
+
+#[test]
+fn heron_in_two_rows_gives_the_same_number_as_heron_in_one() {
+    let heron = ops::get("geometry/geometry/heron_s_formula").unwrap();
+    for (a, b, c) in [(3.0, 4.0, 5.0), (7.0, 8.0, 9.0), (5.5, 6.25, 7.75), (0.1, 0.2, 0.25), (1000.0, 1200.0, 1500.0)] {
+        let (sa, sb, sc) = (format!("{a}"), format!("{b}"), format!("{c}"));
+        let mut doc = chain_doc("geometry/geometry/heron_s_formula", &[(0, 0, &sa), (0, 1, &sb), (0, 2, &sc)]);
+        doc.equals_all().unwrap();
+        let one_row = match (heron.compute)(&[a, b, c]).unwrap() {
+            rust_calculator::value::Value::Number(x) => x,
+            other => panic!("{other:?}"),
+        };
+        assert_eq!(number(&doc, 1), one_row, "{a} {b} {c}"); // the exact same number
+        assert_eq!(doc.rows[1].inputs[0], format!("{}", (a + b + c) / 2.0)); // the s boxes of Row 2 hold Row 1's answer
+        assert_eq!(doc.chain_source(1, &[0]), Some(0));
+        assert_eq!(doc.chain_source(0, &[0]), None);
+    }
+}
+
+#[test]
+fn doppler_in_two_rows_gives_the_same_number_as_doppler_in_one() {
+    let doppler = ops::get("physics/physics/relativistic_doppler").unwrap();
+    let c = 299792458.0_f64;
+    for (f0, v) in [(100.0, 0.6 * c), (100.0, -0.6 * c), (540e12, 1.5e7), (1.0, 0.0)] {
+        let (sf, sv) = (format!("{f0}"), format!("{v}"));
+        let mut doc = chain_doc("physics/physics/relativistic_doppler", &[(0, 0, &sv), (1, 0, &sf)]);
+        doc.equals_all().unwrap();
+        let one_row = match (doppler.compute)(&[f0, v, c]).unwrap() {
+            rust_calculator::value::Value::Number(x) => x,
+            other => panic!("{other:?}"),
+        };
+        assert_eq!(number(&doc, 1), one_row, "{f0} {v}");
+        assert_eq!(doc.rows[1].inputs[1], format!("{}", v / c)); // beta: Row 1's answer
+    }
+}
+
+#[test]
+fn a_chain_declines_where_the_one_row_operator_declines() {
+    let c = 299792458.0_f64;
+    for v in [c, -c, 2.0 * c] {
+        let sv = format!("{v}");
+        let mut doc = chain_doc("physics/physics/relativistic_doppler", &[(0, 0, &sv), (1, 0, "100")]);
+        let err = doc.equals_all().unwrap_err();
+        assert!(err.contains("speed must be less than the speed of light"), "{err}");
+        assert_eq!(doc.rows[1].inputs[1], ""); // the chained box holds no number
+    }
+    // a box left empty on Row 1: both rows decline
+    let mut doc = chain_doc("geometry/geometry/heron_s_formula", &[(0, 0, "3"), (0, 1, "4")]);
+    assert!(doc.equals_all().is_err());
+    assert_eq!(doc.rows[1].inputs[0], "");
+}
+
+#[test]
+fn a_changed_side_gives_a_new_semi_perimeter_and_typing_into_a_chained_box_does_not_stick() {
+    let mut doc = chain_doc("geometry/geometry/heron_s_formula", &[(0, 0, "3"), (0, 1, "4"), (0, 2, "5")]);
+    doc.equals_all().unwrap();
+    assert_eq!(doc.rows[1].inputs[0], "6");
+    doc.rows[0].inputs[0] = "6".to_string();
+    doc.rows[1].inputs[0] = "999".to_string(); // typed into the chained box
+    doc.equals_all().unwrap();
+    assert_eq!(doc.rows[1].inputs[0], "7.5"); // (6 + 4 + 5) / 2: the new s, not 6 and not 999
+}
+
+#[test]
+fn the_then_join_gives_the_last_rows_answer() {
+    use rust_calculator::row::Join;
+    use rust_calculator::value::Value;
+    assert_eq!(Join::from_symbol("→"), Join::Then);
+    assert_eq!(Join::Then.symbol(), "→");
+    assert_eq!(Join::Then.apply(&Value::Number(1.0), &Value::Number(26.5)).unwrap(), Value::Number(26.5));
+    let mut doc = chain_doc("geometry/geometry/heron_s_formula", &[(0, 0, "3"), (0, 1, "4"), (0, 2, "5")]);
+    let message = doc.equals_all().unwrap();
+    assert!(message.ends_with("6"), "{message}");
+}

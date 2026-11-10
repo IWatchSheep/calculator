@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 518)
+        self.assertEqual(len(keys), 522)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 518)
+        self.assertEqual(count, 522)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -133,11 +133,13 @@ class RustPort(unittest.TestCase):
         with open(os.path.join(ROOT, "rust_calculator", "src", "multirow.rs"), encoding="utf-8") as f:
             rust = f.read()
         for key in ("physics/physics/navier_stokes_equation", "math/differential_geometry_and_tensors/exterior_derivative", "math/abstract_algebra/direct_sum",
-                    "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions"):
+                    "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions",
+                    "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
-                self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: &[] } }' % (row["title"], row["op"]), rust, key)
+                fill = "&[(%d, Fill::Row(0))]" % list(row["fill"])[0] if "fill" in row else "&[]"          # a chained box: Fill::Row(k)
+                self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: %s } }' % (row["title"], row["op"], fill), rust, key)
         for word in ("density", "viscosity", "pressure", "incompressible"):          # the explanation really is in words
             self.assertIn(word, multirow_specs.get("physics/physics/navier_stokes_equation")["title"])
 
@@ -247,6 +249,123 @@ class InTheWindow(unittest.TestCase):
         self.assertEqual(self.app.rows[0]["words"][0][0], "force")
         self.app._place_operator_row("math/arithmetic/addition")
         self.assertEqual(self.app.rows[0]["words"], {})
+
+    # ---------- chaining: a row reads the answer of an earlier row ----------
+    def place_chain(self, key, typed):
+        """Open a multi-row operator and type numbers into its first row ({box number: value})."""
+        from operator_row_math import row_tree
+        self.app._place_operator_row(key)
+        self.app.update()
+        for j, value in typed.items():
+            row_tree.set_slot(self.app.rows[0]["node"], (j,), str(value))
+
+    def press_equals(self):
+        self.app._equals()
+        self.app.update()
+        return self.app.results.get("1.0", "end")
+
+    def chained_values(self, row, path):
+        from operator_row_math import row_tree
+        slot = row_tree.get_slot(self.app.rows[row]["node"], path)
+        return slot.get("value")
+
+    def test_heron_in_two_rows_gives_the_same_number_as_heron_in_one(self):
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        compute = library.get("geometry/geometry/heron_s_formula").compute
+        for a, b, c in ((3, 4, 5), (7, 8, 9), (5.5, 6.25, 7.75), (0.1, 0.2, 0.25), (1000, 1200, 1500)):
+            self.app._clear_all()
+            self.place_chain("geometry/geometry/heron_s_formula", {0: a, 1: b, 2: c})
+            self.press_equals()
+            area = row_tree.evaluate(self.app.rows[1]["node"])
+            self.assertEqual(area, compute(a, b, c), (a, b, c))              # the exact same number, not a rounded one
+            s = (a + b + c) / 2
+            for path in ((0,),):                                              # the s boxes of Row 2 are one input: all four hold Row 1's answer
+                self.assertEqual(self.chained_values(1, path), s)
+            self.assertEqual([t for k, t, p in self.app._cards(1) if k == "box" and p == (0,)], [row_tree.fmt(s)] * 4)
+            for j, value in enumerate((a, b, c), start=1):                    # the sides on Row 2 are the ones typed on Row 1
+                self.assertEqual(float(row_tree.get_slot(self.app.rows[1]["node"], (j,))), float(value))
+
+    def test_a_changed_side_gives_a_new_semi_perimeter(self):
+        from operator_row_math import row_tree
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})
+        self.press_equals()
+        self.assertEqual(self.chained_values(1, (0,)), 6)
+        row_tree.set_slot(self.app.rows[0]["node"], (0,), "6")
+        self.app._invalidate()                                                # something changed: the chained box forgets its answer
+        self.assertIsNone(self.chained_values(1, (0,)))
+        self.press_equals()
+        self.assertEqual(self.chained_values(1, (0,)), 7.5)                   # (6 + 4 + 5) / 2, not the old 6
+
+    def test_a_triangle_that_cannot_exist_and_an_empty_box_decline(self):
+        from operator_row_math import row_tree
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 1, 1: 1, 2: 5})
+        text = self.press_equals()
+        self.assertIn("Row 2", text)                                         # the square root of a negative number: declined, like the one-row Heron
+        self.app._clear_all()
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4})   # the third side is left empty
+        text = self.press_equals()
+        self.assertIn("Fill every square box", text)
+        self.assertIsNone(self.chained_values(1, (0,)))                       # no number in the chained box
+
+    def test_typing_into_a_chained_box_does_not_stick(self):
+        from operator_row_math import row_tree
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})
+        row_tree.set_slot(self.app.rows[1]["node"], (0,), "999")             # the person types into a chained box
+        self.press_equals()
+        self.assertEqual(self.chained_values(1, (0,)), 6)                    # = puts the earlier answer back
+        self.assertEqual(row_tree.evaluate(self.app.rows[1]["node"]), 6)
+
+    def test_deleting_row_1_clears_the_chain(self):
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})
+        self.press_equals()
+        self.app._clear_row_math(0)
+        text = self.press_equals()
+        self.assertIn("Row 1", text)                                         # Row 1 is empty: declined, the answer is not a number
+        self.assertIsNone(self.chained_values(1, (0,)))                       # Row 2 does not keep the old s
+
+    def test_doppler_in_two_rows_gives_the_same_number_as_doppler_in_one(self):
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        compute = library.get("physics/physics/relativistic_doppler").compute
+        c = 299792458
+        for f0, v in ((100, 0.6 * c), (100, -0.6 * c), (540e12, 1.5e7), (1, 0)):
+            self.app._clear_all()
+            self.place_chain("physics/physics/relativistic_doppler", {0: v})
+            row_tree.set_slot(self.app.rows[1]["node"], (0,), str(f0))      # f0 is typed on Row 2: it is its first input
+            self.press_equals()
+            self.assertEqual(row_tree.evaluate(self.app.rows[1]["node"]), compute(f0, v), (f0, v))
+            self.assertEqual(self.chained_values(1, (1,)), v / c)             # beta is Row 1's answer, both beta boxes
+            self.assertEqual(compute(f0, v, c), compute(f0, v))
+
+    def test_doppler_declines_at_the_speed_of_light(self):
+        c = 299792458
+        for v in (c, -c, 2 * c):
+            self.app._clear_all()
+            self.place_chain("physics/physics/relativistic_doppler", {0: v})
+            text = self.press_equals()
+            self.assertIn("speed must be less than the speed of light", text)
+            self.assertIsNone(self.chained_values(1, (1,)))
+
+    def test_the_answer_of_the_chain_is_the_last_rows_answer(self):
+        self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})
+        text = self.press_equals()
+        self.assertIn("→", text)
+        self.assertTrue(text.strip().endswith("6"))                           # not 6 + 6 or 6 = 6: the area, the last row's answer
+
+    def test_a_row_may_only_read_an_earlier_row(self):
+        from operator_row_math import multirow_specs
+        self.assertEqual(multirow_specs.chain_errors(), [])
+        saved = dict(multirow_specs.SPECS)
+        try:
+            multirow_specs.SPECS["bad/later"] = {"title": "x", "joins": ["→"], "rows": [{"op": "_number", "fill": {0: {"chain": 1}}}, {"op": "_number"}]}
+            multirow_specs.SPECS["bad/self"] = {"title": "x", "joins": ["→"], "rows": [{"op": "_number"}, {"op": "_number", "fill": {0: {"chain": 1}}}]}
+            problems = multirow_specs.chain_errors()
+            self.assertEqual(len(problems), 2)
+            self.assertTrue(all("earlier row" in p for p in problems))
+        finally:
+            multirow_specs.SPECS.clear()
+            multirow_specs.SPECS.update(saved)
 
     def test_the_answer_box_fills_in_and_a_repeated_variable_is_one_input(self):
         app = self.app

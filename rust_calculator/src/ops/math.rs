@@ -237,7 +237,8 @@ pub fn stirling_number_second_kind(a: &[f64]) -> R {
     let mut s = vec![vec![0u128; k + 2]; nn + 1];
     s[0][0] = 1;
     for i in 1..=nn {
-        for j in 1..=k.min(i) {
+        // only the entries that S(n, k) depends on: S(i, j) with j >= k - (n - i); the others are never used (and can be far too big for nothing: S(100, 100) is 1)
+        for j in (k + i).saturating_sub(nn).max(1)..=k.min(i) {
             s[i][j] = too_big((j as u128).checked_mul(s[i - 1][j]).and_then(|v| v.checked_add(s[i - 1][j - 1])))?;
         }
     }
@@ -286,7 +287,12 @@ pub fn bayes_theorem(a: &[f64]) -> R {
 }
 pub fn binomial_distribution(a: &[f64]) -> R {
     let (nn, k) = (nat(a[0], "n")?, nat(a[1], "k")?);
-    n(comb(nn, k)? as f64 * a[2].powi(k as i32) * (1.0 - a[2]).powi(nn.saturating_sub(k) as i32))
+    // k above n: Python's (1 - p) ** (n - k) has a NEGATIVE exponent, which is a division by zero when p is 1
+    let (q, e) = (1.0 - a[2], nn as i64 - k as i64);
+    if q == 0.0 && e < 0 {
+        return Err("division by zero".into());
+    }
+    n(comb(nn, k)? as f64 * a[2].powi(k as i32) * q.powi(e as i32))
 }
 pub fn conditional_probability(a: &[f64]) -> R {
     n(a[0] / a[1])

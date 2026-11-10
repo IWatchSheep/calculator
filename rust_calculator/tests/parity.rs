@@ -142,6 +142,7 @@ const FRACTION_NONSENSE: &[&str] = &[
 /// are real-valued and report an error instead.  Allowed only when Python's answer is complex.
 const COMPLEX_POWER: &[&str] = &[
     "math/algebra/nth_root",
+    "math/algebra/power",
     "math/algebra/geometric_sequence",
     "math/algebra/geometric_series_sum",
 ];

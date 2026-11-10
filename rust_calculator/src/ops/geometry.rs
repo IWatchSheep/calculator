@@ -36,6 +36,13 @@ pub fn heron_s_formula(a: &[f64]) -> R {
     let s = (a[0] + a[1] + a[2]) / 2.0;
     n((s * (s - a[0]) * (s - a[1]) * (s - a[2])).sqrt())
 }
+pub fn heron_semiperimeter(a: &[f64]) -> R {
+    n((a[0] + a[1] + a[2]) / 2.0)
+}
+pub fn heron_area(a: &[f64]) -> R {
+    // s, a, b, c
+    n((a[0] * (a[0] - a[1]) * (a[0] - a[2]) * (a[0] - a[3])).sqrt())
+}
 pub fn law_of_cosines(a: &[f64]) -> R {
     n((a[0] * a[0] + a[1] * a[1] - 2.0 * a[0] * a[1] * a[2].cos()).sqrt())
 }

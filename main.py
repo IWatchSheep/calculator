@@ -422,6 +422,7 @@ class CalculatorGUI(tk.Tk):
 
     def _invalidate(self):
         """Something changed: the sums and the printed result row are out of date."""
+        self._reset_chains()
         for k, row in enumerate(self.rows):
             row_tree.clear_outputs(row["node"])
             if row["is_result"]:
@@ -698,15 +699,44 @@ class CalculatorGUI(tk.Tk):
         for r in touched:
             self._render_row(r)
 
+    def _chain_boxes(self):
+        """[(row, path of the box, source row)] of the boxes a multi-row operator fills from an earlier row's answer (see row_tree.chain_slots)."""
+        t = self.template
+        if t is None:
+            return []
+        return [(i, path, k) for i, rs in enumerate(t["spec"]["rows"]) for path, k in row_tree.chain_slots(rs)]
+
+    def _reset_chains(self):
+        """Forget the answers the chained boxes hold (something changed, or a new calculation starts): they show "row k" again until = fills them in."""
+        for i, path, k in self._chain_boxes():
+            node = self.rows[i]["node"] if i < len(self.rows) else None
+            if node is None:
+                continue
+            try:
+                held = row_tree.get_slot(node, path)
+                if isinstance(held, dict) and held.get("adv") and held.get("value") is None:
+                    continue                                          # already empty
+                row_tree.set_slot(node, path, row_tree.chain_placeholder(k))
+            except (IndexError, TypeError, KeyError):
+                continue
+            self._render_row(i)
+
     def _equals_template(self):
         self._sync_links()
         spec = self.template["spec"]
+        self._reset_chains()                      # a chained box never keeps an old answer
         results = []
         for i, rs in enumerate(spec["rows"]):
             node = self.rows[i]["node"]
             if node is None:
                 self._say("Row %d (%s) is empty: pick an operator for it." % (i + 1, rs["title"]))
                 return
+            for path, k in row_tree.chain_slots(rs):                  # boxes that read an earlier row: its answer, as the exact number it is
+                earlier = results[k]
+                if isinstance(earlier, bool) or not isinstance(earlier, (int, float)):
+                    self._say("Row %d (%s) reads the answer of Row %d, which is %s: it needs a single number." % (i + 1, rs["title"], k + 1, row_tree.fmt(earlier)))
+                    return
+                row_tree.set_slot(node, path, row_tree.chain_value(earlier))
             try:
                 v = row_tree.evaluate(node)
             except ValueError as e:

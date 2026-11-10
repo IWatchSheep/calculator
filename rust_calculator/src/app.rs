@@ -912,10 +912,17 @@ impl CalculatorApp {
                                                 let caption = if kind == "number" { name.to_string() } else { format!("{} ({})", name, kind) };
                                                 ui.small(caption);
                                                 let width = if kind == "number" { 64.0 } else { 140.0 };
+                                                let chain = self.doc.chain_source(i, &card.path); // a box that reads an earlier row's answer
                                                 if let Some(text) = self.doc.rows[i].slot_mut(&card.path) {
+                                                    let hint = match chain {
+                                                        Some(k) => format!("row {}", k + 1),
+                                                        None if kind == "number" => String::new(),
+                                                        None => crate::kinds::example(kind).to_string(),
+                                                    };
                                                     let te = TextEdit::singleline(text)
                                                         .desired_width(width)
-                                                        .hint_text(if kind == "number" { "" } else { crate::kinds::example(kind) })
+                                                        .hint_text(hint)
+                                                        .interactive(chain.is_none())
                                                         .font(egui::TextStyle::Heading);
                                                     let resp = ui.add(te);
                                                     if resp.gained_focus() || resp.clicked() {

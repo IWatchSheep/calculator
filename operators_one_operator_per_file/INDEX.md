@@ -506,6 +506,8 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Square area | s² | A = s² | Ready | `geometry/geometry/square_area/` |
 | Triangle area | ½bh | A = ½ · base · height | Ready | `geometry/geometry/triangle_area/` |
 | Heron's formula | √(s(s−a)(s−b)(s−c)) | A = √(s(s−a)(s−b)(s−c)),  s = (a + b + c)/2 | Ready | `geometry/geometry/heron_s_formula/` |
+| Heron's formula: semi-perimeter | s = (a+b+c)/2 | s = (a + b + c) / 2   (half the distance round the triangle) | Ready | `geometry/geometry/heron_semiperimeter/` |
+| Heron's formula: area | √(s(s−a)(s−b)(s−c)) | A = √(s(s−a)(s−b)(s−c))   (s is the semi-perimeter, from the row above) | Ready | `geometry/geometry/heron_area/` |
 | Pythagorean theorem | a²+b²=c² | c = √(a² + b²)   (hypotenuse of a right triangle) | Ready | `geometry/geometry/pythagorean_theorem/` |
 | Parallelogram area | bh | A = base · height | Ready | `geometry/geometry/parallelogram_area/` |
 | Trapezoid area | ½(a+b)h | A = ½ (a + b) h | Ready | `geometry/geometry/trapezoid_area/` |
@@ -619,5 +621,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Energy-momentum relation | E² = (pc)² + (mc²)² | E = √( (p c)² + (m c²)² )   (total energy) | Ready | `physics/physics/energy_momentum_relation/` |
 | Relativistic velocity addition | u′ = (u + v)/(1 + uv/c²) | w = (u + v) / (1 + u v / c²) | Ready | `physics/physics/relativistic_velocity_addition/` |
 | Relativistic Doppler effect | f = f₀√((1−β)/(1+β)) | f = f₀ √( (1 − β)/(1 + β) ),  β = v/c   (v > 0 receding, v < 0 approaching) | Ready | `physics/physics/relativistic_doppler/` |
+| Relativistic Doppler: beta | β = v/c | β = v / c   (v > 0 receding, v < 0 approaching; the speed must be less than the speed of light) | Ready | `physics/physics/relativistic_beta/` |
+| Relativistic Doppler: frequency | f = f₀√((1−β)/(1+β)) | f = f₀ √( (1 − β)/(1 + β) )   (β is the answer of the row above) | Ready | `physics/physics/relativistic_doppler_frequency/` |
 | Schwarzschild radius | rₛ = 2GM/c² | rₛ = 2 G M / c²   (G = 6.674×10⁻¹¹ N·m²/kg²) | Ready | `physics/physics/schwarzschild_radius/` |
 | Gravitational time dilation | Δt₀ = Δt√(1 − rₛ/r) | Δt₀ = Δt √(1 − 2GM/(r c²))   (clock at distance r from mass M, r > rₛ) | Ready | `physics/physics/gravitational_time_dilation/` |

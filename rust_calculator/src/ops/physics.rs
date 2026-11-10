@@ -224,6 +224,15 @@ pub fn relativistic_doppler(a: &[f64]) -> R {
     let beta = a[1] / a[2];
     n(a[0] * ((1.0 - beta) / (1.0 + beta)).sqrt())
 }
+pub fn relativistic_beta(a: &[f64]) -> R {
+    // v, c
+    need(a[0].abs() < a[1], "speed must be less than the speed of light")?;
+    n(a[0] / a[1])
+}
+pub fn relativistic_doppler_frequency(a: &[f64]) -> R {
+    // f0, beta
+    n(a[0] * ((1.0 - a[1]) / (1.0 + a[1])).sqrt())
+}
 pub fn relativistic_kinetic_energy(a: &[f64]) -> R {
     // m, v, c
     need(a[1].abs() < a[2], "speed must be less than the speed of light")?;

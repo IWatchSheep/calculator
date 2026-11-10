@@ -25,6 +25,7 @@ JOINS = {
     "=": lambda a, b: abs(a - b) <= 1e-3 * max(1.0, abs(a), abs(b)),   # numerical results: close enough
     "≠": lambda a, b: abs(a - b) > 1e-3 * max(1.0, abs(a), abs(b)),
     "<": lambda a, b: a < b, ">": lambda a, b: a > b, "≤": lambda a, b: a <= b, "≥": lambda a, b: a >= b,
+    "→": lambda a, b: b,          # "then": rows that read each other's answers (a chain); the answer of the whole chain is the LAST row's answer, not a combination
 }
 
 
@@ -41,11 +42,36 @@ def join(symbol, a, b):
 
 
 def build_node(spec):
-    """A row's operator with its boxes pre-filled from spec = {"op": key, "fill": {box number: value | spec}}."""
+    """A row's operator with its boxes pre-filled from spec = {"op": key, "fill": {box number: value | spec | {"chain": k}}}.
+    {"chain": k} = the box reads the answer of row k (counting from 0) of the multi-row operator: see chain_slots."""
     node = new_node(spec["op"])
     for j, v in spec.get("fill", {}).items():
-        node["slots"][j] = build_node(v) if isinstance(v, dict) else str(v)
+        if isinstance(v, dict) and "chain" in v:
+            node["slots"][j] = chain_placeholder(v["chain"])
+        else:
+            node["slots"][j] = build_node(v) if isinstance(v, dict) else str(v)
     return node
+
+
+def chain_slots(spec):
+    """[(path of the box, k)] of the boxes of a row spec that read the answer of row k: they are filled in by `=` from that row's answer, never typed."""
+    out = []
+    for j, v in spec.get("fill", {}).items():
+        if isinstance(v, dict) and "chain" in v:
+            out.append(((j,), v["chain"]))
+        elif isinstance(v, dict):
+            out += [((j,) + path, k) for path, k in chain_slots(v)]
+    return out
+
+
+def chain_placeholder(k):
+    """What a chained box shows before the row it reads has been calculated."""
+    return advanced_slot("number", "", None, "row %d" % (k + 1))
+
+
+def chain_value(value):
+    """A chained box holding the exact number that was calculated (the label is only how it is shown)."""
+    return advanced_slot("number", fmt(value), value, fmt(value))
 
 
 def slot_map(mod):

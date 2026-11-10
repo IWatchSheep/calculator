@@ -1,6 +1,6 @@
 {
- "count": 518,
- "ready": 446,
+ "count": 522,
+ "ready": 450,
  "reference": 72,
  "operators": [
   {
@@ -456,6 +456,72 @@
    ]
   },
   {
+   "key": "geometry/geometry/heron_area",
+   "name": "Heron's formula: area",
+   "symbol": "√(s(s−a)(s−b)(s−c))",
+   "category": "Geometry",
+   "subcategory": "Geometry",
+   "formula": "A = √(s(s−a)(s−b)(s−c))   (s is the semi-perimeter, from the row above)",
+   "status": "Ready",
+   "inputs": [
+    "s",
+    "a",
+    "b",
+    "c"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = √ ( □ ( □ − □ ) ( □ − □ ) ( □ − □ ) )",
+   "compute_signature": "compute(s, a, b, c)",
+   "compute_params": [
+    {
+     "name": "s",
+     "kind": "required"
+    },
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "b",
+     "kind": "required"
+    },
+    {
+     "name": "c",
+     "kind": "required"
+    }
+   ],
+   "required_args": 4,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 4,
+   "examples": [
+    {
+     "args": [
+      6,
+      3,
+      4,
+      5
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      12,
+      7,
+      8,
+      9
+     ],
+     "expected": 26.832815729997478
+    }
+   ]
+  },
+  {
    "key": "geometry/geometry/heron_s_formula",
    "name": "Heron's formula",
    "symbol": "√(s(s−a)(s−b)(s−c))",
@@ -502,6 +568,64 @@
       5
      ],
      "expected": 6
+    }
+   ]
+  },
+  {
+   "key": "geometry/geometry/heron_semiperimeter",
+   "name": "Heron's formula: semi-perimeter",
+   "symbol": "s = (a+b+c)/2",
+   "category": "Geometry",
+   "subcategory": "Geometry",
+   "formula": "s = (a + b + c) / 2   (half the distance round the triangle)",
+   "status": "Ready",
+   "inputs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( □ + □ + □ ) / 2",
+   "compute_signature": "compute(a, b, c)",
+   "compute_params": [
+    {
+     "name": "a",
+     "kind": "required"
+    },
+    {
+     "name": "b",
+     "kind": "required"
+    },
+    {
+     "name": "c",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      3,
+      4,
+      5
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      7,
+      8,
+      9
+     ],
+     "expected": 12
     }
    ]
   },
@@ -20785,6 +20909,62 @@
    ]
   },
   {
+   "key": "physics/physics/relativistic_beta",
+   "name": "Relativistic Doppler: beta",
+   "symbol": "β = v/c",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "β = v / c   (v > 0 receding, v < 0 approaching; the speed must be less than the speed of light)",
+   "status": "Ready",
+   "inputs": [
+    "v"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ / c",
+   "compute_signature": "compute(v, c=299792458)",
+   "compute_params": [
+    {
+     "name": "v",
+     "kind": "required"
+    },
+    {
+     "name": "c",
+     "kind": "optional",
+     "default": 299792458
+    }
+   ],
+   "required_args": 1,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      0.6,
+      1
+     ],
+     "expected": 0.6
+    },
+    {
+     "args": [
+      -0.6,
+      1
+     ],
+     "expected": -0.6
+    },
+    {
+     "args": [
+      0,
+      1
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
    "key": "physics/physics/relativistic_doppler",
    "name": "Relativistic Doppler effect",
    "symbol": "f = f₀√((1−β)/(1+β))",
@@ -20844,6 +21024,63 @@
       100,
       0,
       1
+     ],
+     "expected": 100
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/relativistic_doppler_frequency",
+   "name": "Relativistic Doppler: frequency",
+   "symbol": "f = f₀√((1−β)/(1+β))",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "f = f₀ √( (1 − β)/(1 + β) )   (β is the answer of the row above)",
+   "status": "Ready",
+   "inputs": [
+    "f0",
+    "beta"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ × √ ( ( 1 − □ ) / ( 1 + □ ) )",
+   "compute_signature": "compute(f0, beta)",
+   "compute_params": [
+    {
+     "name": "f0",
+     "kind": "required"
+    },
+    {
+     "name": "beta",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      100,
+      0.6
+     ],
+     "expected": 50
+    },
+    {
+     "args": [
+      100,
+      -0.6
+     ],
+     "expected": 200
+    },
+    {
+     "args": [
+      100,
+      0
      ],
      "expected": 100
     }

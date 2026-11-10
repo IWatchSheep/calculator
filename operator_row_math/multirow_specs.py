@@ -16,7 +16,8 @@ SPECS[operator key] = {
               u / point only has to be typed once.  A path is the box numbers from the row's operator
               inward, e.g. (1, 0) = box 0 of the operator sitting in box 1.
 }
-Join symbols:  +  −  ×  ÷  =  ≠  <  >  ≤  ≥
+Join symbols:  +  −  ×  ÷  =  ≠  <  >  ≤  ≥   and  →  ("then": the rows read each other's answers and the answer of the whole operator is the LAST row's answer;
+a box filled with {"chain": k} reads the answer of row k, an EARLIER row, and is filled in by = , never typed)
 """
 
 _BRACKETS = {
@@ -114,6 +115,23 @@ SPECS = {
         ],
         "joins": ["="],
     },
+    "geometry/geometry/heron_s_formula": {
+        "title": "Heron's formula for the area of a triangle with sides a, b and c. Row 1 finds the semi-perimeter s, half the distance round the triangle. Row 2 reads that s (its four s boxes hold the answer of Row 1) and the same three sides, and gives the area A = √(s(s−a)(s−b)(s−c)). The rows are joined by →: the answer is the last row's answer, the area.",
+        "rows": [
+            {"op": "geometry/geometry/heron_semiperimeter", "title": "Half the distance around the triangle."},
+            {"op": "geometry/geometry/heron_area", "title": "The area from that semi-perimeter. The s boxes read Row 1; the sides are the ones typed in Row 1.", "fill": {0: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+        "links": [((1, (1,)), (0, (0,))), ((1, (2,)), (0, (1,))), ((1, (3,)), (0, (2,)))],
+    },
+    "physics/physics/relativistic_doppler": {
+        "title": "Relativistic Doppler effect. Row 1 turns the speed v into β, the fraction of the speed of light (positive when the source moves away). Row 2 reads that β and gives the frequency f = f₀ √((1−β)/(1+β)) that the observer hears. The rows are joined by →: the answer is the last row's answer, the frequency.",
+        "rows": [
+            {"op": "physics/physics/relativistic_beta", "title": "The speed as a fraction of the speed of light."},
+            {"op": "physics/physics/relativistic_doppler_frequency", "title": "The frequency the observer hears. The β boxes read Row 1; f₀ is typed here.", "fill": {1: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,
@@ -123,3 +141,24 @@ SPECS = {
 
 def get(key):
     return SPECS.get(key)
+
+
+def chain_errors():
+    """Problems in the {"chain": k} boxes of SPECS: a row may read only an EARLIER row (never itself or a later one); [] when all is well."""
+    problems = []
+    for key, spec in SPECS.items():
+        for i, row in enumerate(spec["rows"]):
+            for path, k in _chains(row):
+                if not (0 <= k < i):
+                    problems.append("%s: row %d reads row %d (a row may read only an earlier row)" % (key, i + 1, k + 1))
+    return problems
+
+
+def _chains(row):
+    out = []
+    for j, v in row.get("fill", {}).items():
+        if isinstance(v, dict) and "chain" in v:
+            out.append(((j,), v["chain"]))
+        elif isinstance(v, dict):
+            out += _chains(v)
+    return out
