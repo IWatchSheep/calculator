@@ -1,0 +1,58 @@
+ROBOT NAVIGATION MATHS - STATUS          (written 2026-11-10; update after every batch)
+==========================================================================================
+
+The job: make sure the calculator HAS the maths a walking robot or a flying drone would call to navigate a forest.  No robot, no sensors, no loop:
+only operators whose compute() a robot's code could import.  Plan written by Grok (note_to_grok_robot_navigation.txt); Grok drafts each batch, Claude wires
+it in Python and Rust, tests it, and the project owner approves the commit.
+
+DONE  (all committed and pushed to main; Python and Rust; 595 operators, 523 calculating, 72 formula-only after batch 8)
+-------------------------------------------------------------------------------------------------------------------
+Batch 1  quaternions (Math > Linear algebra)      997216df   multiply, conjugate, inverse, normalise, from axis and angle, rotate a vector,
+                                                              to / from yaw pitch roll (gimbal lock is declined, never guessed)
+Batch 2  rotations                                81843c59   rotation matrix from a quaternion, axis and angle, yaw pitch roll; rotate a vector by a
+                                                              matrix; slerp; angle between orientations; quaternion from a rotation matrix
+Batch 3  motion (Physics)                         07d6ac06   speed after a distance, time to a distance, stopping distance, braking time,
+                                                              projectile range / time of flight / position, hover thrust
+Batch 4  mechanics                                bb56613e   force down a slope, most friction, steepest climb, centre of mass, cylinder moment of
+                                                              inertia, angular acceleration, tipping margin, tree impact force
+Batch 5  where am I                               d235f801   dead reckoning, exponential smoothing, Kalman predict state / variance / update state /
+                                                              update variance, haversine distance, bearing.  THREE-ROW menu operator kalman_update_state
+Batch 6  filter and control                       e3adf457   complementary filter, local east-north-up, control error, PID proportional / integral
+                                                              state / integral term / derivative / sum.  FOUR-ROW menu operator pid_sum
+Batch 7+8 obstacles and the GPS clock             1367ddd6   saturation, low-pass step, distance 3D, time to collision, closing speed, point in a
+                                                              sphere / tree trunk, turn radius, GPS kinematic / gravitational clock / correction.
+                                                              FOUR-ROW menu operator gps_clock_correction.  "negligible below about 1 percent of the
+                                                              speed of light" added to the Context of lorentz_factor, time_dilation, length_contraction,
+                                                              relativistic_momentum, relativistic_kinetic_energy (their compute() is unchanged)
+
+CONVENTIONS  (Grok's, written into the Label / Context words)
+  quaternion = [w, x, y, z], real part first; axes right-handed, x forward, y left, z up; angles in radians; a vector is turned by q v q^-1;
+  roll about x, then pitch about y, then yaw about z (q = yaw * pitch * roll).  Heading: 0 points east, positive turns toward north.
+  g = 9.81 m/s^2, Earth radius 6371000 m, GM = 3.986004418e14, c = 299792458.  Latitudes and longitudes are radians.  A position is a list.
+  A chained box carries ONE number, so a list answer is one row (or one row per component).
+
+NOT DONE  (Grok decided these are not worth forcing into one formula)
+  distance to a line segment, a camera cone (is a point in the field of view), a potential-field push, A*.  Dijkstra (shortest_path_dijkstra) already exists.
+  A moving average is the existing mean; one acceleration step is the existing v = u + a t; low pass with a typed alpha is exponential smoothing.
+
+RESULTS WORTH KNOWING
+  - Two of Grok's test numbers were wrong and were corrected in agreement with Grok: speed_after_distance(10, -2, 9) is 8 (8.944... is the answer for s = 5);
+    the last digits of a few cases move by one bit (dead reckoning east 1.0000000000000002, turn_radius 10.193679918450561, quaternion from the 90 degree
+    matrix 0.7071067811865475).  Those tests accept one bit; do not require the same digits.
+  - The GPS numbers match Grok's to the last digit: -7.213755992552251, +45.651861866919695, sum +38.438105874367444.
+  - The Rust and Python numbers agree through the parity grid and the work-plan values checked in both programs.
+
+HOW TO ADD A BATCH  (what worked; the scripts were throw-away files in the scratchpad)
+  1. Write the Python operator files operators_one_operator_per_file/<group>/<name>/<name>.py (compute() with the plan's messages), the row files
+     operator_row_math/<group>/<name>/<name>.py (copy a similar one: INPUTS, KINDS, CALC), INDEX.md lines, and one spec line per operator in
+     operator_keys/operator_row_specs.txt (boxes in the order of compute()'s INPUTS is not required: boxes are matched by name).
+  2. Rust: a pub fn <name> in rust_calculator/src/ops/physics.rs (numbers only, optional g is the last number) or lists.rs / matrices.rs (lists, matrices,
+     or a list answer).  Same operations in the same order as Python.
+  3. Multi-row menu operators: operator_row_math/multirow_specs.py AND rust_calculator/src/multirow.rs (same texts; a drift test checks them), with
+     {"chain": k} / Fill::Row(k) for boxes that read an earlier row and links for boxes that copy another box.
+  4. Run: python operator_keys/make_operator_row_files.py, make_operator_keys.py, make_rust_ops.py, make_rust_layouts.py, make_value_grid.py;
+     draw pictures with python operator_keys/make_navier_stokes_pictures.py <keys> (only on this machine: it needs Cambria).
+  5. Update the counts (README.md, TESTING_GUIDE.md, operator_keys/README.md, rust_calculator/README.md and WORKLIST.md, layout.rs, pictures.rs,
+     tests/ops_smoke.rs, tests/test_operators.py, tests/test_operator_pictures.py).  Careful: a blanket sed of the old count also hits legitimate numbers
+     (2^3^2 = 512 in test_operators.py once became 523).
+  6. Tests: python -m unittest tests.test_operators tests.test_operator_pictures; cargo +1.83.0 test --release --locked in rust_calculator.
