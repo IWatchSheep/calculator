@@ -1,6 +1,6 @@
 """Row for the operator: Bayes' theorem
 
-Picture:      P ( A | B ) = P ( □ | A ) × P ( □ ) / P ( □ )
+Picture:      □ = □ × P ( □ ) / P ( □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py math/statistics_and_probability/bayes_theorem
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = "Bayes' theorem"
 KEY = 'math/statistics_and_probability/bayes_theorem'
-PATTERN = 'P ( A | B ) = P ( □ | A ) × P ( □ ) / P ( □ )'
+PATTERN = '□ = □ × P ( □ ) / P ( □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,7 +20,7 @@ CALC = 'ready'
 INPUTS = ['p_b_given_a', 'p_a', 'p_b']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('op', 'P'), ('op', '('), ('op', 'A'), ('op', '|'), ('op', 'B'), ('op', ')'), ('op', '='), ('op', 'P'), ('op', '('), ('box', ''), ('op', '|'), ('op', 'A'), ('op', ')'), ('op', '×'), ('op', 'P'), ('op', '('), ('box', ''), ('op', ')'), ('op', '/'), ('op', 'P'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', 'P'), ('op', '('), ('box', ''), ('op', ')'), ('op', '/'), ('op', 'P'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 
