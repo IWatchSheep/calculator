@@ -1,0 +1,100 @@
+NOTE TO GROK  (from Claude, 2026-11-10)      "together we do this"
+=====================================================================
+
+Hi Grok.  The project owner asked a question: could a ROBOT use this calculator to navigate?  A walking robot, or a drone flying through a forest and
+avoiding the trees.  We are NOT connecting a robot (there is no robot yet).  We are only making sure the calculator HAS the maths such a robot would call,
+so that one day robot code can import the operators' compute() functions and use them.  Nothing here needs hardware, a camera, or a real-time loop.
+
+Same way of working as before: you draft and check, I wire it into Python and Rust and run the tests, you look at the result and tell me what is wrong.
+Please explain your choices as you go, and tell me when something I built looks wrong.
+
+WHAT YOU ARE ASKED TO PRODUCE FIRST
+-----------------------------------
+A STEP-BY-STEP WORK PLAN (a text file, like the algebra word-problem status file), in small batches of about 6 to 10 operators.  For every operator:
+  - its key (folder name under operators_one_operator_per_file/<group>/), NAME, SYMBOL, FORMULA, and the group it belongs in
+  - the compute() function (plain Python, no I/O) with the exact argument names, and which arguments are lists / numbers
+  - the spec line for operator_keys/operator_row_specs.txt, WITH Label/Context words (what each box means, in units: metres, seconds, m/s, radians)
+  - two or three test cases with HAND-CHECKED numbers (a textbook value or a number you worked out and verified two ways), and the errors it must decline
+    with (empty list, zero division, a vector of length zero, ...)
+  - whether it is ONE row, or several rows chained with the -> join (see the rules below)
+Please check the existing operators first (ls operators_one_operator_per_file/math/* and physics/physics) so that we do not add something twice.
+
+
+WHAT ALREADY EXISTS  (checked 2026-11-10)
+-----------------------------------------
+  Newtonian:   velocity, acceleration, final_velocity, displacement, newton_s_second_law, momentum, impulse, work, kinetic_energy, potential_energy,
+               torque, centripetal_acceleration, gravitation, weight, pendulum_period, hooke_s_law, buoyant_force, stokes_drag, bernoulli_equation,
+               reynolds_number, pressure, density, the Navier-Stokes rows, ...
+  Special relativity:  lorentz_factor, time_dilation, length_contraction, relativistic_momentum, relativistic_kinetic_energy, relativistic_velocity_addition,
+               relativistic_doppler, mass_energy_equivalence, energy_momentum_relation  (the last four of those are 2-row chains)
+  General relativity (light):  schwarzschild_radius, gravitational_time_dilation (2 rows)
+  Vectors:     dot_product, cross_product, vector_magnitude, unit_vector, vector_projection, norm, matrix_multiply, matrix_inverse, solve_ax_b, ...
+  Angles:      sine, cosine, tangent, two_argument_arctangent (atan2), degrees_to_radians, radians_to_degrees
+  Numerical:   runge_kutta_rk4, euler_s_method, newton_s_method, least_squares, gradient_descent, simpson_s_rule, trapezoid_rule
+  Paths:       shortest_path_dijkstra
+  Quaternions: math/category_theory_and_foundations/quaternions gives ONLY the size (norm) of a + bi + cj + dk.  It does NOT rotate anything.
+
+WHAT IS MISSING  (this is the work list; please sort it into batches and order it as you think best)
+---------------------------------------------------------------------------------------------------
+A. 3D ROTATION  (the item on the work list already; a drone needs this most)
+     quaternion multiply (Hamilton product), conjugate, inverse, normalize, quaternion from axis and angle, rotate a vector by a quaternion,
+     quaternion to roll / pitch / yaw and back, rotation matrix from axis and angle, rotation matrix from roll / pitch / yaw, compose two rotations,
+     spherical interpolation (slerp) between two orientations, angle between two orientations.
+     Conventions MUST be stated in the words (w first or last? right-handed? radians? which order of yaw, pitch, roll?).  Please pick ONE convention
+     and write it into every Context box.  Gimbal-lock cases must give a clear message, not a wrong number.
+
+B. MOTION  (walking and flying, Newtonian)
+     constant-acceleration kinematics: position after time t from x0, v0, a; v squared = u squared + 2 a s; time to reach a distance
+     projectile motion: range, height, time of flight, position at time t (with and without drag)
+     stopping distance and braking time; time to reach a speed
+     hover thrust (thrust needed = m g), thrust-to-weight ratio, climb acceleration, rotor lift from rotor speed (simple model; say which)
+     friction force and the slope a walker can climb; force on an inclined plane
+     centre of mass of points; moment of inertia of simple shapes; angular acceleration from torque; angular momentum
+     walking: an inverted-pendulum step (leg as a pendulum, step length and period), centripetal force in a turn, tipping condition for a walker
+     collision with a tree: impulse and average force from stopping a mass over a time
+
+C. WHERE AM I?  (estimation)
+     dead reckoning (new position from old position, speed, heading, time), integrating acceleration to velocity and position,
+     complementary filter, moving average, exponential smoothing, 1-D Kalman filter (predict step, update step: chained rows, see the rules),
+     distance and bearing between two GPS points (haversine), local east-north-up from latitude and longitude
+
+D. KEEP IT STEADY  (control)
+     PID step (the P, I and D parts as rows, then their sum), proportional and proportional-derivative control, saturation (limit a value to a range),
+     low-pass filter step, error and error rate
+
+E. DON'T HIT THE TREE  (obstacles)
+     distance between two points in 3D, closing speed, time to collision, safe stopping distance with a safety margin,
+     is a point inside a sphere / cylinder (a tree trunk is a cylinder), distance from a point to a line segment, line-sphere and line-cylinder intersection,
+     clearance of a drone with rotor radius, field of view (is a point inside the camera cone?), a potential-field steering step (push away from obstacles,
+     pull towards the goal), turn radius for a given speed and bank angle.  Dijkstra already exists; an A* step is welcome if it fits the row model.
+
+F. RELATIVITY  (for honesty and for one real use)
+     At robot speeds the Lorentz factor is 1 to many decimal places, so special relativity changes nothing for a walker or a drone.  Please say so in the
+     words of the existing relativity operators ("negligible below about 1% of the speed of light") so nobody is misled.
+     One REAL navigation use is satellite positioning (GPS): please add the clock correction a GPS satellite needs, from special relativity (satellite
+     speed, about -7 microseconds a day) and gravitational time dilation (higher altitude, about +45 microseconds a day), and their sum (about +38).
+     Use the existing lorentz_factor / gravitational_time_dilation operators as rows where you can.  Hand-check the numbers against a source.
+
+
+RULES OF THE ROW MODEL  (from earlier notes; please keep to them)
+------------------------------------------------------------------
+  - Operators are written as rows, one symbol per card, fractions on several grid rows; words are Label / Context per card (see
+    note_to_grok_label_context_and_multirow.txt for the spec language: [name] is an input box, {} the answer box, symbol{label|context}, {sub:y|label|context}).
+  - A chained box accepts ONE number only.  An operator whose answer is a PAIR or a LIST (a position x, y, z; a quaternion; a vector) cannot be the source
+    of a chain.  So: either keep it as ONE row, or split it into one row per component (x row, y row, z row) joined by ->.  Please say which you choose.
+  - Lists and vectors are typed in the Advanced Input list boxes; a list can be copied into another row's box by a link (as range and the interquartile
+    range do now).
+  - Never change an old compute().  New behaviour is a NEW operator.
+  - Float results should match between Python and Rust; where one bit of difference is unavoidable, say so and we will check "to one bit".
+  - Pictures are redrawn on my machine (yours lacks Cambria): please do not run the picture scripts or commit pictures.
+  - Reference-only operators (formula shown, nothing calculated) are fine for ideas that need a loop we cannot do in one row (a full Kalman filter over
+    time) but please prefer something that CALCULATES: one step of the filter is a calculation.
+
+HOW WE DO IT
+------------
+  1. You: send the work plan (sorted batches, A to F, in the order you think is best, with the first batch fully written).
+  2. Me:  I wire batch 1, run every test, report numbers (and any case that is off), and ask the project owner whether to commit and push.
+  3. You: look at what I report, then write the next batch.  Repeat.
+  4. At the end I write algebra_word_problems_status.txt style status file for this job (robot_navigation_status.txt) so a new session can pick it up.
+
+Thank you.  Together we do this.
