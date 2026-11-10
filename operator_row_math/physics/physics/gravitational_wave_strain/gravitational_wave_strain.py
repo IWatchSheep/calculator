@@ -1,6 +1,6 @@
 """Row for the operator: Weight
 
-Picture:      □ = 4 ( G □ ) ^ ( 5 / 3 ) ( π □ ) ^ ( 2 / 3 ) / ( c ^ 4 □ )
+Picture:      □ = 4 ³ √ ( ( G □ ) ⁵ ( π □ ) ² ) / ( c ⁴ □ )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/gravitational_wave_strain
 """
@@ -12,17 +12,18 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Gravitational-wave strain'
 KEY = 'physics/physics/gravitational_wave_strain'
-PATTERN = '□ = 4 ( G □ ) ^ ( 5 / 3 ) ( π □ ) ^ ( 2 / 3 ) / ( c ^ 4 □ )'
+PATTERN = '□ = 4 ³ √ ( ( G □ ) ⁵ ( π □ ) ² ) / ( c ⁴ □ )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
 CALC = 'ready'
 INPUTS = ['chirp_mass', 'f_gw', 'distance']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
-WORDS = {0: ('strain h', 'dimensionless, face-on'), 4: ('gravitational constant', '6.674e-11 N m2/kg2'), 5: ('chirp mass', 'kilograms'), 15: ('wave frequency', 'hertz'), 25: ('speed of light', '299792458 m/s'), 28: ('distance', 'metres to the binary')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
-FRAC = [[], [], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n'], [1, 'n']], [[3, 'n'], [1, 'bar']], [[3, 'n'], [1, 'd']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n']], [[3, 'n'], [2, 'n']], [[3, 'n'], [2, 'bar']], [[3, 'n'], [2, 'd']], [[3, 'n']], [[3, 'bar']], [[3, 'hide']], [[3, 'd']], [[3, 'd']], [[3, 'd']], [[3, 'd']], [[3, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
+LEVELS = [0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('strain h', 'dimensionless, face-on'), 7: ('gravitational constant', '6.674e-11 N m2/kg2'), 8: ('chirp mass', 'kilograms'), 13: ('wave frequency', 'hertz'), 19: ('speed of light', '299792458 m/s'), 21: ('distance', 'metres to the binary')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
+FRAC = [[], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('out', ''), ('op', '='), ('op', '4'), ('op', '('), ('op', 'G'), ('box', ''), ('op', ')'), ('op', '^'), ('op', '('), ('op', '5'), ('op', '/'), ('op', '3'), ('op', ')'), ('op', '('), ('op', 'π'), ('box', ''), ('op', ')'), ('op', '^'), ('op', '('), ('op', '2'), ('op', '/'), ('op', '3'), ('op', ')'), ('op', '/'), ('op', '('), ('op', 'c'), ('op', '^'), ('op', '4'), ('box', ''), ('op', ')')]      # cards left of "="
+LEFT = [('out', ''), ('op', '='), ('op', '4'), ('op', '3'), ('op', '√'), ('op', '('), ('op', '('), ('op', 'G'), ('box', ''), ('op', ')'), ('op', '5'), ('op', '('), ('op', 'π'), ('box', ''), ('op', ')'), ('op', '2'), ('op', ')'), ('op', '/'), ('op', '('), ('op', 'c'), ('op', '4'), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

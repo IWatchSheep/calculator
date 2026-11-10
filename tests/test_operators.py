@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 618)
+        self.assertEqual(len(self.ops), 619)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 618)
+        self.assertEqual(len(status), 619)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -296,6 +296,8 @@ CASES = [
     (PH + "chirp_mass", (1, 1), 0.8705505632961241), (PH + "chirp_mass", (2, 2), 1.7411011265922482),
     (PH + "gravitational_wave_strain", (1, 1, 1), 1.166417692781491e-50), (PH + "gravitational_wave_strain", (1.3466514515085672e+27, 1, 1), 1.915488009903443e-05),
     (PH + "gravitational_wave_strain", (1, 0, 1), 0),
+    (PH + "tov_pressure_step", (1000000, 1, 1e24, 1000, 0), -66740.00009911992),
+    (PH + "tov_pressure_step", (10000, 0.01, 1e27, 1e17, 1e30), -7.609133368347511e+23),   # the work plan rounds this to -7.60913336834751e+23
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1404,6 +1406,33 @@ class GravitationalWaveTests(unittest.TestCase):
 
 
 # --------------------------------------------------------------------------- 3. error handling
+class TovPressureStepTests(unittest.TestCase):
+    """General relativity, job 10: one thin shell of the Tolman-Oppenheimer-Volkoff equation."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "tov_pressure_step").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 1, 1e24, 1000, 0), "a radius must be positive")
+        self.says((1e6, 0, 1e24, 1000, 0), "the shell thickness must be positive")
+        self.says((1e6, 1, 0, 1000, 0), "mass must be positive")
+        self.says((1e6, 1, 1e24, 0, 0), "density must be positive")
+        self.says((1e6, 1, 1e24, 1000, -1), "pressure cannot be negative")
+        self.says((1, 1, 1e27, 1000, 0), "r is not outside the horizon")
+        rs = get(PH + "schwarzschild_radius").compute(1e27)
+        self.says((rs, 1, 1e27, 1000, 0), "r is not outside the horizon")     # exactly on the horizon
+
+    def test_the_physics(self):
+        step = get(PH + "tov_pressure_step").compute
+        self.assertLess(step(1e6, 1, 1e24, 1000, 0), 0)                            # pressure drops outward
+        self.assertAlmostEqual(step(1e6, 2, 1e24, 1000, 0), 2 * step(1e6, 1, 1e24, 1000, 0), delta=1e-9 * 66740)   # linear in the thickness
+        newton = -6.674e-11 * 1e24 * 1000 / 1e12                                    # weak field, P = 0: the Newtonian -G M rho / r^2
+        self.assertAlmostEqual(step(1e6, 1, 1e24, 1000, 0) / newton, 1, places=6)
+        self.assertLess(step(1e4, 1, 1e27, 1e17, 1e30), step(1e4, 1, 1e27, 1e17, 0))   # pressure makes gravity stronger
+
+
 class ErrorTests(unittest.TestCase):
     """Invalid input must raise a clear exception, never return a silent wrong number."""
 

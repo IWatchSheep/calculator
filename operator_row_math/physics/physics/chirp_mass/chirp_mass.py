@@ -1,6 +1,6 @@
 """Row for the operator: Weight
 
-Picture:      □ = ( □ □ ) ^ ( 3 / 5 ) / ( □ + □ ) ^ ( 1 / 5 )
+Picture:      □ = ⁵ √ ( ( □ □ ) ³ / ( □ + □ ) )
 Calculation:  ready - fill the boxes, press = and the sum appears right of =
 Try it:       python operator_row_math/preview.py physics/physics/chirp_mass
 """
@@ -12,7 +12,7 @@ from operator_row_math.row_builder import build_row  # noqa: E402
 
 NAME = 'Chirp mass'
 KEY = 'physics/physics/chirp_mass'
-PATTERN = '□ = ( □ □ ) ^ ( 3 / 5 ) / ( □ + □ ) ^ ( 1 / 5 )'
+PATTERN = '□ = ⁵ √ ( ( □ □ ) ³ / ( □ + □ ) )'
 # "ready"     = the boxes on the left feed compute() and the sum shows right of "="
 # "reference" = formula only (no calculation yet)
 # "advanced"  = needs a list / matrix / function / set / graph: use the Advanced Input window
@@ -20,10 +20,11 @@ CALC = 'ready'
 INPUTS = ['m1', 'm2']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 1, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
-WORDS = {0: ('chirp mass', 'kilograms'), 3: ('first mass', 'kilograms'), 4: ('second mass', 'kilograms')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
-FRAC = [[], [], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n']], [[2, 'n'], [1, 'n']], [[2, 'n'], [1, 'bar']], [[2, 'n'], [1, 'd']], [[2, 'n']], [[2, 'bar']], [[2, 'hide']], [[2, 'd']], [[2, 'd']], [[2, 'd']], [[2, 'hide']], [], [], [[3, 'n']], [[3, 'bar']], [[3, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
+LEVELS = [0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('chirp mass', 'kilograms'), 6: ('first mass', 'kilograms'), 7: ('second mass', 'kilograms')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
+FRAC = [[], [], [], [], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
-LEFT = [('out', ''), ('op', '='), ('op', '('), ('box', ''), ('box', ''), ('op', ')'), ('op', '^'), ('op', '('), ('op', '3'), ('op', '/'), ('op', '5'), ('op', ')'), ('op', '/'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', '^'), ('op', '('), ('op', '1'), ('op', '/'), ('op', '5'), ('op', ')')]      # cards left of "="
+LEFT = [('out', ''), ('op', '='), ('op', '5'), ('op', '√'), ('op', '('), ('op', '('), ('box', ''), ('box', ''), ('op', ')'), ('op', '3'), ('op', '/'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)
 
 

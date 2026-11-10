@@ -758,3 +758,17 @@ pub fn gravitational_wave_strain(a: &[f64]) -> R {
     need(a[1] >= 0.0, "a frequency cannot be negative")?;
     n(4.0 * (a[3] * a[0]).powf(5.0 / 3.0) * (std::f64::consts::PI * a[1]).powf(2.0 / 3.0) / (a[4].powf(4.0) * a[2]))
 }
+
+// ---------- one thin shell of the Tolman-Oppenheimer-Volkoff equation (general relativity, job 10; the same operations as the Python file) ----------
+
+pub fn tov_pressure_step(a: &[f64]) -> R {
+    // r, dr, M, rho, P, G, c
+    let (r, dr, m, rho, p, g, c) = (a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+    need(r > 0.0, "a radius must be positive")?;
+    need(dr > 0.0, "the shell thickness must be positive")?;
+    need(m > 0.0, "mass must be positive")?;
+    need(rho > 0.0, "density must be positive")?;
+    need(p >= 0.0, "pressure cannot be negative")?;
+    need(2.0 * g * m / (r * c.powi(2)) < 1.0, "r is not outside the horizon")?;
+    n(-(g * m * rho / r.powi(2)) * (1.0 + p / (rho * c.powi(2))) * (1.0 + 4.0 * std::f64::consts::PI * r.powf(3.0) * p / (m * c.powi(2))) / (1.0 - 2.0 * g * m / (r * c.powi(2))) * dr)
+}

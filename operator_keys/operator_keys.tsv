@@ -610,6 +610,7 @@ physics/physics/time_to_distance	Time to a distance	s = ut + ½at²	Physics	Phys
 physics/physics/tipping_margin	Tipping margin	b cos θ − h sin θ	Physics	Physics	b cos θ − h sin θ   (metres from the downhill foot to where the weight falls; positive stays upright)	Ready	3	3	half_width,height,angle	compute(half_width, height, angle)
 physics/physics/torque	Torque	τ = rF·sin θ	Physics	Physics	τ = r F sin θ	Ready	3	3	r,F,theta	compute(r, F, theta)
 physics/physics/torricelli_speed	Torricelli's law	v = √(2gh)	Physics	Physics	v = √(2 g h)   (g = 9.81 m/s²)	Ready	1	2	h	compute(h, g=9.81)
+physics/physics/tov_pressure_step	TOV pressure step	one shell of dP/dr	Physics	Physics	ΔP = −(G M ρ / r²) (1 + P/(ρ c²)) (1 + 4π r³ P / (M c²)) / (1 − 2GM/(r c²)) Δr   (the pressure change across one thin shell of a static spherical star, Tolman–Oppenheimer–Volkoff; M is the mass already inside r; G = 6.674e-11, c = 299792458)	Ready	5	7	r,dr,M,rho,P	compute(r, dr, M, rho, P, G=6.674e-11, c=299792458)
 physics/physics/turn_radius	Turn radius	r = v² / (g tan φ)	Physics	Physics	r = v² / (g tan φ)   (a level banked turn; φ in radians, positive to the left; a negative radius turns the other way; g = 9.81 m/s²)	Ready	2	3	speed,bank	compute(speed, bank, g=9.81)
 physics/physics/velocity	Velocity	v = d/t	Physics	Physics	v = d / t	Ready	2	2	d,t	compute(d, t)
 physics/physics/velocity_squared	Velocity squared	v² = u² + 2as	Physics	Physics	v = √(u² + 2 a s)	Ready	3	3	u,a,s	compute(u, a, s)

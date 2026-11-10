@@ -1034,3 +1034,24 @@ fn the_gravitational_wave_operators_give_the_numbers_of_the_work_plan_and_declin
     assert!(call("gravitational_wave_strain", &[1., 1., 0., g, c]).unwrap_err().contains("a distance must be positive"));
     assert!(call("gravitational_wave_strain", &[1., -1., 1., g, c]).unwrap_err().contains("a frequency cannot be negative"));
 }
+
+#[test]
+fn the_tov_pressure_step_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/tov_pressure_step").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let (g, c) = (6.674e-11, 299792458.0);
+    assert_eq!(call(&[1e6, 1., 1e24, 1000., 0., g, c]).unwrap(), -66740.00009911992);
+    let relativistic = call(&[1e4, 0.01, 1e27, 1e17, 1e30, g, c]).unwrap();
+    assert!((relativistic / -7.60913336834751e+23 - 1.0).abs() < 1e-14);
+    assert!(call(&[0., 1., 1e24, 1000., 0., g, c]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[1e6, 0., 1e24, 1000., 0., g, c]).unwrap_err().contains("the shell thickness must be positive"));
+    assert!(call(&[1e6, 1., 0., 1000., 0., g, c]).unwrap_err().contains("mass must be positive"));
+    assert!(call(&[1e6, 1., 1e24, 0., 0., g, c]).unwrap_err().contains("density must be positive"));
+    assert!(call(&[1e6, 1., 1e24, 1000., -1., g, c]).unwrap_err().contains("pressure cannot be negative"));
+    assert!(call(&[1., 1., 1e27, 1000., 0., g, c]).unwrap_err().contains("r is not outside the horizon"));
+}

@@ -48,7 +48,10 @@ DONE
          (m1 + m2)^(1/5), gravitational_wave_strain(chirp_mass, f_gw, distance) = 4 (G Mc)^(5/3) (pi f)^(2/3) / (c^4 d) (G, c as in schwarzschild_radius).
          618 operators, 546 calculating.  Grok's numbers match (20, 0, 0.8705505632961241, 1.166417692781491e-50, 1.915488009903443e-05).  Python and Rust tests pass.
 
-WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 10  one radial step of the Tolman-Oppenheimer-Volkoff equation (pressure change over a thin shell)
+  Job 10 One thin shell of the Tolman-Oppenheimer-Volkoff equation (physics/physics): tov_pressure_step(r, dr, M, rho, P) = dP/dr * dr, with
+         dP/dr = -(G M rho / r^2)(1 + P/(rho c^2))(1 + 4 pi r^3 P/(M c^2)) / (1 - 2GM/(r c^2)); G, c as in schwarzschild_radius; declines as Grok listed
+         (the horizon test is 2GM/(r c^2) >= 1).  619 operators, 547 calculating.  Grok's -66740.00009911992 matches exactly; the relativistic shell gives
+         -7.609133368347511e+23 (Grok's -7.60913336834751e+23 is the same number rounded to 15 digits; tests compare to 1e-14).
+         Also redrew the chirp_mass and gravitational_wave_strain rows and pictures from their spec lines (the job 9 commit had stale ones).
+         THE GENERAL RELATIVITY LIST IS FINISHED.
 
-NOT ON THE LIST  a 3D numerical evolution of spacetime, a waveform synthesizer, a merger simulation, a full orbit integration.

@@ -488,6 +488,8 @@ physics/physics/tipping_margin	0.2 1 1.5707963267948966	-1
 physics/physics/torque	2 3 1.5707963267948966	6
 physics/physics/torricelli_speed	5	9.904544411531507
 physics/physics/torricelli_speed	0	0
+physics/physics/tov_pressure_step	1000000 1 1e+24 1000 0	-66740.00009911992
+physics/physics/tov_pressure_step	10000 0.01 1e+27 1e+17 1e+30	-7.609133368347511e+23
 physics/physics/turn_radius	10 0.7853981633974483	10.19367991845056
 physics/physics/velocity	10 2	5
 physics/physics/velocity_squared	0 2 4	4
