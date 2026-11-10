@@ -476,6 +476,11 @@ physics/physics/speed_after_distance	0 2 8	5.656854249492381
 physics/physics/speed_after_distance	3 0 10	3
 physics/physics/speed_after_distance	10 -2 9	8
 physics/physics/speed_after_distance	10 -2 5	8.94427190999916
+physics/physics/spin_up_at_angle	0	1
+physics/physics/spin_up_at_angle	1.5707963267948966	0.5
+physics/physics/spin_up_at_angle	3.141592653589793	0
+physics/physics/spin_z_up_probability	1	1
+physics/physics/spin_z_up_probability	-1	0
 physics/physics/steepest_climb_angle	0	0
 physics/physics/steepest_climb_angle	1	0.7853981633974483
 physics/physics/steepest_climb_angle	1.7320508075688772	1.0471975511965976

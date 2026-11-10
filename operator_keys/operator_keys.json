@@ -1,6 +1,6 @@
 {
- "count": 627,
- "ready": 555,
+ "count": 629,
+ "ready": 557,
  "reference": 72,
  "operators": [
   {
@@ -27515,6 +27515,96 @@
       5
      ],
      "expected": 8.94427190999916
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/spin_up_at_angle",
+   "name": "Spin up at an angle",
+   "symbol": "P = (1 + cos θ) / 2",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "P = (1 + cos θ) / 2 = cos²(θ/2)   (a spin-1/2 particle prepared spin up along z is found spin up along an axis at angle θ from z, in radians; the (1 + cos θ) / 2 form makes 90° exactly 0.5 and 180° exactly 0)",
+   "status": "Ready",
+   "inputs": [
+    "theta"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( 1 + cos ( □ ) ) / 2",
+   "compute_signature": "compute(theta)",
+   "compute_params": [
+    {
+     "name": "theta",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1.5707963267948966
+     ],
+     "expected": 0.5
+    },
+    {
+     "args": [
+      3.141592653589793
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/spin_z_up_probability",
+   "name": "Spin up along z",
+   "symbol": "P(↑_z)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "P(↑_z) = 1 if the spin-1/2 particle was prepared spin up along z, 0 if it was prepared spin down (the prepared value is 1 or −1)",
+   "status": "Ready",
+   "inputs": [
+    "prepared"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = P ( ↑ | □ )",
+   "compute_signature": "compute(prepared)",
+   "compute_params": [
+    {
+     "name": "prepared",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ]
   },

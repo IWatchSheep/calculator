@@ -1129,3 +1129,22 @@ fn the_oscillator_operators_give_the_numbers_of_the_work_plan_and_decline_with_i
     assert!(call("oscillator_ground_variance", &[1., -1., 1.]).unwrap_err().contains(omega));
     assert!(call("oscillator_ground_variance", &[1., 1., 0.]).unwrap_err().contains(hbar));
 }
+
+#[test]
+fn the_spin_half_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_message() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call("spin_z_up_probability", &[1.]).unwrap(), 1.0);
+    assert_eq!(call("spin_z_up_probability", &[-1.]).unwrap(), 0.0);
+    for bad in [0.0, 2.0, -2.0, 0.5, f64::NAN] {
+        assert!(call("spin_z_up_probability", &[bad]).unwrap_err().contains("the prepared spin must be 1 or -1"));
+    }
+    assert_eq!(call("spin_up_at_angle", &[0.]).unwrap(), 1.0);
+    assert_eq!(call("spin_up_at_angle", &[1.5707963267948966]).unwrap(), 0.5);
+    assert_eq!(call("spin_up_at_angle", &[3.141592653589793]).unwrap(), 0.0);
+}

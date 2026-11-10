@@ -841,3 +841,16 @@ pub fn oscillator_ground_variance(a: &[f64]) -> R {
     need(a[2] > 0.0, "hbar must be positive")?;
     n(a[2] / (2.0 * a[0] * a[1]))
 }
+
+// ---------- quantum mechanics, job 4 (the same operations as the Python files) ----------
+
+pub fn spin_z_up_probability(a: &[f64]) -> R {
+    // prepared
+    need(a[0] == 1.0 || a[0] == -1.0, "the prepared spin must be 1 or -1")?;
+    n(if a[0] == 1.0 { 1.0 } else { 0.0 })
+}
+
+pub fn spin_up_at_angle(a: &[f64]) -> R {
+    // theta
+    n((1.0 + a[0].cos()) / 2.0)
+}

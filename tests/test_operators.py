@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 627)
+        self.assertEqual(len(self.ops), 629)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 627)
+        self.assertEqual(len(status), 629)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -306,6 +306,8 @@ CASES = [
     (PH + "oscillator_level_gap", (1, 1), 1), (PH + "oscillator_level_gap", (2,), 2.109143634e-34),
     (PH + "oscillator_ground_density", (1, 1, 0, 1), 0.5641895835477563), (PH + "oscillator_ground_density", (1, 1, 1, 1), 0.20755374871029736),
     (PH + "oscillator_ground_variance", (1, 2, 1), 0.25),
+    (PH + "spin_z_up_probability", (1,), 1), (PH + "spin_z_up_probability", (-1,), 0),
+    (PH + "spin_up_at_angle", (0,), 1), (PH + "spin_up_at_angle", (1.5707963267948966,), 0.5), (PH + "spin_up_at_angle", (3.141592653589793,), 0),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1545,6 +1547,28 @@ class OscillatorGroundStateTests(unittest.TestCase):
         self.assertAlmostEqual(sum(x * x * dens(1.5, 2.0, x, 1) for x in xs) * dx, var(1.5, 2.0, 1), places=9)
         h = 1.054571817e-34
         self.assertAlmostEqual(var(1e-30, 1e15) , h / (2 * 1e-30 * 1e15), delta=1e-12 * var(1e-30, 1e15))
+
+
+class SpinHalfTests(unittest.TestCase):
+    """Quantum mechanics, job 4: a spin-1/2 particle prepared along z."""
+
+    def test_the_declines(self):
+        for bad in (0, 2, -2, 0.5, float("nan")):
+            with self.assertRaises(ValueError, msg=str(bad)) as ctx:
+                get(PH + "spin_z_up_probability").compute(bad)
+            self.assertIn("the prepared spin must be 1 or -1", str(ctx.exception))
+
+    def test_the_numbers(self):
+        up, angle = get(PH + "spin_z_up_probability").compute, get(PH + "spin_up_at_angle").compute
+        self.assertEqual((up(1), up(-1), up(1.0), up(-1.0)), (1, 0, 1, 0))
+        self.assertEqual(angle(0), 1)
+        self.assertEqual(angle(math.pi / 2), 0.5)          # exact, not 0.5000000000000001
+        self.assertEqual(angle(math.pi), 0)                # exact, not 1e-33
+        for t in (-7.0, -1.0, 0.3, 2.0, 10.0):             # any real angle; the same as cos^2(theta/2)
+            self.assertAlmostEqual(angle(t), math.cos(t / 2) ** 2, places=14)
+            self.assertAlmostEqual(angle(t) + angle(t + math.pi), 1.0, places=14)   # the two outcomes along one axis add to 1
+        self.assertAlmostEqual(angle(1.0), angle(-1.0), places=15)                  # even in theta
+        self.assertAlmostEqual(angle(2 * math.pi), 1.0, places=14)                
 
 
 class ErrorTests(unittest.TestCase):

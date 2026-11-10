@@ -644,6 +644,8 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Oscillator level gap | ΔE = ħ ω | ΔE = ħ ω   (the energy between neighbouring levels of a quantum harmonic oscillator; it does not depend on n; ħ = 1.054571817e-34 J s unless another is passed) | Ready | `physics/physics/oscillator_level_gap/` |
 | Oscillator ground-state density | |ψ₀|² = √(m ω / (π ħ)) exp(−m ω x² / ħ) | |ψ₀|² = √(m ω / (π ħ)) exp(−m ω x² / ħ)   (the probability per metre of finding the particle at x in the ground state of a quantum harmonic oscillator; ħ = 1.054571817e-34 J s unless another is passed) | Ready | `physics/physics/oscillator_ground_density/` |
 | Oscillator ground-state variance | ⟨x²⟩ = ħ / (2 m ω) | ⟨x²⟩ = ħ / (2 m ω)   (the mean of x is 0, so this is the spread of the ground state of a quantum harmonic oscillator, in square metres; ħ = 1.054571817e-34 J s unless another is passed) | Ready | `physics/physics/oscillator_ground_variance/` |
+| Spin up along z | P(↑_z) | P(↑_z) = 1 if the spin-1/2 particle was prepared spin up along z, 0 if it was prepared spin down (the prepared value is 1 or −1) | Ready | `physics/physics/spin_z_up_probability/` |
+| Spin up at an angle | P = (1 + cos θ) / 2 | P = (1 + cos θ) / 2 = cos²(θ/2)   (a spin-1/2 particle prepared spin up along z is found spin up along an axis at angle θ from z, in radians; the (1 + cos θ) / 2 form makes 90° exactly 0.5 and 180° exactly 0) | Ready | `physics/physics/spin_up_at_angle/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |
