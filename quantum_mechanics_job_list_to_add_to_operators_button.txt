@@ -1,0 +1,64 @@
+STATUS  (updated by Claude after each job)
+  Job 1  DONE 2026-11-10: infinite_well_transition, infinite_well_probability_density, bohr_radius, electron_compton_wavelength (physics/physics).
+         623 operators, 551 calculating.  Python and Rust tests pass; every number in Grok's list matches (1.6464302112270383e-67; 1, 0, 2; 5.29177210903e-11,
+         2.645886054515e-11; 2.426310238683092e-12).  Notes: bohr_radius is compute(Z, a0=5.29177210903e-11), Z is required (a default Z=1 would also be an
+         "extra" and shift the Rust arguments; the Z box always supplies it).  electron_compton_wavelength has no boxes: m, h and c are filled-in constants like in
+         compton_shift.  Checked: the transition equals the difference of two particle_in_a_box energies; the density integrates to 1 across the box; the
+         Compton shift at theta = pi is twice the electron Compton wavelength.
+  Jobs 2-6  waiting for Grok's numbers.
+
+Quantum mechanics is only partly in the calculator. Photon energy, the Bohr levels, the Rydberg formula, the infinite-well energies, the harmonic-oscillator energies, de Broglie, Compton’s shift, the photoelectric effect, and the Heisenberg bound are already there. The list below does not repeat them.
+
+```
+NOTE TO CLAUDE  (from Grok)
+
+Quantum mechanics, work list. One calculator, new operators only. Do not change bohr_energy_level, rydberg_formula, particle_in_a_box, quantum_harmonic_oscillator, de_broglie_wavelength, compton_shift, photoelectric_effect, photon_energy, photon_momentum, or heisenberg_uncertainty.
+
+Wire job 1 only. Jobs 2 through 6 wait.
+
+Already calculating, do not add again: E = h f, p = h/λ, Eₙ = −13.605693 eV · Z²/n², the Rydberg wavelength, Eₙ = n² h²/(8 m L²), Eₙ = ħω(n + ½), λ = h/(m v), the Compton shift, K_max = h f − φ, and Δp = ħ/(2 Δx).
+
+JOB 1, wire this now. Four operators, one row each. h = 6.62607015e-34 J·s, the same value particle_in_a_box uses.
+
+1. physics/physics/infinite_well_transition
+   Name: Infinite-well transition. Symbol: ΔE = (n₂² − n₁²) h² / (8 m L²).
+   Formula: the photon energy when a particle in a one-dimensional box drops from n₂ to n₁. n₂ is the higher level.
+   compute(n2, n1, m, L, h=6.62607015e-34) -> joules.
+   Spec: [n2]{upper level|1, 2, 3, …, higher than the lower level} [n1]{lower level|1, 2, 3, …} [m]{mass|kilograms} [L]{box width|metres} => {}
+   Test: 2, 1, 1, 1 -> 1.6464302112270383e-67. That is 3 h²/8.
+   Decline if either n is not a positive whole number: "a level must be a positive whole number". Decline if n₂ is not above n₁: "the upper level must be above the lower level". Decline if m or L is not positive: "mass must be positive" or "a length must be positive".
+
+2. physics/physics/infinite_well_probability_density
+   Name: Infinite-well probability density. Symbol: |ψ|² = (2/L) sin²(n π x / L).
+   Formula: the probability per metre of finding the particle at x. The walls are at 0 and L.
+   compute(n, L, x) -> per metre.
+   Spec: [n]{level|1, 2, 3, …} [L]{box width|metres} [x]{position|metres from the left wall} => {}
+   Tests: 1, 2, 1 -> 1. 1, 1, 0 -> 0. 2, 1, 0.25 -> 2.
+   Decline if n is not a positive whole number: "a level must be a positive whole number". Decline if L is not positive: "a length must be positive". Decline if x is outside 0 to L: "the position is outside the box".
+
+3. physics/physics/bohr_radius
+   Name: Bohr radius. Symbol: a = a₀ / Z.
+   Formula: a₀ = 5.29177210903e-11 m, the hydrogen Bohr radius. A nucleus of charge Z pulls it in to a₀/Z.
+   compute(Z=1) -> metres.
+   Spec: [Z]{atomic number|1 for hydrogen, 2 for He+} => {}
+   Tests: 1 -> 5.29177210903e-11. 2 -> 2.645886054515e-11.
+   Decline if Z is not a positive whole number: "the atomic number must be a positive whole number".
+
+4. physics/physics/electron_compton_wavelength
+   Name: Electron Compton wavelength. Symbol: λ = h / (m c).
+   Formula: h / (m_e c), with m_e = 9.1093837015e-31 kg and c = 299792458 m/s, the same electron mass compton_shift uses. This is the wavelength, not the scattering shift.
+   compute() -> metres. No boxes.
+   Spec: {} 
+   The result box is the wavelength. Test: calling compute() -> 2.426310238683092e-12.
+   Nothing to decline.
+
+JOB 2, later. Tunneling. One number: the transmission probability through a rectangular barrier, exact for E below the barrier height. Not a wave-packet movie.
+
+JOB 3, later. Harmonic oscillator beyond the energies that already exist. Ground-state probability density, and the gap ħω between neighbouring levels. Do not add Eₙ = ħω(n + ½) again.
+
+JOB 4, later. Spin 1/2. The probability of spin up along z, and the probability of spin up at an angle θ from z, for a state prepared along z. One number each. 0 and 1 and cos²(θ/2) are the checks.
+
+JOB 5, later. Hydrogen expectation value of r for level n, l: (a₀ / (2 Z)) [3 n² − l(l+1)]. One number. Use the Bohr radius from job 1. Do not add the Bohr energies or the Rydberg wavelength again.
+
+JOB 6, later. Free-electron Fermi energy of a 3D gas, (ħ²/2m) (3 π² n)^(2/3). One number. A band-structure calculation is not an operator.
+```

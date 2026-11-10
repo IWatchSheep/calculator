@@ -772,3 +772,33 @@ pub fn tov_pressure_step(a: &[f64]) -> R {
     need(2.0 * g * m / (r * c.powi(2)) < 1.0, "r is not outside the horizon")?;
     n(-(g * m * rho / r.powi(2)) * (1.0 + p / (rho * c.powi(2))) * (1.0 + 4.0 * std::f64::consts::PI * r.powf(3.0) * p / (m * c.powi(2))) / (1.0 - 2.0 * g * m / (r * c.powi(2))) * dr)
 }
+
+// ---------- quantum mechanics, job 1 (the same operations as the Python files) ----------
+
+pub fn infinite_well_transition(a: &[f64]) -> R {
+    // n2, n1, m, L, h
+    need(a[0] >= 1.0 && a[0].fract() == 0.0 && a[1] >= 1.0 && a[1].fract() == 0.0, "a level must be a positive whole number")?;
+    need(a[0] > a[1], "the upper level must be above the lower level")?;
+    need(a[2] > 0.0, "mass must be positive")?;
+    need(a[3] > 0.0, "a length must be positive")?;
+    n((a[0].powi(2) - a[1].powi(2)) * a[4].powi(2) / (8.0 * a[2] * a[3].powi(2)))
+}
+
+pub fn infinite_well_probability_density(a: &[f64]) -> R {
+    // n, L, x
+    need(a[0] >= 1.0 && a[0].fract() == 0.0, "a level must be a positive whole number")?;
+    need(a[1] > 0.0, "a length must be positive")?;
+    need(a[2] >= 0.0 && a[2] <= a[1], "the position is outside the box")?;
+    n(2.0 / a[1] * (a[0] * PI * a[2] / a[1]).sin().powi(2))
+}
+
+pub fn bohr_radius(a: &[f64]) -> R {
+    // Z, a0
+    need(a[0] >= 1.0 && a[0].fract() == 0.0, "the atomic number must be a positive whole number")?;
+    n(a[1] / a[0])
+}
+
+pub fn electron_compton_wavelength(a: &[f64]) -> R {
+    // m, h, c
+    n(a[1] / (a[0] * a[2]))
+}

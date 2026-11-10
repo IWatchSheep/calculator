@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 619)
+        self.assertEqual(len(keys), 623)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 619)
+        self.assertEqual(count, 623)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 

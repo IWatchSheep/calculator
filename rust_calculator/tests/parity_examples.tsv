@@ -248,6 +248,8 @@ physics/physics/bernoulli_equation	5 1 0 1 0 1000	5
 physics/physics/bohr_energy_level	1	-13.605693122994
 physics/physics/bohr_energy_level	2	-3.4014232807485
 physics/physics/bohr_energy_level	1 2	-54.422772491976
+physics/physics/bohr_radius	1	5.29177210903e-11
+physics/physics/bohr_radius	2	2.645886054515e-11
 physics/physics/braking_time	10 -2	5
 physics/physics/braking_time	-8 2	4
 physics/physics/braking_time	0 -2	0
@@ -285,6 +287,7 @@ physics/physics/displacement	1 2 3	12
 physics/physics/double_slit_fringe_spacing	5e-07 2 0.001	0.001
 physics/physics/double_slit_fringe_spacing	6e-07 1 0.001	0.0006
 physics/physics/electric_power	2 5	10
+physics/physics/electron_compton_wavelength		2.426310238683092e-12
 physics/physics/energy_momentum_relation	3 4 1	5
 physics/physics/energy_momentum_relation	0 2 1	2
 physics/physics/energy_momentum_relation	1 0 1	1
@@ -326,6 +329,10 @@ physics/physics/impact_force	2 -3 1	9
 physics/physics/impulse	5 2	10
 physics/physics/inductor_energy	2 3	9
 physics/physics/inductor_energy	0.5 4	4
+physics/physics/infinite_well_probability_density	1 2 1	1
+physics/physics/infinite_well_probability_density	1 1 0	0
+physics/physics/infinite_well_probability_density	2 1 0.25	2
+physics/physics/infinite_well_transition	2 1 1 1	1.6464302112270383e-67
 physics/physics/isco_radius	2	6
 physics/physics/kalman_predict_state	10 2 3	16
 physics/physics/kalman_predict_variance	1 0.25	1.25

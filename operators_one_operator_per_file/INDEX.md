@@ -636,6 +636,10 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Chirp mass | (m1 m2)^(3/5) / (m1 + m2)^(1/5) | Mc = (m1 m2)^(3/5) / (m1 + m2)^(1/5)   (the mass combination that sets the leading gravitational wave) | Ready | `physics/physics/chirp_mass/` |
 | Gravitational-wave strain | h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d) | h = 4 (G Mc)^(5/3) (π f)^(2/3) / (c⁴ d)   (leading-order amplitude of a face-on circular binary at distance d; f is the wave frequency, twice the orbital frequency; G = 6.674e-11, c = 299792458) | Ready | `physics/physics/gravitational_wave_strain/` |
 | TOV pressure step | one shell of dP/dr | ΔP = −(G M ρ / r²) (1 + P/(ρ c²)) (1 + 4π r³ P / (M c²)) / (1 − 2GM/(r c²)) Δr   (the pressure change across one thin shell of a static spherical star, Tolman–Oppenheimer–Volkoff; M is the mass already inside r; G = 6.674e-11, c = 299792458) | Ready | `physics/physics/tov_pressure_step/` |
+| Infinite-well transition | ΔE = (n₂² − n₁²) h² / (8 m L²) | ΔE = (n₂² − n₁²) h² / (8 m L²)   (the photon energy when a particle in a one-dimensional box drops from level n₂ to the lower level n₁; h = 6.62607015e-34 J s) | Ready | `physics/physics/infinite_well_transition/` |
+| Infinite-well probability density | |ψ|² = (2/L) sin²(n π x / L) | |ψ|² = (2/L) sin²(n π x / L)   (the probability per metre of finding a particle in a one-dimensional box at x; the walls are at 0 and L) | Ready | `physics/physics/infinite_well_probability_density/` |
+| Bohr radius | a = a₀ / Z | a = a₀ / Z   (a₀ = 5.29177210903e-11 m, the hydrogen Bohr radius; a nucleus of charge Z pulls it in to a₀/Z) | Ready | `physics/physics/bohr_radius/` |
+| Electron Compton wavelength | λ = h / (m c) | λ = h / (m_e c)   (m_e = 9.1093837015e-31 kg, c = 299792458 m/s, h = 6.62607015e-34 J s; the wavelength itself, not the scattering shift) | Ready | `physics/physics/electron_compton_wavelength/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

@@ -1,6 +1,6 @@
 {
- "count": 619,
- "ready": 547,
+ "count": 623,
+ "ready": 551,
  "reference": 72,
  "operators": [
   {
@@ -19600,6 +19600,53 @@
    ]
   },
   {
+   "key": "physics/physics/bohr_radius",
+   "name": "Bohr radius",
+   "symbol": "a = a₀ / Z",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "a = a₀ / Z   (a₀ = 5.29177210903e-11 m, the hydrogen Bohr radius; a nucleus of charge Z pulls it in to a₀/Z)",
+   "status": "Ready",
+   "inputs": [
+    "Z"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = a0 / □",
+   "compute_signature": "compute(Z, a0=5.29177210903e-11)",
+   "compute_params": [
+    {
+     "name": "Z",
+     "kind": "required"
+    },
+    {
+     "name": "a0",
+     "kind": "optional",
+     "default": 5.29177210903e-11
+    }
+   ],
+   "required_args": 1,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 1,
+   "examples": [
+    {
+     "args": [
+      1
+     ],
+     "expected": 5.29177210903e-11
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2.645886054515e-11
+    }
+   ]
+  },
+  {
    "key": "physics/physics/braking_time",
    "name": "Braking time",
    "symbol": "t = −u/a",
@@ -21065,6 +21112,47 @@
    ]
   },
   {
+   "key": "physics/physics/electron_compton_wavelength",
+   "name": "Electron Compton wavelength",
+   "symbol": "λ = h / (m c)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "λ = h / (m_e c)   (m_e = 9.1093837015e-31 kg, c = 299792458 m/s, h = 6.62607015e-34 J s; the wavelength itself, not the scattering shift)",
+   "status": "Ready",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "ready",
+   "pattern": "□ = h / ( m × c )",
+   "compute_signature": "compute(m=9.1093837015e-31, h=6.62607015e-34, c=299792458)",
+   "compute_params": [
+    {
+     "name": "m",
+     "kind": "optional",
+     "default": 9.1093837015e-31
+    },
+    {
+     "name": "h",
+     "kind": "optional",
+     "default": 6.62607015e-34
+    },
+    {
+     "name": "c",
+     "kind": "optional",
+     "default": 299792458
+    }
+   ],
+   "required_args": 0,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 0,
+   "examples": [
+    {
+     "args": [],
+     "expected": 2.426310238683092e-12
+    }
+   ]
+  },
+  {
    "key": "physics/physics/energy_momentum_relation",
    "name": "Energy-momentum relation",
    "symbol": "E² = (pc)² + (mc²)²",
@@ -22335,6 +22423,134 @@
       4
      ],
      "expected": 4
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/infinite_well_probability_density",
+   "name": "Infinite-well probability density",
+   "symbol": "|ψ|² = (2/L) sin²(n π x / L)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "|ψ|² = (2/L) sin²(n π x / L)   (the probability per metre of finding a particle in a one-dimensional box at x; the walls are at 0 and L)",
+   "status": "Ready",
+   "inputs": [
+    "n",
+    "L",
+    "x"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 / □ × sin ² ( □ π □ / □ )",
+   "compute_signature": "compute(n, L, x)",
+   "compute_params": [
+    {
+     "name": "n",
+     "kind": "required"
+    },
+    {
+     "name": "L",
+     "kind": "required"
+    },
+    {
+     "name": "x",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      1,
+      2,
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1,
+      1,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2,
+      1,
+      0.25
+     ],
+     "expected": 2
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/infinite_well_transition",
+   "name": "Infinite-well transition",
+   "symbol": "ΔE = (n₂² − n₁²) h² / (8 m L²)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "ΔE = (n₂² − n₁²) h² / (8 m L²)   (the photon energy when a particle in a one-dimensional box drops from level n₂ to the lower level n₁; h = 6.62607015e-34 J s)",
+   "status": "Ready",
+   "inputs": [
+    "n2",
+    "n1",
+    "m",
+    "L"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ( □ ² − □ ² ) × h ² / ( 8 × □ × □ ² )",
+   "compute_signature": "compute(n2, n1, m, L, h=6.62607015e-34)",
+   "compute_params": [
+    {
+     "name": "n2",
+     "kind": "required"
+    },
+    {
+     "name": "n1",
+     "kind": "required"
+    },
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "L",
+     "kind": "required"
+    },
+    {
+     "name": "h",
+     "kind": "optional",
+     "default": 6.62607015e-34
+    }
+   ],
+   "required_args": 4,
+   "max_args": 5,
+   "varargs": false,
+   "arity": 4,
+   "examples": [
+    {
+     "args": [
+      2,
+      1,
+      1,
+      1
+     ],
+     "expected": 1.6464302112270383e-67
     }
    ]
   },

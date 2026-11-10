@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 619)
+        self.assertEqual(len(self.ops), 623)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 619)
+        self.assertEqual(len(status), 623)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -298,6 +298,10 @@ CASES = [
     (PH + "gravitational_wave_strain", (1, 0, 1), 0),
     (PH + "tov_pressure_step", (1000000, 1, 1e24, 1000, 0), -66740.00009911992),
     (PH + "tov_pressure_step", (10000, 0.01, 1e27, 1e17, 1e30), -7.609133368347511e+23),   # the work plan rounds this to -7.60913336834751e+23
+    (PH + "infinite_well_transition", (2, 1, 1, 1), 1.6464302112270383e-67),
+    (PH + "infinite_well_probability_density", (1, 2, 1), 1), (PH + "infinite_well_probability_density", (1, 1, 0), 0), (PH + "infinite_well_probability_density", (2, 1, 0.25), 2),
+    (PH + "bohr_radius", (1,), 5.29177210903e-11), (PH + "bohr_radius", (2,), 2.645886054515e-11),
+    (PH + "electron_compton_wavelength", (), 2.426310238683092e-12),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1431,6 +1435,44 @@ class TovPressureStepTests(unittest.TestCase):
         newton = -6.674e-11 * 1e24 * 1000 / 1e12                                    # weak field, P = 0: the Newtonian -G M rho / r^2
         self.assertAlmostEqual(step(1e6, 1, 1e24, 1000, 0) / newton, 1, places=6)
         self.assertLess(step(1e4, 1, 1e27, 1e17, 1e30), step(1e4, 1, 1e27, 1e17, 0))   # pressure makes gravity stronger
+
+
+class QuantumMechanicsJob1Tests(unittest.TestCase):
+    """Quantum mechanics, job 1: the infinite well, the Bohr radius and the electron Compton wavelength."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        level = "a level must be a positive whole number"
+        self.says("infinite_well_transition", (2.5, 1, 1, 1), level)
+        self.says("infinite_well_transition", (2, 0, 1, 1), level)
+        self.says("infinite_well_transition", (2, 2, 1, 1), "the upper level must be above the lower level")
+        self.says("infinite_well_transition", (1, 2, 1, 1), "the upper level must be above the lower level")
+        self.says("infinite_well_transition", (2, 1, 0, 1), "mass must be positive")
+        self.says("infinite_well_transition", (2, 1, 1, 0), "a length must be positive")
+        self.says("infinite_well_probability_density", (0, 1, 0.5), level)
+        self.says("infinite_well_probability_density", (1.5, 1, 0.5), level)
+        self.says("infinite_well_probability_density", (1, 0, 0), "a length must be positive")
+        self.says("infinite_well_probability_density", (1, 1, -0.1), "the position is outside the box")
+        self.says("infinite_well_probability_density", (1, 1, 1.1), "the position is outside the box")
+        for z in (0, 1.5, -1):
+            self.says("bohr_radius", (z,), "the atomic number must be a positive whole number")
+
+    def test_the_pieces_fit_together(self):
+        trans = get(PH + "infinite_well_transition").compute
+        box = get(PH + "particle_in_a_box").compute
+        self.assertAlmostEqual(trans(3, 1, 2e-30, 1e-9), box(3, 2e-30, 1e-9) - box(1, 2e-30, 1e-9), delta=1e-12 * box(3, 2e-30, 1e-9))
+        dens = get(PH + "infinite_well_probability_density").compute
+        steps = 20000                                  # the density integrates to 1 across the box
+        total = sum(dens(3, 2.0, (i + 0.5) * 2.0 / steps) for i in range(steps)) * 2.0 / steps
+        self.assertAlmostEqual(total, 1.0, places=6)
+        self.assertEqual(dens(1, 1, 1), dens(1, 1, 1.0))
+        self.assertEqual(get(PH + "bohr_radius").compute(1, 5.29177210903e-11), get(PH + "bohr_radius").compute(1))
+        lam = get(PH + "electron_compton_wavelength").compute()
+        self.assertAlmostEqual(get(PH + "compton_shift").compute(3.141592653589793) / lam, 2.0, places=12)   # theta = pi: the shift is twice the Compton wavelength
 
 
 class ErrorTests(unittest.TestCase):

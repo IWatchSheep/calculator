@@ -1055,3 +1055,33 @@ fn the_tov_pressure_step_gives_the_numbers_of_the_work_plan_and_declines_with_it
     assert!(call(&[1e6, 1., 1e24, 1000., -1., g, c]).unwrap_err().contains("pressure cannot be negative"));
     assert!(call(&[1., 1., 1e27, 1000., 0., g, c]).unwrap_err().contains("r is not outside the horizon"));
 }
+
+#[test]
+fn the_quantum_job_1_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |key: &str, xs: &[f64]| -> Result<f64, String> {
+        match (ops::get(&format!("physics/physics/{key}")).unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let (h, a0, me, c) = (6.62607015e-34, 5.29177210903e-11, 9.1093837015e-31, 299792458.0);
+    assert_eq!(call("infinite_well_transition", &[2., 1., 1., 1., h]).unwrap(), 1.6464302112270383e-67);
+    assert_eq!(call("infinite_well_probability_density", &[1., 2., 1.]).unwrap(), 1.0);
+    assert_eq!(call("infinite_well_probability_density", &[1., 1., 0.]).unwrap(), 0.0);
+    assert_eq!(call("infinite_well_probability_density", &[2., 1., 0.25]).unwrap(), 2.0);
+    assert_eq!(call("bohr_radius", &[1., a0]).unwrap(), 5.29177210903e-11);
+    assert_eq!(call("bohr_radius", &[2., a0]).unwrap(), 2.645886054515e-11);
+    assert_eq!(call("electron_compton_wavelength", &[me, h, c]).unwrap(), 2.426310238683092e-12);
+    let level = "a level must be a positive whole number";
+    assert!(call("infinite_well_transition", &[2.5, 1., 1., 1., h]).unwrap_err().contains(level));
+    assert!(call("infinite_well_transition", &[2., 0., 1., 1., h]).unwrap_err().contains(level));
+    assert!(call("infinite_well_transition", &[2., 2., 1., 1., h]).unwrap_err().contains("the upper level must be above the lower level"));
+    assert!(call("infinite_well_transition", &[2., 1., 0., 1., h]).unwrap_err().contains("mass must be positive"));
+    assert!(call("infinite_well_transition", &[2., 1., 1., 0., h]).unwrap_err().contains("a length must be positive"));
+    assert!(call("infinite_well_probability_density", &[0., 1., 0.5]).unwrap_err().contains(level));
+    assert!(call("infinite_well_probability_density", &[1., 0., 0.]).unwrap_err().contains("a length must be positive"));
+    assert!(call("infinite_well_probability_density", &[1., 1., 1.1]).unwrap_err().contains("the position is outside the box"));
+    assert!(call("bohr_radius", &[0., a0]).unwrap_err().contains("the atomic number must be a positive whole number"));
+    assert!(call("bohr_radius", &[1.5, a0]).unwrap_err().contains("the atomic number must be a positive whole number"));
+}
