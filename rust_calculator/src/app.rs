@@ -1013,6 +1013,17 @@ impl CalculatorApp {
             }
         });
         ui.separator();
+        ui.label(
+            RichText::new(format!("Join Row {} to the rows above:", self.doc.target_row.max(1) + 1)).color(ORANGE).strong(),
+        );
+        ui.horizontal(|ui| {
+            for sym in ["+", "−", "×", "÷", "=", "≠", "<", ">", "≤", "≥"] {
+                if ui.add_sized(egui::vec2(28.0, 30.0), Button::new(RichText::new(sym).strong()).fill(Color32::from_rgb(0xfb, 0xd3, 0x4d))).clicked() {
+                    self.status = self.doc.join_key(sym);
+                }
+            }
+        });
+        ui.separator();
         ui.label("Phase 1 Rust port of the Python calculator.");
         ui.label(format!("{} operators loaded.", ops::all_operators().len()));
         
@@ -1033,6 +1044,15 @@ impl CalculatorApp {
                         s.push('-');
                     }
                 }
+            }
+            "+" | "-" | "*" | "/" => {
+                let sym = match key {
+                    "-" => "−",
+                    "*" => "×",
+                    "/" => "÷",
+                    k => k,
+                };
+                self.status = self.doc.join_key(sym);
             }
             "." => self.doc.append_digit('.'),
             d if d.len() == 1 && d.chars().next().unwrap().is_ascii_digit() => {

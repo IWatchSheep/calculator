@@ -327,8 +327,25 @@ impl Row {
             .unwrap_or(0)
     }
 
+    /// A row with nothing in it: no operator, or just the plain number box with nothing typed (the default empty square box of Python's rows).
     pub fn is_blank(&self) -> bool {
-        self.op_key.is_none() && !self.is_result
+        if self.is_result {
+            return false;
+        }
+        match self.op_key.as_deref() {
+            None => true,
+            Some("_number") => self.inputs.first().map_or(true, |t| t.is_empty()) && self.children.first().map_or(true, |c| c.is_none()),
+            Some(_) => false,
+        }
+    }
+
+    /// Give a row with no operator the plain number box, so keypad digits have somewhere to go.
+    pub fn ensure_number_box(&mut self) {
+        if self.op_key.is_none() && !self.is_result {
+            if let Some(op) = ops::get("_number") {
+                self.set_operator(op);
+            }
+        }
     }
 
     pub fn set_operator(&mut self, op: &Operator) {
@@ -689,8 +706,38 @@ impl Document {
         Ok(format!("Row 1 = {}", total.show()))
     }
 
+    /// A join key under the keypad (like pressing + on a calculator): put the symbol on the target row and carry on in that row, so the next digits are ITS number.
+    /// A second join key after the number of an already joined row starts the NEXT row, so  1 + 1 + 1  makes three rows.
+    pub fn join_key(&mut self, symbol: &str) -> String {
+        self.ensure_target();
+        let mut i = self.target_row.max(1);
+        if i < self.rows.len() && self.rows[i].join != Join::None && !self.rows[i].is_result && !self.rows[i].is_blank() {
+            i += 1;
+        }
+        while i >= self.rows.len() {
+            self.rows.push(Row::blank());
+        }
+        if self.rows[i].is_result {
+            self.rows[i] = Row::blank();
+        }
+        for r in self.rows.iter_mut() {
+            r.clear_result();
+            r.error = None;
+        }
+        self.rows[i].join = Join::from_symbol(symbol);
+        self.target_row = i;
+        self.target_path = vec![0];
+        if self.rows[i].is_blank() {
+            self.rows[i].ensure_number_box();
+            format!("Row {} is joined to the rows above with  {} .  Type its number, then press =.", i + 1, symbol)
+        } else {
+            format!("Row {} is joined to the rows above with  {} .  Press = to calculate.", i + 1, symbol)
+        }
+    }
+
     pub fn append_digit(&mut self, ch: char) {
         self.ensure_target();
+        self.rows[self.target_row].ensure_number_box();
         let path = self.target_path.clone();
         let row = &mut self.rows[self.target_row];
         if let Some(slot) = row.slot_mut(&path) {

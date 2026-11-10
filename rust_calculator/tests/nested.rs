@@ -361,3 +361,38 @@ fn range_interquartile_range_and_variance_in_three_rows_give_the_one_row_numbers
     assert!(doc.equals_all().is_err());
     assert_eq!(doc.rows[2].inputs[0], "");
 }
+
+#[test]
+fn one_plus_one_plus_one_with_the_join_keys_gives_three_in_row_four() {
+    let mut doc = Document::new();
+    doc.append_digit('1');
+    doc.join_key("+");
+    doc.append_digit('1');
+    doc.join_key("+");
+    doc.append_digit('1');
+    let typed: Vec<&str> = doc.rows.iter().take(3).map(|r| r.inputs[0].as_str()).collect();
+    assert_eq!(typed, ["1", "1", "1"]);
+    assert_eq!(doc.rows[1].join, rust_calculator::row::Join::Add);
+    assert_eq!(doc.rows[2].join, rust_calculator::row::Join::Add);
+    doc.equals_all().unwrap();
+    assert!(doc.rows[3].is_result);
+    assert_eq!(doc.rows[3].result, "3");
+}
+
+#[test]
+fn one_plus_one_is_two_and_a_second_join_key_with_no_number_only_changes_the_symbol() {
+    let mut doc = Document::new();
+    doc.append_digit('1');
+    doc.join_key("+");
+    doc.append_digit('1');
+    assert_eq!((doc.rows[0].inputs[0].as_str(), doc.rows[1].inputs[0].as_str()), ("1", "1")); // not 11
+    doc.equals_all().unwrap();
+    assert_eq!(doc.rows[2].result, "2");
+    let mut doc = Document::new();
+    doc.append_digit('1');
+    doc.join_key("+");
+    let rows = doc.rows.len();
+    doc.join_key("−");
+    assert_eq!(doc.rows[1].join, rust_calculator::row::Join::Sub);
+    assert_eq!(doc.rows.len(), rows);
+}
