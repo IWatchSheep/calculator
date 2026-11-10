@@ -117,6 +117,17 @@ class RowFiles(unittest.TestCase):
                 self.assertNotIn(key + "   extra boxes", listed, key)
 
 
+class RustPort(unittest.TestCase):
+    def test_the_rust_layouts_are_up_to_date_with_the_python_rows(self):
+        """rust_calculator/src/layouts.rs is generated from the Python row files; if this fails run  python operator_keys/make_rust_layouts.py ."""
+        sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
+        import make_rust_layouts as generator
+        text, count = generator.build_text()
+        self.assertEqual(count, 507)
+        with open(generator.OUT, encoding="utf-8", newline="") as f:
+            self.assertEqual(f.read().replace("\r\n", "\n"), text)
+
+
 class InTheWindow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

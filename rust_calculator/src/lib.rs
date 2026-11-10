@@ -3,6 +3,8 @@
 pub mod app;
 pub mod expr;
 pub mod kinds;
+pub mod layout;
+pub mod layouts;
 pub mod operator;
 pub mod ops;
 pub mod row;

@@ -15,6 +15,13 @@ fn main() -> eframe::Result<()> {
     eframe::run_native(
         "Rust Calculator",
         options,
-        Box::new(|_cc| Ok(Box::new(CalculatorApp::default()))),
+        Box::new(|_cc| {
+            // `--demo <operator key> <numbers...>` opens with that operator in Row 1, filled in and calculated
+            let args: Vec<String> = std::env::args().skip(1).collect();
+            if args.first().map(|a| a == "--demo").unwrap_or(false) && args.len() >= 2 {
+                return Ok(Box::new(CalculatorApp::with_demo(&args[1], &args[2..])));
+            }
+            Ok(Box::new(CalculatorApp::default()))
+        }),
     )
 }
