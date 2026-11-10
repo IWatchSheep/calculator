@@ -577,6 +577,14 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Projectile time of flight | T = 2v sin θ / g | T = 2 v sin θ / g   (back to the same height, no drag, g = 9.81 m/s², θ in radians) | Ready | `physics/physics/projectile_time_of_flight/` |
 | Projectile position | x, y at t | x = v cos θ · t,  y = v sin θ · t − ½ g t²   (y is up, no drag, g = 9.81 m/s²) | Ready | `physics/physics/projectile_position/` |
 | Hover thrust | T = mg | T = m g   (the upward force that balances the weight, g = 9.81 m/s²) | Ready | `physics/physics/hover_thrust/` |
+| Force down a slope | F = mg sin θ | F = m g sin θ   (the part of the weight that pulls down the slope, g = 9.81 m/s², θ in radians above the horizontal) | Ready | `physics/physics/slope_force/` |
+| Most friction on a slope | f = μ m g cos θ | f = μ m g cos θ   (the largest static friction, μ times the normal force, g = 9.81 m/s², θ in radians) | Ready | `physics/physics/max_friction_on_slope/` |
+| Steepest climb | θ = atan μ | θ = atan μ   (the steepest slope friction μ can hold, in radians; mass and gravity cancel) | Ready | `physics/physics/steepest_climb_angle/` |
+| Centre of mass | Σ m x / Σ m | [x, y, z] = Σ mᵢ pᵢ / Σ mᵢ   (each position is x, y, z in metres) | Ready | `physics/physics/centre_of_mass/` |
+| Cylinder moment of inertia | I = ½ M R² | I = ½ M R²   (a solid cylinder or disc about its own centre axis) | Ready | `physics/physics/cylinder_moment_of_inertia/` |
+| Angular acceleration | α = τ / I | α = τ / I   (a negative torque turns the other way) | Ready | `physics/physics/angular_acceleration/` |
+| Tipping margin | b cos θ − h sin θ | b cos θ − h sin θ   (metres from the downhill foot to where the weight falls; positive stays upright) | Ready | `physics/physics/tipping_margin/` |
+| Tree impact force | F = mv² / 2s | F = m v² / (2 s)   (the average force to stop a mass from speed v over a distance s) | Ready | `physics/physics/impact_force/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

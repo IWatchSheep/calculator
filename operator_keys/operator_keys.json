@@ -1,6 +1,6 @@
 {
- "count": 560,
- "ready": 488,
+ "count": 568,
+ "ready": 496,
  "reference": 72,
  "operators": [
   {
@@ -19278,6 +19278,41 @@
    ]
   },
   {
+   "key": "physics/physics/angular_acceleration",
+   "name": "Angular acceleration",
+   "symbol": "α = τ / I",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "α = τ / I   (a negative torque turns the other way)",
+   "status": "Ready",
+   "inputs": [
+    "torque",
+    "inertia"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ / □",
+   "compute_signature": "compute(torque, inertia)",
+   "compute_params": [
+    {
+     "name": "torque",
+     "kind": "required"
+    },
+    {
+     "name": "inertia",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/bernoulli_equation",
    "name": "Bernoulli's equation",
    "symbol": "P + ½ρv² + ρgh = const",
@@ -19451,7 +19486,29 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      -2
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -8,
+      2
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      0,
+      -2
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/brewster_angle",
@@ -19600,6 +19657,41 @@
      "expected": 6
     }
    ]
+  },
+  {
+   "key": "physics/physics/centre_of_mass",
+   "name": "Centre of mass",
+   "symbol": "Σ m x / Σ m",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "[x, y, z] = Σ mᵢ pᵢ / Σ mᵢ   (each position is x, y, z in metres)",
+   "status": "Ready",
+   "inputs": [
+    "masses",
+    "positions"
+   ],
+   "input_kinds": [
+    "list",
+    "matrix"
+   ],
+   "row_calc": "advanced",
+   "pattern": "□ = Σ □ □ / Σ □",
+   "compute_signature": "compute(masses, positions)",
+   "compute_params": [
+    {
+     "name": "masses",
+     "kind": "required"
+    },
+    {
+     "name": "positions",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/centripetal_acceleration",
@@ -19935,6 +20027,41 @@
      "expected": 1.5
     }
    ]
+  },
+  {
+   "key": "physics/physics/cylinder_moment_of_inertia",
+   "name": "Cylinder moment of inertia",
+   "symbol": "I = ½ M R²",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "I = ½ M R²   (a solid cylinder or disc about its own centre axis)",
+   "status": "Ready",
+   "inputs": [
+    "mass",
+    "radius"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ½ □ □ ²",
+   "compute_signature": "compute(mass, radius)",
+   "compute_params": [
+    {
+     "name": "mass",
+     "kind": "required"
+    },
+    {
+     "name": "radius",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
   },
   {
    "key": "physics/physics/de_broglie_wavelength",
@@ -20825,7 +20952,14 @@
    "max_args": 2,
    "varargs": false,
    "arity": 1,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      2
+     ],
+     "expected": 19.62
+    }
+   ]
   },
   {
    "key": "physics/physics/hydraulic_press",
@@ -20994,6 +21128,47 @@
      "expected": 101388.19036190625
     }
    ]
+  },
+  {
+   "key": "physics/physics/impact_force",
+   "name": "Tree impact force",
+   "symbol": "F = mv² / 2s",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "F = m v² / (2 s)   (the average force to stop a mass from speed v over a distance s)",
+   "status": "Ready",
+   "inputs": [
+    "mass",
+    "speed",
+    "distance"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ □ ² / ( 2 □ )",
+   "compute_signature": "compute(mass, speed, distance)",
+   "compute_params": [
+    {
+     "name": "mass",
+     "kind": "required"
+    },
+    {
+     "name": "speed",
+     "kind": "required"
+    },
+    {
+     "name": "distance",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
   },
   {
    "key": "physics/physics/impulse",
@@ -21816,6 +21991,52 @@
    ]
   },
   {
+   "key": "physics/physics/max_friction_on_slope",
+   "name": "Most friction on a slope",
+   "symbol": "f = μ m g cos θ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "f = μ m g cos θ   (the largest static friction, μ times the normal force, g = 9.81 m/s², θ in radians)",
+   "status": "Ready",
+   "inputs": [
+    "mu",
+    "m",
+    "angle"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ □ g cos □",
+   "compute_signature": "compute(mu, m, angle, g=9.81)",
+   "compute_params": [
+    {
+     "name": "mu",
+     "kind": "required"
+    },
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 3,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 3,
+   "examples": []
+  },
+  {
    "key": "physics/physics/momentum",
    "name": "Momentum",
    "symbol": "p = mv",
@@ -22624,7 +22845,19 @@
    "max_args": 4,
    "varargs": false,
    "arity": 3,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      1.5707963267948966,
+      1
+     ],
+     "expected": [
+      0,
+      5.095
+     ]
+    }
+   ]
   },
   {
    "key": "physics/physics/projectile_range",
@@ -22664,7 +22897,15 @@
    "max_args": 3,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      0.7853981633974483
+     ],
+     "expected": 10.19367991845056
+    }
+   ]
   },
   {
    "key": "physics/physics/projectile_time_of_flight",
@@ -22704,7 +22945,22 @@
    "max_args": 3,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      1.5707963267948966
+     ],
+     "expected": 2.038735983690112
+    },
+    {
+     "args": [
+      10,
+      0.7853981633974483
+     ],
+     "expected": 1.4416040391163047
+    }
+   ]
   },
   {
    "key": "physics/physics/quantum_harmonic_oscillator",
@@ -23607,6 +23863,46 @@
    ]
   },
   {
+   "key": "physics/physics/slope_force",
+   "name": "Force down a slope",
+   "symbol": "F = mg sin θ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "F = m g sin θ   (the part of the weight that pulls down the slope, g = 9.81 m/s², θ in radians above the horizontal)",
+   "status": "Ready",
+   "inputs": [
+    "m",
+    "angle"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ g sin □",
+   "compute_signature": "compute(m, angle, g=9.81)",
+   "compute_params": [
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
+     "kind": "required"
+    },
+    {
+     "name": "g",
+     "kind": "optional",
+     "default": 9.81
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": []
+  },
+  {
    "key": "physics/physics/snell_s_law",
    "name": "Snell's law",
    "symbol": "n₁sin θ₁ = n₂sin θ₂",
@@ -23703,6 +23999,68 @@
    "max_args": 3,
    "varargs": false,
    "arity": 3,
+   "examples": [
+    {
+     "args": [
+      0,
+      2,
+      8
+     ],
+     "expected": 5.656854249492381
+    },
+    {
+     "args": [
+      3,
+      0,
+      10
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      10,
+      -2,
+      9
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      10,
+      -2,
+      5
+     ],
+     "expected": 8.94427190999916
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/steepest_climb_angle",
+   "name": "Steepest climb",
+   "symbol": "θ = atan μ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "θ = atan μ   (the steepest slope friction μ can hold, in radians; mass and gravity cancel)",
+   "status": "Ready",
+   "inputs": [
+    "mu"
+   ],
+   "input_kinds": [
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = arctan ( □ )",
+   "compute_signature": "compute(mu)",
+   "compute_params": [
+    {
+     "name": "mu",
+     "kind": "required"
+    }
+   ],
+   "required_args": 1,
+   "max_args": 1,
+   "varargs": false,
+   "arity": 1,
    "examples": []
   },
   {
@@ -23796,7 +24154,29 @@
    "max_args": 2,
    "varargs": false,
    "arity": 2,
-   "examples": []
+   "examples": [
+    {
+     "args": [
+      10,
+      -2
+     ],
+     "expected": 25
+    },
+    {
+     "args": [
+      -8,
+      2
+     ],
+     "expected": -16
+    },
+    {
+     "args": [
+      0,
+      -2
+     ],
+     "expected": 0
+    }
+   ]
   },
   {
    "key": "physics/physics/thin_lens_equation",
@@ -23994,6 +24374,80 @@
     },
     {
      "name": "s",
+     "kind": "required"
+    }
+   ],
+   "required_args": 3,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      0,
+      2,
+      4
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      4,
+      0,
+      10
+     ],
+     "expected": 2.5
+    },
+    {
+     "args": [
+      10,
+      -2,
+      9
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      0,
+      0,
+      0
+     ],
+     "expected": 0
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/tipping_margin",
+   "name": "Tipping margin",
+   "symbol": "b cos θ − h sin θ",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "b cos θ − h sin θ   (metres from the downhill foot to where the weight falls; positive stays upright)",
+   "status": "Ready",
+   "inputs": [
+    "half_width",
+    "height",
+    "angle"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = □ cos □ − □ sin □",
+   "compute_signature": "compute(half_width, height, angle)",
+   "compute_params": [
+    {
+     "name": "half_width",
+     "kind": "required"
+    },
+    {
+     "name": "height",
+     "kind": "required"
+    },
+    {
+     "name": "angle",
      "kind": "required"
     }
    ],

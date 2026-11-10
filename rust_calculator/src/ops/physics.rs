@@ -397,3 +397,56 @@ pub fn hover_thrust(a: &[f64]) -> R {
     need(a[1] > 0.0, "gravity must pull downward")?;
     n(a[0] * a[1])
 }
+
+// ---------- walking and flying mechanics, batch 4 (the same operations in the same order as the Python files) ----------
+
+fn mass_slope_gravity(m: f64, angle: f64, g: f64) -> Result<(), String> {
+    need(m > 0.0, "mass must be positive")?;
+    need((0.0..=std::f64::consts::FRAC_PI_2).contains(&angle), "the slope is past vertical")?;
+    need(g > 0.0, "gravity must pull downward")
+}
+
+pub fn slope_force(a: &[f64]) -> R {
+    // m, angle, g
+    mass_slope_gravity(a[0], a[1], a[2])?;
+    n(a[0] * a[2] * a[1].sin())
+}
+
+pub fn max_friction_on_slope(a: &[f64]) -> R {
+    // mu, m, angle, g
+    need(a[0] >= 0.0, "friction cannot be negative")?;
+    mass_slope_gravity(a[1], a[2], a[3])?;
+    n(a[0] * a[1] * a[3] * a[2].cos())
+}
+
+pub fn steepest_climb_angle(a: &[f64]) -> R {
+    need(a[0] >= 0.0, "friction cannot be negative")?;
+    n(a[0].atan())
+}
+
+pub fn cylinder_moment_of_inertia(a: &[f64]) -> R {
+    // mass, radius
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[1] >= 0.0, "radius cannot be negative")?;
+    n(0.5 * a[0] * a[1] * a[1])
+}
+
+pub fn angular_acceleration(a: &[f64]) -> R {
+    // torque, inertia
+    need(a[1] > 0.0, "the moment of inertia must be positive")?;
+    n(a[0] / a[1])
+}
+
+pub fn tipping_margin(a: &[f64]) -> R {
+    // half_width, height, angle
+    need(a[0] >= 0.0 && a[1] >= 0.0, "a length cannot be negative")?;
+    need((0.0..=std::f64::consts::FRAC_PI_2).contains(&a[2]), "the slope is past vertical")?;
+    n(a[0] * a[2].cos() - a[1] * a[2].sin())
+}
+
+pub fn impact_force(a: &[f64]) -> R {
+    // mass, speed, distance
+    need(a[0] > 0.0, "mass must be positive")?;
+    need(a[2] > 0.0, "the stopping distance must be positive")?;
+    n(a[0] * a[1] * a[1] / (2.0 * a[2]))
+}

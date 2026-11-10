@@ -657,3 +657,14 @@ pub fn projectile_position(a: &[Value]) -> R {
     need(t >= 0.0, "time cannot be negative")?;
     Ok(vlist(vec![v * angle.cos() * t, v * angle.sin() * t - 0.5 * g * t * t]))
 }
+
+pub fn centre_of_mass(a: &[Value]) -> R {
+    let (masses, positions) = (nums(&a[0])?, mat(&a[1])?);
+    need(masses.len() == positions.len(), "each mass needs a position")?;
+    need(positions.iter().all(|p| p.len() == 3), "a position has 3 numbers: x, y, z")?;
+    need(masses.iter().all(|m| *m >= 0.0), "mass cannot be negative")?;
+    need(!masses.is_empty(), "there are no points")?;
+    let total: f64 = masses.iter().fold(0.0, |s, m| s + m);
+    need(total != 0.0, "the total mass is zero")?;
+    Ok(vlist((0..3).map(|k| masses.iter().zip(&positions).fold(0.0, |s, (m, p)| s + m * p[k]) / total).collect()))
+}

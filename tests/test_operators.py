@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 560)
+        self.assertEqual(len(self.ops), 568)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 560)
+        self.assertEqual(len(status), 568)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -236,6 +236,14 @@ CASES = [
     (PH + "projectile_range", (10, 0.7853981633974483), 10.19367991845056),
     (PH + "projectile_time_of_flight", (10, 1.5707963267948966), 2.038735983690112), (PH + "projectile_time_of_flight", (10, 0.7853981633974483), 1.4416040391163047),
     (PH + "projectile_position", (10, 1.5707963267948966, 1), [0, 5.095]), (PH + "hover_thrust", (2,), 19.62),
+    (PH + "slope_force", (2, 0), 0), (PH + "slope_force", (2, 0.5235987755982988), 9.809999999999999), (PH + "slope_force", (2, 1.5707963267948966), 19.62),
+    (PH + "max_friction_on_slope", (0.5, 2, 0), 9.81), (PH + "max_friction_on_slope", (0.5, 2, 1.0471975511965976), 4.905000000000001),
+    (PH + "steepest_climb_angle", (0,), 0), (PH + "steepest_climb_angle", (1,), 0.7853981633974483), (PH + "steepest_climb_angle", (1.7320508075688772,), 1.0471975511965976),
+    (PH + "centre_of_mass", ([1, 3], [[0, 0, 0], [4, 0, 0]]), [3, 0, 0]),
+    (PH + "cylinder_moment_of_inertia", (2, 3), 9), (PH + "cylinder_moment_of_inertia", (4, 0), 0),
+    (PH + "angular_acceleration", (6, 2), 3), (PH + "angular_acceleration", (-6, 2), -3),
+    (PH + "tipping_margin", (0.2, 1, 0), 0.2), (PH + "tipping_margin", (0.2, 1, 0.19739555984988078), 0), (PH + "tipping_margin", (0.2, 1, 1.5707963267948966), -1),
+    (PH + "impact_force", (2, 3, 1), 9), (PH + "impact_force", (2, -3, 1), 9),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -789,6 +797,56 @@ class MotionDeclineTests(unittest.TestCase):
             self.assertAlmostEqual(y, 0, places=9)                                              # back on the ground at the time of flight
             self.assertAlmostEqual(x, rng(v, th), places=9)                                     # at the range
         self.assertEqual(get(PH + "hover_thrust").compute(2), get(PH + "weight").compute(2))      # hover thrust balances the weight
+
+
+class MechanicsDeclineTests(unittest.TestCase):
+    """Batch 4 of the robot maths (slopes, friction, centre of mass, tipping, impact) declines with the plan's messages."""
+
+    def says(self, key, args, text):
+        with self.assertRaises(ValueError, msg=f"{key}{args}") as ctx:
+            get(PH + key).compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_slope_and_friction_declines(self):
+        self.says("slope_force", (0, 0.5), "mass must be positive")
+        self.says("slope_force", (2, 1.6), "the slope is past vertical")
+        self.says("slope_force", (2, -0.1), "the slope is past vertical")
+        self.says("slope_force", (2, 0.5, 0), "gravity must pull downward")
+        self.says("max_friction_on_slope", (-0.1, 2, 0.5), "friction cannot be negative")
+        self.says("max_friction_on_slope", (0.5, -2, 0.5), "mass must be positive")
+        self.says("max_friction_on_slope", (0.5, 2, 2.0), "the slope is past vertical")
+        self.says("max_friction_on_slope", (0.5, 2, 0.5, -1), "gravity must pull downward")
+        self.says("steepest_climb_angle", (-1,), "friction cannot be negative")
+
+    def test_centre_of_mass_declines(self):
+        self.says("centre_of_mass", ([1, 2], [[0, 0, 0]]), "each mass needs a position")
+        self.says("centre_of_mass", ([1, 2], [[0, 0, 0], [1, 1]]), "a position has 3 numbers: x, y, z")
+        self.says("centre_of_mass", ([1, -2], [[0, 0, 0], [1, 1, 1]]), "mass cannot be negative")
+        self.says("centre_of_mass", ([0, 0], [[0, 0, 0], [1, 1, 1]]), "the total mass is zero")
+        self.says("centre_of_mass", ([], []), "there are no points")
+
+    def test_the_rest_decline(self):
+        self.says("cylinder_moment_of_inertia", (0, 1), "mass must be positive")
+        self.says("cylinder_moment_of_inertia", (1, -1), "radius cannot be negative")
+        self.says("angular_acceleration", (1, 0), "the moment of inertia must be positive")
+        self.says("tipping_margin", (-0.1, 1, 0.1), "a length cannot be negative")
+        self.says("tipping_margin", (0.1, -1, 0.1), "a length cannot be negative")
+        self.says("tipping_margin", (0.2, 1, 1.6), "the slope is past vertical")
+        self.says("impact_force", (0, 3, 1), "mass must be positive")
+        self.says("impact_force", (2, 3, 0), "the stopping distance must be positive")
+
+    def test_the_mechanics_agree_with_each_other(self):
+        import math
+        climb = get(PH + "steepest_climb_angle").compute
+        pull, grip = get(PH + "slope_force").compute, get(PH + "max_friction_on_slope").compute
+        for mu in (0.3, 0.8, 1.2):
+            th = climb(mu)
+            self.assertAlmostEqual(pull(5, th), grip(mu, 5, th), places=9)         # at the steepest angle the pull equals the most friction
+        tip = get(PH + "tipping_margin").compute
+        self.assertAlmostEqual(tip(0.2, 1, math.atan(0.2)), 0, places=12)          # it tips where tan θ = b / h
+        self.assertEqual(get(PH + "centre_of_mass").compute([2, 2], [[1, 2, 3], [3, 2, 1]]), [2, 2, 2])
+        # impact force times the crumple distance is the kinetic energy
+        self.assertAlmostEqual(get(PH + "impact_force").compute(2, 3, 0.5) * 0.5, get(PH + "kinetic_energy").compute(2, 3), places=9)
 
 
 # --------------------------------------------------------------------------- 3. error handling

@@ -533,3 +533,59 @@ fn the_motion_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_m
     assert!(said("projectile_position", &[10., 0.5, -1., g]).contains("time cannot be negative"));
     assert!(said("hover_thrust", &[0., g]).contains("mass must be positive"));
 }
+
+#[test]
+fn the_mechanics_operators_give_the_numbers_of_the_work_plan_and_decline_with_its_messages() {
+    use rust_calculator::value::Value;
+    let ph = "physics/physics/";
+    let call = |key: &str, args: Vec<Value>| -> Result<Value, String> {
+        let op = ops::get(&format!("{ph}{key}")).unwrap();
+        match op.compute_v {
+            Some(f) => f(&args),
+            None => (op.compute)(&args.iter().map(|v| if let Value::Number(x) = v { *x } else { panic!() }).collect::<Vec<f64>>()),
+        }
+    };
+    let nums = |xs: &[f64]| xs.iter().map(|x| Value::Number(*x)).collect::<Vec<_>>();
+    let one = |key: &str, xs: &[f64]| -> f64 {
+        match call(key, nums(xs)).unwrap() {
+            Value::Number(x) => x,
+            o => panic!("{o:?}"),
+        }
+    };
+    let said = |key: &str, xs: &[f64]| call(key, nums(xs)).unwrap_err();
+    let (g, half_pi) = (9.81, std::f64::consts::FRAC_PI_2);
+    assert_eq!(one("slope_force", &[2., 0., g]), 0.0);
+    assert_eq!(one("slope_force", &[2., 0.5235987755982988, g]), 9.809999999999999);
+    assert_eq!(one("slope_force", &[2., half_pi, g]), 19.62);
+    assert_eq!(one("max_friction_on_slope", &[0.5, 2., 0., g]), 9.81);
+    assert_eq!(one("max_friction_on_slope", &[0.5, 2., 1.0471975511965976, g]), 4.905000000000001);
+    assert_eq!(one("steepest_climb_angle", &[0.]), 0.0);
+    assert_eq!(one("steepest_climb_angle", &[1.]), 0.7853981633974483);
+    assert_eq!(one("steepest_climb_angle", &[1.7320508075688772]), 1.0471975511965976);
+    assert_eq!(one("cylinder_moment_of_inertia", &[2., 3.]), 9.0);
+    assert_eq!(one("angular_acceleration", &[-6., 2.]), -3.0);
+    assert_eq!(one("tipping_margin", &[0.2, 1., 0.]), 0.2);
+    assert!(one("tipping_margin", &[0.2, 1., 0.19739555984988078]).abs() < 1e-12);
+    assert!((one("tipping_margin", &[0.2, 1., half_pi]) + 1.0).abs() < 1e-12);
+    assert_eq!(one("impact_force", &[2., -3., 1.]), 9.0);
+    let masses = Value::List(nums(&[1., 3.]));
+    let positions = Value::List(vec![Value::List(nums(&[0., 0., 0.])), Value::List(nums(&[4., 0., 0.]))]);
+    match call("centre_of_mass", vec![masses, positions]).unwrap() {
+        Value::List(p) => assert_eq!(p.iter().map(|v| if let Value::Number(x) = v { *x } else { panic!() }).collect::<Vec<_>>(), vec![3.0, 0.0, 0.0]),
+        o => panic!("{o:?}"),
+    }
+    let com_error = |ms: &[f64], ps: Vec<Vec<f64>>| call("centre_of_mass", vec![Value::List(nums(ms)), Value::List(ps.iter().map(|p| Value::List(nums(p))).collect())]).unwrap_err();
+    assert!(com_error(&[1., 2.], vec![vec![0., 0., 0.]]).contains("each mass needs a position"));
+    assert!(com_error(&[1., 2.], vec![vec![0., 0., 0.], vec![1., 1.]]).contains("a position has 3 numbers: x, y, z"));
+    assert!(com_error(&[1., -2.], vec![vec![0., 0., 0.], vec![1., 1., 1.]]).contains("mass cannot be negative"));
+    assert!(com_error(&[0., 0.], vec![vec![0., 0., 0.], vec![1., 1., 1.]]).contains("the total mass is zero"));
+    assert!(com_error(&[], vec![]).contains("there are no points"));
+    assert!(said("slope_force", &[2., 1.6, g]).contains("the slope is past vertical"));
+    assert!(said("slope_force", &[0., 0.5, g]).contains("mass must be positive"));
+    assert!(said("max_friction_on_slope", &[-1., 2., 0.5, g]).contains("friction cannot be negative"));
+    assert!(said("steepest_climb_angle", &[-1.]).contains("friction cannot be negative"));
+    assert!(said("cylinder_moment_of_inertia", &[1., -1.]).contains("radius cannot be negative"));
+    assert!(said("angular_acceleration", &[1., 0.]).contains("the moment of inertia must be positive"));
+    assert!(said("tipping_margin", &[-0.1, 1., 0.1]).contains("a length cannot be negative"));
+    assert!(said("impact_force", &[2., 3., 0.]).contains("the stopping distance must be positive"));
+}

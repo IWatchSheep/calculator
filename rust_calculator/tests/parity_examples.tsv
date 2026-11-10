@@ -242,6 +242,9 @@ physics/physics/bernoulli_equation	5 1 0 1 0 1000	5
 physics/physics/bohr_energy_level	1	-13.605693122994
 physics/physics/bohr_energy_level	2	-3.4014232807485
 physics/physics/bohr_energy_level	1 2	-54.422772491976
+physics/physics/braking_time	10 -2	5
+physics/physics/braking_time	-8 2	4
+physics/physics/braking_time	0 -2	0
 physics/physics/brewster_angle	1 1	0.7853981633974483
 physics/physics/brewster_angle	1 1.5	0.982793723247329
 physics/physics/buoyant_force	1000 0.002	19.62
@@ -285,6 +288,7 @@ physics/physics/heat	2 4 5	40
 physics/physics/heisenberg_uncertainty	1e-10	5.272859085e-25
 physics/physics/heisenberg_uncertainty	1	5.272859085e-35
 physics/physics/hooke_s_law	10 0.5	-5
+physics/physics/hover_thrust	2	19.62
 physics/physics/hydraulic_press	100 0.01 0.5	5000
 physics/physics/hydraulic_press	10 1 1	10
 physics/physics/hydrostatic_pressure	1000 10	98100
@@ -340,6 +344,9 @@ physics/physics/poiseuille_flow	0.02 1000 0.001 1	0.06283185307179587
 physics/physics/potential_energy	2 3	58.86
 physics/physics/power_physics	100 5	20
 physics/physics/pressure	10 2	5
+physics/physics/projectile_range	10 0.7853981633974483	10.19367991845056
+physics/physics/projectile_time_of_flight	10 1.5707963267948966	2.038735983690112
+physics/physics/projectile_time_of_flight	10 0.7853981633974483	1.4416040391163047
 physics/physics/quantum_harmonic_oscillator	0 2	1.054571817e-34
 physics/physics/quantum_harmonic_oscillator	2 2	5.272859085e-34
 physics/physics/refractive_index	200000000.0	1.49896229
@@ -374,8 +381,15 @@ physics/physics/self_induced_emf	2 3 0.5	-12
 physics/physics/self_induced_emf	0.1 -5 0.01	50
 physics/physics/snell_s_law	1 0.5235987755982988 1	0.5235987755982988
 physics/physics/snell_s_law	1 0.5235987755982988 2	0.25268025514207865
+physics/physics/speed_after_distance	0 2 8	5.656854249492381
+physics/physics/speed_after_distance	3 0 10	3
+physics/physics/speed_after_distance	10 -2 9	8
+physics/physics/speed_after_distance	10 -2 5	8.94427190999916
 physics/physics/stokes_drag	0.001 0.01 2	0.0003769911184307752
 physics/physics/stokes_drag	0.001 0.01 0	0
+physics/physics/stopping_distance	10 -2	25
+physics/physics/stopping_distance	-8 2	-16
+physics/physics/stopping_distance	0 -2	0
 physics/physics/thin_lens_equation	10 30	15
 physics/physics/thin_lens_equation	10 20	20
 physics/physics/thin_lens_equation	10 5	-10
@@ -383,6 +397,10 @@ physics/physics/time_dilation	1 0.6 1	1.25
 physics/physics/time_dilation	10 0.8 1	16.666666666666668
 physics/physics/time_dilation_from_gamma	1 1.25	1.25
 physics/physics/time_dilation_from_gamma	10 1	10
+physics/physics/time_to_distance	0 2 4	2
+physics/physics/time_to_distance	4 0 10	2.5
+physics/physics/time_to_distance	10 -2 9	1
+physics/physics/time_to_distance	0 0 0	0
 physics/physics/torque	2 3 1.5707963267948966	6
 physics/physics/torricelli_speed	5	9.904544411531507
 physics/physics/torricelli_speed	0	0
