@@ -32,7 +32,7 @@ def build_text():
         "",
         "pub static LAYOUTS: &[Layout] = &[",
     ]
-    count, stacked = 0, []
+    count, stacked, worded = 0, [], []
     for key in R.keys():
         m = R.get(key)
         smap = row_tree.slot_map(m)
@@ -54,10 +54,18 @@ def build_text():
         count += 1
         if getattr(m, "STACK_EXPONENTS", False):
             stacked.append(key)
+        if getattr(m, "WORDS", None):
+            worded.append((key, sorted(m.WORDS.items())))
     lines.append("];")
     lines.append("")
     lines.append("/// The operators whose rows draw an exponent in the column of the symbol it powers (STACK_EXPONENTS in the Python row file).")
     lines.append("pub static STACKED: &[&str] = &[%s];" % ", ".join(rs(k) for k in stacked))
+    lines.append("")
+    lines.append("/// The words the cards of an operator's row carry (WORDS in the Python row file): (operator, [(card index, label, context)]).")
+    lines.append("pub static WORDS: &[(&str, &[(usize, &str, &str)])] = &[")
+    for key, items in worded:
+        lines.append("    (%s, &[%s])," % (rs(key), ", ".join("(%d, %s, %s)" % (n, rs(w[0]), rs(w[1])) for n, w in items)))
+    lines.append("];")
     lines.append("")
     return "\n".join(lines), count
 

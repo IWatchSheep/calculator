@@ -98,3 +98,28 @@ fn the_cone_has_one_input_for_the_two_r_boxes() {
     assert_eq!(boxes, vec![0, 0, 1]); // r, r, l
     assert_eq!(l.cards[0].kind, CardKind::Out); // A is the answer box
 }
+
+#[test]
+fn every_card_has_label_and_context_words_and_typed_words_replace_the_defaults() {
+    let mut row = Row::blank();
+    fill(&mut row, "physics/physics/gravitation", &[]);
+    assert_eq!(row.card_words().len(), row.flatten().len());
+    row.words.insert(0, ("force".to_string(), "newtons".to_string()));
+    assert_eq!(row.card_words()[0], ("force".to_string(), "newtons".to_string()));
+    assert_eq!(row.card_words()[1], (String::new(), String::new()));
+}
+
+#[test]
+fn the_words_line_up_with_the_cards_when_an_operator_is_written_inside_a_box() {
+    let mut doc = Document::new();
+    doc.place_operator(ops::get("math/arithmetic/multiplication").unwrap());
+    doc.place_operator(ops::get("math/arithmetic/addition").unwrap());          // goes inside the first box
+    let row = &doc.rows[0];
+    assert!(row.flatten().len() > 3, "the addition is written out inside the box");
+    assert_eq!(row.card_words().len(), row.flatten().len());
+    // putting another operator in the row throws away the words typed into the cards that moved
+    let mut doc = doc;
+    doc.rows[0].words.insert(0, ("a".to_string(), "b".to_string()));
+    doc.place_operator(ops::get("math/arithmetic/subtraction").unwrap());
+    assert!(doc.rows[0].words.is_empty());
+}

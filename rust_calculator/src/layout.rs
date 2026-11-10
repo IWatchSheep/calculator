@@ -231,6 +231,11 @@ pub fn plan_stack(cards: &[Card], stack: bool) -> Plan {
     plan_pc(&pcs, stack)
 }
 
+/// The words the cards of this operator's row carry by default: (card index, label, context) (Python `WORDS`).
+pub fn words(key: &str) -> &'static [(usize, &'static str, &'static str)] {
+    crate::layouts::WORDS.iter().find(|(k, _)| *k == key).map_or(&[], |(_, w)| *w)
+}
+
 /// Does this operator draw an exponent in the column of the symbol it powers (Python `STACK_EXPONENTS`)?
 pub fn stacks(key: &str) -> bool {
     crate::layouts::STACKED.contains(&key)

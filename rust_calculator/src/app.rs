@@ -21,6 +21,8 @@ pub struct CalculatorApp {
     /// The list shows the 1,000 algebra word problems instead of the operators.
     show_words: bool,
     word_category: String,
+    /// Every card of a row shows its Label / Item and Context boxes (the words you type to describe it).
+    show_card_words: bool,
     /// The Advanced Input window.
     show_adv: bool,
     adv_kind: String,
@@ -85,6 +87,7 @@ impl Default for CalculatorApp {
             op_filter: String::new(),
             selected_category: "All".into(),
             show_words: false,
+            show_card_words: false,
             word_category: "All".into(),
             show_adv: false,
             adv_kind: "list".into(),
@@ -690,6 +693,14 @@ impl CalculatorApp {
     }
 
     fn apply_operator(&mut self, key: &str) {
+        self.apply_operator_inner(key);
+        // an operator that comes with words for its cards shows the Label / Context boxes, so the words are seen
+        if self.doc.rows.iter().any(|r| r.card_words().iter().any(|w| !w.0.is_empty() || !w.1.is_empty())) {
+            self.show_card_words = true;
+        }
+    }
+
+    fn apply_operator_inner(&mut self, key: &str) {
         self.preview_key = Some(key.to_string());
         self.doc.ensure_target();
         if let Some(spec) = crate::multirow::get(key) {
@@ -724,7 +735,10 @@ impl CalculatorApp {
     }
 
     fn ui_rows(&mut self, ui: &mut Ui) {
-        ui.heading("Mathematical Addend Sequence");
+        ui.horizontal(|ui| {
+            ui.heading("Mathematical Addend Sequence");
+            ui.checkbox(&mut self.show_card_words, "Label / Context boxes").on_hover_text("Show a Label (Item for a number) box and a Context box under every card, to type words that describe it");
+        });
         ScrollArea::both().show(ui, |ui| {
             for i in 0..self.doc.rows.len() {
                 ui.group(|ui| {
@@ -818,6 +832,9 @@ impl CalculatorApp {
             ui.label("(no picture for this operator)");
             return None;
         }
+        let words = self.doc.rows[i].card_words();
+        let show_card_words = self.show_card_words;
+        let mut word_edits: Vec<(usize, String, String)> = Vec::new();
         let pcs: Vec<layout::PC> = cards.iter().map(|c| c.pc()).collect();
         let stack = self.doc.rows[i].op_key.as_deref().map_or(false, layout::stacks);
         let plan = layout::plan_pc(&pcs, stack);
@@ -863,6 +880,8 @@ impl CalculatorApp {
                             }
                             Cell::Card(idx) => {
                                 let card = &cards[idx];
+                                let (label, context) = words.get(idx).cloned().unwrap_or_default();
+                                let shown = ui.vertical(|ui| {
                                 match card.kind {
                                     CardKind::Op => {
                                         ui.label(RichText::new(card.text.as_str()).size(22.0).strong());
@@ -912,6 +931,25 @@ impl CalculatorApp {
                                         }
                                     }
                                 }
+                                if show_card_words {
+                                    let (mut l, mut c) = (label.clone(), context.clone());
+                                    let hint = if card.kind == CardKind::Box { "item" } else { "label" };
+                                    let a = ui.add(TextEdit::singleline(&mut l).desired_width(78.0).hint_text(hint).font(egui::TextStyle::Small));
+                                    let b = ui.add(TextEdit::singleline(&mut c).desired_width(78.0).hint_text("context").font(egui::TextStyle::Small));
+                                    if !l.is_empty() {
+                                        a.clone().on_hover_text(l.clone());          // the boxes are narrow: the whole word on hover
+                                    }
+                                    if !c.is_empty() {
+                                        b.clone().on_hover_text(c.clone());
+                                    }
+                                    if a.changed() || b.changed() {
+                                        word_edits.push((idx, l, c));
+                                    }
+                                }
+                                });
+                                if !show_card_words && (!label.is_empty() || !context.is_empty()) {
+                                    shown.response.on_hover_text(format!("{}\n{}", label, context));
+                                }
                             }
                         }
                     }
@@ -932,6 +970,9 @@ impl CalculatorApp {
                 }
             });
         });
+        for (idx, l, c) in word_edits {
+            self.doc.rows[i].words.insert(idx, (l, c));
+        }
         focused
     }
 

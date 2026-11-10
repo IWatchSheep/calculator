@@ -98,6 +98,8 @@ pub struct Row {
     /// A row that only shows the answer for the rows above it (Row 3 when Rows 1 and 2 are joined).
     pub is_result: bool,
     pub error: Option<String>,
+    /// Words typed into a card's Label / Item and Context boxes: flat card index -> (label, context).  They replace the operator's default words (`layout::words`).
+    pub words: std::collections::HashMap<usize, (String, String)>,
 }
 
 impl Row {
@@ -112,6 +114,7 @@ impl Row {
             join: Join::None,
             is_result: false,
             error: None,
+            words: std::collections::HashMap::new(),
         }
     }
 
@@ -252,6 +255,42 @@ impl Row {
                     out_k += 1;
                 }
                 kind => out.push(FlatCard { kind, text: card.text.to_string(), path: Vec::new(), level, frac: own, out_k: 0, owner: path.to_vec() }),
+            }
+        }
+    }
+
+    /// The (label, context) words of every card of `flatten()`, same order: the operator's default words (Python `WORDS`), with what was typed on top.
+    pub fn card_words(&self) -> Vec<(String, String)> {
+        let mut out = Vec::new();
+        self.walk_words(&mut out);
+        for (k, w) in out.iter_mut().enumerate() {
+            if let Some(typed) = self.words.get(&k) {
+                *w = typed.clone();
+            }
+        }
+        out
+    }
+
+    fn walk_words(&self, out: &mut Vec<(String, String)>) {
+        use crate::layout::CardKind;
+        let Some(op) = self.operator() else { return };
+        let Some(layout) = crate::layout::get(op.key) else { return };
+        let given = crate::layout::words(op.key);
+        let mut seen: Vec<i32> = Vec::new();
+        for (n, card) in layout.cards.iter().enumerate() {
+            let w = given.iter().find(|(i, _, _)| *i == n).map_or((String::new(), String::new()), |(_, l, c)| (l.to_string(), c.to_string()));
+            if card.kind == CardKind::Box {
+                if seen.contains(&card.slot) {
+                    out.push(w);
+                    continue;
+                }
+                seen.push(card.slot);
+                match self.children.get(card.slot as usize).and_then(|c| c.as_deref()) {
+                    Some(c) => c.walk_words(out),
+                    None => out.push(w),
+                }
+            } else {
+                out.push(w);
             }
         }
     }
@@ -429,6 +468,7 @@ impl Document {
             let boxes = self.rows[i].box_paths();
             let path = if boxes.contains(&self.target_path) { self.target_path.clone() } else { boxes[0].clone() };
             self.rows[i].put_row(&path, new);
+            self.rows[i].words.clear();          // the cards moved: the words typed into the old ones no longer fit
             self.rows[i].clear_result();
             self.rows[i].error = None;
         } else {

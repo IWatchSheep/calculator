@@ -26,6 +26,7 @@ import operator_row_math as R  # noqa: E402
 from operator_row_math.layout import group_fractions, level_of, shown  # noqa: E402
 
 EXTRAS = {}
+WORDS_OF = {}      # key -> {card index: (label, context)}: the words a card carries (written  ρ{density|mass per volume}  in a spec line)
 STACK = set()      # keys whose spec starts with @stack: exponents share the column of the symbol they power (STACK_EXPONENTS = True in the row file)
 SPECS = os.path.join(ROOT, "operator_keys", "operator_row_specs.txt")
 BOX = "□"
@@ -59,7 +60,17 @@ def build(key, dsl, inputs, calc="ready"):
     left_text, arrow, right_text = dsl.partition("=>")
     left, slots, pattern, levels = [], [], [], []
     first_seen = set()
-    for tok in left_text.split():
+    card_words = {}
+    WORDS_OF[key] = card_words
+    for raw in re.findall(r"\S*?\{[^{}|]*\|[^{}]*\}|\S+", left_text):          # a token, or a token with {label|context}; a plain { } card has no |
+        tok, words = raw, None
+        m = re.fullmatch(r"\{sub:([^|}]+)(?:\|([^|}]*)\|([^}]*))?\}", raw)          # {sub:y|label|context}
+        if m:
+            tok, words = "{sub:%s}" % m.group(1), ((m.group(2), m.group(3)) if m.group(2) is not None else None)
+        elif raw != "{}":
+            m = re.fullmatch(r"(\S+?)\{([^{}|]*)\|([^{}]*)\}", raw)                          # symbol{label|context}
+            if m:
+                tok, words = m.group(1), (m.group(2), m.group(3))
         m = None if tok.startswith("[_") else re.fullmatch(r"\[([^\]]+)\]", tok)
         if m:
             name = m.group(1)
@@ -91,6 +102,8 @@ def build(key, dsl, inputs, calc="ready"):
             left.append(("op", shown(tok)))          # an exponent / subscript has its own cell (one row up / down) and shows ordinary characters
             levels.append(level_of(tok))
             pattern.append(tok)
+        if words:
+            card_words[len(left) - 1] = (words[0].strip(), words[1].strip())
     fracs = group_fractions(left, levels)           # the picture's own cards only: the "with" boxes added below are never part of a fraction
     if stack:
         # group_fractions takes everything back to the "+" as the numerator, so  u ∂u / ∂x  would be (u ∂u) / ∂x.  The equation is u TIMES ∂u/∂x: the velocity that multiplies
@@ -149,11 +162,14 @@ def rewrite(key, dsl):
     src = re.sub(r"^LEVELS = .*\n", "", src, flags=re.M)
     src = re.sub(r"^FRAC = .*\n", "", src, flags=re.M)
     src = re.sub(r"^STACK_EXPONENTS = .*\n", "", src, flags=re.M)
+    src = re.sub(r"^WORDS = .*\n", "", src, flags=re.M)
     extra = ""
     if slots != ident:
         extra += "SLOTS = %r    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)\n" % slots
     if any(levels):
         extra += "LEVELS = %r    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line\n" % levels
+    if WORDS_OF.get(key):
+        extra += "WORDS = %r    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used\n" % WORDS_OF[key]
     if key in STACK:
         extra += "STACK_EXPONENTS = True    # an exponent card shares the column of the symbol it powers (one grid row up) instead of having a column of its own\n"
     if any(fracs):

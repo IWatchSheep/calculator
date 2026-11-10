@@ -104,6 +104,25 @@ def levels(node):
     return [level for _card, level, _frac in _walk3(node)]
 
 
+def words(node):
+    """For every card of flatten(node): the (label, context) words its operator's row file gives it (WORDS), or ("", "").  Same order and length as flatten(node)."""
+    mod = node["mod"]
+    given = getattr(mod, "WORDS", None) or {}
+    out, smap, b, seen = [], slot_map(mod), 0, set()
+    for n, (kind, _text) in enumerate(mod.LEFT):
+        if kind == "box":
+            j = smap[b]
+            b += 1
+            slot = node["slots"][j]
+            if j not in seen:
+                seen.add(j)
+                if isinstance(slot, dict) and "adv" not in slot:          # an operator written inside this box: its own cards, with its own words
+                    out.extend(words(slot))
+                    continue
+        out.append(tuple(given.get(n, ("", ""))))
+    return out
+
+
 def stack_exponents(node):
     """True when the row's operator draws an exponent in the column of the symbol it powers (STACK_EXPONENTS in its row file)."""
     return bool(getattr(node["mod"], "STACK_EXPONENTS", False))

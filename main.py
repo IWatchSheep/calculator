@@ -360,7 +360,7 @@ class CalculatorGUI(tk.Tk):
             helper.grid(row=r, column=1, padx=(0, 20), pady=6, sticky="w")
         row = self._math_slot(area, r)
         row.update({"sub": sub, "join_btn": join_btn, "join": None, "mode": "full", "label": row_label,
-                    "is_result": False})
+                    "is_result": False, "words": {}})
         col3 = tk.Frame(area, bg=CREAM)
         col3.grid(row=r, column=3, padx=8, pady=6)
         edge = tk.Frame(col3, bg="black")          # black outline as in the picture
@@ -413,6 +413,7 @@ class CalculatorGUI(tk.Tk):
         """Put row i back to the default: one empty square box, no join symbol, not a result row."""
         row = self.rows[i]
         row["node"], row["sel"], row["is_result"] = row_tree.new_node("_number"), None, False
+        row["words"] = {}
         row["sub"].configure(text="")
         if row["join_btn"] is not None:
             self._set_join(i, None)
@@ -529,6 +530,37 @@ class CalculatorGUI(tk.Tk):
         node = self.rows[i]["node"]
         return row_tree.flatten(node) if node else []
 
+    # ---------- the words of a card (its Label / Item and Context boxes) ----------
+    def _card_words(self, i):
+        """Row i's (label, context) for every card: what the operator's row file gives it (WORDS), overridden by what was typed."""
+        row = self.rows[i]
+        base = row_tree.words(row["node"]) if row["node"] else []
+        typed = row.get("words", {})
+        return [tuple(typed.get(k, w)) for k, w in enumerate(base)]
+
+    def _set_word(self, i, k, which, text):
+        """The person typed `text` into box `which` (0 = Label / Item, 1 = Context) of card k of row i."""
+        cur = list(self._card_words(i)[k])
+        cur[which] = text
+        self.rows[i].setdefault("words", {})[k] = tuple(cur)
+
+    def _word_focus_set(self, i, k, which):
+        self._word_focus = (i, k, which)
+
+    def _apply_word(self, which, text):
+        """The Descriptive Columns Console: put a word into the Label / Item (which = 0) or Context (which = 1) box last clicked.  which None = the box last clicked."""
+        focus = getattr(self, "_word_focus", None)
+        text = text.strip()
+        if focus is None or not text:
+            self._say("Click a [Label] / [Item] or [Context] box on a card first, then pick or type a word.")
+            return
+        i, k, field = focus
+        if i >= len(self.rows) or k >= len(self._card_words(i)):
+            self._say("That card is gone: click a [Label] / [Item] or [Context] box again.")
+            return
+        self._set_word(i, k, field if which is None else which, text)
+        self._render_row(i)
+
     def _render_row(self, i):
         row = self.rows[i]
         for w in row["inner"].winfo_children():
@@ -540,7 +572,9 @@ class CalculatorGUI(tk.Tk):
             sel = next((n for n, c in enumerate(cards) if c[2] is not None and c[2] == row["sel"]), None)
             build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
                       on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"]),
-                      stack_exponents=row_tree.stack_exponents(row["node"])).pack(anchor="w", padx=6, pady=4)
+                      stack_exponents=row_tree.stack_exponents(row["node"]), words=self._card_words(i),
+                      on_words=lambda k, which, text, i=i: self._set_word(i, k, which, text),
+                      on_focus=lambda k, which, i=i: self._word_focus_set(i, k, which)).pack(anchor="w", padx=6, pady=4)
         row["refresh"]()
 
     def _set_result(self, i, text=None):
@@ -739,6 +773,7 @@ class CalculatorGUI(tk.Tk):
             row_tree.set_slot(row["node"], path, new)
         else:
             row["node"] = new
+        row["words"] = {}
         row["sel"] = None
         self._invalidate()
         self._render_row(i)
@@ -765,6 +800,7 @@ class CalculatorGUI(tk.Tk):
             self._add_row()
         for k, row in enumerate(self.rows):
             row["node"], row["sel"], row["is_result"] = row_tree.new_node("_number"), None, False
+            row["words"] = {}
             row["sub"].configure(text="")
             row["mode"] = "full"
             if row["join_btn"] is not None:
@@ -774,6 +810,7 @@ class CalculatorGUI(tk.Tk):
             row = self.rows[k]
             row["mode"] = "full"
             row["node"] = row_tree.build_node(rs)
+            row["words"] = {}
             row["sub"].configure(text=rs["title"])
             if k > 0:
                 self._set_join(k, spec["joins"][k - 1])
@@ -1647,16 +1684,17 @@ class CalculatorGUI(tk.Tk):
         ur.pack(anchor="w", padx=4, pady=2)
         tk.Label(ur, text="Unit:", font=("Segoe UI", 8, "bold"), bg="#f0f4f4").pack(side="left")
         for u in ["pens", "pencils", "books", "apples", "oranges", "cars"]:
-            btn(ur, u, "#e8e8f8", fg="black", font=("Segoe UI", 8)).pack(side="left", padx=1)
+            btn(ur, u, "#e8e8f8", fg="black", font=("Segoe UI", 8), command=lambda u=u: self._apply_word(0, u)).pack(side="left", padx=1)
         cr = tk.Frame(desc, bg="#f0f4f4")
         cr.pack(anchor="w", padx=4, pady=2)
         tk.Label(cr, text="Context:", font=("Segoe UI", 8, "bold"), bg="#f0f4f4").pack(side="left")
         for c in ["in the drawer", "on the desk", "in the room", "in the basket"]:
-            btn(cr, c, "#fbe0e8", fg="#a01040", font=("Segoe UI", 8)).pack(side="left", padx=1)
+            btn(cr, c, "#fbe0e8", fg="#a01040", font=("Segoe UI", 8), command=lambda c=c: self._apply_word(1, c)).pack(side="left", padx=1)
         wr = tk.Frame(desc, bg="#f0f4f4")
         wr.pack(anchor="w", padx=4, pady=2)
-        tk.Entry(wr, width=22).pack(side="left", padx=(40, 2))
-        btn(wr, "Apply Word", "#e8e8e8", fg="black").pack(side="left")
+        self.word_entry = tk.Entry(wr, width=22)
+        self.word_entry.pack(side="left", padx=(40, 2))
+        btn(wr, "Apply Word", "#e8e8e8", fg="black", command=lambda: self._apply_word(None, self.word_entry.get())).pack(side="left")
 
         # inspector
         insp = tk.Frame(bottom, bg="#f0f4f4")

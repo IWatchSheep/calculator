@@ -19,6 +19,7 @@ PATTERN = '∂ u / ∂ x + ∂ v / ∂ y + ∂ w / ∂ z = 0'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('change of u', 'how much u changes along x'), 6: ('change of v', 'how much v changes along y'), 12: ('change of w', 'how much w changes along z'), 17: ('equals zero', 'the flow neither squeezes nor creates fluid')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 STACK_EXPONENTS = True    # an exponent card shares the column of the symbol it powers (one grid row up) instead of having a column of its own
 FRAC = [[[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']], [[1, 'd']], [], [[2, 'n']], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [[2, 'd']], [], [[3, 'n']], [[3, 'n']], [[3, 'bar']], [[3, 'd']], [[3, 'd']], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card

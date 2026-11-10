@@ -140,6 +140,16 @@ class RustPort(unittest.TestCase):
             self.assertIn(word, spec["title"])
 
 
+class CardWords(unittest.TestCase):
+    def test_the_words_line_up_with_the_cards_of_a_row(self):
+        for key in ("physics/physics/gravitation", "math/arithmetic/addition", "physics/physics/navier_stokes_x_momentum"):
+            node = row_tree.new_node(key)
+            self.assertEqual(len(row_tree.words(node)), len(row_tree.flatten(node)), key)
+        outer = row_tree.new_node("math/arithmetic/multiplication")           # an operator written inside a box adds its own cards, with its own words
+        row_tree.set_slot(outer, (0,), row_tree.new_node("math/arithmetic/addition"))
+        self.assertEqual(len(row_tree.words(outer)), len(row_tree.flatten(outer)))
+
+
 class InTheWindow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -171,6 +181,48 @@ class InTheWindow(unittest.TestCase):
 
     def outs(self):
         return [t for k, t, _p in self.app._cards(0) if k == "out"]
+
+    def card_frames(self, i=0):
+        """{card index: the card's widget} of row i (a card that is not drawn, like the / of a fraction, has none)."""
+        return {w.card_index: w for row in self.app.rows[i]["inner"].winfo_children() for w in row.winfo_children() if hasattr(w, "card_index")}
+
+    def type_word(self, box, text):
+        box.focus_force()                       # clicking the box clears its grey hint and sends the typing to it
+        box.update()
+        box.event_generate("<FocusIn>")
+        box.insert(0, text)
+        box.event_generate("<KeyRelease>")
+
+    def test_the_label_and_context_boxes_take_the_words_you_type(self):
+        self.app._place_operator_row("physics/physics/gravitation")
+        self.app.update()
+        frames = self.card_frames()
+        self.assertEqual(len(frames), len(self.app._cards(0)) - 1)           # every card but the / of the fraction has its Label / Item and Context boxes
+        self.type_word(frames[0].label_box, "force")
+        self.type_word(frames[0].context_box, "newtons")
+        self.assertEqual(self.app.rows[0]["words"][0], ("force", "newtons"))
+        self.app._render_row(0)                                              # drawing the row again keeps what was typed
+        self.app.update()
+        again = self.card_frames()[0]
+        self.assertEqual((again.label_box.get(), again.context_box.get()), ("force", "newtons"))
+        self.assertEqual(self.app._card_words(0)[0], ("force", "newtons"))
+
+    def test_the_console_puts_a_word_into_the_box_last_clicked(self):
+        self.app._place_operator_row("physics/physics/gravitation")
+        self.app.update()
+        self.card_frames()[2].label_box.event_generate("<FocusIn>")
+        self.app._apply_word(0, "pens")
+        self.assertEqual(self.app._card_words(0)[2][0], "pens")
+        self.card_frames()[2].context_box.event_generate("<FocusIn>")
+        self.app._apply_word(None, "in the drawer")                           # None = the box last clicked
+        self.assertEqual(self.app._card_words(0)[2], ("pens", "in the drawer"))
+
+    def test_the_words_of_a_row_are_forgotten_when_its_math_changes(self):
+        self.app._place_operator_row("physics/physics/gravitation")
+        self.type_word(self.card_frames()[0].label_box, "force")
+        self.assertEqual(self.app.rows[0]["words"][0][0], "force")
+        self.app._place_operator_row("physics/physics/gravitation")
+        self.assertEqual(self.app.rows[0]["words"], {})
 
     def test_the_answer_box_fills_in_and_a_repeated_variable_is_one_input(self):
         app = self.app

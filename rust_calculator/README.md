@@ -29,6 +29,8 @@ Answers are shown like the Python program (`7.415555556e-11`, `24`), through `Va
 
 Sets and neighbour lists keep the order they were typed in, on both sides: `Direct product` of `a, b, c` and `1, 2, 3` lists (a,1) (a,2) (a,3) (b,1) ... (the diagram reads g in G, h in H). Python used to list letters in a different order every run (a plain `set`); `OrderedSet` in `operator_row_math/advanced_input.py` and `_NeighbourSet` in `operators_one_operator_per_file/_helpers.py` fixed that, and `make_value_grid.py` now writes the same file under every `PYTHONHASHSEED`.
 
+Every card has a **Label** (**Item** on a number card) and a **Context** box for words that describe it, shown under the card when the **Label / Context boxes** checkbox above the rows is on (it turns on by itself when you pick an operator that comes with words, like the Navier–Stokes rows). Hover a box to read all of its text. The default words come from `WORDS` in the Python row files (`layouts.rs` has them as `WORDS`); what you type is kept in `Row::words` and replaces the defaults until the row's math changes.
+
 ## What is in the Rust program
 
 Everything in the Python program is ported:
