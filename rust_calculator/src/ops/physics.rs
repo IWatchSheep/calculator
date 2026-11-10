@@ -656,3 +656,13 @@ pub fn schwarzschild_local_orbit_speed(a: &[f64]) -> R {
     need(a[0] >= 3.0 * a[1], "no stable circular orbit inside the ISCO")?;
     n(299792458.0 * ((a[1] / (2.0 * a[0])) / (1.0 - a[1] / a[0])).sqrt())
 }
+
+// ---------- light deflection (general relativity, job 3; the same operations as the Python file) ----------
+
+pub fn light_deflection_angle(a: &[f64]) -> R {
+    // b, Rs
+    need(a[0] > 0.0, "a radius must be positive")?;
+    need(a[1] > 0.0, "the horizon radius must be positive")?;
+    need(a[0] > 1.5 * 3.0_f64.sqrt() * a[1], "the ray falls in; the small-angle formula does not apply")?;
+    n(2.0 * a[1] / a[0])
+}

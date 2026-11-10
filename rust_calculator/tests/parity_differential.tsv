@@ -6538,6 +6538,43 @@ physics/physics/lensmakers_equation	3 100 10	-5.5555555555555545
 physics/physics/lensmakers_equation	10 100 3	-0.34364261168384885
 physics/physics/lensmakers_equation	1 0.25 1	ERR
 physics/physics/lensmakers_equation	0.5 100 5	10.526315789473685
+physics/physics/light_deflection_angle	10 2	0.4
+physics/physics/light_deflection_angle	7.5 2	0.5333333333333333
+physics/physics/light_deflection_angle	7.5 7.5	ERR
+physics/physics/light_deflection_angle	2 0.5	0.5
+physics/physics/light_deflection_angle	0.5 0.5	ERR
+physics/physics/light_deflection_angle	-3 2.5	ERR
+physics/physics/light_deflection_angle	0 3	ERR
+physics/physics/light_deflection_angle	-3 3	ERR
+physics/physics/light_deflection_angle	3 -3	ERR
+physics/physics/light_deflection_angle	2 0	ERR
+physics/physics/light_deflection_angle	7.5 1	0.26666666666666666
+physics/physics/light_deflection_angle	7.5 5	ERR
+physics/physics/light_deflection_angle	0.5 2.5	ERR
+physics/physics/light_deflection_angle	0 0	ERR
+physics/physics/light_deflection_angle	1 2.5	ERR
+physics/physics/light_deflection_angle	7.5 100	ERR
+physics/physics/light_deflection_angle	0.5 100	ERR
+physics/physics/light_deflection_angle	-3 0	ERR
+physics/physics/light_deflection_angle	3 5	ERR
+physics/physics/light_deflection_angle	0 -1	ERR
+physics/physics/light_deflection_angle	10 1	0.2
+physics/physics/light_deflection_angle	2.5 0.25	0.2
+physics/physics/light_deflection_angle	1 -1	ERR
+physics/physics/light_deflection_angle	0.5 1	ERR
+physics/physics/light_deflection_angle	0.25 0.5	ERR
+physics/physics/light_deflection_angle	2.5 1	ERR
+physics/physics/light_deflection_angle	0.25 -3	ERR
+physics/physics/light_deflection_angle	0 7.5	ERR
+physics/physics/light_deflection_angle	100 -1	ERR
+physics/physics/light_deflection_angle	3 7.5	ERR
+physics/physics/light_deflection_angle	2.5 100	ERR
+physics/physics/light_deflection_angle	-1 1	ERR
+physics/physics/light_deflection_angle	2.5 7.5	ERR
+physics/physics/light_deflection_angle	1 3	ERR
+physics/physics/light_deflection_angle	-3 0.25	ERR
+physics/physics/light_deflection_angle	0.25 100	ERR
+physics/physics/light_deflection_angle	0.25 10	ERR
 physics/physics/local_east_north_up	2 10 2.5 10	ERR
 physics/physics/local_east_north_up	2.5 7.5 7.5 -3	ERR
 physics/physics/local_east_north_up	2 -1 0.25 0	ERR

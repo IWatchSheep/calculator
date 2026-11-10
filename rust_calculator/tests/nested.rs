@@ -884,3 +884,24 @@ fn the_circular_orbit_operators_give_the_numbers_of_the_work_plan_and_decline_wi
     assert!(call("schwarzschild_local_orbit_speed", &[0., 2.]).unwrap_err().contains("a radius must be positive"));
     assert!(call("schwarzschild_local_orbit_speed", &[6., 0.]).unwrap_err().contains("the horizon radius must be positive"));
 }
+
+#[test]
+fn the_light_deflection_operator_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/light_deflection_angle").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    assert_eq!(call(&[10., 2.]).unwrap(), 0.4);
+    let rs = match (ops::get("physics/physics/schwarzschild_radius").unwrap().compute)(&[1.9885e30, 6.674e-11, 299792458.0]).unwrap() {
+        Value::Number(x) => x,
+        o => panic!("{o:?}"),
+    };
+    assert!((call(&[695700000., rs]).unwrap() - 8.490013479230432e-06).abs() < 1e-16);
+    assert!(call(&[0., 2.]).unwrap_err().contains("a radius must be positive"));
+    assert!(call(&[10., 0.]).unwrap_err().contains("the horizon radius must be positive"));
+    assert!(call(&[3., 2.]).unwrap_err().contains("the ray falls in; the small-angle formula does not apply"));
+    assert!(call(&[5.196152422706632, 2.]).unwrap_err().contains("the ray falls in"));
+}

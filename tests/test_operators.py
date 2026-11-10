@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 607)
+        self.assertEqual(len(self.ops), 608)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 607)
+        self.assertEqual(len(status), 608)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -282,6 +282,7 @@ CASES = [
     (PH + "photon_sphere_radius", (2,), 3), (PH + "isco_radius", (2,), 6),
     (PH + "schwarzschild_orbit_angular_speed", (4, 2), 37474057.25), (PH + "schwarzschild_orbit_period", (4, 2), 1.6766760175613453e-07),
     (PH + "schwarzschild_coordinate_speed", (4, 2), 149896229.0), (PH + "schwarzschild_local_orbit_speed", (6, 2), 149896228.99999997),
+    (PH + "light_deflection_angle", (10, 2), 0.4),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1187,6 +1188,33 @@ class SchwarzschildOrbitTests(unittest.TestCase):
         self.assertAlmostEqual(local(6, 2), c / 2, delta=1e-6 * c)                          # at the ISCO the local speed is c/2
         self.assertGreater(local(6, 2), speed(6, 2))                                          # a hovering observer sees it faster than the Kepler speed
         self.assertLess(local(60, 2), c)
+
+
+class LightDeflectionTests(unittest.TestCase):
+    """General relativity, job 3: the weak-field bending of light."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "light_deflection_angle").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 2), "a radius must be positive")
+        self.says((-5, 2), "a radius must be positive")
+        self.says((10, 0), "the horizon radius must be positive")
+        self.says((10, -2), "the horizon radius must be positive")
+        self.says((5.196152422706632, 2), "the ray falls in; the small-angle formula does not apply")      # b = (3 sqrt 3 / 2) Rs exactly
+        self.says((3, 2), "the ray falls in; the small-angle formula does not apply")
+        self.assertEqual(get(PH + "light_deflection_angle").compute(5.2, 2), 2 * 2 / 5.2)                # just outside is allowed
+
+    def test_light_grazing_the_sun(self):
+        import math
+        rs = get(PH + "schwarzschild_radius").compute(1.9885e30)                       # with that operator's own G and c
+        angle = get(PH + "light_deflection_angle").compute(695700000, rs)
+        self.assertAlmostEqual(angle, 8.490013479230432e-06, delta=1e-16)
+        arcseconds = angle * 180 / math.pi * 3600
+        self.assertAlmostEqual(arcseconds, 1.751, places=3)                          # about 1.75 arcseconds
+        self.assertAlmostEqual(angle, 4 * 6.674e-11 * 1.9885e30 / (299792458 ** 2 * 695700000), delta=1e-18)   # 4GM / (c^2 b)
 
 
 # --------------------------------------------------------------------------- 3. error handling

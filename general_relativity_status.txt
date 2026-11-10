@@ -16,8 +16,11 @@ DONE
          (c/8, c/2, 1.6766760175613453e-07, and 149896228.99999997 at the ISCO).  Checked: Omega * T = 2 pi; r Omega = coordinate speed; Omega is the
          Kepler sqrt(GM/r^3) for the Earth; local / coordinate speed = 1 in the weak field.
 
+  Job 3  Light deflection (physics/physics): light_deflection_angle, delta = 2 Rs / b in radians; declined for b <= (3 sqrt 3 / 2) Rs ("the ray falls in; the
+         small-angle formula does not apply").  608 operators, 536 calculating.  Checked: 10, 2 -> 0.4; light grazing the Sun gives 8.490013479230432e-06
+         radians (1.751 arcseconds) with schwarzschild_radius' own G and c, equal to 4GM / (c^2 b).
+
 WAITING  (Grok will write the numbers when it starts each job; G = 6.674e-11 and c = 299792458 as in schwarzschild_radius)
-  Job 3   light deflection 4GM / (c^2 b), small angle
   Job 4   Mercury perihelion advance 6 pi GM / (c^2 a (1 - e^2)) radians per orbit (about 43 arcseconds per century; hand-check the inputs)
   Job 5   gravitational redshift between two finite radii: sqrt((1 - Rs/r_receiver) / (1 - Rs/r_source))
   Job 6   one geodesic step (radial fall: the next r after one time step), not a loop

@@ -334,6 +334,7 @@ physics/physics/length_contraction_from_gamma	7 1	7
 physics/physics/lens_magnification	15 30	-0.5
 physics/physics/lens_magnification	-10 5	2
 physics/physics/lensmakers_equation	1.5 0.2 -0.2	0.2
+physics/physics/light_deflection_angle	10 2	0.4
 physics/physics/lorentz_factor	0.6 1	1.25
 physics/physics/lorentz_factor	0.8 1	1.6666666666666667
 physics/physics/lorentz_factor	0 1	1

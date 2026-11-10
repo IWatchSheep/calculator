@@ -1,6 +1,6 @@
 {
- "count": 607,
- "ready": 535,
+ "count": 608,
+ "ready": 536,
  "reference": 72,
  "operators": [
   {
@@ -22660,6 +22660,49 @@
       -0.2
      ],
      "expected": 0.2
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/light_deflection_angle",
+   "name": "Light deflection",
+   "symbol": "δ = 2 Rs / b",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "δ = 4GM / (c² b) = 2 Rs / b   (the weak-field bend of a ray with closest approach b, in radians; only accurate when Rs/b is small; b ≤ (3√3/2) Rs falls into the mass)",
+   "status": "Ready",
+   "inputs": [
+    "b",
+    "Rs"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = 2 □ / □",
+   "compute_signature": "compute(b, Rs)",
+   "compute_params": [
+    {
+     "name": "b",
+     "kind": "required"
+    },
+    {
+     "name": "Rs",
+     "kind": "required"
+    }
+   ],
+   "required_args": 2,
+   "max_args": 2,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      10,
+      2
+     ],
+     "expected": 0.4
     }
    ]
   },
