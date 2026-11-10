@@ -19,6 +19,7 @@ PATTERN = '□ ° → □ rad'
 CALC = 'ready'
 INPUTS = ['degrees']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('angle', 'degrees'), 3: ('angle', 'radians')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('box', ''), ('op', '°'), ('op', '→'), ('out', ''), ('op', 'rad')]      # cards left of "="
 RIGHT = []

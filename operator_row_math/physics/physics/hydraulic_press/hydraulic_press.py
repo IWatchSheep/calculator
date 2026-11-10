@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['F1', 'A1', 'A2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 2, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {0: ('output force', 'newtons'), 2: ('input force', 'newtons'), 4: ('output area', 'square metres'), 6: ('input area', 'square metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="

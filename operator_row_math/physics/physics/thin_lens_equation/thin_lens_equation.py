@@ -19,6 +19,7 @@ PATTERN = '1 / □ = 1 / □ + 1 / □'
 CALC = 'ready'
 INPUTS = ['f', 'd_o']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {2: ('focal length', 'metres'), 6: ('object distance', 'metres'), 10: ('image distance', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [], [[3, 'n']], [[3, 'bar']], [[3, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '1'), ('op', '/'), ('box', ''), ('op', '='), ('op', '1'), ('op', '/'), ('box', ''), ('op', '+'), ('op', '1'), ('op', '/'), ('out', '')]      # cards left of "="

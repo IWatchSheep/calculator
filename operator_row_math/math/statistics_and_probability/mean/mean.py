@@ -19,6 +19,7 @@ PATTERN = 'mean ( □ ) = □'
 CALC = 'advanced'
 INPUTS = ['data']    # what each box (left to right) is
 KINDS = ['list']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {2: ('data', 'the list of numbers')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'mean'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)

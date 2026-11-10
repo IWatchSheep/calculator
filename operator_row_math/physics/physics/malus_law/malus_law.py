@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['I0', 'theta']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, -1]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('transmitted intensity', 'watts per square metre'), 2: ('starting intensity', 'watts per square metre'), 6: ('angle', 'radians between the two polariser axes')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', '2')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

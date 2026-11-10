@@ -19,6 +19,7 @@ PATTERN = '□ = − □ × □'
 CALC = 'ready'
 INPUTS = ['k', 'x']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('restoring force', 'newtons, back toward the rest point'), 3: ('spring constant', 'newtons per metre'), 5: ('stretch', 'metres from the rest point')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '−'), ('box', ''), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

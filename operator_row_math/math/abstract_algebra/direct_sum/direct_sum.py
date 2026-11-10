@@ -19,6 +19,7 @@ PATTERN = '□ ⊕ □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('first space', 'a vector space'), 2: ('second space', 'a vector space')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('dec', ''), ('op', '⊕'), ('dec', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

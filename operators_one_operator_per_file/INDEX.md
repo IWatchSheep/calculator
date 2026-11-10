@@ -250,6 +250,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Dimension | dim V | The number of vectors in any basis of V | Ready | `math/abstract_algebra/dimension/` |
 | Tensor product | ⊗ | (a ⊗ b) = (a₁b₁, a₁b₂, …, aₘbₙ)   (Kronecker product of two vectors) | Ready | `math/abstract_algebra/tensor_product/` |
 | Direct sum | ⊕ | A ⊕ B = { (a, b) : a ∈ A, b ∈ B } with component-wise operations; dim(A ⊕ B) = dim A + dim B | Reference | `math/abstract_algebra/direct_sum/` |
+| Direct sum: dimension | dim(A ⊕ B) | dim(A ⊕ B) = dim A + dim B | Reference | `math/abstract_algebra/direct_sum_dimension/` |
 
 ## Math / Topology
 
@@ -425,6 +426,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Tangent space | TₚM | The vector space of all tangent vectors at p | Reference | `math/differential_geometry_and_tensors/tangent_space/` |
 | Differential form | ω | A smooth, antisymmetric, multilinear field that can be integrated over manifolds | Reference | `math/differential_geometry_and_tensors/differential_form/` |
 | Exterior derivative | d | d(f dx) = df ∧ dx,  d² = 0 | Reference | `math/differential_geometry_and_tensors/exterior_derivative/` |
+| Exterior derivative: d squared is zero | d² = 0 | d² = 0 | Reference | `math/differential_geometry_and_tensors/exterior_derivative_nilpotent/` |
 | Wedge product | ∧ | α ∧ β = −β ∧ α  (antisymmetric product of differential forms) | Ready | `math/differential_geometry_and_tensors/wedge_product/` |
 | Pullback | f* | (f*ω)(v) = ω(df(v)) | Reference | `math/differential_geometry_and_tensors/pullback/` |
 | Metric tensor | g | gᵢⱼ gives lengths and angles: ds² = gᵢⱼ dxⁱ dxʲ | Ready | `math/differential_geometry_and_tensors/metric_tensor/` |

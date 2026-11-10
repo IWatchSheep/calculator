@@ -21,6 +21,7 @@ INPUTS = ['x1', 'y1', 'x2', 'y2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [3, 1, 2, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
 LEVELS = [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('slope', 'rise over run'), 3: ('second y', 'metres'), 6: ('first y', 'metres'), 11: ('second x', 'metres'), 14: ('first x', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '('), ('box', ''), ('op', '2'), ('op', '−'), ('box', ''), ('op', '1'), ('op', ')'), ('op', '/'), ('op', '('), ('box', ''), ('op', '2'), ('op', '−'), ('box', ''), ('op', '1'), ('op', ')')]      # cards left of "="

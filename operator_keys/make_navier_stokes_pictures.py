@@ -26,7 +26,11 @@ PREFIX = "physics/physics/"
 
 
 def font(name, size, index=0):
-    return ImageFont.truetype(os.path.join(FONTS, name), size, index=index)
+    try:
+        return ImageFont.truetype(os.path.join(FONTS, name), size, index=index)
+    except OSError:
+        fallback = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if "bold" in name or name.endswith("b.ttf") else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        return ImageFont.truetype(fallback, size)
 
 
 BIG, SMALL = font("cambria.ttc", 38, 1), font("cambria.ttc", 25, 1)      # Cambria Math has the ∂ ∇ symbols
@@ -38,16 +42,16 @@ _probe = ImageDraw.Draw(Image.new("RGB", (10, 10)))
 
 def cards_of(key):
     """The placed cards of an operator's row: ([(text, small)], plan, rows)."""
-    m = R.get(PREFIX + key)
+    m = R.get(key if "/" in key else PREFIX + key)
     levels = list(getattr(m, "LEVELS", None) or [0] * len(m.LEFT))
     fracs = list(getattr(m, "FRAC", None) or [[] for _ in m.LEFT])
     placed, bars, columns = _plan(len(m.LEFT), levels, fracs, bool(getattr(m, "STACK_EXPONENTS", False)))
     cards = {i: (m.LEFT[i][1], levels[i] != 0, r, c) for i, (r, c) in placed.items()}
-    return cards, bars, columns
+    return cards, bars, columns, getattr(m, "WORDS", {})
 
 
 def layout(key):
-    cards, bars, columns = cards_of(key)
+    cards, bars, columns, words = cards_of(key)
     colw = [34] * columns
     for text, small, r, c in cards.values():
         colw[c] = max(colw[c], _probe.textlength(text, font=SMALL if small else BIG) + PAD)
@@ -60,16 +64,36 @@ def layout(key):
     for g in range(first, grid_rows[-1] + 1):
         big = any(r == g and not small for _t, small, r, _c in cards.values()) or any(b[0] == g for b in bars)
         heights[g] = ROW_BIG if big else ROW_SMALL
-    return cards, bars, colw, heights, first
+    return cards, bars, colw, heights, first, words
+
+
+def wrap(text, font, limit):
+    lines, cur = [], ""
+    for word in text.split():
+        trial = (cur + " " + word).strip()
+        if _probe.textlength(trial, font=font) <= limit or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = word
+    if cur:
+        lines.append(cur)
+    return lines[:2]
+
+
+WORD = font("segoeui.ttf", 13)
+WORD_GREY = font("segoeui.ttf", 12)
 
 
 def render(key, title, description):
-    cards, bars, colw, heights, first = layout(key)
+    cards, bars, colw, heights, first, words = layout(key)
     formula_w, formula_h = sum(colw), sum(heights.values())
     lines = description.split("\n")
+    word_rows = [(cards[i][0], label, context) for i, (label, context) in words.items() if i in cards]
+    word_h = 22 * len(word_rows)
     w = max(1040, int(formula_w) + 88)
     top = 100                                              # the equation starts under the title and its rule
-    desc_y = top + formula_h + 38
+    desc_y = top + formula_h + 12 + word_h + 20
     img = Image.new("RGB", (w, desc_y + 26 * len(lines) + 24), "white")
     d = ImageDraw.Draw(img)
     d.text((40, 18), title, font=font("segoeuib.ttf", 30), fill="#16233a")
@@ -90,6 +114,10 @@ def render(key, title, description):
             d.text((cx, cy + 0.30 * 38), text, font=BIG, fill=INK, anchor="ms")
     for r, c, bw in bars:
         d.line((xs[c] + 3, ys[r], xs[c + bw - 1] + colw[c + bw - 1] - 3, ys[r]), fill=INK, width=3)
+    yy = top + formula_h + 6
+    for symbol, label, context in word_rows:
+        d.text((48, yy), "%s   %s  -  %s" % (symbol, label, context), font=WORD, fill=GREY)
+        yy += 22
     for k, line in enumerate(lines):
         d.text((40, desc_y + 26 * k), line, font=NOTE, fill=GREY)
     return img
@@ -114,5 +142,12 @@ PICTURES.append(("navier_stokes_continuity", "Navier\u2013Stokes: continuity (in
                  "The fluid is incompressible, so the velocity field has no sources or sinks: u, v, w are the velocity along x, y, z."))
 
 if __name__ == "__main__":
-    for slug, title, description in PICTURES:
-        save(render(slug, title, description), os.path.join(OPS, slug, slug + ".jpg"))
+    extra = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if extra:
+        for key in extra:
+            name = key.split("/")[-1]
+            title = R.get(key).NAME
+            save(render(key, title, ""), os.path.join(ROOT, "operators_one_operator_per_file", *key.split("/"), name + ".jpg"))
+    else:
+        for slug, title, description in PICTURES:
+            save(render(slug, title, description), os.path.join(OPS, slug, slug + ".jpg"))

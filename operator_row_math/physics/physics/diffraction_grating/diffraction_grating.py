@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['m', 'wavelength', 'd']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [2, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {0: ('slit spacing', 'metres'), 4: ('diffraction angle', 'radians'), 7: ('order', '0, 1, 2, ...'), 9: ('wavelength', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('box', ''), ('op', '×'), ('op', 'sin'), ('op', '('), ('out', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

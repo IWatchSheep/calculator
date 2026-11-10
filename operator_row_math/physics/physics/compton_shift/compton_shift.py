@@ -19,6 +19,7 @@ PATTERN = '□ = h / ( m × c ) × ( 1 − cos ( □ ) )'
 CALC = 'ready'
 INPUTS = ['theta']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('wavelength shift', 'metres'), 2: ('Planck constant', '6.626e-34 J s'), 5: ('electron mass', 'kilograms'), 7: ('speed of light', '299792458 m/s'), 15: ('scatter angle', 'radians')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', 'h'), ('op', '/'), ('op', '('), ('op', 'm'), ('op', '×'), ('op', 'c'), ('op', ')'), ('op', '×'), ('op', '('), ('op', '1'), ('op', '−'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')'), ('op', ')')]      # cards left of "="

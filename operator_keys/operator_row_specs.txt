@@ -1,46 +1,47 @@
 # One line per operator, written from its picture.  Format and symbols: see make_operator_row_files.py.
 # [name] = an input box (repeat the name for a variable the picture writes twice)   {} = the answer box inside the formula   => {} = result box right of the row
-geometry/geometry/arc_length | {} = [r] × [theta]
-geometry/geometry/circle_area | {} = π × [r] ²
-geometry/geometry/circle_circumference | {} = 2 × π × [r]
-geometry/geometry/cone_surface_area | {} = π × [r] × ( [r] + [l] )
-geometry/geometry/cone_volume | {} = ⅓ × π × [r] ² × [h]
-geometry/geometry/cube_surface_area | {} = 6 [s] ²
-geometry/geometry/cube_volume | {} = [s] ³
-geometry/geometry/cylinder_surface_area | {} = 2 × π × [r] × ( [r] + [h] )
-geometry/geometry/cylinder_volume | {} = π × [r] ² × [h]
-geometry/geometry/degrees_to_radians_geometry | [degrees] ° → {} rad
-geometry/geometry/distance_formula | {} = √ ( ( [x2] ₂ − [x1] ₁ ) ² + ( [y2] ₂ − [y1] ₁ ) ² )
+geometry/geometry/arc_length | {}{arc length|metres along the circle} = [r]{radius|metres} × [theta]{angle|radians}
+geometry/geometry/circle_area | {}{area|square metres} = π × [r]{radius|metres} ²
+geometry/geometry/circle_circumference | {}{circumference|metres around the circle} = 2 × π × [r]{radius|metres}
+geometry/geometry/cone_surface_area | {}{surface area|square metres, including the base} = π × [r]{base radius|metres} × ( [r]{base radius|metres} + [l]{slant height|metres along the side} )
+geometry/geometry/cone_volume | {}{volume|cubic metres} = ⅓ × π × [r]{base radius|metres} ² × [h]{height|metres}
+geometry/geometry/cube_surface_area | {}{surface area|square metres} = 6 [s]{side|metres} ²
+geometry/geometry/cube_volume | {}{volume|cubic metres} = [s]{side|metres} ³
+geometry/geometry/cylinder_surface_area | {}{surface area|square metres, including both ends} = 2 × π × [r]{radius|metres} × ( [r]{radius|metres} + [h]{height|metres} )
+geometry/geometry/cylinder_volume | {}{volume|cubic metres} = π × [r]{radius|metres} ² × [h]{height|metres}
+geometry/geometry/degrees_to_radians_geometry | [degrees]{angle|degrees} ° → {}{angle|radians} rad
+geometry/geometry/distance_formula | {}{distance|metres between the two points} = √ ( ( [x2]{second x|metres} ₂ − [x1]{first x|metres} ₁ ) ² + ( [y2]{second y|metres} ₂ − [y1]{first y|metres} ₁ ) ² )
 # Heron: the picture's s boxes are the semi-perimeter s = (a+b+c)/2, which is not an input: drawn as the plain letter s
-geometry/geometry/heron_s_formula | {} = √ ( s ( s − [a] ) ( s − [b] ) ( s − [c] ) )
-geometry/geometry/law_of_cosines | {} = √ ( [a] ² + [b] ² − 2 × [a] × [b] × cos ( [C] ) )
-geometry/geometry/law_of_sines | {} = [a] · sin [B] / sin [A]
-geometry/geometry/midpoint_formula | {} = ( ( [x1] ₁ + [x2] ₂ ) / 2 , ( [y1] ₁ + [y2] ₂ ) / 2 )
-geometry/geometry/parallelogram_area | {} = [b] · [h]
-geometry/geometry/polygon_interior_angle_sum | ( [n] − 2 ) · 180 ° => {}
-geometry/geometry/pyramid_volume | {} = ⅓ × [base_area] × [h]
-geometry/geometry/pythagorean_theorem | {} = √ ( [a] ² + [b] ² )
-geometry/geometry/radians_to_degrees_geometry | [radians] rad → {} °
-geometry/geometry/rectangle_area | {} = [l] · [w]
-geometry/geometry/rectangle_perimeter | {} = 2 ( [l] + [w] )
-geometry/geometry/rectangular_prism_surface_area | {} = 2 × ( [l] × [w] + [l] × [h] + [w] × [h] )
-geometry/geometry/rectangular_prism_volume | {} = [l] · [w] · [h]
-geometry/geometry/regular_polygon_area | {} = ½ · [perimeter] · [apothem]
-geometry/geometry/rhombus_area | {} = ½ × [d1] × [d2]
-geometry/geometry/sector_area | {} = ½ × [r] ² × [theta]
-geometry/geometry/slope | {} = ( [y2] ₂ − [y1] ₁ ) / ( [x2] ₂ − [x1] ₁ )
-geometry/geometry/sphere_surface_area | {} = 4 × π × [r] ²
-geometry/geometry/sphere_volume | {} = ( 4 / 3 ) × π × [r] ³
-geometry/geometry/square_area | {} = [s] ²
-geometry/geometry/trapezoid_area | {} = ½ × ( [a] + [b] ) × [h]
-geometry/geometry/triangle_area | {} = ½ · [b] · [h]
+geometry/geometry/heron_s_formula | {}{area|square metres of the triangle} = √ ( s{semi-perimeter|(a + b + c) / 2, not typed} ( s{semi-perimeter|(a + b + c) / 2, not typed} − [a]{side a|metres} ) ( s{semi-perimeter|(a + b + c) / 2, not typed} − [b]{side b|metres} ) ( s{semi-perimeter|(a + b + c) / 2, not typed} − [c]{side c|metres} ) )
+geometry/geometry/law_of_cosines | {}{side c|metres, opposite angle C} = √ ( [a]{side a|metres} ² + [b]{side b|metres} ² − 2 × [a]{side a|metres} × [b]{side b|metres} × cos ( [C]{included angle|radians} ) )
+geometry/geometry/law_of_sines | {}{side b|metres, opposite angle B} = [a]{side a|metres} · sin [B]{angle B|radians} / sin [A]{angle A|radians, opposite side a}
+geometry/geometry/midpoint_formula | {}{midpoint|the point halfway between} = ( ( [x1]{first x|metres} ₁ + [x2]{second x|metres} ₂ ) / 2 , ( [y1]{first y|metres} ₁ + [y2]{second y|metres} ₂ ) / 2 )
+geometry/geometry/parallelogram_area | {}{area|square metres} = [b]{base|metres} · [h]{height|metres, perpendicular to the base}
+geometry/geometry/polygon_interior_angle_sum | ( [n]{number of sides|3 or more} − 2 ) · 180 ° => {}
+geometry/geometry/pyramid_volume | {}{volume|cubic metres} = ⅓ × [base_area]{base area|square metres} × [h]{height|metres}
+geometry/geometry/pythagorean_theorem | {}{hypotenuse|metres, the longest side} = √ ( [a]{leg a|metres} ² + [b]{leg b|metres} ² )
+geometry/geometry/radians_to_degrees_geometry | [radians]{angle|radians} rad → {}{angle|degrees} °
+geometry/geometry/rectangle_area | {}{area|square metres} = [l]{length|metres} · [w]{width|metres}
+geometry/geometry/rectangle_perimeter | {}{perimeter|metres around the rectangle} = 2 ( [l]{length|metres} + [w]{width|metres} )
+geometry/geometry/rectangular_prism_surface_area | {}{surface area|square metres} = 2 × ( [l]{length|metres} × [w]{width|metres} + [l]{length|metres} × [h]{height|metres} + [w]{width|metres} × [h]{height|metres} )
+geometry/geometry/rectangular_prism_volume | {}{volume|cubic metres} = [l]{length|metres} · [w]{width|metres} · [h]{height|metres}
+geometry/geometry/regular_polygon_area | {}{area|square metres} = ½ · [perimeter]{perimeter|metres} · [apothem]{apothem|metres from the centre to a side}
+geometry/geometry/rhombus_area | {}{area|square metres} = ½ × [d1]{first diagonal|metres} × [d2]{second diagonal|metres}
+geometry/geometry/sector_area | {}{sector area|square metres of the pie slice} = ½ × [r]{radius|metres} ² × [theta]{angle|radians}
+geometry/geometry/slope | {}{slope|rise over run} = ( [y2]{second y|metres} ₂ − [y1]{first y|metres} ₁ ) / ( [x2]{second x|metres} ₂ − [x1]{first x|metres} ₁ )
+geometry/geometry/sphere_surface_area | {}{surface area|square metres} = 4 × π × [r]{radius|metres} ²
+geometry/geometry/sphere_volume | {}{volume|cubic metres} = ( 4 / 3 ) × π × [r]{radius|metres} ³
+geometry/geometry/square_area | {}{area|square metres} = [s]{side|metres} ²
+geometry/geometry/trapezoid_area | {}{area|square metres} = ½ × ( [a]{first base|metres} + [b]{second base|metres} ) × [h]{height|metres}
+geometry/geometry/triangle_area | {}{area|square metres} = ½ · [b]{base|metres} · [h]{height|metres}
 math/abstract_algebra/alternating_group_order | | [] ₙ | = [n] ! / 2
 math/abstract_algebra/basis | Basis ( [vectors] )
 math/abstract_algebra/coset | [g] [H] = { [g] ∘ [] : [] ∈ [H] }
 math/abstract_algebra/cyclic_group | ⟨ [g] ⟩
 math/abstract_algebra/dimension | Dimension ( [vectors] )
 math/abstract_algebra/direct_product | [G] × [H] = { ( [] , [] ) : [] ∈ [G] , [] ∈ [H] }
-math/abstract_algebra/direct_sum | [] ⊕ []
+math/abstract_algebra/direct_sum | []{first space|a vector space} ⊕ []{second space|a vector space}
+math/abstract_algebra/direct_sum_dimension | dim{dimension|the number of vectors in a basis} ( A{first space|a vector space} ⊕ B{second space|a vector space} ) = dim{dimension|the number of vectors in a basis} A{first space|a vector space} + dim{dimension|the number of vectors in a basis} B{second space|a vector space}
 math/abstract_algebra/field | Add, subtract, multiply, and divide by nonzero elements
 math/abstract_algebra/field_extension | [] / []
 math/abstract_algebra/galois_group | Gal ( [] / [] )
@@ -185,7 +186,8 @@ math/constants_and_relations/proportional_to | [y] ∝ [x]
 math/constants_and_relations/square_brackets | [ [] , [] ]
 math/differential_geometry_and_tensors/christoffel_symbol | Γ ᵏ ᵢⱼ ( [] )
 math/differential_geometry_and_tensors/differential_form | ω = [] d [] + [] d []
-math/differential_geometry_and_tensors/exterior_derivative | d ( [] d [] ) = d [] ∧ d []
+math/differential_geometry_and_tensors/exterior_derivative | d{exterior derivative|sends a form to the form one degree higher} ( []{function|a smooth function} d []{coordinate|the variable the form is written in} ) = d{exterior derivative|sends a form to the form one degree higher} []{function|a smooth function} ∧ d{exterior derivative|sends a form to the form one degree higher} []{coordinate|the variable the form is written in}
+math/differential_geometry_and_tensors/exterior_derivative_nilpotent | @stack d{exterior derivative|apply d twice} ²{two|the second application} = 0{zero|d of d is always the zero form}
 math/differential_geometry_and_tensors/gaussian_curvature | {} = [k1] ₁ · [k2] ₂
 math/differential_geometry_and_tensors/geodesic | ∇ ( along γ ′ ) γ ′ = 0
 math/differential_geometry_and_tensors/lie_bracket | [ [X] , [Y] ]
@@ -329,35 +331,35 @@ math/real_analysis/sigma_algebra | Sigma-algebra ( [] )
 math/real_analysis/supremum | sup ( [values] ) => {}
 math/real_analysis/uniform_continuity | ∀ ε > 0 , ∃ δ > 0 , ∀ x , y ∈ D · | x − y | < δ ⇒ | f ( x ) − f ( y ) | < ε
 math/real_analysis/uniform_convergence | [] ₙ ⇉ []
-math/statistics_and_probability/bayes_theorem | {} = [p_b_given_a] × P ( [p_a] ) / P ( [p_b] )
-math/statistics_and_probability/binomial_distribution | P ( [] = [k] ) = C ( [n] , [k] ) · [p] ᵏ · ( 1 − [p] ) ⁿ⁻ᵏ
-math/statistics_and_probability/chi_square_statistic | {} ² = Σ ( [observed] ᵢ − [expected] ᵢ ) ² / [expected] ᵢ
-math/statistics_and_probability/conditional_probability | {} = [p_a_and_b] / P ( [p_b] )
-math/statistics_and_probability/confidence_interval | {} = [mean] ± [] × [sd] / √ ( [n] )
-math/statistics_and_probability/correlation | {} = cov ( [x] , [y] ) / ( [] ₓ · [] [] )
-math/statistics_and_probability/covariance | cov ( [x] , [y] ) = Σ ( [x] ᵢ − [] ) ( [y] ᵢ − [] ) / ( [] − 1 )
-math/statistics_and_probability/expected_value | [] [ [] ] = Σ [values] ᵢ · [probs] ᵢ
-math/statistics_and_probability/exponential_distribution | f ( [x] ) = [lam] · e ^ ( − [lam] [x] ) for [x] ≥ 0
+math/statistics_and_probability/bayes_theorem | {} = [p_b_given_a] × P ( [p_a]{prior|P(A), before seeing B} ) / P ( [p_b]{evidence|P(B)} )
+math/statistics_and_probability/binomial_distribution | P ( [] = [k]{successes|how many you want} ) = C ( [n]{trials|how many times} , [k]{successes|how many you want} ) · [p]{success chance|between 0 and 1, each trial} ᵏ · ( 1 − [p]{success chance|between 0 and 1, each trial} ) ⁿ⁻ᵏ
+math/statistics_and_probability/chi_square_statistic | {}{chi-square|how far the counts are from what was expected} ² = Σ ( [observed]{observed counts|what you counted} ᵢ − [expected]{expected counts|what the model predicted} ᵢ ) ² / [expected]{expected counts|what the model predicted} ᵢ
+math/statistics_and_probability/conditional_probability | {} = [p_a_and_b]{joint probability|P(A and B)} / P ( [p_b]{condition|P(B), must be greater than 0} )
+math/statistics_and_probability/confidence_interval | {}{interval|the range the mean is likely in} = [mean]{sample mean|average of the data} ± [] × [sd]{standard deviation|spread of the data} / √ ( [n]{sample size|how many values} )
+math/statistics_and_probability/correlation | {}{correlation|from -1 to 1, how the two lists move together} = cov ( [x]{first list|one number per pair} , [y]{second list|one number per pair} ) / ( [] ₓ · [] [] )
+math/statistics_and_probability/covariance | cov ( [x]{first list|one number per pair} , [y]{second list|one number per pair} ) = Σ ( [x]{first list|one number per pair} ᵢ − [] ) ( [y]{second list|one number per pair} ᵢ − [] ) / ( [] − 1 )
+math/statistics_and_probability/expected_value | [] [ [] ] = Σ [values]{values|the possible numbers} ᵢ · [probs]{probabilities|same length as the values, they add to 1} ᵢ
+math/statistics_and_probability/exponential_distribution | f ( [x]{value|zero or greater} ) = [lam]{rate|how many events per unit of time} · e ^ ( − [lam]{rate|how many events per unit of time} [x]{value|zero or greater} ) for [x]{value|zero or greater} ≥ 0
 math/statistics_and_probability/interquartile_range | IQR = [] − []
 math/statistics_and_probability/linear_regression | [] = [] [] + []
-math/statistics_and_probability/mean | mean ( [data] ) => {}
-math/statistics_and_probability/median | median ( [data] ) => {}
-math/statistics_and_probability/mode | mode ( [data] ) => {}
-math/statistics_and_probability/normal_distribution | f ( [x] ) = e ^ ( − ( [x] − [] ) ² / 2 [] ² ) / ( [] √ ( 2 π ) )
-math/statistics_and_probability/p_value | p-value ( [z] ) => {}
-math/statistics_and_probability/percentile | [data] ₖ => {}
-math/statistics_and_probability/poisson_distribution | P ( [] = [k] ) = [lam] ᵏ · e ^ ( − [lam] ) / [k] !
+math/statistics_and_probability/mean | mean ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/median | median ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/mode | mode ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/normal_distribution | f ( [x]{value|where you read the curve} ) = e ^ ( − ( [x]{value|where you read the curve} − [] ) ² / 2 [] ² ) / ( [] √ ( 2 π ) )
+math/statistics_and_probability/p_value | p-value ( [z]{z score|how many standard deviations from the mean} ) => {}
+math/statistics_and_probability/percentile | [data]{data|the list of numbers} ₖ => {}
+math/statistics_and_probability/poisson_distribution | P ( [] = [k]{count|0, 1, 2, ...} ) = [lam]{average count|the expected number} ᵏ · e ^ ( − [lam]{average count|the expected number} ) / [k]{count|0, 1, 2, ...} !
 math/statistics_and_probability/probability | P ( [] ) => {}
-math/statistics_and_probability/quartiles | quartiles ( [data] ) => {}
-math/statistics_and_probability/range | range ( [data] ) => {}
-math/statistics_and_probability/sample_standard_deviation | {} = √ ( [] ² )
-math/statistics_and_probability/sample_variance | {} ² = Σ ( [data] ᵢ − [] ) ² / ( [] − 1 )
-math/statistics_and_probability/standard_deviation | {} = √ ( [] ² )
-math/statistics_and_probability/t_test_statistic | {} = ( [mean] − [mu0] ₀ ) / ( [s] / √ [n] )
-math/statistics_and_probability/uniform_distribution | f ( [x] ) = 1 / ( [b] − [a] ) for [a] ≤ [x] ≤ [b] , else 0
-math/statistics_and_probability/variance | {} ² = Σ ( [data] ᵢ − [] ) ² / []
+math/statistics_and_probability/quartiles | quartiles ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/range | range ( [data]{data|the list of numbers} ) => {}
+math/statistics_and_probability/sample_standard_deviation | {}{sample standard deviation|spread, dividing by n - 1} = √ ( [] ² )
+math/statistics_and_probability/sample_variance | {}{sample variance|spread squared, dividing by n - 1} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / ( [] − 1 )
+math/statistics_and_probability/standard_deviation | {}{standard deviation|the usual spread of the numbers} = √ ( [] ² )
+math/statistics_and_probability/t_test_statistic | {}{t statistic|how far the mean is from the claimed value} = ( [mean]{sample mean|average of the data} − [mu0]{claimed mean|the value being tested} ₀ ) / ( [s]{sample standard deviation|spread of the data} / √ [n]{sample size|how many values} )
+math/statistics_and_probability/uniform_distribution | f ( [x]{value|where you read the density} ) = 1 / ( [b]{high end|the largest possible value} − [a]{low end|the smallest possible value} ) for [a]{low end|the smallest possible value} ≤ [x]{value|where you read the density} ≤ [b]{high end|the largest possible value} , else 0
+math/statistics_and_probability/variance | {}{variance|the square of the standard deviation} ² = Σ ( [data]{data|the list of numbers} ᵢ − [] ) ² / []
 math/statistics_and_probability/variance_of_random_variable | Var ( [] ) = [] [ [] ² ] − ( [] [ [] ] ) ²
-math/statistics_and_probability/z_score | {} = ( [x] − [mean] ) / [sd]
+math/statistics_and_probability/z_score | {}{z score|how many standard deviations x is from the mean} = ( [x]{value|the number you measured} − [mean]{mean|the average} ) / [sd]{standard deviation|the spread}
 math/topology/basis_of_topology | ℬ ( [B] )
 math/topology/boundary | ∂ [A]
 math/topology/cauchy_sequence | ( [terms] ₙ )
@@ -427,89 +429,89 @@ math/trigonometry/secant | sec [theta] = 1 / cos [theta]
 math/trigonometry/sine | sin [theta] = [] / []
 math/trigonometry/tangent | tan [theta] = sin [theta] / cos [theta]
 math/trigonometry/two_argument_arctangent | atan2 ( [y] , [x] ) => {}
-physics/physics/acceleration | {} = [delta_v] / [t]
-physics/physics/bernoulli_equation | {} = [P1] + ½ × [rho] × ( [v1] ² − [v2] ² ) + [rho] × g × ( [h1] − [h2] )
-physics/physics/bohr_energy_level | {} = − 13.6 eV × Z ² / [n] ²
-physics/physics/brewster_angle | tan ( {} ) = [n2] / [n1]
-physics/physics/buoyant_force | {} = [rho] × g × [V]
-physics/physics/capacitance | {} = [C] × [V]
-physics/physics/centripetal_acceleration | {} = [v] ² / [r]
-physics/physics/compton_shift | {} = h / ( m × c ) × ( 1 − cos ( [theta] ) )
-physics/physics/continuity_equation | [A1] × [v1] = [A2] × {}
+physics/physics/acceleration | {}{acceleration|metres per second squared} = [delta_v]{change in velocity|metres per second} / [t]{time|seconds}
+physics/physics/bernoulli_equation | {}{downstream pressure|pascals} = [P1]{upstream pressure|pascals} + ½ × [rho]{density|kilograms per cubic metre} × ( [v1]{upstream speed|metres per second} ² − [v2]{downstream speed|metres per second} ² ) + [rho]{density|kilograms per cubic metre} × g{gravity|9.81 m/s2} × ( [h1]{upstream height|metres} − [h2]{downstream height|metres} )
+physics/physics/bohr_energy_level | {}{energy level|electron-volts} = − 13.6 eV × Z{atomic number|1 for hydrogen} ² / [n]{level number|1, 2, 3, ...} ²
+physics/physics/brewster_angle | tan ( {}{Brewster angle|radians} ) = [n2]{second refractive index|where the light goes} / [n1]{first refractive index|where the light starts}
+physics/physics/buoyant_force | {}{buoyant force|newtons, upward} = [rho]{fluid density|kilograms per cubic metre} × g{gravity|9.81 m/s2} × [V]{displaced volume|cubic metres}
+physics/physics/capacitance | {}{charge|coulombs} = [C]{capacitance|farads} × [V]{voltage|volts}
+physics/physics/centripetal_acceleration | {}{centripetal acceleration|metres per second squared, toward the centre} = [v]{speed|metres per second} ² / [r]{radius|metres}
+physics/physics/compton_shift | {}{wavelength shift|metres} = h{Planck constant|6.626e-34 J s} / ( m{electron mass|kilograms} × c{speed of light|299792458 m/s} ) × ( 1 − cos ( [theta]{scatter angle|radians} ) )
+physics/physics/continuity_equation | [A1]{upstream area|square metres} × [v1]{upstream speed|metres per second} = [A2]{downstream area|square metres} × {}{downstream speed|metres per second}
 physics/physics/navier_stokes_equation | @stack ρ{density|mass of fluid in each unit of volume (kg/m³)} ( ∂{change in time|how fast the velocity u changes at one point (∂u/∂t)} u / ∂ t{time|seconds} + ( u{velocity|speed and direction of the fluid, u = (u, v, w)} · ∇{gradient|how a quantity changes from place to place} ) u ) ={balance|left side: density × the fluid's acceleration; right side: the forces on it} − ∇{gradient|the direction in which the pressure rises fastest} p{pressure|force on each unit of area (Pa)} + μ{viscosity|how sticky the fluid is, its internal friction (Pa·s)} ∇{Laplacian|∇² adds up the second derivatives: how different u is from its neighbours} ² u + f{outside force|pushes on each volume of fluid from outside, such as gravity (N/m³)}
 physics/physics/navier_stokes_x_momentum | @stack ρ{density|mass of fluid in each unit of volume (kg/m³)} ( ∂{change in time|how fast the velocity u changes at one point (∂u/∂t)} u / ∂ t{time|seconds} + u{velocity along x|carries the fluid along x, so u changes along x too} ∂ u / ∂ x + v{velocity along y|carries the fluid along y, so u changes along y too} ∂ u / ∂ y + w{velocity along z|carries the fluid along z, so u changes along z too} ∂ u / ∂ z ) ={balance|left side: density × the fluid's acceleration; right side: the forces on it} − ∂{pressure change|the push on the fluid along x comes from pressure that changes along x} p{pressure|force on each unit of area (Pa)} / ∂ x + μ{viscosity|how sticky the fluid is, its internal friction (Pa·s)} ( ∂{second derivative|how u curves along x: friction smooths it out} ² u / ∂ x ² + ∂{second derivative|how u curves along y: friction smooths it out} ² u / ∂ y ² + ∂{second derivative|how u curves along z: friction smooths it out} ² u / ∂ z ² ) + f{outside force|pushes on each volume of fluid from outside, such as gravity (N/m³)} {sub:x|direction|the outside force along x}
 physics/physics/navier_stokes_y_momentum | @stack ρ{density|mass of fluid in each unit of volume (kg/m³)} ( ∂{change in time|how fast the velocity v changes at one point (∂v/∂t)} v / ∂ t{time|seconds} + u{velocity along x|carries the fluid along x, so v changes along x too} ∂ v / ∂ x + v{velocity along y|carries the fluid along y, so v changes along y too} ∂ v / ∂ y + w{velocity along z|carries the fluid along z, so v changes along z too} ∂ v / ∂ z ) ={balance|left side: density × the fluid's acceleration; right side: the forces on it} − ∂{pressure change|the push on the fluid along y comes from pressure that changes along y} p{pressure|force on each unit of area (Pa)} / ∂ y + μ{viscosity|how sticky the fluid is, its internal friction (Pa·s)} ( ∂{second derivative|how v curves along x: friction smooths it out} ² v / ∂ x ² + ∂{second derivative|how v curves along y: friction smooths it out} ² v / ∂ y ² + ∂{second derivative|how v curves along z: friction smooths it out} ² v / ∂ z ² ) + f{outside force|pushes on each volume of fluid from outside, such as gravity (N/m³)} {sub:y|direction|the outside force along y}
 physics/physics/navier_stokes_z_momentum | @stack ρ{density|mass of fluid in each unit of volume (kg/m³)} ( ∂{change in time|how fast the velocity w changes at one point (∂w/∂t)} w / ∂ t{time|seconds} + u{velocity along x|carries the fluid along x, so w changes along x too} ∂ w / ∂ x + v{velocity along y|carries the fluid along y, so w changes along y too} ∂ w / ∂ y + w{velocity along z|carries the fluid along z, so w changes along z too} ∂ w / ∂ z ) ={balance|left side: density × the fluid's acceleration; right side: the forces on it} − ∂{pressure change|the push on the fluid along z comes from pressure that changes along z} p{pressure|force on each unit of area (Pa)} / ∂ z + μ{viscosity|how sticky the fluid is, its internal friction (Pa·s)} ( ∂{second derivative|how w curves along x: friction smooths it out} ² w / ∂ x ² + ∂{second derivative|how w curves along y: friction smooths it out} ² w / ∂ y ² + ∂{second derivative|how w curves along z: friction smooths it out} ² w / ∂ z ² ) + f{outside force|pushes on each volume of fluid from outside, such as gravity (N/m³)} {sub:z|direction|the outside force along z}
 physics/physics/navier_stokes_continuity | @stack ∂{change of u|how much u changes along x} u / ∂ x + ∂{change of v|how much v changes along y} v / ∂ y + ∂{change of w|how much w changes along z} w / ∂ z ={equals zero|the flow neither squeezes nor creates fluid} 0
-physics/physics/coulomb_s_law | {} = kₑ × [q1] × [q2] / [r] ²
-physics/physics/critical_angle | sin ( {} ) = [n2] / [n1]
-physics/physics/cyclotron_radius | {} = [m] × [v] / ( | [q] | × [B] )
-physics/physics/de_broglie_wavelength | {} = h / ( [m] × [v] )
-physics/physics/density | {} = [m] / [V]
-physics/physics/diffraction_grating | [d] × sin ( {} ) = [m] × [wavelength]
-physics/physics/displacement | {} = [u] × [t] + ½ × [a] × [t] ²
-physics/physics/double_slit_fringe_spacing | {} = [wavelength] × [L] / [d]
-physics/physics/electric_power | {} = [V] × [I]
-physics/physics/energy_momentum_relation | {} ² = ( [p] × c ) ² + ( [m] × c ² ) ²
-physics/physics/faradays_law | {} = − [N] × [delta_flux] / [dt]
-physics/physics/final_velocity | {} = [u] + [a] × [t]
-physics/physics/frequency | {} = 1 / [T]
-physics/physics/gravitation | {} = G × [m1] × [m2] / [r] ²
-physics/physics/gravitational_time_dilation | {} = [dt] × √ ( 1 − 2 × G × [M] / ( [r] × c ² ) )
-physics/physics/heat | {} = [m] × [c] × [delta_T]
-physics/physics/heisenberg_uncertainty | [delta_x] × {} ≥ ħ / 2
-physics/physics/hooke_s_law | {} = − [k] × [x]
-physics/physics/hydraulic_press | {} = [F1] × [A2] / [A1]
-physics/physics/hydrostatic_pressure | {} = [rho] × g × [h]
-physics/physics/ideal_gas_law | {} = ( [n] × R × [T] ) / [V]
-physics/physics/impulse | {} = [F] × [dt]
-physics/physics/inductor_energy | {} = ½ × [L] × [I] ²
-physics/physics/kinetic_energy | {} = ½ × [m] × [v] ²
-physics/physics/length_contraction | {} = [L0] × √ ( 1 − [v] ² / c ² )
-physics/physics/lens_magnification | {} = − [d_i] / [d_o]
-physics/physics/lensmakers_equation | 1 / {} = ( [n] − 1 ) × ( 1 / [R1] − 1 / [R2] )
-physics/physics/lorentz_factor | {} = 1 / √ ( 1 − [v] ² / c ² )
-physics/physics/magnetic_field_solenoid | {} = μ₀ × [n] × [I]
-physics/physics/magnetic_field_straight_wire | {} = μ₀ × [I] / ( 2 π × [r] )
-physics/physics/magnetic_flux | {} = [B] × [A] × cos ( [theta] )
-physics/physics/magnetic_force_on_charge | {} = [q] × [v] × [B] × sin ( [theta] )
-physics/physics/magnetic_force_on_wire | {} = [B] × [I] × [L] × sin ( [theta] )
-physics/physics/malus_law | {} = [I0] × cos ( [theta] ) ²
-physics/physics/mass_energy_equivalence | {} = [m] × c ²
-physics/physics/momentum | {} = [m] × [v]
-physics/physics/motional_emf | {} = [B] × [L] × [v]
-physics/physics/newton_s_second_law | {} = [m] × [a]
-physics/physics/ohm_s_law | {} = [I] × [R]
-physics/physics/particle_in_a_box | {} = [n] ² × h ² / ( 8 × [m] × [L] ² )
-physics/physics/pendulum_period | {} = 2 π √ ( [L] / g )
-physics/physics/photoelectric_effect | {} = h × [f] − [work_function]
-physics/physics/photon_energy | {} = h × [f]
-physics/physics/photon_momentum | {} = h / [wavelength]
-physics/physics/poiseuille_flow | {} = π × [r] ⁴ × [delta_P] / ( 8 × [mu] × [L] )
-physics/physics/potential_energy | {} = [m] × g × [h]
-physics/physics/power_physics | {} = [W] / [t]
-physics/physics/pressure | {} = [F] / [A]
-physics/physics/quantum_harmonic_oscillator | {} = ħ × [omega] × ( [n] + ½ )
-physics/physics/refractive_index | {} = c / [v]
-physics/physics/relativistic_doppler | {} = [f0] × √ ( ( 1 − β ) / ( 1 + β ) ) , β = [v] / c
-physics/physics/relativistic_kinetic_energy | {} = ( γ − 1 ) × [m] × c ²
-physics/physics/relativistic_momentum | {} = [m] × [v] / √ ( 1 − [v] ² / c ² )
-physics/physics/relativistic_velocity_addition | {} = ( [u] + [v] ) / ( 1 + [u] × [v] / c ² )
-physics/physics/resistors_in_parallel | 1 / {} = Σ 1 / [resistors] ᵢ
-physics/physics/resistors_in_series | [resistors] ₁ + [] ₂ + … => {}
-physics/physics/reynolds_number | {} = [rho] × [v] × [L] / [mu]
-physics/physics/rydberg_formula | 1 / {} = R × Z ² × ( 1 / [n1] ² − 1 / [n2] ² )
-physics/physics/schwarzschild_radius | {} = 2 × G × [M] / c ²
-physics/physics/self_induced_emf | {} = − [L] × [delta_I] / [dt]
-physics/physics/snell_s_law | [n1] × sin ( [theta1] ) = [n2] × sin ( {} )
-physics/physics/stokes_drag | {} = 6 π × [mu] × [r] × [v]
-physics/physics/thin_lens_equation | 1 / [f] = 1 / [d_o] + 1 / {}
-physics/physics/time_dilation | {} = [dt0] / √ ( 1 − [v] ² / c ² )
-physics/physics/torque | {} = [r] × [F] × sin ( [theta] )
-physics/physics/torricelli_speed | {} = √ ( 2 × g × [h] )
-physics/physics/velocity | {} = [d] / [t]
-physics/physics/velocity_squared | {} = √ ( [u] ² + 2 × [a] × [s] )
-physics/physics/volume_flow_rate | {} = [A] × [v]
-physics/physics/wave_speed | {} = [f] × [wavelength]
-physics/physics/weight | {} = [m] × g
-physics/physics/work | {} = [F] × [d]
+physics/physics/coulomb_s_law | {}{electric force|newtons} = kₑ × [q1]{first charge|coulombs} × [q2]{second charge|coulombs} / [r]{separation|metres} ²
+physics/physics/critical_angle | sin ( {}{critical angle|radians, for total reflection} ) = [n2]{rarer index|must be smaller than n1} / [n1]{denser index|the side the light starts in}
+physics/physics/cyclotron_radius | {}{orbit radius|metres} = [m]{mass|kilograms} × [v]{speed|metres per second} / ( | [q]{charge|coulombs} | × [B]{magnetic field|tesla} )
+physics/physics/de_broglie_wavelength | {}{wavelength|metres} = h{Planck constant|6.626e-34 J s} / ( [m]{mass|kilograms} × [v]{speed|metres per second} )
+physics/physics/density | {}{density|kilograms per cubic metre} = [m]{mass|kilograms} / [V]{volume|cubic metres}
+physics/physics/diffraction_grating | [d]{slit spacing|metres} × sin ( {}{diffraction angle|radians} ) = [m]{order|0, 1, 2, ...} × [wavelength]{wavelength|metres}
+physics/physics/displacement | {}{displacement|metres} = [u]{starting speed|metres per second} × [t]{time|seconds} + ½ × [a]{acceleration|metres per second squared} × [t]{time|seconds} ²
+physics/physics/double_slit_fringe_spacing | {}{fringe spacing|metres on the screen} = [wavelength]{wavelength|metres} × [L]{screen distance|metres} / [d]{slit separation|metres}
+physics/physics/electric_power | {}{power|watts} = [V]{voltage|volts} × [I]{current|amperes}
+physics/physics/energy_momentum_relation | {}{total energy|joules} ² = ( [p]{momentum|kg m/s} × c{speed of light|299792458 m/s} ) ² + ( [m]{rest mass|kilograms} × c{speed of light|299792458 m/s} ² ) ²
+physics/physics/faradays_law | {}{induced emf|volts} = − [N]{number of turns|how many loops} × [delta_flux]{flux change|webers} / [dt]{time taken|seconds}
+physics/physics/final_velocity | {}{final speed|metres per second} = [u]{starting speed|metres per second} + [a]{acceleration|metres per second squared} × [t]{time|seconds}
+physics/physics/frequency | {}{frequency|hertz, cycles per second} = 1 / [T]{period|seconds for one cycle}
+physics/physics/gravitation | {}{force|newtons, the pull between the masses} = G{gravitational constant|6.674e-11 N m2/kg2} × [m1]{first mass|kilograms} × [m2]{second mass|kilograms} / [r]{separation|metres between the centres} ²
+physics/physics/gravitational_time_dilation | {}{clock time|seconds on the clock near the mass} = [dt]{far-away time|seconds measured far from the mass} × √ ( 1 − 2 × G{gravitational constant|6.674e-11 N m2/kg2} × [M]{mass|kilograms} / ( [r]{distance|metres from the centre, outside the horizon} × c{speed of light|299792458 m/s} ² ) )
+physics/physics/heat | {}{heat|joules} = [m]{mass|kilograms} × [c]{specific heat|joules per kilogram per kelvin} × [delta_T]{temperature change|kelvin}
+physics/physics/heisenberg_uncertainty | [delta_x]{position uncertainty|metres} × {}{momentum uncertainty|smallest possible, kg m/s} ≥ ħ / 2
+physics/physics/hooke_s_law | {}{restoring force|newtons, back toward the rest point} = − [k]{spring constant|newtons per metre} × [x]{stretch|metres from the rest point}
+physics/physics/hydraulic_press | {}{output force|newtons} = [F1]{input force|newtons} × [A2]{output area|square metres} / [A1]{input area|square metres}
+physics/physics/hydrostatic_pressure | {}{pressure|pascals, from the fluid alone} = [rho]{density|kilograms per cubic metre} × g{gravity|9.81 m/s2} × [h]{depth|metres}
+physics/physics/ideal_gas_law | {}{pressure|pascals} = ( [n]{amount of gas|moles} × R{gas constant|8.314 J/(mol K)} × [T]{temperature|kelvin} ) / [V]{volume|cubic metres}
+physics/physics/impulse | {}{impulse|newton seconds, the change in momentum} = [F]{force|newtons} × [dt]{time|seconds the force acts}
+physics/physics/inductor_energy | {}{stored energy|joules} = ½ × [L]{inductance|henries} × [I]{current|amperes} ²
+physics/physics/kinetic_energy | {}{kinetic energy|joules} = ½ × [m]{mass|kilograms} × [v]{speed|metres per second} ²
+physics/physics/length_contraction | {}{moving length|metres, in the direction of motion} = [L0]{rest length|metres} × √ ( 1 − [v]{speed|metres per second} ² / c{speed of light|299792458 m/s} ² )
+physics/physics/lens_magnification | {}{magnification|negative means the image is upside down} = − [d_i]{image distance|metres} / [d_o]{object distance|metres}
+physics/physics/lensmakers_equation | 1 / {}{focal length|metres} = ( [n]{refractive index|of the lens glass} − 1 ) × ( 1 / [R1]{first radius|metres, sign by the sign convention} − 1 / [R2]{second radius|metres} )
+physics/physics/lorentz_factor | {}{Lorentz factor|how much time and mass stretch} = 1 / √ ( 1 − [v]{speed|metres per second, less than light} ² / c{speed of light|299792458 m/s} ² )
+physics/physics/magnetic_field_solenoid | {}{magnetic field|tesla, inside the coil} = μ₀ × [n]{turns per metre|how tightly the wire is wound} × [I]{current|amperes}
+physics/physics/magnetic_field_straight_wire | {}{magnetic field|tesla} = μ₀ × [I]{current|amperes} / ( 2 π × [r]{distance|metres from the wire} )
+physics/physics/magnetic_flux | {}{flux|webers} = [B]{magnetic field|tesla} × [A]{area|square metres} × cos ( [theta]{angle|radians, between the field and the normal} )
+physics/physics/magnetic_force_on_charge | {}{force|newtons} = [q]{charge|coulombs} × [v]{speed|metres per second} × [B]{magnetic field|tesla} × sin ( [theta]{angle|radians, between velocity and field} )
+physics/physics/magnetic_force_on_wire | {}{force|newtons} = [B]{magnetic field|tesla} × [I]{current|amperes} × [L]{length|metres of wire in the field} × sin ( [theta]{angle|radians, between the wire and the field} )
+physics/physics/malus_law | {}{transmitted intensity|watts per square metre} = [I0]{starting intensity|watts per square metre} × cos ( [theta]{angle|radians between the two polariser axes} ) ²
+physics/physics/mass_energy_equivalence | {}{energy|joules} = [m]{mass|kilograms} × c{speed of light|299792458 m/s} ²
+physics/physics/momentum | {}{momentum|kg m/s} = [m]{mass|kilograms} × [v]{velocity|metres per second}
+physics/physics/motional_emf | {}{induced emf|volts} = [B]{magnetic field|tesla} × [L]{rod length|metres} × [v]{speed|metres per second across the field}
+physics/physics/newton_s_second_law | {}{force|newtons} = [m]{mass|kilograms} × [a]{acceleration|metres per second squared}
+physics/physics/ohm_s_law | {}{voltage|volts} = [I]{current|amperes} × [R]{resistance|ohms}
+physics/physics/particle_in_a_box | {}{energy|joules} = [n]{level number|1, 2, 3, ...} ² × h{Planck constant|6.626e-34 J s} ² / ( 8 × [m]{mass|kilograms} × [L]{box width|metres} ² )
+physics/physics/pendulum_period | {}{period|seconds for one swing} = 2 π √ ( [L]{length|metres of the string} / g{gravity|9.81 m/s2} )
+physics/physics/photoelectric_effect | {}{maximum kinetic energy|joules of the freed electron, or 0} = h{Planck constant|6.626e-34 J s} × [f]{light frequency|hertz} − [work_function]{work function|joules to free one electron}
+physics/physics/photon_energy | {}{photon energy|joules} = h{Planck constant|6.626e-34 J s} × [f]{frequency|hertz}
+physics/physics/photon_momentum | {}{photon momentum|kg m/s} = h{Planck constant|6.626e-34 J s} / [wavelength]{wavelength|metres}
+physics/physics/poiseuille_flow | {}{volume flow|cubic metres per second} = π × [r]{pipe radius|metres} ⁴ × [delta_P]{pressure drop|pascals along the pipe} / ( 8 × [mu]{viscosity|pascal seconds} × [L]{pipe length|metres} )
+physics/physics/potential_energy | {}{potential energy|joules} = [m]{mass|kilograms} × g{gravity|9.81 m/s2} × [h]{height|metres}
+physics/physics/power_physics | {}{power|watts} = [W]{work|joules} / [t]{time|seconds}
+physics/physics/pressure | {}{pressure|pascals} = [F]{force|newtons} / [A]{area|square metres}
+physics/physics/quantum_harmonic_oscillator | {}{energy|joules} = ħ × [omega]{angular frequency|radians per second} × ( [n]{level number|0, 1, 2, ...} + ½ )
+physics/physics/refractive_index | {}{refractive index|how much the material slows light} = c{speed of light|299792458 m/s} / [v]{speed in the material|metres per second}
+physics/physics/relativistic_doppler | {}{observed frequency|hertz} = [f0]{proper frequency|hertz of the source} × √ ( ( 1 − β ) / ( 1 + β ) ) , β = [v]{speed|metres per second, positive when receding} / c{speed of light|299792458 m/s}
+physics/physics/relativistic_kinetic_energy | {}{kinetic energy|joules above the rest energy} = ( γ − 1 ) × [m]{rest mass|kilograms} × c{speed of light|299792458 m/s} ²
+physics/physics/relativistic_momentum | {}{momentum|kg m/s} = [m]{rest mass|kilograms} × [v]{speed|metres per second} / √ ( 1 − [v]{speed|metres per second} ² / c{speed of light|299792458 m/s} ² )
+physics/physics/relativistic_velocity_addition | {}{combined speed|metres per second} = ( [u]{first speed|metres per second} + [v]{second speed|metres per second, in the same direction} ) / ( 1 + [u]{first speed|metres per second} × [v]{second speed|metres per second, in the same direction} / c{speed of light|299792458 m/s} ² )
+physics/physics/resistors_in_parallel | 1 / {}{total resistance|ohms} = Σ 1 / [resistors]{resistances|ohms, one number for each resistor} ᵢ
+physics/physics/resistors_in_series | [resistors]{resistances|ohms, one number for each resistor} ₁ + [] ₂ + … => {}
+physics/physics/reynolds_number | {}{Reynolds number|small means smooth flow, large means turbulent} = [rho]{density|kilograms per cubic metre} × [v]{speed|metres per second} × [L]{size|metres, a length of the object} / [mu]{viscosity|pascal seconds}
+physics/physics/rydberg_formula | 1 / {}{wavelength|metres of the emitted light} = R{Rydberg constant|1.097e7 per metre} × Z{atomic number|1 for hydrogen} ² × ( 1 / [n1]{lower level|1, 2, 3, ...} ² − 1 / [n2]{upper level|greater than n1} ² )
+physics/physics/schwarzschild_radius | {}{horizon radius|metres} = 2 × G{gravitational constant|6.674e-11 N m2/kg2} × [M]{mass|kilograms} / c{speed of light|299792458 m/s} ²
+physics/physics/self_induced_emf | {}{induced emf|volts} = − [L]{inductance|henries} × [delta_I]{current change|amperes} / [dt]{time taken|seconds}
+physics/physics/snell_s_law | [n1]{first index|where the light starts} × sin ( [theta1]{incoming angle|radians} ) = [n2]{second index|where the light goes} × sin ( {}{refracted angle|radians} )
+physics/physics/stokes_drag | {}{drag force|newtons} = 6 π × [mu]{viscosity|pascal seconds} × [r]{sphere radius|metres} × [v]{speed|metres per second}
+physics/physics/thin_lens_equation | 1 / [f]{focal length|metres} = 1 / [d_o]{object distance|metres} + 1 / {}{image distance|metres}
+physics/physics/time_dilation | {}{elapsed time|seconds for the stay-at-home clock} = [dt0]{proper time|seconds on the moving clock} / √ ( 1 − [v]{speed|metres per second} ² / c{speed of light|299792458 m/s} ² )
+physics/physics/torque | {}{torque|newton metres} = [r]{lever arm|metres} × [F]{force|newtons} × sin ( [theta]{angle|radians between the arm and the force} )
+physics/physics/torricelli_speed | {}{exit speed|metres per second} = √ ( 2 × g{gravity|9.81 m/s2} × [h]{depth|metres from the surface to the hole} )
+physics/physics/velocity | {}{velocity|metres per second} = [d]{displacement|metres} / [t]{time|seconds}
+physics/physics/velocity_squared | {}{final speed|metres per second} = √ ( [u]{starting speed|metres per second} ² + 2 × [a]{acceleration|metres per second squared} × [s]{distance|metres} )
+physics/physics/volume_flow_rate | {}{volume flow|cubic metres per second} = [A]{area|square metres} × [v]{speed|metres per second}
+physics/physics/wave_speed | {}{wave speed|metres per second} = [f]{frequency|hertz} × [wavelength]{wavelength|metres}
+physics/physics/weight | {}{weight|newtons} = [m]{mass|kilograms} × g{gravity|9.81 m/s2}
+physics/physics/work | {}{work|joules} = [F]{force|newtons, along the motion} × [d]{distance|metres}

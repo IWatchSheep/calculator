@@ -19,6 +19,7 @@ PATTERN = '□ = □ × □ × cos ( □ )'
 CALC = 'ready'
 INPUTS = ['B', 'A', 'theta']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('flux', 'webers'), 2: ('magnetic field', 'tesla'), 4: ('area', 'square metres'), 8: ('angle', 'radians, between the field and the normal')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '×'), ('op', 'cos'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

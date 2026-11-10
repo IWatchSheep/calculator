@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['a', 'b']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, 0, 0, 0, 0, -1, 0, 0, -1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('hypotenuse', 'metres, the longest side'), 4: ('leg a', 'metres'), 7: ('leg b', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('box', ''), ('op', '2'), ('op', '+'), ('box', ''), ('op', '2'), ('op', ')')]      # cards left of "="
 RIGHT = []

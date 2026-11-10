@@ -4,7 +4,7 @@ Generated from the real files by `make_operator_keys.py` (run it from the projec
 
 | File | What it holds |
 |---|---|
-| `operator_keys.json` | all 512 operators, one object each (see fields below) |
+| `operator_keys.json` | all 514 operators, one object each (see fields below) |
 | `operator_keys.tsv` | the same, flat (key, name, symbol, category, subcategory, formula, status, arity, max_args, inputs, compute_signature) |
 | `rust_key_mismatch_map.json` | the Rust port's current keys that do not exist in Python -> the Python key to rename them to |
 
@@ -37,7 +37,7 @@ python operator_keys/make_rust_layouts.py    # rust_calculator/src/layouts.rs: h
 cd rust_calculator && cargo test --release
 ```
 
-All 446 Ready operators and all 66 Reference operators exist in Rust (`rust_todo.json` is empty).
+All 446 Ready operators and all 68 Reference operators exist in Rust (`rust_todo.json` is empty).
 
 | File (in `rust_calculator/tests/`) | What it holds |
 |---|---|

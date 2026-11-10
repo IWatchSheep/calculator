@@ -69,6 +69,22 @@ SPECS = {
         "joins": ["+", "="],
         "links": [((1, (0,)), (0, (0,))), ((1, (1,)), (0, (1,)))],
     },
+    "math/differential_geometry_and_tensors/exterior_derivative": {
+        "title": "Exterior derivative. Row 1 is the product rule: d of f dx equals df wedged with dx. Row 2 says applying d twice gives the zero form.",
+        "rows": [
+            {"op": "math/differential_geometry_and_tensors/exterior_derivative", "title": "Product rule: d(f dx) = df ∧ dx"},
+            {"op": "math/differential_geometry_and_tensors/exterior_derivative_nilpotent", "title": "Nilpotent: d of d is zero"},
+        ],
+        "joins": ["="],
+    },
+    "math/abstract_algebra/direct_sum": {
+        "title": "Direct sum of two vector spaces. Row 1 is the sum A ⊕ B. Row 2 says its dimension is the sum of the two dimensions.",
+        "rows": [
+            {"op": "math/abstract_algebra/direct_sum", "title": "The sum: pairs (a, b) with component-wise operations"},
+            {"op": "math/abstract_algebra/direct_sum_dimension", "title": "Dimension: dim(A ⊕ B) = dim A + dim B"},
+        ],
+        "joins": ["="],
+    },
     "physics/physics/navier_stokes_equation": {
         "title": "Navier–Stokes equations for an incompressible fluid. u = (u, v, w) is the velocity of the fluid, ρ its density, μ its viscosity, p the pressure and f an outside force on each volume of fluid, such as gravity. Row 1 says: density × the fluid's acceleration = the push from pressure differences (−∇p) + the friction between layers of fluid (μ∇²u) + the outside force (f). The acceleration has two parts: ∂u/∂t is how the velocity changes in time at one point, and (u·∇)u is the change from being carried along by the flow. Rows 2, 3 and 4 are Row 1 written out for the x, y and z directions. Row 5, continuity, says ∂u/∂x + ∂v/∂y + ∂w/∂z = 0: the flow neither squeezes nor creates fluid. Each row is one equation, drawn on the same rows and columns as its diagram. Reference only: nothing is calculated.",
         "rows": [

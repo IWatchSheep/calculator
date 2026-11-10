@@ -19,6 +19,7 @@ PATTERN = '□ = □ + □ × □'
 CALC = 'ready'
 INPUTS = ['u', 'a', 't']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('final speed', 'metres per second'), 2: ('starting speed', 'metres per second'), 4: ('acceleration', 'metres per second squared'), 6: ('time', 'seconds')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '+'), ('box', ''), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

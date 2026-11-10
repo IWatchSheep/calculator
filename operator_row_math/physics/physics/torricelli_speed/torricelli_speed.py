@@ -19,6 +19,7 @@ PATTERN = '□ = √ ( 2 × g × □ )'
 CALC = 'ready'
 INPUTS = ['h']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('exit speed', 'metres per second'), 6: ('gravity', '9.81 m/s2'), 8: ('depth', 'metres from the surface to the hole')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('op', '2'), ('op', '×'), ('op', 'g'), ('op', '×'), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

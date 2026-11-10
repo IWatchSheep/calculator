@@ -19,6 +19,7 @@ PATTERN = '□ = 2 × π × □'
 CALC = 'ready'
 INPUTS = ['r']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('circumference', 'metres around the circle'), 6: ('radius', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '2'), ('op', '×'), ('op', 'π'), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []

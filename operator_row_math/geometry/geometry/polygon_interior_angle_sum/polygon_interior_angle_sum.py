@@ -19,6 +19,7 @@ PATTERN = '( □ − 2 ) · 180 ° = □'
 CALC = 'ready'
 INPUTS = ['n']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {1: ('number of sides', '3 or more')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '('), ('box', ''), ('op', '−'), ('op', '2'), ('op', ')'), ('op', '·'), ('op', '180'), ('op', '°')]      # cards left of "="
 RIGHT = [('box', '')]

@@ -103,6 +103,26 @@ static LAPLACE: Spec = Spec {
     links: &[((1, &[0]), (0, &[0])), ((1, &[1]), (0, &[1]))],
 };
 
+static EXTERIOR: Spec = Spec {
+    title: "Exterior derivative. Row 1 is the product rule: d of f dx equals df wedged with dx. Row 2 says applying d twice gives the zero form.",
+    rows: &[
+        RowSpec { title: "Product rule: d(f dx) = df ∧ dx", node: NodeSpec { op: "math/differential_geometry_and_tensors/exterior_derivative", fill: &[] } },
+        RowSpec { title: "Nilpotent: d of d is zero", node: NodeSpec { op: "math/differential_geometry_and_tensors/exterior_derivative_nilpotent", fill: &[] } },
+    ],
+    joins: &["="],
+    links: &[],
+};
+
+static DIRECT_SUM: Spec = Spec {
+    title: "Direct sum of two vector spaces. Row 1 is the sum A ⊕ B. Row 2 says its dimension is the sum of the two dimensions.",
+    rows: &[
+        RowSpec { title: "The sum: pairs (a, b) with component-wise operations", node: NodeSpec { op: "math/abstract_algebra/direct_sum", fill: &[] } },
+        RowSpec { title: "Dimension: dim(A ⊕ B) = dim A + dim B", node: NodeSpec { op: "math/abstract_algebra/direct_sum_dimension", fill: &[] } },
+    ],
+    joins: &["="],
+    links: &[],
+};
+
 static NAVIER_STOKES: Spec = Spec {
     title: "Navier–Stokes equations for an incompressible fluid. u = (u, v, w) is the velocity of the fluid, ρ its density, μ its viscosity, p the pressure and f an outside force on each volume of fluid, such as gravity. Row 1 says: density × the fluid's acceleration = the push from pressure differences (−∇p) + the friction between layers of fluid (μ∇²u) + the outside force (f). The acceleration has two parts: ∂u/∂t is how the velocity changes in time at one point, and (u·∇)u is the change from being carried along by the flow. Rows 2, 3 and 4 are Row 1 written out for the x, y and z directions. Row 5, continuity, says ∂u/∂x + ∂v/∂y + ∂w/∂z = 0: the flow neither squeezes nor creates fluid. Each row is one equation, drawn on the same rows and columns as its diagram. Reference only: nothing is calculated.",
     rows: &[
@@ -123,6 +143,8 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/transforms_and_differential_equations/heat_equation" => &HEAT,
         "math/transforms_and_differential_equations/wave_equation" => &WAVE,
         "math/transforms_and_differential_equations/laplace_s_equation" => &LAPLACE,
+        "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
+        "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
         "math/constants_and_relations/open_bracket"
         | "math/constants_and_relations/close_bracket"

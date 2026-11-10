@@ -19,6 +19,7 @@ PATTERN = '□ × sin ( □ ) = □ × sin ( □ )'
 CALC = 'ready'
 INPUTS = ['n1', 'theta1', 'n2']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('first index', 'where the light starts'), 4: ('incoming angle', 'radians'), 7: ('second index', 'where the light goes'), 11: ('refracted angle', 'radians')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('box', ''), ('op', '×'), ('op', 'sin'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', '×'), ('op', 'sin'), ('op', '('), ('out', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

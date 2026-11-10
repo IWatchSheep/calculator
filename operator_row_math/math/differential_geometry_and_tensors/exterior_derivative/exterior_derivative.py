@@ -19,6 +19,7 @@ PATTERN = 'd ( □ d □ ) = d □ ∧ d □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('exterior derivative', 'sends a form to the form one degree higher'), 2: ('function', 'a smooth function'), 4: ('coordinate', 'the variable the form is written in'), 7: ('exterior derivative', 'sends a form to the form one degree higher'), 8: ('function', 'a smooth function'), 10: ('exterior derivative', 'sends a form to the form one degree higher'), 11: ('coordinate', 'the variable the form is written in')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'd'), ('op', '('), ('dec', ''), ('op', 'd'), ('dec', ''), ('op', ')'), ('op', '='), ('op', 'd'), ('dec', ''), ('op', '∧'), ('op', 'd'), ('dec', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

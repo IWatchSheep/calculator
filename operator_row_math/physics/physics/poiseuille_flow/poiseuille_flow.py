@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['r', 'delta_P', 'mu', 'L']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 LEVELS = [0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
+WORDS = {0: ('volume flow', 'cubic metres per second'), 4: ('pipe radius', 'metres'), 7: ('pressure drop', 'pascals along the pipe'), 12: ('viscosity', 'pascal seconds'), 14: ('pipe length', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', 'π'), ('op', '×'), ('box', ''), ('op', '4'), ('op', '×'), ('box', ''), ('op', '/'), ('op', '('), ('op', '8'), ('op', '×'), ('box', ''), ('op', '×'), ('box', ''), ('op', ')')]      # cards left of "="

@@ -1,7 +1,7 @@
 {
- "count": 512,
+ "count": 514,
  "ready": 446,
- "reference": 66,
+ "reference": 68,
  "operators": [
   {
    "key": "geometry/geometry/arc_length",
@@ -1713,6 +1713,31 @@
    "input_kinds": [],
    "row_calc": "reference",
    "pattern": "□ ⊕ □",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "math/abstract_algebra/direct_sum_dimension",
+   "name": "Direct sum: dimension",
+   "symbol": "dim(A ⊕ B)",
+   "category": "Math",
+   "subcategory": "Abstract algebra",
+   "formula": "dim(A ⊕ B) = dim A + dim B",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "dim ( A ⊕ B ) = dim A + dim B",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7373,6 +7398,31 @@
    "input_kinds": [],
    "row_calc": "reference",
    "pattern": "d ( □ d □ ) = d □ ∧ d □",
+   "compute_signature": "compute(*args)",
+   "compute_params": [
+    {
+     "name": "args",
+     "kind": "varargs"
+    }
+   ],
+   "required_args": 0,
+   "max_args": null,
+   "varargs": true,
+   "arity": 0,
+   "examples": []
+  },
+  {
+   "key": "math/differential_geometry_and_tensors/exterior_derivative_nilpotent",
+   "name": "Exterior derivative: d squared is zero",
+   "symbol": "d² = 0",
+   "category": "Math",
+   "subcategory": "Differential geometry and tensors",
+   "formula": "d² = 0",
+   "status": "Reference",
+   "inputs": [],
+   "input_kinds": [],
+   "row_calc": "reference",
+   "pattern": "d ² = 0",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {

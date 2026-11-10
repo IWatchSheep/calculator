@@ -19,6 +19,7 @@ PATTERN = '□ = 6 π × □ × □ × □'
 CALC = 'ready'
 INPUTS = ['mu', 'r', 'v']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('drag force', 'newtons'), 5: ('viscosity', 'pascal seconds'), 7: ('sphere radius', 'metres'), 9: ('speed', 'metres per second')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '6'), ('op', 'π'), ('op', '×'), ('box', ''), ('op', '×'), ('box', ''), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

@@ -30,9 +30,14 @@ KEEP = os.path.join(ROOT, "operator_pictures_one_line")      # the old one-line 
 
 
 def font(size):
-    for name, index in (("cambria.ttc", 0), ("georgia.ttf", 0), ("times.ttf", 0)):
+    for path in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        os.path.join(FONT_DIR, "segoeui.ttf"),
+        os.path.join(FONT_DIR, "cambria.ttc"),
+    ):
         try:
-            return ImageFont.truetype(os.path.join(FONT_DIR, name), size, index=index)
+            return ImageFont.truetype(path, size)
         except OSError:
             continue
     return ImageFont.load_default()
@@ -127,7 +132,7 @@ def redraw(key, source, dest):
     small_h = int(big * 0.6)
     probe = ImageDraw.Draw(Image.new("RGB", (10, 10)))
 
-    placed, bars, _end = _plan(n, levels, fracs)
+    placed, bars, _end = _plan(n, levels, fracs, bool(getattr(m, "STACK_EXPONENTS", False)))
 
     def width_of(i):
         if i in box_of:
@@ -162,10 +167,12 @@ def redraw(key, source, dest):
     band_h = int(y)
     formula_w = sum(colw) + gap * (columns - 1) + (sum(tail_w) + gap * len(tail_w) if tail else 0)
 
+    words = getattr(m, "WORDS", {})
+    word_rows = [(shown(left[i][1]), words[i][0], words[i][1]) for i in sorted(words) if i < n and i in placed]
     W = 1040 if style == "A" else max(int(formula_w) + 68, title_right + 34, 120)
     W = max(W, int(formula_w) + 68)
     single = box_h if style == "B" else 58
-    height = old.height + (band_h - single)
+    height = old.height + (band_h - single) + 18 * len(word_rows)
     out = Image.new("RGB", (W, height), "white")
     d = ImageDraw.Draw(out)
     head = 72 if style == "A" else 44
@@ -207,8 +214,11 @@ def redraw(key, source, dest):
         else:
             text(x + w / 2, cy, v, 0, 0)
         x += w + gap
+    f_word = font(15)
+    for n_line, (symbol, label, context) in enumerate(word_rows):
+        d.text((40, top_y + band_h + 8 + 18 * n_line), "%s   %s  -  %s" % (symbol, label, context), font=f_word, fill="#4a5a78")
     if desc is not None:
-        out.paste(desc, (36 + 2, top_y + band_h + 39))
+        out.paste(desc, (36 + 2, top_y + band_h + 39 + 18 * len(word_rows)))
     out.save(dest, "JPEG", quality=92)
 
 

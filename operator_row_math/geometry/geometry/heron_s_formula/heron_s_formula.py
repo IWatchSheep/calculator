@@ -19,6 +19,7 @@ PATTERN = '□ = √ ( s ( s − □ ) ( s − □ ) ( s − □ ) )'
 CALC = 'ready'
 INPUTS = ['a', 'b', 'c']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('area', 'square metres of the triangle'), 4: ('semi-perimeter', '(a + b + c) / 2, not typed'), 6: ('semi-perimeter', '(a + b + c) / 2, not typed'), 8: ('side a', 'metres'), 11: ('semi-perimeter', '(a + b + c) / 2, not typed'), 13: ('side b', 'metres'), 16: ('semi-perimeter', '(a + b + c) / 2, not typed'), 18: ('side c', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '√'), ('op', '('), ('op', 's'), ('op', '('), ('op', 's'), ('op', '−'), ('box', ''), ('op', ')'), ('op', '('), ('op', 's'), ('op', '−'), ('box', ''), ('op', ')'), ('op', '('), ('op', 's'), ('op', '−'), ('box', ''), ('op', ')'), ('op', ')')]      # cards left of "="
 RIGHT = []

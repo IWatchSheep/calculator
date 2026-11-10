@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['n', 'omega']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {0: ('energy', 'joules'), 4: ('angular frequency', 'radians per second'), 7: ('level number', '0, 1, 2, ...')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', 'ħ'), ('op', '×'), ('box', ''), ('op', '×'), ('op', '('), ('box', ''), ('op', '+'), ('op', '½'), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

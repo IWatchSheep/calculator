@@ -19,6 +19,7 @@ PATTERN = '□ = □ × □'
 CALC = 'ready'
 INPUTS = ['r', 'theta']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('arc length', 'metres along the circle'), 2: ('radius', 'metres'), 4: ('angle', 'radians')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []

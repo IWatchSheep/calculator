@@ -19,6 +19,7 @@ PATTERN = '□ = h × □ − □'
 CALC = 'ready'
 INPUTS = ['f', 'work_function']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('maximum kinetic energy', 'joules of the freed electron, or 0'), 2: ('Planck constant', '6.626e-34 J s'), 4: ('light frequency', 'hertz'), 6: ('work function', 'joules to free one electron')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', 'h'), ('op', '×'), ('box', ''), ('op', '−'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

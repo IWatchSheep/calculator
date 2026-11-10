@@ -19,6 +19,7 @@ PATTERN = '□ = □ × □ × sin ( □ )'
 CALC = 'ready'
 INPUTS = ['r', 'F', 'theta']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('torque', 'newton metres'), 2: ('lever arm', 'metres'), 4: ('force', 'newtons'), 8: ('angle', 'radians between the arm and the force')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '×'), ('op', 'sin'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

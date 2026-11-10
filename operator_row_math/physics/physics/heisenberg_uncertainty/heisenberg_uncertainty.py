@@ -19,6 +19,7 @@ PATTERN = '□ × □ ≥ ħ / 2'
 CALC = 'ready'
 INPUTS = ['delta_x']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('position uncertainty', 'metres'), 2: ('momentum uncertainty', 'smallest possible, kg m/s')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('box', ''), ('op', '×'), ('out', ''), ('op', '≥'), ('op', 'ħ'), ('op', '/'), ('op', '2')]      # cards left of "="

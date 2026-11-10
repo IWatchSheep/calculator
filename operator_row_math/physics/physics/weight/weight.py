@@ -19,6 +19,7 @@ PATTERN = '□ = □ × g'
 CALC = 'ready'
 INPUTS = ['m']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('weight', 'newtons'), 2: ('mass', 'kilograms'), 4: ('gravity', '9.81 m/s2')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('op', 'g')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

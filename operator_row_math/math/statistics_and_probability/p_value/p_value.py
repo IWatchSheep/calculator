@@ -19,6 +19,7 @@ PATTERN = 'p-value ( □ ) = □'
 CALC = 'ready'
 INPUTS = ['z']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {2: ('z score', 'how many standard deviations from the mean')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'p-value'), ('op', '('), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = [('box', '')]    # cards right of "="  (the result box = Row 1's number card)

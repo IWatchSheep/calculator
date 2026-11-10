@@ -19,6 +19,7 @@ PATTERN = '□ = □ × □ × □ / □'
 CALC = 'ready'
 INPUTS = ['rho', 'v', 'L', 'mu']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('Reynolds number', 'small means smooth flow, large means turbulent'), 2: ('density', 'kilograms per cubic metre'), 4: ('speed', 'metres per second'), 6: ('size', 'metres, a length of the object'), 8: ('viscosity', 'pascal seconds')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'bar']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('box', ''), ('op', '×'), ('box', ''), ('op', '×'), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="

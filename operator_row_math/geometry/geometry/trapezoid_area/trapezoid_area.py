@@ -19,6 +19,7 @@ PATTERN = '□ = ½ × ( □ + □ ) × □'
 CALC = 'ready'
 INPUTS = ['a', 'b', 'h']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('area', 'square metres'), 5: ('first base', 'metres'), 7: ('second base', 'metres'), 10: ('height', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '½'), ('op', '×'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')'), ('op', '×'), ('box', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['n1', 'n2']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [1, 0]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {2: ('critical angle', 'radians, for total reflection'), 5: ('rarer index', 'must be smaller than n1'), 7: ('denser index', 'the side the light starts in')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [], [], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']]]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'sin'), ('op', '('), ('out', ''), ('op', ')'), ('op', '='), ('box', ''), ('op', '/'), ('box', '')]      # cards left of "="

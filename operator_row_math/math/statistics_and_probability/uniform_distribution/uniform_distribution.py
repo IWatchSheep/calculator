@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['x', 'a', 'b']    # what each box (left to right) is
 KINDS = ['number', 'number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 2, 1, 1, 0, 2]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {2: ('value', 'where you read the density'), 8: ('high end', 'the largest possible value'), 10: ('low end', 'the smallest possible value'), 13: ('low end', 'the smallest possible value'), 15: ('value', 'where you read the density'), 17: ('high end', 'the largest possible value')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [], [], [], [[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'f'), ('op', '('), ('box', ''), ('op', ')'), ('op', '='), ('op', '1'), ('op', '/'), ('op', '('), ('box', ''), ('op', '−'), ('box', ''), ('op', ')'), ('op', 'for'), ('box', ''), ('op', '≤'), ('box', ''), ('op', '≤'), ('box', ''), ('op', ','), ('op', 'else'), ('op', '0')]      # cards left of "="

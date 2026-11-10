@@ -19,6 +19,7 @@ PATTERN = '□ = 2 π √ ( □ / g )'
 CALC = 'ready'
 INPUTS = ['L']    # what each box (left to right) is
 KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
+WORDS = {0: ('period', 'seconds for one swing'), 6: ('length', 'metres of the string'), 8: ('gravity', '9.81 m/s2')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 FRAC = [[], [], [], [], [], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '2'), ('op', 'π'), ('op', '√'), ('op', '('), ('box', ''), ('op', '/'), ('op', 'g'), ('op', ')')]      # cards left of "="

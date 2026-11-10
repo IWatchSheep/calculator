@@ -20,6 +20,7 @@ CALC = 'ready'
 INPUTS = ['r', 'h']    # what each box (left to right) is
 KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
 SLOTS = [0, 0, 1]    # which input each box of LEFT shows (an input the picture writes twice has two boxes that share one value)
+WORDS = {0: ('surface area', 'square metres, including both ends'), 6: ('radius', 'metres'), 9: ('radius', 'metres'), 11: ('height', 'metres')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('out', ''), ('op', '='), ('op', '2'), ('op', '×'), ('op', 'π'), ('op', '×'), ('box', ''), ('op', '×'), ('op', '('), ('box', ''), ('op', '+'), ('box', ''), ('op', ')')]      # cards left of "="
 RIGHT = []
