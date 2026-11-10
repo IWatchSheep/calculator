@@ -510,6 +510,9 @@ class CalculatorGUI(tk.Tk):
     def _join_key(self, symbol):
         """A join key under the keypad: put the symbol in the helper card of the target row."""
         i = max(self.op_target, 1)
+        # a second join key after the number of a joined row starts the NEXT row, like  1 + 1 + 1  on a calculator
+        if i < len(self.rows) and self.rows[i].get("join") and not self.rows[i]["is_result"] and not self._is_blank(self.rows[i]):
+            i += 1
         while i >= len(self.rows):
             self._add_row()
         if self.rows[i]["is_result"]:

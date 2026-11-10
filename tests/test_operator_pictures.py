@@ -589,6 +589,28 @@ class InTheWindow(unittest.TestCase):
         app._equals()
         self.assertIn("=  2", app.results.get("1.0", "end"))
 
+    def test_a_second_join_key_starts_the_next_row_so_one_plus_one_plus_one_is_three(self):
+        app = self.app
+        app._key("1")
+        app._join_key("+")
+        app._key("1")
+        app._join_key("+")
+        app._key("1")
+        self.assertEqual([r["node"]["slots"] for r in app.rows[:3]], [["1"], ["1"], ["1"]])
+        self.assertEqual([r["join"] for r in app.rows[:3]], [None, "+", "+"])
+        app._equals()
+        self.assertIn("=  3", app.results.get("1.0", "end"))
+        self.assertEqual(app.rows[3]["is_result"], True)                      # the answer sits in Row 4
+
+    def test_a_join_key_pressed_twice_with_no_number_between_only_changes_the_symbol(self):
+        app = self.app
+        app._key("1")
+        app._join_key("+")
+        count = len(app.rows)
+        app._join_key("−")
+        self.assertEqual(app.rows[1]["join"], "−")
+        self.assertEqual(len(app.rows), count)
+
     def test_the_old_way_still_works_next_row_then_the_join_key(self):
         app = self.app
         app._key("1")
