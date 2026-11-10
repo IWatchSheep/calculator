@@ -21,7 +21,7 @@ KINDS = {"box", "out", "dec", "op"}
 class RowFiles(unittest.TestCase):
     def test_every_row_is_well_formed(self):
         keys = rows.keys()
-        self.assertEqual(len(keys), 522)
+        self.assertEqual(len(keys), 526)
         for key in keys:
             m = rows.get(key)
             self.assertTrue(m.LEFT, key)
@@ -123,7 +123,7 @@ class RustPort(unittest.TestCase):
         sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
         import make_rust_layouts as generator
         text, count = generator.build_text()
-        self.assertEqual(count, 522)
+        self.assertEqual(count, 526)
         with open(generator.OUT, encoding="utf-8", newline="") as f:
             self.assertEqual(f.read().replace("\r\n", "\n"), text)
 
@@ -134,7 +134,9 @@ class RustPort(unittest.TestCase):
             rust = f.read()
         for key in ("physics/physics/navier_stokes_equation", "math/differential_geometry_and_tensors/exterior_derivative", "math/abstract_algebra/direct_sum",
                     "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions",
-                    "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler"):
+                    "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler",
+                    "physics/physics/relativistic_kinetic_energy", "physics/physics/relativistic_momentum", "physics/physics/length_contraction",
+                    "physics/physics/time_dilation"):
             spec = multirow_specs.get(key)
             self.assertIn('title: "%s"' % spec["title"], rust, key)
             for row in spec["rows"]:
@@ -346,6 +348,65 @@ class InTheWindow(unittest.TestCase):
             text = self.press_equals()
             self.assertIn("speed must be less than the speed of light", text)
             self.assertIsNone(self.chained_values(1, (1,)))
+
+    # ---------- the four operators that take their γ from the Lorentz factor (Row 1) ----------
+    GAMMA_ROWS = [
+        # operator, the typed box of Row 2 (the others are chained or linked), arguments of today's compute(typed, v)
+        ("relativistic_kinetic_energy", (1,), lambda x, v: (x, v)),
+        ("relativistic_momentum", (1,), lambda x, v: (x, v)),
+        ("length_contraction", (0,), lambda x, v: (x, v)),
+        ("time_dilation", (0,), lambda x, v: (x, v)),
+    ]
+
+    def test_the_lorentz_chains_give_todays_numbers(self):
+        """Row 1 is the Lorentz factor, Row 2 reads it.  Kinetic energy is the same float as today's compute(); the others differ in the last bit now and then
+        (L0 / γ is not always the same float as L0 times the square root), so they are checked to one bit (2 ulp), never more."""
+        import math
+        from operator_row_math import row_tree
+        import operators_one_operator_per_file as library
+        c = 299792458
+        cases = [(2, 0.6 * c), (1, 0.8 * c), (100, 0.5 * c), (3.5, -0.3 * c), (1e6, 0.99 * c), (0.001, 1000.0), (5, 0)]
+        for name, typed_box, _args in self.GAMMA_ROWS:
+            today = library.get("physics/physics/" + name).compute
+            for x, v in cases:
+                self.app._clear_all()
+                self.app._place_operator_row("physics/physics/" + name)
+                self.app.update()
+                row_tree.set_slot(self.app.rows[0]["node"], (0,), repr(v))                 # v is typed on Row 1
+                row_tree.set_slot(self.app.rows[1]["node"], (typed_box[0],), repr(x))      # m, L0 or dt0 is typed on Row 2
+                self.app._sync_links()
+                self.press_equals()
+                got = row_tree.evaluate(self.app.rows[1]["node"])
+                expected = today(x, v)
+                if name == "relativistic_kinetic_energy":
+                    self.assertEqual(got, expected, (name, x, v))
+                else:
+                    self.assertTrue(abs(got - expected) <= 2 * math.ulp(expected), (name, x, v, got, expected))
+                gamma = library.get("physics/physics/lorentz_factor").compute(v)
+                self.assertEqual(self.chained_values(1, (1,) if name in ("length_contraction", "time_dilation") else (0,)), gamma, name)   # γ is Row 1's exact answer
+
+    def test_the_lorentz_chains_decline_at_the_speed_of_light(self):
+        c = 299792458
+        for name, typed_box, _args in self.GAMMA_ROWS:
+            for v in (c, -c, 2 * c):
+                from operator_row_math import row_tree
+                self.app._clear_all()
+                self.app._place_operator_row("physics/physics/" + name)
+                row_tree.set_slot(self.app.rows[0]["node"], (0,), repr(v))
+                row_tree.set_slot(self.app.rows[1]["node"], (typed_box[0],), "2")
+                self.app._sync_links()
+                text = self.press_equals()
+                self.assertIn("speed must be less than the speed of light", text, (name, v))
+                gamma_box = (1,) if name in ("length_contraction", "time_dilation") else (0,)
+                self.assertIsNone(self.chained_values(1, gamma_box), name)                  # no γ in the chained box
+
+    def test_the_momentum_row_uses_the_speed_typed_in_row_1(self):
+        from operator_row_math import row_tree
+        self.place_chain("physics/physics/relativistic_momentum", {0: 1.5e8})
+        row_tree.set_slot(self.app.rows[1]["node"], (1,), "2")
+        self.app._sync_links()
+        self.press_equals()
+        self.assertEqual(float(row_tree.get_slot(self.app.rows[1]["node"], (2,))), 1.5e8)    # v on Row 2 is the v typed on Row 1
 
     def test_the_answer_of_the_chain_is_the_last_rows_answer(self):
         self.place_chain("geometry/geometry/heron_s_formula", {0: 3, 1: 4, 2: 5})

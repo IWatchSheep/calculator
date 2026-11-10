@@ -233,6 +233,22 @@ pub fn relativistic_doppler_frequency(a: &[f64]) -> R {
     // f0, beta
     n(a[0] * ((1.0 - a[1]) / (1.0 + a[1])).sqrt())
 }
+pub fn relativistic_kinetic_energy_from_gamma(a: &[f64]) -> R {
+    // gamma, m, c
+    n((a[0] - 1.0) * a[1] * a[2].powi(2))
+}
+pub fn relativistic_momentum_from_gamma(a: &[f64]) -> R {
+    // gamma, m, v
+    n(a[1] * a[2] * a[0])
+}
+pub fn length_contraction_from_gamma(a: &[f64]) -> R {
+    // L0, gamma
+    n(a[0] / a[1])
+}
+pub fn time_dilation_from_gamma(a: &[f64]) -> R {
+    // dt0, gamma
+    n(a[0] * a[1])
+}
 pub fn relativistic_kinetic_energy(a: &[f64]) -> R {
     // m, v, c
     need(a[1].abs() < a[2], "speed must be less than the speed of light")?;

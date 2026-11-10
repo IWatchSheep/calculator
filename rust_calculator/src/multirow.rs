@@ -180,6 +180,46 @@ static DOPPLER: Spec = Spec {
     links: &[],
 };
 
+static KINETIC_ENERGY: Spec = Spec {
+    title: "Relativistic kinetic energy. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives K = (γ − 1) m c², the energy above the rest energy. The rows are joined by →: the answer is the last row's answer, the kinetic energy.",
+    rows: &[
+        RowSpec { title: "The Lorentz factor γ: how much time and mass stretch at this speed.", node: NodeSpec { op: "physics/physics/lorentz_factor", fill: &[] } },
+        RowSpec { title: "The kinetic energy from that γ. The γ box reads Row 1; the rest mass m is typed here.", node: NodeSpec { op: "physics/physics/relativistic_kinetic_energy_from_gamma", fill: &[(0, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
+static MOMENTUM: Spec = Spec {
+    title: "Relativistic momentum. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives p = γ m v. The rows are joined by →: the answer is the last row's answer, the momentum.",
+    rows: &[
+        RowSpec { title: "The Lorentz factor γ: how much time and mass stretch at this speed.", node: NodeSpec { op: "physics/physics/lorentz_factor", fill: &[] } },
+        RowSpec { title: "The momentum from that γ. The γ box reads Row 1; m is typed here and v is the speed typed in Row 1.", node: NodeSpec { op: "physics/physics/relativistic_momentum_from_gamma", fill: &[(0, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[((1, &[2]), (0, &[0]))],
+};
+
+static LENGTH_CONTRACTION: Spec = Spec {
+    title: "Length contraction. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives the moving length L = L₀ / γ: an object of rest length L₀ is shorter along its motion. The rows are joined by →: the answer is the last row's answer, the moving length.",
+    rows: &[
+        RowSpec { title: "The Lorentz factor γ: how much time and mass stretch at this speed.", node: NodeSpec { op: "physics/physics/lorentz_factor", fill: &[] } },
+        RowSpec { title: "The moving length from that γ. The γ box reads Row 1; the rest length L₀ is typed here.", node: NodeSpec { op: "physics/physics/length_contraction_from_gamma", fill: &[(1, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
+static TIME_DILATION: Spec = Spec {
+    title: "Time dilation. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives Δt = Δt₀ γ: the time the stay-at-home observer measures for a moving clock's proper time Δt₀. The rows are joined by →: the answer is the last row's answer, the elapsed time.",
+    rows: &[
+        RowSpec { title: "The Lorentz factor γ: how much time and mass stretch at this speed.", node: NodeSpec { op: "physics/physics/lorentz_factor", fill: &[] } },
+        RowSpec { title: "The elapsed time from that γ. The γ box reads Row 1; the proper time Δt₀ is typed here.", node: NodeSpec { op: "physics/physics/time_dilation_from_gamma", fill: &[(1, Fill::Row(0))] } },
+    ],
+    joins: &["→"],
+    links: &[],
+};
+
 /// The multi-row operators, by operator key.
 pub fn get(key: &str) -> Option<&'static Spec> {
     Some(match key {
@@ -190,6 +230,10 @@ pub fn get(key: &str) -> Option<&'static Spec> {
         "math/differential_geometry_and_tensors/exterior_derivative" => &EXTERIOR,
         "math/abstract_algebra/direct_sum" => &DIRECT_SUM,
         "physics/physics/navier_stokes_equation" => &NAVIER_STOKES,
+        "physics/physics/relativistic_kinetic_energy" => &KINETIC_ENERGY,
+        "physics/physics/relativistic_momentum" => &MOMENTUM,
+        "physics/physics/length_contraction" => &LENGTH_CONTRACTION,
+        "physics/physics/time_dilation" => &TIME_DILATION,
         "geometry/geometry/heron_s_formula" => &HERON,
         "physics/physics/relativistic_doppler" => &DOPPLER,
         "math/optimization_and_numerical_methods/kkt_conditions" => &KKT,

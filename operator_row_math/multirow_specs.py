@@ -132,6 +132,39 @@ SPECS = {
         ],
         "joins": ["→"],
     },
+    "physics/physics/relativistic_kinetic_energy": {
+        "title": "Relativistic kinetic energy. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives K = (γ − 1) m c², the energy above the rest energy. The rows are joined by →: the answer is the last row's answer, the kinetic energy.",
+        "rows": [
+            {"op": "physics/physics/lorentz_factor", "title": "The Lorentz factor γ: how much time and mass stretch at this speed."},
+            {"op": "physics/physics/relativistic_kinetic_energy_from_gamma", "title": "The kinetic energy from that γ. The γ box reads Row 1; the rest mass m is typed here.", "fill": {0: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
+    "physics/physics/relativistic_momentum": {
+        "title": "Relativistic momentum. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives p = γ m v. The rows are joined by →: the answer is the last row's answer, the momentum.",
+        "rows": [
+            {"op": "physics/physics/lorentz_factor", "title": "The Lorentz factor γ: how much time and mass stretch at this speed."},
+            {"op": "physics/physics/relativistic_momentum_from_gamma", "title": "The momentum from that γ. The γ box reads Row 1; m is typed here and v is the speed typed in Row 1.", "fill": {0: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+        "links": [((1, (2,)), (0, (0,)))],
+    },
+    "physics/physics/length_contraction": {
+        "title": "Length contraction. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives the moving length L = L₀ / γ: an object of rest length L₀ is shorter along its motion. The rows are joined by →: the answer is the last row's answer, the moving length.",
+        "rows": [
+            {"op": "physics/physics/lorentz_factor", "title": "The Lorentz factor γ: how much time and mass stretch at this speed."},
+            {"op": "physics/physics/length_contraction_from_gamma", "title": "The moving length from that γ. The γ box reads Row 1; the rest length L₀ is typed here.", "fill": {1: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
+    "physics/physics/time_dilation": {
+        "title": "Time dilation. Row 1 finds the Lorentz factor γ from the speed v (it declines when v reaches the speed of light). Row 2 reads that γ and gives Δt = Δt₀ γ: the time the stay-at-home observer measures for a moving clock's proper time Δt₀. The rows are joined by →: the answer is the last row's answer, the elapsed time.",
+        "rows": [
+            {"op": "physics/physics/lorentz_factor", "title": "The Lorentz factor γ: how much time and mass stretch at this speed."},
+            {"op": "physics/physics/time_dilation_from_gamma", "title": "The elapsed time from that γ. The γ box reads Row 1; the proper time Δt₀ is typed here.", "fill": {1: {"chain": 0}}},
+        ],
+        "joins": ["→"],
+    },
     "math/constants_and_relations/open_bracket": _BRACKETS,
     "math/constants_and_relations/close_bracket": _BRACKETS,
     "math/constants_and_relations/square_brackets": _BRACKETS,

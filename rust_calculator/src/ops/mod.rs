@@ -1359,9 +1359,9 @@ const OPS: &[Operator] = &[
         kinds: &[],
         compute_v: None,
         compute: |a| {
-            let beta2 = (a[1] / a[2]).powi(2);
-            need(beta2 < 1.0, "|v| must be less than c")?;
-            Ok(Value::Number(a[0] / (1.0 - beta2).sqrt()))
+            // the same expression and the same message as Python's compute(), so the two programs give the same float (also near the speed of light)
+            need(a[1].abs() < a[2], "speed must be less than the speed of light")?;
+            Ok(Value::Number(a[0] / (1.0 - a[1].powi(2) / a[2].powi(2)).sqrt()))
         },
     },
     Operator {
@@ -1379,9 +1379,8 @@ const OPS: &[Operator] = &[
         kinds: &[],
         compute_v: None,
         compute: |a| {
-            let beta2 = (a[0] / a[1]).powi(2);
-            need(beta2 < 1.0, "|v| must be less than c")?;
-            Ok(Value::Number(1.0 / (1.0 - beta2).sqrt()))
+            need(a[0].abs() < a[1], "speed must be less than the speed of light")?;
+            Ok(Value::Number(1.0 / (1.0 - a[0].powi(2) / a[1].powi(2)).sqrt()))
         },
     },
     // ---- Constants ----

@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 522)
+        self.assertEqual(len(self.ops), 526)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 522)
+        self.assertEqual(len(status), 526)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -592,6 +592,10 @@ CASES += [
     (PH + "relativistic_doppler", (100, -0.6, 1), 200),
     (PH + "relativistic_doppler", (100, 0, 1), 100),
     (PH + "relativistic_beta", (0.6, 1), 0.6), (PH + "relativistic_beta", (-0.6, 1), -0.6), (PH + "relativistic_beta", (0, 1), 0),
+    (PH + "relativistic_kinetic_energy_from_gamma", (1.25, 2, 1), 0.5), (PH + "relativistic_kinetic_energy_from_gamma", (1, 3, 1), 0),
+    (PH + "relativistic_momentum_from_gamma", (1.25, 2, 0.6), 1.5), (PH + "relativistic_momentum_from_gamma", (1, 5, 0), 0),
+    (PH + "length_contraction_from_gamma", (100, 1.25), 80), (PH + "length_contraction_from_gamma", (7, 1), 7),
+    (PH + "time_dilation_from_gamma", (1, 1.25), 1.25), (PH + "time_dilation_from_gamma", (10, 1), 10),
     (PH + "relativistic_doppler_frequency", (100, 0.6), 50), (PH + "relativistic_doppler_frequency", (100, -0.6), 200), (PH + "relativistic_doppler_frequency", (100, 0), 100),
     (PH + "schwarzschild_radius", (1, 1, 1), 2),
     (PH + "schwarzschild_radius", (1.989e30,), 2 * 6.674e-11 * 1.989e30 / 299792458 ** 2),
@@ -821,8 +825,8 @@ NEW_PHYSICS = [
     'thin_lens_equation', 'lens_magnification', 'lensmakers_equation',
     'critical_angle', 'brewster_angle', 'double_slit_fringe_spacing',
     'diffraction_grating', 'malus_law', 'refractive_index',
-    'lorentz_factor', 'time_dilation', 'length_contraction',
-    'relativistic_momentum', 'relativistic_kinetic_energy', 'energy_momentum_relation',
+    'lorentz_factor',
+    'energy_momentum_relation',
     'relativistic_velocity_addition', 'schwarzschild_radius',
     'gravitational_time_dilation',
 ]
@@ -947,10 +951,6 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         c = 299792458.0
         extra = [
             ("lorentz_factor", (0.6 * c,), 1.25),
-            ("time_dilation", (1, 0.6 * c), 1.25),
-            ("length_contraction", (100, 0.8 * c), 60),
-            ("relativistic_momentum", (2, 0.6 * c), 2 * 0.6 * c * 1.25),
-            ("relativistic_kinetic_energy", (1, 0.6 * c), 0.25 * c * c),
             ("energy_momentum_relation", (1, 0), c * c),
             ("relativistic_velocity_addition", (0.5 * c, 0.5 * c), 0.8 * c),
             ("gravitational_time_dilation", (1000, 1.989e30, 6.957e8),
@@ -1013,8 +1013,8 @@ class NewPhysicsCalculatorTests(unittest.TestCase):
         self.assertEqual(len(clear_buttons), 2)                   # the keypad C and the toolbar Clear (C)
         for button in clear_buttons:
             app._reset_row(0)
-            app._place_operator_row("physics/physics/time_dilation")
-            self._type_into_boxes([1, 179875474.8])
+            app._place_operator_row("math/arithmetic/addition")       # (time dilation now opens on two rows, so a one-row operator is used here)
+            self._type_into_boxes([1, 0.25])
             app._equals()
             self.assertIn("1.25", app.results.get("1.0", "end"))
             app._set_join(1, "+")                                  # leave a join symbol behind as well

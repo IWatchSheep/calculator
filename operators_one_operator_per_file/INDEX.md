@@ -614,6 +614,10 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Malus's law | I = I₀cos²θ | I = I₀ cos²θ   (θ = angle between polariser axes, radians) | Ready | `physics/physics/malus_law/` |
 | Refractive index | n = c/v | n = c / v   (c = 299 792 458 m/s) | Ready | `physics/physics/refractive_index/` |
 | Lorentz factor | γ = 1/√(1 − v²/c²) | γ = 1 / √(1 − v²/c²)   (|v| < c) | Ready | `physics/physics/lorentz_factor/` |
+| Relativistic kinetic energy: from the Lorentz factor | K = (γ − 1)mc² | K = (γ − 1) m c²   (γ is the answer of the row above) | Ready | `physics/physics/relativistic_kinetic_energy_from_gamma/` |
+| Relativistic momentum: from the Lorentz factor | p = γmv | p = γ m v   (γ is the answer of the row above) | Ready | `physics/physics/relativistic_momentum_from_gamma/` |
+| Length contraction: from the Lorentz factor | L = L₀/γ | L = L₀ / γ   (γ is the answer of the row above) | Ready | `physics/physics/length_contraction_from_gamma/` |
+| Time dilation: from the Lorentz factor | Δt = γΔt₀ | Δt = Δt₀ γ   (γ is the answer of the row above) | Ready | `physics/physics/time_dilation_from_gamma/` |
 | Time dilation | Δt = γΔt₀ | Δt = Δt₀ / √(1 − v²/c²)   (Δt₀ = time measured by the moving clock) | Ready | `physics/physics/time_dilation/` |
 | Length contraction | L = L₀/γ | L = L₀ √(1 − v²/c²)   (L₀ = length at rest) | Ready | `physics/physics/length_contraction/` |
 | Relativistic momentum | p = γmv | p = m v / √(1 − v²/c²) | Ready | `physics/physics/relativistic_momentum/` |

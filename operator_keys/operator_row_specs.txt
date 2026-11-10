@@ -477,6 +477,10 @@ physics/physics/length_contraction | {}{moving length|metres, in the direction o
 physics/physics/lens_magnification | {}{magnification|negative means the image is upside down} = − [d_i]{image distance|metres} / [d_o]{object distance|metres}
 physics/physics/lensmakers_equation | 1 / {}{focal length|metres} = ( [n]{refractive index|of the lens glass} − 1 ) × ( 1 / [R1]{first radius|metres, sign by the sign convention} − 1 / [R2]{second radius|metres} )
 physics/physics/lorentz_factor | {}{Lorentz factor|how much time and mass stretch} = 1 / √ ( 1 − [v]{speed|metres per second, less than light} ² / c{speed of light|299792458 m/s} ² )
+physics/physics/relativistic_kinetic_energy_from_gamma | {}{kinetic energy|joules above the rest energy} = ( [gamma]{Lorentz factor|the answer of the row above} − 1 ) × [m]{rest mass|kilograms} × c{speed of light|299792458 m/s} ²
+physics/physics/relativistic_momentum_from_gamma | {}{momentum|kg m/s} = [gamma]{Lorentz factor|the answer of the row above} × [m]{rest mass|kilograms} × [v]{speed|metres per second, the speed typed above}
+physics/physics/length_contraction_from_gamma | {}{moving length|metres, in the direction of motion} = [L0]{rest length|metres} / [gamma]{Lorentz factor|the answer of the row above}
+physics/physics/time_dilation_from_gamma | {}{elapsed time|seconds for the stay-at-home clock} = [dt0]{proper time|seconds on the moving clock} × [gamma]{Lorentz factor|the answer of the row above}
 physics/physics/magnetic_field_solenoid | {}{magnetic field|tesla, inside the coil} = μ₀ × [n]{turns per metre|how tightly the wire is wound} × [I]{current|amperes}
 physics/physics/magnetic_field_straight_wire | {}{magnetic field|tesla} = μ₀ × [I]{current|amperes} / ( 2 π × [r]{distance|metres from the wire} )
 physics/physics/magnetic_flux | {}{flux|webers} = [B]{magnetic field|tesla} × [A]{area|square metres} × cos ( [theta]{angle|radians, between the field and the normal} )

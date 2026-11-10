@@ -5612,6 +5612,42 @@ physics/physics/length_contraction	0.5 1	0.5
 physics/physics/length_contraction	0.25 -3	0.24999999999999997
 physics/physics/length_contraction	5 2	5.0
 physics/physics/length_contraction	2.5 0.25	2.5
+physics/physics/length_contraction_from_gamma	100 1.25	80.0
+physics/physics/length_contraction_from_gamma	7 1	7.0
+physics/physics/length_contraction_from_gamma	7.5 0.25	30.0
+physics/physics/length_contraction_from_gamma	2 -1	-2.0
+physics/physics/length_contraction_from_gamma	0.5 0.5	1.0
+physics/physics/length_contraction_from_gamma	10 0.25	40.0
+physics/physics/length_contraction_from_gamma	1 5	0.2
+physics/physics/length_contraction_from_gamma	0.25 100	0.0025
+physics/physics/length_contraction_from_gamma	0.5 1	0.5
+physics/physics/length_contraction_from_gamma	1 0.5	2.0
+physics/physics/length_contraction_from_gamma	0.5 2.5	0.2
+physics/physics/length_contraction_from_gamma	1 0	ERR
+physics/physics/length_contraction_from_gamma	1 10	0.1
+physics/physics/length_contraction_from_gamma	100 -1	-100.0
+physics/physics/length_contraction_from_gamma	10 -1	-10.0
+physics/physics/length_contraction_from_gamma	3 0	ERR
+physics/physics/length_contraction_from_gamma	0 100	0.0
+physics/physics/length_contraction_from_gamma	7.5 0	ERR
+physics/physics/length_contraction_from_gamma	0.25 1	0.25
+physics/physics/length_contraction_from_gamma	3 0.25	12.0
+physics/physics/length_contraction_from_gamma	100 1	100.0
+physics/physics/length_contraction_from_gamma	5 -3	-1.6666666666666667
+physics/physics/length_contraction_from_gamma	1 -1	-1.0
+physics/physics/length_contraction_from_gamma	7.5 5	1.5
+physics/physics/length_contraction_from_gamma	-1 2	-0.5
+physics/physics/length_contraction_from_gamma	2 3	0.6666666666666666
+physics/physics/length_contraction_from_gamma	7.5 -1	-7.5
+physics/physics/length_contraction_from_gamma	-3 7.5	-0.4
+physics/physics/length_contraction_from_gamma	2 -3	-0.6666666666666666
+physics/physics/length_contraction_from_gamma	2.5 3	0.8333333333333334
+physics/physics/length_contraction_from_gamma	0.25 2.5	0.1
+physics/physics/length_contraction_from_gamma	100 100	1.0
+physics/physics/length_contraction_from_gamma	1 3	0.3333333333333333
+physics/physics/length_contraction_from_gamma	1 7.5	0.13333333333333333
+physics/physics/length_contraction_from_gamma	0.25 5	0.05
+physics/physics/length_contraction_from_gamma	10 2	5.0
 physics/physics/lens_magnification	15 30	-0.5
 physics/physics/lens_magnification	-10 5	2.0
 physics/physics/lens_magnification	-1 -1	-1.0
@@ -6553,6 +6589,32 @@ physics/physics/relativistic_kinetic_energy	10 7.5	399.12747717388515
 physics/physics/relativistic_kinetic_energy	-3 1	-0.0
 physics/physics/relativistic_kinetic_energy	0 1	0.0
 physics/physics/relativistic_kinetic_energy	1 3	19.956373858694256
+physics/physics/relativistic_kinetic_energy_from_gamma	1.25 2	4.493775893684088e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	1 3	0
+physics/physics/relativistic_kinetic_energy_from_gamma	1 -1	0
+physics/physics/relativistic_kinetic_energy_from_gamma	2.5 0.25	3.370331920263066e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	10 2.5	2.0221991521578396e+18
+physics/physics/relativistic_kinetic_energy_from_gamma	0.25 10	-6.740663840526132e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	2 2.5	2.246887946842044e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	2 0	0
+physics/physics/relativistic_kinetic_energy_from_gamma	0 0.25	-2.246887946842044e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	10 7.5	6.066597456473519e+18
+physics/physics/relativistic_kinetic_energy_from_gamma	5 7.5	2.696265536210453e+18
+physics/physics/relativistic_kinetic_energy_from_gamma	-3 0.5	-1.7975103574736352e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	0.25 -3	2.0221991521578397e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	1 2.5	0.0
+physics/physics/relativistic_kinetic_energy_from_gamma	0.5 2.5	-1.123443973421022e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	2 0.5	4.493775893684088e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	0.5 -1	4.493775893684088e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	1 0.25	0.0
+physics/physics/relativistic_kinetic_energy_from_gamma	100 7.5	6.67325720212087e+19
+physics/physics/relativistic_kinetic_energy_from_gamma	0.25 0.25	-1.685165960131533e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	7.5 -3	-1.7525725985367944e+18
+physics/physics/relativistic_kinetic_energy_from_gamma	2.5 1	1.3481327681052264e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	-1 2.5	-4.493775893684088e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	3 0.5	8.987551787368176e+16
+physics/physics/relativistic_kinetic_energy_from_gamma	2.5 -3	-4.0443983043156794e+17
+physics/physics/relativistic_kinetic_energy_from_gamma	2.5 2	2.6962655362104528e+17
 physics/physics/relativistic_momentum	2 0.6	1.2
 physics/physics/relativistic_momentum	1 0	0.0
 physics/physics/relativistic_momentum	0.5 7.5	3.7500000000000013
@@ -6591,6 +6653,47 @@ physics/physics/relativistic_momentum	0.5 2.5	1.2500000000000002
 physics/physics/relativistic_momentum	10 3	30.000000000000004
 physics/physics/relativistic_momentum	0 2	0.0
 physics/physics/relativistic_momentum	7.5 100	750.0000000000417
+physics/physics/relativistic_momentum_from_gamma	1.25 2 0.6	1.5
+physics/physics/relativistic_momentum_from_gamma	1 5 0	0
+physics/physics/relativistic_momentum_from_gamma	-1 2.5 3	-7.5
+physics/physics/relativistic_momentum_from_gamma	0 0.5 1	0.0
+physics/physics/relativistic_momentum_from_gamma	7.5 10 -1	-75.0
+physics/physics/relativistic_momentum_from_gamma	100 100 5	50000
+physics/physics/relativistic_momentum_from_gamma	5 0.25 0.25	0.3125
+physics/physics/relativistic_momentum_from_gamma	0.5 2.5 5	6.25
+physics/physics/relativistic_momentum_from_gamma	3 5 0	0
+physics/physics/relativistic_momentum_from_gamma	2.5 3 10	75.0
+physics/physics/relativistic_momentum_from_gamma	0.5 0.5 7.5	1.875
+physics/physics/relativistic_momentum_from_gamma	0 3 1	0
+physics/physics/relativistic_momentum_from_gamma	1 0 1	0
+physics/physics/relativistic_momentum_from_gamma	100 0.25 0	0.0
+physics/physics/relativistic_momentum_from_gamma	0.5 2.5 100	125.0
+physics/physics/relativistic_momentum_from_gamma	3 10 1	30
+physics/physics/relativistic_momentum_from_gamma	1 3 0.5	1.5
+physics/physics/relativistic_momentum_from_gamma	0.5 10 5	25.0
+physics/physics/relativistic_momentum_from_gamma	7.5 -1 0.5	-3.75
+physics/physics/relativistic_momentum_from_gamma	0 7.5 2	0.0
+physics/physics/relativistic_momentum_from_gamma	2 1 7.5	15.0
+physics/physics/relativistic_momentum_from_gamma	-3 7.5 -3	67.5
+physics/physics/relativistic_momentum_from_gamma	0.5 -1 10	-5.0
+physics/physics/relativistic_momentum_from_gamma	5 0.5 -3	-7.5
+physics/physics/relativistic_momentum_from_gamma	0 -1 0.5	-0.0
+physics/physics/relativistic_momentum_from_gamma	10 0.5 -1	-5.0
+physics/physics/relativistic_momentum_from_gamma	7.5 0 -3	0.0
+physics/physics/relativistic_momentum_from_gamma	5 10 100	5000
+physics/physics/relativistic_momentum_from_gamma	10 5 5	250
+physics/physics/relativistic_momentum_from_gamma	100 7.5 10	7500.0
+physics/physics/relativistic_momentum_from_gamma	10 5 100	5000
+physics/physics/relativistic_momentum_from_gamma	-3 10 0	0
+physics/physics/relativistic_momentum_from_gamma	2 2 0.25	1.0
+physics/physics/relativistic_momentum_from_gamma	5 -3 2.5	-37.5
+physics/physics/relativistic_momentum_from_gamma	2.5 2.5 0.5	3.125
+physics/physics/relativistic_momentum_from_gamma	1 3 1	3
+physics/physics/relativistic_momentum_from_gamma	-3 3 10	-90
+physics/physics/relativistic_momentum_from_gamma	0.5 2 3	3.0
+physics/physics/relativistic_momentum_from_gamma	0.25 10 2.5	6.25
+physics/physics/relativistic_momentum_from_gamma	10 -1 0.5	-5.0
+physics/physics/relativistic_momentum_from_gamma	10 100 2	2000
 physics/physics/relativistic_velocity_addition	0.5 0.5	1.0
 physics/physics/relativistic_velocity_addition	1 0.5	1.5
 physics/physics/relativistic_velocity_addition	0 0.3	0.3
@@ -6912,6 +7015,45 @@ physics/physics/time_dilation	0.5 0	0.5
 physics/physics/time_dilation	0 5	0.0
 physics/physics/time_dilation	1 0.5	1.0
 physics/physics/time_dilation	-3 2	-3.0
+physics/physics/time_dilation_from_gamma	1 1.25	1.25
+physics/physics/time_dilation_from_gamma	10 1	10
+physics/physics/time_dilation_from_gamma	2 10	20
+physics/physics/time_dilation_from_gamma	0.5 7.5	3.75
+physics/physics/time_dilation_from_gamma	100 10	1000
+physics/physics/time_dilation_from_gamma	100 -1	-100
+physics/physics/time_dilation_from_gamma	0.5 2.5	1.25
+physics/physics/time_dilation_from_gamma	0 3	0
+physics/physics/time_dilation_from_gamma	3 7.5	22.5
+physics/physics/time_dilation_from_gamma	2.5 10	25.0
+physics/physics/time_dilation_from_gamma	5 2.5	12.5
+physics/physics/time_dilation_from_gamma	3 0.5	1.5
+physics/physics/time_dilation_from_gamma	2 5	10
+physics/physics/time_dilation_from_gamma	10 0.5	5.0
+physics/physics/time_dilation_from_gamma	3 -1	-3
+physics/physics/time_dilation_from_gamma	5 0.25	1.25
+physics/physics/time_dilation_from_gamma	5 0	0
+physics/physics/time_dilation_from_gamma	0.5 3	1.5
+physics/physics/time_dilation_from_gamma	5 100	500
+physics/physics/time_dilation_from_gamma	-1 5	-5
+physics/physics/time_dilation_from_gamma	10 100	1000
+physics/physics/time_dilation_from_gamma	0.5 100	50.0
+physics/physics/time_dilation_from_gamma	3 0.25	0.75
+physics/physics/time_dilation_from_gamma	7.5 5	37.5
+physics/physics/time_dilation_from_gamma	2.5 1	2.5
+physics/physics/time_dilation_from_gamma	0 0.25	0.0
+physics/physics/time_dilation_from_gamma	2.5 2.5	6.25
+physics/physics/time_dilation_from_gamma	100 5	500
+physics/physics/time_dilation_from_gamma	2.5 -3	-7.5
+physics/physics/time_dilation_from_gamma	-3 2	-6
+physics/physics/time_dilation_from_gamma	0 0	0
+physics/physics/time_dilation_from_gamma	5 0.5	2.5
+physics/physics/time_dilation_from_gamma	-3 100	-300
+physics/physics/time_dilation_from_gamma	1 100	100
+physics/physics/time_dilation_from_gamma	0.5 5	2.5
+physics/physics/time_dilation_from_gamma	0.25 100	25.0
+physics/physics/time_dilation_from_gamma	7.5 0.25	1.875
+physics/physics/time_dilation_from_gamma	100 0	0
+physics/physics/time_dilation_from_gamma	10 2.5	25.0
 physics/physics/torque	2 3 1.5707963267948966	6.0
 physics/physics/torque	0 10 0	0.0
 physics/physics/torque	0 0 -1	-0.0

@@ -214,3 +214,47 @@ fn the_then_join_gives_the_last_rows_answer() {
     let message = doc.equals_all().unwrap();
     assert!(message.ends_with("6"), "{message}");
 }
+
+#[test]
+fn the_lorentz_chains_give_todays_numbers_and_decline_at_the_speed_of_light() {
+    let c = 299792458.0_f64;
+    // (operator, the typed box of Row 2, same float as today's compute()?)  Kinetic energy is; the others may differ in the last bit (L0 / gamma is not always the
+    // same float as L0 times the square root), so they are checked to one bit (2 epsilon), never more.
+    for (name, typed, exact) in [
+        ("relativistic_kinetic_energy", 1usize, true),
+        ("relativistic_momentum", 1, false),
+        ("length_contraction", 0, false),
+        ("time_dilation", 0, false),
+    ] {
+        let key = format!("physics/physics/{name}");
+        let today = ops::get(&key).unwrap();
+        let gamma_box = if name == "length_contraction" || name == "time_dilation" { 1 } else { 0 };
+        for (x, v) in [(2.0, 0.6 * c), (1.0, 0.8 * c), (100.0, 0.5 * c), (3.5, -0.3 * c), (1e6, 0.99 * c), (0.001, 1000.0), (5.0, 0.0)] {
+            let (sv, sx) = (format!("{v}"), format!("{x}"));
+            let mut doc = chain_doc(&key, &[(0, 0, &sv), (1, typed, &sx)]);
+            doc.equals_all().unwrap_or_else(|e| panic!("{name} {x} {v}: {e}"));
+            let got = number(&doc, 1);
+            let want = match (today.compute)(&[x, v, c]).unwrap() {
+                rust_calculator::value::Value::Number(n) => n,
+                other => panic!("{other:?}"),
+            };
+            if exact {
+                assert_eq!(got, want, "{name} {x} {v}");
+            } else {
+                assert!((got - want).abs() <= 2.0 * f64::EPSILON * want.abs(), "{name} {x} {v}: {got} vs {want}"); // one bit, never more
+            }
+            let gamma = match (ops::get("physics/physics/lorentz_factor").unwrap().compute)(&[v, c]).unwrap() {
+                rust_calculator::value::Value::Number(n) => n,
+                other => panic!("{other:?}"),
+            };
+            assert_eq!(doc.rows[1].inputs[gamma_box], format!("{}", gamma), "{name}"); // the chained box holds Row 1's exact answer
+        }
+        for v in [c, -c, 2.0 * c] {
+            let sv = format!("{v}");
+            let mut doc = chain_doc(&key, &[(0, 0, &sv), (1, typed, "2")]);
+            let err = doc.equals_all().unwrap_err();
+            assert!(err.contains("speed must be less than the speed of light"), "{name}: {err}");
+            assert_eq!(doc.rows[1].inputs[gamma_box], "", "{name}"); // no γ in the chained box
+        }
+    }
+}

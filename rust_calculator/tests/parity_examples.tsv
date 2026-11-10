@@ -287,6 +287,8 @@ physics/physics/inductor_energy	0.5 4	4
 physics/physics/kinetic_energy	2 3	9
 physics/physics/length_contraction	100 0.8 1	60
 physics/physics/length_contraction	100 0 1	100
+physics/physics/length_contraction_from_gamma	100 1.25	80
+physics/physics/length_contraction_from_gamma	7 1	7
 physics/physics/lens_magnification	15 30	-0.5
 physics/physics/lens_magnification	-10 5	2
 physics/physics/lensmakers_equation	1.5 0.2 -0.2	0.2
@@ -344,8 +346,12 @@ physics/physics/relativistic_doppler_frequency	100 -0.6	200
 physics/physics/relativistic_doppler_frequency	100 0	100
 physics/physics/relativistic_kinetic_energy	1 0.6 1	0.25
 physics/physics/relativistic_kinetic_energy	2 0.8 1	1.3333333333333335
+physics/physics/relativistic_kinetic_energy_from_gamma	1.25 2 1	0.5
+physics/physics/relativistic_kinetic_energy_from_gamma	1 3 1	0
 physics/physics/relativistic_momentum	2 0.6 1	1.5
 physics/physics/relativistic_momentum	1 0 1	0
+physics/physics/relativistic_momentum_from_gamma	1.25 2 0.6	1.5
+physics/physics/relativistic_momentum_from_gamma	1 5 0	0
 physics/physics/relativistic_velocity_addition	0.5 0.5 1	0.8
 physics/physics/relativistic_velocity_addition	1 0.5 1	1
 physics/physics/relativistic_velocity_addition	0 0.3 1	0.3
@@ -366,6 +372,8 @@ physics/physics/thin_lens_equation	10 20	20
 physics/physics/thin_lens_equation	10 5	-10
 physics/physics/time_dilation	1 0.6 1	1.25
 physics/physics/time_dilation	10 0.8 1	16.666666666666668
+physics/physics/time_dilation_from_gamma	1 1.25	1.25
+physics/physics/time_dilation_from_gamma	10 1	10
 physics/physics/torque	2 3 1.5707963267948966	6
 physics/physics/torricelli_speed	5	9.904544411531507
 physics/physics/torricelli_speed	0	0

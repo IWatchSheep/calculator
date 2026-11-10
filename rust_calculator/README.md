@@ -35,7 +35,7 @@ Every card has a **Label** (**Item** on a number card) and a **Context** box for
 
 Everything in the Python program is ported:
 
-- all 522 operators (450 Ready, 72 Reference), each drawn from its picture (`layouts.rs`), with typed values for lists, matrices, sets, graphs and functions (`kinds.rs`, `expr.rs`)
+- all 526 operators (454 Ready, 72 Reference), each drawn from its picture (`layouts.rs`), with typed values for lists, matrices, sets, graphs and functions (`kinds.rs`, `expr.rs`)
 - the Advanced Input window, the kind hint in every box, the formula pictures (the JPGs) and the word-problem diagrams (`pictures.rs`)
 - operators nested inside operators and the multi-row operators (`multirow.rs`)
 - Mathematical Templates (`template_math.rs`)
