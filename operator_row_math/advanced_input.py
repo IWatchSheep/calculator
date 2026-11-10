@@ -178,6 +178,35 @@ def make_function(expr):
     return fn
 
 
+class OrderedSet(set):
+    """A set that remembers the order the items were typed in.
+
+    A plain Python set lists strings in a different order every run, so Direct product of {a, b, c}
+    came out as (c, ..), (b, ..), (a, ..) one time and (a, ..), (b, ..), (c, ..) the next. The
+    diagram reads g in G, h in H left to right, so the items stay in the order they were typed
+    (the Rust version does the same). Set maths (union, ...) still works: it is a real set."""
+
+    def __init__(self, items=()):
+        self._order = list(dict.fromkeys(items))
+        super().__init__(self._order)
+
+    def __iter__(self):
+        return iter(self._order)
+
+
+class OrderedFrozenSet(frozenset):
+    """The frozenset twin of OrderedSet (used for each set of a family of sets)."""
+
+    def __new__(cls, items=()):
+        order = list(dict.fromkeys(items))
+        self = super().__new__(cls, order)
+        self._order = order
+        return self
+
+    def __iter__(self):
+        return iter(self._order)
+
+
 def parse(kind, text):
     """Typed text -> python value.  Raises ValueError with a friendly message."""
     text = text.strip()
@@ -197,7 +226,7 @@ def parse(kind, text):
         if kind in ("function", "multi", "predicate"):
             return make_function(text)
         if kind == "set":
-            return set(_item(t) for t in text.strip("{}").split(",") if t.strip())
+            return OrderedSet(_item(t) for t in text.strip("{}").split(",") if t.strip())
         if kind == "pairs":
             body = text if text.startswith("[") else "[" + text + "]"
             v = ast.literal_eval(body)
@@ -227,7 +256,7 @@ def parse(kind, text):
             groups = re.findall(r"\{([^{}]*)\}", text)
             if not groups:
                 raise ValueError("Put each set in braces, e.g. {1,2}, {2,3}")
-            return [frozenset(_item(t) for t in g.split(",") if t.strip()) for g in groups]
+            return [OrderedFrozenSet(_item(t) for t in g.split(",") if t.strip()) for g in groups]
     except ValueError as e:
         if str(e).startswith("Every row") or str(e).startswith("Type"):
             raise

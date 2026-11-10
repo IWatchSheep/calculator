@@ -27,16 +27,19 @@ To look at one row: `cargo run --release -- --demo physics/physics/gravitation 5
 
 Answers are shown like the Python program (`7.415555556e-11`, `24`), through `Value::show`; `Value::display` stays the exact form the parity tests use.
 
-Not ported yet: the algebra word problems (the solver is about 3,000 lines of Python), templates, the Advanced Input window, operators nested inside operators, the multi-row operators, the formula pictures (the JPGs).
+Sets and neighbour lists keep the order they were typed in, on both sides: `Direct product` of `a, b, c` and `1, 2, 3` lists (a,1) (a,2) (a,3) (b,1) ... (the diagram reads g in G, h in H). Python used to list letters in a different order every run (a plain `set`); `OrderedSet` in `operator_row_math/advanced_input.py` and `_NeighbourSet` in `operators_one_operator_per_file/_helpers.py` fixed that, and `make_value_grid.py` now writes the same file under every `PYTHONHASHSEED`.
 
-## Phase 1 (this folder)
+## What is in the Rust program
 
-- Desktop GUI (`eframe` / `egui`)
-- Rows with input boxes, join symbols, Clear / Next Row
-- Number pad and Operators browser (filter + category)
-- **60+ ready operators**: arithmetic, algebra, trigonometry, discrete, geometry, common physics (including time dilation)
+Everything in the Python program is ported:
 
-Not yet (later phases, same architecture): all 507 operators, formula JPG diagrams, Advanced Input, templates, nested operators-inside-operators, multi-row auto layouts.
+- all 507 operators (446 Ready, 61 Reference), each drawn from its picture (`layouts.rs`), with typed values for lists, matrices, sets, graphs and functions (`kinds.rs`, `expr.rs`)
+- the Advanced Input window, the kind hint in every box, the formula pictures (the JPGs) and the word-problem diagrams (`pictures.rs`)
+- operators nested inside operators and the multi-row operators (`multirow.rs`)
+- Mathematical Templates (`template_math.rs`)
+- the algebra word problems: the solver (`word_solver/`, number puzzle + 58 families) and the 377 Ready problems in an "Algebra word problems" tab
+
+`WORKLIST.md` is the status; `operator_keys/README.md` says how the parity files are made. Still open: larger boxes for matrices, graphs and long functions.
 
 ## Build and run
 
@@ -61,5 +64,10 @@ cargo test --release
 | `src/app.rs` | egui UI (toolbar, rows, keypad, Operators) |
 | `src/row.rs` | Document / row / join / compute wiring |
 | `src/operator.rs` | Operator metadata (Python NAME/SYMBOL/FORMULA/CALC) |
-| `src/ops/mod.rs` | Phase-1 registry + `compute` |
-| `src/value.rs` | Number / pair / text results |
+| `src/ops/` | the operators (`generated.rs` registry, `lists`, `matrices`, `sets`, `graphs`, `calculus`, `misc`, `words`) + `compute` |
+| `src/value.rs` | Number / pair / bool / complex / text / list / tuple / set / dict / function values |
+| `src/kinds.rs`, `src/expr.rs` | typed text -> `Value` (Advanced Input rules), typed functions |
+| `src/layout.rs`, `src/layouts.rs`, `src/multirow.rs`, `src/pictures.rs` | row placement, generated pictures, multi-row operators, formula / word-problem images |
+| `src/template_math.rs` | Mathematical Templates |
+| `src/word_solver/`, `src/word_layouts.rs` | algebra word-problem solver and equation rows |
+| `tests/` | parity with Python (`parity*.rs`, `words.rs`, `word_solver_parity.rs`), rows, nesting, templates |

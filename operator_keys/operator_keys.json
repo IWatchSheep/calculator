@@ -20,7 +20,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(r, theta)",
    "compute_params": [
     {
@@ -61,7 +61,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = π □²",
+   "pattern": "□ = π × □ ²",
    "compute_signature": "compute(r)",
    "compute_params": [
     {
@@ -97,7 +97,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2 π □",
+   "pattern": "□ = 2 × π × □",
    "compute_signature": "compute(r)",
    "compute_params": [
     {
@@ -135,7 +135,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = π □ (□ + □)",
+   "pattern": "□ = π × □ × ( □ + □ )",
    "compute_signature": "compute(r, l)",
    "compute_params": [
     {
@@ -178,7 +178,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ⅓ π □² □",
+   "pattern": "□ = ⅓ × π × □ ² × □",
    "compute_signature": "compute(r, h)",
    "compute_params": [
     {
@@ -219,7 +219,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 6 □²",
+   "pattern": "□ = 6 □ ²",
    "compute_signature": "compute(s)",
    "compute_params": [
     {
@@ -255,7 +255,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □³",
+   "pattern": "□ = □ ³",
    "compute_signature": "compute(s)",
    "compute_params": [
     {
@@ -293,7 +293,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2 π □ (□ + □)",
+   "pattern": "□ = 2 × π × □ × ( □ + □ )",
    "compute_signature": "compute(r, h)",
    "compute_params": [
     {
@@ -336,7 +336,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = π □² □",
+   "pattern": "□ = π × □ ² × □",
    "compute_signature": "compute(r, h)",
    "compute_params": [
     {
@@ -377,7 +377,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□° → □ rad",
+   "pattern": "□ ° → □ rad",
    "compute_signature": "compute(degrees)",
    "compute_params": [
     {
@@ -419,7 +419,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √((□₂ − □₁)² + (□₂ − □₁)²)",
+   "pattern": "□ = √ ( ( □ ₂ − □ ₁ ) ² + ( □ ₂ − □ ₁ ) ² )",
    "compute_signature": "compute(x1, y1, x2, y2)",
    "compute_params": [
     {
@@ -474,7 +474,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √(□(□−□)(□−□)(□−□))",
+   "pattern": "□ = √ ( s ( s − □ ) ( s − □ ) ( s − □ ) )",
    "compute_signature": "compute(a, b, c)",
    "compute_params": [
     {
@@ -524,7 +524,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √(□² + □² − 2□□ cos □)",
+   "pattern": "□ = √ ( □ ² + □ ² − 2 × □ × □ × cos ( □ ) )",
    "compute_signature": "compute(a, b, C)",
    "compute_params": [
     {
@@ -626,7 +626,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ((□₁ + □₂)/2, (□₁ + □₂)/2)",
+   "pattern": "□ = ( ( □ ₁ + □ ₂ ) / 2 , ( □ ₁ + □ ₂ ) / 2 )",
    "compute_signature": "compute(x1, y1, x2, y2)",
    "compute_params": [
     {
@@ -710,7 +710,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(□−2)·180° = □",
+   "pattern": "( □ − 2 ) · 180 ° = □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -754,7 +754,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "⅓□□ = □",
+   "pattern": "□ = ⅓ × □ × □",
    "compute_signature": "compute(base_area, h)",
    "compute_params": [
     {
@@ -797,7 +797,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √(□² + □²)",
+   "pattern": "□ = √ ( □ ² + □ ² )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -838,7 +838,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ rad → □°",
+   "pattern": "□ rad → □ °",
    "compute_signature": "compute(radians)",
    "compute_params": [
     {
@@ -919,7 +919,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2(□ + □)",
+   "pattern": "□ = 2 ( □ + □ )",
    "compute_signature": "compute(l, w)",
    "compute_params": [
     {
@@ -964,7 +964,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2(□□ + □□ + □□)",
+   "pattern": "□ = 2 × ( □ × □ + □ × □ + □ × □ )",
    "compute_signature": "compute(l, w, h)",
    "compute_params": [
     {
@@ -1105,7 +1105,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ½ □₁ □₂",
+   "pattern": "□ = ½ × □ × □",
    "compute_signature": "compute(d1, d2)",
    "compute_params": [
     {
@@ -1148,7 +1148,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ½ □² □",
+   "pattern": "□ = ½ × □ ² × □",
    "compute_signature": "compute(r, theta)",
    "compute_params": [
     {
@@ -1195,7 +1195,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (□₂ − □₁) / (□₂ − □₁)",
+   "pattern": "□ = ( □ ₂ − □ ₁ ) / ( □ ₂ − □ ₁ )",
    "compute_signature": "compute(x1, y1, x2, y2)",
    "compute_params": [
     {
@@ -1255,7 +1255,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 4 π □²",
+   "pattern": "□ = 4 × π × □ ²",
    "compute_signature": "compute(r)",
    "compute_params": [
     {
@@ -1291,7 +1291,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 4/3 π □³",
+   "pattern": "□ = ( 4 / 3 ) × π × □ ³",
    "compute_signature": "compute(r)",
    "compute_params": [
     {
@@ -1327,7 +1327,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □²",
+   "pattern": "□ = □ ²",
    "compute_signature": "compute(s)",
    "compute_params": [
     {
@@ -1367,7 +1367,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ½ (□ + □) □",
+   "pattern": "□ = ½ × ( □ + □ ) × □",
    "compute_signature": "compute(a, b, h)",
    "compute_params": [
     {
@@ -1456,7 +1456,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□ₙ| = □!/2",
+   "pattern": "| □ ₙ | = □ ! / 2",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -1492,7 +1492,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "Basis( □ )",
+   "pattern": "Basis ( □ )",
    "compute_signature": "compute(vectors)",
    "compute_params": [
     {
@@ -1554,7 +1554,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "□□ = { □∘□ : □ ∈ □ }",
+   "pattern": "□ □ = { □ ∘ □ : □ ∈ □ } with □",
    "compute_signature": "compute(g, H, op)",
    "compute_params": [
     {
@@ -1595,7 +1595,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "⟨□⟩",
+   "pattern": "⟨ □ ⟩ with □ , □",
    "compute_signature": "compute(g, op, identity)",
    "compute_params": [
     {
@@ -1632,7 +1632,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "Dimension( □ )",
+   "pattern": "Dimension ( □ )",
    "compute_signature": "compute(vectors)",
    "compute_params": [
     {
@@ -1683,7 +1683,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□ × □ = { (□, □) : □ ∈ □, □ ∈ □ }",
+   "pattern": "□ × □ = { ( □ , □ ) : □ ∈ □ , □ ∈ □ }",
    "compute_signature": "compute(G, H)",
    "compute_params": [
     {
@@ -1741,7 +1741,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "Field( □ )",
+   "pattern": "Add, subtract, multiply, and divide by nonzero elements with □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -1779,7 +1779,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□/□",
+   "pattern": "□ / □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -1804,7 +1804,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Gal(□/□)",
+   "pattern": "Gal ( □ / □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -1835,7 +1835,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "(□, ∘)",
+   "pattern": "( G , ∘ ) with □ , □",
    "compute_signature": "compute(G, op)",
    "compute_params": [
     {
@@ -1874,7 +1874,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "□: □ → □",
+   "pattern": "□ : □ → □ with □ , □",
    "compute_signature": "compute(phi, G, op1, op2)",
    "compute_params": [
     {
@@ -1942,7 +1942,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "im □",
+   "pattern": "im □ with □",
    "compute_signature": "compute(phi, G)",
    "compute_params": [
     {
@@ -1975,7 +1975,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "ID( □ )",
+   "pattern": "a × b = 0 ⇒ a = 0 or b = 0 with □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -2025,7 +2025,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ≅ □",
+   "pattern": "□ ≅ □ with □ , □ , □",
    "compute_signature": "compute(phi, G, H_, op1, op2)",
    "compute_params": [
     {
@@ -2074,7 +2074,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "ker □",
+   "pattern": "ker □ with □ , □",
    "compute_signature": "compute(phi, G, identity)",
    "compute_params": [
     {
@@ -2107,7 +2107,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Module( □ )",
+   "pattern": "Module ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -2140,7 +2140,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ◁ □",
+   "pattern": "□ ◁ □ with □",
    "compute_signature": "compute(N, G, op)",
    "compute_params": [
     {
@@ -2181,7 +2181,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "ord(□) = □",
+   "pattern": "ord ( □ ) with □ , □ = □",
    "compute_signature": "compute(g, op, identity)",
    "compute_params": [
     {
@@ -2218,7 +2218,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "|□| = □",
+   "pattern": "| □ | = □",
    "compute_signature": "compute(elements)",
    "compute_params": [
     {
@@ -2254,7 +2254,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□[□]",
+   "pattern": "□ [ □ ]",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -2285,7 +2285,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□/□| = |□| / |□|",
+   "pattern": "| □ / □ | = | □ | / | □ |",
    "compute_signature": "compute(order_g, order_n)",
    "compute_params": [
     {
@@ -2322,7 +2322,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "(□, +, ·)",
+   "pattern": "( □ , + , · )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -2355,7 +2355,7 @@
     "multi"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ≤ □",
+   "pattern": "□ ≤ □ with □",
    "compute_signature": "compute(H_, G, op)",
    "compute_params": [
     {
@@ -2392,7 +2392,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□ₙ| = □!",
+   "pattern": "| □ ₙ | = □ !",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -2430,7 +2430,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ ⊗ □) = (□₁□₁, □₁□₂, …, □ₘ□ₙ)",
+   "pattern": "( □ ⊗ □ ) = ( □ ₁ □ ₁ , □ ₁ □ ₂ , … , □ ₘ □ ₙ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -2478,7 +2478,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Vector space( □ )",
+   "pattern": "Vector addition + scalar multiplication",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -2511,7 +2511,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = □₁ + (□ − 1)□",
+   "pattern": "□ = □ + ( □ − 1 ) × □",
    "compute_signature": "compute(a1, d, n)",
    "compute_params": [
     {
@@ -2561,7 +2561,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = □/2 · (2□₁ + (□ − 1)□)",
+   "pattern": "□ = ( □ / 2 ) × ( 2 × □ + ( □ − 1 ) × □ )",
    "compute_signature": "compute(a1, d, n)",
    "compute_params": [
     {
@@ -2611,7 +2611,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(□ + □)ⁿ = Σₖ C(□,□) · □ⁿ⁻ᵏ · □ᵏ",
+   "pattern": "( □ + □ ) ⁿ = Σ ₖ C ( □ , □ ) · □ ⁿ⁻ᵏ · □ ᵏ",
    "compute_signature": "compute(a, b, n)",
    "compute_params": [
     {
@@ -2665,7 +2665,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "conj(□ + □i) = □ − □i",
+   "pattern": "conj ( □ + □ i ) = □ − □ i with □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -2696,7 +2696,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ + □i",
+   "pattern": "□ + □ i",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -2729,7 +2729,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□³ = □ · □ · □",
+   "pattern": "□ = □ × □ × □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -2765,7 +2765,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "∛□ = □",
+   "pattern": "³ √ □ = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -2809,7 +2809,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□² − □² = (□ − □)(□ + □)",
+   "pattern": "□ ² − □ ² = ( □ − □ ) ( □ + □ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -2846,7 +2846,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □² − 4□□",
+   "pattern": "□ = □ ² − 4 × □ × □",
    "compute_signature": "compute(a, b, c)",
    "compute_params": [
     {
@@ -2908,7 +2908,7 @@
     "text"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ + □)(□ + □) = □□ + □□ + □□ + □□",
+   "pattern": "( □ + □ ) ( □ + □ ) = □ □ + □ □ + □ □ + □ □ with □",
    "compute_signature": "compute(expr)",
    "compute_params": [
     {
@@ -2986,7 +2986,7 @@
     "text"
    ],
    "row_calc": "advanced",
-   "pattern": "factor(□) = □ · □",
+   "pattern": "factor ( □ ) = □ · □",
    "compute_signature": "compute(expr)",
    "compute_params": [
     {
@@ -3026,7 +3026,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = □₁ · □ⁿ⁻¹",
+   "pattern": "□ ₙ = □ ₁ · □ ⁿ⁻¹ with □",
    "compute_signature": "compute(a1, r, n)",
    "compute_params": [
     {
@@ -3076,7 +3076,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = □₁(1 − □ⁿ) / (1 − □)",
+   "pattern": "□ ₙ = □ ₁ ( 1 − □ ⁿ ) / ( 1 − □ ) with □",
    "compute_signature": "compute(a1, r, n)",
    "compute_params": [
     {
@@ -3192,7 +3192,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "log₁₀(□) = □",
+   "pattern": "log ₁₀ ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -3234,7 +3234,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□ + □i| = □",
+   "pattern": "| □ + □ i | with □ = □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -3263,7 +3263,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "ln(□) = □",
+   "pattern": "ln ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -3307,7 +3307,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "ⁿ√□ = □^(1/□)",
+   "pattern": "ⁿ √ □ = □ ^ ( 1 / □ )",
    "compute_signature": "compute(x, n)",
    "compute_params": [
     {
@@ -3465,7 +3465,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (−□ ± √(□² − 4□□)) / 2□",
+   "pattern": "( □ , □ ) = ( − □ ± √ ( □ ² − 4 × □ × □ ) ) / ( 2 × □ )",
    "compute_signature": "compute(a, b, c)",
    "compute_params": [
     {
@@ -3502,7 +3502,7 @@
     "text"
    ],
    "row_calc": "advanced",
-   "pattern": "simplify(□) = □",
+   "pattern": "simplify ( □ ) = □",
    "compute_signature": "compute(expr)",
    "compute_params": [
     {
@@ -3542,7 +3542,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □·□ + □",
+   "pattern": "□ = □ · □ + □",
    "compute_signature": "compute(m, x, b)",
    "compute_params": [
     {
@@ -3588,7 +3588,7 @@
     "function"
    ],
    "row_calc": "advanced",
-   "pattern": "solve(□ = □) → □",
+   "pattern": "solve ( □ = □ ) → □",
    "compute_signature": "compute(f)",
    "compute_params": [
     {
@@ -3619,7 +3619,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = □ and □ = □ → (□, □)",
+   "pattern": "□ = □ and □ = □ → ( □ , □ ) with □ , □",
    "compute_signature": "compute(A, b)",
    "compute_params": [
     {
@@ -3675,7 +3675,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□² = □ · □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -3711,7 +3711,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "√□ = □",
+   "pattern": "√ □ = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -3753,7 +3753,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□| = □",
+   "pattern": "| □ | = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -3962,7 +3962,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "max(□, □, □) = □",
+   "pattern": "max ( □ ) with □ , □ = □",
    "compute_signature": "compute(*values)",
    "compute_params": [
     {
@@ -4011,7 +4011,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "min(□, □, □) = □",
+   "pattern": "min ( □ ) with □ , □ = □",
    "compute_signature": "compute(*values)",
    "compute_params": [
     {
@@ -4156,7 +4156,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "−□ = □",
+   "pattern": "− □ = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -4198,7 +4198,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "1/□ = □",
+   "pattern": "1 / □ = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -4240,7 +4240,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "⌊□⌋ = □",
+   "pattern": "floor ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -4282,7 +4282,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "round(□) = □",
+   "pattern": "round ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -4330,7 +4330,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "⌈□⌉ = □",
+   "pattern": "ceil ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -4424,7 +4424,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(f∘g)′(□) = f′(g(□)) · g′(□)",
+   "pattern": "( f ∘ g ) ′ ( x ) = f ′ ( g ( x ) ) · g ′ ( x ) with □ , □",
    "compute_signature": "compute(fprime_at_gx, gprime_at_x)",
    "compute_params": [
     {
@@ -4467,7 +4467,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "∇ × □ = □",
+   "pattern": "∇ × □ with □ = □",
    "compute_signature": "compute(F, point)",
    "compute_params": [
     {
@@ -4504,7 +4504,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∫ □ d□ = □   (from □ to □)",
+   "pattern": "∫ □ dx from □ to □ → □",
    "compute_signature": "compute(f, a, b, n=1000)",
    "compute_params": [
     {
@@ -4548,7 +4548,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f′(□) = lim{□→0} (f(□+□) − f(□−□)) / 2□",
+   "pattern": "□ = lim ( h → 0 ) ( ( □ ( □ + h ) − □ ( □ ) ) / h )",
    "compute_signature": "compute(f, x, h=1e-06)",
    "compute_params": [
     {
@@ -4592,7 +4592,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "d□ / d□ = f(□, □)",
+   "pattern": "d □ / d □ = f ( □ , □ ) with □ , □ , □ , □",
    "compute_signature": "compute(f, x0, y0, x_end)",
    "compute_params": [
     {
@@ -4635,7 +4635,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "∇ · □ = □",
+   "pattern": "∇ · □ with □ = □",
    "compute_signature": "compute(F, point)",
    "compute_params": [
     {
@@ -4676,7 +4676,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∬ □ dA = □",
+   "pattern": "∬ □ dA with □ , □ , □ , □ = □",
    "compute_signature": "compute(f, x0, x1, y0, y1)",
    "compute_params": [
     {
@@ -4723,7 +4723,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "∇□ = (∂□/∂□₁, …, ∂□/∂□ₙ)",
+   "pattern": "∇ □ = ( ∂ □ / ∂ □ ₁ , … , ∂ □ / ∂ □ ₙ ) with □",
    "compute_signature": "compute(f, point, h=1e-06)",
    "compute_params": [
     {
@@ -4763,7 +4763,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∫ □ d□ = □ + □",
+   "pattern": "∫ □ d □ = □ + □",
    "compute_signature": "compute(f, x, C=0)",
    "compute_params": [
     {
@@ -4825,7 +4825,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "lim □ / □ = lim □′ / □′",
+   "pattern": "lim □ / □ = lim □ ′ / □ ′ with □",
    "compute_signature": "compute(f, g, a)",
    "compute_params": [
     {
@@ -4864,7 +4864,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Δ□ = □",
+   "pattern": "Δ □ with □ = □",
    "compute_signature": "compute(f, point)",
    "compute_params": [
     {
@@ -4899,7 +4899,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "lim(□ → □) f(□) = □",
+   "pattern": "lim ( □ → □ ) f ( □ ) with □ = □",
    "compute_signature": "compute(f, a)",
    "compute_params": [
     {
@@ -4938,7 +4938,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∮ □ · d□ = □",
+   "pattern": "∫ □ · dr along □ with □ , □ = □",
    "compute_signature": "compute(F, r, a, b)",
    "compute_params": [
     {
@@ -4981,7 +4981,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) ≈ Σₙ □⁽ⁿ⁾(0)/□! · □ⁿ",
+   "pattern": "f ( □ ) ≈ Σ ₙ □ ⁽ⁿ⁾ ( 0 ) / □ ! · □ ⁿ",
    "compute_signature": "compute(derivs, x)",
    "compute_params": [
     {
@@ -5037,7 +5037,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∂□/∂□ᵢ ≈ (f(…□ᵢ+□…) − f(…□ᵢ−□…)) / 2□",
+   "pattern": "∂ □ / ∂ □ ᵢ ≈ ( f ( … □ ᵢ + □ … ) − f ( … □ ᵢ − □ … ) ) / 2 □ with □",
    "compute_signature": "compute(f, point, i, h=1e-06)",
    "compute_params": [
     {
@@ -5079,7 +5079,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "∏ □ᵢ = □₁ · □₂ · … · □ₙ",
+   "pattern": "product ( □ ) = □",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -5126,7 +5126,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(f · g)′ = f′ · g + f · g′",
+   "pattern": "( f · g ) ′ = f ′ · g + f · g ′ with □ , □ , □ , □",
    "compute_signature": "compute(f, fprime, g, gprime)",
    "compute_params": [
     {
@@ -5183,7 +5183,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(f / g)′ = (f′ · g − f · g′) / g²",
+   "pattern": "( f / g ) ′ = ( f ′ · g − f · g ′ ) / g ² with □ , □ , □ , □",
    "compute_signature": "compute(f, fprime, g, gprime)",
    "compute_params": [
     {
@@ -5236,7 +5236,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f″(□) ≈ (f(□+□) − 2f(□) + f(□−□)) / □²",
+   "pattern": "f ″ ( □ ) ≈ ( f ( □ + □ ) − 2 f ( □ ) + f ( □ − □ ) ) / □ ² with □",
    "compute_signature": "compute(f, x, h=0.0001)",
    "compute_params": [
     {
@@ -5278,7 +5278,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∂²□/∂□ᵢ² ≈ (f(…□ᵢ+□…) − 2f + f(…□ᵢ−□…)) / □²",
+   "pattern": "∂ ² □ / ∂ □ ᵢ ² ≈ ( f ( … □ ᵢ + □ … ) − 2 f + f ( … □ ᵢ − □ … ) ) / □ ² with □",
    "compute_signature": "compute(f, point, i, h=0.001)",
    "compute_params": [
     {
@@ -5320,7 +5320,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ □ᵢ = □₁ + □₂ + … + □ₙ",
+   "pattern": "sum ( □ ) = □",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -5365,7 +5365,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) ≈ Σₙ □⁽ⁿ⁾(□)/□! · (□ − □)ⁿ",
+   "pattern": "f ( □ ) ≈ Σ ₙ □ ⁽ⁿ⁾ ( □ ) / □ ! · ( □ − □ ) ⁿ",
    "compute_signature": "compute(derivs, a, x)",
    "compute_params": [
     {
@@ -5428,7 +5428,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∭ □ dV = □",
+   "pattern": "∭ □ dV with □ , □ , □ , □ , □ , □ = □",
    "compute_signature": "compute(f, x0, x1, y0, y1, z0, z1)",
    "compute_params": [
     {
@@ -5502,7 +5502,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "|ℕ| = ℵ₀",
+   "pattern": "| ℕ | = ℵ ₀",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5531,7 +5531,7 @@
     "setfamily"
    ],
    "row_calc": "advanced",
-   "pattern": "{ □, □, □ } → pick one from each",
+   "pattern": "{ □ , □ , □ } → pick one from each",
    "compute_signature": "compute(sets)",
    "compute_params": [
     {
@@ -5564,7 +5564,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "Bijective(□, □, □) = □",
+   "pattern": "Bijective ( □ , □ , □ ) = □",
    "compute_signature": "compute(f, domain, codomain)",
    "compute_params": [
     {
@@ -5603,7 +5603,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□ × □ = { (□, □) : □ ∈ □, □ ∈ □ }",
+   "pattern": "□ × □ = { ( □ , □ ) : □ ∈ □ , □ ∈ □ }",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -5632,7 +5632,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "objects □, □ and morphism □ → □",
+   "pattern": "objects □ , □ and morphism □ → □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5663,7 +5663,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ + □i ∈ ℂ",
+   "pattern": "□ + □ i ∈ ℂ",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -5698,7 +5698,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□: □ → □",
+   "pattern": "□ : □ → □ with □",
    "compute_signature": "compute(f, x)",
    "compute_params": [
     {
@@ -5727,7 +5727,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□: 𝒞 → 𝒟",
+   "pattern": "□ : 𝒞 → 𝒟",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5758,7 +5758,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) = f(□) ⇒ □ = □",
+   "pattern": "f ( □ ) = f ( □ ) ⇒ □ = □ with □ , □",
    "compute_signature": "compute(f, domain)",
    "compute_params": [
     {
@@ -5823,7 +5823,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Limit and colimit( □ )",
+   "pattern": "Limit and colimit ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5848,7 +5848,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□: □ → □",
+   "pattern": "□ : □ → □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5915,7 +5915,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□: □ ⇒ □",
+   "pattern": "□ : □ ⇒ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5940,7 +5940,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "0, 1, 2, … → ω",
+   "pattern": "0 , 1 , 2 , … → ω",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -5969,7 +5969,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "𝒫(□) = □",
+   "pattern": "𝒫 ( □ ) = □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -5994,7 +5994,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ × □, □ ⊔ □",
+   "pattern": "□ × □ , □ ⊔ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6029,7 +6029,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ + □i + □j + □k ∈ ℍ",
+   "pattern": "□ + □ i + □ j + □ k ∈ ℍ",
    "compute_signature": "compute(a, b, c, d)",
    "compute_params": [
     {
@@ -6163,7 +6163,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "onto(□, □, □) = □",
+   "pattern": "onto ( □ , □ , □ ) = □",
    "compute_signature": "compute(f, domain, codomain)",
    "compute_params": [
     {
@@ -6196,7 +6196,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Zorn( □ )",
+   "pattern": "Chains have upper bounds ⇒ a maximal element exists",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6221,7 +6221,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "holomorphic( □ )",
+   "pattern": "Locally equal to a convergent power series",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6250,7 +6250,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "arg(□ + □i) = □",
+   "pattern": "arg ( □ + □ i ) with □ = □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -6275,7 +6275,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Branch cut( □ )",
+   "pattern": "Branch cut ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6308,7 +6308,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) = ∮ f(□) / (□ − □) dz",
+   "pattern": "f ( □ ) = ∮ f ( □ ) / ( □ − □ ) dz with □ , □",
    "compute_signature": "compute(f, a, radius)",
    "compute_params": [
     {
@@ -6351,7 +6351,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∂□/∂□ = ∂□/∂□   and   ∂□/∂□ = −∂□/∂□",
+   "pattern": "∂ □ / ∂ □ = ∂ □ / ∂ □ and ∂ □ / ∂ □ = − ∂ □ / ∂ □ with □ , □",
    "compute_signature": "compute(u, v, x0, y0)",
    "compute_params": [
     {
@@ -6388,7 +6388,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "conformal( □ )",
+   "pattern": "conformal ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6421,7 +6421,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∮ f(□) d□ = □",
+   "pattern": "∫ □ dz along □ with □ = □",
    "compute_signature": "compute(f, center, radius)",
    "compute_params": [
     {
@@ -6462,7 +6462,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "(□(cos □ + i sin □))ⁿ = □ⁿ(cos □□ + i sin □□)",
+   "pattern": "( □ ( cos □ + i sin □ ) ) ⁿ = □ ⁿ ( cos □ □ + i sin □ □ )",
    "compute_signature": "compute(r, theta, n)",
    "compute_params": [
     {
@@ -6499,7 +6499,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "e^(i□) = cos □ + i sin □",
+   "pattern": "e ^ ( i □ ) = cos □ + i sin □",
    "compute_signature": "compute(theta)",
    "compute_params": [
     {
@@ -6528,7 +6528,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "Im(□ + □i) = □",
+   "pattern": "Im ( □ + □ i ) with □ = □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -6553,7 +6553,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Σ □ₙ (□−□)ⁿ",
+   "pattern": "Σ □ ₙ ( □ − □ ) ⁿ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -6590,7 +6590,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "f(□) = (□□ + □) / (□□ + □)",
+   "pattern": "f ( □ ) = ( □ □ + □ ) / ( □ □ + □ )",
    "compute_signature": "compute(a, b, c, d, z)",
    "compute_params": [
     {
@@ -6646,7 +6646,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "Re(□ + □i) = □",
+   "pattern": "Re ( □ + □ i ) with □ = □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -6677,7 +6677,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "Res(□, □)",
+   "pattern": "Res ( □ , □ )",
    "compute_signature": "compute(f, a, radius=0.01)",
    "compute_params": [
     {
@@ -6719,7 +6719,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∮ f(□) d□ = 2πi · Σ □",
+   "pattern": "∮ f ( □ ) d □ = 2 π i · Σ □ with □ , □ , □",
    "compute_signature": "compute(f, center, radius)",
    "compute_params": [
     {
@@ -6907,7 +6907,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "ready",
-   "pattern": "γ = lim (1 + 1/2 + … + 1 / □ − ln □)",
+   "pattern": "γ = lim ( 1 + 1 / 2 + ··· + 1 / n − ln ( n ) )",
    "compute_signature": "compute()",
    "compute_params": [],
    "required_args": 0,
@@ -6932,7 +6932,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "ready",
-   "pattern": "e = lim (1 + 1 / □)ⁿ",
+   "pattern": "e = lim ( 1 + 1 / n ) ⁿ",
    "compute_signature": "compute()",
    "compute_params": [],
    "required_args": 0,
@@ -6957,7 +6957,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "ready",
-   "pattern": "φ = (1 + √5) / 2",
+   "pattern": "φ = ( 1 + √ 5 ) / 2",
    "compute_signature": "compute()",
    "compute_params": [],
    "required_args": 0,
@@ -7167,7 +7167,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ ≠ □",
+   "pattern": "□ ≠ □",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -7322,7 +7322,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Γᵏᵢⱼ( □ )",
+   "pattern": "Γ ᵏ ᵢⱼ ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7347,7 +7347,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "ω = □ d□ + □ d□",
+   "pattern": "ω = □ d □ + □ d □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7372,7 +7372,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "d(□ d□) = d□ ∧ d□",
+   "pattern": "d ( □ d □ ) = d □ ∧ d □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7403,7 +7403,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □₁ · □₂",
+   "pattern": "□ = □ ₁ · □ ₂",
    "compute_signature": "compute(k1, k2)",
    "compute_params": [
     {
@@ -7440,7 +7440,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□″ = 0",
+   "pattern": "∇ ( along γ ′ ) γ ′ = 0",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7473,7 +7473,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "[□, □]",
+   "pattern": "[ □ , □ ] with □",
    "compute_signature": "compute(X, Y, point)",
    "compute_params": [
     {
@@ -7506,7 +7506,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□□",
+   "pattern": "□ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7539,7 +7539,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "ds² = □ d□ d□",
+   "pattern": "ds ² = □ d □ d □",
    "compute_signature": "compute(g, v, w)",
    "compute_params": [
     {
@@ -7596,7 +7596,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□*",
+   "pattern": "□ *",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7621,7 +7621,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ᵢⱼ",
+   "pattern": "□ ᵢⱼ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7646,7 +7646,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ᵃᵦᵧ□",
+   "pattern": "□ ᵃ βγ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7671,7 +7671,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "∫□ □□ = ∫∂□ □",
+   "pattern": "∫ □ □ □ = ∫ ∂ □ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7696,7 +7696,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ₚ□",
+   "pattern": "□ ₚ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -7727,7 +7727,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ∈ □ₚ□",
+   "pattern": "□ ∈ □ ₚ □ with □ , □",
    "compute_signature": "compute(curve, t)",
    "compute_params": [
     {
@@ -7760,7 +7760,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "Tⁱᵢ = Σ □",
+   "pattern": "T ⁱ ᵢ = Σ □",
    "compute_signature": "compute(T)",
    "compute_params": [
     {
@@ -7807,7 +7807,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ∧ □ = −(□ ∧ □)",
+   "pattern": "□ ∧ □ = − ( □ ∧ □ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -7858,7 +7858,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "C(□, □) = □! / (□! (□ − □)!)",
+   "pattern": "C ( □ , □ ) = □ ! / ( □ ! ( □ − □ ) ! )",
    "compute_signature": "compute(n, r)",
    "compute_params": [
     {
@@ -7913,7 +7913,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "φ(□) = □",
+   "pattern": "φ ( □ ) = □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -7961,7 +7961,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□! = □ · (□−1) · … · 2 · 1",
+   "pattern": "□ ! = □ · ( □ − 1 ) · ... · 2 · 1",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8003,7 +8003,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□₀ = 0, □₁ = 1, □ₙ = □ₙ₋₁ + □ₙ₋₂",
+   "pattern": "□ ₀ = 0 , □ ₁ = 1 , □ ₙ = □ ₙ₋₁ + □ ₙ₋₂ with □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8053,7 +8053,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "gcd(□, □) = □",
+   "pattern": "gcd ( □ , □ ) = □",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -8105,7 +8105,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "|□ ∪ □| = |□| + |□| − |□ ∩ □|",
+   "pattern": "| □ ∪ □ | = | □ | + | □ | − | □ ∩ □ | with □",
    "compute_signature": "compute(a, b, a_and_b)",
    "compute_params": [
     {
@@ -8153,7 +8153,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "lcm(□, □) = |□·□| / gcd(□, □)",
+   "pattern": "lcm ( □ , □ ) = | □ · □ | / gcd ( □ , □ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -8246,7 +8246,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□, □) = □! / (□ − □)!",
+   "pattern": "P ( □ , □ ) = □ ! / ( □ − □ ) !",
    "compute_signature": "compute(n, r)",
    "compute_params": [
     {
@@ -8289,7 +8289,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "⌈□ / □⌉ = □",
+   "pattern": "⌈ □ / □ ⌉ = □",
    "compute_signature": "compute(n, m)",
    "compute_params": [
     {
@@ -8337,7 +8337,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "prime(□) = yes / no",
+   "pattern": "prime ( □ ) = yes / no",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8391,7 +8391,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ · □ · □ · …",
+   "pattern": "factor ( □ ) = □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8436,7 +8436,7 @@
     "pairs"
    ],
    "row_calc": "advanced",
-   "pattern": "Adjacency matrix(□, □) = □",
+   "pattern": "Adjacency matrix ( □ , □ ) = □",
    "compute_signature": "compute(n, edges)",
    "compute_params": [
     {
@@ -8469,7 +8469,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = Σₖ S(□, □)",
+   "pattern": "□ ₙ = Σ ₖ S ( □ , □ )",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8505,7 +8505,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "bipartite( □ )",
+   "pattern": "Vertices in two sets with □",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8534,7 +8534,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "|□/□| = □",
+   "pattern": "| □ / □ | with □ = □",
    "compute_signature": "compute(fixed_counts)",
    "compute_params": [
     {
@@ -8575,7 +8575,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ₙ = C(2□, □) / (□ + 1)",
+   "pattern": "□ ₙ = C ( 2 □ , □ ) / ( □ + 1 )",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8611,7 +8611,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "χ(□) = □",
+   "pattern": "χ ( □ ) = □",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8640,7 +8640,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "cycle( □ )",
+   "pattern": "cycle ( □ )",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8669,7 +8669,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "Euler path( □ )",
+   "pattern": "Euler path ( □ )",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8700,7 +8700,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "G(□) = Σ □ₙ □ⁿ",
+   "pattern": "G ( □ ) = Σ □ ₙ □ ⁿ",
    "compute_signature": "compute(terms, x)",
    "compute_params": [
     {
@@ -8745,7 +8745,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = (□, □)",
+   "pattern": "□ = ( □ , □ )",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8774,7 +8774,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "Hamiltonian path( □ )",
+   "pattern": "Hamiltonian path ( □ )",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8807,7 +8807,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "Max flow min cut( □ )",
+   "pattern": "Max flow min cut ( □ ) with □ , □",
    "compute_signature": "compute(graph, source, sink)",
    "compute_params": [
     {
@@ -8844,7 +8844,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□(□) = □",
+   "pattern": "□ ( □ ) = □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -8884,7 +8884,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "path( □ )",
+   "pattern": "path ( □ ) with □ , □",
    "compute_signature": "compute(graph, start, end)",
    "compute_params": [
     {
@@ -8921,7 +8921,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "planar( □ )",
+   "pattern": "planar ( □ )",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -8954,7 +8954,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ = f(□ₙ₋₁, …)",
+   "pattern": "□ ₙ = f ( □ ₙ₋₁ , … ) with □ , □ , □",
    "compute_signature": "compute(coeffs, start, n)",
    "compute_params": [
     {
@@ -9008,7 +9008,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "□(□, □) = □",
+   "pattern": "□ ( □ , □ ) = □",
    "compute_signature": "compute(graph, start)",
    "compute_params": [
     {
@@ -9072,7 +9072,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "S(□, □) = (1/□!) Σⱼ (−1)ʲ C(□, □) (□ − □)ⁿ",
+   "pattern": "S ( □ , □ ) = ( 1 / □ ! ) Σ ⱼ ( − 1 ) ʲ C ( □ , □ ) ( □ − □ ) ⁿ",
    "compute_signature": "compute(n, k)",
    "compute_params": [
     {
@@ -9120,7 +9120,7 @@
     "graph"
    ],
    "row_calc": "advanced",
-   "pattern": "tree( □ )",
+   "pattern": "Connected + no cycles with □",
    "compute_signature": "compute(graph)",
    "compute_params": [
     {
@@ -9151,7 +9151,7 @@
     "item"
    ],
    "row_calc": "advanced",
-   "pattern": "deg(□) = □",
+   "pattern": "deg ( □ ) with □ = □",
    "compute_signature": "compute(graph, v)",
    "compute_params": [
     {
@@ -9184,7 +9184,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "p(□) = det(□ − □ · I)",
+   "pattern": "p ( □ ) = det ( □ − □ · I )",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9233,7 +9233,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "col(□) = { □ · □ }",
+   "pattern": "col ( □ ) = { □ · □ }",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9285,7 +9285,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ × □ = (□₂□₃ − □₃□₂, □₃□₁ − □₁□₃, □₁□₂ − □₂□₁)",
+   "pattern": "□ × □ = ( □ ₂ □ ₃ − □ ₃ □ ₂ , □ ₃ □ ₁ − □ ₁ □ ₃ , □ ₁ □ ₂ − □ ₂ □ ₁ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -9357,7 +9357,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "det(□) = □",
+   "pattern": "det ( □ ) = □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9426,7 +9426,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□·□ = Σ □ᵢ□ᵢ = |□||□|cos □",
+   "pattern": "□ · □ = Σ □ ᵢ □ ᵢ = | □ | | □ | cos □",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -9475,7 +9475,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "det(□ − □ · I) = 0",
+   "pattern": "□ → □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9504,7 +9504,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "□ · □ = □ · □",
+   "pattern": "□ × □ = □ × □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9533,7 +9533,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ᵢⱼ = 1 if □ = □, else 0",
+   "pattern": "I ᵢⱼ = 1 when i = j , 0 otherwise with □",
    "compute_signature": "compute(n)",
    "compute_params": [
     {
@@ -9585,7 +9585,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = □ · □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9616,7 +9616,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ + □)ᵢⱼ = □ᵢⱼ + □ᵢⱼ",
+   "pattern": "( □ + □ ) ᵢⱼ = □ ᵢⱼ + □ ᵢⱼ",
    "compute_signature": "compute(A, B)",
    "compute_params": [
     {
@@ -9684,7 +9684,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "□ · □⁻¹ = I",
+   "pattern": "□ · □ ⁻¹ = I",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9740,7 +9740,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "(□□)ᵢⱼ = Σₖ □ᵢₖ · □ₖⱼ",
+   "pattern": "□ ᵢⱼ = Σ ₖ □ ᵢₖ × □ ₖⱼ",
    "compute_signature": "compute(A, B)",
    "compute_params": [
     {
@@ -9808,7 +9808,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "rank(□) = □",
+   "pattern": "rank ( □ ) = □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -9870,7 +9870,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ − □)ᵢⱼ = □ᵢⱼ − □ᵢⱼ",
+   "pattern": "( □ − □ ) ᵢⱼ = □ ᵢⱼ − □ ᵢⱼ",
    "compute_signature": "compute(A, B)",
    "compute_params": [
     {
@@ -9938,7 +9938,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "‖□‖ₚ = (Σ |□ᵢ|ᵖ)^(1/□)",
+   "pattern": "‖ □ ‖ ₚ = ( Σ | □ ᵢ | ᵖ ) ^ ( 1 / □ )",
    "compute_signature": "compute(v, p=2)",
    "compute_params": [
     {
@@ -9992,7 +9992,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "null(□) = { □ : □ · □ = 0 }",
+   "pattern": "null ( □ ) = { □ : □ · □ = 0 }",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -10042,7 +10042,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = □ · □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -10127,7 +10127,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "(□□)ᵢⱼ = □ · □ᵢⱼ",
+   "pattern": "( □ □ ) ᵢⱼ = □ · □ ᵢⱼ",
    "compute_signature": "compute(k, A)",
    "compute_params": [
     {
@@ -10186,7 +10186,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = □ · □ · □ᵀ",
+   "pattern": "□ = □ × □ × □ ᵀ",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -10292,7 +10292,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "tr(□) = Σᵢ □ᵢᵢ",
+   "pattern": "tr ( □ ) = Σ ᵢ □ ᵢᵢ",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -10337,7 +10337,7 @@
     "matrix"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ᵀ)ᵢⱼ = □ⱼᵢ",
+   "pattern": "( □ ᵀ ) ᵢⱼ = □ ⱼᵢ",
    "compute_signature": "compute(A)",
    "compute_params": [
     {
@@ -10397,7 +10397,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□̂ = □ / ‖□‖",
+   "pattern": "□ = □ / ‖ □ ‖",
    "compute_signature": "compute(v)",
    "compute_params": [
     {
@@ -10439,7 +10439,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "‖□‖ = √(□₁² + □₂² + …)",
+   "pattern": "‖ □ ‖ = √ ( □ ₁ ² + □ ₂ ² + ... )",
    "compute_signature": "compute(v)",
    "compute_params": [
     {
@@ -10481,7 +10481,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "proj□(□) = (□·□ / □·□) · □",
+   "pattern": "proj □ ( □ ) = ( □ · □ / □ · □ ) · □",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -10581,7 +10581,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "|□| = □",
+   "pattern": "| □ | = □",
    "compute_signature": "compute(a)",
    "compute_params": [
     {
@@ -10612,7 +10612,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□ᶜ = □",
+   "pattern": "□ ᶜ with □ = □",
    "compute_signature": "compute(a, universe)",
    "compute_params": [
     {
@@ -10702,7 +10702,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "∀□ ∈ □: P(□)",
+   "pattern": "∀ □ ∈ □ : P ( □ ) with □",
    "compute_signature": "compute(predicate, domain)",
    "compute_params": [
     {
@@ -10877,7 +10877,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "¬(□) = □",
+   "pattern": "¬ ( □ ) = □",
    "compute_signature": "compute(a)",
    "compute_params": [
     {
@@ -10915,7 +10915,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ∉ □",
+   "pattern": "□ ∉ □",
    "compute_signature": "compute(x, s)",
    "compute_params": [
     {
@@ -11105,7 +11105,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "∃□ ∈ □: P(□)",
+   "pattern": "∃ □ ∈ □ : P ( □ ) with □",
    "compute_signature": "compute(predicate, domain)",
    "compute_params": [
     {
@@ -11227,7 +11227,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "bisect(□, □, □) = □",
+   "pattern": "bisect ( □ , □ , □ ) = □",
    "compute_signature": "compute(f, a, b, tol=1e-12, max_iter=200)",
    "compute_params": [
     {
@@ -11278,7 +11278,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□□ + (1−□)□) ≤ □f(□) + (1−□)f(□)",
+   "pattern": "f ( □ □ + ( 1 − □ ) □ ) ≤ □ f ( □ ) + ( 1 − □ ) f ( □ ) with □",
    "compute_signature": "compute(f, x, y)",
    "compute_params": [
     {
@@ -11323,7 +11323,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ₊₁ = □ₙ + □ · f(□ₙ, □ₙ)",
+   "pattern": "□ ₙ₊₁ = □ ₙ + □ · f ( □ ₙ , □ ₙ ) with □ , □ , □ , □",
    "compute_signature": "compute(f, x0, y0, h, steps)",
    "compute_params": [
     {
@@ -11370,7 +11370,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ₊₁ = g(□ₙ)",
+   "pattern": "□ ₙ₊₁ = g ( □ ₙ ) with □",
    "compute_signature": "compute(g, x0, tol=1e-12, max_iter=1000)",
    "compute_params": [
     {
@@ -11415,7 +11415,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□⁽ᵏ⁺¹⁾ = □",
+   "pattern": "□ ⁽ᵏ⁺¹⁾ with □ , □ = □",
    "compute_signature": "compute(A, b, iterations=100)",
    "compute_params": [
     {
@@ -11478,7 +11478,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□|□ → □",
+   "pattern": "□ | □ → □",
    "compute_signature": "compute(A, b)",
    "compute_params": [
     {
@@ -11536,7 +11536,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₖ₊₁ = □ₖ − □∇□",
+   "pattern": "□ ₖ₊₁ = □ ₖ − □ ∇ □",
    "compute_signature": "compute(grad_f, x0, lr=0.01, steps=1000)",
    "compute_params": [
     {
@@ -11581,7 +11581,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "H = [ ∂²□ / ∂□∂□ ]",
+   "pattern": "H = [ ∂ ² □ / ∂ □ ∂ □ ] with □",
    "compute_signature": "compute(f, point)",
    "compute_params": [
     {
@@ -11616,7 +11616,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ᵢ⁽ᵏ⁺¹⁾ = (□ᵢ − Σ{□≠i} □ᵢⱼ □ⱼ⁽ᵏ⁾) / □ᵢᵢ",
+   "pattern": "□ ᵢ ⁽ᵏ⁺¹⁾ = ( □ ᵢ − Σ { □ = i } □ ᵢⱼ □ ⱼ ⁽ᵏ⁾ ) / □ ᵢᵢ",
    "compute_signature": "compute(A, b, iterations=100)",
    "compute_params": [
     {
@@ -11673,7 +11673,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "∇□ + □ · ∇□ = 0",
+   "pattern": "∇ □ + □ · ∇ □ = 0",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -11706,7 +11706,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "L(□) = Σᵢ □ᵢ ∏{□≠i} (□ − □ⱼ) / (□ᵢ − □ⱼ)",
+   "pattern": "L ( □ ) = Σ ᵢ □ ᵢ ∏ { □ = i } ( □ − □ ⱼ ) / ( □ ᵢ − □ ⱼ )",
    "compute_signature": "compute(xs, ys, x)",
    "compute_params": [
     {
@@ -11764,7 +11764,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "∇□ = □ · ∇□",
+   "pattern": "∇ □ = □ · ∇ □ with □",
    "compute_signature": "compute(f, g, point)",
    "compute_params": [
     {
@@ -11803,7 +11803,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "min Σ(□ᵢ − □̂ᵢ)² = □",
+   "pattern": "min Σ ( □ ᵢ − □ ᵢ ) ² with □ = □",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -11840,7 +11840,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "max □ · □   subject to   □ · □ ≤ □",
+   "pattern": "max □ · □ subject to □ · □ ≤ □",
    "compute_signature": "compute(c, A, b)",
    "compute_params": [
     {
@@ -11881,7 +11881,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "max □(□)",
+   "pattern": "max □ ( □ ) with □ , □",
    "compute_signature": "compute(f, lo, hi)",
    "compute_params": [
     {
@@ -11922,7 +11922,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "min □(□)",
+   "pattern": "min □ ( □ ) with □ , □",
    "compute_signature": "compute(f, lo, hi)",
    "compute_params": [
     {
@@ -11963,7 +11963,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "N(□) = □₀ + □₁(□ − □₀) + □₂(□ − □₀)(□ − □₁) + …",
+   "pattern": "N ( □ ) = □ ₀ + □ ₁ ( □ − □ ₀ ) + □ ₂ ( □ − □ ₀ ) ( □ − □ ₁ ) + ... with □",
    "compute_signature": "compute(xs, ys, x)",
    "compute_params": [
     {
@@ -12021,7 +12021,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ₊₁ = □ₙ − f(□ₙ) / f′(□ₙ)",
+   "pattern": "□ = □ − f ( □ ) / f ′ ( □ ) with □ , □",
    "compute_signature": "compute(f, fprime, x0, tol=1e-12, max_iter=100)",
    "compute_params": [
     {
@@ -12076,7 +12076,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ₊₁ = □ₙ + □/6 · (□₁ + 2□₂ + 2□₃ + □₄)",
+   "pattern": "□ ₙ₊₁ = □ ₙ + □ / 6 · ( □ ₁ + 2 □ ₂ + 2 □ ₃ + □ ₄ ) with □ , □ , □",
    "compute_signature": "compute(f, x0, y0, h, steps)",
    "compute_params": [
     {
@@ -12125,7 +12125,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ₊₁ = □ₙ − f(□ₙ)(□ₙ − □ₙ₋₁) / (f(□ₙ) − f(□ₙ₋₁))",
+   "pattern": "□ ₙ₊₁ = □ ₙ − f ( □ ₙ ) ( □ ₙ − □ ₙ₋₁ ) / ( f ( □ ₙ ) − f ( □ ₙ₋₁ ) ) with □",
    "compute_signature": "compute(f, x0, x1, tol=1e-12, max_iter=100)",
    "compute_params": [
     {
@@ -12176,7 +12176,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "simplex(□ · □ ≤ □) = □",
+   "pattern": "simplex ( □ · □ ≤ □ ) with □ = □",
    "compute_signature": "compute(c, A, b)",
    "compute_params": [
     {
@@ -12217,7 +12217,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∫ₐᵇ □ ≈ □/3 · (□₀ + 4□₁ + 2□₂ + … + □ₙ)",
+   "pattern": "∫ ₐ ᵇ □ ≈ □ / 3 · ( □ ₀ + 4 □ ₁ + 2 □ ₂ + ... + □ ₙ ) with □ , □",
    "compute_signature": "compute(f, a, b, n=1000)",
    "compute_params": [
     {
@@ -12263,7 +12263,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "S(□)",
+   "pattern": "S ( □ ) with □ , □",
    "compute_signature": "compute(xs, ys, x)",
    "compute_params": [
     {
@@ -12321,7 +12321,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∫ₐᵇ □ ≈ □ · (f(□)/2 + Σ f(□ᵢ) + f(□)/2)",
+   "pattern": "∫ ₐ ᵇ □ ≈ □ · ( f ( □ ) / 2 + Σ f ( □ ᵢ ) + f ( □ ) / 2 )",
    "compute_signature": "compute(f, a, b, n=1000)",
    "compute_params": [
     {
@@ -12359,7 +12359,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Almost everywhere( □ )",
+   "pattern": "Almost everywhere ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -12388,7 +12388,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ (−1)ⁿ □ₙ",
+   "pattern": "Σ ( − 1 ) ⁿ □ ₙ",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -12413,7 +12413,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Banach space( □ )",
+   "pattern": "Normed vector space + completeness",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -12444,7 +12444,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ ≤ □ₙ",
+   "pattern": "□ ₙ ≤ □ ₙ",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -12497,7 +12497,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ → □",
+   "pattern": "□ ₙ → □ with □",
    "compute_signature": "compute(terms, L, eps)",
    "compute_params": [
     {
@@ -12552,7 +12552,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∀□ ∃□ : |□ − □| < □ → |f(□) − f(□)| < □",
+   "pattern": "∀ □ ∃ □ : | □ − □ | < □ → | f ( □ ) − f ( □ ) | < □ with □",
    "compute_signature": "compute(f, a, eps)",
    "compute_params": [
     {
@@ -12585,7 +12585,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Hilbert space( □ )",
+   "pattern": "Inner product space + completeness",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -12614,7 +12614,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "inf(□) = □",
+   "pattern": "inf ( □ ) = □",
    "compute_signature": "compute(values)",
    "compute_params": [
     {
@@ -12656,7 +12656,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "⟨□, □⟩ = Σ □ᵢ□ᵢ",
+   "pattern": "⟨ □ , □ ⟩ = Σ □ ᵢ □ ᵢ",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -12707,7 +12707,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ □ₙ  ↔  ∫ f(□) d□",
+   "pattern": "Σ □ ₙ ↔ ∫ f ( □ ) d □ with □ , □",
    "compute_signature": "compute(f, N)",
    "compute_params": [
     {
@@ -12746,7 +12746,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) < □ < f(□) → f(□) = □",
+   "pattern": "f ( □ ) < □ < f ( □ ) → f ( □ ) with □ = □",
    "compute_signature": "compute(f, a, b, y)",
    "compute_params": [
     {
@@ -12791,7 +12791,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "∫ □ dμ = □",
+   "pattern": "∫ □ dμ with □ , □ = □",
    "compute_signature": "compute(f, a, b)",
    "compute_params": [
     {
@@ -12828,7 +12828,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Limit inferior( □ )",
+   "pattern": "Limit inferior ( □ )",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -12873,7 +12873,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Limit superior( □ )",
+   "pattern": "Limit superior ( □ )",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -12922,7 +12922,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "|f(□) − f(□)| ≤ □ |□ − □|",
+   "pattern": "| f ( □ ) − f ( □ ) | ≤ □ | □ − □ | with □",
    "compute_signature": "compute(f, x, y)",
    "compute_params": [
     {
@@ -12963,7 +12963,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "‖□‖ₚ = (∫|□|ᵖ □□)^(1/□)",
+   "pattern": "‖ □ ‖ ₚ = ( ∫ | □ | ᵖ □ □ ) ^ ( 1 / □ ) with □ , □",
    "compute_signature": "compute(f, a, b, p=2, n=10000)",
    "compute_params": [
     {
@@ -13014,7 +13014,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f′(□) = □",
+   "pattern": "f ′ ( □ ) with □ , □ , □ = □",
    "compute_signature": "compute(f, a, b)",
    "compute_params": [
     {
@@ -13051,7 +13051,7 @@
     "pairs"
    ],
    "row_calc": "advanced",
-   "pattern": "μ(□) = □",
+   "pattern": "μ ( □ ) = □",
    "compute_signature": "compute(intervals)",
    "compute_params": [
     {
@@ -13080,7 +13080,7 @@
     "pairs"
    ],
    "row_calc": "advanced",
-   "pattern": "□*",
+   "pattern": "□ *",
    "compute_signature": "compute(intervals)",
    "compute_params": [
     {
@@ -13147,7 +13147,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = lim |□ₙ₊₁ / □ₙ|",
+   "pattern": "□ = lim | □ ₙ₊₁ / □ ₙ |",
    "compute_signature": "compute(a_n, a_next)",
    "compute_params": [
     {
@@ -13194,7 +13194,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ f(□ᵢ) · □ = □",
+   "pattern": "Σ f ( x ᵢ ) · Δx with □ , □ , □ , □ = □",
    "compute_signature": "compute(f, a, b, n)",
    "compute_params": [
     {
@@ -13239,7 +13239,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ f(□ᵢ) · (g(□ᵢ₊₁) − g(□ᵢ)) = □",
+   "pattern": "Σ f ( □ ᵢ ) · ( g ( □ ᵢ₊₁ ) − g ( □ ᵢ ) ) with □ , □ = □",
    "compute_signature": "compute(f, g, xs)",
    "compute_params": [
     {
@@ -13278,7 +13278,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = lim ⁿ√|□ₙ|",
+   "pattern": "□ = lim ⁿ √ | □ ₙ | with □",
    "compute_signature": "compute(a_n, n)",
    "compute_params": [
     {
@@ -13319,7 +13319,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Σ □ₙ",
+   "pattern": "Σ □ ₙ",
    "compute_signature": "compute(terms)",
    "compute_params": [
     {
@@ -13344,7 +13344,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Sigma-algebra( □ )",
+   "pattern": "Sigma-algebra ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -13373,7 +13373,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "sup(□) = □",
+   "pattern": "sup ( □ ) = □",
    "compute_signature": "compute(values)",
    "compute_params": [
     {
@@ -13409,7 +13409,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Uniform continuity( □ )",
+   "pattern": "∀ ε > 0 , ∃ δ > 0 , ∀ x , y ∈ D · | x − y | < δ ⇒ | f ( x ) − f ( y ) | < ε",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -13434,7 +13434,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ₙ ⇉ □",
+   "pattern": "□ ₙ ⇉ □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -13467,7 +13467,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□|□) = P(□|□) · P(□) / P(□)",
+   "pattern": "□ = □ × P ( □ ) / P ( □ )",
    "compute_signature": "compute(p_b_given_a, p_a, p_b)",
    "compute_params": [
     {
@@ -13517,7 +13517,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□ = □) = C(□,□) · □ᵏ · (1−□)ⁿ⁻ᵏ",
+   "pattern": "P ( □ = □ ) = C ( □ , □ ) · □ ᵏ · ( 1 − □ ) ⁿ⁻ᵏ",
    "compute_signature": "compute(n, k, p)",
    "compute_params": [
     {
@@ -13565,7 +13565,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□² = Σ (□ᵢ − □ᵢ)² / □ᵢ",
+   "pattern": "□ ² = Σ ( □ ᵢ − □ ᵢ ) ² / □ ᵢ",
    "compute_signature": "compute(observed, expected)",
    "compute_params": [
     {
@@ -13614,7 +13614,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□|□) = P(□ ∩ □) / P(□)",
+   "pattern": "□ = □ / P ( □ )",
    "compute_signature": "compute(p_a_and_b, p_b)",
    "compute_params": [
     {
@@ -13659,7 +13659,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□̄ ± □ · □ / √□ = □",
+   "pattern": "□ = □ ± □ × □ / √ ( □ )",
    "compute_signature": "compute(mean, sd, n, z=1.96)",
    "compute_params": [
     {
@@ -13703,7 +13703,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = cov(□,□) / (□ₓ · □□)",
+   "pattern": "□ = cov ( □ , □ ) / ( □ ₓ · □ □ )",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -13769,7 +13769,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "cov(□,□) = Σ(□ᵢ − □̄)(□ᵢ − □̄) / (□ − 1)",
+   "pattern": "cov ( □ , □ ) = Σ ( □ ᵢ − □ ) ( □ ᵢ − □ ) / ( □ − 1 )",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -13820,7 +13820,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□[□] = Σ □ᵢ · □ᵢ",
+   "pattern": "□ [ □ ] = Σ □ ᵢ · □ ᵢ",
    "compute_signature": "compute(values, probs)",
    "compute_params": [
     {
@@ -13871,7 +13871,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "f(□) = □ · e^(−□□) for □ ≥ 0",
+   "pattern": "f ( □ ) = □ · e ^ ( − □ □ ) for □ ≥ 0",
    "compute_signature": "compute(x, lam)",
    "compute_params": [
     {
@@ -13912,7 +13912,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "IQR = □ − □",
+   "pattern": "IQR = □ − □ with □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -13959,7 +13959,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = □□ + □",
+   "pattern": "□ = □ □ + □ with □ , □",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -13992,7 +13992,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "mean = Σ□ᵢ / □",
+   "pattern": "mean ( □ ) = □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14033,7 +14033,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "median(□) = □",
+   "pattern": "median ( □ ) = □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14084,7 +14084,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "mode(□) = □",
+   "pattern": "mode ( □ ) = □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14125,7 +14125,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "f(□) = e^(−(□−□)² / 2□²) / (□√(2π))",
+   "pattern": "f ( □ ) = e ^ ( − ( □ − □ ) ² / 2 □ ² ) / ( □ √ ( 2 π ) )",
    "compute_signature": "compute(x, mu=0, sigma=1)",
    "compute_params": [
     {
@@ -14171,7 +14171,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "p-value(□) = □",
+   "pattern": "p-value ( □ ) = □",
    "compute_signature": "compute(z)",
    "compute_params": [
     {
@@ -14209,7 +14209,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₖ = □",
+   "pattern": "□ ₖ with □ = □",
    "compute_signature": "compute(data, k)",
    "compute_params": [
     {
@@ -14258,7 +14258,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□ = □) = □ᵏ · e^(−□) / □!",
+   "pattern": "P ( □ = □ ) = □ ᵏ · e ^ ( − □ ) / □ !",
    "compute_signature": "compute(k, lam)",
    "compute_params": [
     {
@@ -14308,7 +14308,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "P(□) = □",
+   "pattern": "P ( □ ) with □ , □ = □",
    "compute_signature": "compute(favorable, total)",
    "compute_params": [
     {
@@ -14349,7 +14349,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Quartiles(□) = □",
+   "pattern": "quartiles ( □ ) = □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14398,7 +14398,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "range(□) = □",
+   "pattern": "range ( □ ) = □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14438,7 +14438,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = √(□²)",
+   "pattern": "□ = √ ( □ ² ) with □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14480,7 +14480,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□² = Σ(□ᵢ − □̄)² / (□ − 1)",
+   "pattern": "□ ² = Σ ( □ ᵢ − □ ) ² / ( □ − 1 )",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14522,7 +14522,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ = √(□²)",
+   "pattern": "□ = √ ( □ ² ) with □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14573,7 +14573,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (□̄ − □₀) / (□ / √□)",
+   "pattern": "□ = ( □ − □ ₀ ) / ( □ / √ □ )",
    "compute_signature": "compute(mean, mu0, s, n)",
    "compute_params": [
     {
@@ -14628,7 +14628,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "f(□) = 1 / (□ − □) for □ ≤ □ ≤ □, else 0",
+   "pattern": "f ( □ ) = 1 / ( □ − □ ) for □ ≤ □ ≤ □ , else 0",
    "compute_signature": "compute(x, a, b)",
    "compute_params": [
     {
@@ -14682,7 +14682,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□² = Σ(□ᵢ − □)² / □",
+   "pattern": "□ ² = Σ ( □ ᵢ − □ ) ² / □",
    "compute_signature": "compute(data)",
    "compute_params": [
     {
@@ -14729,7 +14729,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "Var(□) = □[□²] − (□[□])²",
+   "pattern": "Var ( □ ) = □ [ □ ² ] − ( □ [ □ ] ) ² with □ , □",
    "compute_signature": "compute(values, probs)",
    "compute_params": [
     {
@@ -14780,7 +14780,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (□ − □) / □",
+   "pattern": "□ = ( □ − □ ) / □",
    "compute_signature": "compute(x, mean, sd)",
    "compute_params": [
     {
@@ -14828,7 +14828,7 @@
     "setfamily"
    ],
    "row_calc": "advanced",
-   "pattern": "ℬ( □ )",
+   "pattern": "ℬ ( □ ) with □",
    "compute_signature": "compute(tau, B)",
    "compute_params": [
     {
@@ -14863,7 +14863,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "∂□",
+   "pattern": "∂ □ with □",
    "compute_signature": "compute(tau, A)",
    "compute_params": [
     {
@@ -14898,7 +14898,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ₙ)",
+   "pattern": "( □ ₙ ) with □",
    "compute_signature": "compute(terms, eps)",
    "compute_params": [
     {
@@ -14946,7 +14946,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "Closed set( □ )",
+   "pattern": "X ∖ A is open with □ , □",
    "compute_signature": "compute(tau, A)",
    "compute_params": [
     {
@@ -14981,7 +14981,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□̄",
+   "pattern": "‾ □ with □",
    "compute_signature": "compute(tau, A)",
    "compute_params": [
     {
@@ -15010,7 +15010,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ⁿ(□)",
+   "pattern": "□ ⁿ ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15035,7 +15035,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "compact( □ )",
+   "pattern": "compact ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15060,7 +15060,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "complete( □ )",
+   "pattern": "complete ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15089,7 +15089,7 @@
     "setfamily"
    ],
    "row_calc": "advanced",
-   "pattern": "connected( □ )",
+   "pattern": "No separation into two open pieces with □",
    "compute_signature": "compute(tau)",
    "compute_params": [
     {
@@ -15114,7 +15114,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□: □ → □",
+   "pattern": "□ : □ → □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15139,7 +15139,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□: □̃ → □",
+   "pattern": "□ : ‾ □ → □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15214,7 +15214,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "π₁(□)",
+   "pattern": "π ₁ ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15243,7 +15243,7 @@
     "setfamily"
    ],
    "row_calc": "advanced",
-   "pattern": "□ ≠ □ → □ ∩ □ = ∅",
+   "pattern": "x ≠ y ⇒ ∃ open U , V with x ∈ U , y ∈ V , U ∩ V = ∅ with □",
    "compute_signature": "compute(tau)",
    "compute_params": [
     {
@@ -15293,7 +15293,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ₙ(□)",
+   "pattern": "□ ₙ ( □ )",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15349,7 +15349,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□°",
+   "pattern": "□ ° with □",
    "compute_signature": "compute(tau, A)",
    "compute_params": [
     {
@@ -15378,7 +15378,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "Manifold( □ )",
+   "pattern": "Locally looks like ℝ ⁿ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15409,7 +15409,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□(□, □) = √Σ(□ᵢ − □ᵢ)²",
+   "pattern": "d ( □ , □ ) = √ ( Σ ᵢ ( □ ᵢ − □ ᵢ ) ² )",
    "compute_signature": "compute(x, y)",
    "compute_params": [
     {
@@ -15460,7 +15460,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "N(□)",
+   "pattern": "N ( □ ) with □ , □",
    "compute_signature": "compute(tau, x, N)",
    "compute_params": [
     {
@@ -15503,7 +15503,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□(□, □) = { □ : □(□, □) < □ }",
+   "pattern": "□ ( □ , □ ) = { □ : □ ( □ , □ ) < □ }",
    "compute_signature": "compute(d, x, y, r)",
    "compute_params": [
     {
@@ -15546,7 +15546,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "Open set( □ )",
+   "pattern": "x ∈ U ⇒ some ball around x lies in U with □ , □",
    "compute_signature": "compute(tau, U)",
    "compute_params": [
     {
@@ -15575,7 +15575,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "path-connected( □ )",
+   "pattern": "x → continuous path → y",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15631,7 +15631,7 @@
     "set"
    ],
    "row_calc": "advanced",
-   "pattern": "□□",
+   "pattern": "□ □",
    "compute_signature": "compute(tau, A)",
    "compute_params": [
     {
@@ -15668,7 +15668,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□r² + □r + □ = 0",
+   "pattern": "□ r ² + □ r + □ = 0",
    "compute_signature": "compute(a, b, c)",
    "compute_params": [
     {
@@ -15707,7 +15707,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "(□ ∗ □)[□] = Σⱼ □[□] · □[□ − □]",
+   "pattern": "( □ * □ ) [ □ ] = Σ ⱼ □ [ □ ] · □ [ □ − □ ]",
    "compute_signature": "compute(f, g)",
    "compute_params": [
     {
@@ -15758,7 +15758,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "δ(□) = □",
+   "pattern": "δ ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -15794,7 +15794,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₖ = Σₙ □ₙ · e^(−2πi·□□/□)",
+   "pattern": "□ ₖ = Σ ₙ □ ₙ · e ^ ( − 2 π i · □ □ / □ )",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -15846,7 +15846,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□′ = f(□, □)",
+   "pattern": "□ ′ = f ( □ , □ ) with □ , □ , □ , □",
    "compute_signature": "compute(f, x0, y0, x_end)",
    "compute_params": [
     {
@@ -15889,7 +15889,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "f(□) = Σ □ₙcos(n□) + □ₙsin(n□)",
+   "pattern": "f ( □ ) = Σ □ ₙ cos ( n □ ) + □ ₙ sin ( n □ ) with □ , □",
    "compute_signature": "compute(f, n)",
    "compute_params": [
     {
@@ -15918,7 +15918,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ₜ = □ □ₓₓ",
+   "pattern": "□ ₜ = □ □ ₓₓ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -15947,7 +15947,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "H(□) = □",
+   "pattern": "H ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -15999,7 +15999,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□(□) = e ^ ∫□ d□",
+   "pattern": "□ ( □ ) = e ^ ∫ □ d □ with □",
    "compute_signature": "compute(P, x0, x)",
    "compute_params": [
     {
@@ -16036,7 +16036,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₙ = (1/□) Σₖ □ₖ · e^(2πi·□□/□)",
+   "pattern": "□ ₙ = ( 1 / □ ) Σ ₖ □ ₖ · e ^ ( 2 π i · □ □ / □ )",
    "compute_signature": "compute(X)",
    "compute_params": [
     {
@@ -16078,7 +16078,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "L⁻¹{□} = □",
+   "pattern": "L ⁻¹ { □ } = □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -16103,7 +16103,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "∇²□ = 0",
+   "pattern": "∇ ² □ = 0",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -16134,7 +16134,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "L{□} = □",
+   "pattern": "L { □ } with □ = □",
    "compute_signature": "compute(f, s)",
    "compute_params": [
     {
@@ -16163,7 +16163,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "∂□/∂□ + ∂□/∂□ = □",
+   "pattern": "∂ □ / ∂ □ + ∂ □ / ∂ □ = □",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -16188,7 +16188,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ = Σ □ₙ □ⁿ",
+   "pattern": "□ = Σ □ ₙ □ ⁿ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -16225,7 +16225,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□″ = f(□, □, □′)",
+   "pattern": "□ ″ = f ( □ , □ , □ ′ ) with □ , □ , □ , □ , □",
    "compute_signature": "compute(f, x0, y0, v0, x_end)",
    "compute_params": [
     {
@@ -16278,7 +16278,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□□/□□ = g(□)□(□)",
+   "pattern": "□ □ / □ □ = g ( □ ) □ ( □ ) with □ , □ , □ , □ , □",
    "compute_signature": "compute(g, h, x0, y0, x_end)",
    "compute_params": [
     {
@@ -16331,7 +16331,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□ₚ = □ + □",
+   "pattern": "□ ₚ = □ + □ with □ , □ , □ , □ , □",
    "compute_signature": "compute(y1, y2, g, x0, x)",
    "compute_params": [
     {
@@ -16372,7 +16372,7 @@
    "inputs": [],
    "input_kinds": [],
    "row_calc": "reference",
-   "pattern": "□ₜₜ = □² □ₓₓ",
+   "pattern": "□ ₜₜ = □ ² □ ₓₓ",
    "compute_signature": "compute(*args)",
    "compute_params": [
     {
@@ -16407,7 +16407,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□(□, □) = □·g′ − □·f′",
+   "pattern": "□ ( □ , □ ) = □ · g ′ − □ · f ′ with □ , □",
    "compute_signature": "compute(f, fprime, g, gprime)",
    "compute_params": [
     {
@@ -16460,7 +16460,7 @@
     "number"
    ],
    "row_calc": "advanced",
-   "pattern": "□(□) = Σₙ □[□] · □⁻ⁿ",
+   "pattern": "□ ( □ ) = Σ ₙ □ [ □ ] · □ ⁻ⁿ",
    "compute_signature": "compute(x, z)",
    "compute_params": [
     {
@@ -16507,7 +16507,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sin(□ + □) = sin □ cos □ + cos □ sin □",
+   "pattern": "sin ( □ + □ ) = sin ( □ ) × cos ( □ ) + cos ( □ ) × sin ( □ )",
    "compute_signature": "compute(a, b)",
    "compute_params": [
     {
@@ -16668,7 +16668,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□° → □ rad",
+   "pattern": "□ ° → □ rad",
    "compute_signature": "compute(degrees)",
    "compute_params": [
     {
@@ -16710,7 +16710,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sin 2□ = 2 sin □ cos □",
+   "pattern": "sin ( 2 × □ ) = 2 × sin ( □ ) × cos ( □ )",
    "compute_signature": "compute(theta)",
    "compute_params": [
     {
@@ -16746,7 +16746,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sin(□/2) = √((1 − cos □) / 2)",
+   "pattern": "sin ( □ / 2 ) = √ ( ( 1 − cos ( □ ) ) / 2 )",
    "compute_signature": "compute(theta)",
    "compute_params": [
     {
@@ -16782,7 +16782,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "cosh □ = (eˣ + e⁻ˣ) / 2",
+   "pattern": "cosh ( □ ) = ( exp ( □ ) + exp ( − □ ) ) / 2",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -16824,7 +16824,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sinh □ = (eˣ − e⁻ˣ) / 2",
+   "pattern": "sinh ( □ ) = ( exp ( □ ) − exp ( − □ ) ) / 2",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -16902,7 +16902,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "acos(□) = □",
+   "pattern": "acos ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -16944,7 +16944,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "acosh □ = ln(□ + √(□² − 1))",
+   "pattern": "acosh □ = ln ( □ + √ ( □ ² − 1 ) )",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -16980,7 +16980,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "asinh □ = ln(□ + √(□² + 1))",
+   "pattern": "asinh □ = ln ( □ + √ ( □ ² + 1 ) )",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -17016,7 +17016,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "atanh □ = ½ ln((1 + □)/(1 − □))",
+   "pattern": "atanh □ = ½ ln ( ( 1 + □ ) / ( 1 − □ ) )",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -17052,7 +17052,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "asin(□) = □",
+   "pattern": "asin ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -17088,7 +17088,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "atan(□) = □",
+   "pattern": "atan ( □ ) = □",
    "compute_signature": "compute(x)",
    "compute_params": [
     {
@@ -17124,7 +17124,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sin²□ + cos²□ = 1",
+   "pattern": "sin ² ( □ ) + cos ² ( □ ) = 1",
    "compute_signature": "compute(theta)",
    "compute_params": [
     {
@@ -17160,7 +17160,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ rad → □°",
+   "pattern": "□ rad → □ °",
    "compute_signature": "compute(radians)",
    "compute_params": [
     {
@@ -17330,7 +17330,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "atan2(□, □) = □",
+   "pattern": "atan2 ( □ , □ ) = □",
    "compute_signature": "compute(y, x)",
    "compute_params": [
     {
@@ -17431,7 +17431,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ + ½ × □ × (□² − □²) + □ × g × (□ − □)",
+   "pattern": "□ = □ + ½ × □ × ( □ ² − □ ² ) + □ × g × ( □ − □ )",
    "compute_signature": "compute(P1, v1, h1, v2, h2, rho, g=9.81)",
    "compute_params": [
     {
@@ -17508,7 +17508,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = −13.6 eV × □² / □²",
+   "pattern": "□ = − 13.6 eV × Z ² / □ ²",
    "compute_signature": "compute(n, Z=1)",
    "compute_params": [
     {
@@ -17564,7 +17564,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "tan(□) = □ / □",
+   "pattern": "tan ( □ ) = □ / □",
    "compute_signature": "compute(n1, n2)",
    "compute_params": [
     {
@@ -17669,7 +17669,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(C, V)",
    "compute_params": [
     {
@@ -17712,7 +17712,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □² / □",
+   "pattern": "□ = □ ² / □",
    "compute_signature": "compute(v, r)",
    "compute_params": [
     {
@@ -17753,7 +17753,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = h / (m × c) × (1 − cos(□))",
+   "pattern": "□ = h / ( m × c ) × ( 1 − cos ( □ ) )",
    "compute_signature": "compute(theta, m=9.1093837015e-31, h=6.62607015e-34, c=299792458)",
    "compute_params": [
     {
@@ -17878,7 +17878,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □₁ □₂ / □²",
+   "pattern": "□ = kₑ × □ × □ / □ ²",
    "compute_signature": "compute(q1, q2, r, k=8987551792.3)",
    "compute_params": [
     {
@@ -17931,7 +17931,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "sin(□) = □ / □",
+   "pattern": "sin ( □ ) = □ / □",
    "compute_signature": "compute(n1, n2)",
    "compute_params": [
     {
@@ -17985,7 +17985,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × □ / ( |□| × □ )",
+   "pattern": "□ = □ × □ / ( | □ | × □ )",
    "compute_signature": "compute(m, v, q, B)",
    "compute_params": [
     {
@@ -18047,7 +18047,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = h / (□ × □)",
+   "pattern": "□ = h / ( □ × □ )",
    "compute_signature": "compute(m, v, h=6.62607015e-34)",
    "compute_params": [
     {
@@ -18147,7 +18147,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ × sin(□) = □ × □",
+   "pattern": "□ × sin ( □ ) = □ × □",
    "compute_signature": "compute(m, wavelength, d)",
    "compute_params": [
     {
@@ -18213,7 +18213,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □ + ½ □ □²",
+   "pattern": "□ = □ × □ + ½ × □ × □ ²",
    "compute_signature": "compute(u, a, t)",
    "compute_params": [
     {
@@ -18327,7 +18327,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(I, V)",
    "compute_params": [
     {
@@ -18370,7 +18370,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□² = (□ × c)² + (□ × c²)²",
+   "pattern": "□ ² = ( □ × c ) ² + ( □ × c ² ) ²",
    "compute_signature": "compute(m, p, c=299792458)",
    "compute_params": [
     {
@@ -18437,7 +18437,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = −□ × □ / □",
+   "pattern": "□ = − □ × □ / □",
    "compute_signature": "compute(N, delta_flux, dt)",
    "compute_params": [
     {
@@ -18495,7 +18495,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ + □ □",
+   "pattern": "□ = □ + □ × □",
    "compute_signature": "compute(u, a, t)",
    "compute_params": [
     {
@@ -18581,7 +18581,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □₁ □₂ / □²",
+   "pattern": "□ = G × □ × □ / □ ²",
    "compute_signature": "compute(m1, m2, r, G=6.674e-11)",
    "compute_params": [
     {
@@ -18636,7 +18636,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × √(1 − 2 × G × □ / (□ × c²))",
+   "pattern": "□ = □ × √ ( 1 − 2 × G × □ / ( □ × c ² ) )",
    "compute_signature": "compute(dt, M, r, G=6.674e-11, c=299792458)",
    "compute_params": [
     {
@@ -18708,7 +18708,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □ □",
+   "pattern": "□ = □ × □ × □",
    "compute_signature": "compute(m, c, delta_T)",
    "compute_params": [
     {
@@ -18803,7 +18803,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = −□ □",
+   "pattern": "□ = − □ × □",
    "compute_signature": "compute(k, x)",
    "compute_params": [
     {
@@ -18961,7 +18961,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □ □ / □",
+   "pattern": "□ = ( □ × R × □ ) / □",
    "compute_signature": "compute(n, T, V, R=8.314462618)",
    "compute_params": [
     {
@@ -19014,7 +19014,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(F, dt)",
    "compute_params": [
     {
@@ -19057,7 +19057,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ½ × □ × □²",
+   "pattern": "□ = ½ × □ × □ ²",
    "compute_signature": "compute(L, I)",
    "compute_params": [
     {
@@ -19107,7 +19107,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ½ □ □²",
+   "pattern": "□ = ½ × □ × □ ²",
    "compute_signature": "compute(m, v)",
    "compute_params": [
     {
@@ -19150,7 +19150,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × √(1 − □² / c²)",
+   "pattern": "□ = □ × √ ( 1 − □ ² / c ² )",
    "compute_signature": "compute(L0, v, c=299792458)",
    "compute_params": [
     {
@@ -19207,7 +19207,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = −□ / □",
+   "pattern": "□ = − □ / □",
    "compute_signature": "compute(d_i, d_o)",
    "compute_params": [
     {
@@ -19259,7 +19259,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "1 / □ = (□ − 1) × (1 / □ − 1 / □)",
+   "pattern": "1 / □ = ( □ − 1 ) × ( 1 / □ − 1 / □ )",
    "compute_signature": "compute(n, R1, R2)",
    "compute_params": [
     {
@@ -19305,7 +19305,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 1 / √(1 − □² / c²)",
+   "pattern": "□ = 1 / √ ( 1 − □ ² / c ² )",
    "compute_signature": "compute(v, c=299792458)",
    "compute_params": [
     {
@@ -19424,7 +19424,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = μ₀ × □ / (2π × □)",
+   "pattern": "□ = μ₀ × □ / ( 2 π × □ )",
    "compute_signature": "compute(I, r, mu0=1.2566370614359173e-06)",
    "compute_params": [
     {
@@ -19481,7 +19481,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × □ × cos(□)",
+   "pattern": "□ = □ × □ × cos ( □ )",
    "compute_signature": "compute(B, A, theta)",
    "compute_params": [
     {
@@ -19549,7 +19549,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × □ × □ × sin(□)",
+   "pattern": "□ = □ × □ × □ × sin ( □ )",
    "compute_signature": "compute(q, v, B, theta)",
    "compute_params": [
     {
@@ -19624,7 +19624,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × □ × □ × sin(□)",
+   "pattern": "□ = □ × □ × □ × sin ( □ )",
    "compute_signature": "compute(B, I, L, theta)",
    "compute_params": [
     {
@@ -19686,7 +19686,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × cos(□)²",
+   "pattern": "□ = □ × cos ( □ ) ²",
    "compute_signature": "compute(I0, theta)",
    "compute_params": [
     {
@@ -19741,7 +19741,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □²",
+   "pattern": "□ = □ × c ²",
    "compute_signature": "compute(m, c=299792458)",
    "compute_params": [
     {
@@ -19784,7 +19784,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(m, v)",
    "compute_params": [
     {
@@ -19885,7 +19885,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(m, a)",
    "compute_params": [
     {
@@ -19928,7 +19928,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(I, R)",
    "compute_params": [
     {
@@ -19973,7 +19973,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □² × h² / (8 × □ × □²)",
+   "pattern": "□ = □ ² × h ² / ( 8 × □ × □ ² )",
    "compute_signature": "compute(n, m, L, h=6.62607015e-34)",
    "compute_params": [
     {
@@ -20032,7 +20032,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2π √(□ / □)",
+   "pattern": "□ = 2 π √ ( □ / g )",
    "compute_signature": "compute(L, g=9.81)",
    "compute_params": [
     {
@@ -20228,7 +20228,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = π × □⁴ × □ / (8 × □ × □)",
+   "pattern": "□ = π × □ ⁴ × □ / ( 8 × □ × □ )",
    "compute_signature": "compute(r, delta_P, mu, L)",
    "compute_params": [
     {
@@ -20290,7 +20290,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □ □",
+   "pattern": "□ = □ × g × □",
    "compute_signature": "compute(m, h, g=9.81)",
    "compute_params": [
     {
@@ -20424,7 +20424,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = ħ × □ × (□ + ½)",
+   "pattern": "□ = ħ × □ × ( □ + ½ )",
    "compute_signature": "compute(n, omega, hbar=1.054571817e-34)",
    "compute_params": [
     {
@@ -20526,7 +20526,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × √( (1 − β) / (1 + β) ), β = □ / c",
+   "pattern": "□ = □ × √ ( ( 1 − β ) / ( 1 + β ) ) , β = □ / c",
    "compute_signature": "compute(f0, v, c=299792458)",
    "compute_params": [
     {
@@ -20591,7 +20591,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (γ − 1) × □ × c²",
+   "pattern": "□ = ( γ − 1 ) × □ × c ² with □",
    "compute_signature": "compute(m, v, c=299792458)",
    "compute_params": [
     {
@@ -20648,7 +20648,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ × □ / √(1 − □² / c²)",
+   "pattern": "□ = □ × □ / √ ( 1 − □ ² / c ² )",
    "compute_signature": "compute(m, v, c=299792458)",
    "compute_params": [
     {
@@ -20705,7 +20705,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = (□ + □) / (1 + □ × □ / c²)",
+   "pattern": "□ = ( □ + □ ) / ( 1 + □ × □ / c ² )",
    "compute_signature": "compute(u, v, c=299792458)",
    "compute_params": [
     {
@@ -20768,7 +20768,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "1/□ = Σ 1/□ᵢ",
+   "pattern": "1 / □ = Σ 1 / □ ᵢ",
    "compute_signature": "compute(resistors)",
    "compute_params": [
     {
@@ -20816,7 +20816,7 @@
     "list"
    ],
    "row_calc": "advanced",
-   "pattern": "□₁+□₂+… = □",
+   "pattern": "□ ₁ + □ ₂ + … = □",
    "compute_signature": "compute(resistors)",
    "compute_params": [
     {
@@ -20924,7 +20924,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "1 / □ = R × □² × (1 / □² − 1 / □²)",
+   "pattern": "1 / □ = R × Z ² × ( 1 / □ ² − 1 / □ ² )",
    "compute_signature": "compute(n1, n2, Z=1, R=10973731.56816)",
    "compute_params": [
     {
@@ -20982,7 +20982,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 2 × G × □ / c²",
+   "pattern": "□ = 2 × G × □ / c ²",
    "compute_signature": "compute(M, G=6.674e-11, c=299792458)",
    "compute_params": [
     {
@@ -21040,7 +21040,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = −□ × □ / □",
+   "pattern": "□ = − □ × □ / □",
    "compute_signature": "compute(L, delta_I, dt)",
    "compute_params": [
     {
@@ -21098,7 +21098,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□₁sin □₁ = □₂sin □₂",
+   "pattern": "□ × sin ( □ ) = □ × sin ( □ )",
    "compute_signature": "compute(n1, theta1, n2)",
    "compute_params": [
     {
@@ -21156,7 +21156,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = 6π × □ × □ × □",
+   "pattern": "□ = 6 π × □ × □ × □",
    "compute_signature": "compute(mu, r, v)",
    "compute_params": [
     {
@@ -21269,7 +21269,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ / √(1 − □² / c²)",
+   "pattern": "□ = □ / √ ( 1 − □ ² / c ² )",
    "compute_signature": "compute(dt0, v, c=299792458)",
    "compute_params": [
     {
@@ -21328,7 +21328,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □ sin □",
+   "pattern": "□ = □ × □ × sin ( □ )",
    "compute_signature": "compute(r, F, theta)",
    "compute_params": [
     {
@@ -21374,7 +21374,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √(2 × g × □)",
+   "pattern": "□ = √ ( 2 × g × □ )",
    "compute_signature": "compute(h, g=9.81)",
    "compute_params": [
     {
@@ -21468,7 +21468,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = √(□² + 2 □ □)",
+   "pattern": "□ = √ ( □ ² + 2 × □ × □ )",
    "compute_signature": "compute(u, a, s)",
    "compute_params": [
     {
@@ -21566,7 +21566,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(f, wavelength)",
    "compute_params": [
     {
@@ -21607,7 +21607,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × g",
    "compute_signature": "compute(m, g=9.81)",
    "compute_params": [
     {
@@ -21650,7 +21650,7 @@
     "number"
    ],
    "row_calc": "ready",
-   "pattern": "□ = □ □",
+   "pattern": "□ = □ × □",
    "compute_signature": "compute(F, d)",
    "compute_params": [
     {

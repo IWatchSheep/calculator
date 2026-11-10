@@ -35,7 +35,4 @@ Success = 0 parity failures; `MIN_PASSING` (in `tests/parity.rs` and `tests/pari
 
 ## Still open (product work, not operator maths)
 
-- GUI: show each box's expected kind as a hint (lists, matrices, functions ...) and offer an Advanced Input window
 - Larger boxes for matrices, graphs and long functions
-- Formula JPGs, templates, nested operators, multi-row layouts
-- Commit `rust_calculator/` (keep `target/` out; `.gitignore` already excludes it)
