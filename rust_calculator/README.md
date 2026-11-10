@@ -45,16 +45,18 @@ Everything in the Python program is ported:
 
 ```
 cd rust_calculator
-cargo run --release
+cargo run --release --locked
 ```
 
 Tests:
 
 ```
-cargo test --release
+cargo test --release --locked
 ```
 
 `rust-version = "1.83"` in `Cargo.toml`. Built with a newer rustc is fine.
+
+**Always use `--locked` with Rust 1.83.** `Cargo.lock` pins older crate versions (for example `idna_adapter`, `webbrowser`, and `mime_guess2` 2.0.5) that 1.83 can compile. Newer ones need a newer Cargo (`edition2024`). Without `--locked`, or after `cargo update`, Cargo may pull those newer versions and the build fails on 1.83. Keep `Cargo.lock` committed. To refresh it safely, run `CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo update`, then `cargo update mime_guess2 --precise 2.0.5`, then check with `cargo +1.83.0 build --locked`.
 
 ## Layout
 
