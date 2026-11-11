@@ -2393,6 +2393,49 @@ def base_plus_extra_over_time(problem):
 
 
 # ---------------------------------------------------------------------------------------------------------
+# two-leg average speed: drove h1 hours at v1, then t hours at v2, average A.   t = h1 (A - v1) / (v2 - A)
+# "Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part?"
+# ---------------------------------------------------------------------------------------------------------
+_AVERAGE_SPEED_TWO_LEG = re.compile(
+    r"(?P<name>[a-z]+) drove "
+    r"(?P<h1>\d+(?:\.\d+)?) hours? at "
+    r"(?P<v1>\d+(?:\.\d+)?) mph "
+    r"and then some hours at "
+    r"(?P<v2>\d+(?:\.\d+)?) mph\. "
+    r"the average speed for the whole trip was "
+    r"(?P<avg>\d+(?:\.\d+)?) mph\. "
+    r"how long was the second part\?")
+
+
+def average_speed_two_leg_unknown_time(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _AVERAGE_SPEED_TWO_LEG.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4:
+        return None
+    # sentence order: first hours, first speed, second speed, whole-trip average
+    h1 = Fraction(match.group("h1"))
+    v1 = Fraction(match.group("v1"))
+    v2 = Fraction(match.group("v2"))
+    avg = Fraction(match.group("avg"))
+    if [n[0] for n in numbers] != [h1, v1, v2, avg]:
+        return None
+    if h1 <= 0 or v1 <= 0 or v2 <= 0 or avg <= 0:
+        return None
+    if v2 == avg:
+        return None
+    t = h1 * (avg - v1) / (v2 - avg)
+    if t <= 0:
+        return None
+    if (v1 * h1 + v2 * t) / (h1 + t) != avg:
+        return None
+    eq = "(%s×%s + %st)/(%s + t) = %s" % (show(v1), show(h1), show(v2), show(h1), show(avg))
+    return Result("average_speed_two_leg_unknown_time", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+# ---------------------------------------------------------------------------------------------------------
 # 46. distance, speed and time:   D = S t, the one the question asks for      (the generator's "Using distance = speed x time, how long does it take to travel 160 km at 40 km/h?")
 # ---------------------------------------------------------------------------------------------------------
 _DST_DIST = re.compile(NUM + r"\s*(miles?|mi|kilometers?|kilometres?|km)\b(?![/\w])")
@@ -3155,7 +3198,7 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             two_rates_one_pile, least_for_profit,
             two_priced_items, plan_with_included, most_that_fits,
             line_from_two_points, election_margin, wind_same_time,
-            base_plus_extra_over_time, distance_speed_time,
+            base_plus_extra_over_time, distance_speed_time, average_speed_two_leg_unknown_time,
             pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
             temperature_whole_hours, two_candles_equal, transversal_equal_angles,
             class_ratio_after_join, kinematics_time, pipes_and_drain,
