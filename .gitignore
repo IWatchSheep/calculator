@@ -6,7 +6,6 @@ __pycache__/
 .env
 .env.*
 saved_templates.json
-rust_calculator/
 
 # regenerable / build output inside algebra_word_problems
 algebra_word_problems/algebra_matcher/training_data.jsonl
@@ -31,4 +30,3 @@ algebra_word_problems/rust_chess/forming_chess-main/target/
 .env.*
 
 # Original Rust Git repository
-/rust_calculator/the_rust_version_of_calculator/
