@@ -67,6 +67,7 @@ Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittes
   tests:                                          175 word-solver, number-puzzle and archive-family tests, all pass (python -m unittest test_word_solver test_number_puzzle test_archive_families); tests/test_word_archive.py has 3 more
   fresh sets:                                     49 files (fresh_word_problems.py ... fresh_word_problems_49.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
   git:                                            branch main, last commit before Batch 45 is bb7e45f (Batch 45 is the next commit), pushed to https://github.com/IWatchSheep/calculator
+  One wording, once:                              the collection is 479 stored problems. A second copy of the same sentence with different numbers was removed. A slider on the unknown uses the stored equation. The solver claims 220 of the 479, wrong 0. 235 are Ready (220 word_solver + 15 number_puzzle).
 
 
 4. DONE   (one line per batch; the long text is in word_solver_results.txt)

@@ -194,7 +194,7 @@ Keys look like `math/<area>/<operator>`, `geometry/geometry/<operator>` and
 
 ## Algebra word problems (work in progress)
 
-Besides the 631 operators the project is getting a second library: **1,000 algebra word problems**, each stored as its own file with a diagram, and each with a row layout so it can sit in a calculator row like an operator does. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 1,000 problems. Clicking one opens its diagram, and if the problem is Ready (377 of them) it is also put into the target row as `Name(□, □ ...) = □`: fill one box for every number in the text, in the order they appear, and press `=` to get the answer. A Reference problem shows its diagram and says so, and is not placed. The operator that takes pasted text is not built. It is under *What is left*.
+Besides the 631 operators the project is getting a second library: **479 algebra word problems**, one stored wording each, with a diagram and a row layout so it can sit in a calculator row like an operator does. A second copy of the same wording, with different numbers, is not stored: those numbers are a slider on the unknown. The diagrams are in the window. Click Operators, then Algebra word problems, and the list shows all 479 problems. Clicking one opens its diagram, and if the problem is Ready it is also put into the target row as `Name(□, □ ...) = □`: fill one box for every number in the text, in the order they appear, and press `=` to get the answer. A Reference problem shows its diagram and says so, and is not placed. The operator that takes pasted text is not built. It is under *What is left*.
 
 > Reviewed. The steps under *How a problem travels* and the decisions under *Decisions* are the ones to follow. A family answers only when its wording matches, every number has a role, and the answer passes its checks. Otherwise it declines. A decline is safe. A wrong number is a failure.
 
@@ -283,7 +283,7 @@ Read these at the start of every session. Update them every time a batch is fini
 | `operators_one_operator_per_file/` | The 631 operators: one folder each with `<name>.py` (formula and `compute()`) and `<name>.jpg` (picture). `INDEX.md` lists them all |
 | `operator_row_math/` | How each operator is laid out as cards in a row (following its picture), the Advanced Input parser, and the multi-row operators |
 | `operator_keys/operator_row_specs.txt` | One line per operator: its picture written as cards. `make_operator_row_files.py` turns it into the row files |
-| `operators_one_algebra_word_problem_per_file/` | The 1,000 algebra word problems: one folder each with `<id>.py` (problem, steps, answer, `compute()`) and `<id>.jpg` (diagram). `INDEX.md` lists them all |
+| `operators_one_algebra_word_problem_per_file/` | The 479 algebra word problems, one per wording: one folder each with `<id>.py` (problem, steps, answer, `compute()`) and `<id>.jpg` (diagram). `INDEX.md` lists them all |
 | `operator_row_math_for_algebra_word_problems/` | How each algebra word problem is laid out as a row of cards in the calculator |
 | `algebra_word_problems/` | The problem list, the generator, and the word solver (`algebra_matcher/`) that answers the problems from their wording |
 | `algebra_word_problems_status.txt` | What algebra work is done and to do, and how to keep that list current |

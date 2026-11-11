@@ -18,7 +18,7 @@ pub struct CalculatorApp {
     show_ops: bool,
     op_filter: String,
     selected_category: String,
-    /// The list shows the 1,000 algebra word problems instead of the operators.
+    /// The list shows the algebra word problems, one per wording, instead of the operators.
     show_words: bool,
     word_category: String,
     /// Every card of a row shows its Label / Item and Context boxes (the words you type to describe it).
@@ -273,7 +273,7 @@ impl CalculatorApp {
         });
     }
 
-    /// The 1,000 algebra word problems: a Ready one goes into the target row as its equation (the boxes hold the numbers of the text, press `=`);
+    /// The algebra word problems, one per wording: a Ready one goes into the target row as its equation (the boxes hold the numbers of the text, press `=`);
     /// a Reference one only says that nothing answers it yet.
     fn ui_word_problems(&mut self, ui: &mut Ui) {
         ui.heading("Algebra word problems");

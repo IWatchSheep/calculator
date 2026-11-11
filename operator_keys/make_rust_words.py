@@ -2,8 +2,8 @@
 
     python operator_keys/make_rust_words.py
 
-words_data.rs : ITEMS    - all 1,000 problems (category, id, text, Ready or Reference, key)
-                SPECS    - for the 377 Ready ones: the text template, its numbers as written, which solver answers it, the place of each box's number, the boxes' starting numbers
+words_data.rs : ITEMS    - every stored wording (category, id, text, Ready or Reference, key)
+                SPECS    - for each Ready one: the text template, its numbers as written, which solver answers it, the place of each box's number, the boxes' starting numbers
                 OPERATORS - one Operator per Ready problem (key "word:age/0002"), computed by the hand-written src/ops/words.rs
 word_layouts.rs: how each Ready problem's row is drawn (its equation as cards), the same cards the Python row files hold.
 
