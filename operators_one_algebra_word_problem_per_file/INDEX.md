@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 250 ready (235 word_solver, 15 number_puzzle), 229 reference.
+479 problems: 255 ready (240 word_solver, 15 number_puzzle), 224 reference.
 
 ## Age
 
@@ -151,13 +151,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake? | 160 miles | Reference |  | `distance_round_trip/0140/` |
+| 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake? | 160 miles | Ready | round_trip_lake_distance | `distance_round_trip/0140/` |
 | 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ride? | 45 km/h | Ready | archive_distance_round_trip_1 | `distance_round_trip/0141/` |
-| 0142 | Bea drove to a lake at 60 mph and returned on the same road at 30 mph. The round trip took 10 hours. How far is the lake? | 200 miles | Reference |  | `distance_round_trip/0142/` |
+| 0142 | Bea drove to a lake at 60 mph and returned on the same road at 30 mph. The round trip took 10 hours. How far is the lake? | 200 miles | Ready | round_trip_lake_distance | `distance_round_trip/0142/` |
 | 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride? | 30 km/h | Reference |  | `distance_round_trip/0143/` |
-| 0144 | Kofi drove to a lake at 40 mph and returned on the same road at 20 mph. The round trip took 6 hours. How far is the lake? | 80 miles | Reference |  | `distance_round_trip/0144/` |
-| 0146 | Isla drove to a lake at 45 mph and returned on the same road at 30 mph. The round trip took 2 hours. How far is the lake? | 36 miles | Reference |  | `distance_round_trip/0146/` |
-| 0148 | Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How far is the lake? | 60 miles | Reference |  | `distance_round_trip/0148/` |
+| 0144 | Kofi drove to a lake at 40 mph and returned on the same road at 20 mph. The round trip took 6 hours. How far is the lake? | 80 miles | Ready | round_trip_lake_distance | `distance_round_trip/0144/` |
+| 0146 | Isla drove to a lake at 45 mph and returned on the same road at 30 mph. The round trip took 2 hours. How far is the lake? | 36 miles | Ready | round_trip_lake_distance | `distance_round_trip/0146/` |
+| 0148 | Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How far is the lake? | 60 miles | Ready | round_trip_lake_distance | `distance_round_trip/0148/` |
 
 ## Distance (toward each other)
 
