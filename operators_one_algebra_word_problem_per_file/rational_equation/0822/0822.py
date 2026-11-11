@@ -6,7 +6,7 @@ Equation: 14/(15 − c) = 46/(15 + c)
 Solve   : Cross-multiply → c = 8
 Answer  : 8 km/h
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_rational_equation_3 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '14/(15 − c) = 46/(15 + c)'
 SOLVE = 'Cross-multiply → c = 8'
 ANSWER = '8 km/h'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_rational_equation_3'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A boat goes {0} km upstream in the same time it goes {1} km downstream. Its speed in still water is {2} km/h. What is the speed of the current?'
 NUMBERS = ['14', '46', '15']

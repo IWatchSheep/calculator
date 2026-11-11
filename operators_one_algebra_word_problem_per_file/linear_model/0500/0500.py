@@ -6,7 +6,7 @@ Equation: 90 − 4h = 10
 Solve   : 4h = 80 → h = 20
 Answer  : 20 hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_linear_model_4 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '90 − 4h = 10'
 SOLVE = '4h = 80 → h = 20'
 ANSWER = '20 hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_linear_model_4'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A phone at {0}% battery loses {1}% per hour. After how many hours will it be at {2}%?'
 NUMBERS = ['90', '4', '10']

@@ -6,7 +6,7 @@ Equation: 12 + 0.18k = 157.8
 Solve   : 0.18k = 145.8 → k = 810
 Answer  : 810 kWh
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_linear_cost_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '12 + 0.18k = 157.8'
 SOLVE = '0.18k = 145.8 → k = 810'
 ANSWER = '810 kWh'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_linear_cost_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "An electric bill is ${0} per month plus ${1} per kWh. This month's bill is ${2}. How many kWh were used?"
 NUMBERS = ['12', '0.18', '157.80']

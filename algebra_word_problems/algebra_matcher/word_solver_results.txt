@@ -1135,3 +1135,25 @@ Measured:
   my / our); 8 required declines: 8 of 8; 0 wrong.  (One item was first written as a required decline by my own mistake: x + (2x - 100) = 90 gives 190/3 and 80/3, both positive, so the solver's answer
   was right and the fixture was corrected; no solver change.)
   166 word-solver and number-puzzle tests pass.
+
+Batch 46: archive families (the word archive from Grok's zip, pull request 4)
+==============================================================
+word_archive.py plays every reference problem: it solves the stored equation and keeps the game when the answer is the stored answer.  A wording is PROVEN when every stored problem of it matches and
+there are at least two (one pass: 87 proven wordings, 130 candidates with one matching problem, 73 unmatched; word_archive.json).  The zip's list 2 binds an equation number to the FIRST problem number
+that has the same value, which is not yet a role, and it compares only the first number of the answer.  make_archive_families.py therefore does more before it writes a family:
+  1. every number of the equation gets a role that is the same in every problem of the wording: the i-th number of the problem (N[i]) or a fixed number.  A wording where two problem numbers are equal
+     in every problem, or a number is the same in every stored problem (it could be a fixed number), or a problem number is used nowhere, is left alone.
+  2. the equation is solved exactly (Newton from several starts, the root written as a fraction and checked exactly); the root has to be one of the numbers of the stored answer.
+  3. EVERY number of the stored answer gets a recipe (x, a problem number, x + c, x - c, c - x, c x, x / c, c / x): the stored answer of 2, 4, 6 needs x, x + 2 and x + 4, not x alone.
+  4. the family runs on every problem of its wording and keeps only an exact match (the comparison test_word_solver uses: all the numbers of the answer).
+Result: 46 families, 177 problems (archive_families.json, read by archive_families.py, appended to word_solver.FAMILIES).  41 proven wordings were left alone, each with its reason in
+archive_families_skipped.txt (for example: a number of the equation is not a problem number, such as 100 - p; an answer that needs a recipe this reader does not have; one of the older families'
+special answers; the problem's "3 of them are ..." which no equation uses).  The reader of the table evaluates the equations with its own small parser (no eval).
+A family answers only when the whole text is the wording, every number written in the problem was taken by the pattern and used, and exactly one root passes the checks (positive, whole) that
+every stored answer of the wording passes.  Anything else declines.
+Measured: 1,000 generated problems: claims 349 -> 526 (177 by archive families), wrong 0.  175 tests (166 + 9 in test_archive_families.py) pass.  test_archive_families checks every stored
+problem, declines (an extra number, a missing number, other words, half a problem), and new numbers in the same wording against word_archive's own equation reader.
+Three hand-written texts changed from "must decline" to answered, because their wordings are proven archive wordings and the answers are right: the regular polygon's interior angle 150 degrees
+(12 sides), its exterior angle 30 degrees (12 sides), and the parking garage with a first-hour rule ($5 then $2, paid $13: 5 hours).  The older families (polygon_angle_sum, fixed_plus_rate) still
+decline them (the tests say so).  "What percent of 80 is 20?" is now answered by the solver (25) and has its hand answer in HAND_ANSWERS.
+Not done: the Rust port of archive_families (the Rust calculator still has the 377 Ready word problems; the Python library has 554).

@@ -6,7 +6,7 @@ Equation: (7 + 2x)(13 + 2x) = 135
 Solve   : x² + 10x − 11 = 0 → x = 1 (the other root, -11, is rejected)
 Answer  : 1 in
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_quadratic_3 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(7 + 2x)(13 + 2x) = 135'
 SOLVE = 'x² + 10x − 11 = 0 → x = 1 (the other root, -11, is rejected)'
 ANSWER = '1 in'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_quadratic_3'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A {0} in × {1} in photo is surrounded by a frame of uniform width. The framed picture covers {2} in². How wide is the frame?'
 NUMBERS = ['7', '13', '135']

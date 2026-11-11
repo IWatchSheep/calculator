@@ -6,7 +6,7 @@ Equation: 4500 × (r/100) × 8 = 720
 Solve   : 360r = 720 → r = 2
 Answer  : 2%
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_simple_interest_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4500 × (r/100) × 8 = 720'
 SOLVE = '360r = 720 → r = 2'
 ANSWER = '2%'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_simple_interest_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = '${0} earns ${1} in simple interest over {2} years. What is the annual interest rate?'
 NUMBERS = ['4500.00', '720.00', '8']

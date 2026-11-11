@@ -6,7 +6,7 @@ Equation: (17×86 + 75n)/(17 + n) = 80.5
 Solve   : Multiply both sides by the denominator and collect terms → n = 17
 Answer  : 17 students
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_average_weighted_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(17×86 + 75n)/(17 + n) = 80.5'
 SOLVE = 'Multiply both sides by the denominator and collect terms → n = 17'
 ANSWER = '17 students'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_average_weighted_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Class A has {0} students averaging {1}. Class B averages {2}. Together the classes average {3}. How many students are in class B?'
 NUMBERS = ['17', '86', '75', '80.5']

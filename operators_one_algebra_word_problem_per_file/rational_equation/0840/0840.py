@@ -6,7 +6,7 @@ Equation: 156/n − 156/(n + 3) = 2.6
 Solve   : Multiply out → quadratic in n → n = 12 (reject negative)
 Answer  : 12 people
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_rational_equation_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '156/n − 156/(n + 3) = 2.6'
 SOLVE = 'Multiply out → quadratic in n → n = 12 (reject negative)'
 ANSWER = '12 people'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_rational_equation_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A group shares a ${0} rental equally. If {1} more people join, each pays ${2} less. How many people are in the group originally?'
 NUMBERS = ['156', '3', '2.60']

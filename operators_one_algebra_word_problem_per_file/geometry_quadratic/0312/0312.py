@@ -6,7 +6,7 @@ Equation: w(w + 12) = 640
 Solve   : w² + 12w − 640 = 0 → (w − 20)(w + 32) = 0 → w = 20 (reject negative)
 Answer  : Width 20 m, length 32 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_quadratic_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'w(w + 12) = 640'
 SOLVE = 'w² + 12w − 640 = 0 → (w − 20)(w + 32) = 0 → w = 20 (reject negative)'
 ANSWER = 'Width 20 m, length 32 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_quadratic_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A rectangle's length is {0} m more than its width, and its area is {1} m². Find the dimensions."
 NUMBERS = ['12', '640']

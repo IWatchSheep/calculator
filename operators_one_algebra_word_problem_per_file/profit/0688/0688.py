@@ -6,7 +6,7 @@ Equation: 15n − (1650 + 5n) = 4890
 Solve   : 10n = 6540 → n = 654
 Answer  : 654 items
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_profit_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '15n − (1650 + 5n) = 4890'
 SOLVE = '10n = 6540 → n = 654'
 ANSWER = '654 items'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_profit_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A candle shop has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?'
 NUMBERS = ['1650', '5', '15', '4890']

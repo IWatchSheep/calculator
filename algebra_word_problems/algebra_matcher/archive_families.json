@@ -1,0 +1,1468 @@
+{
+ "families": [
+  {
+   "id": "archive_average_weighted_1",
+   "category": "Average (weighted)",
+   "wording": "Class A has {0} students averaging {1}. Class B averages {2}. Together the classes average {3}. How many students are in class B?",
+   "pattern": "^class\\ a\\ has\\ (\\d+(?:\\.\\d+)?)\\ students\\ averaging\\ (\\d+(?:\\.\\d+)?)\\.\\ class\\ b\\ averages\\ (\\d+(?:\\.\\d+)?)\\.\\ together\\ the\\ classes\\ average\\ (\\d+(?:\\.\\d+)?)\\.\\ how\\ many\\ students\\ are\\ in\\ class\\ b\\?$",
+   "n": 4,
+   "var": "n",
+   "left": "(N[0]*N[1] + N[2]*X)/(N[0] + X) ",
+   "right": " N[3]",
+   "equation": "({0}×{1} + {2}n)/({0} + n) = {3}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0019",
+    "0022",
+    "0023",
+    "0026",
+    "0027"
+   ]
+  },
+  {
+   "id": "archive_break_even_1",
+   "category": "Break-even",
+   "wording": "Service A has a ${0} sign-up fee and costs ${1}/month. Service B has no fee and costs ${2}/month. After how many months is the total cost the same?",
+   "pattern": "^service\\ a\\ has\\ a\\ \\$(\\d+(?:\\.\\d+)?)\\ sign\\-up\\ fee\\ and\\ costs\\ \\$(\\d+(?:\\.\\d+)?)/month\\.\\ service\\ b\\ has\\ no\\ fee\\ and\\ costs\\ \\$(\\d+(?:\\.\\d+)?)/month\\.\\ after\\ how\\ many\\ months\\ is\\ the\\ total\\ cost\\ the\\ same\\?$",
+   "n": 3,
+   "var": "n",
+   "left": "N[0] + N[1]*X ",
+   "right": " N[2]*X",
+   "equation": "{0} + {1}n = {2}n",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0030",
+    "0038",
+    "0039",
+    "0046",
+    "0052"
+   ]
+  },
+  {
+   "id": "archive_break_even_2",
+   "category": "Break-even",
+   "wording": "Car rental A costs ${0} plus ${1} per mile. Plan B costs ${2} plus ${3} per mile. For how many miles do they cost the same?",
+   "pattern": "^car\\ rental\\ a\\ costs\\ \\$(\\d+(?:\\.\\d+)?)\\ plus\\ \\$(\\d+(?:\\.\\d+)?)\\ per\\ mile\\.\\ plan\\ b\\ costs\\ \\$(\\d+(?:\\.\\d+)?)\\ plus\\ \\$(\\d+(?:\\.\\d+)?)\\ per\\ mile\\.\\ for\\ how\\ many\\ miles\\ do\\ they\\ cost\\ the\\ same\\?$",
+   "n": 4,
+   "var": "x",
+   "left": "N[0] + N[1]*X ",
+   "right": " N[2] + N[3]*X",
+   "equation": "{0} + {1}x = {2} + {3}x",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0035",
+    "0044"
+   ]
+  },
+  {
+   "id": "archive_consecutive_integers_1",
+   "category": "Consecutive integers",
+   "wording": "Of three consecutive even integers, the sum of the smallest and largest is {0}. Find all three.",
+   "pattern": "^of\\ three\\ consecutive\\ even\\ integers,\\ the\\ sum\\ of\\ the\\ smallest\\ and\\ largest\\ is\\ (\\d+(?:\\.\\d+)?)\\.\\ find\\ all\\ three\\.$",
+   "n": 1,
+   "var": "x",
+   "left": "X + (X + F('4')) ",
+   "right": " N[0]",
+   "equation": "x + (x + 4) = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+F('2')",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+F('4')",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0067",
+    "0072",
+    "0076",
+    "0079",
+    "0083"
+   ]
+  },
+  {
+   "id": "archive_consecutive_integers_2",
+   "category": "Consecutive integers",
+   "wording": "Three consecutive integers are such that {0} times the smallest is {1} more than the largest. Find the integers.",
+   "pattern": "^three\\ consecutive\\ integers\\ are\\ such\\ that\\ (\\d+(?:\\.\\d+)?)\\ times\\ the\\ smallest\\ is\\ (\\d+(?:\\.\\d+)?)\\ more\\ than\\ the\\ largest\\.\\ find\\ the\\ integers\\.$",
+   "n": 2,
+   "var": "x",
+   "left": "N[0]*X ",
+   "right": " (X + F('2')) + N[1]",
+   "equation": "{0}x = (x + 2) + {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+F('1')",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+F('2')",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0069",
+    "0071",
+    "0080"
+   ]
+  },
+  {
+   "id": "archive_distance_average_speed_1",
+   "category": "Distance (average speed)",
+   "wording": "A car goes from A to B at {0} km/h. How fast must it return so that the average speed for the round trip is {1} km/h?",
+   "pattern": "^a\\ car\\ goes\\ from\\ a\\ to\\ b\\ at\\ (\\d+(?:\\.\\d+)?)\\ km/h\\.\\ how\\ fast\\ must\\ it\\ return\\ so\\ that\\ the\\ average\\ speed\\ for\\ the\\ round\\ trip\\ is\\ (\\d+(?:\\.\\d+)?)\\ km/h\\?$",
+   "n": 2,
+   "var": "v",
+   "left": "F('2')/(F('1')/N[0] + F('1')/X) ",
+   "right": " N[1]",
+   "equation": "2/(1/{0} + 1/v) = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0116",
+    "0118",
+    "0119",
+    "0122",
+    "0123"
+   ]
+  },
+  {
+   "id": "archive_distance_catch_up_1",
+   "category": "Distance (catch-up)",
+   "wording": "Two runners start together on a {0} m track, one at {1} m/s and the other at {2} m/s. After how many seconds does the faster one lap the slower one?",
+   "pattern": "^two\\ runners\\ start\\ together\\ on\\ a\\ (\\d+(?:\\.\\d+)?)\\ m\\ track,\\ one\\ at\\ (\\d+(?:\\.\\d+)?)\\ m/s\\ and\\ the\\ other\\ at\\ (\\d+(?:\\.\\d+)?)\\ m/s\\.\\ after\\ how\\ many\\ seconds\\ does\\ the\\ faster\\ one\\ lap\\ the\\ slower\\ one\\?$",
+   "n": 3,
+   "var": "t",
+   "left": "N[2]*X - N[1]*X ",
+   "right": " N[0]",
+   "equation": "{2}t − {1}t = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0125",
+    "0127",
+    "0129",
+    "0131",
+    "0133"
+   ]
+  },
+  {
+   "id": "archive_distance_round_trip_1",
+   "category": "Distance (round trip)",
+   "wording": "A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2} hours. How fast was the outbound ride?",
+   "pattern": "^a\\ cyclist\\ rides\\ (\\d+(?:\\.\\d+)?)\\ km\\ to\\ a\\ town\\ and\\ returns\\ (\\d+(?:\\.\\d+)?)\\ km/h\\ faster\\.\\ the\\ whole\\ trip\\ takes\\ (\\d+(?:\\.\\d+)?)\\ hours\\.\\ how\\ fast\\ was\\ the\\ outbound\\ ride\\?$",
+   "n": 3,
+   "var": "s",
+   "left": "N[0]/X + N[0]/(X + N[1]) ",
+   "right": " N[2]",
+   "equation": "{0}/s + {0}/(s + {1}) = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0141",
+    "0145",
+    "0147"
+   ]
+  },
+  {
+   "id": "archive_formula_1",
+   "category": "Formula",
+   "wording": "Using V = IR, find the current when the voltage is {0} V and the resistance is {1} Ω.",
+   "pattern": "^using\\ v\\ =\\ ir,\\ find\\ the\\ current\\ when\\ the\\ voltage\\ is\\ (\\d+(?:\\.\\d+)?)\\ v\\ and\\ the\\ resistance\\ is\\ (\\d+(?:\\.\\d+)?)\\ ω\\.$",
+   "n": 2,
+   "var": "i",
+   "left": "N[1]*X ",
+   "right": " N[0]",
+   "equation": "{1}i = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": false
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": false
+     }
+    }
+   ],
+   "problems": [
+    "0181",
+    "0187",
+    "0196"
+   ]
+  },
+  {
+   "id": "archive_formula_2",
+   "category": "Formula",
+   "wording": "An object has a mass of {0} g and a density of {1} g/cm³. Using density = mass/volume, find its volume.",
+   "pattern": "^an\\ object\\ has\\ a\\ mass\\ of\\ (\\d+(?:\\.\\d+)?)\\ g\\ and\\ a\\ density\\ of\\ (\\d+(?:\\.\\d+)?)\\ g/cm³\\.\\ using\\ density\\ =\\ mass/volume,\\ find\\ its\\ volume\\.$",
+   "n": 2,
+   "var": "v",
+   "left": "N[1]*X ",
+   "right": " N[0]",
+   "equation": "{1}v = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0183",
+    "0185",
+    "0193",
+    "0200",
+    "0207"
+   ]
+  },
+  {
+   "id": "archive_formula_3",
+   "category": "Formula",
+   "wording": "Using V = IR, find the resistance (in ohms) when the voltage is {0} V and the current is {1} A.",
+   "pattern": "^using\\ v\\ =\\ ir,\\ find\\ the\\ resistance\\ \\(in\\ ohms\\)\\ when\\ the\\ voltage\\ is\\ (\\d+(?:\\.\\d+)?)\\ v\\ and\\ the\\ current\\ is\\ (\\d+(?:\\.\\d+)?)\\ a\\.$",
+   "n": 2,
+   "var": "r",
+   "left": "N[1]*X ",
+   "right": " N[0]",
+   "equation": "{1}r = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0204",
+    "0208"
+   ]
+  },
+  {
+   "id": "archive_geometry_angles_1",
+   "category": "Geometry (angles)",
+   "wording": "In an isosceles triangle, the vertex angle is {0}° more than each base angle. Find all three angles.",
+   "pattern": "^in\\ an\\ isosceles\\ triangle,\\ the\\ vertex\\ angle\\ is\\ (\\d+(?:\\.\\d+)?)°\\ more\\ than\\ each\\ base\\ angle\\.\\ find\\ all\\ three\\ angles\\.$",
+   "n": 1,
+   "var": "x",
+   "left": "X + X + (X + N[0]) ",
+   "right": " F('180')",
+   "equation": "x + x + (x + {0}) = 180",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[0]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0242",
+    "0246",
+    "0264"
+   ]
+  },
+  {
+   "id": "archive_geometry_angles_2",
+   "category": "Geometry (angles)",
+   "wording": "In a triangle, the second angle is {0} times the first, and the third angle is {1} more than the first. Find all three angles.",
+   "pattern": "^in\\ a\\ triangle,\\ the\\ second\\ angle\\ is\\ (\\d+(?:\\.\\d+)?)\\ times\\ the\\ first,\\ and\\ the\\ third\\ angle\\ is\\ (\\d+(?:\\.\\d+)?)\\ more\\ than\\ the\\ first\\.\\ find\\ all\\ three\\ angles\\.$",
+   "n": 2,
+   "var": "x",
+   "left": "X + N[0]*X + (X + N[1]) ",
+   "right": " F('180')",
+   "equation": "x + {0}x + (x + {1}) = 180",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "N[0]*X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[1]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0243",
+    "0245",
+    "0255",
+    "0267",
+    "0269"
+   ]
+  },
+  {
+   "id": "archive_geometry_area_1",
+   "category": "Geometry (area)",
+   "wording": "A trapezoid has parallel sides of {0} cm and {1} cm and an area of {2} cm². Find its height.",
+   "pattern": "^a\\ trapezoid\\ has\\ parallel\\ sides\\ of\\ (\\d+(?:\\.\\d+)?)\\ cm\\ and\\ (\\d+(?:\\.\\d+)?)\\ cm\\ and\\ an\\ area\\ of\\ (\\d+(?:\\.\\d+)?)\\ cm²\\.\\ find\\ its\\ height\\.$",
+   "n": 3,
+   "var": "h",
+   "left": "(F('1')/F('2'))*(N[0] + N[1])*X ",
+   "right": " N[2]",
+   "equation": "(1/2)({0} + {1})h = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0276",
+    "0279",
+    "0284",
+    "0286",
+    "0290"
+   ]
+  },
+  {
+   "id": "archive_geometry_area_2",
+   "category": "Geometry (area)",
+   "wording": "A triangle has an area of {0} m² and a height of {1} m. How long is its base?",
+   "pattern": "^a\\ triangle\\ has\\ an\\ area\\ of\\ (\\d+(?:\\.\\d+)?)\\ m²\\ and\\ a\\ height\\ of\\ (\\d+(?:\\.\\d+)?)\\ m\\.\\ how\\ long\\ is\\ its\\ base\\?$",
+   "n": 2,
+   "var": "b",
+   "left": "(F('1')/F('2'))*X*(N[1]) ",
+   "right": " N[0]",
+   "equation": "(1/2)b({1}) = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0277",
+    "0281",
+    "0283",
+    "0288"
+   ]
+  },
+  {
+   "id": "archive_geometry_perimeter_1",
+   "category": "Geometry (perimeter)",
+   "wording": "A window is a rectangle {0} ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is {1} ft. How wide is the window?",
+   "pattern": "^a\\ window\\ is\\ a\\ rectangle\\ (\\d+(?:\\.\\d+)?)\\ ft\\ tall\\ topped\\ by\\ an\\ equilateral\\ triangle\\.\\ the\\ triangle's\\ sides\\ equal\\ the\\ rectangle's\\ width\\.\\ the\\ outside\\ perimeter\\ is\\ (\\d+(?:\\.\\d+)?)\\ ft\\.\\ how\\ wide\\ is\\ the\\ window\\?$",
+   "n": 2,
+   "var": "w",
+   "left": "X + F('2')*(N[0]) + F('2')*X ",
+   "right": " N[1]",
+   "equation": "w + 2({0}) + 2w = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0293",
+    "0295",
+    "0297",
+    "0299"
+   ]
+  },
+  {
+   "id": "archive_geometry_polygons_1",
+   "category": "Geometry (polygons)",
+   "wording": "Each interior angle of a regular polygon measures {0}°. How many sides does the polygon have?",
+   "pattern": "^each\\ interior\\ angle\\ of\\ a\\ regular\\ polygon\\ measures\\ (\\d+(?:\\.\\d+)?)°\\.\\ how\\ many\\ sides\\ does\\ the\\ polygon\\ have\\?$",
+   "n": 1,
+   "var": "n",
+   "left": "F('180')*(X - F('2'))/X ",
+   "right": " N[0]",
+   "equation": "180(n − 2)/n = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0300",
+    "0307"
+   ]
+  },
+  {
+   "id": "archive_geometry_polygons_2",
+   "category": "Geometry (polygons)",
+   "wording": "Each exterior angle of a regular polygon is {0}°. How many sides does it have?",
+   "pattern": "^each\\ exterior\\ angle\\ of\\ a\\ regular\\ polygon\\ is\\ (\\d+(?:\\.\\d+)?)°\\.\\ how\\ many\\ sides\\ does\\ it\\ have\\?$",
+   "n": 1,
+   "var": "n",
+   "left": "F('360')/X ",
+   "right": " N[0]",
+   "equation": "360/n = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0302",
+    "0304"
+   ]
+  },
+  {
+   "id": "archive_geometry_quadratic_1",
+   "category": "Geometry (quadratic)",
+   "wording": "A rectangle's length is {0} m more than its width, and its area is {1} m². Find the dimensions.",
+   "pattern": "^a\\ rectangle's\\ length\\ is\\ (\\d+(?:\\.\\d+)?)\\ m\\ more\\ than\\ its\\ width,\\ and\\ its\\ area\\ is\\ (\\d+(?:\\.\\d+)?)\\ m²\\.\\ find\\ the\\ dimensions\\.$",
+   "n": 2,
+   "var": "w",
+   "left": "X*(X + N[0]) ",
+   "right": " N[1]",
+   "equation": "w(w + {0}) = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[0]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0312",
+    "0322",
+    "0326",
+    "0332"
+   ]
+  },
+  {
+   "id": "archive_geometry_quadratic_2",
+   "category": "Geometry (quadratic)",
+   "wording": "The height of a triangle is {0} cm more than its base. The area is {1} cm². Find the base and height.",
+   "pattern": "^the\\ height\\ of\\ a\\ triangle\\ is\\ (\\d+(?:\\.\\d+)?)\\ cm\\ more\\ than\\ its\\ base\\.\\ the\\ area\\ is\\ (\\d+(?:\\.\\d+)?)\\ cm²\\.\\ find\\ the\\ base\\ and\\ height\\.$",
+   "n": 2,
+   "var": "b",
+   "left": "(F('1')/F('2'))*X*(X + N[0]) ",
+   "right": " N[1]",
+   "equation": "(1/2)b(b + {0}) = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[0]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0314",
+    "0316",
+    "0328",
+    "0333",
+    "0338"
+   ]
+  },
+  {
+   "id": "archive_geometry_quadratic_3",
+   "category": "Geometry (quadratic)",
+   "wording": "A {0} in × {1} in photo is surrounded by a frame of uniform width. The framed picture covers {2} in². How wide is the frame?",
+   "pattern": "^a\\ (\\d+(?:\\.\\d+)?)\\ in\\ ×\\ (\\d+(?:\\.\\d+)?)\\ in\\ photo\\ is\\ surrounded\\ by\\ a\\ frame\\ of\\ uniform\\ width\\.\\ the\\ framed\\ picture\\ covers\\ (\\d+(?:\\.\\d+)?)\\ in²\\.\\ how\\ wide\\ is\\ the\\ frame\\?$",
+   "n": 3,
+   "var": "x",
+   "left": "(N[0] + F('2')*X)*(N[1] + F('2')*X) ",
+   "right": " N[2]",
+   "equation": "({0} + 2x)({1} + 2x) = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0315",
+    "0321",
+    "0329",
+    "0331",
+    "0339"
+   ]
+  },
+  {
+   "id": "archive_geometry_triangle_1",
+   "category": "Geometry (triangle)",
+   "wording": "Each of the two equal sides of an isosceles triangle is {0} cm longer than the base. The perimeter is {1} cm. Find the side lengths.",
+   "pattern": "^each\\ of\\ the\\ two\\ equal\\ sides\\ of\\ an\\ isosceles\\ triangle\\ is\\ (\\d+(?:\\.\\d+)?)\\ cm\\ longer\\ than\\ the\\ base\\.\\ the\\ perimeter\\ is\\ (\\d+(?:\\.\\d+)?)\\ cm\\.\\ find\\ the\\ side\\ lengths\\.$",
+   "n": 2,
+   "var": "x",
+   "left": "X + F('2')*(X + N[0]) ",
+   "right": " N[1]",
+   "equation": "x + 2(x + {0}) = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[0]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0346",
+    "0349",
+    "0350",
+    "0352"
+   ]
+  },
+  {
+   "id": "archive_geometry_volume_1",
+   "category": "Geometry (volume)",
+   "wording": "A rectangular box is {0} in long and {1} in wide. Its volume is {2} in³. How tall is it?",
+   "pattern": "^a\\ rectangular\\ box\\ is\\ (\\d+(?:\\.\\d+)?)\\ in\\ long\\ and\\ (\\d+(?:\\.\\d+)?)\\ in\\ wide\\.\\ its\\ volume\\ is\\ (\\d+(?:\\.\\d+)?)\\ in³\\.\\ how\\ tall\\ is\\ it\\?$",
+   "n": 3,
+   "var": "h",
+   "left": "N[0] * N[1] * X ",
+   "right": " N[2]",
+   "equation": "{0} × {1} × h = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0355",
+    "0357",
+    "0358"
+   ]
+  },
+  {
+   "id": "archive_inverse_variation_1",
+   "category": "Inverse variation",
+   "wording": "{0} workers can build a wall in {1} days. At the same rate, how many days would {2} workers take?",
+   "pattern": "^(\\d+(?:\\.\\d+)?)\\ workers\\ can\\ build\\ a\\ wall\\ in\\ (\\d+(?:\\.\\d+)?)\\ days\\.\\ at\\ the\\ same\\ rate,\\ how\\ many\\ days\\ would\\ (\\d+(?:\\.\\d+)?)\\ workers\\ take\\?$",
+   "n": 3,
+   "var": "d",
+   "left": "N[0] * N[1] ",
+   "right": " N[2] * X",
+   "equation": "{0} × {1} = {2} × d",
+   "unknown_flags": {
+    "positive": true,
+    "whole": false
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": false
+     }
+    }
+   ],
+   "problems": [
+    "0401",
+    "0406",
+    "0409",
+    "0410",
+    "0413"
+   ]
+  },
+  {
+   "id": "archive_inverse_variation_2",
+   "category": "Inverse variation",
+   "wording": "A gear with {0} teeth turning at {1} rpm drives a gear with {2} teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn?",
+   "pattern": "^a\\ gear\\ with\\ (\\d+(?:\\.\\d+)?)\\ teeth\\ turning\\ at\\ (\\d+(?:\\.\\d+)?)\\ rpm\\ drives\\ a\\ gear\\ with\\ (\\d+(?:\\.\\d+)?)\\ teeth\\.\\ teeth\\ ×\\ rpm\\ is\\ the\\ same\\ for\\ both\\ gears\\.\\ how\\ fast\\ does\\ the\\ second\\ gear\\ turn\\?$",
+   "n": 3,
+   "var": "r",
+   "left": "N[0] * N[1] ",
+   "right": " N[2]*X",
+   "equation": "{0} × {1} = {2}r",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0402",
+    "0404",
+    "0408",
+    "0411",
+    "0414"
+   ]
+  },
+  {
+   "id": "archive_inverse_variation_3",
+   "category": "Inverse variation",
+   "wording": "At {0} km/h a trip takes {1} hours. Time varies inversely with speed. How long would it take at {2} km/h?",
+   "pattern": "^at\\ (\\d+(?:\\.\\d+)?)\\ km/h\\ a\\ trip\\ takes\\ (\\d+(?:\\.\\d+)?)\\ hours\\.\\ time\\ varies\\ inversely\\ with\\ speed\\.\\ how\\ long\\ would\\ it\\ take\\ at\\ (\\d+(?:\\.\\d+)?)\\ km/h\\?$",
+   "n": 3,
+   "var": "t",
+   "left": "N[0] * N[1] ",
+   "right": " N[2]*X",
+   "equation": "{0} × {1} = {2}t",
+   "unknown_flags": {
+    "positive": true,
+    "whole": false
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": false
+     }
+    }
+   ],
+   "problems": [
+    "0403",
+    "0405",
+    "0407",
+    "0412"
+   ]
+  },
+  {
+   "id": "archive_joint_variation_1",
+   "category": "Joint variation",
+   "wording": "{0} workers working {1} hours a day finish a job in {2} days. How many days would {3} workers working {4} hours a day take?",
+   "pattern": "^(\\d+(?:\\.\\d+)?)\\ workers\\ working\\ (\\d+(?:\\.\\d+)?)\\ hours\\ a\\ day\\ finish\\ a\\ job\\ in\\ (\\d+(?:\\.\\d+)?)\\ days\\.\\ how\\ many\\ days\\ would\\ (\\d+(?:\\.\\d+)?)\\ workers\\ working\\ (\\d+(?:\\.\\d+)?)\\ hours\\ a\\ day\\ take\\?$",
+   "n": 5,
+   "var": "d",
+   "left": "N[0] * N[1] * N[2] ",
+   "right": " N[3] * N[4] * X",
+   "equation": "{0} × {1} × {2} = {3} × {4} × d",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0415",
+    "0416",
+    "0417",
+    "0418",
+    "0419"
+   ]
+  },
+  {
+   "id": "archive_linear_cost_1",
+   "category": "Linear cost",
+   "wording": "An electric bill is ${0} per month plus ${1} per kWh. This month's bill is ${2}. How many kWh were used?",
+   "pattern": "^an\\ electric\\ bill\\ is\\ \\$(\\d+(?:\\.\\d+)?)\\ per\\ month\\ plus\\ \\$(\\d+(?:\\.\\d+)?)\\ per\\ kwh\\.\\ this\\ month's\\ bill\\ is\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ how\\ many\\ kwh\\ were\\ used\\?$",
+   "n": 3,
+   "var": "k",
+   "left": "N[0] + N[1]*X ",
+   "right": " N[2]",
+   "equation": "{0} + {1}k = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0428",
+    "0436",
+    "0452",
+    "0471",
+    "0479"
+   ]
+  },
+  {
+   "id": "archive_linear_cost_2",
+   "category": "Linear cost",
+   "wording": "A parking garage charges ${0} for the first hour and ${1} for each additional hour. A driver paid ${2}. How many hours did they park?",
+   "pattern": "^a\\ parking\\ garage\\ charges\\ \\$(\\d+(?:\\.\\d+)?)\\ for\\ the\\ first\\ hour\\ and\\ \\$(\\d+(?:\\.\\d+)?)\\ for\\ each\\ additional\\ hour\\.\\ a\\ driver\\ paid\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ how\\ many\\ hours\\ did\\ they\\ park\\?$",
+   "n": 3,
+   "var": "h",
+   "left": "N[0] + N[1]*(X - F('1')) ",
+   "right": " N[2]",
+   "equation": "{0} + {1}(h − 1) = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0429",
+    "0439",
+    "0458",
+    "0463"
+   ]
+  },
+  {
+   "id": "archive_linear_model_1",
+   "category": "Linear model",
+   "wording": "A tractor bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?",
+   "pattern": "^a\\ tractor\\ bought\\ for\\ \\$(\\d+(?:\\.\\d+)?)\\ loses\\ \\$(\\d+(?:\\.\\d+)?)\\ in\\ value\\ each\\ year\\.\\ after\\ how\\ many\\ years\\ will\\ it\\ be\\ worth\\ \\$(\\d+(?:\\.\\d+)?)\\?$",
+   "n": 3,
+   "var": "y",
+   "left": "N[0] - N[1]*X ",
+   "right": " N[2]",
+   "equation": "{0} − {1}y = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0487",
+    "0492",
+    "0508"
+   ]
+  },
+  {
+   "id": "archive_linear_model_2",
+   "category": "Linear model",
+   "wording": "A club has raised ${0} so far. At its bake sale it charges ${1} per box of cookies. How many more boxes must it sell to reach its ${2} goal?",
+   "pattern": "^a\\ club\\ has\\ raised\\ \\$(\\d+(?:\\.\\d+)?)\\ so\\ far\\.\\ at\\ its\\ bake\\ sale\\ it\\ charges\\ \\$(\\d+(?:\\.\\d+)?)\\ per\\ box\\ of\\ cookies\\.\\ how\\ many\\ more\\ boxes\\ must\\ it\\ sell\\ to\\ reach\\ its\\ \\$(\\d+(?:\\.\\d+)?)\\ goal\\?$",
+   "n": 3,
+   "var": "n",
+   "left": "N[0] + N[1]*X ",
+   "right": " N[2]",
+   "equation": "{0} + {1}n = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0488",
+    "0497",
+    "0517",
+    "0526"
+   ]
+  },
+  {
+   "id": "archive_linear_model_3",
+   "category": "Linear model",
+   "wording": "A hot-air balloon at {0} ft descends {1} ft per minute. Another at {2} ft rises {3} ft per minute. When are they at the same height?",
+   "pattern": "^a\\ hot\\-air\\ balloon\\ at\\ (\\d+(?:\\.\\d+)?)\\ ft\\ descends\\ (\\d+(?:\\.\\d+)?)\\ ft\\ per\\ minute\\.\\ another\\ at\\ (\\d+(?:\\.\\d+)?)\\ ft\\ rises\\ (\\d+(?:\\.\\d+)?)\\ ft\\ per\\ minute\\.\\ when\\ are\\ they\\ at\\ the\\ same\\ height\\?$",
+   "n": 4,
+   "var": "t",
+   "left": "N[0] - N[1]*X ",
+   "right": " N[2] + N[3]*X",
+   "equation": "{0} − {1}t = {2} + {3}t",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0489",
+    "0495",
+    "0503",
+    "0515"
+   ]
+  },
+  {
+   "id": "archive_linear_model_4",
+   "category": "Linear model",
+   "wording": "A phone at {0}% battery loses {1}% per hour. After how many hours will it be at {2}%?",
+   "pattern": "^a\\ phone\\ at\\ (\\d+(?:\\.\\d+)?)%\\ battery\\ loses\\ (\\d+(?:\\.\\d+)?)%\\ per\\ hour\\.\\ after\\ how\\ many\\ hours\\ will\\ it\\ be\\ at\\ (\\d+(?:\\.\\d+)?)%\\?$",
+   "n": 3,
+   "var": "h",
+   "left": "N[0] - N[1]*X ",
+   "right": " N[2]",
+   "equation": "{0} − {1}h = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": false
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": false
+     }
+    }
+   ],
+   "problems": [
+    "0490",
+    "0500",
+    "0505",
+    "0523",
+    "0524"
+   ]
+  },
+  {
+   "id": "archive_percent_1",
+   "category": "Percent",
+   "wording": "What percent of {0} is {1}?",
+   "pattern": "^what\\ %\\ of\\ (\\d+(?:\\.\\d+)?)\\ is\\ (\\d+(?:\\.\\d+)?)\\?$",
+   "n": 2,
+   "var": "p",
+   "left": "(X/F('100'))*(N[0]) ",
+   "right": " N[1]",
+   "equation": "(p/100)({0}) = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0620",
+    "0632",
+    "0668"
+   ]
+  },
+  {
+   "id": "archive_percent_2",
+   "category": "Percent",
+   "wording": "{0} out of {1} students passed. What percent passed?",
+   "pattern": "^(\\d+(?:\\.\\d+)?)\\ out\\ of\\ (\\d+(?:\\.\\d+)?)\\ students\\ passed\\.\\ what\\ %\\ passed\\?$",
+   "n": 2,
+   "var": "p",
+   "left": "(X/F('100'))*(N[1]) ",
+   "right": " N[0]",
+   "equation": "(p/100)({1}) = {0}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0644",
+    "0657"
+   ]
+  },
+  {
+   "id": "archive_profit_1",
+   "category": "Profit",
+   "wording": "A candle shop has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?",
+   "pattern": "^a\\ candle\\ shop\\ has\\ fixed\\ costs\\ of\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ each\\ item\\ costs\\ \\$(\\d+(?:\\.\\d+)?)\\ to\\ make\\ and\\ sells\\ for\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ how\\ many\\ items\\ must\\ be\\ sold\\ to\\ make\\ a\\ profit\\ of\\ \\$(\\d+(?:\\.\\d+)?)\\?$",
+   "n": 4,
+   "var": "n",
+   "left": "N[2]*X - (N[0] + N[1]*X) ",
+   "right": " N[3]",
+   "equation": "{2}n − ({0} + {1}n) = {3}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0686",
+    "0687",
+    "0688"
+   ]
+  },
+  {
+   "id": "archive_proportion_similar_triangles_1",
+   "category": "Proportion (similar triangles)",
+   "wording": "A {0} ft person casts a {1} ft shadow. At the same time a tree casts a {2} ft shadow. How tall is the tree?",
+   "pattern": "^a\\ (\\d+(?:\\.\\d+)?)\\ ft\\ person\\ casts\\ a\\ (\\d+(?:\\.\\d+)?)\\ ft\\ shadow\\.\\ at\\ the\\ same\\ time\\ a\\ tree\\ casts\\ a\\ (\\d+(?:\\.\\d+)?)\\ ft\\ shadow\\.\\ how\\ tall\\ is\\ the\\ tree\\?$",
+   "n": 3,
+   "var": "h",
+   "left": "N[0]/N[1] ",
+   "right": " X/N[2]",
+   "equation": "{0}/{1} = h/{2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0725",
+    "0727"
+   ]
+  },
+  {
+   "id": "archive_rational_equation_1",
+   "category": "Rational equation",
+   "wording": "A group shares a ${0} rental equally. If {1} more people join, each pays ${2} less. How many people are in the group originally?",
+   "pattern": "^a\\ group\\ shares\\ a\\ \\$(\\d+(?:\\.\\d+)?)\\ rental\\ equally\\.\\ if\\ (\\d+(?:\\.\\d+)?)\\ more\\ people\\ join,\\ each\\ pays\\ \\$(\\d+(?:\\.\\d+)?)\\ less\\.\\ how\\ many\\ people\\ are\\ in\\ the\\ group\\ originally\\?$",
+   "n": 3,
+   "var": "n",
+   "left": "N[0]/X - N[0]/(X + N[1]) ",
+   "right": " N[2]",
+   "equation": "{0}/n − {0}/(n + {1}) = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0816",
+    "0823",
+    "0831",
+    "0840"
+   ]
+  },
+  {
+   "id": "archive_rational_equation_2",
+   "category": "Rational equation",
+   "wording": "A truck travels {0} miles in the same time a car travels {1} miles. The car is {2} mph faster. Find both speeds.",
+   "pattern": "^a\\ truck\\ travels\\ (\\d+(?:\\.\\d+)?)\\ miles\\ in\\ the\\ same\\ time\\ a\\ car\\ travels\\ (\\d+(?:\\.\\d+)?)\\ miles\\.\\ the\\ car\\ is\\ (\\d+(?:\\.\\d+)?)\\ mph\\ faster\\.\\ find\\ both\\ speeds\\.$",
+   "n": 3,
+   "var": "s",
+   "left": "N[0]/X ",
+   "right": " N[1]/(X + N[2])",
+   "equation": "{0}/s = {1}/(s + {2})",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "X+N[2]",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0817",
+    "0827",
+    "0835",
+    "0843"
+   ]
+  },
+  {
+   "id": "archive_rational_equation_3",
+   "category": "Rational equation",
+   "wording": "A boat goes {0} km upstream in the same time it goes {1} km downstream. Its speed in still water is {2} km/h. What is the speed of the current?",
+   "pattern": "^a\\ boat\\ goes\\ (\\d+(?:\\.\\d+)?)\\ km\\ upstream\\ in\\ the\\ same\\ time\\ it\\ goes\\ (\\d+(?:\\.\\d+)?)\\ km\\ downstream\\.\\ its\\ speed\\ in\\ still\\ water\\ is\\ (\\d+(?:\\.\\d+)?)\\ km/h\\.\\ what\\ is\\ the\\ speed\\ of\\ the\\ current\\?$",
+   "n": 3,
+   "var": "c",
+   "left": "N[0]/(N[2] - X) ",
+   "right": " N[1]/(N[2] + X)",
+   "equation": "{0}/({2} − c) = {1}/({2} + c)",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0818",
+    "0822",
+    "0832",
+    "0839",
+    "0844"
+   ]
+  },
+  {
+   "id": "archive_rational_equation_4",
+   "category": "Rational equation",
+   "wording": "Jogging a route at {0} km/h takes {1} hours longer than cycling it at {2} km/h. How long is the route?",
+   "pattern": "^jogging\\ a\\ route\\ at\\ (\\d+(?:\\.\\d+)?)\\ km/h\\ takes\\ (\\d+(?:\\.\\d+)?)\\ hours\\ longer\\ than\\ cycling\\ it\\ at\\ (\\d+(?:\\.\\d+)?)\\ km/h\\.\\ how\\ long\\ is\\ the\\ route\\?$",
+   "n": 3,
+   "var": "d",
+   "left": "X/N[0] - X/N[2] ",
+   "right": " N[1]",
+   "equation": "d/{0} − d/{2} = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0819",
+    "0828",
+    "0837"
+   ]
+  },
+  {
+   "id": "archive_sequences_1",
+   "category": "Sequences",
+   "wording": "A theater has {0} seats in the first row and each row has {1} more seats than the row before. Which row has {2} seats?",
+   "pattern": "^a\\ theater\\ has\\ (\\d+(?:\\.\\d+)?)\\ seats\\ in\\ the\\ first\\ row\\ and\\ each\\ row\\ has\\ (\\d+(?:\\.\\d+)?)\\ more\\ seats\\ than\\ the\\ row\\ before\\.\\ which\\ row\\ has\\ (\\d+(?:\\.\\d+)?)\\ seats\\?$",
+   "n": 3,
+   "var": "n",
+   "left": "N[0] + (X - F('1'))*(N[1]) ",
+   "right": " N[2]",
+   "equation": "{0} + (n − 1)({1}) = {2}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0857",
+    "0858",
+    "0859",
+    "0861"
+   ]
+  },
+  {
+   "id": "archive_simple_interest_1",
+   "category": "Simple interest",
+   "wording": "${0} earns ${1} in simple interest over {2} years. What is the annual interest rate?",
+   "pattern": "^\\$(\\d+(?:\\.\\d+)?)\\ earns\\ \\$(\\d+(?:\\.\\d+)?)\\ in\\ simple\\ interest\\ over\\ (\\d+(?:\\.\\d+)?)\\ years\\.\\ what\\ is\\ the\\ annual\\ interest\\ rate\\?$",
+   "n": 3,
+   "var": "r",
+   "left": "N[0] * (X/F('100')) * N[2] ",
+   "right": " N[1]",
+   "equation": "{0} × (r/100) × {2} = {1}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0874",
+    "0878"
+   ]
+  },
+  {
+   "id": "archive_tickets_1",
+   "category": "Tickets",
+   "wording": "Adult tickets to a movie screening cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?",
+   "pattern": "^adult\\ tickets\\ to\\ a\\ movie\\ screening\\ cost\\ \\$(\\d+(?:\\.\\d+)?)\\ and\\ child\\ tickets\\ cost\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ (\\d+(?:\\.\\d+)?)\\ tickets\\ were\\ sold\\ for\\ a\\ total\\ of\\ \\$(\\d+(?:\\.\\d+)?)\\.\\ how\\ many\\ of\\ each\\ were\\ sold\\?$",
+   "n": 4,
+   "var": "x",
+   "left": "N[0]*X + N[1]*(N[2] - X) ",
+   "right": " N[3]",
+   "equation": "{0}x + {1}({2} − x) = {3}",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    },
+    {
+     "expr": "N[2]-X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0959",
+    "0961",
+    "0963"
+   ]
+  },
+  {
+   "id": "archive_work_rate_1",
+   "category": "Work rate",
+   "wording": "A new machine works {0} times as fast as an old one. Together they finish an order in {1} hours. How long would the old machine take alone?",
+   "pattern": "^a\\ new\\ machine\\ works\\ (\\d+(?:\\.\\d+)?)\\ times\\ as\\ fast\\ as\\ an\\ old\\ one\\.\\ together\\ they\\ finish\\ an\\ order\\ in\\ (\\d+(?:\\.\\d+)?)\\ hours\\.\\ how\\ long\\ would\\ the\\ old\\ machine\\ take\\ alone\\?$",
+   "n": 2,
+   "var": "x",
+   "left": "N[1]/X + N[1]/(X/N[0]) ",
+   "right": " F('1')",
+   "equation": "{1}/x + {1}/(x/{0}) = 1",
+   "unknown_flags": {
+    "positive": true,
+    "whole": true
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": true
+     }
+    }
+   ],
+   "problems": [
+    "0967",
+    "0975",
+    "0984",
+    "0989"
+   ]
+  },
+  {
+   "id": "archive_work_rate_2",
+   "category": "Work rate",
+   "wording": "An inlet pipe fills a tank in {0} hours. A drain empties it in {1} hours. If both are open, how long does it take to fill the empty tank?",
+   "pattern": "^an\\ inlet\\ pipe\\ fills\\ a\\ tank\\ in\\ (\\d+(?:\\.\\d+)?)\\ hours\\.\\ a\\ drain\\ empties\\ it\\ in\\ (\\d+(?:\\.\\d+)?)\\ hours\\.\\ if\\ both\\ are\\ open,\\ how\\ long\\ does\\ it\\ take\\ to\\ fill\\ the\\ empty\\ tank\\?$",
+   "n": 2,
+   "var": "t",
+   "left": "X/N[0] - X/N[1] ",
+   "right": " F('1')",
+   "equation": "t/{0} − t/{1} = 1",
+   "unknown_flags": {
+    "positive": true,
+    "whole": false
+   },
+   "values": [
+    {
+     "expr": "X",
+     "flags": {
+      "positive": true,
+      "whole": false
+     }
+    }
+   ],
+   "problems": [
+    "0969",
+    "0973",
+    "0982",
+    "0993",
+    "0996"
+   ]
+  }
+ ]
+}

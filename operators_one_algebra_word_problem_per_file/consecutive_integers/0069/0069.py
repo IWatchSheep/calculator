@@ -6,7 +6,7 @@ Equation: 3x = (x + 2) + 4
 Solve   : 2x = 6 → x = 3
 Answer  : 3, 4, 5
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_consecutive_integers_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '3x = (x + 2) + 4'
 SOLVE = '2x = 6 → x = 3'
 ANSWER = '3, 4, 5'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_consecutive_integers_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Three consecutive integers are such that {0} times the smallest is {1} more than the largest. Find the integers.'
 NUMBERS = ['3', '4']

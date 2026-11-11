@@ -6,7 +6,7 @@ Equation: 36 × 80 = 60r
 Solve   : 60r = 2880 → r = 48
 Answer  : 48 rpm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_inverse_variation_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '36 × 80 = 60r'
 SOLVE = '60r = 2880 → r = 48'
 ANSWER = '48 rpm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_inverse_variation_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A gear with {0} teeth turning at {1} rpm drives a gear with {2} teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn?'
 NUMBERS = ['36', '80', '60']

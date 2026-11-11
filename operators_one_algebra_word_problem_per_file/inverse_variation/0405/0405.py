@@ -6,7 +6,7 @@ Equation: 60 × 5 = 120t
 Solve   : 120t = 300 → t = 2.5
 Answer  : 2.5 hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_inverse_variation_3 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '60 × 5 = 120t'
 SOLVE = '120t = 300 → t = 2.5'
 ANSWER = '2.5 hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_inverse_variation_3'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'At {0} km/h a trip takes {1} hours. Time varies inversely with speed. How long would it take at {2} km/h?'
 NUMBERS = ['60', '5', '120']

@@ -6,7 +6,7 @@ Equation: d/10 − d/24 = 2.8
 Solve   : Multiply by 120 → d = 48
 Answer  : 48 km
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_rational_equation_4 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'd/10 − d/24 = 2.8'
 SOLVE = 'Multiply by 120 → d = 48'
 ANSWER = '48 km'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_rational_equation_4'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Jogging a route at {0} km/h takes {1} hours longer than cycling it at {2} km/h. How long is the route?'
 NUMBERS = ['10', '2.8', '24']

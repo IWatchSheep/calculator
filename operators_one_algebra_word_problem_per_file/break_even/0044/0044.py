@@ -6,7 +6,7 @@ Equation: 45 + 0.05x = 41 + 0.1x
 Solve   : 0.05x = 4 → x = 80
 Answer  : 80 miles
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_break_even_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '45 + 0.05x = 41 + 0.1x'
 SOLVE = '0.05x = 4 → x = 80'
 ANSWER = '80 miles'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_break_even_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Car rental A costs ${0} plus ${1} per mile. Plan B costs ${2} plus ${3} per mile. For how many miles do they cost the same?'
 NUMBERS = ['45.00', '0.05', '41.00', '0.10']

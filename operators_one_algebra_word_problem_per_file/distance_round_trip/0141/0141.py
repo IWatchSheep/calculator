@@ -6,7 +6,7 @@ Equation: 225/s + 225/(s + 5) = 9.5
 Solve   : Clear denominators → quadratic → s = 45 (reject negative)
 Answer  : 45 km/h
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_distance_round_trip_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '225/s + 225/(s + 5) = 9.5'
 SOLVE = 'Clear denominators → quadratic → s = 45 (reject negative)'
 ANSWER = '45 km/h'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_distance_round_trip_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2} hours. How fast was the outbound ride?'
 NUMBERS = ['225', '5', '9.5']

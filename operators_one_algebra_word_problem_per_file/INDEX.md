@@ -4,7 +4,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 **Ready** = a solver answers it today (`compute(...)` works); **Reference** = the problem and its steps are stored, no solver answers it yet.
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 
-1000 problems: 377 ready (349 word_solver, 28 number_puzzle), 623 reference.
+1000 problems: 554 ready (526 word_solver, 28 number_puzzle), 446 reference.
 
 ## Age
 
@@ -38,15 +38,15 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in class B? | 13 students | Reference |  | `average_weighted/0019/` |
+| 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in class B? | 13 students | Ready | archive_average_weighted_1 | `average_weighted/0019/` |
 | 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86? | 56 | Reference |  | `average_weighted/0020/` |
 | 0021 | A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85? | 94 | Reference |  | `average_weighted/0021/` |
-| 0022 | Class A has 18 students averaging 72. Class B averages 65. Together the classes average 67.8. How many students are in class B? | 27 students | Reference |  | `average_weighted/0022/` |
-| 0023 | Class A has 17 students averaging 86. Class B averages 75. Together the classes average 80.5. How many students are in class B? | 17 students | Reference |  | `average_weighted/0023/` |
+| 0022 | Class A has 18 students averaging 72. Class B averages 65. Together the classes average 67.8. How many students are in class B? | 27 students | Ready | archive_average_weighted_1 | `average_weighted/0022/` |
+| 0023 | Class A has 17 students averaging 86. Class B averages 75. Together the classes average 80.5. How many students are in class B? | 17 students | Ready | archive_average_weighted_1 | `average_weighted/0023/` |
 | 0024 | A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88? | 100 | Reference |  | `average_weighted/0024/` |
 | 0025 | A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85? | 67 | Reference |  | `average_weighted/0025/` |
-| 0026 | Class A has 16 students averaging 80. Class B averages 66. Together the classes average 71.6. How many students are in class B? | 24 students | Reference |  | `average_weighted/0026/` |
-| 0027 | Class A has 14 students averaging 81. Class B averages 91. Together the classes average 85.4. How many students are in class B? | 11 students | Reference |  | `average_weighted/0027/` |
+| 0026 | Class A has 16 students averaging 80. Class B averages 66. Together the classes average 71.6. How many students are in class B? | 24 students | Ready | archive_average_weighted_1 | `average_weighted/0026/` |
+| 0027 | Class A has 14 students averaging 81. Class B averages 91. Together the classes average 85.4. How many students are in class B? | 11 students | Ready | archive_average_weighted_1 | `average_weighted/0027/` |
 | 0028 | A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81? | 67 | Reference |  | `average_weighted/0028/` |
 
 ## Break-even
@@ -54,29 +54,29 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do they cost the same? | 230 kWhs | Reference |  | `break_even/0029/` |
-| 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is the total cost the same? | 16 months | Reference |  | `break_even/0030/` |
+| 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is the total cost the same? | 16 months | Ready | archive_break_even_1 | `break_even/0030/` |
 | 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same? | $17,000.00 | Reference |  | `break_even/0031/` |
 | 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs? | 50 meals | Reference |  | `break_even/0032/` |
 | 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying? | 9 uses | Reference |  | `break_even/0033/` |
 | 0034 | Job A pays $2200 a month plus 4% commission. Job B pays $160 a month plus 8% commission. At what monthly sales total do both pay the same? | $51,000.00 | Reference |  | `break_even/0034/` |
-| 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost the same? | 70 miles | Reference |  | `break_even/0035/` |
+| 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost the same? | 70 miles | Ready | archive_break_even_2 | `break_even/0035/` |
 | 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even? | 125 posters | Reference |  | `break_even/0036/` |
 | 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost the same as buying? | 35 uses | Reference |  | `break_even/0037/` |
-| 0038 | Service A has a $240 sign-up fee and costs $12/month. Service B has no fee and costs $22/month. After how many months is the total cost the same? | 24 months | Reference |  | `break_even/0038/` |
-| 0039 | Service A has a $240 sign-up fee and costs $8/month. Service B has no fee and costs $13/month. After how many months is the total cost the same? | 48 months | Reference |  | `break_even/0039/` |
+| 0038 | Service A has a $240 sign-up fee and costs $12/month. Service B has no fee and costs $22/month. After how many months is the total cost the same? | 24 months | Ready | archive_break_even_1 | `break_even/0038/` |
+| 0039 | Service A has a $240 sign-up fee and costs $8/month. Service B has no fee and costs $13/month. After how many months is the total cost the same? | 48 months | Ready | archive_break_even_1 | `break_even/0039/` |
 | 0040 | Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 19 uses | Reference |  | `break_even/0040/` |
 | 0041 | Job A pays $3000 a month plus 4% commission. Job B pays $2400 a month plus 8% commission. At what monthly sales total do both pay the same? | $15,000.00 | Reference |  | `break_even/0041/` |
 | 0042 | Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they cost the same? | 340 minutes | Reference |  | `break_even/0042/` |
 | 0043 | A food truck pays $2075 in daily costs, and each meal costs $15 in ingredients. Meals sell for $20. How many meals a day cover the costs? | 415 meals | Reference |  | `break_even/0043/` |
-| 0044 | Car rental A costs $45.00 plus $0.05 per mile. Plan B costs $41.00 plus $0.10 per mile. For how many miles do they cost the same? | 80 miles | Reference |  | `break_even/0044/` |
+| 0044 | Car rental A costs $45.00 plus $0.05 per mile. Plan B costs $41.00 plus $0.10 per mile. For how many miles do they cost the same? | 80 miles | Ready | archive_break_even_2 | `break_even/0044/` |
 | 0045 | A food truck pays $750 in daily costs, and each meal costs $14 in ingredients. Meals sell for $19. How many meals a day cover the costs? | 150 meals | Reference |  | `break_even/0045/` |
-| 0046 | Service A has a $140 sign-up fee and costs $8/month. Service B has no fee and costs $13/month. After how many months is the total cost the same? | 28 months | Reference |  | `break_even/0046/` |
+| 0046 | Service A has a $140 sign-up fee and costs $8/month. Service B has no fee and costs $13/month. After how many months is the total cost the same? | 28 months | Ready | archive_break_even_1 | `break_even/0046/` |
 | 0047 | Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 51 uses | Reference |  | `break_even/0047/` |
 | 0048 | Job A pays $1100 a month plus 3% commission. Job B pays $960 a month plus 5% commission. At what monthly sales total do both pay the same? | $7,000.00 | Reference |  | `break_even/0048/` |
 | 0049 | Buying a pressure washer costs $200. Renting one costs $25 once plus $25 per use. After how many uses does renting cost the same as buying? | 7 uses | Reference |  | `break_even/0049/` |
 | 0050 | Job A pays $2200 a month plus 4% commission. Job B pays $940 a month plus 10% commission. At what monthly sales total do both pay the same? | $21,000.00 | Reference |  | `break_even/0050/` |
 | 0051 | A food truck pays $375 in daily costs, and each meal costs $18 in ingredients. Meals sell for $23. How many meals a day cover the costs? | 75 meals | Reference |  | `break_even/0051/` |
-| 0052 | Service A has a $90 sign-up fee and costs $8/month. Service B has no fee and costs $11/month. After how many months is the total cost the same? | 30 months | Reference |  | `break_even/0052/` |
+| 0052 | Service A has a $90 sign-up fee and costs $8/month. Service B has no fee and costs $11/month. After how many months is the total cost the same? | 30 months | Ready | archive_break_even_1 | `break_even/0052/` |
 
 ## Clock
 
@@ -106,23 +106,23 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0067 | Of three consecutive even integers, the sum of the smallest and largest is 8. Find all three. | 2, 4, 6 | Reference |  | `consecutive_integers/0067/` |
+| 0067 | Of three consecutive even integers, the sum of the smallest and largest is 8. Find all three. | 2, 4, 6 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0067/` |
 | 0068 | The average of 5 consecutive integers is 50. What is the smallest? | 48 (the integers are 48 to 52) | Reference |  | `consecutive_integers/0068/` |
-| 0069 | Three consecutive integers are such that 3 times the smallest is 4 more than the largest. Find the integers. | 3, 4, 5 | Reference |  | `consecutive_integers/0069/` |
+| 0069 | Three consecutive integers are such that 3 times the smallest is 4 more than the largest. Find the integers. | 3, 4, 5 | Ready | archive_consecutive_integers_2 | `consecutive_integers/0069/` |
 | 0070 | The sum of 3 consecutive integers is 120. What are the integers? | 39, 40, 41 | Ready | consecutive | `consecutive_integers/0070/` |
-| 0071 | Three consecutive integers are such that 3 times the smallest is 76 more than the largest. Find the integers. | 39, 40, 41 | Reference |  | `consecutive_integers/0071/` |
-| 0072 | Of three consecutive even integers, the sum of the smallest and largest is 28. Find all three. | 12, 14, 16 | Reference |  | `consecutive_integers/0072/` |
+| 0071 | Three consecutive integers are such that 3 times the smallest is 76 more than the largest. Find the integers. | 39, 40, 41 | Ready | archive_consecutive_integers_2 | `consecutive_integers/0071/` |
+| 0072 | Of three consecutive even integers, the sum of the smallest and largest is 28. Find all three. | 12, 14, 16 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0072/` |
 | 0073 | The average of 7 consecutive integers is 60. What is the smallest? | 57 (the integers are 57 to 63) | Reference |  | `consecutive_integers/0073/` |
 | 0074 | The sum of 4 consecutive odd integers is 160. What are the integers? | 37, 39, 41, 43 | Ready | consecutive | `consecutive_integers/0074/` |
 | 0075 | The average of 7 consecutive integers is 59. What is the smallest? | 56 (the integers are 56 to 62) | Reference |  | `consecutive_integers/0075/` |
-| 0076 | Of three consecutive even integers, the sum of the smallest and largest is 40. Find all three. | 18, 20, 22 | Reference |  | `consecutive_integers/0076/` |
+| 0076 | Of three consecutive even integers, the sum of the smallest and largest is 40. Find all three. | 18, 20, 22 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0076/` |
 | 0077 | The sum of 3 consecutive integers is 96. What are the integers? | 31, 32, 33 | Ready | consecutive | `consecutive_integers/0077/` |
 | 0078 | Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers. | -3, -2, -1 | Reference |  | `consecutive_integers/0078/` |
-| 0079 | Of three consecutive even integers, the sum of the smallest and largest is 96. Find all three. | 46, 48, 50 | Reference |  | `consecutive_integers/0079/` |
-| 0080 | Three consecutive integers are such that 5 times the smallest is 2 more than the largest. Find the integers. | 1, 2, 3 | Reference |  | `consecutive_integers/0080/` |
+| 0079 | Of three consecutive even integers, the sum of the smallest and largest is 96. Find all three. | 46, 48, 50 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0079/` |
+| 0080 | Three consecutive integers are such that 5 times the smallest is 2 more than the largest. Find the integers. | 1, 2, 3 | Ready | archive_consecutive_integers_2 | `consecutive_integers/0080/` |
 | 0081 | The sum of 3 consecutive odd integers is 33. What are the integers? | 9, 11, 13 | Ready | consecutive | `consecutive_integers/0081/` |
 | 0082 | The average of 7 consecutive integers is 31. What is the smallest? | 28 (the integers are 28 to 34) | Reference |  | `consecutive_integers/0082/` |
-| 0083 | Of three consecutive even integers, the sum of the smallest and largest is 104. Find all three. | 50, 52, 54 | Reference |  | `consecutive_integers/0083/` |
+| 0083 | Of three consecutive even integers, the sum of the smallest and largest is 104. Find all three. | 50, 52, 54 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0083/` |
 | 0084 | The sum of 4 consecutive even integers is 244. What are the integers? | 58, 60, 62, 64 | Ready | consecutive | `consecutive_integers/0084/` |
 | 0085 | The average of 7 consecutive integers is 50. What is the smallest? | 47 (the integers are 47 to 53) | Reference |  | `consecutive_integers/0085/` |
 
@@ -175,29 +175,29 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0115/` |
-| 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h? | 20 km/h | Reference |  | `distance_average_speed/0116/` |
+| 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h? | 20 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0116/` |
 | 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0117/` |
-| 0118 | A car goes from A to B at 30 km/h. How fast must it return so that the average speed for the round trip is 24 km/h? | 20 km/h | Reference |  | `distance_average_speed/0118/` |
-| 0119 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 80 km/h? | 120 km/h | Reference |  | `distance_average_speed/0119/` |
+| 0118 | A car goes from A to B at 30 km/h. How fast must it return so that the average speed for the round trip is 24 km/h? | 20 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0118/` |
+| 0119 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 80 km/h? | 120 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0119/` |
 | 0120 | Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0120/` |
 | 0121 | Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0121/` |
-| 0122 | A car goes from A to B at 30 km/h. How fast must it return so that the average speed for the round trip is 45 km/h? | 90 km/h | Reference |  | `distance_average_speed/0122/` |
-| 0123 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 72 km/h? | 90 km/h | Reference |  | `distance_average_speed/0123/` |
+| 0122 | A car goes from A to B at 30 km/h. How fast must it return so that the average speed for the round trip is 45 km/h? | 90 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0122/` |
+| 0123 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 72 km/h? | 90 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0123/` |
 | 0124 | Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part? | 2 hours | Reference |  | `distance_average_speed/0124/` |
 
 ## Distance (catch-up)
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0125 | Two runners start together on a 400 m track, one at 5 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Reference |  | `distance_catch_up/0125/` |
+| 0125 | Two runners start together on a 400 m track, one at 5 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Ready | archive_distance_catch_up_1 | `distance_catch_up/0125/` |
 | 0126 | Caleb leaves at 39 mph. 2 hours later, Aiden follows the same route at 63 mph. How long after Aiden leaves will Aiden catch up? | 3.25 hours | Ready | catch_up | `distance_catch_up/0126/` |
-| 0127 | Two runners start together on a 250 m track, one at 6 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 250 seconds | Reference |  | `distance_catch_up/0127/` |
+| 0127 | Two runners start together on a 250 m track, one at 6 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 250 seconds | Ready | archive_distance_catch_up_1 | `distance_catch_up/0127/` |
 | 0128 | Rosa leaves at 39 mph. 1 hour later, Dev follows the same route at 45 mph. How long after Dev leaves will Dev catch up? | 6.5 hours | Ready | catch_up | `distance_catch_up/0128/` |
-| 0129 | Two runners start together on a 200 m track, one at 5 m/s and the other at 6 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Reference |  | `distance_catch_up/0129/` |
+| 0129 | Two runners start together on a 200 m track, one at 5 m/s and the other at 6 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Ready | archive_distance_catch_up_1 | `distance_catch_up/0129/` |
 | 0130 | Jamal leaves at 38 mph. 1 hour later, Nia follows the same route at 57 mph. How long after Nia leaves will Nia catch up? | 2 hours | Ready | catch_up | `distance_catch_up/0130/` |
-| 0131 | Two runners start together on a 200 m track, one at 6 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Reference |  | `distance_catch_up/0131/` |
+| 0131 | Two runners start together on a 200 m track, one at 6 m/s and the other at 7 m/s. After how many seconds does the faster one lap the slower one? | 200 seconds | Ready | archive_distance_catch_up_1 | `distance_catch_up/0131/` |
 | 0132 | Maya leaves at 38 mph. 3 hours later, Omar follows the same route at 50 mph. How long after Omar leaves will Omar catch up? | 9.5 hours | Ready | catch_up | `distance_catch_up/0132/` |
-| 0133 | Two runners start together on a 300 m track, one at 4 m/s and the other at 6 m/s. After how many seconds does the faster one lap the slower one? | 150 seconds | Reference |  | `distance_catch_up/0133/` |
+| 0133 | Two runners start together on a 300 m track, one at 4 m/s and the other at 6 m/s. After how many seconds does the faster one lap the slower one? | 150 seconds | Ready | archive_distance_catch_up_1 | `distance_catch_up/0133/` |
 | 0134 | Sofia leaves at 47 mph. 3 hours later, Mateo follows the same route at 59 mph. How long after Mateo leaves will Mateo catch up? | 11.75 hours | Ready | catch_up | `distance_catch_up/0134/` |
 
 ## Distance (opposite directions)
@@ -215,13 +215,13 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake? | 160 miles | Reference |  | `distance_round_trip/0140/` |
-| 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ride? | 45 km/h | Reference |  | `distance_round_trip/0141/` |
+| 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ride? | 45 km/h | Ready | archive_distance_round_trip_1 | `distance_round_trip/0141/` |
 | 0142 | Bea drove to a lake at 60 mph and returned on the same road at 30 mph. The round trip took 10 hours. How far is the lake? | 200 miles | Reference |  | `distance_round_trip/0142/` |
 | 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride? | 30 km/h | Reference |  | `distance_round_trip/0143/` |
 | 0144 | Kofi drove to a lake at 40 mph and returned on the same road at 20 mph. The round trip took 6 hours. How far is the lake? | 80 miles | Reference |  | `distance_round_trip/0144/` |
-| 0145 | A cyclist rides 280 km to a town and returns 10 km/h faster. The whole trip takes 7.5 hours. How fast was the outbound ride? | 70 km/h | Reference |  | `distance_round_trip/0145/` |
+| 0145 | A cyclist rides 280 km to a town and returns 10 km/h faster. The whole trip takes 7.5 hours. How fast was the outbound ride? | 70 km/h | Ready | archive_distance_round_trip_1 | `distance_round_trip/0145/` |
 | 0146 | Isla drove to a lake at 45 mph and returned on the same road at 30 mph. The round trip took 2 hours. How far is the lake? | 36 miles | Reference |  | `distance_round_trip/0146/` |
-| 0147 | A cyclist rides 132 km to a town and returns 15 km/h faster. The whole trip takes 6.75 hours. How fast was the outbound ride? | 33 km/h | Reference |  | `distance_round_trip/0147/` |
+| 0147 | A cyclist rides 132 km to a town and returns 15 km/h faster. The whole trip takes 6.75 hours. How fast was the outbound ride? | 33 km/h | Ready | archive_distance_round_trip_1 | `distance_round_trip/0147/` |
 | 0148 | Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How far is the lake? | 60 miles | Reference |  | `distance_round_trip/0148/` |
 
 ## Distance (toward each other)
@@ -275,34 +275,34 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0178 | Using distance = speed × time, how long does it take to travel 160 km at 40 km/h? | 4 hours | Ready | distance_speed_time | `formula/0178/` |
 | 0179 | Using v = u + at, how long does it take an object to go from 0 m/s to 30 m/s with acceleration 5 m/s²? | 6 seconds | Ready | kinematics_time | `formula/0179/` |
 | 0180 | Solve P = 2l + 2w for w when P = 70 and l = 27. | 8 | Reference |  | `formula/0180/` |
-| 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω. | 3 A | Reference |  | `formula/0181/` |
+| 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω. | 3 A | Ready | archive_formula_1 | `formula/0181/` |
 | 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32) | 160°C (320°F) | Reference |  | `formula/0182/` |
-| 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume. | 6 cm³ | Reference |  | `formula/0183/` |
+| 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume. | 6 cm³ | Ready | archive_formula_2 | `formula/0183/` |
 | 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Theo (36 kg) sit to balance? | 5.75 m | Reference |  | `formula/0184/` |
-| 0185 | An object has a mass of 97.9 g and a density of 8.9 g/cm³. Using density = mass/volume, find its volume. | 11 cm³ | Reference |  | `formula/0185/` |
+| 0185 | An object has a mass of 97.9 g and a density of 8.9 g/cm³. Using density = mass/volume, find its volume. | 11 cm³ | Ready | archive_formula_2 | `formula/0185/` |
 | 0186 | Using distance = speed × time, how long does it take to travel 490 km at 50 km/h? | 9.8 hours | Ready | distance_speed_time | `formula/0186/` |
-| 0187 | Using V = IR, find the current when the voltage is 4 V and the resistance is 8 Ω. | 0.5 A | Reference |  | `formula/0187/` |
+| 0187 | Using V = IR, find the current when the voltage is 4 V and the resistance is 8 Ω. | 0.5 A | Ready | archive_formula_1 | `formula/0187/` |
 | 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F? | 45°C | Reference |  | `formula/0188/` |
 | 0189 | On a seesaw, weight × distance from the pivot must be equal on both sides. Yara (36 kg) sits 6 m from the pivot. How far from the pivot must Priya (54 kg) sit to balance? | 4 m | Reference |  | `formula/0189/` |
 | 0190 | Solve P = 2l + 2w for w when P = 138 and l = 65. | 4 | Reference |  | `formula/0190/` |
 | 0191 | Using v = u + at, how long does it take an object to go from 7 m/s to 11 m/s with acceleration 4 m/s²? | 1 second | Ready | kinematics_time | `formula/0191/` |
 | 0192 | Using F = (9/5)C + 32, what Celsius temperature equals 158°F? | 70°C | Reference |  | `formula/0192/` |
-| 0193 | An object has a mass of 84 g and a density of 2 g/cm³. Using density = mass/volume, find its volume. | 42 cm³ | Reference |  | `formula/0193/` |
+| 0193 | An object has a mass of 84 g and a density of 2 g/cm³. Using density = mass/volume, find its volume. | 42 cm³ | Ready | archive_formula_2 | `formula/0193/` |
 | 0194 | Using distance = speed × time, how long does it take to travel 504 km at 20 km/h? | 25.2 hours | Ready | distance_speed_time | `formula/0194/` |
 | 0195 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sofia (66 kg) sits 6 m from the pivot. How far from the pivot must Mateo (22 kg) sit to balance? | 18 m | Reference |  | `formula/0195/` |
-| 0196 | Using V = IR, find the current when the voltage is 15 V and the resistance is 6 Ω. | 2.5 A | Reference |  | `formula/0196/` |
+| 0196 | Using V = IR, find the current when the voltage is 15 V and the resistance is 6 Ω. | 2.5 A | Ready | archive_formula_1 | `formula/0196/` |
 | 0197 | Using v = u + at, how long does it take an object to go from 13 m/s to 93 m/s with acceleration 10 m/s²? | 8 seconds | Ready | kinematics_time | `formula/0197/` |
 | 0198 | Solve P = 2l + 2w for w when P = 22 and l = 9. | 2 | Reference |  | `formula/0198/` |
 | 0199 | Solve P = 2l + 2w for w when P = 138 and l = 63. | 6 | Reference |  | `formula/0199/` |
-| 0200 | An object has a mass of 10 g and a density of 2.5 g/cm³. Using density = mass/volume, find its volume. | 4 cm³ | Reference |  | `formula/0200/` |
+| 0200 | An object has a mass of 10 g and a density of 2.5 g/cm³. Using density = mass/volume, find its volume. | 4 cm³ | Ready | archive_formula_2 | `formula/0200/` |
 | 0201 | Using F = (9/5)C + 32, what Celsius temperature equals 167°F? | 75°C | Reference |  | `formula/0201/` |
 | 0202 | Using v = u + at, how long does it take an object to go from 16 m/s to 106 m/s with acceleration 10 m/s²? | 9 seconds | Ready | kinematics_time | `formula/0202/` |
 | 0203 | On a seesaw, weight × distance from the pivot must be equal on both sides. Ivan (35 kg) sits 1 m from the pivot. How far from the pivot must Pablo (70 kg) sit to balance? | 0.5 m | Reference |  | `formula/0203/` |
-| 0204 | Using V = IR, find the resistance (in ohms) when the voltage is 50 V and the current is 5 A. | 10 Ω | Reference |  | `formula/0204/` |
+| 0204 | Using V = IR, find the resistance (in ohms) when the voltage is 50 V and the current is 5 A. | 10 Ω | Ready | archive_formula_3 | `formula/0204/` |
 | 0205 | Using distance = speed × time, how long does it take to travel 264 km at 20 km/h? | 13.2 hours | Ready | distance_speed_time | `formula/0205/` |
 | 0206 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sam (30 kg) sits 3 m from the pivot. How far from the pivot must Sofia (72 kg) sit to balance? | 1.25 m | Reference |  | `formula/0206/` |
-| 0207 | An object has a mass of 115 g and a density of 2.5 g/cm³. Using density = mass/volume, find its volume. | 46 cm³ | Reference |  | `formula/0207/` |
-| 0208 | Using V = IR, find the resistance (in ohms) when the voltage is 12 V and the current is 2 A. | 6 Ω | Reference |  | `formula/0208/` |
+| 0207 | An object has a mass of 115 g and a density of 2.5 g/cm³. Using density = mass/volume, find its volume. | 46 cm³ | Ready | archive_formula_2 | `formula/0207/` |
+| 0208 | Using V = IR, find the resistance (in ohms) when the voltage is 12 V and the current is 2 A. | 6 Ω | Ready | archive_formula_3 | `formula/0208/` |
 | 0209 | Using v = u + at, how long does it take an object to go from 5 m/s to 21 m/s with acceleration 2 m/s²? | 8 seconds | Ready | kinematics_time | `formula/0209/` |
 
 ## Fractions
@@ -351,11 +351,11 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0239 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle. | x = 25; each angle is 74° | Ready | transversal_equal_angles | `geometry_angles/0239/` |
 | 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles. | 17° and 73° | Ready | complementary_supplementary | `geometry_angles/0240/` |
 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles. | x = 22; the angles are 117° and 63° | Reference |  | `geometry_angles/0241/` |
-| 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles. | 54°, 54°, 72° | Reference |  | `geometry_angles/0242/` |
-| 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angles. | 21°, 63°, 96° | Reference |  | `geometry_angles/0243/` |
+| 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles. | 54°, 54°, 72° | Ready | archive_geometry_angles_1 | `geometry_angles/0242/` |
+| 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angles. | 21°, 63°, 96° | Ready | archive_geometry_angles_2 | `geometry_angles/0243/` |
 | 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find x and the exterior angle. | x = 17; exterior angle = 73° | Reference |  | `geometry_angles/0244/` |
-| 0245 | In a triangle, the second angle is 2 times the first, and the third angle is 112 more than the first. Find all three angles. | 17°, 34°, 129° | Reference |  | `geometry_angles/0245/` |
-| 0246 | In an isosceles triangle, the vertex angle is 72° more than each base angle. Find all three angles. | 36°, 36°, 108° | Reference |  | `geometry_angles/0246/` |
+| 0245 | In a triangle, the second angle is 2 times the first, and the third angle is 112 more than the first. Find all three angles. | 17°, 34°, 129° | Ready | archive_geometry_angles_2 | `geometry_angles/0245/` |
+| 0246 | In an isosceles triangle, the vertex angle is 72° more than each base angle. Find all three angles. | 36°, 36°, 108° | Ready | archive_geometry_angles_1 | `geometry_angles/0246/` |
 | 0247 | The angles of a triangle are in the ratio 5:6:7. Find each angle. | 50°, 60°, 70° | Ready | triangle_ratio | `geometry_angles/0247/` |
 | 0248 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (4x + 8)° and (2x + 76)°. Find x and the angle. | x = 34; each angle is 144° | Ready | transversal_equal_angles | `geometry_angles/0248/` |
 | 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles. | 14° and 76° | Ready | complementary_supplementary | `geometry_angles/0249/` |
@@ -364,7 +364,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0252 | Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. Find the angle. | x = 36; each angle is 98° | Ready | opposite_angles_equal | `geometry_angles/0252/` |
 | 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure. | x = 15; each angle is 77° | Reference |  | `geometry_angles/0253/` |
 | 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B? | x = 10; the angles are 12° and 168° | Reference |  | `geometry_angles/0254/` |
-| 0255 | In a triangle, the second angle is 2 times the first, and the third angle is 108 more than the first. Find all three angles. | 18°, 36°, 126° | Reference |  | `geometry_angles/0255/` |
+| 0255 | In a triangle, the second angle is 2 times the first, and the third angle is 108 more than the first. Find all three angles. | 18°, 36°, 126° | Ready | archive_geometry_angles_2 | `geometry_angles/0255/` |
 | 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles. | 64°, 64°, 52° | Reference |  | `geometry_angles/0256/` |
 | 0257 | Two parallel lines are cut by a transversal. A pair of corresponding angles measure (4x + 4)° and (6x − 54)°. Find x and the angle. | x = 29; each angle is 120° | Ready | transversal_equal_angles | `geometry_angles/0257/` |
 | 0258 | The angles of a triangle are in the ratio 2:6:7. Find each angle. | 24°, 72°, 84° | Ready | triangle_ratio | `geometry_angles/0258/` |
@@ -373,12 +373,12 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0261 | An exterior angle of a triangle measures (7x + 38)°. The two remote interior angles measure (4x + 15)° and (5x − 3)°. Find x and the exterior angle. | x = 13; exterior angle = 129° | Reference |  | `geometry_angles/0261/` |
 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles. | x = 33; the angles are 117° and 63° | Reference |  | `geometry_angles/0262/` |
 | 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles. | 31° and 149° | Ready | complementary_supplementary | `geometry_angles/0263/` |
-| 0264 | In an isosceles triangle, the vertex angle is 60° more than each base angle. Find all three angles. | 40°, 40°, 100° | Reference |  | `geometry_angles/0264/` |
+| 0264 | In an isosceles triangle, the vertex angle is 60° more than each base angle. Find all three angles. | 40°, 40°, 100° | Ready | archive_geometry_angles_1 | `geometry_angles/0264/` |
 | 0265 | Where two lines cross, opposite angles are (6x + 7)° and (3x + 31)°. Find the angle. | x = 8; each angle is 55° | Ready | opposite_angles_equal | `geometry_angles/0265/` |
 | 0266 | The angles of a triangle are in the ratio 2:3:7. Find each angle. | 30°, 45°, 105° | Ready | triangle_ratio | `geometry_angles/0266/` |
-| 0267 | In a triangle, the second angle is 2 times the first, and the third angle is 40 more than the first. Find all three angles. | 35°, 70°, 75° | Reference |  | `geometry_angles/0267/` |
+| 0267 | In a triangle, the second angle is 2 times the first, and the third angle is 40 more than the first. Find all three angles. | 35°, 70°, 75° | Ready | archive_geometry_angles_2 | `geometry_angles/0267/` |
 | 0268 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (3x + 32)° and (1x + 66)°. Find x and the angle. | x = 17; each angle is 83° | Ready | transversal_equal_angles | `geometry_angles/0268/` |
-| 0269 | In a triangle, the second angle is 3 times the first, and the third angle is 80 more than the first. Find all three angles. | 20°, 60°, 100° | Reference |  | `geometry_angles/0269/` |
+| 0269 | In a triangle, the second angle is 3 times the first, and the third angle is 80 more than the first. Find all three angles. | 20°, 60°, 100° | Ready | archive_geometry_angles_2 | `geometry_angles/0269/` |
 | 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B? | x = 40; the angles are 158° and 22° | Reference |  | `geometry_angles/0270/` |
 | 0271 | An exterior angle of a triangle measures (4x + 60)°. The two remote interior angles measure (4x + 5)° and (5x − 35)°. Find x and the exterior angle. | x = 18; exterior angle = 132° | Reference |  | `geometry_angles/0271/` |
 | 0272 | Where two lines cross, opposite angles are (3x + 17)° and (4x − 16)°. Find the angle. | x = 33; each angle is 116° | Ready | opposite_angles_equal | `geometry_angles/0272/` |
@@ -390,21 +390,21 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 |---|---|---|---|---|---|
 | 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length. | 22 cm | Reference |  | `geometry_area/0274/` |
 | 0275 | A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stays the same. Find the original dimensions. | Width 12 m, length 24 m | Reference |  | `geometry_area/0275/` |
-| 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height. | 15 cm | Reference |  | `geometry_area/0276/` |
-| 0277 | A triangle has an area of 60 m² and a height of 3 m. How long is its base? | 40 m | Reference |  | `geometry_area/0277/` |
+| 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height. | 15 cm | Ready | archive_geometry_area_1 | `geometry_area/0276/` |
+| 0277 | A triangle has an area of 60 m² and a height of 3 m. How long is its base? | 40 m | Ready | archive_geometry_area_2 | `geometry_area/0277/` |
 | 0278 | A rectangle's length is twice its width. If the length is decreased by 5 m and the width increased by 3 m, the area stays the same. Find the original dimensions. | Width 15 m, length 30 m | Reference |  | `geometry_area/0278/` |
-| 0279 | A trapezoid has parallel sides of 26 cm and 28 cm and an area of 432 cm². Find its height. | 16 cm | Reference |  | `geometry_area/0279/` |
+| 0279 | A trapezoid has parallel sides of 26 cm and 28 cm and an area of 432 cm². Find its height. | 16 cm | Ready | archive_geometry_area_1 | `geometry_area/0279/` |
 | 0280 | If each side of a square is increased by 8 cm, its area increases by 464 cm². Find the original side length. | 25 cm | Reference |  | `geometry_area/0280/` |
-| 0281 | A triangle has an area of 418 m² and a height of 22 m. How long is its base? | 38 m | Reference |  | `geometry_area/0281/` |
+| 0281 | A triangle has an area of 418 m² and a height of 22 m. How long is its base? | 38 m | Ready | archive_geometry_area_2 | `geometry_area/0281/` |
 | 0282 | If each side of a square is increased by 5 cm, its area increases by 235 cm². Find the original side length. | 21 cm | Reference |  | `geometry_area/0282/` |
-| 0283 | A triangle has an area of 390 m² and a height of 20 m. How long is its base? | 39 m | Reference |  | `geometry_area/0283/` |
-| 0284 | A trapezoid has parallel sides of 19 cm and 19 cm and an area of 247 cm². Find its height. | 13 cm | Reference |  | `geometry_area/0284/` |
+| 0283 | A triangle has an area of 390 m² and a height of 20 m. How long is its base? | 39 m | Ready | archive_geometry_area_2 | `geometry_area/0283/` |
+| 0284 | A trapezoid has parallel sides of 19 cm and 19 cm and an area of 247 cm². Find its height. | 13 cm | Ready | archive_geometry_area_1 | `geometry_area/0284/` |
 | 0285 | A rectangle's length is twice its width. If the length is decreased by 4 m and the width increased by 3 m, the area stays the same. Find the original dimensions. | Width 6 m, length 12 m | Reference |  | `geometry_area/0285/` |
-| 0286 | A trapezoid has parallel sides of 10 cm and 9 cm and an area of 85.5 cm². Find its height. | 9 cm | Reference |  | `geometry_area/0286/` |
+| 0286 | A trapezoid has parallel sides of 10 cm and 9 cm and an area of 85.5 cm². Find its height. | 9 cm | Ready | archive_geometry_area_1 | `geometry_area/0286/` |
 | 0287 | A rectangle's length is twice its width. If the length is decreased by 3 m and the width increased by 2 m, the area stays the same. Find the original dimensions. | Width 6 m, length 12 m | Reference |  | `geometry_area/0287/` |
-| 0288 | A triangle has an area of 87 m² and a height of 29 m. How long is its base? | 6 m | Reference |  | `geometry_area/0288/` |
+| 0288 | A triangle has an area of 87 m² and a height of 29 m. How long is its base? | 6 m | Ready | archive_geometry_area_2 | `geometry_area/0288/` |
 | 0289 | If each side of a square is increased by 8 cm, its area increases by 320 cm². Find the original side length. | 16 cm | Reference |  | `geometry_area/0289/` |
-| 0290 | A trapezoid has parallel sides of 11 cm and 11 cm and an area of 66 cm². Find its height. | 6 cm | Reference |  | `geometry_area/0290/` |
+| 0290 | A trapezoid has parallel sides of 11 cm and 11 cm and an area of 66 cm². Find its height. | 6 cm | Ready | archive_geometry_area_1 | `geometry_area/0290/` |
 | 0291 | If each side of a square is increased by 7 cm, its area increases by 105 cm². Find the original side length. | 4 cm | Reference |  | `geometry_area/0291/` |
 
 ## Geometry (perimeter)
@@ -412,26 +412,26 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0292 | Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length. | x = 28; side = 29 cm | Reference |  | `geometry_perimeter/0292/` |
-| 0293 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 91 ft. How wide is the window? | 19 ft | Reference |  | `geometry_perimeter/0293/` |
+| 0293 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 91 ft. How wide is the window? | 19 ft | Ready | archive_geometry_perimeter_1 | `geometry_perimeter/0293/` |
 | 0294 | Each side of a square is (1x + 1) cm. The perimeter is 40 cm. Find x and the side length. | x = 9; side = 10 cm | Reference |  | `geometry_perimeter/0294/` |
-| 0295 | A window is a rectangle 18 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 66 ft. How wide is the window? | 10 ft | Reference |  | `geometry_perimeter/0295/` |
+| 0295 | A window is a rectangle 18 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 66 ft. How wide is the window? | 10 ft | Ready | archive_geometry_perimeter_1 | `geometry_perimeter/0295/` |
 | 0296 | Each side of a square is (1x + 16) cm. The perimeter is 72 cm. Find x and the side length. | x = 2; side = 18 cm | Reference |  | `geometry_perimeter/0296/` |
-| 0297 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 82 ft. How wide is the window? | 16 ft | Reference |  | `geometry_perimeter/0297/` |
+| 0297 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 82 ft. How wide is the window? | 16 ft | Ready | archive_geometry_perimeter_1 | `geometry_perimeter/0297/` |
 | 0298 | Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length. | x = 7; side = 22 cm | Reference |  | `geometry_perimeter/0298/` |
-| 0299 | A window is a rectangle 13 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 68 ft. How wide is the window? | 14 ft | Reference |  | `geometry_perimeter/0299/` |
+| 0299 | A window is a rectangle 13 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 68 ft. How wide is the window? | 14 ft | Ready | archive_geometry_perimeter_1 | `geometry_perimeter/0299/` |
 
 ## Geometry (polygons)
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0300 | Each interior angle of a regular polygon measures 150°. How many sides does the polygon have? | 12 sides | Reference |  | `geometry_polygons/0300/` |
+| 0300 | Each interior angle of a regular polygon measures 150°. How many sides does the polygon have? | 12 sides | Ready | archive_geometry_polygons_1 | `geometry_polygons/0300/` |
 | 0301 | The interior angles of a polygon add up to 720°. How many sides does it have? | 6 sides | Ready | polygon_angle_sum | `geometry_polygons/0301/` |
-| 0302 | Each exterior angle of a regular polygon is 120°. How many sides does it have? | 3 sides | Reference |  | `geometry_polygons/0302/` |
+| 0302 | Each exterior angle of a regular polygon is 120°. How many sides does it have? | 3 sides | Ready | archive_geometry_polygons_2 | `geometry_polygons/0302/` |
 | 0303 | The interior angles of a polygon add up to 1980°. How many sides does it have? | 13 sides | Ready | polygon_angle_sum | `geometry_polygons/0303/` |
-| 0304 | Each exterior angle of a regular polygon is 18°. How many sides does it have? | 20 sides | Reference |  | `geometry_polygons/0304/` |
+| 0304 | Each exterior angle of a regular polygon is 18°. How many sides does it have? | 20 sides | Ready | archive_geometry_polygons_2 | `geometry_polygons/0304/` |
 | 0305 | The interior angles of a polygon add up to 900°. How many sides does it have? | 7 sides | Ready | polygon_angle_sum | `geometry_polygons/0305/` |
 | 0306 | The interior angles of a polygon add up to 2700°. How many sides does it have? | 17 sides | Ready | polygon_angle_sum | `geometry_polygons/0306/` |
-| 0307 | Each interior angle of a regular polygon measures 135°. How many sides does the polygon have? | 8 sides | Reference |  | `geometry_polygons/0307/` |
+| 0307 | Each interior angle of a regular polygon measures 135°. How many sides does the polygon have? | 8 sides | Ready | archive_geometry_polygons_1 | `geometry_polygons/0307/` |
 | 0308 | The interior angles of a polygon add up to 540°. How many sides does it have? | 5 sides | Ready | polygon_angle_sum | `geometry_polygons/0308/` |
 
 ## Geometry (quadratic)
@@ -441,34 +441,34 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0309 | A rectangle has a perimeter of 40 ft and an area of 36 ft². Find its length and width. | 18 ft by 2 ft | Ready | rectangle_from_perimeter_area | `geometry_quadratic/0309/` |
 | 0310 | A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 216 m². What dimensions work? | Two answers: 18 m × 12 m, or 6 m × 36 m | Reference |  | `geometry_quadratic/0310/` |
 | 0311 | Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. The base of the box has area 209 cm². Find x. | 5 cm | Reference |  | `geometry_quadratic/0311/` |
-| 0312 | A rectangle's length is 12 m more than its width, and its area is 640 m². Find the dimensions. | Width 20 m, length 32 m | Reference |  | `geometry_quadratic/0312/` |
+| 0312 | A rectangle's length is 12 m more than its width, and its area is 640 m². Find the dimensions. | Width 20 m, length 32 m | Ready | archive_geometry_quadratic_1 | `geometry_quadratic/0312/` |
 | 0313 | A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path? | 2 ft | Reference |  | `geometry_quadratic/0313/` |
-| 0314 | The height of a triangle is 9 cm more than its base. The area is 243 cm². Find the base and height. | Base 18 cm, height 27 cm | Reference |  | `geometry_quadratic/0314/` |
-| 0315 | A 18 in × 15 in photo is surrounded by a frame of uniform width. The framed picture covers 418 in². How wide is the frame? | 2 in | Reference |  | `geometry_quadratic/0315/` |
-| 0316 | The height of a triangle is 8 cm more than its base. The area is 234 cm². Find the base and height. | Base 18 cm, height 26 cm | Reference |  | `geometry_quadratic/0316/` |
+| 0314 | The height of a triangle is 9 cm more than its base. The area is 243 cm². Find the base and height. | Base 18 cm, height 27 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0314/` |
+| 0315 | A 18 in × 15 in photo is surrounded by a frame of uniform width. The framed picture covers 418 in². How wide is the frame? | 2 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0315/` |
+| 0316 | The height of a triangle is 8 cm more than its base. The area is 234 cm². Find the base and height. | Base 18 cm, height 26 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0316/` |
 | 0317 | A 10 ft by 15 ft garden has a path of uniform width around it. The path's area is 54 ft². How wide is the path? | 1 ft | Reference |  | `geometry_quadratic/0317/` |
 | 0318 | Squares of side x are cut from each corner of a 35 cm by 32 cm sheet, and the sides are folded up to make an open box. The base of the box has area 550 cm². Find x. | 5 cm | Reference |  | `geometry_quadratic/0318/` |
 | 0319 | A rectangle has a perimeter of 104 ft and an area of 651 ft². Find its length and width. | 31 ft by 21 ft | Ready | rectangle_from_perimeter_area | `geometry_quadratic/0319/` |
 | 0320 | A farmer has 82 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 828 m². What dimensions work? | Two answers: 23 m × 36 m, or 18 m × 46 m | Reference |  | `geometry_quadratic/0320/` |
-| 0321 | A 19 in × 16 in photo is surrounded by a frame of uniform width. The framed picture covers 460 in². How wide is the frame? | 2 in | Reference |  | `geometry_quadratic/0321/` |
-| 0322 | A rectangle's length is 10 m more than its width, and its area is 200 m². Find the dimensions. | Width 10 m, length 20 m | Reference |  | `geometry_quadratic/0322/` |
+| 0321 | A 19 in × 16 in photo is surrounded by a frame of uniform width. The framed picture covers 460 in². How wide is the frame? | 2 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0321/` |
+| 0322 | A rectangle's length is 10 m more than its width, and its area is 200 m². Find the dimensions. | Width 10 m, length 20 m | Ready | archive_geometry_quadratic_1 | `geometry_quadratic/0322/` |
 | 0323 | A 7 ft by 7 ft garden has a path of uniform width around it. The path's area is 120 ft². How wide is the path? | 3 ft | Reference |  | `geometry_quadratic/0323/` |
 | 0324 | A farmer has 58 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 240 m². What dimensions work? | Two answers: 24 m × 10 m, or 5 m × 48 m | Reference |  | `geometry_quadratic/0324/` |
 | 0325 | A rectangle has a perimeter of 60 ft and an area of 189 ft². Find its length and width. | 21 ft by 9 ft | Ready | rectangle_from_perimeter_area | `geometry_quadratic/0325/` |
-| 0326 | A rectangle's length is 9 m more than its width, and its area is 850 m². Find the dimensions. | Width 25 m, length 34 m | Reference |  | `geometry_quadratic/0326/` |
+| 0326 | A rectangle's length is 9 m more than its width, and its area is 850 m². Find the dimensions. | Width 25 m, length 34 m | Ready | archive_geometry_quadratic_1 | `geometry_quadratic/0326/` |
 | 0327 | Squares of side x are cut from each corner of a 24 cm by 19 cm sheet, and the sides are folded up to make an open box. The base of the box has area 126 cm². Find x. | 5 cm | Reference |  | `geometry_quadratic/0327/` |
-| 0328 | The height of a triangle is 6 cm more than its base. The area is 56 cm². Find the base and height. | Base 8 cm, height 14 cm | Reference |  | `geometry_quadratic/0328/` |
-| 0329 | A 12 in × 20 in photo is surrounded by a frame of uniform width. The framed picture covers 468 in². How wide is the frame? | 3 in | Reference |  | `geometry_quadratic/0329/` |
+| 0328 | The height of a triangle is 6 cm more than its base. The area is 56 cm². Find the base and height. | Base 8 cm, height 14 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0328/` |
+| 0329 | A 12 in × 20 in photo is surrounded by a frame of uniform width. The framed picture covers 468 in². How wide is the frame? | 3 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0329/` |
 | 0330 | A 5 ft by 13 ft garden has a path of uniform width around it. The path's area is 280 ft². How wide is the path? | 5 ft | Reference |  | `geometry_quadratic/0330/` |
-| 0331 | A 7 in × 13 in photo is surrounded by a frame of uniform width. The framed picture covers 135 in². How wide is the frame? | 1 in | Reference |  | `geometry_quadratic/0331/` |
-| 0332 | A rectangle's length is 1 m more than its width, and its area is 306 m². Find the dimensions. | Width 17 m, length 18 m | Reference |  | `geometry_quadratic/0332/` |
-| 0333 | The height of a triangle is 9 cm more than its base. The area is 81 cm². Find the base and height. | Base 9 cm, height 18 cm | Reference |  | `geometry_quadratic/0333/` |
+| 0331 | A 7 in × 13 in photo is surrounded by a frame of uniform width. The framed picture covers 135 in². How wide is the frame? | 1 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0331/` |
+| 0332 | A rectangle's length is 1 m more than its width, and its area is 306 m². Find the dimensions. | Width 17 m, length 18 m | Ready | archive_geometry_quadratic_1 | `geometry_quadratic/0332/` |
+| 0333 | The height of a triangle is 9 cm more than its base. The area is 81 cm². Find the base and height. | Base 9 cm, height 18 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0333/` |
 | 0334 | A farmer has 36 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 162 m². What dimensions work? | Two answers: 9 m × 18 m, or 9 m × 18 m | Reference |  | `geometry_quadratic/0334/` |
 | 0335 | A rectangle has a perimeter of 84 ft and an area of 405 ft². Find its length and width. | 27 ft by 15 ft | Ready | rectangle_from_perimeter_area | `geometry_quadratic/0335/` |
 | 0336 | Squares of side x are cut from each corner of a 16 cm by 4 cm sheet, and the sides are folded up to make an open box. The base of the box has area 28 cm². Find x. | 1 cm | Reference |  | `geometry_quadratic/0336/` |
 | 0337 | Squares of side x are cut from each corner of a 26 cm by 13 cm sheet, and the sides are folded up to make an open box. The base of the box has area 48 cm². Find x. | 5 cm | Reference |  | `geometry_quadratic/0337/` |
-| 0338 | The height of a triangle is 8 cm more than its base. The area is 384 cm². Find the base and height. | Base 24 cm, height 32 cm | Reference |  | `geometry_quadratic/0338/` |
-| 0339 | A 9 in × 5 in photo is surrounded by a frame of uniform width. The framed picture covers 117 in². How wide is the frame? | 2 in | Reference |  | `geometry_quadratic/0339/` |
+| 0338 | The height of a triangle is 8 cm more than its base. The area is 384 cm². Find the base and height. | Base 24 cm, height 32 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0338/` |
+| 0339 | A 9 in × 5 in photo is surrounded by a frame of uniform width. The framed picture covers 117 in². How wide is the frame? | 2 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0339/` |
 | 0340 | A 7 ft by 17 ft garden has a path of uniform width around it. The path's area is 112 ft². How wide is the path? | 2 ft | Reference |  | `geometry_quadratic/0340/` |
 
 ## Geometry (rectangle)
@@ -485,13 +485,13 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0346 | Each of the two equal sides of an isosceles triangle is 2 cm longer than the base. The perimeter is 52 cm. Find the side lengths. | Base 16 cm, equal sides 18 cm | Reference |  | `geometry_triangle/0346/` |
+| 0346 | Each of the two equal sides of an isosceles triangle is 2 cm longer than the base. The perimeter is 52 cm. Find the side lengths. | Base 16 cm, equal sides 18 cm | Ready | archive_geometry_triangle_1 | `geometry_triangle/0346/` |
 | 0347 | A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the perimeter is 122 in, how long is each side? | 29 in, 40 in, 53 in | Reference |  | `geometry_triangle/0347/` |
 | 0348 | A triangle's second side is 4 in longer than the first, and its third side is 5 in less than twice the first. If the perimeter is 47 in, how long is each side? | 12 in, 16 in, 19 in | Reference |  | `geometry_triangle/0348/` |
-| 0349 | Each of the two equal sides of an isosceles triangle is 9 cm longer than the base. The perimeter is 33 cm. Find the side lengths. | Base 5 cm, equal sides 14 cm | Reference |  | `geometry_triangle/0349/` |
-| 0350 | Each of the two equal sides of an isosceles triangle is 5 cm longer than the base. The perimeter is 67 cm. Find the side lengths. | Base 19 cm, equal sides 24 cm | Reference |  | `geometry_triangle/0350/` |
+| 0349 | Each of the two equal sides of an isosceles triangle is 9 cm longer than the base. The perimeter is 33 cm. Find the side lengths. | Base 5 cm, equal sides 14 cm | Ready | archive_geometry_triangle_1 | `geometry_triangle/0349/` |
+| 0350 | Each of the two equal sides of an isosceles triangle is 5 cm longer than the base. The perimeter is 67 cm. Find the side lengths. | Base 19 cm, equal sides 24 cm | Ready | archive_geometry_triangle_1 | `geometry_triangle/0350/` |
 | 0351 | A triangle's second side is 6 in longer than the first, and its third side is 7 in less than twice the first. If the perimeter is 95 in, how long is each side? | 24 in, 30 in, 41 in | Reference |  | `geometry_triangle/0351/` |
-| 0352 | Each of the two equal sides of an isosceles triangle is 11 cm longer than the base. The perimeter is 70 cm. Find the side lengths. | Base 16 cm, equal sides 27 cm | Reference |  | `geometry_triangle/0352/` |
+| 0352 | Each of the two equal sides of an isosceles triangle is 11 cm longer than the base. The perimeter is 70 cm. Find the side lengths. | Base 16 cm, equal sides 27 cm | Ready | archive_geometry_triangle_1 | `geometry_triangle/0352/` |
 | 0353 | The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side. | 21 in, 29 in, 39 in | Reference |  | `geometry_triangle/0353/` |
 | 0354 | The sides of a triangle are x, x + 8, and 2x − 1 inches long. The perimeter is 75 inches. Find each side. | 17 in, 25 in, 33 in | Reference |  | `geometry_triangle/0354/` |
 
@@ -499,10 +499,10 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0355 | A rectangular box is 16 in long and 5 in wide. Its volume is 320 in³. How tall is it? | 4 in | Reference |  | `geometry_volume/0355/` |
+| 0355 | A rectangular box is 16 in long and 5 in wide. Its volume is 320 in³. How tall is it? | 4 in | Ready | archive_geometry_volume_1 | `geometry_volume/0355/` |
 | 0356 | An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it? | 6 dm | Reference |  | `geometry_volume/0356/` |
-| 0357 | A rectangular box is 20 in long and 4 in wide. Its volume is 400 in³. How tall is it? | 5 in | Reference |  | `geometry_volume/0357/` |
-| 0358 | A rectangular box is 14 in long and 7 in wide. Its volume is 1078 in³. How tall is it? | 11 in | Reference |  | `geometry_volume/0358/` |
+| 0357 | A rectangular box is 20 in long and 4 in wide. Its volume is 400 in³. How tall is it? | 5 in | Ready | archive_geometry_volume_1 | `geometry_volume/0357/` |
+| 0358 | A rectangular box is 14 in long and 7 in wide. Its volume is 1078 in³. How tall is it? | 11 in | Ready | archive_geometry_volume_1 | `geometry_volume/0358/` |
 
 ## Inequality
 
@@ -555,30 +555,30 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0401 | 12 workers can build a wall in 10 days. At the same rate, how many days would 3 workers take? | 40 days | Reference |  | `inverse_variation/0401/` |
-| 0402 | A gear with 24 teeth turning at 40 rpm drives a gear with 20 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 48 rpm | Reference |  | `inverse_variation/0402/` |
-| 0403 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 90 km/h? | 4 hours | Reference |  | `inverse_variation/0403/` |
-| 0404 | A gear with 24 teeth turning at 80 rpm drives a gear with 15 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 128 rpm | Reference |  | `inverse_variation/0404/` |
-| 0405 | At 60 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 120 km/h? | 2.5 hours | Reference |  | `inverse_variation/0405/` |
-| 0406 | 5 workers can build a wall in 6 days. At the same rate, how many days would 20 workers take? | 1.5 days | Reference |  | `inverse_variation/0406/` |
-| 0407 | At 75 km/h a trip takes 2 hours. Time varies inversely with speed. How long would it take at 30 km/h? | 5 hours | Reference |  | `inverse_variation/0407/` |
-| 0408 | A gear with 36 teeth turning at 40 rpm drives a gear with 9 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 160 rpm | Reference |  | `inverse_variation/0408/` |
-| 0409 | 5 workers can build a wall in 24 days. At the same rate, how many days would 24 workers take? | 5 days | Reference |  | `inverse_variation/0409/` |
-| 0410 | 10 workers can build a wall in 24 days. At the same rate, how many days would 8 workers take? | 30 days | Reference |  | `inverse_variation/0410/` |
-| 0411 | A gear with 24 teeth turning at 30 rpm drives a gear with 8 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 90 rpm | Reference |  | `inverse_variation/0411/` |
-| 0412 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 120 km/h? | 3 hours | Reference |  | `inverse_variation/0412/` |
-| 0413 | 4 workers can build a wall in 15 days. At the same rate, how many days would 10 workers take? | 6 days | Reference |  | `inverse_variation/0413/` |
-| 0414 | A gear with 36 teeth turning at 80 rpm drives a gear with 60 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 48 rpm | Reference |  | `inverse_variation/0414/` |
+| 0401 | 12 workers can build a wall in 10 days. At the same rate, how many days would 3 workers take? | 40 days | Ready | archive_inverse_variation_1 | `inverse_variation/0401/` |
+| 0402 | A gear with 24 teeth turning at 40 rpm drives a gear with 20 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 48 rpm | Ready | archive_inverse_variation_2 | `inverse_variation/0402/` |
+| 0403 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 90 km/h? | 4 hours | Ready | archive_inverse_variation_3 | `inverse_variation/0403/` |
+| 0404 | A gear with 24 teeth turning at 80 rpm drives a gear with 15 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 128 rpm | Ready | archive_inverse_variation_2 | `inverse_variation/0404/` |
+| 0405 | At 60 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 120 km/h? | 2.5 hours | Ready | archive_inverse_variation_3 | `inverse_variation/0405/` |
+| 0406 | 5 workers can build a wall in 6 days. At the same rate, how many days would 20 workers take? | 1.5 days | Ready | archive_inverse_variation_1 | `inverse_variation/0406/` |
+| 0407 | At 75 km/h a trip takes 2 hours. Time varies inversely with speed. How long would it take at 30 km/h? | 5 hours | Ready | archive_inverse_variation_3 | `inverse_variation/0407/` |
+| 0408 | A gear with 36 teeth turning at 40 rpm drives a gear with 9 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 160 rpm | Ready | archive_inverse_variation_2 | `inverse_variation/0408/` |
+| 0409 | 5 workers can build a wall in 24 days. At the same rate, how many days would 24 workers take? | 5 days | Ready | archive_inverse_variation_1 | `inverse_variation/0409/` |
+| 0410 | 10 workers can build a wall in 24 days. At the same rate, how many days would 8 workers take? | 30 days | Ready | archive_inverse_variation_1 | `inverse_variation/0410/` |
+| 0411 | A gear with 24 teeth turning at 30 rpm drives a gear with 8 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 90 rpm | Ready | archive_inverse_variation_2 | `inverse_variation/0411/` |
+| 0412 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 120 km/h? | 3 hours | Ready | archive_inverse_variation_3 | `inverse_variation/0412/` |
+| 0413 | 4 workers can build a wall in 15 days. At the same rate, how many days would 10 workers take? | 6 days | Ready | archive_inverse_variation_1 | `inverse_variation/0413/` |
+| 0414 | A gear with 36 teeth turning at 80 rpm drives a gear with 60 teeth. Teeth × rpm is the same for both gears. How fast does the second gear turn? | 48 rpm | Ready | archive_inverse_variation_2 | `inverse_variation/0414/` |
 
 ## Joint variation
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0415 | 6 workers working 10 hours a day finish a job in 5 days. How many days would 4 workers working 5 hours a day take? | 15 days | Reference |  | `joint_variation/0415/` |
-| 0416 | 6 workers working 12 hours a day finish a job in 6 days. How many days would 4 workers working 6 hours a day take? | 18 days | Reference |  | `joint_variation/0416/` |
-| 0417 | 8 workers working 10 hours a day finish a job in 5 days. How many days would 10 workers working 4 hours a day take? | 10 days | Reference |  | `joint_variation/0417/` |
-| 0418 | 4 workers working 12 hours a day finish a job in 10 days. How many days would 10 workers working 6 hours a day take? | 8 days | Reference |  | `joint_variation/0418/` |
-| 0419 | 3 workers working 6 hours a day finish a job in 6 days. How many days would 2 workers working 9 hours a day take? | 6 days | Reference |  | `joint_variation/0419/` |
+| 0415 | 6 workers working 10 hours a day finish a job in 5 days. How many days would 4 workers working 5 hours a day take? | 15 days | Ready | archive_joint_variation_1 | `joint_variation/0415/` |
+| 0416 | 6 workers working 12 hours a day finish a job in 6 days. How many days would 4 workers working 6 hours a day take? | 18 days | Ready | archive_joint_variation_1 | `joint_variation/0416/` |
+| 0417 | 8 workers working 10 hours a day finish a job in 5 days. How many days would 10 workers working 4 hours a day take? | 10 days | Ready | archive_joint_variation_1 | `joint_variation/0417/` |
+| 0418 | 4 workers working 12 hours a day finish a job in 10 days. How many days would 10 workers working 6 hours a day take? | 8 days | Ready | archive_joint_variation_1 | `joint_variation/0418/` |
+| 0419 | 3 workers working 6 hours a day finish a job in 6 days. How many days would 2 workers working 9 hours a day take? | 6 days | Ready | archive_joint_variation_1 | `joint_variation/0419/` |
 
 ## Linear cost
 
@@ -592,18 +592,18 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought? | 14 notebooks | Ready | price_minus_coupon | `linear_cost/0425/` |
 | 0426 | A plumber charges a $80 call-out fee plus $85 per hour. The bill was $250.00. How long did the job take? | 2 hours | Ready | fixed_plus_rate | `linear_cost/0426/` |
 | 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled? | 1 game | Reference |  | `linear_cost/0427/` |
-| 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used? | 940 kWh | Reference |  | `linear_cost/0428/` |
-| 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours did they park? | 4 hours | Reference |  | `linear_cost/0429/` |
+| 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used? | 940 kWh | Ready | archive_linear_cost_1 | `linear_cost/0428/` |
+| 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours did they park? | 4 hours | Ready | archive_linear_cost_2 | `linear_cost/0429/` |
 | 0430 | A taxi charges $3.50 plus $1.50 per mile. A ride costs $39.50. How many miles was the ride? | 24 miles | Ready | fixed_plus_rate | `linear_cost/0430/` |
 | 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven? | 190 miles | Reference |  | `linear_cost/0431/` |
 | 0432 | Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many overtime hours were worked? | 5 overtime hours (45 hours total) | Reference |  | `linear_cost/0432/` |
 | 0433 | Umar works two jobs paying $18/h and $20/h. Last month 53 hours were worked in total, earning $1010. How many hours were worked at the $18 job? | 25 hours at $18, 28 hours at $20 | Ready | two_prices_known_count | `linear_cost/0433/` |
 | 0434 | A venue charges $475 plus $35 per guest. The total was $1280. How many guests came? | 23 guests | Ready | fixed_plus_rate | `linear_cost/0434/` |
 | 0435 | Zane gets $10 allowance a week plus $3 for each extra chore. Over 8 weeks that came to $92. How many extra chores were done? | 4 chores | Ready | base_plus_extra_over_time | `linear_cost/0435/` |
-| 0436 | An electric bill is $12 per month plus $0.14 per kWh. This month's bill is $87.60. How many kWh were used? | 540 kWh | Reference |  | `linear_cost/0436/` |
+| 0436 | An electric bill is $12 per month plus $0.14 per kWh. This month's bill is $87.60. How many kWh were used? | 540 kWh | Ready | archive_linear_cost_1 | `linear_cost/0436/` |
 | 0437 | A plumber charges a $90 call-out fee plus $70 per hour. The bill was $370.00. How long did the job take? | 4 hours | Ready | fixed_plus_rate | `linear_cost/0437/` |
 | 0438 | A rental car costs $35 per day plus $0.50 per mile. A 4-day rental cost $385.00. How many miles were driven? | 490 miles | Reference |  | `linear_cost/0438/` |
-| 0439 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $17.50. How many hours did they park? | 10 hours | Reference |  | `linear_cost/0439/` |
+| 0439 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $17.50. How many hours did they park? | 10 hours | Ready | archive_linear_cost_2 | `linear_cost/0439/` |
 | 0440 | A taxi charges $3.00 plus $1.75 per mile. A ride costs $25.75. How many miles was the ride? | 13 miles | Ready | fixed_plus_rate | `linear_cost/0440/` |
 | 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought? | 3 bags of chips | Ready | price_minus_coupon | `linear_cost/0441/` |
 | 0442 | Pablo earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $832.00. How many overtime hours were worked? | 8 overtime hours (48 hours total) | Reference |  | `linear_cost/0442/` |
@@ -616,18 +616,18 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0449 | A venue charges $325 plus $18 per guest. The total was $1909. How many guests came? | 88 guests | Ready | fixed_plus_rate | `linear_cost/0449/` |
 | 0450 | Leo gets $8 allowance a week plus $4 for each extra chore. Over 6 weeks that came to $64. How many extra chores were done? | 4 chores | Ready | base_plus_extra_over_time | `linear_cost/0450/` |
 | 0451 | A rental car costs $45 per day plus $0.50 per mile. A 4-day rental cost $455.00. How many miles were driven? | 550 miles | Reference |  | `linear_cost/0451/` |
-| 0452 | An electric bill is $8 per month plus $0.11 per kWh. This month's bill is $79.50. How many kWh were used? | 650 kWh | Reference |  | `linear_cost/0452/` |
+| 0452 | An electric bill is $8 per month plus $0.11 per kWh. This month's bill is $79.50. How many kWh were used? | 650 kWh | Ready | archive_linear_cost_1 | `linear_cost/0452/` |
 | 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought? | 4 notebooks | Reference |  | `linear_cost/0453/` |
 | 0454 | Pablo works two jobs paying $12/h and $17/h. Last month 21 hours were worked in total, earning $297. How many hours were worked at the $12 job? | 12 hours at $12, 9 hours at $17 | Ready | two_prices_known_count | `linear_cost/0454/` |
 | 0455 | A phone plan costs $30 a month and includes 15 GB of data. Each extra GB costs $8. The bill was $62. How much data was used? | 19 GB | Ready | plan_with_included | `linear_cost/0455/` |
 | 0456 | A gym charges a $50 joining fee and $25 per month. Uma has paid $325 in total. How many months has Uma been a member? | 11 months | Ready | fixed_plus_rate | `linear_cost/0456/` |
 | 0457 | A taxi charges $4.00 plus $2.50 per mile. A ride costs $49.00. How many miles was the ride? | 18 miles | Ready | fixed_plus_rate | `linear_cost/0457/` |
-| 0458 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $20.50. How many hours did they park? | 12 hours | Reference |  | `linear_cost/0458/` |
+| 0458 | A parking garage charges $4 for the first hour and $1.50 for each additional hour. A driver paid $20.50. How many hours did they park? | 12 hours | Ready | archive_linear_cost_2 | `linear_cost/0458/` |
 | 0459 | Notebooks cost $3.50 each. With a $2 coupon, Dev paid $33.00. How many notebooks were bought? | 10 notebooks | Ready | price_minus_coupon | `linear_cost/0459/` |
 | 0460 | A phone plan costs $30 a month and includes 15 GB of data. Each extra GB costs $5. The bill was $40. How much data was used? | 17 GB | Ready | plan_with_included | `linear_cost/0460/` |
 | 0461 | A taxi charges $4.00 plus $1.50 per mile. A ride costs $16.00. How many miles was the ride? | 8 miles | Ready | fixed_plus_rate | `linear_cost/0461/` |
 | 0462 | Bowling costs $7.00 per game plus $4.00 for shoe rental. Wren spent $39.00. How many games were bowled? | 5 games | Reference |  | `linear_cost/0462/` |
-| 0463 | A parking garage charges $3 for the first hour and $3.00 for each additional hour. A driver paid $15.00. How many hours did they park? | 5 hours | Reference |  | `linear_cost/0463/` |
+| 0463 | A parking garage charges $3 for the first hour and $3.00 for each additional hour. A driver paid $15.00. How many hours did they park? | 5 hours | Ready | archive_linear_cost_2 | `linear_cost/0463/` |
 | 0464 | Caleb earns $18/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $801.00. How many overtime hours were worked? | 3 overtime hours (43 hours total) | Reference |  | `linear_cost/0464/` |
 | 0465 | Ava gets $8 allowance a week plus $3 for each extra chore. Over 6 weeks that came to $78. How many extra chores were done? | 10 chores | Ready | base_plus_extra_over_time | `linear_cost/0465/` |
 | 0466 | Ivan works two jobs paying $14/h and $17/h. Last month 24 hours were worked in total, earning $363. How many hours were worked at the $14 job? | 15 hours at $14, 9 hours at $17 | Ready | two_prices_known_count | `linear_cost/0466/` |
@@ -635,7 +635,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0468 | A rental car costs $50 per day plus $0.50 per mile. A 5-day rental cost $340.00. How many miles were driven? | 180 miles | Reference |  | `linear_cost/0468/` |
 | 0469 | A gym charges a $100 joining fee and $30 per month. Wren has paid $190 in total. How many months has Wren been a member? | 3 months | Ready | fixed_plus_rate | `linear_cost/0469/` |
 | 0470 | A venue charges $575 plus $12 per guest. The total was $1511. How many guests came? | 78 guests | Ready | fixed_plus_rate | `linear_cost/0470/` |
-| 0471 | An electric bill is $15 per month plus $0.18 per kWh. This month's bill is $92.40. How many kWh were used? | 430 kWh | Reference |  | `linear_cost/0471/` |
+| 0471 | An electric bill is $15 per month plus $0.18 per kWh. This month's bill is $92.40. How many kWh were used? | 430 kWh | Ready | archive_linear_cost_1 | `linear_cost/0471/` |
 | 0472 | A phone plan costs $40 a month and includes 5 GB of data. Each extra GB costs $10. The bill was $80. How much data was used? | 9 GB | Ready | plan_with_included | `linear_cost/0472/` |
 | 0473 | Rosa gets $5 allowance a week plus $3 for each extra chore. Over 6 weeks that came to $54. How many extra chores were done? | 8 chores | Ready | base_plus_extra_over_time | `linear_cost/0473/` |
 | 0474 | Pablo works two jobs paying $14/h and $16/h. Last month 53 hours were worked in total, earning $796. How many hours were worked at the $14 job? | 26 hours at $14, 27 hours at $16 | Ready | two_prices_known_count | `linear_cost/0474/` |
@@ -643,7 +643,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0476 | A gym charges a $99 joining fee and $15 per month. Dana has paid $219 in total. How many months has Dana been a member? | 8 months | Ready | fixed_plus_rate | `linear_cost/0476/` |
 | 0477 | Bags of chips cost $4.00 each. With a $10 coupon, Wren paid $10.00. How many bags of chips were bought? | 5 bags of chips | Ready | price_minus_coupon | `linear_cost/0477/` |
 | 0478 | A taxi charges $4.00 plus $2.00 per mile. A ride costs $10.00. How many miles was the ride? | 3 miles | Ready | fixed_plus_rate | `linear_cost/0478/` |
-| 0479 | An electric bill is $12 per month plus $0.18 per kWh. This month's bill is $157.80. How many kWh were used? | 810 kWh | Reference |  | `linear_cost/0479/` |
+| 0479 | An electric bill is $12 per month plus $0.18 per kWh. This month's bill is $157.80. How many kWh were used? | 810 kWh | Ready | archive_linear_cost_1 | `linear_cost/0479/` |
 
 ## Linear model
 
@@ -656,46 +656,46 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0484 | A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days? | 53 pages per day | Ready | pages_per_day | `linear_model/0484/` |
 | 0485 | One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. When will they be the same height? | 4.5 hours | Ready | two_candles_equal | `linear_model/0485/` |
 | 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the thunder be heard? | 8 seconds | Reference |  | `linear_model/0486/` |
-| 0487 | A tractor bought for $23,000.00 loses $1,600.00 in value each year. After how many years will it be worth $16,600.00? | 4 years | Reference |  | `linear_model/0487/` |
-| 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to reach its $130 goal? | 24 | Reference |  | `linear_model/0488/` |
-| 0489 | A hot-air balloon at 5500 ft descends 650 ft per minute. Another at 1300 ft rises 400 ft per minute. When are they at the same height? | 4 minutes | Reference |  | `linear_model/0489/` |
-| 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%? | 14 hours | Reference |  | `linear_model/0490/` |
+| 0487 | A tractor bought for $23,000.00 loses $1,600.00 in value each year. After how many years will it be worth $16,600.00? | 4 years | Ready | archive_linear_model_1 | `linear_model/0487/` |
+| 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to reach its $130 goal? | 24 | Ready | archive_linear_model_2 | `linear_model/0488/` |
+| 0489 | A hot-air balloon at 5500 ft descends 650 ft per minute. Another at 1300 ft rises 400 ft per minute. When are they at the same height? | 4 minutes | Ready | archive_linear_model_3 | `linear_model/0489/` |
+| 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%? | 14 hours | Ready | archive_linear_model_4 | `linear_model/0490/` |
 | 0491 | Plant A is 4 cm tall and grows 3 cm a week. Plant B is 24 cm tall and grows 1 cm a week. After how many weeks will they be the same height? | 10 weeks | Ready | two_changing_equal | `linear_model/0491/` |
-| 0492 | A tractor bought for $15,000.00 loses $500.00 in value each year. After how many years will it be worth $11,000.00? | 8 years | Reference |  | `linear_model/0492/` |
+| 0492 | A tractor bought for $15,000.00 loses $500.00 in value each year. After how many years will it be worth $11,000.00? | 8 years | Ready | archive_linear_model_1 | `linear_model/0492/` |
 | 0493 | A 548-page book has 116 pages already read. How many pages a day must be read to finish in 18 days? | 24 pages per day | Ready | pages_per_day | `linear_model/0493/` |
 | 0494 | For a taxi ride, 3 miles cost $92 and 5 miles cost $104. The cost is linear: C = m·x + b. Find m and b, then how many miles cost $158. | m = 6, b = 74; 14 miles | Ready | line_from_two_points | `linear_model/0494/` |
-| 0495 | A hot-air balloon at 4500 ft descends 550 ft per minute. Another at 900 ft rises 350 ft per minute. When are they at the same height? | 4 minutes | Reference |  | `linear_model/0495/` |
+| 0495 | A hot-air balloon at 4500 ft descends 550 ft per minute. Another at 900 ft rises 350 ft per minute. When are they at the same height? | 4 minutes | Ready | archive_linear_model_3 | `linear_model/0495/` |
 | 0496 | A pool holds 4,500 L and drains at 50 L per minute. After how many minutes will 800 L remain? | 74 minutes | Ready | drain_or_fill | `linear_model/0496/` |
-| 0497 | A club has raised $40 so far. At its bake sale it charges $15 per box of cookies. How many more boxes must it sell to reach its $940 goal? | 60 | Reference |  | `linear_model/0497/` |
+| 0497 | A club has raised $40 so far. At its bake sale it charges $15 per box of cookies. How many more boxes must it sell to reach its $940 goal? | 60 | Ready | archive_linear_model_2 | `linear_model/0497/` |
 | 0498 | One candle is 30 cm tall and burns 1.5 cm per hour. Another is 38 cm tall and burns 3.5 cm per hour. When will they be the same height? | 4 hours | Ready | two_candles_equal | `linear_model/0498/` |
 | 0499 | Sound travels about 343 m/s, so d = 343t. A storm is 686 m away. How many seconds after the lightning flash will the thunder be heard? | 2 seconds | Reference |  | `linear_model/0499/` |
-| 0500 | A phone at 90% battery loses 4% per hour. After how many hours will it be at 10%? | 20 hours | Reference |  | `linear_model/0500/` |
+| 0500 | A phone at 90% battery loses 4% per hour. After how many hours will it be at 10%? | 20 hours | Ready | archive_linear_model_4 | `linear_model/0500/` |
 | 0501 | Town A has 36,000 people and grows by 700 a year. Town B has 58,000 people and shrinks by 300 a year. In how many years will they be equal? | 22 years | Ready | two_changing_equal | `linear_model/0501/` |
 | 0502 | Plant A is 7 cm tall and grows 2 cm a week. Plant B is 25 cm tall and grows 1.5 cm a week. After how many weeks will they be the same height? | 36 weeks | Ready | two_changing_equal | `linear_model/0502/` |
-| 0503 | A hot-air balloon at 5500 ft descends 200 ft per minute. Another at 2200 ft rises 900 ft per minute. When are they at the same height? | 3 minutes | Reference |  | `linear_model/0503/` |
+| 0503 | A hot-air balloon at 5500 ft descends 200 ft per minute. Another at 2200 ft rises 900 ft per minute. When are they at the same height? | 3 minutes | Ready | archive_linear_model_3 | `linear_model/0503/` |
 | 0504 | For a taxi ride, 2 miles cost $104 and 7 miles cost $129. The cost is linear: C = m·x + b. Find m and b, then how many miles cost $159. | m = 5, b = 94; 13 miles | Ready | line_from_two_points | `linear_model/0504/` |
-| 0505 | A phone at 85% battery loses 15% per hour. After how many hours will it be at 10%? | 5 hours | Reference |  | `linear_model/0505/` |
+| 0505 | A phone at 85% battery loses 15% per hour. After how many hours will it be at 10%? | 5 hours | Ready | archive_linear_model_4 | `linear_model/0505/` |
 | 0506 | A 187-page book has 79 pages already read. How many pages a day must be read to finish in 18 days? | 6 pages per day | Ready | pages_per_day | `linear_model/0506/` |
 | 0507 | One candle is 23 cm tall and burns 1.5 cm per hour. Another is 30 cm tall and burns 2 cm per hour. When will they be the same height? | 14 hours | Ready | two_candles_equal | `linear_model/0507/` |
-| 0508 | A tractor bought for $17,000.00 loses $1,100.00 in value each year. After how many years will it be worth $10,400.00? | 6 years | Reference |  | `linear_model/0508/` |
+| 0508 | A tractor bought for $17,000.00 loses $1,100.00 in value each year. After how many years will it be worth $10,400.00? | 6 years | Ready | archive_linear_model_1 | `linear_model/0508/` |
 | 0509 | A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 goal? | 38 | Reference |  | `linear_model/0509/` |
 | 0510 | Sound travels about 343 m/s, so d = 343t. A storm is 2058 m away. How many seconds after the lightning flash will the thunder be heard? | 6 seconds | Reference |  | `linear_model/0510/` |
 | 0511 | Town A has 40,000 people and grows by 1000 a year. Town B has 49,000 people and shrinks by 800 a year. In how many years will they be equal? | 5 years | Ready | two_changing_equal | `linear_model/0511/` |
 | 0512 | A pool holds 3,400 L and drains at 400 L per minute. After how many minutes will 1,000 L remain? | 6 minutes | Ready | drain_or_fill | `linear_model/0512/` |
 | 0513 | A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00? | 4 years | Reference |  | `linear_model/0513/` |
 | 0514 | A 634-page book has 313 pages already read. How many pages a day must be read to finish in 3 days? | 107 pages per day | Ready | pages_per_day | `linear_model/0514/` |
-| 0515 | A hot-air balloon at 6900 ft descends 650 ft per minute. Another at 1400 ft rises 450 ft per minute. When are they at the same height? | 5 minutes | Reference |  | `linear_model/0515/` |
+| 0515 | A hot-air balloon at 6900 ft descends 650 ft per minute. Another at 1400 ft rises 450 ft per minute. When are they at the same height? | 5 minutes | Ready | archive_linear_model_3 | `linear_model/0515/` |
 | 0516 | One candle is 30 cm tall and burns 1.5 cm per hour. Another is 36 cm tall and burns 3.5 cm per hour. When will they be the same height? | 3 hours | Ready | two_candles_equal | `linear_model/0516/` |
-| 0517 | A club has raised $260 so far. At its bake sale it charges $12 per box of cookies. How many more boxes must it sell to reach its $344 goal? | 7 | Reference |  | `linear_model/0517/` |
+| 0517 | A club has raised $260 so far. At its bake sale it charges $12 per box of cookies. How many more boxes must it sell to reach its $344 goal? | 7 | Ready | archive_linear_model_2 | `linear_model/0517/` |
 | 0518 | Town A has 32,000 people and grows by 2600 a year. Town B has 70,000 people and shrinks by 1200 a year. In how many years will they be equal? | 10 years | Ready | two_changing_equal | `linear_model/0518/` |
 | 0519 | A pool holds 9,100 L and drains at 370 L per minute. After how many minutes will 1,700 L remain? | 20 minutes | Ready | drain_or_fill | `linear_model/0519/` |
 | 0520 | Plant A is 15 cm tall and grows 3 cm a week. Plant B is 35 cm tall and grows 2 cm a week. After how many weeks will they be the same height? | 20 weeks | Ready | two_changing_equal | `linear_model/0520/` |
 | 0521 | Sound travels about 343 m/s, so d = 343t. A storm is 1029 m away. How many seconds after the lightning flash will the thunder be heard? | 3 seconds | Reference |  | `linear_model/0521/` |
 | 0522 | For a plumber's bill, 5 hours cost $107 and 7 hours cost $121. The cost is linear: C = m·x + b. Find m and b, then how many hours cost $142. | m = 7, b = 72; 10 hours | Ready | line_from_two_points | `linear_model/0522/` |
-| 0523 | A phone at 95% battery loses 6% per hour. After how many hours will it be at 20%? | 12.5 hours | Reference |  | `linear_model/0523/` |
-| 0524 | A phone at 100% battery loses 5% per hour. After how many hours will it be at 20%? | 16 hours | Reference |  | `linear_model/0524/` |
+| 0523 | A phone at 95% battery loses 6% per hour. After how many hours will it be at 20%? | 12.5 hours | Ready | archive_linear_model_4 | `linear_model/0523/` |
+| 0524 | A phone at 100% battery loses 5% per hour. After how many hours will it be at 20%? | 16 hours | Ready | archive_linear_model_4 | `linear_model/0524/` |
 | 0525 | A 102-page book has 32 pages already read. How many pages a day must be read to finish in 5 days? | 14 pages per day | Ready | pages_per_day | `linear_model/0525/` |
-| 0526 | A club has raised $220 so far. At its bake sale it charges $8 per box of cookies. How many more boxes must it sell to reach its $588 goal? | 46 | Reference |  | `linear_model/0526/` |
+| 0526 | A club has raised $220 so far. At its bake sale it charges $8 per box of cookies. How many more boxes must it sell to reach its $588 goal? | 46 | Ready | archive_linear_model_2 | `linear_model/0526/` |
 | 0527 | A pool holds 2,600 L and drains at 360 L per minute. After how many minutes will 800 L remain? | 5 minutes | Ready | drain_or_fill | `linear_model/0527/` |
 | 0528 | Sound travels about 343 m/s, so d = 343t. A storm is 1715 m away. How many seconds after the lightning flash will the thunder be heard? | 5 seconds | Reference |  | `linear_model/0528/` |
 | 0529 | One candle is 11 cm tall and burns 1 cm per hour. Another is 14 cm tall and burns 2 cm per hour. When will they be the same height? | 3 hours | Ready | two_candles_equal | `linear_model/0529/` |
@@ -804,7 +804,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0617 | After a 2% raise, Mateo's salary is $77,520.00. What was the salary before the raise? | $76,000.00 | Ready | percent_change | `percent/0617/` |
 | 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck? | $1120 | Ready | percent_spent_left | `percent/0618/` |
 | 0619 | The total cost of an item including 7.5% sales tax is $46.87. What was the price before tax? | $43.60 | Ready | percent_change | `percent/0619/` |
-| 0620 | What percent of 95 is 114? | 120% | Reference |  | `percent/0620/` |
+| 0620 | What percent of 95 is 114? | 120% | Ready | archive_percent_1 | `percent/0620/` |
 | 0621 | 3 is 30% of what number? | 10 | Reference |  | `percent/0621/` |
 | 0622 | After a 20% discount, a backpack costs $20.00. What was the original price? | $25.00 | Ready | percent_change | `percent/0622/` |
 | 0623 | 9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip? | $1,260.00 | Reference |  | `percent/0623/` |
@@ -816,7 +816,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0629 | Rhea spent 40% of a paycheck on rent and had $192 left. How much was the paycheck? | $320 | Ready | percent_spent_left | `percent/0629/` |
 | 0630 | 21 is 12% of what number? | 175 | Reference |  | `percent/0630/` |
 | 0631 | After a 2% raise, Kira's salary is $55,080.00. What was the salary before the raise? | $54,000.00 | Ready | percent_change | `percent/0631/` |
-| 0632 | What percent of 70 is 28? | 40% | Reference |  | `percent/0632/` |
+| 0632 | What percent of 70 is 28? | 40% | Ready | archive_percent_1 | `percent/0632/` |
 | 0633 | A test has 20 questions. Isla scored 65%. How many questions were answered correctly? | 13 questions | Ready | percent_of_count | `percent/0633/` |
 | 0634 | A town's population changed from 32000 to 40000. What was the percent change? | +25% (increase) | Ready | percent_change_between | `percent/0634/` |
 | 0635 | The total cost of an item including 7.5% sales tax is $99.33. What was the price before tax? | $92.40 | Ready | percent_change | `percent/0635/` |
@@ -828,7 +828,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0641 | 55% of the students in a club are boys. There are 81 girls. How many students are in the club? | 180 students | Reference |  | `percent/0641/` |
 | 0642 | A stock's price rose 10% one month and then fell 25% the next, ending at $1,501.50. What was the starting price? | $1,820.00 | Reference |  | `percent/0642/` |
 | 0643 | In a two-candidate election, the winner got 58% of the votes and won by 672 votes. How many votes were cast? | 4,200 votes | Ready | election_margin | `percent/0643/` |
-| 0644 | 30 out of 150 students passed. What percent passed? | 20% | Reference |  | `percent/0644/` |
+| 0644 | 30 out of 150 students passed. What percent passed? | 20% | Ready | archive_percent_2 | `percent/0644/` |
 | 0645 | After a 5% raise, Fatima's salary is $69,300.00. What was the salary before the raise? | $66,000.00 | Ready | percent_change | `percent/0645/` |
 | 0646 | The total cost of an item including 10% sales tax is $203.28. What was the price before tax? | $184.80 | Ready | percent_change | `percent/0646/` |
 | 0647 | A test has 40 questions. Pablo scored 95%. How many questions were answered correctly? | 38 questions | Ready | percent_of_count | `percent/0647/` |
@@ -841,7 +841,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0654 | 92 is 40% of what number? | 230 | Reference |  | `percent/0654/` |
 | 0655 | A town's population changed from 16500 to 9900. What was the percent change? | -40% (decrease) | Ready | percent_change_between | `percent/0655/` |
 | 0656 | A test has 80 questions. Theo scored 95%. How many questions were answered correctly? | 76 questions | Ready | percent_of_count | `percent/0656/` |
-| 0657 | 84 out of 240 students passed. What percent passed? | 35% | Reference |  | `percent/0657/` |
+| 0657 | 84 out of 240 students passed. What percent passed? | 35% | Ready | archive_percent_2 | `percent/0657/` |
 | 0658 | The total cost of an item including 7.5% sales tax is $325.51. What was the price before tax? | $302.80 | Ready | percent_change | `percent/0658/` |
 | 0659 | After a 25% discount, a bicycle costs $258.75. What was the original price? | $345.00 | Ready | percent_change | `percent/0659/` |
 | 0660 | A stock's price rose 20% one month and then fell 25% the next, ending at $792.00. What was the starting price? | $880.00 | Reference |  | `percent/0660/` |
@@ -852,7 +852,7 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0665 | A coat is marked 25% off, and then an extra 20% is taken off the sale price. The final price is $240.00. What was the original price? | $400.00 | Ready | two_discounts | `percent/0665/` |
 | 0666 | Mateo spent 25% of a paycheck on rent and had $435 left. How much was the paycheck? | $580 | Ready | percent_spent_left | `percent/0666/` |
 | 0667 | In a two-candidate election, the winner got 56% of the votes and won by 4200 votes. How many votes were cast? | 35,000 votes | Ready | election_margin | `percent/0667/` |
-| 0668 | What percent of 15 is 6? | 40% | Reference |  | `percent/0668/` |
+| 0668 | What percent of 15 is 6? | 40% | Ready | archive_percent_1 | `percent/0668/` |
 | 0669 | A coat is marked 25% off, and then an extra 10% is taken off the sale price. The final price is $459.00. What was the original price? | $680.00 | Ready | two_discounts | `percent/0669/` |
 | 0670 | A test has 80 questions. Gus scored 70%. How many questions were answered correctly? | 56 questions | Ready | percent_of_count | `percent/0670/` |
 | 0671 | In a two-candidate election, the winner got 62% of the votes and won by 2400 votes. How many votes were cast? | 10,000 votes | Ready | election_margin | `percent/0671/` |
@@ -885,9 +885,9 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0686 | A candle shop has fixed costs of $2000. Each item costs $2 to make and sells for $17. How many items must be sold to make a profit of $9775? | 785 items | Reference |  | `profit/0686/` |
-| 0687 | A candle shop has fixed costs of $750. Each item costs $12 to make and sells for $27. How many items must be sold to make a profit of $1350? | 140 items | Reference |  | `profit/0687/` |
-| 0688 | A candle shop has fixed costs of $1650. Each item costs $5 to make and sells for $15. How many items must be sold to make a profit of $4890? | 654 items | Reference |  | `profit/0688/` |
+| 0686 | A candle shop has fixed costs of $2000. Each item costs $2 to make and sells for $17. How many items must be sold to make a profit of $9775? | 785 items | Ready | archive_profit_1 | `profit/0686/` |
+| 0687 | A candle shop has fixed costs of $750. Each item costs $12 to make and sells for $27. How many items must be sold to make a profit of $1350? | 140 items | Ready | archive_profit_1 | `profit/0687/` |
+| 0688 | A candle shop has fixed costs of $1650. Each item costs $5 to make and sells for $15. How many items must be sold to make a profit of $4890? | 654 items | Ready | archive_profit_1 | `profit/0688/` |
 | 0689 | A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to make a profit of $452? | 92 items | Reference |  | `profit/0689/` |
 | 0690 | A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make a profit of $302? | 526 items | Reference |  | `profit/0690/` |
 
@@ -934,9 +934,9 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0725 | A 5 ft person casts a 2 ft shadow. At the same time a tree casts a 30 ft shadow. How tall is the tree? | 75 | Reference |  | `proportion_similar_triangles/0725/` |
+| 0725 | A 5 ft person casts a 2 ft shadow. At the same time a tree casts a 30 ft shadow. How tall is the tree? | 75 | Ready | archive_proportion_similar_triangles_1 | `proportion_similar_triangles/0725/` |
 | 0726 | At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building? | 90 | Reference |  | `proportion_similar_triangles/0726/` |
-| 0727 | A 7 ft person casts a 11 ft shadow. At the same time a tree casts a 44 ft shadow. How tall is the tree? | 28 | Reference |  | `proportion_similar_triangles/0727/` |
+| 0727 | A 7 ft person casts a 11 ft shadow. At the same time a tree casts a 44 ft shadow. How tall is the tree? | 28 | Ready | archive_proportion_similar_triangles_1 | `proportion_similar_triangles/0727/` |
 | 0728 | At noon a 4 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building? | 60 | Reference |  | `proportion_similar_triangles/0728/` |
 
 ## Quadratic
@@ -1060,35 +1060,35 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0813 | A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. What is the plane's speed in still air? | 490 mph | Ready | wind_same_time | `rational_equation/0813/` |
 | 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the original fraction. | 10/12 | Reference |  | `rational_equation/0814/` |
 | 0815 | A number plus its reciprocal equals 2.5. Find the number. | 2 or 1/2 | Reference |  | `rational_equation/0815/` |
-| 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group originally? | 3 people | Reference |  | `rational_equation/0816/` |
-| 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds. | Truck 32 mph, car 46 mph | Reference |  | `rational_equation/0817/` |
-| 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the speed of the current? | 10 km/h | Reference |  | `rational_equation/0818/` |
-| 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route? | 48 km | Reference |  | `rational_equation/0819/` |
+| 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group originally? | 3 people | Ready | archive_rational_equation_1 | `rational_equation/0816/` |
+| 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds. | Truck 32 mph, car 46 mph | Ready | archive_rational_equation_2 | `rational_equation/0817/` |
+| 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the speed of the current? | 10 km/h | Ready | archive_rational_equation_3 | `rational_equation/0818/` |
+| 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route? | 48 km | Ready | archive_rational_equation_4 | `rational_equation/0819/` |
 | 0820 | A field trip costs $550 for the bus plus $15 admission per student. The bus cost is shared equally, and each student pays $27.50 in total. How many students went? | 44 students | Ready | shared_fixed_cost | `rational_equation/0820/` |
 | 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route? | 48 km | Reference |  | `rational_equation/0821/` |
-| 0822 | A boat goes 14 km upstream in the same time it goes 46 km downstream. Its speed in still water is 15 km/h. What is the speed of the current? | 8 km/h | Reference |  | `rational_equation/0822/` |
-| 0823 | A group shares a $42 rental equally. If 2 more people join, each pays $1.75 less. How many people are in the group originally? | 6 people | Reference |  | `rational_equation/0823/` |
+| 0822 | A boat goes 14 km upstream in the same time it goes 46 km downstream. Its speed in still water is 15 km/h. What is the speed of the current? | 8 km/h | Ready | archive_rational_equation_3 | `rational_equation/0822/` |
+| 0823 | A group shares a $42 rental equally. If 2 more people join, each pays $1.75 less. How many people are in the group originally? | 6 people | Ready | archive_rational_equation_1 | `rational_equation/0823/` |
 | 0824 | A plane flies 400 miles with a 50 mph tailwind in the same time it flies 200 miles into the same wind as a headwind. What is the plane's speed in still air? | 150 mph | Ready | wind_same_time | `rational_equation/0824/` |
 | 0825 | The denominator of a fraction is 2 more than the numerator. If 3 is added to both, the fraction becomes 5/6. Find the original fraction. | 7/9 | Reference |  | `rational_equation/0825/` |
 | 0826 | A number plus its reciprocal equals 5.2. Find the number. | 5 or 1/5 | Reference |  | `rational_equation/0826/` |
-| 0827 | A truck travels 40 miles in the same time a car travels 51 miles. The car is 11 mph faster. Find both speeds. | Truck 40 mph, car 51 mph | Reference |  | `rational_equation/0827/` |
-| 0828 | Jogging a route at 8 km/h takes 2.25 hours longer than cycling it at 20 km/h. How long is the route? | 30 km | Reference |  | `rational_equation/0828/` |
+| 0827 | A truck travels 40 miles in the same time a car travels 51 miles. The car is 11 mph faster. Find both speeds. | Truck 40 mph, car 51 mph | Ready | archive_rational_equation_2 | `rational_equation/0827/` |
+| 0828 | Jogging a route at 8 km/h takes 2.25 hours longer than cycling it at 20 km/h. How long is the route? | 30 km | Ready | archive_rational_equation_4 | `rational_equation/0828/` |
 | 0829 | A plane flies 2420 miles with a 35 mph tailwind in the same time it flies 2140 miles into the same wind as a headwind. What is the plane's speed in still air? | 570 mph | Ready | wind_same_time | `rational_equation/0829/` |
 | 0830 | A field trip costs $200 for the bus plus $5 admission per student. The bus cost is shared equally, and each student pays $9.00 in total. How many students went? | 50 students | Ready | shared_fixed_cost | `rational_equation/0830/` |
-| 0831 | A group shares a $42 rental equally. If 3 more people join, each pays $1.80 less. How many people are in the group originally? | 7 people | Reference |  | `rational_equation/0831/` |
-| 0832 | A boat goes 36 km upstream in the same time it goes 84 km downstream. Its speed in still water is 20 km/h. What is the speed of the current? | 8 km/h | Reference |  | `rational_equation/0832/` |
+| 0831 | A group shares a $42 rental equally. If 3 more people join, each pays $1.80 less. How many people are in the group originally? | 7 people | Ready | archive_rational_equation_1 | `rational_equation/0831/` |
+| 0832 | A boat goes 36 km upstream in the same time it goes 84 km downstream. Its speed in still water is 20 km/h. What is the speed of the current? | 8 km/h | Ready | archive_rational_equation_3 | `rational_equation/0832/` |
 | 0833 | The denominator of a fraction is 1 more than the numerator. If 4 is added to both, the fraction becomes 20/21. Find the original fraction. | 16/17 | Reference |  | `rational_equation/0833/` |
 | 0834 | A number plus its reciprocal equals 4.25. Find the number. | 4 or 1/4 | Reference |  | `rational_equation/0834/` |
-| 0835 | A truck travels 152 miles in the same time a car travels 224 miles. The car is 18 mph faster. Find both speeds. | Truck 38 mph, car 56 mph | Reference |  | `rational_equation/0835/` |
+| 0835 | A truck travels 152 miles in the same time a car travels 224 miles. The car is 18 mph faster. Find both speeds. | Truck 38 mph, car 56 mph | Ready | archive_rational_equation_2 | `rational_equation/0835/` |
 | 0836 | A field trip costs $300 for the bus plus $8 admission per student. The bus cost is shared equally, and each student pays $23.00 in total. How many students went? | 20 students | Ready | shared_fixed_cost | `rational_equation/0836/` |
-| 0837 | Jogging a route at 10 km/h takes 0.4 hours longer than cycling it at 15 km/h. How long is the route? | 12 km | Reference |  | `rational_equation/0837/` |
+| 0837 | Jogging a route at 10 km/h takes 0.4 hours longer than cycling it at 15 km/h. How long is the route? | 12 km | Ready | archive_rational_equation_4 | `rational_equation/0837/` |
 | 0838 | A number plus its reciprocal equals 8.125. Find the number. | 8 or 1/8 | Reference |  | `rational_equation/0838/` |
-| 0839 | A boat goes 33 km upstream in the same time it goes 123 km downstream. Its speed in still water is 26 km/h. What is the speed of the current? | 15 km/h | Reference |  | `rational_equation/0839/` |
-| 0840 | A group shares a $156 rental equally. If 3 more people join, each pays $2.60 less. How many people are in the group originally? | 12 people | Reference |  | `rational_equation/0840/` |
+| 0839 | A boat goes 33 km upstream in the same time it goes 123 km downstream. Its speed in still water is 26 km/h. What is the speed of the current? | 15 km/h | Ready | archive_rational_equation_3 | `rational_equation/0839/` |
+| 0840 | A group shares a $156 rental equally. If 3 more people join, each pays $2.60 less. How many people are in the group originally? | 12 people | Ready | archive_rational_equation_1 | `rational_equation/0840/` |
 | 0841 | A plane flies 670 miles with a 35 mph tailwind in the same time it flies 530 miles into the same wind as a headwind. What is the plane's speed in still air? | 300 mph | Ready | wind_same_time | `rational_equation/0841/` |
 | 0842 | The denominator of a fraction is 3 more than the numerator. If 2 is added to both, the fraction becomes 10/13. Find the original fraction. | 8/11 | Reference |  | `rational_equation/0842/` |
-| 0843 | A truck travels 265 miles in the same time a car travels 320 miles. The car is 11 mph faster. Find both speeds. | Truck 53 mph, car 64 mph | Reference |  | `rational_equation/0843/` |
-| 0844 | A boat goes 16 km upstream in the same time it goes 64 km downstream. Its speed in still water is 10 km/h. What is the speed of the current? | 6 km/h | Reference |  | `rational_equation/0844/` |
+| 0843 | A truck travels 265 miles in the same time a car travels 320 miles. The car is 11 mph faster. Find both speeds. | Truck 53 mph, car 64 mph | Ready | archive_rational_equation_2 | `rational_equation/0843/` |
+| 0844 | A boat goes 16 km upstream in the same time it goes 64 km downstream. Its speed in still water is 10 km/h. What is the speed of the current? | 6 km/h | Ready | archive_rational_equation_3 | `rational_equation/0844/` |
 | 0845 | A plane flies 1580 miles with a 35 mph tailwind in the same time it flies 1300 miles into the same wind as a headwind. What is the plane's speed in still air? | 360 mph | Ready | wind_same_time | `rational_equation/0845/` |
 | 0846 | The denominator of a fraction is 1 more than the numerator. If 1 is added to both, the fraction becomes 13/14. Find the original fraction. | 12/13 | Reference |  | `rational_equation/0846/` |
 | 0847 | A number plus its reciprocal equals 10/3. Find the number. | 3 or 1/3 | Reference |  | `rational_equation/0847/` |
@@ -1111,11 +1111,11 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0857 | A theater has 29 seats in the first row and each row has 5 more seats than the row before. Which row has 209 seats? | Row 37 | Reference |  | `sequences/0857/` |
-| 0858 | A theater has 23 seats in the first row and each row has 4 more seats than the row before. Which row has 83 seats? | Row 16 | Reference |  | `sequences/0858/` |
-| 0859 | A theater has 14 seats in the first row and each row has 2 more seats than the row before. Which row has 58 seats? | Row 23 | Reference |  | `sequences/0859/` |
+| 0857 | A theater has 29 seats in the first row and each row has 5 more seats than the row before. Which row has 209 seats? | Row 37 | Ready | archive_sequences_1 | `sequences/0857/` |
+| 0858 | A theater has 23 seats in the first row and each row has 4 more seats than the row before. Which row has 83 seats? | Row 16 | Ready | archive_sequences_1 | `sequences/0858/` |
+| 0859 | A theater has 14 seats in the first row and each row has 2 more seats than the row before. Which row has 58 seats? | Row 23 | Ready | archive_sequences_1 | `sequences/0859/` |
 | 0860 | A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63? | Week 9 | Reference |  | `sequences/0860/` |
-| 0861 | A theater has 27 seats in the first row and each row has 3 more seats than the row before. Which row has 129 seats? | Row 35 | Reference |  | `sequences/0861/` |
+| 0861 | A theater has 27 seats in the first row and each row has 3 more seats than the row before. Which row has 129 seats? | Row 35 | Ready | archive_sequences_1 | `sequences/0861/` |
 
 ## Simple interest
 
@@ -1133,11 +1133,11 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0871 | Yusuf has $19,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $28,500.00 | Reference |  | `simple_interest/0871/` |
 | 0872 | Kofi invests $30,500.00, part at 2% and the rest at 4% simple annual interest. After one year the total interest is $830.00. How much was invested at each rate? | $19,500.00 at 2% and $11,000.00 at 4% | Ready | two_rate_interest | `simple_interest/0872/` |
 | 0873 | $22,500.00 is split between two accounts paying 2% and 4% simple interest. Both accounts earn the same interest in a year. How much is in each? | $15,000.00 at 2%, $7,500.00 at 4% | Reference |  | `simple_interest/0873/` |
-| 0874 | $15,000.00 earns $5,400.00 in simple interest over 9 years. What is the annual interest rate? | 4% | Reference |  | `simple_interest/0874/` |
+| 0874 | $15,000.00 earns $5,400.00 in simple interest over 9 years. What is the annual interest rate? | 4% | Ready | archive_simple_interest_1 | `simple_interest/0874/` |
 | 0875 | Dana invests $13,500.00, part at 2% and the rest at 5% simple annual interest. After one year the total interest is $450.00. How much was invested at each rate? | $7,500.00 at 2% and $6,000.00 at 5% | Ready | two_rate_interest | `simple_interest/0875/` |
 | 0876 | Wren has $16,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $24,000.00 | Reference |  | `simple_interest/0876/` |
 | 0877 | $22,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each? | $8,250.00 at 10%, $13,750.00 at 6% | Reference |  | `simple_interest/0877/` |
-| 0878 | $4,500.00 earns $720.00 in simple interest over 8 years. What is the annual interest rate? | 2% | Reference |  | `simple_interest/0878/` |
+| 0878 | $4,500.00 earns $720.00 in simple interest over 8 years. What is the annual interest rate? | 2% | Ready | archive_simple_interest_1 | `simple_interest/0878/` |
 | 0879 | $7,000.00 is split between two accounts paying 4% and 3% simple interest. Both accounts earn the same interest in a year. How much is in each? | $3,000.00 at 4%, $4,000.00 at 3% | Reference |  | `simple_interest/0879/` |
 | 0880 | Tara has $1,500.00 invested at 2%. How much more must be invested at 7% so that the total earns 6% overall? | $6,000.00 | Reference |  | `simple_interest/0880/` |
 | 0881 | Mateo invests $40,000.00, part at 2% and the rest at 8% simple annual interest. After one year the total interest is $2,000.00. How much was invested at each rate? | $20,000.00 at 2% and $20,000.00 at 8% | Ready | two_rate_interest | `simple_interest/0881/` |
@@ -1233,11 +1233,11 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0959 | Adult tickets to a movie screening cost $12 and child tickets cost $6. 167 tickets were sold for a total of $1404. How many of each were sold? | 67 adult and 100 child tickets | Reference |  | `tickets/0959/` |
+| 0959 | Adult tickets to a movie screening cost $12 and child tickets cost $6. 167 tickets were sold for a total of $1404. How many of each were sold? | 67 adult and 100 child tickets | Ready | archive_tickets_1 | `tickets/0959/` |
 | 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of each were sold? | 300 adult and 299 child tickets | Reference |  | `tickets/0960/` |
-| 0961 | Adult tickets to a movie screening cost $8 and child tickets cost $5. 252 tickets were sold for a total of $1398. How many of each were sold? | 46 adult and 206 child tickets | Reference |  | `tickets/0961/` |
+| 0961 | Adult tickets to a movie screening cost $8 and child tickets cost $5. 252 tickets were sold for a total of $1398. How many of each were sold? | 46 adult and 206 child tickets | Ready | archive_tickets_1 | `tickets/0961/` |
 | 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of each were sold? | 97 adult and 128 child tickets | Reference |  | `tickets/0962/` |
-| 0963 | Adult tickets to a movie screening cost $8 and child tickets cost $7. 471 tickets were sold for a total of $3535. How many of each were sold? | 238 adult and 233 child tickets | Reference |  | `tickets/0963/` |
+| 0963 | Adult tickets to a movie screening cost $8 and child tickets cost $7. 471 tickets were sold for a total of $3535. How many of each were sold? | 238 adult and 233 child tickets | Ready | archive_tickets_1 | `tickets/0963/` |
 
 ## Work rate
 
@@ -1246,36 +1246,36 @@ Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column
 | 0964 | Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words? | 16 minutes | Ready | two_rates_one_pile | `work_rate/0964/` |
 | 0965 | Rosa can assemble the shelves in 15 hours. Fatima can do it in 3 hours. How long will it take them working together? | 2.5 hours (2.50 h) | Ready | work_together | `work_rate/0965/` |
 | 0966 | Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. With all three open, how long does it take to fill the pool? | 2.5 hours | Ready | pipes_and_drain | `work_rate/0966/` |
-| 0967 | A new machine works 2 times as fast as an old one. Together they finish an order in 3 hours. How long would the old machine take alone? | 9 hours (new machine: 4.5 hours) | Reference |  | `work_rate/0967/` |
+| 0967 | A new machine works 2 times as fast as an old one. Together they finish an order in 3 hours. How long would the old machine take alone? | 9 hours (new machine: 4.5 hours) | Ready | archive_work_rate_1 | `work_rate/0967/` |
 | 0968 | Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long will it take all three together? | 20/9 hours | Reference |  | `work_rate/0968/` |
-| 0969 | An inlet pipe fills a tank in 5 hours. A drain empties it in 6 hours. If both are open, how long does it take to fill the empty tank? | 30 hours | Reference |  | `work_rate/0969/` |
+| 0969 | An inlet pipe fills a tank in 5 hours. A drain empties it in 6 hours. If both are open, how long does it take to fill the empty tank? | 30 hours | Ready | archive_work_rate_2 | `work_rate/0969/` |
 | 0970 | Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone? | 6 hours | Reference |  | `work_rate/0970/` |
 | 0971 | Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish? | 4/3 more hours | Reference |  | `work_rate/0971/` |
 | 0972 | Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. How long would Victor take alone? | 12 hours | Reference |  | `work_rate/0972/` |
-| 0973 | An inlet pipe fills a tank in 4 hours. A drain empties it in 12 hours. If both are open, how long does it take to fill the empty tank? | 6 hours | Reference |  | `work_rate/0973/` |
+| 0973 | An inlet pipe fills a tank in 4 hours. A drain empties it in 12 hours. If both are open, how long does it take to fill the empty tank? | 6 hours | Ready | archive_work_rate_2 | `work_rate/0973/` |
 | 0974 | Grace can do a job in 5 hours and Isla can do it in 15 hours. Grace works alone for 2 hours, then Isla joins. How much longer will it take to finish? | 2.25 more hours | Reference |  | `work_rate/0974/` |
-| 0975 | A new machine works 3 times as fast as an old one. Together they finish an order in 4 hours. How long would the old machine take alone? | 16 hours (new machine: 16/3 hours) | Reference |  | `work_rate/0975/` |
+| 0975 | A new machine works 3 times as fast as an old one. Together they finish an order in 4 hours. How long would the old machine take alone? | 16 hours (new machine: 16/3 hours) | Ready | archive_work_rate_1 | `work_rate/0975/` |
 | 0976 | Lena can paint a fence in 5 hours. Ava can do it in 10 hours. How long will it take them working together? | 10/3 hours (3.33 h) | Ready | work_together | `work_rate/0976/` |
 | 0977 | Pipe A fills a pool in 3 hours, pipe B in 6 hours, and a drain empties it in 10 hours. With all three open, how long does it take to fill the pool? | 2.5 hours | Ready | pipes_and_drain | `work_rate/0977/` |
 | 0978 | Quinn, Jamal, and Sam can each paint a room alone in 24, 20, and 30 hours. How long will it take all three together? | 8 hours | Reference |  | `work_rate/0978/` |
 | 0979 | Two typists type 70 and 30 words per minute. Working together, how long will they take to type 3800 words? | 38 minutes | Ready | two_rates_one_pile | `work_rate/0979/` |
 | 0980 | Rhea can do a job in 4 hours and Carla can do it in 12 hours. Rhea works alone for 2 hours, then Carla joins. How much longer will it take to finish? | 1.5 more hours | Reference |  | `work_rate/0980/` |
 | 0981 | Pipe A fills a pool in 12 hours, pipe B in 10 hours, and a drain empties it in 20 hours. With all three open, how long does it take to fill the pool? | 7.5 hours | Ready | pipes_and_drain | `work_rate/0981/` |
-| 0982 | An inlet pipe fills a tank in 5 hours. A drain empties it in 10 hours. If both are open, how long does it take to fill the empty tank? | 10 hours | Reference |  | `work_rate/0982/` |
+| 0982 | An inlet pipe fills a tank in 5 hours. A drain empties it in 10 hours. If both are open, how long does it take to fill the empty tank? | 10 hours | Ready | archive_work_rate_2 | `work_rate/0982/` |
 | 0983 | Bea can mow a lawn in 12 hours. Yara can do it in 18 hours. How long will it take them working together? | 7.2 hours (7.20 h) | Ready | work_together | `work_rate/0983/` |
-| 0984 | A new machine works 3 times as fast as an old one. Together they finish an order in 2.5 hours. How long would the old machine take alone? | 10 hours (new machine: 10/3 hours) | Reference |  | `work_rate/0984/` |
+| 0984 | A new machine works 3 times as fast as an old one. Together they finish an order in 2.5 hours. How long would the old machine take alone? | 10 hours (new machine: 10/3 hours) | Ready | archive_work_rate_1 | `work_rate/0984/` |
 | 0985 | Two typists type 70 and 50 words per minute. Working together, how long will they take to type 6960 words? | 58 minutes | Ready | two_rates_one_pile | `work_rate/0985/` |
 | 0986 | Aiden, Lena, and Yara can each paint a room alone in 8, 30, and 20 hours. How long will it take all three together? | 4.8 hours | Reference |  | `work_rate/0986/` |
 | 0987 | Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone? | 6 hours | Reference |  | `work_rate/0987/` |
 | 0988 | Two typists type 45 and 50 words per minute. Working together, how long will they take to type 3895 words? | 41 minutes | Ready | two_rates_one_pile | `work_rate/0988/` |
-| 0989 | A new machine works 3 times as fast as an old one. Together they finish an order in 6 hours. How long would the old machine take alone? | 24 hours (new machine: 8 hours) | Reference |  | `work_rate/0989/` |
+| 0989 | A new machine works 3 times as fast as an old one. Together they finish an order in 6 hours. How long would the old machine take alone? | 24 hours (new machine: 8 hours) | Ready | archive_work_rate_1 | `work_rate/0989/` |
 | 0990 | Sofia, Grace, and Sam can each paint a room alone in 24, 15, and 10 hours. How long will it take all three together? | 4.8 hours | Reference |  | `work_rate/0990/` |
 | 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish? | 2.25 more hours | Reference |  | `work_rate/0991/` |
 | 0992 | Maya can wash the cars in 10 hours. Kira can do it in 20 hours. How long will it take them working together? | 20/3 hours (6.67 h) | Ready | work_together | `work_rate/0992/` |
-| 0993 | An inlet pipe fills a tank in 6 hours. A drain empties it in 12 hours. If both are open, how long does it take to fill the empty tank? | 12 hours | Reference |  | `work_rate/0993/` |
+| 0993 | An inlet pipe fills a tank in 6 hours. A drain empties it in 12 hours. If both are open, how long does it take to fill the empty tank? | 12 hours | Ready | archive_work_rate_2 | `work_rate/0993/` |
 | 0994 | Pipe A fills a pool in 4 hours, pipe B in 12 hours, and a drain empties it in 6 hours. With all three open, how long does it take to fill the pool? | 6 hours | Ready | pipes_and_drain | `work_rate/0994/` |
 | 0995 | Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone? | 12 hours | Reference |  | `work_rate/0995/` |
-| 0996 | An inlet pipe fills a tank in 5 hours. A drain empties it in 15 hours. If both are open, how long does it take to fill the empty tank? | 7.5 hours | Reference |  | `work_rate/0996/` |
+| 0996 | An inlet pipe fills a tank in 5 hours. A drain empties it in 15 hours. If both are open, how long does it take to fill the empty tank? | 7.5 hours | Ready | archive_work_rate_2 | `work_rate/0996/` |
 | 0997 | Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone? | 4 hours | Reference |  | `work_rate/0997/` |
 | 0998 | Grace, Uma, and Omar can each paint a room alone in 10, 30, and 24 hours. How long will it take all three together? | 40/7 hours | Reference |  | `work_rate/0998/` |
 | 0999 | Dana can clean the house in 15 hours. Priya can do it in 10 hours. How long will it take them working together? | 6 hours | Ready | work_together | `work_rate/0999/` |

@@ -16,6 +16,7 @@ from test_number_puzzle import load_problems
 
 # Answers worked out by hand for the hand-written matcher problems the solver claims.
 HAND_ANSWERS = {
+    "What percent of 80 is 20?": [25],
     "Find two numbers that add to 50 if one is 8 bigger than the other.": [21, 29],
     "Add up three integers in a row and you get 138. Which integers?": [45, 46, 47],
     "Shoes are 30% off and now cost $56. What did they cost before the sale?": [80],
@@ -564,9 +565,14 @@ class FreshWordings(unittest.TestCase):
         self.assertIn("(n - 2) * 180 = 720", r.reading)
         self.assertIn("n = 6 sides", r.reading)
         # a regular polygon's one angle, an exterior angle, a sum that is not a multiple of 180, a result that is not above 2 sides, diagonals
-        for text in ("Each interior angle of a regular polygon measures 150°. How many sides does the polygon have?",
-                     "Each exterior angle of a regular polygon is 30°. How many sides does it have?",
-                     "The exterior angles of a polygon add up to 360°. How many sides does it have?",
+        # (a regular polygon's one interior angle is a wording the word archive proved: polygon_angle_sum still declines it, archive_geometry_polygons_* answers it)
+        regular = "Each interior angle of a regular polygon measures 150°. How many sides does the polygon have?"
+        self.assertIsNone(WS.polygon_angle_sum(regular))
+        self.assertEqual(answers(regular), values(12))
+        exterior = "Each exterior angle of a regular polygon is 30°. How many sides does it have?"          # also a proven wording: 360 / n = 30
+        self.assertIsNone(WS.polygon_angle_sum(exterior))
+        self.assertEqual(answers(exterior), values(12))
+        for text in ("The exterior angles of a polygon add up to 360°. How many sides does it have?",
                      "The interior angles of a polygon add up to 1450°. How many sides does it have?",
                      "The interior angles of a polygon add up to 0°. How many sides does it have?",
                      "The interior angles of a polygon add up to 90°. How many sides does it have?",
@@ -874,9 +880,12 @@ class FreshWordings(unittest.TestCase):
                      "A venue charges $100 plus $15 per guest. The total was $865, with a 10% discount. How many guests came?",
                      "A venue charges $100 plus $15 per guest for part of the year. The total was $865. How many guests came?",
                      "A venue charges $100 plus $15 per guest. The total was $865. How many tickets were sold?",
-                     "A venue charges $100 plus twice $15 per guest. The total was $865. How many guests came?",
-                     "A parking garage charges $5 for the first hour and $2 for each additional hour. A driver paid $13. How many hours did they park?"):
+                     "A venue charges $100 plus twice $15 per guest. The total was $865. How many guests came?"):
             self.assertIsNone(answers(text), text)
+        # a first-hour rule is a wording the word archive proved: fixed_plus_rate still declines it, an archive family answers it (5 + 2 (h - 1) = 13, so 5 hours)
+        parking = "A parking garage charges $5 for the first hour and $2 for each additional hour. A driver paid $13. How many hours did they park?"
+        self.assertIsNone(WS.fixed_plus_rate(parking))
+        self.assertEqual(answers(parking), values(5))
 
     def test_two_changing_equal(self):
         self.assertEqual(answers("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. In how many years are they equal?"), values(18))

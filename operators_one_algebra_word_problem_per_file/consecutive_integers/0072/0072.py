@@ -6,7 +6,7 @@ Equation: x + (x + 4) = 28
 Solve   : 2x = 24 → x = 12
 Answer  : 12, 14, 16
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_consecutive_integers_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + (x + 4) = 28'
 SOLVE = '2x = 24 → x = 12'
 ANSWER = '12, 14, 16'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_consecutive_integers_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Of three consecutive even integers, the sum of the smallest and largest is {0}. Find all three.'
 NUMBERS = ['28']

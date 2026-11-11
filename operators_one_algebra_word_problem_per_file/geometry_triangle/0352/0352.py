@@ -6,7 +6,7 @@ Equation: x + 2(x + 11) = 70
 Solve   : 3x + 22 = 70 → x = 16
 Answer  : Base 16 cm, equal sides 27 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_triangle_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + 2(x + 11) = 70'
 SOLVE = '3x + 22 = 70 → x = 16'
 ANSWER = 'Base 16 cm, equal sides 27 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_triangle_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Each of the two equal sides of an isosceles triangle is {0} cm longer than the base. The perimeter is {1} cm. Find the side lengths.'
 NUMBERS = ['11', '70']

@@ -6,7 +6,7 @@ Equation: 240 + 12n = 22n
 Solve   : 10n = 240 → n = 24
 Answer  : 24 months
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_break_even_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '240 + 12n = 22n'
 SOLVE = '10n = 240 → n = 24'
 ANSWER = '24 months'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_break_even_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Service A has a ${0} sign-up fee and costs ${1}/month. Service B has no fee and costs ${2}/month. After how many months is the total cost the same?'
 NUMBERS = ['240', '12', '22']

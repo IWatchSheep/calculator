@@ -6,7 +6,7 @@ Equation: 29 + (n − 1)(5) = 209
 Solve   : 5n = 185 → n = 37
 Answer  : Row 37
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_sequences_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '29 + (n − 1)(5) = 209'
 SOLVE = '5n = 185 → n = 37'
 ANSWER = 'Row 37'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_sequences_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A theater has {0} seats in the first row and each row has {1} more seats than the row before. Which row has {2} seats?'
 NUMBERS = ['29', '5', '209']

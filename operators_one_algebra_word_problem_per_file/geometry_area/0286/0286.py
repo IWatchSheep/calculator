@@ -6,7 +6,7 @@ Equation: (1/2)(10 + 9)h = 85.5
 Solve   : 9.5h = 85.5 → h = 9
 Answer  : 9 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_area_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(1/2)(10 + 9)h = 85.5'
 SOLVE = '9.5h = 85.5 → h = 9'
 ANSWER = '9 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_area_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A trapezoid has parallel sides of {0} cm and {1} cm and an area of {2} cm². Find its height.'
 NUMBERS = ['10', '9', '85.5']

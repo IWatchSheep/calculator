@@ -6,7 +6,7 @@ Equation: (1/2)b(b + 6) = 56
 Solve   : b² + 6b − 112 = 0 → b = 8 (the other root, -14, is rejected)
 Answer  : Base 8 cm, height 14 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_quadratic_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(1/2)b(b + 6) = 56'
 SOLVE = 'b² + 6b − 112 = 0 → b = 8 (the other root, -14, is rejected)'
 ANSWER = 'Base 8 cm, height 14 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_quadratic_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The height of a triangle is {0} cm more than its base. The area is {1} cm². Find the base and height.'
 NUMBERS = ['6', '56']

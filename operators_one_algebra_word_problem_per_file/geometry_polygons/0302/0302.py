@@ -6,7 +6,7 @@ Equation: 360/n = 120
 Solve   : Multiply by n → n = 3
 Answer  : 3 sides
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_polygons_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '360/n = 120'
 SOLVE = 'Multiply by n → n = 3'
 ANSWER = '3 sides'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_polygons_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Each exterior angle of a regular polygon is {0}°. How many sides does it have?'
 NUMBERS = ['120']

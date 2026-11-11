@@ -6,7 +6,7 @@ Equation: 2.5/x + 2.5/(x/3) = 1
 Solve   : Multiply through by x → x = 10
 Answer  : 10 hours (new machine: 10/3 hours)
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_work_rate_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2.5/x + 2.5/(x/3) = 1'
 SOLVE = 'Multiply through by x → x = 10'
 ANSWER = '10 hours (new machine: 10/3 hours)'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_work_rate_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A new machine works {0} times as fast as an old one. Together they finish an order in {1} hours. How long would the old machine take alone?'
 NUMBERS = ['3', '2.5']

@@ -1,0 +1,84 @@
+Proven wordings the archive could not turn into a family, and why (written by make_archive_families.py).
+
+0010  Average  ambiguous role (the number 4 is the same in every stored problem, so it could be a fixed number)
+    The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}. What is the missing number?
+0015  Average  ambiguous role (the number 5 is the same in every stored problem, so it could be a fixed number)
+    The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}, {6}. What is the missing number?
+0031  Break-even  a number of the equation is not a number of the problem and not fixed
+    Job A pays ${0} a month plus {1}% commission. Job B pays ${2} a month plus {3}% commission. At what monthly sales total do both pay the same?
+0032  Break-even  the equations do not have the same numbers
+    A food truck pays ${0} in daily costs, and each meal costs ${1} in ingredients. Meals sell for ${2}. How many meals a day cover the costs?
+0033  Break-even  ambiguous role (problem numbers [1, 2] are equal in every problem)
+    Buying a pressure washer costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?
+0058  Coins  a number of the equation is not a number of the problem and not fixed
+    A jar has quarters, dimes, and nickels worth ${0}. There are {1} more dimes than quarters and twice as many nickels as quarters. How many of each coin?
+0068  Consecutive integers  a number of the equation is not a number of the problem and not fixed
+    The average of {0} consecutive integers is {1}. What is the smallest?
+0180  Formula  ambiguous role (problem numbers [0, 1] are equal in every problem)
+    Solve P = {0}l + {1}w for w when P = {2} and l = {3}.
+0188  Formula  ambiguous role (the number 9 is the same in every stored problem, so it could be a fixed number)
+    Using F = ({0}/{1})C + {2}, what Celsius temperature equals {3}°F?
+0212  Fractions  ambiguous role (the number 1 is the same in every stored problem, so it could be a fixed number)
+    A gas tank is {0}/{1} full. Adding {2} gallons fills it to {3}/{4}. How much does the tank hold?
+0214  Fractions  ambiguous role (the number 5 is the same in every stored problem, so it could be a fixed number)
+    A tank is {0}/{1} full. After {2} liters are added, it is {3}/{4} full. What is the tank's capacity?
+0244  Geometry (angles)  the answer is one of the special cases of an older family
+    An exterior angle of a triangle measures ({0}x + {1})°. The two remote interior angles measure ({2}x + {3})° and ({4}x − {5})°. Find x and the exterior angle.
+0292  Geometry (perimeter)  the answer is one of the special cases of an older family
+    Each side of a square is ({0}x + {1}) cm. The perimeter is {2} cm. Find x and the side length.
+0311  Geometry (quadratic)  the family declines problem 0311
+    Squares of side x are cut from each corner of a {0} cm by {1} cm sheet, and the sides are folded up to make an open box. The base of the box has area {2} cm². Find x.
+0313  Geometry (quadratic)  a number of the equation is not a number of the problem and not fixed
+    A {0} ft by {1} ft garden has a path of uniform width around it. The path's area is {2} ft². How wide is the path?
+0341  Geometry (rectangle)  no recipe for answer number 2
+    The length of a rectangle is {0} less than {1} times its width. The perimeter is {2} cm. Find the dimensions.
+0347  Geometry (triangle)  no recipe for answer number 3
+    A triangle's second side is {0} in longer than the first, and its third side is {1} in less than twice the first. If the perimeter is {2} in, how long is each side?
+0353  Geometry (triangle)  ambiguous role (the number 8 is the same in every stored problem, so it could be a fixed number)
+    The sides of a triangle are x, x + {0}, and {1}x − {2} inches long. The perimeter is {3} inches. Find each side.
+0431  Linear cost  ambiguous role (the number 1/2 is the same in every stored problem, so it could be a fixed number)
+    A rental car costs ${0} per day plus ${1} per mile. A {2}-day rental cost ${3}. How many miles were driven?
+0486  Linear model  ambiguous role (problem numbers [0, 1] are equal in every problem)
+    Sound travels about {0} m/s, so d = {1}t. A storm is {2} m away. How many seconds after the lightning flash will the thunder be heard?
+0535  Mixture  a number of the equation is not a number of the problem and not fixed
+    How much water must be added to {0} L of a {1}% salt solution to make it {2}% salt?
+0536  Mixture  a number of the equation is not a number of the problem and not fixed
+    A {0} L tank of {1}% salt water is left to evaporate until it is {2}% salt. How much water evaporates?
+0538  Mixture  a number of the equation is not a number of the problem and not fixed
+    How many liters of pure antifreeze must be added to {0} L of a {1}% antifreeze mix to get a {2}% mix?
+0539  Mixture  a number of the equation is not a number of the problem and not fixed
+    A {0}-liter radiator holds a {1}% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to {2}%?
+0541  Mixture  a number of the equation is not a number of the problem and not fixed
+    A {0} L batch of {1}% juice concentrate is diluted with water to {2}% juice. How much water is added?
+0571  Number puzzle  no recipe for answer number 3
+    The second of three numbers is {0} times the first. The third is {1} more than the second. Their sum is {2}. Find the numbers.
+0621  Percent  a number of the equation is not a number of the problem and not fixed
+    {0} is {1}% of what number?
+0623  Percent  a number of the equation is not a number of the problem and not fixed
+    {0} friends split a restaurant bill equally, including a {1}% tip. Each paid ${2}. What was the bill before the tip?
+0624  Percent  a number of the equation is not a number of the problem and not fixed
+    {0}% of the students in a club are boys. There are {1} girls. How many students are in the club?
+0625  Percent  a number of the equation is not a number of the problem and not fixed
+    A stock's price rose {0}% one month and then fell {1}% the next, ending at ${2}. What was the starting price?
+0679  Percent (commission)  a number of the equation is not a number of the problem and not fixed
+    A salesperson gets ${0} per week plus {1}% of everything they sell. To earn ${2} in a week, how much must they sell?
+0691  Proportion  ambiguous role (the number 1 is the same in every stored problem, so it could be a fixed number)
+    A model car is built at a {0}:{1} scale. The real car is {2} cm long. How long is the model?
+0697  Proportion  ambiguous role (the number 1 is the same in every stored problem, so it could be a fixed number)
+    On a map, {0} cm represents {1} km. Two cities are {2} km apart. How far apart are they on the map?
+0726  Proportion (similar triangles)  ambiguous role (the number 10 is the same in every stored problem, so it could be a fixed number)
+    At noon a {0} m post casts a {1} m shadow, and a building nearby casts a {2} m shadow. How tall is the building?
+0734  Quadratic  no single root of the equation is a number of the stored answer (2)
+    Two numbers add up to {0} and multiply to {1}. What are they?
+0736  Quadratic  no single root of the equation is a number of the stored answer (2)
+    The sum of two numbers is {0} and their product is {1}. Find the numbers.
+0764  Quadratic (sequences)  ambiguous role (problem numbers [0, 2, 4] are equal in every problem)
+    How many consecutive whole numbers, starting from {0}, must be added to get a sum of {1}? (Use {2} + {3} + … + n = n(n + {4})/{5}.)
+0814  Rational equation  a number of the equation is not a number of the problem and not fixed
+    The denominator of a fraction is {0} more than the numerator. If {1} is added to both, the fraction becomes {2}/{3}. Find the original fraction.
+0815  Rational equation  no single root of the equation is a number of the stored answer (2)
+    A number plus its reciprocal equals {0}. Find the number.
+0864  Simple interest  the answer is one of the special cases of an older family
+    ${0} is split between two accounts paying {1}% and {2}% simple interest. Both accounts earn the same interest in a year. How much is in each?
+0865  Simple interest  a number of the equation is not a number of the problem and not fixed
+    How many years will it take ${0} to earn ${1} in simple interest at {2}% per year?

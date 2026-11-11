@@ -6,7 +6,7 @@ Equation: (1/2)b(22) = 418
 Solve   : 11b = 418 → b = 38
 Answer  : 38 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_area_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(1/2)b(22) = 418'
 SOLVE = '11b = 418 → b = 38'
 ANSWER = '38 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_area_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A triangle has an area of {0} m² and a height of {1} m. How long is its base?'
 NUMBERS = ['418', '22']

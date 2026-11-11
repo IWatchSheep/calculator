@@ -6,7 +6,7 @@ Equation: 8x + 7(471 − x) = 3535
 Solve   : x = 238
 Answer  : 238 adult and 233 child tickets
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_tickets_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '8x + 7(471 − x) = 3535'
 SOLVE = 'x = 238'
 ANSWER = '238 adult and 233 child tickets'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_tickets_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Adult tickets to a movie screening cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?'
 NUMBERS = ['8', '7', '471', '3535']

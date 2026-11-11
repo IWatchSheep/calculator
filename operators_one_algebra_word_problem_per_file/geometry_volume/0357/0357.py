@@ -6,7 +6,7 @@ Equation: 20 × 4 × h = 400
 Solve   : 80h = 400 → h = 5
 Answer  : 5 in
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_volume_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '20 × 4 × h = 400'
 SOLVE = '80h = 400 → h = 5'
 ANSWER = '5 in'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_volume_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rectangular box is {0} in long and {1} in wide. Its volume is {2} in³. How tall is it?'
 NUMBERS = ['20', '4', '400']

@@ -6,7 +6,7 @@ Equation: 5500 − 650t = 1300 + 400t
 Solve   : 1050t = 4200 → t = 4
 Answer  : 4 minutes
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_linear_model_3 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '5500 − 650t = 1300 + 400t'
 SOLVE = '1050t = 4200 → t = 4'
 ANSWER = '4 minutes'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_linear_model_3'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A hot-air balloon at {0} ft descends {1} ft per minute. Another at {2} ft rises {3} ft per minute. When are they at the same height?'
 NUMBERS = ['5500', '650', '1300', '400']

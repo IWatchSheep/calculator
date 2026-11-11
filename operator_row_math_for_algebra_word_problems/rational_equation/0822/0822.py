@@ -1,7 +1,7 @@
 """Row for the algebra word problem: Rational equation 0822
 
 Picture:      □ / ( □ − c ) = □ / ( 15 + c )   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
-Calculation:  reference - the problem is stored; no solver answers it yet
+Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py rational_equation/0822
 """
 import os
@@ -16,7 +16,7 @@ LIBRARY_KEY = 'rational_equation/0822'    # the problem in operators_one_algebra
 PATTERN = '□ / ( □ − c ) = □ / ( 15 + c )  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
-CALC = 'reference'
+CALC = 'ready'
 INPUTS = ['number 1', 'number 3', 'number 2']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
 BOX_INDEX = [0, 2, 1]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
 DEFAULTS = ['14', '15', '46']    # the boxes' numbers as written in the stored problem

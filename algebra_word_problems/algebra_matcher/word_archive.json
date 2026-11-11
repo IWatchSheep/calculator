@@ -1,0 +1,1747 @@
+{
+ "templates": {
+  "Wren is {0} times as old as Jamal. In {1} years, the sum of their ages will be {2}. How old is each now?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Wren is {0} times as old as Jamal. In {1} years, the sum of their ages will be {2}. How old is each now?",
+   "proven": false
+  },
+  "Ben is {0} years older than Sam. {1} years ago, Ben was twice as old as Sam. How old is each now?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Ben is {0} years older than Sam. {1} years ago, Ben was twice as old as Sam. How old is each now?",
+   "proven": false
+  },
+  "Dana is {0} times as old as Aiden. In {1} years, the sum of their ages will be {2}. How old is each now?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Dana is {0} times as old as Aiden. In {1} years, the sum of their ages will be {2}. How old is each now?",
+   "proven": false
+  },
+  "Uma is {0} times as old as Yusuf. In {1} years, the sum of their ages will be {2}. How old is each now?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Uma is {0} times as old as Yusuf. In {1} years, the sum of their ages will be {2}. How old is each now?",
+   "proven": false
+  },
+  "Noah is {0} times as old as Ava. In {1} years, the sum of their ages will be {2}. How old is each now?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Noah is {0} times as old as Ava. In {1} years, the sum of their ages will be {2}. How old is each now?",
+   "proven": false
+  },
+  "The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}. What is the missing number?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}. What is the missing number?",
+   "proven": true
+  },
+  "The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}, {6}. What is the missing number?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}, {6}. What is the missing number?",
+   "proven": true
+  },
+  "Class A has {0} students averaging {1}. Class B averages {2}. Together the classes average {3}. How many students are in class B?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Class A has {0} students averaging {1}. Class B averages {2}. Together the classes average {3}. How many students are in class B?",
+   "proven": true
+  },
+  "A course grade is {0}% coursework and {1}% final exam. Elena has a coursework average of {2}. What final exam score gives an overall grade of {3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A course grade is {0}% coursework and {1}% final exam. Elena has a coursework average of {2}. What final exam score gives an overall grade of {3}?",
+   "proven": false
+  },
+  "A course grade is {0}% coursework and {1}% final exam. Gus has a coursework average of {2}. What final exam score gives an overall grade of {3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A course grade is {0}% coursework and {1}% final exam. Gus has a coursework average of {2}. What final exam score gives an overall grade of {3}?",
+   "proven": false
+  },
+  "A course grade is {0}% coursework and {1}% final exam. Rhea has a coursework average of {2}. What final exam score gives an overall grade of {3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A course grade is {0}% coursework and {1}% final exam. Rhea has a coursework average of {2}. What final exam score gives an overall grade of {3}?",
+   "proven": false
+  },
+  "A course grade is {0}% coursework and {1}% final exam. Ivan has a coursework average of {2}. What final exam score gives an overall grade of {3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A course grade is {0}% coursework and {1}% final exam. Ivan has a coursework average of {2}. What final exam score gives an overall grade of {3}?",
+   "proven": false
+  },
+  "A course grade is {0}% coursework and {1}% final exam. Lena has a coursework average of {2}. What final exam score gives an overall grade of {3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A course grade is {0}% coursework and {1}% final exam. Lena has a coursework average of {2}. What final exam score gives an overall grade of {3}?",
+   "proven": false
+  },
+  "Electric utility plan A costs ${0} plus ${1} per kWh. Plan B costs ${2} plus ${3} per kWh. For how many kWhs do they cost the same?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Electric utility plan A costs ${0} plus ${1} per kWh. Plan B costs ${2} plus ${3} per kWh. For how many kWhs do they cost the same?",
+   "proven": false
+  },
+  "Service A has a ${0} sign-up fee and costs ${1}/month. Service B has no fee and costs ${2}/month. After how many months is the total cost the same?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Service A has a ${0} sign-up fee and costs ${1}/month. Service B has no fee and costs ${2}/month. After how many months is the total cost the same?",
+   "proven": true
+  },
+  "Job A pays ${0} a month plus {1}% commission. Job B pays ${2} a month plus {3}% commission. At what monthly sales total do both pay the same?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Job A pays ${0} a month plus {1}% commission. Job B pays ${2} a month plus {3}% commission. At what monthly sales total do both pay the same?",
+   "proven": true
+  },
+  "A food truck pays ${0} in daily costs, and each meal costs ${1} in ingredients. Meals sell for ${2}. How many meals a day cover the costs?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A food truck pays ${0} in daily costs, and each meal costs ${1} in ingredients. Meals sell for ${2}. How many meals a day cover the costs?",
+   "proven": true
+  },
+  "Buying a pressure washer costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Buying a pressure washer costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?",
+   "proven": true
+  },
+  "Car rental A costs ${0} plus ${1} per mile. Plan B costs ${2} plus ${3} per mile. For how many miles do they cost the same?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Car rental A costs ${0} plus ${1} per mile. Plan B costs ${2} plus ${3} per mile. For how many miles do they cost the same?",
+   "proven": true
+  },
+  "It costs ${0} to set up a print run plus ${1} per poster. Posters sell for ${2} each. How many must be sold to break even?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "It costs ${0} to set up a print run plus ${1} per poster. Posters sell for ${2} each. How many must be sold to break even?",
+   "proven": false
+  },
+  "Buying a carpet cleaner costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Buying a carpet cleaner costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?",
+   "proven": false
+  },
+  "Buying a kayak costs ${0}. Renting costs ${1} per use. After how many uses would renting cost the same as buying?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Buying a kayak costs ${0}. Renting costs ${1} per use. After how many uses would renting cost the same as buying?",
+   "proven": false
+  },
+  "Phone plan A costs ${0} plus ${1} per minute. Plan B costs ${2} plus ${3} per minute. For how many minutes do they cost the same?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Phone plan A costs ${0} plus ${1} per minute. Plan B costs ${2} plus ${3} per minute. For how many minutes do they cost the same?",
+   "proven": false
+  },
+  "Buying a pressure washer costs ${0}. Renting costs ${1} per use. After how many uses would renting cost the same as buying?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Buying a pressure washer costs ${0}. Renting costs ${1} per use. After how many uses would renting cost the same as buying?",
+   "proven": false
+  },
+  "At what time between {0}:{1} and {2}:{3} are the hour and minute hands of a clock exactly together?": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "At what time between {0}:{1} and {2}:{3} are the hour and minute hands of a clock exactly together?",
+   "proven": false
+  },
+  "Pablo has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Pablo has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?",
+   "proven": false
+  },
+  "A jar has quarters, dimes, and nickels worth ${0}. There are {1} more dimes than quarters and twice as many nickels as quarters. How many of each coin?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A jar has quarters, dimes, and nickels worth ${0}. There are {1} more dimes than quarters and twice as many nickels as quarters. How many of each coin?",
+   "proven": true
+  },
+  "Theo has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Theo has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?",
+   "proven": false
+  },
+  "Xena has {0} coins, all dimes and quarters, worth ${1} in total. How many of each coin are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Xena has {0} coins, all dimes and quarters, worth ${1} in total. How many of each coin are there?",
+   "proven": false
+  },
+  "Yusuf has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Yusuf has {0} coins, all nickels and quarters, worth ${1} in total. How many of each coin are there?",
+   "proven": false
+  },
+  "Oscar has {0} coins, all dimes and quarters, worth ${1} in total. How many of each coin are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Oscar has {0} coins, all dimes and quarters, worth ${1} in total. How many of each coin are there?",
+   "proven": false
+  },
+  "Of three consecutive even integers, the sum of the smallest and largest is {0}. Find all three.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Of three consecutive even integers, the sum of the smallest and largest is {0}. Find all three.",
+   "proven": true
+  },
+  "The average of {0} consecutive integers is {1}. What is the smallest?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "The average of {0} consecutive integers is {1}. What is the smallest?",
+   "proven": true
+  },
+  "Three consecutive integers are such that {0} times the smallest is {1} more than the largest. Find the integers.": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Three consecutive integers are such that {0} times the smallest is {1} more than the largest. Find the integers.",
+   "proven": true
+  },
+  "Three consecutive integers are such that {0} times the smallest is {1} less than the largest. Find the integers.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Three consecutive integers are such that {0} times the smallest is {1} less than the largest. Find the integers.",
+   "proven": false
+  },
+  "A plane flies {0} miles with the wind in {1} hours. Flying back against the same wind takes {2} hours. Find the plane's speed in still air and the wind speed.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "A plane flies {0} miles with the wind in {1} hours. Flying back against the same wind takes {2} hours. Find the plane's speed in still air and the wind speed.",
+   "proven": false
+  },
+  "In a two-digit number, the units digit is {0} times the tens digit. The number is {1} more than the sum of its digits. Find the number.": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "In a two-digit number, the units digit is {0} times the tens digit. The number is {1} more than the sum of its digits. Find the number.",
+   "proven": false
+  },
+  "The digits of a two-digit number add up to {0}. When the digits are reversed, the new number is {1} less than the original. Find the original number.": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "The digits of a two-digit number add up to {0}. When the digits are reversed, the new number is {1} less than the original. Find the original number.",
+   "proven": false
+  },
+  "The digits of a two-digit number add up to {0}. When the digits are reversed, the new number is {1} more than the original. Find the original number.": {
+   "tried": 2,
+   "matched": 0,
+   "pattern": "The digits of a two-digit number add up to {0}. When the digits are reversed, the new number is {1} more than the original. Find the original number.",
+   "proven": false
+  },
+  "Kofi drove {0} hour at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Kofi drove {0} hour at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?",
+   "proven": false
+  },
+  "A car goes from A to B at {0} km/h. How fast must it return so that the average speed for the round trip is {1} km/h?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A car goes from A to B at {0} km/h. How fast must it return so that the average speed for the round trip is {1} km/h?",
+   "proven": true
+  },
+  "Aiden drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?",
+   "proven": false
+  },
+  "Lena drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Lena drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?",
+   "proven": false
+  },
+  "Emeka drove {0} hour at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Emeka drove {0} hour at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?",
+   "proven": false
+  },
+  "Sofia drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Sofia drove {0} hours at {1} mph and then some hours at {2} mph. The average speed for the whole trip was {3} mph. How long was the second part?",
+   "proven": false
+  },
+  "Two runners start together on a {0} m track, one at {1} m/s and the other at {2} m/s. After how many seconds does the faster one lap the slower one?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Two runners start together on a {0} m track, one at {1} m/s and the other at {2} m/s. After how many seconds does the faster one lap the slower one?",
+   "proven": true
+  },
+  "Tara drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Tara drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?",
+   "proven": false
+  },
+  "A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2} hours. How fast was the outbound ride?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2} hours. How fast was the outbound ride?",
+   "proven": true
+  },
+  "Bea drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Bea drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?",
+   "proven": false
+  },
+  "A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2}/{3} hours. How fast was the outbound ride?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A cyclist rides {0} km to a town and returns {1} km/h faster. The whole trip takes {2}/{3} hours. How fast was the outbound ride?",
+   "proven": false
+  },
+  "Kofi drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Kofi drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?",
+   "proven": false
+  },
+  "Isla drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Isla drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?",
+   "proven": false
+  },
+  "Aiden drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?",
+   "proven": false
+  },
+  "Carla and Jamal live {0} miles apart. Carla drives toward Jamal at {1} mph. {2} hour later, Jamal starts driving toward Carla at {3} mph. How long after Jamal leaves do they meet?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Carla and Jamal live {0} miles apart. Carla drives toward Jamal at {1} mph. {2} hour later, Jamal starts driving toward Carla at {3} mph. How long after Jamal leaves do they meet?",
+   "proven": false
+  },
+  "Emeka and Quinn live {0} miles apart. Emeka drives toward Quinn at {1} mph. {2} hours later, Quinn starts driving toward Emeka at {3} mph. How long after Quinn leaves do they meet?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Emeka and Quinn live {0} miles apart. Emeka drives toward Quinn at {1} mph. {2} hours later, Quinn starts driving toward Emeka at {3} mph. How long after Quinn leaves do they meet?",
+   "proven": false
+  },
+  "Yusuf and Theo live {0} miles apart. Yusuf drives toward Theo at {1} mph. {2} hours later, Theo starts driving toward Yusuf at {3} mph. How long after Theo leaves do they meet?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Yusuf and Theo live {0} miles apart. Yusuf drives toward Theo at {1} mph. {2} hours later, Theo starts driving toward Yusuf at {3} mph. How long after Theo leaves do they meet?",
+   "proven": false
+  },
+  "Carla and Zane live {0} miles apart. Carla drives toward Zane at {1} mph. {2} hour later, Zane starts driving toward Carla at {3} mph. How long after Zane leaves do they meet?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Carla and Zane live {0} miles apart. Carla drives toward Zane at {1} mph. {2} hour later, Zane starts driving toward Carla at {3} mph. How long after Zane leaves do they meet?",
+   "proven": false
+  },
+  "Victor and Aiden live {0} miles apart. Victor drives toward Aiden at {1} mph. {2} hour later, Aiden starts driving toward Victor at {3} mph. How long after Aiden leaves do they meet?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Victor and Aiden live {0} miles apart. Victor drives toward Aiden at {1} mph. {2} hour later, Aiden starts driving toward Victor at {3} mph. How long after Aiden leaves do they meet?",
+   "proven": false
+  },
+  "Pablo walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Pablo walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?",
+   "proven": false
+  },
+  "Lena walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Lena walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?",
+   "proven": false
+  },
+  "Quinn walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Quinn walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?",
+   "proven": false
+  },
+  "Hana walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Hana walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?",
+   "proven": false
+  },
+  "Kira walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Kira walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?",
+   "proven": false
+  },
+  "Solve P = {0}l + {1}w for w when P = {2} and l = {3}.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "Solve P = {0}l + {1}w for w when P = {2} and l = {3}.",
+   "proven": true
+  },
+  "Using V = IR, find the current when the voltage is {0} V and the resistance is {1} \u03a9.": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Using V = IR, find the current when the voltage is {0} V and the resistance is {1} \u03a9.",
+   "proven": true
+  },
+  "At what Celsius temperature is the Fahrenheit reading exactly {0} times the Celsius reading? (F = ({1}/{2})C + {3})": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "At what Celsius temperature is the Fahrenheit reading exactly {0} times the Celsius reading? (F = ({1}/{2})C + {3})",
+   "proven": false
+  },
+  "An object has a mass of {0} g and a density of {1} g/cm\u00b3. Using density = mass/volume, find its volume.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "An object has a mass of {0} g and a density of {1} g/cm\u00b3. Using density = mass/volume, find its volume.",
+   "proven": true
+  },
+  "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade ({0} kg) sits {1} m from the pivot. How far from the pivot must Theo ({2} kg) sit to balance?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade ({0} kg) sits {1} m from the pivot. How far from the pivot must Theo ({2} kg) sit to balance?",
+   "proven": false
+  },
+  "Using F = ({0}/{1})C + {2}, what Celsius temperature equals {3}\u00b0F?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Using F = ({0}/{1})C + {2}, what Celsius temperature equals {3}\u00b0F?",
+   "proven": true
+  },
+  "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Yara ({0} kg) sits {1} m from the pivot. How far from the pivot must Priya ({2} kg) sit to balance?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Yara ({0} kg) sits {1} m from the pivot. How far from the pivot must Priya ({2} kg) sit to balance?",
+   "proven": false
+  },
+  "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sofia ({0} kg) sits {1} m from the pivot. How far from the pivot must Mateo ({2} kg) sit to balance?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sofia ({0} kg) sits {1} m from the pivot. How far from the pivot must Mateo ({2} kg) sit to balance?",
+   "proven": false
+  },
+  "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Ivan ({0} kg) sits {1} m from the pivot. How far from the pivot must Pablo ({2} kg) sit to balance?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Ivan ({0} kg) sits {1} m from the pivot. How far from the pivot must Pablo ({2} kg) sit to balance?",
+   "proven": false
+  },
+  "Using V = IR, find the resistance (in ohms) when the voltage is {0} V and the current is {1} A.": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Using V = IR, find the resistance (in ohms) when the voltage is {0} V and the current is {1} A.",
+   "proven": true
+  },
+  "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sam ({0} kg) sits {1} m from the pivot. How far from the pivot must Sofia ({2} kg) sit to balance?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sam ({0} kg) sits {1} m from the pivot. How far from the pivot must Sofia ({2} kg) sit to balance?",
+   "proven": false
+  },
+  "Maya spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Maya spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?",
+   "proven": false
+  },
+  "A puzzle: a man spent {0}/{1} of his life as a boy, {2}/{3} more as a youth, and {4}/{5} more before marrying. {6} years later a son was born, who lived {7}/{8} as long as his father. The father died {9} years after the son. How long did the father live?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A puzzle: a man spent {0}/{1} of his life as a boy, {2}/{3} more as a youth, and {4}/{5} more before marrying. {6} years later a son was born, who lived {7}/{8} as long as his father. The father died {9} years after the son. How long did the father live?",
+   "proven": false
+  },
+  "A gas tank is {0}/{1} full. Adding {2} gallons fills it to {3}/{4}. How much does the tank hold?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "A gas tank is {0}/{1} full. Adding {2} gallons fills it to {3}/{4}. How much does the tank hold?",
+   "proven": true
+  },
+  "Sofia read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Sofia read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?",
+   "proven": false
+  },
+  "A tank is {0}/{1} full. After {2} liters are added, it is {3}/{4} full. What is the tank's capacity?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "A tank is {0}/{1} full. After {2} liters are added, it is {3}/{4} full. What is the tank's capacity?",
+   "proven": true
+  },
+  "Gus spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Gus spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?",
+   "proven": false
+  },
+  "Omar read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Omar read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?",
+   "proven": false
+  },
+  "Sam read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Sam read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?",
+   "proven": false
+  },
+  "Yara spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Yara spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?",
+   "proven": false
+  },
+  "Uma spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Uma spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?",
+   "proven": false
+  },
+  "Isla read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Isla read {0}/{1} of a book on Monday and {2}/{3} of the remaining pages on Tuesday. {4} pages are left. How many pages does the book have?",
+   "proven": false
+  },
+  "Aiden spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden spent {0}/{1} of their money on a game and then {2}/{3} of what was left on lunch, leaving ${4}. How much did they start with?",
+   "proven": false
+  },
+  "Two angles form a linear pair. One measures ({0}x + {1})\u00b0 and the other ({2}x + {3})\u00b0. Find both angles.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Two angles form a linear pair. One measures ({0}x + {1})\u00b0 and the other ({2}x + {3})\u00b0. Find both angles.",
+   "proven": false
+  },
+  "In an isosceles triangle, the vertex angle is {0}\u00b0 more than each base angle. Find all three angles.": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "In an isosceles triangle, the vertex angle is {0}\u00b0 more than each base angle. Find all three angles.",
+   "proven": true
+  },
+  "In a triangle, the second angle is {0} times the first, and the third angle is {1} more than the first. Find all three angles.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "In a triangle, the second angle is {0} times the first, and the third angle is {1} more than the first. Find all three angles.",
+   "proven": true
+  },
+  "An exterior angle of a triangle measures ({0}x + {1})\u00b0. The two remote interior angles measure ({2}x + {3})\u00b0 and ({4}x \u2212 {5})\u00b0. Find x and the exterior angle.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "An exterior angle of a triangle measures ({0}x + {1})\u00b0. The two remote interior angles measure ({2}x + {3})\u00b0 and ({4}x \u2212 {5})\u00b0. Find x and the exterior angle.",
+   "proven": true
+  },
+  "Angles A and B lie on a straight line. A = ({0}x \u2212 {1})\u00b0 and B = ({2}x + {3})\u00b0. What are A and B?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Angles A and B lie on a straight line. A = ({0}x \u2212 {1})\u00b0 and B = ({2}x + {3})\u00b0. What are A and B?",
+   "proven": false
+  },
+  "Two vertical angles measure ({0}x \u2212 {1})\u00b0 and ({2}x + {3})\u00b0. Find x and the angle measure.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Two vertical angles measure ({0}x \u2212 {1})\u00b0 and ({2}x + {3})\u00b0. Find x and the angle measure.",
+   "proven": false
+  },
+  "Angles A and B lie on a straight line. A = ({0}x + {1})\u00b0 and B = ({2}x + {3})\u00b0. What are A and B?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Angles A and B lie on a straight line. A = ({0}x + {1})\u00b0 and B = ({2}x + {3})\u00b0. What are A and B?",
+   "proven": false
+  },
+  "In an isosceles triangle, the vertex angle is {0}\u00b0 less than each base angle. Find all three angles.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "In an isosceles triangle, the vertex angle is {0}\u00b0 less than each base angle. Find all three angles.",
+   "proven": false
+  },
+  "Two angles form a linear pair. One measures ({0}x + {1})\u00b0 and the other ({2}x \u2212 {3})\u00b0. Find both angles.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Two angles form a linear pair. One measures ({0}x + {1})\u00b0 and the other ({2}x \u2212 {3})\u00b0. Find both angles.",
+   "proven": false
+  },
+  "Angles A and B lie on a straight line. A = ({0}x \u2212 {1})\u00b0 and B = ({2}x \u2212 {3})\u00b0. What are A and B?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Angles A and B lie on a straight line. A = ({0}x \u2212 {1})\u00b0 and B = ({2}x \u2212 {3})\u00b0. What are A and B?",
+   "proven": false
+  },
+  "If each side of a square is increased by {0} cm, its area increases by {1} cm\u00b2. Find the original side length.": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "If each side of a square is increased by {0} cm, its area increases by {1} cm\u00b2. Find the original side length.",
+   "proven": false
+  },
+  "A rectangle's length is twice its width. If the length is decreased by {0} m and the width increased by {1} m, the area stays the same. Find the original dimensions.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "A rectangle's length is twice its width. If the length is decreased by {0} m and the width increased by {1} m, the area stays the same. Find the original dimensions.",
+   "proven": false
+  },
+  "A trapezoid has parallel sides of {0} cm and {1} cm and an area of {2} cm\u00b2. Find its height.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A trapezoid has parallel sides of {0} cm and {1} cm and an area of {2} cm\u00b2. Find its height.",
+   "proven": true
+  },
+  "A triangle has an area of {0} m\u00b2 and a height of {1} m. How long is its base?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A triangle has an area of {0} m\u00b2 and a height of {1} m. How long is its base?",
+   "proven": true
+  },
+  "Each side of a square is ({0}x + {1}) cm. The perimeter is {2} cm. Find x and the side length.": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Each side of a square is ({0}x + {1}) cm. The perimeter is {2} cm. Find x and the side length.",
+   "proven": true
+  },
+  "A window is a rectangle {0} ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is {1} ft. How wide is the window?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A window is a rectangle {0} ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is {1} ft. How wide is the window?",
+   "proven": true
+  },
+  "Each side of a square is ({0}x \u2212 {1}) cm. The perimeter is {2} cm. Find x and the side length.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Each side of a square is ({0}x \u2212 {1}) cm. The perimeter is {2} cm. Find x and the side length.",
+   "proven": false
+  },
+  "Each interior angle of a regular polygon measures {0}\u00b0. How many sides does the polygon have?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Each interior angle of a regular polygon measures {0}\u00b0. How many sides does the polygon have?",
+   "proven": true
+  },
+  "Each exterior angle of a regular polygon is {0}\u00b0. How many sides does it have?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Each exterior angle of a regular polygon is {0}\u00b0. How many sides does it have?",
+   "proven": true
+  },
+  "A rectangular field is {0} m long. A diagonal path across it is {1} m long. How wide is the field?": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "A rectangular field is {0} m long. A diagonal path across it is {1} m long. How wide is the field?",
+   "proven": false
+  },
+  "A {0} ft ladder leans against a wall with its foot {1} ft from the wall. How high up the wall does it reach?": {
+   "tried": 2,
+   "matched": 0,
+   "pattern": "A {0} ft ladder leans against a wall with its foot {1} ft from the wall. How high up the wall does it reach?",
+   "proven": false
+  },
+  "One leg of a right triangle is {0} cm longer than the other. The hypotenuse is {1} cm. Find the legs.": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "One leg of a right triangle is {0} cm longer than the other. The hypotenuse is {1} cm. Find the legs.",
+   "proven": false
+  },
+  "A rectangular TV screen is {0} in tall with a diagonal of {1} in. How wide is it?": {
+   "tried": 2,
+   "matched": 0,
+   "pattern": "A rectangular TV screen is {0} in tall with a diagonal of {1} in. How wide is it?",
+   "proven": false
+  },
+  "The hypotenuse of a right triangle is {0} in, and one leg is {1} in longer than the other leg. How long are the legs?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "The hypotenuse of a right triangle is {0} in, and one leg is {1} in longer than the other leg. How long are the legs?",
+   "proven": false
+  },
+  "A {0} m support wire runs from the top of a pole to a stake {1} m from the pole's base. How tall is the pole?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A {0} m support wire runs from the top of a pole to a stake {1} m from the pole's base. How tall is the pole?",
+   "proven": false
+  },
+  "A ramp is {0} ft long and covers a horizontal distance of {1} ft; how high does it rise?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A ramp is {0} ft long and covers a horizontal distance of {1} ft; how high does it rise?",
+   "proven": false
+  },
+  "A farmer has {0} m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of {1} m\u00b2. What dimensions work?": {
+   "tried": 4,
+   "matched": 1,
+   "pattern": "A farmer has {0} m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of {1} m\u00b2. What dimensions work?",
+   "proven": false
+  },
+  "Squares of side x are cut from each corner of a {0} cm by {1} cm sheet, and the sides are folded up to make an open box. The base of the box has area {2} cm\u00b2. Find x.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Squares of side x are cut from each corner of a {0} cm by {1} cm sheet, and the sides are folded up to make an open box. The base of the box has area {2} cm\u00b2. Find x.",
+   "proven": true
+  },
+  "A rectangle's length is {0} m more than its width, and its area is {1} m\u00b2. Find the dimensions.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A rectangle's length is {0} m more than its width, and its area is {1} m\u00b2. Find the dimensions.",
+   "proven": true
+  },
+  "A {0} ft by {1} ft garden has a path of uniform width around it. The path's area is {2} ft\u00b2. How wide is the path?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A {0} ft by {1} ft garden has a path of uniform width around it. The path's area is {2} ft\u00b2. How wide is the path?",
+   "proven": true
+  },
+  "The height of a triangle is {0} cm more than its base. The area is {1} cm\u00b2. Find the base and height.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "The height of a triangle is {0} cm more than its base. The area is {1} cm\u00b2. Find the base and height.",
+   "proven": true
+  },
+  "A {0} in \u00d7 {1} in photo is surrounded by a frame of uniform width. The framed picture covers {2} in\u00b2. How wide is the frame?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A {0} in \u00d7 {1} in photo is surrounded by a frame of uniform width. The framed picture covers {2} in\u00b2. How wide is the frame?",
+   "proven": true
+  },
+  "The length of a rectangle is {0} less than {1} times its width. The perimeter is {2} cm. Find the dimensions.": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "The length of a rectangle is {0} less than {1} times its width. The perimeter is {2} cm. Find the dimensions.",
+   "proven": true
+  },
+  "The length of a rectangle is {0} more than its width. The perimeter is {1} cm. Find the dimensions.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "The length of a rectangle is {0} more than its width. The perimeter is {1} cm. Find the dimensions.",
+   "proven": false
+  },
+  "The length of a rectangle is {0} more than {1} times its width. The perimeter is {2} cm. Find the dimensions.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "The length of a rectangle is {0} more than {1} times its width. The perimeter is {2} cm. Find the dimensions.",
+   "proven": false
+  },
+  "Each of the two equal sides of an isosceles triangle is {0} cm longer than the base. The perimeter is {1} cm. Find the side lengths.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "Each of the two equal sides of an isosceles triangle is {0} cm longer than the base. The perimeter is {1} cm. Find the side lengths.",
+   "proven": true
+  },
+  "A triangle's second side is {0} in longer than the first, and its third side is {1} in less than twice the first. If the perimeter is {2} in, how long is each side?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A triangle's second side is {0} in longer than the first, and its third side is {1} in less than twice the first. If the perimeter is {2} in, how long is each side?",
+   "proven": true
+  },
+  "The sides of a triangle are x, x + {0}, and {1}x \u2212 {2} inches long. The perimeter is {3} inches. Find each side.": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "The sides of a triangle are x, x + {0}, and {1}x \u2212 {2} inches long. The perimeter is {3} inches. Find each side.",
+   "proven": true
+  },
+  "A rectangular box is {0} in long and {1} in wide. Its volume is {2} in\u00b3. How tall is it?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A rectangular box is {0} in long and {1} in wide. Its volume is {2} in\u00b3. How tall is it?",
+   "proven": true
+  },
+  "An aquarium {0} dm long and {1} dm wide holds {2} dm\u00b3 of water when full. How deep is it?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "An aquarium {0} dm long and {1} dm wide holds {2} dm\u00b3 of water when full. How deep is it?",
+   "proven": false
+  },
+  "Elena has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Elena has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?",
+   "proven": false
+  },
+  "Plan A costs ${0} plus ${1} per minute. Plan B costs ${2} plus ${3} per minute. What is the fewest whole minutes for which Plan B is cheaper?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "Plan A costs ${0} plus ${1} per minute. Plan B costs ${2} plus ${3} per minute. What is the fewest whole minutes for which Plan B is cheaper?",
+   "proven": false
+  },
+  "A rectangular garden is {0} ft long, and there is at most {1} ft of fencing. What is the greatest whole-number width possible?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "A rectangular garden is {0} ft long, and there is at most {1} ft of fencing. What is the greatest whole-number width possible?",
+   "proven": false
+  },
+  "Isla's test scores are {0}, {1}. What is the lowest score on the next test that gives an average of at least {2}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Isla's test scores are {0}, {1}. What is the lowest score on the next test that gives an average of at least {2}?",
+   "proven": false
+  },
+  "A salesperson earns ${0} a week plus {1}% of sales. What is the least (whole-dollar) amount of sales needed to earn at least ${2}?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "A salesperson earns ${0} a week plus {1}% of sales. What is the least (whole-dollar) amount of sales needed to earn at least ${2}?",
+   "proven": false
+  },
+  "Isla has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Isla has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?",
+   "proven": false
+  },
+  "Lena's test scores are {0}, {1}, {2}, {3}, {4}. What is the lowest score on the next test that gives an average of at least {5}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Lena's test scores are {0}, {1}, {2}, {3}, {4}. What is the lowest score on the next test that gives an average of at least {5}?",
+   "proven": false
+  },
+  "Jade has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Jade has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?",
+   "proven": false
+  },
+  "Emeka's test scores are {0}, {1}, {2}, {3}, {4}. What is the lowest score on the next test that gives an average of at least {5}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Emeka's test scores are {0}, {1}, {2}, {3}, {4}. What is the lowest score on the next test that gives an average of at least {5}?",
+   "proven": false
+  },
+  "Lena's test scores are {0}, {1}, {2}. What is the lowest score on the next test that gives an average of at least {3}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Lena's test scores are {0}, {1}, {2}. What is the lowest score on the next test that gives an average of at least {3}?",
+   "proven": false
+  },
+  "Ivan has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Ivan has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?",
+   "proven": false
+  },
+  "Gus's test scores are {0}, {1}, {2}, {3}. What is the lowest score on the next test that gives an average of at least {4}?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Gus's test scores are {0}, {1}, {2}, {3}. What is the lowest score on the next test that gives an average of at least {4}?",
+   "proven": false
+  },
+  "{0} workers can build a wall in {1} days. At the same rate, how many days would {2} workers take?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "{0} workers can build a wall in {1} days. At the same rate, how many days would {2} workers take?",
+   "proven": true
+  },
+  "A gear with {0} teeth turning at {1} rpm drives a gear with {2} teeth. Teeth \u00d7 rpm is the same for both gears. How fast does the second gear turn?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A gear with {0} teeth turning at {1} rpm drives a gear with {2} teeth. Teeth \u00d7 rpm is the same for both gears. How fast does the second gear turn?",
+   "proven": true
+  },
+  "At {0} km/h a trip takes {1} hours. Time varies inversely with speed. How long would it take at {2} km/h?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "At {0} km/h a trip takes {1} hours. Time varies inversely with speed. How long would it take at {2} km/h?",
+   "proven": true
+  },
+  "{0} workers working {1} hours a day finish a job in {2} days. How many days would {3} workers working {4} hours a day take?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "{0} workers working {1} hours a day finish a job in {2} days. How many days would {3} workers working {4} hours a day take?",
+   "proven": true
+  },
+  "Bowling costs ${0} per game plus ${1} for shoe rental. Uma spent ${2}. How many games were bowled?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Bowling costs ${0} per game plus ${1} for shoe rental. Uma spent ${2}. How many games were bowled?",
+   "proven": false
+  },
+  "An electric bill is ${0} per month plus ${1} per kWh. This month's bill is ${2}. How many kWh were used?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "An electric bill is ${0} per month plus ${1} per kWh. This month's bill is ${2}. How many kWh were used?",
+   "proven": true
+  },
+  "A parking garage charges ${0} for the first hour and ${1} for each additional hour. A driver paid ${2}. How many hours did they park?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A parking garage charges ${0} for the first hour and ${1} for each additional hour. A driver paid ${2}. How many hours did they park?",
+   "proven": true
+  },
+  "A rental car costs ${0} per day plus ${1} per mile. A {2}-day rental cost ${3}. How many miles were driven?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A rental car costs ${0} per day plus ${1} per mile. A {2}-day rental cost ${3}. How many miles were driven?",
+   "proven": true
+  },
+  "Sam earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Sam earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?",
+   "proven": false
+  },
+  "Pablo earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Pablo earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?",
+   "proven": false
+  },
+  "Bowling costs ${0} per game plus ${1} for shoe rental. Nia spent ${2}. How many games were bowled?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Bowling costs ${0} per game plus ${1} for shoe rental. Nia spent ${2}. How many games were bowled?",
+   "proven": false
+  },
+  "Bowling costs ${0} per game plus ${1} for shoe rental. Theo spent ${2}. How many games were bowled?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Bowling costs ${0} per game plus ${1} for shoe rental. Theo spent ${2}. How many games were bowled?",
+   "proven": false
+  },
+  "Priya earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Priya earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?",
+   "proven": false
+  },
+  "Notebooks cost ${0} each. With a ${1} coupon, Bea paid ${2}. How many notebooks were bought?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Notebooks cost ${0} each. With a ${1} coupon, Bea paid ${2}. How many notebooks were bought?",
+   "proven": false
+  },
+  "Bowling costs ${0} per game plus ${1} for shoe rental. Wren spent ${2}. How many games were bowled?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Bowling costs ${0} per game plus ${1} for shoe rental. Wren spent ${2}. How many games were bowled?",
+   "proven": false
+  },
+  "Caleb earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Caleb earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?",
+   "proven": false
+  },
+  "Jamal earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Jamal earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?",
+   "proven": false
+  },
+  "Sound travels about {0} m/s, so d = {1}t. A storm is {2} m away. How many seconds after the lightning flash will the thunder be heard?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "Sound travels about {0} m/s, so d = {1}t. A storm is {2} m away. How many seconds after the lightning flash will the thunder be heard?",
+   "proven": true
+  },
+  "A tractor bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A tractor bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?",
+   "proven": true
+  },
+  "A club has raised ${0} so far. At its bake sale it charges ${1} per box of cookies. How many more boxes must it sell to reach its ${2} goal?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A club has raised ${0} so far. At its bake sale it charges ${1} per box of cookies. How many more boxes must it sell to reach its ${2} goal?",
+   "proven": true
+  },
+  "A hot-air balloon at {0} ft descends {1} ft per minute. Another at {2} ft rises {3} ft per minute. When are they at the same height?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A hot-air balloon at {0} ft descends {1} ft per minute. Another at {2} ft rises {3} ft per minute. When are they at the same height?",
+   "proven": true
+  },
+  "A phone at {0}% battery loses {1}% per hour. After how many hours will it be at {2}%?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A phone at {0}% battery loses {1}% per hour. After how many hours will it be at {2}%?",
+   "proven": true
+  },
+  "A club has raised ${0} so far. At its car wash it charges ${1} per car. How many more cars must it sell to reach its ${2} goal?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A club has raised ${0} so far. At its car wash it charges ${1} per car. How many more cars must it sell to reach its ${2} goal?",
+   "proven": false
+  },
+  "A delivery van bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A delivery van bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?",
+   "proven": false
+  },
+  "How much water must be added to {0} L of a {1}% salt solution to make it {2}% salt?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "How much water must be added to {0} L of a {1}% salt solution to make it {2}% salt?",
+   "proven": true
+  },
+  "A {0} L tank of {1}% salt water is left to evaporate until it is {2}% salt. How much water evaporates?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A {0} L tank of {1}% salt water is left to evaporate until it is {2}% salt. How much water evaporates?",
+   "proven": true
+  },
+  "How many liters of pure antifreeze must be added to {0} L of a {1}% antifreeze mix to get a {2}% mix?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "How many liters of pure antifreeze must be added to {0} L of a {1}% antifreeze mix to get a {2}% mix?",
+   "proven": true
+  },
+  "A {0}-liter radiator holds a {1}% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to {2}%?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A {0}-liter radiator holds a {1}% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to {2}%?",
+   "proven": true
+  },
+  "A {0} L batch of {1}% juice concentrate is diluted with water to {2}% juice. How much water is added?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A {0} L batch of {1}% juice concentrate is diluted with water to {2}% juice. How much water is added?",
+   "proven": true
+  },
+  "The second of three numbers is {0} times the first. The third is {1} more than the second. Their sum is {2}. Find the numbers.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "The second of three numbers is {0} times the first. The third is {1} more than the second. Their sum is {2}. Find the numbers.",
+   "proven": true
+  },
+  "Tara has {0} more than {1} times as many stamps as Aiden. Together they have {2} stamps. How many does each have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Tara has {0} more than {1} times as many stamps as Aiden. Together they have {2} stamps. How many does each have?",
+   "proven": false
+  },
+  "Aiden has {0} times as much money as Fatima. After Aiden gives Fatima ${1}, they have the same amount. How much did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden has {0} times as much money as Fatima. After Aiden gives Fatima ${1}, they have the same amount. How much did each have at first?",
+   "proven": false
+  },
+  "Grace has {0} times as much money as Nia. After Grace gives Nia ${1}, they have the same amount. How much did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Grace has {0} times as much money as Nia. After Grace gives Nia ${1}, they have the same amount. How much did each have at first?",
+   "proven": false
+  },
+  "Grace has {0} more than {1} times as many stamps as Uma. Together they have {2} stamps. How many does each have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Grace has {0} more than {1} times as many stamps as Uma. Together they have {2} stamps. How many does each have?",
+   "proven": false
+  },
+  "Wren has {0} times as much money as Sam. After Wren gives Sam ${1}, they have the same amount. How much did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Wren has {0} times as much money as Sam. After Wren gives Sam ${1}, they have the same amount. How much did each have at first?",
+   "proven": false
+  },
+  "Caleb has {0} more than {1} times as many stamps as Bea. Together they have {2} stamps. How many does each have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Caleb has {0} more than {1} times as many stamps as Bea. Together they have {2} stamps. How many does each have?",
+   "proven": false
+  },
+  "Ben has {0} times as much money as Dev. After Ben gives Dev ${1}, they have the same amount. How much did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Ben has {0} times as much money as Dev. After Ben gives Dev ${1}, they have the same amount. How much did each have at first?",
+   "proven": false
+  },
+  "Isla has {0} more than {1} times as many stamps as Caleb. Together they have {2} stamps. How many does each have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Isla has {0} more than {1} times as many stamps as Caleb. Together they have {2} stamps. How many does each have?",
+   "proven": false
+  },
+  "Victor has {0} times as much money as Yara. After Victor gives Yara ${1}, they have the same amount. How much did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Victor has {0} times as much money as Yara. After Victor gives Yara ${1}, they have the same amount. How much did each have at first?",
+   "proven": false
+  },
+  "Maya has {0} more than {1} times as many stamps as Ben. Together they have {2} stamps. How many does each have?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Maya has {0} more than {1} times as many stamps as Ben. Together they have {2} stamps. How many does each have?",
+   "proven": false
+  },
+  "What percent of {0} is {1}?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "What percent of {0} is {1}?",
+   "proven": true
+  },
+  "{0} is {1}% of what number?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "{0} is {1}% of what number?",
+   "proven": true
+  },
+  "{0} friends split a restaurant bill equally, including a {1}% tip. Each paid ${2}. What was the bill before the tip?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "{0} friends split a restaurant bill equally, including a {1}% tip. Each paid ${2}. What was the bill before the tip?",
+   "proven": true
+  },
+  "{0}% of the students in a club are boys. There are {1} girls. How many students are in the club?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "{0}% of the students in a club are boys. There are {1} girls. How many students are in the club?",
+   "proven": true
+  },
+  "A stock's price rose {0}% one month and then fell {1}% the next, ending at ${2}. What was the starting price?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A stock's price rose {0}% one month and then fell {1}% the next, ending at ${2}. What was the starting price?",
+   "proven": true
+  },
+  "{0} out of {1} students passed. What percent passed?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "{0} out of {1} students passed. What percent passed?",
+   "proven": true
+  },
+  "Theo earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Theo earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?",
+   "proven": false
+  },
+  "Isla earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Isla earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?",
+   "proven": false
+  },
+  "A salesperson gets ${0} per week plus {1}% of everything they sell. To earn ${2} in a week, how much must they sell?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "A salesperson gets ${0} per week plus {1}% of everything they sell. To earn ${2} in a week, how much must they sell?",
+   "proven": true
+  },
+  "Nia earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Nia earns a weekly base pay of ${0} plus {1}% commission on sales. One week the total pay was ${2}. What were the sales?",
+   "proven": false
+  },
+  "A candle shop has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "A candle shop has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?",
+   "proven": true
+  },
+  "A T-shirt business has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A T-shirt business has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?",
+   "proven": false
+  },
+  "A bakery stall has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A bakery stall has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?",
+   "proven": false
+  },
+  "A model car is built at a {0}:{1} scale. The real car is {2} cm long. How long is the model?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A model car is built at a {0}:{1} scale. The real car is {2} cm long. How long is the model?",
+   "proven": true
+  },
+  "On a map, {0} cm represents {1} km. Two cities are {2} km apart. How far apart are they on the map?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "On a map, {0} cm represents {1} km. Two cities are {2} km apart. How far apart are they on the map?",
+   "proven": true
+  },
+  "A {0} ft person casts a {1} ft shadow. At the same time a tree casts a {2} ft shadow. How tall is the tree?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "A {0} ft person casts a {1} ft shadow. At the same time a tree casts a {2} ft shadow. How tall is the tree?",
+   "proven": true
+  },
+  "At noon a {0} m post casts a {1} m shadow, and a building nearby casts a {2} m shadow. How tall is the building?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "At noon a {0} m post casts a {1} m shadow, and a building nearby casts a {2} m shadow. How tall is the building?",
+   "proven": true
+  },
+  "The square of a positive number is {0} more than {1} times the number. Find the number.": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "The square of a positive number is {0} more than {1} times the number. Find the number.",
+   "proven": false
+  },
+  "The sum of the squares of two consecutive positive integers is {0}. Find the integers.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "The sum of the squares of two consecutive positive integers is {0}. Find the integers.",
+   "proven": false
+  },
+  "The square of a positive number plus {0} times the number equals {1}. Find the number.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "The square of a positive number plus {0} times the number equals {1}. Find the number.",
+   "proven": false
+  },
+  "A polygon has {0} diagonals. Using D = n(n \u2212 {1})/{2}, how many sides does it have?": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "A polygon has {0} diagonals. Using D = n(n \u2212 {1})/{2}, how many sides does it have?",
+   "proven": false
+  },
+  "Two numbers add up to {0} and multiply to {1}. What are they?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "Two numbers add up to {0} and multiply to {1}. What are they?",
+   "proven": true
+  },
+  "The sum of two numbers is {0} and their product is {1}. Find the numbers.": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "The sum of two numbers is {0} and their product is {1}. Find the numbers.",
+   "proven": true
+  },
+  "At a party everyone shook hands with everyone else exactly once, for {0} handshakes. How many people were there?": {
+   "tried": 2,
+   "matched": 0,
+   "pattern": "At a party everyone shook hands with everyone else exactly once, for {0} handshakes. How many people were there?",
+   "proven": false
+  },
+  "In a round-robin tournament each team plays every other team once, for {0} games. How many teams are there?": {
+   "tried": 2,
+   "matched": 0,
+   "pattern": "In a round-robin tournament each team plays every other team once, for {0} games. How many teams are there?",
+   "proven": false
+  },
+  "A rocket is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "A rocket is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?",
+   "proven": false
+  },
+  "A rock is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A rock is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?",
+   "proven": false
+  },
+  "A stone is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A stone is launched upward from a height of {0} ft at {1} ft/s. Its height is h = \u2212{2}t\u00b2 + {3}t + {4}. After how many seconds does it hit the ground?",
+   "proven": false
+  },
+  "How many consecutive whole numbers, starting from {0}, must be added to get a sum of {1}? (Use {2} + {3} + \u2026 + n = n(n + {4})/{5}.)": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "How many consecutive whole numbers, starting from {0}, must be added to get a sum of {1}? (Use {2} + {3} + \u2026 + n = n(n + {4})/{5}.)",
+   "proven": true
+  },
+  "A stack of cans has {0} can in the top row, and each row below has {1} more than the row above. The stack has {2} cans in total. How many rows are there?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A stack of cans has {0} can in the top row, and each row below has {1} more than the row above. The stack has {2} cans in total. How many rows are there?",
+   "proven": false
+  },
+  "A stack of cans has {0} cans in the top row, and each row below has {1} more than the row above. The stack has {2} cans in total. How many rows are there?": {
+   "tried": 4,
+   "matched": 3,
+   "pattern": "A stack of cans has {0} cans in the top row, and each row below has {1} more than the row above. The stack has {2} cans in total. How many rows are there?",
+   "proven": false
+  },
+  "An estate of ${0} is split among three heirs. Wes gets {1} times as much as Nia, and Noah gets ${2} more than Nia. How much does each receive?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "An estate of ${0} is split among three heirs. Wes gets {1} times as much as Nia, and Noah gets ${2} more than Nia. How much does each receive?",
+   "proven": false
+  },
+  "A mix uses cement, sand, and gravel in the ratio {0}:{1}:{2}. The total is {3} kg. How much of each is used?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A mix uses cement, sand, and gravel in the ratio {0}:{1}:{2}. The total is {3} kg. How much of each is used?",
+   "proven": false
+  },
+  "The ratio of Yusuf's marbles to Dev's is {0}:{1}. After Yusuf gives Dev {2} marbles, the ratio is {3}:{4}. How many did each have at first?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "The ratio of Yusuf's marbles to Dev's is {0}:{1}. After Yusuf gives Dev {2} marbles, the ratio is {3}:{4}. How many did each have at first?",
+   "proven": false
+  },
+  "Sofia and Pablo invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Sofia and Pablo invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?",
+   "proven": false
+  },
+  "A {0} m rope is cut into two pieces in the ratio {1}:{2}. How long is each piece?": {
+   "tried": 4,
+   "matched": 1,
+   "pattern": "A {0} m rope is cut into two pieces in the ratio {1}:{2}. How long is each piece?",
+   "proven": false
+  },
+  "A mix uses flour, sugar, and butter in the ratio {0}:{1}:{2}. The total is {3} g. How much of each is used?": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "A mix uses flour, sugar, and butter in the ratio {0}:{1}:{2}. The total is {3} g. How much of each is used?",
+   "proven": false
+  },
+  "The ratio of Hana's marbles to Maya's is {0}:{1}. After Hana gives Maya {2} marbles, the ratio is {3}:{4}. How many did each have at first?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "The ratio of Hana's marbles to Maya's is {0}:{1}. After Hana gives Maya {2} marbles, the ratio is {3}:{4}. How many did each have at first?",
+   "proven": false
+  },
+  "An estate of ${0} is split among three heirs. Finn gets {1} times as much as Sam, and Ben gets ${2} more than Sam. How much does each receive?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "An estate of ${0} is split among three heirs. Finn gets {1} times as much as Sam, and Ben gets ${2} more than Sam. How much does each receive?",
+   "proven": false
+  },
+  "Caleb and Quinn invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Caleb and Quinn invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?",
+   "proven": false
+  },
+  "The ratio of Ben's marbles to Carla's is {0}:{1}. After Ben gives Carla {2} marbles, the ratio is {3}:{4}. How many did each have at first?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "The ratio of Ben's marbles to Carla's is {0}:{1}. After Ben gives Carla {2} marbles, the ratio is {3}:{4}. How many did each have at first?",
+   "proven": false
+  },
+  "Finn and Jade invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Finn and Jade invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?",
+   "proven": false
+  },
+  "An estate of ${0} is split among three heirs. Jamal gets {1} times as much as Maya, and Noah gets ${2} more than Maya. How much does each receive?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "An estate of ${0} is split among three heirs. Jamal gets {1} times as much as Maya, and Noah gets ${2} more than Maya. How much does each receive?",
+   "proven": false
+  },
+  "The ratio of Yusuf's marbles to Zane's is {0}:{1}. After Yusuf gives Zane {2} marbles, the ratio is {3}:{4}. How many did each have at first?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "The ratio of Yusuf's marbles to Zane's is {0}:{1}. After Yusuf gives Zane {2} marbles, the ratio is {3}:{4}. How many did each have at first?",
+   "proven": false
+  },
+  "An estate of ${0} is split among three heirs. Xena gets {1} times as much as Dana, and Finn gets ${2} more than Dana. How much does each receive?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "An estate of ${0} is split among three heirs. Xena gets {1} times as much as Dana, and Finn gets ${2} more than Dana. How much does each receive?",
+   "proven": false
+  },
+  "Aiden and Quinn invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden and Quinn invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?",
+   "proven": false
+  },
+  "A mix uses red, blue, and yellow paint in the ratio {0}:{1}:{2}. The total is {3} mL. How much of each is used?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A mix uses red, blue, and yellow paint in the ratio {0}:{1}:{2}. The total is {3} mL. How much of each is used?",
+   "proven": false
+  },
+  "The ratio of Gus's marbles to Kira's is {0}:{1}. After Gus gives Kira {2} marbles, the ratio is {3}:{4}. How many did each have at first?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "The ratio of Gus's marbles to Kira's is {0}:{1}. After Gus gives Kira {2} marbles, the ratio is {3}:{4}. How many did each have at first?",
+   "proven": false
+  },
+  "An estate of ${0} is split among three heirs. Theo gets {1} times as much as Kira, and Umar gets ${2} more than Kira. How much does each receive?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "An estate of ${0} is split among three heirs. Theo gets {1} times as much as Kira, and Umar gets ${2} more than Kira. How much does each receive?",
+   "proven": false
+  },
+  "Zane and Wes invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Zane and Wes invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?",
+   "proven": false
+  },
+  "The denominator of a fraction is {0} more than the numerator. If {1} is added to both, the fraction becomes {2}/{3}. Find the original fraction.": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "The denominator of a fraction is {0} more than the numerator. If {1} is added to both, the fraction becomes {2}/{3}. Find the original fraction.",
+   "proven": true
+  },
+  "A number plus its reciprocal equals {0}. Find the number.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A number plus its reciprocal equals {0}. Find the number.",
+   "proven": true
+  },
+  "A group shares a ${0} rental equally. If {1} more people join, each pays ${2} less. How many people are in the group originally?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A group shares a ${0} rental equally. If {1} more people join, each pays ${2} less. How many people are in the group originally?",
+   "proven": true
+  },
+  "A truck travels {0} miles in the same time a car travels {1} miles. The car is {2} mph faster. Find both speeds.": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A truck travels {0} miles in the same time a car travels {1} miles. The car is {2} mph faster. Find both speeds.",
+   "proven": true
+  },
+  "A boat goes {0} km upstream in the same time it goes {1} km downstream. Its speed in still water is {2} km/h. What is the speed of the current?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "A boat goes {0} km upstream in the same time it goes {1} km downstream. Its speed in still water is {2} km/h. What is the speed of the current?",
+   "proven": true
+  },
+  "Jogging a route at {0} km/h takes {1} hours longer than cycling it at {2} km/h. How long is the route?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Jogging a route at {0} km/h takes {1} hours longer than cycling it at {2} km/h. How long is the route?",
+   "proven": true
+  },
+  "Jogging a route at {0} km/h takes {1}/{2} hours longer than cycling it at {3} km/h. How long is the route?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Jogging a route at {0} km/h takes {1}/{2} hours longer than cycling it at {3} km/h. How long is the route?",
+   "proven": false
+  },
+  "A number plus its reciprocal equals {0}/{1}. Find the number.": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A number plus its reciprocal equals {0}/{1}. Find the number.",
+   "proven": false
+  },
+  "Ben has ${0} and saves ${1} per week to buy a laptop that costs ${2}. How many weeks until there is enough?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Ben has ${0} and saves ${1} per week to buy a laptop that costs ${2}. How many weeks until there is enough?",
+   "proven": false
+  },
+  "Noah has ${0} and saves ${1} per week to buy a guitar that costs ${2}. How many weeks until there is enough?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Noah has ${0} and saves ${1} per week to buy a guitar that costs ${2}. How many weeks until there is enough?",
+   "proven": false
+  },
+  "Jamal has ${0} and saves ${1} per week to buy a game console that costs ${2}. How many weeks until there is enough?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Jamal has ${0} and saves ${1} per week to buy a game console that costs ${2}. How many weeks until there is enough?",
+   "proven": false
+  },
+  "Lena has ${0} and saves ${1} per week to buy a guitar that costs ${2}. How many weeks until there is enough?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Lena has ${0} and saves ${1} per week to buy a guitar that costs ${2}. How many weeks until there is enough?",
+   "proven": false
+  },
+  "Finn has ${0} and saves ${1} per week to buy concert tickets that costs ${2}. How many weeks until there is enough?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Finn has ${0} and saves ${1} per week to buy concert tickets that costs ${2}. How many weeks until there is enough?",
+   "proven": false
+  },
+  "A theater has {0} seats in the first row and each row has {1} more seats than the row before. Which row has {2} seats?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A theater has {0} seats in the first row and each row has {1} more seats than the row before. Which row has {2} seats?",
+   "proven": true
+  },
+  "A savings jar holds ${0} in week {1} and grows by ${2} each week. In which week does it hold ${3}?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "A savings jar holds ${0} in week {1} and grows by ${2} each week. In which week does it hold ${3}?",
+   "proven": false
+  },
+  "Dev has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Dev has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?",
+   "proven": false
+  },
+  "${0} is split between two accounts paying {1}% and {2}% simple interest. Both accounts earn the same interest in a year. How much is in each?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "${0} is split between two accounts paying {1}% and {2}% simple interest. Both accounts earn the same interest in a year. How much is in each?",
+   "proven": true
+  },
+  "How many years will it take ${0} to earn ${1} in simple interest at {2}% per year?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "How many years will it take ${0} to earn ${1} in simple interest at {2}% per year?",
+   "proven": true
+  },
+  "Emeka has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Emeka has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?",
+   "proven": false
+  },
+  "Yusuf has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Yusuf has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?",
+   "proven": false
+  },
+  "${0} earns ${1} in simple interest over {2} years. What is the annual interest rate?": {
+   "tried": 2,
+   "matched": 2,
+   "pattern": "${0} earns ${1} in simple interest over {2} years. What is the annual interest rate?",
+   "proven": true
+  },
+  "Wren has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Wren has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?",
+   "proven": false
+  },
+  "Tara has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Tara has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?",
+   "proven": false
+  },
+  "Two numbers x and y satisfy \u2212{0}x \u2212 {1}y = {2} and {3}x \u2212 {4}y = -{5}. Find x and y.": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Two numbers x and y satisfy \u2212{0}x \u2212 {1}y = {2} and {3}x \u2212 {4}y = -{5}. Find x and y.",
+   "proven": false
+  },
+  "The perimeter of a rectangle is {0} m and its length is {1} m more than its width. Find the length and width.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "The perimeter of a rectangle is {0} m and its length is {1} m more than its width. Find the length and width.",
+   "proven": false
+  },
+  "A farm packed {0} eggs into {1} cartons, using cartons of {2} and cartons of {3}. All cartons were full. How many of each?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "A farm packed {0} eggs into {1} cartons, using cartons of {2} and cartons of {3}. All cartons were full. How many of each?",
+   "proven": false
+  },
+  "A banquet hall seats {0} guests at {1} tables. Some tables seat {2} and the others seat {3}. How many of each kind are there?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "A banquet hall seats {0} guests at {1} tables. Some tables seat {2} and the others seat {3}. How many of each kind are there?",
+   "proven": false
+  },
+  "A lot has motorcycles and cars. There are {0} vehicles and {1} wheels. How many of each are there?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A lot has motorcycles and cars. There are {0} vehicles and {1} wheels. How many of each are there?",
+   "proven": false
+  },
+  "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Gus answered every question and scored {3}. How many were correct?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Gus answered every question and scored {3}. How many were correct?",
+   "proven": false
+  },
+  "A camp rents {0} canoes for {1} campers, filling every seat. Some canoes hold {2} people and the rest hold {3}. How many of each were rented?": {
+   "tried": 3,
+   "matched": 0,
+   "pattern": "A camp rents {0} canoes for {1} campers, filling every seat. Some canoes hold {2} people and the rest hold {3}. How many of each were rented?",
+   "proven": false
+  },
+  "A cash drawer has {0} bills, all ${1} and ${2} bills, totaling ${3}. How many of each?": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "A cash drawer has {0} bills, all ${1} and ${2} bills, totaling ${3}. How many of each?",
+   "proven": false
+  },
+  "A lot has bicycles and tricycles. There are {0} vehicles and {1} wheels. How many of each are there?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A lot has bicycles and tricycles. There are {0} vehicles and {1} wheels. How many of each are there?",
+   "proven": false
+  },
+  "A camp rents {0} paddle boats for {1} campers, filling every seat. Some paddle boats hold {2} people and the rest hold {3}. How many of each were rented?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A camp rents {0} paddle boats for {1} campers, filling every seat. Some paddle boats hold {2} people and the rest hold {3}. How many of each were rented?",
+   "proven": false
+  },
+  "Two numbers x and y satisfy {0}x + {1}y = -{2} and \u2212{3}x \u2212 {4}y = {5}. Find x and y.": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Two numbers x and y satisfy {0}x + {1}y = -{2} and \u2212{3}x \u2212 {4}y = {5}. Find x and y.",
+   "proven": false
+  },
+  "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Priya answered every question and scored {3}. How many were correct?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Priya answered every question and scored {3}. How many were correct?",
+   "proven": false
+  },
+  "Two numbers x and y satisfy {0}x + {1}y = {2} and {3}x + {4}y = {5}. Find x and y.": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Two numbers x and y satisfy {0}x + {1}y = {2} and {3}x + {4}y = {5}. Find x and y.",
+   "proven": false
+  },
+  "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Zoe answered every question and scored {3}. How many were correct?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Zoe answered every question and scored {3}. How many were correct?",
+   "proven": false
+  },
+  "Two numbers x and y satisfy \u2212x + {0}y = {1} and {2}x \u2212 {3}y = -{4}. Find x and y.": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Two numbers x and y satisfy \u2212x + {0}y = {1} and {2}x \u2212 {3}y = -{4}. Find x and y.",
+   "proven": false
+  },
+  "A farm has spiders and beetles. There are {0} bugs and {1} legs. How many of each are there?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A farm has spiders and beetles. There are {0} bugs and {1} legs. How many of each are there?",
+   "proven": false
+  },
+  "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Noah answered every question and scored {3}. How many were correct?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Noah answered every question and scored {3}. How many were correct?",
+   "proven": false
+  },
+  "An apple, a banana, and a cherry cup cost ${0} together. Two apples and a banana cost ${1}. A banana and two cherry cups cost ${2}. Find each price.": {
+   "tried": 5,
+   "matched": 0,
+   "pattern": "An apple, a banana, and a cherry cup cost ${0} together. Two apples and a banana cost ${1}. A banana and two cherry cups cost ${2}. Find each price.",
+   "proven": false
+  },
+  "Three numbers add up to {0}. The first plus the second is {1}, and the second plus the third is {2}. Find all three.": {
+   "tried": 4,
+   "matched": 0,
+   "pattern": "Three numbers add up to {0}. The first plus the second is {1}, and the second plus the third is {2}. Find all three.",
+   "proven": false
+  },
+  "Adult tickets to a movie screening cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?": {
+   "tried": 3,
+   "matched": 3,
+   "pattern": "Adult tickets to a movie screening cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?",
+   "proven": true
+  },
+  "Adult tickets to a museum cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Adult tickets to a museum cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?",
+   "proven": false
+  },
+  "Adult tickets to a concert cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Adult tickets to a concert cost ${0} and child tickets cost ${1}. {2} tickets were sold for a total of ${3}. How many of each were sold?",
+   "proven": false
+  },
+  "A new machine works {0} times as fast as an old one. Together they finish an order in {1} hours. How long would the old machine take alone?": {
+   "tried": 4,
+   "matched": 4,
+   "pattern": "A new machine works {0} times as fast as an old one. Together they finish an order in {1} hours. How long would the old machine take alone?",
+   "proven": true
+  },
+  "Gus, Rosa, and Bea can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Gus, Rosa, and Bea can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?",
+   "proven": false
+  },
+  "An inlet pipe fills a tank in {0} hours. A drain empties it in {1} hours. If both are open, how long does it take to fill the empty tank?": {
+   "tried": 5,
+   "matched": 5,
+   "pattern": "An inlet pipe fills a tank in {0} hours. A drain empties it in {1} hours. If both are open, how long does it take to fill the empty tank?",
+   "proven": true
+  },
+  "Working together, Rhea and Emeka can finish a job in {0} hours. Rhea alone takes {1} hours. How long would Emeka take alone?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Working together, Rhea and Emeka can finish a job in {0} hours. Rhea alone takes {1} hours. How long would Emeka take alone?",
+   "proven": false
+  },
+  "Sam can do a job in {0} hours and Hana can do it in {1} hours. Sam works alone for {2} hours, then Hana joins. How much longer will it take to finish?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Sam can do a job in {0} hours and Hana can do it in {1} hours. Sam works alone for {2} hours, then Hana joins. How much longer will it take to finish?",
+   "proven": false
+  },
+  "Working together, Noah and Victor can finish a job in {0} hours. Noah alone takes {1} hours. How long would Victor take alone?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Working together, Noah and Victor can finish a job in {0} hours. Noah alone takes {1} hours. How long would Victor take alone?",
+   "proven": false
+  },
+  "Grace can do a job in {0} hours and Isla can do it in {1} hours. Grace works alone for {2} hours, then Isla joins. How much longer will it take to finish?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Grace can do a job in {0} hours and Isla can do it in {1} hours. Grace works alone for {2} hours, then Isla joins. How much longer will it take to finish?",
+   "proven": false
+  },
+  "Quinn, Jamal, and Sam can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Quinn, Jamal, and Sam can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?",
+   "proven": false
+  },
+  "Rhea can do a job in {0} hours and Carla can do it in {1} hours. Rhea works alone for {2} hours, then Carla joins. How much longer will it take to finish?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Rhea can do a job in {0} hours and Carla can do it in {1} hours. Rhea works alone for {2} hours, then Carla joins. How much longer will it take to finish?",
+   "proven": false
+  },
+  "Aiden, Lena, and Yara can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Aiden, Lena, and Yara can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?",
+   "proven": false
+  },
+  "Working together, Gus and Sam can finish a job in {0} hours. Gus alone takes {1} hours. How long would Sam take alone?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Working together, Gus and Sam can finish a job in {0} hours. Gus alone takes {1} hours. How long would Sam take alone?",
+   "proven": false
+  },
+  "Sofia, Grace, and Sam can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Sofia, Grace, and Sam can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?",
+   "proven": false
+  },
+  "Vera can do a job in {0} hours and Zane can do it in {1} hours. Vera works alone for {2} hour, then Zane joins. How much longer will it take to finish?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Vera can do a job in {0} hours and Zane can do it in {1} hours. Vera works alone for {2} hour, then Zane joins. How much longer will it take to finish?",
+   "proven": false
+  },
+  "Working together, Hiro and Nia can finish a job in {0} hours. Hiro alone takes {1} hours. How long would Nia take alone?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Working together, Hiro and Nia can finish a job in {0} hours. Hiro alone takes {1} hours. How long would Nia take alone?",
+   "proven": false
+  },
+  "Working together, Omar and Fatima can finish a job in {0} hours. Omar alone takes {1} hours. How long would Fatima take alone?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Working together, Omar and Fatima can finish a job in {0} hours. Omar alone takes {1} hours. How long would Fatima take alone?",
+   "proven": false
+  },
+  "Grace, Uma, and Omar can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?": {
+   "tried": 1,
+   "matched": 0,
+   "pattern": "Grace, Uma, and Omar can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?",
+   "proven": false
+  },
+  "Dev can do a job in {0} hours and Pablo can do it in {1} hours. Dev works alone for {2} hour, then Pablo joins. How much longer will it take to finish?": {
+   "tried": 1,
+   "matched": 1,
+   "pattern": "Dev can do a job in {0} hours and Pablo can do it in {1} hours. Dev works alone for {2} hour, then Pablo joins. How much longer will it take to finish?",
+   "proven": false
+  }
+ },
+ "proven_wordings": 87,
+ "candidate_wordings": 130,
+ "unmatched_wordings": 73
+}

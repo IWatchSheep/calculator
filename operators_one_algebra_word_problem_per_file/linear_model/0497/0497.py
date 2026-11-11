@@ -6,7 +6,7 @@ Equation: 40 + 15n = 940
 Solve   : 15n = 900 → n = 60
 Answer  : 60
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_linear_model_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '40 + 15n = 940'
 SOLVE = '15n = 900 → n = 60'
 ANSWER = '60'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_linear_model_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A club has raised ${0} so far. At its bake sale it charges ${1} per box of cookies. How many more boxes must it sell to reach its ${2} goal?'
 NUMBERS = ['40', '15', '940']

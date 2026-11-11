@@ -6,7 +6,7 @@ Equation: 5 × 24 = 24 × d
 Solve   : d = 120/24 = 5
 Answer  : 5 days
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_inverse_variation_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '5 × 24 = 24 × d'
 SOLVE = 'd = 120/24 = 5'
 ANSWER = '5 days'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_inverse_variation_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = '{0} workers can build a wall in {1} days. At the same rate, how many days would {2} workers take?'
 NUMBERS = ['5', '24', '24']

@@ -1,7 +1,7 @@
 ALGEBRA WORD PROBLEMS: WHAT IS DONE, WHAT IS TO DO, AND HOW TO KEEP THIS FILE CURRENT
 =======================================================================================
 File: algebra_word_problems_status.txt, in the main project folder (C:\Users\I_wat\PycharmProjects\calculator).
-Last updated by Claude after Batch 45 (the commit that follows bb7e45f), 2026-11-09.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
+Last updated by Claude after Batch 46 (archive families), 2026-11-10.  The user, Grok and Claude have worked on this together; commits are under the user's GitHub account.
 
 
 NOTE TO THE NEXT CLAUDE  (read this first)
@@ -16,7 +16,7 @@ The user asked that THIS FILE be kept current every time an algebra word problem
   2b. REGENERATE THE TWO FOLDERS (new in this version; see section 7): from the project folder run
          .venv\Scripts\python.exe operator_keys\make_algebra_word_problem_files.py
       then  python tests/test_algebra_word_problem_files.py .  Each problem file records which solver answers it (Ready / Reference), so a family you just added only shows up as Ready after this step.
-      The test expects the Ready count (377 = 349 word_solver + 28 number_puzzle); change that number in tests/test_algebra_word_problem_files.py when the claim count changes, and the 365 in the README.
+      The test expects the Ready count (554 = 526 word_solver + 28 number_puzzle); change that number in tests/test_algebra_word_problem_files.py when the claim count changes, and the 365 in the README.
   3. In section 3 (THE NUMBERS) change the numbers and the "last commit" line.
   4. In section 4 (DONE) add ONE line for the batch: "Batch N (date): what it did; families added or fixed; new claim count".  The long write-up of the batch goes into
          algebra_word_problems/algebra_matcher/word_solver_results.txt   (a new "Batch N: ..." section at the end, same style as the earlier ones)
@@ -57,14 +57,14 @@ sanity check.  Anything else returns None (a "decline"), so the trained matcher 
 Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittest test_word_solver test_number_puzzle   (about 11 seconds).
 
 
-3. THE NUMBERS   (as of Batch 45)
+3. THE NUMBERS   (as of Batch 46)
 -------------------------------------------------
-  families in word_solver.FAMILIES:               58
-  generated problems claimed by the solver:       349 of 1,000, WRONG: 0
-  generated problems still unclaimed:             651   (230 distinct wording shapes, listed in the appendix)
+  families in word_solver.FAMILIES:               104 (58 written by hand + 46 archive families from archive_families.json)
+  generated problems claimed by the solver:       526 of 1,000, WRONG: 0   (349 by the hand families + 177 by the archive families)
+  generated problems still unclaimed:             474   (184 distinct wording shapes, listed in the appendix)
   hand-written problems answered:                 38 by the word solver (HAND_ANSWERS, all match the hand-calculated answers) + 3 by the number-puzzle reader = 41 of the 100;
                                                   the trained matcher's first guess covers the rest
-  tests:                                          166 word-solver and number-puzzle tests, all pass
+  tests:                                          175 word-solver, number-puzzle and archive-family tests, all pass (python -m unittest test_word_solver test_number_puzzle test_archive_families); tests/test_word_archive.py has 3 more
   fresh sets:                                     49 files (fresh_word_problems.py ... fresh_word_problems_49.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
   git:                                            branch main, last commit before Batch 45 is bb7e45f (Batch 45 is the next commit), pushed to https://github.com/IWatchSheep/calculator
 
@@ -114,6 +114,10 @@ Batches (Batch 1 was the five-family solver and its tests; numbers in brackets a
                Fresh set 48: 3 solved, 6 declines, 0 wrong.   [337]
   Batch 45     NEW FAMILIES percent_spent_left ("spent 75% of a paycheck ... $280 left", fuel left), price_minus_coupon (3.5n - 3 = 46), complementary_supplementary (x + (5x - 12) = 90).
                Fresh set 49: 6 solved, 1 safe decline ("an allowance"), 8 declines, 0 wrong.   [349]
+  Batch 46     ARCHIVE FAMILIES (2026-11-10, from Grok's word-archive zip / pull request 4): word_archive.py proved 87 wordings (the stored equation, with each number given a role, solves to the stored
+               answer for every problem of the wording).  make_archive_families.py turned 46 of them into families (archive_families.json, read by archive_families.py, 177 problems), each checked to
+               return EXACTLY the stored answer on every problem of its wording; 41 wordings were left alone with a reason each (archive_families_skipped.txt).  Hand families untouched; three hand-written
+               "must decline" texts in test_word_solver.py became answered texts (12 sides, 12 sides, 5 hours: correct) and "What percent of 80 is 20?" got its hand answer (25).   [526]
 
 All 55 families (the FAMILIES list, in the order the solver tries them):
   sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest, two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
@@ -190,7 +194,7 @@ The user asked for the 1,000 generated problems to be put into their own files, 
   tests/test_algebra_word_problem_files.py                                          11 tests: 1,000 folders / files / pictures / rows (a row's boxes = the picture's blue boxes), stored text, compute() for all 377 Ready problems, rows in the window, joins, your own numbers, errors.
   README.md                                                                          a new section "Algebra word problems (work in progress)" with a NOTE TO GROK, the four pieces, the Python use, HOW A PROBLEM TRAVELS (text -> solver family -> generated file and diagram -> row ->
                                                                                       checks -> status file), what is left, and six QUESTIONS FOR REVIEW; plus rows in the "Project files" table and a line in "Testing".
-Status of the 1,000: 377 Ready (349 word_solver, 28 number_puzzle), 623 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
+Status of the 1,000: 554 Ready (526 word_solver, 28 number_puzzle), 446 Reference (stored, no solver yet).  compute() on a Reference problem raises NotImplementedError; numbers a solver declines raise ValueError.
 WIRED INTO THE WINDOW (2026-11-09, after Batch 45):  main.py _place_word_problem() puts a Ready problem into the target row when it is clicked in Operators > Algebra word problems; operator_row_math/row_tree.py knows the node key "word:<category>/<id>" (row file from operator_row_math_for_algebra_word_problems, answer from the problem file's compute()); a list answer passes through the plain-number wrapper so several answers show as a list; a Reference problem is not placed and says so.  Tests: tests/test_algebra_word_problem_files.py class InTheCalculator (11 tests in the file).  The boxes start with the stored numbers (DEFAULTS; Grok asked for this) and are labelled number 1, number 2 ...; a list answer cannot be joined with any join symbol (row_tree.join declines it; Grok found that x would repeat the list); nesting in an operator is covered by the window test.  Tests in InTheCalculator: 11 in the file.
 OPEN: Grok was asked (in the README) to review the section and amend it; the six questions are the decisions still open (row shape and labels by role, several answers in one result box, the diagram, the 24 MB of pictures,
 folder naming by category, how a declined compute() should look in a row).  When Grok has amended the README, read it again before changing the folders: it may change the generator's output.
@@ -202,73 +206,66 @@ Order of work agreed with the user on 2026-11-09: (1) README written and sent to
 
 APPENDIX: UNCLAIMED WORDING SHAPES   (regenerate with: python todo_report.py)
 ==============================================================================
-generated problems: 1000   claimed by the word solver: 349   unclaimed: 651   distinct unclaimed wording shapes: 230   families: 58
+generated problems: 1000   claimed by the word solver: 526   unclaimed: 474   distinct unclaimed wording shapes: 184   families: 104
 (the number of WRONG claims is checked by test_word_solver.py: GroundTruth.test_never_wrong_on_generated_problems, it must stay 0)
 
 UNCLAIMED BY CATEGORY (problems):
    42  Number puzzle
    34  System of equations
-   28  Geometry (quadratic)
-   27  Rational equation
-   24  Break-even
    24  Inequality
    24  Ratio
-   24  Work rate
-   23  Formula
-   23  Linear cost
-   23  Linear model
-   23  Percent
    21  Quadratic
-   20  Geometry (angles)
    20  Mixture
-   18  Geometry (area)
-   15  Simple interest
-   14  Consecutive integers
+   18  Percent
+   17  Break-even
+   15  Work rate
    14  Fractions
-   14  Inverse variation
+   14  Geometry (quadratic)
+   14  Linear cost
+   13  Formula
    13  Geometry (Pythagorean)
-   10  Average (weighted)
+   13  Simple interest
+   12  Geometry (angles)
+   11  Rational equation
    10  Coins
    10  Digits
-   10  Distance (average speed)
    10  Proportion
    10  Quadratic (sequences)
-    9  Distance (round trip)
-    9  Geometry (triangle)
+    9  Geometry (area)
     9  System of equations (3 variables)
-    8  Geometry (perimeter)
+    7  Linear model
+    6  Consecutive integers
+    6  Distance (round trip)
     5  Age
-    5  Distance (catch-up)
+    5  Average (weighted)
+    5  Distance (average speed)
     5  Distance (toward each other)
     5  Distance (two legs)
     5  Geometry (rectangle)
-    5  Joint variation
+    5  Geometry (triangle)
     5  Percent (commission)
-    5  Profit
     5  Quadratic (projectile)
     5  Savings
-    5  Sequences
-    5  Tickets
     4  Average
     4  Clock
     4  Current / wind
-    4  Geometry (polygons)
-    4  Geometry (volume)
-    4  Proportion (similar triangles)
+    4  Geometry (perimeter)
     4  Quadratic (counting)
+    2  Profit
+    2  Proportion (similar triangles)
+    2  Tickets
+    1  Geometry (volume)
+    1  Sequences
 
 UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Age | 4 | 0001 | Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now?
   Age | 1 | 0003 | Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now?
   Average | 2 | 0010 | The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the missing number?
   Average | 2 | 0015 | The mean of 5 numbers is 36. 4 of them are 18, 50, 34, 36. What is the missing number?
-  Average (weighted) | 5 | 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in cla
   Average (weighted) | 5 | 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives a
-  Break-even | 5 | 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is 
   Break-even | 5 | 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do 
   Break-even | 4 | 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day co
   Break-even | 2 | 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost 
-  Break-even | 2 | 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost t
   Break-even | 1 | 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do th
   Break-even | 1 | 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even?
   Break-even | 1 | 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost t
@@ -279,29 +276,21 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Coins | 5 | 0058 | A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as qu
   Coins | 3 | 0057 | Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there?
   Coins | 2 | 0062 | Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there?
-  Consecutive integers | 5 | 0067 | Of three consecutive even integers, the sum of the smallest and largest is 8. Find all three.
   Consecutive integers | 5 | 0068 | The average of 5 consecutive integers is 50. What is the smallest?
-  Consecutive integers | 3 | 0069 | Three consecutive integers are such that 3 times the smallest is 4 more than the largest. Find the integers.
   Consecutive integers | 1 | 0078 | Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers.
   Current / wind | 4 | 0087 | A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. Find the plane's sp
   Digits | 5 | 0095 | In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find
   Digits | 5 | 0096 | The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original
-  Distance (average speed) | 5 | 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h?
   Distance (average speed) | 3 | 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long w
   Distance (average speed) | 2 | 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was
-  Distance (catch-up) | 5 | 0125 | Two runners start together on a 400 m track, one at 5 m/s and the other at 7 m/s. After how many seconds does the faster
   Distance (round trip) | 5 | 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake
-  Distance (round trip) | 3 | 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ri
   Distance (round trip) | 1 | 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound r
   Distance (toward each other) | 3 | 0149 | Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Car
   Distance (toward each other) | 2 | 0152 | Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Em
   Distance (two legs) | 5 | 0159 | Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the walk?
-  Formula | 5 | 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume.
   Formula | 5 | 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far
   Formula | 4 | 0180 | Solve P = 2l + 2w for w when P = 70 and l = 27.
-  Formula | 3 | 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω.
   Formula | 3 | 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F?
-  Formula | 2 | 0204 | Using V = IR, find the resistance (in ohms) when the voltage is 50 V and the current is 5 A.
   Formula | 1 | 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32)
   Fractions | 5 | 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start wi
   Fractions | 4 | 0213 | Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does th
@@ -315,9 +304,7 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Geometry (Pythagorean) | 1 | 0229 | The hypotenuse of a right triangle is 29 in, and one leg is 1 in longer than the other leg. How long are the legs?
   Geometry (Pythagorean) | 1 | 0231 | A 29 m support wire runs from the top of a pole to a stake 20 m from the pole's base. How tall is the pole?
   Geometry (Pythagorean) | 1 | 0234 | A ramp is 41 ft long and covers a horizontal distance of 9 ft; how high does it rise?
-  Geometry (angles) | 5 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angl
   Geometry (angles) | 5 | 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. F
-  Geometry (angles) | 3 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles.
   Geometry (angles) | 1 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles.
   Geometry (angles) | 1 | 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B?
   Geometry (angles) | 1 | 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure.
@@ -326,27 +313,17 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Geometry (angles) | 1 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles.
   Geometry (angles) | 1 | 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B?
   Geometry (area) | 5 | 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length.
-  Geometry (area) | 5 | 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height.
   Geometry (area) | 4 | 0275 | A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stay
-  Geometry (area) | 4 | 0277 | A triangle has an area of 60 m² and a height of 3 m. How long is its base?
-  Geometry (perimeter) | 4 | 0293 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. 
   Geometry (perimeter) | 3 | 0292 | Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length.
   Geometry (perimeter) | 1 | 0298 | Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length.
-  Geometry (polygons) | 2 | 0300 | Each interior angle of a regular polygon measures 150°. How many sides does the polygon have?
-  Geometry (polygons) | 2 | 0302 | Each exterior angle of a regular polygon is 120°. How many sides does it have?
   Geometry (quadratic) | 5 | 0311 | Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. T
   Geometry (quadratic) | 5 | 0313 | A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path?
-  Geometry (quadratic) | 5 | 0314 | The height of a triangle is 9 cm more than its base. The area is 243 cm². Find the base and height.
-  Geometry (quadratic) | 5 | 0315 | A 18 in × 15 in photo is surrounded by a frame of uniform width. The framed picture covers 418 in². How wide is the fram
   Geometry (quadratic) | 4 | 0310 | A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must ha
-  Geometry (quadratic) | 4 | 0312 | A rectangle's length is 12 m more than its width, and its area is 640 m². Find the dimensions.
   Geometry (rectangle) | 3 | 0341 | The length of a rectangle is 3 less than 3 times its width. The perimeter is 178 cm. Find the dimensions.
   Geometry (rectangle) | 1 | 0342 | The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the dimensions.
   Geometry (rectangle) | 1 | 0344 | The length of a rectangle is 5 more than 3 times its width. The perimeter is 170 cm. Find the dimensions.
-  Geometry (triangle) | 4 | 0346 | Each of the two equal sides of an isosceles triangle is 2 cm longer than the base. The perimeter is 52 cm. Find the side
   Geometry (triangle) | 3 | 0347 | A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the pe
   Geometry (triangle) | 2 | 0353 | The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side.
-  Geometry (volume) | 3 | 0355 | A rectangular box is 16 in long and 5 in wide. Its volume is 320 in³. How tall is it?
   Geometry (volume) | 1 | 0356 | An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it?
   Inequality | 5 | 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for whi
   Inequality | 5 | 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width poss
@@ -357,21 +334,11 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Inequality | 1 | 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 
   Inequality | 1 | 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88?
   Inequality | 1 | 0397 | Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75?
-  Inverse variation | 5 | 0401 | 12 workers can build a wall in 10 days. At the same rate, how many days would 3 workers take?
-  Inverse variation | 5 | 0402 | A gear with 24 teeth turning at 40 rpm drives a gear with 20 teeth. Teeth × rpm is the same for both gears. How fast doe
-  Inverse variation | 4 | 0403 | At 72 km/h a trip takes 5 hours. Time varies inversely with speed. How long would it take at 90 km/h?
-  Joint variation | 5 | 0415 | 6 workers working 10 hours a day finish a job in 5 days. How many days would 4 workers working 5 hours a day take?
-  Linear cost | 5 | 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used?
   Linear cost | 5 | 0432 | Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many overtime
   Linear cost | 4 | 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled?
-  Linear cost | 4 | 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours 
   Linear cost | 4 | 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven?
   Linear cost | 1 | 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?
   Linear model | 5 | 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the th
-  Linear model | 5 | 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%?
-  Linear model | 4 | 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to rea
-  Linear model | 4 | 0489 | A hot-air balloon at 5500 ft descends 650 ft per minute. Another at 1300 ft rises 400 ft per minute. When are they at th
-  Linear model | 3 | 0487 | A tractor bought for $23,000.00 loses $1,600.00 in value each year. After how many years will it be worth $16,600.00?
   Linear model | 1 | 0509 | A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 
   Linear model | 1 | 0513 | A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00
   Mixture | 5 | 0536 | A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates?
@@ -401,16 +368,12 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Percent | 5 | 0625 | A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price?
   Percent | 4 | 0621 | 3 is 30% of what number?
   Percent | 4 | 0624 | 20% of the students in a club are boys. There are 136 girls. How many students are in the club?
-  Percent | 3 | 0620 | What percent of 95 is 114?
-  Percent | 2 | 0644 | 30 out of 150 students passed. What percent passed?
   Percent (commission) | 3 | 0677 | Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sale
   Percent (commission) | 2 | 0679 | A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell?
-  Profit | 3 | 0686 | A candle shop has fixed costs of $2000. Each item costs $2 to make and sells for $17. How many items must be sold to mak
   Profit | 1 | 0689 | A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to 
   Profit | 1 | 0690 | A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make
   Proportion | 5 | 0691 | A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the model?
   Proportion | 5 | 0697 | On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they on the map?
-  Proportion (similar triangles) | 2 | 0725 | A 5 ft person casts a 2 ft shadow. At the same time a tree casts a 30 ft shadow. How tall is the tree?
   Proportion (similar triangles) | 2 | 0726 | At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building?
   Quadratic | 5 | 0729 | The square of a positive number is 48 more than 2 times the number. Find the number.
   Quadratic | 4 | 0730 | The sum of the squares of two consecutive positive integers is 85. Find the integers.
@@ -442,23 +405,17 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   Ratio | 1 | 0809 | The ratio of Gus's marbles to Kira's is 6:5. After Gus gives Kira 16 marbles, the ratio is 4:7. How many did each have a
   Ratio | 1 | 0810 | An estate of $88,500.00 is split among three heirs. Theo gets 3 times as much as Kira, and Umar gets $1,000.00 more than
   Rational equation | 5 | 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the or
-  Rational equation | 5 | 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the 
   Rational equation | 4 | 0815 | A number plus its reciprocal equals 2.5. Find the number.
-  Rational equation | 4 | 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group origi
-  Rational equation | 4 | 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds.
-  Rational equation | 3 | 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route?
   Rational equation | 1 | 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route?
   Rational equation | 1 | 0847 | A number plus its reciprocal equals 10/3. Find the number.
   Savings | 2 | 0851 | Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?
   Savings | 1 | 0849 | Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough?
   Savings | 1 | 0852 | Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough?
   Savings | 1 | 0856 | Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough?
-  Sequences | 4 | 0857 | A theater has 29 seats in the first row and each row has 5 more seats than the row before. Which row has 209 seats?
   Sequences | 1 | 0860 | A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63?
   Simple interest | 5 | 0862 | Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall?
   Simple interest | 5 | 0864 | $16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a yea
   Simple interest | 3 | 0865 | How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year?
-  Simple interest | 2 | 0874 | $15,000.00 earns $5,400.00 in simple interest over 9 years. What is the annual interest rate?
   System of equations | 5 | 0890 | A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each?
   System of equations | 5 | 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there?
   System of equations | 5 | 0896 | A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each?
@@ -475,12 +432,9 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   System of equations | 1 | 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there?
   System of equations (3 variables) | 5 | 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cu
   System of equations (3 variables) | 4 | 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three.
-  Tickets | 3 | 0959 | Adult tickets to a movie screening cost $12 and child tickets cost $6. 167 tickets were sold for a total of $1404. How m
   Tickets | 1 | 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of ea
   Tickets | 1 | 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of e
-  Work rate | 5 | 0969 | An inlet pipe fills a tank in 5 hours. A drain empties it in 6 hours. If both are open, how long does it take to fill th
   Work rate | 5 | 0970 | Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone
-  Work rate | 4 | 0967 | A new machine works 2 times as fast as an old one. Together they finish an order in 3 hours. How long would the old mach
   Work rate | 3 | 0971 | Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer
   Work rate | 2 | 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much long
   Work rate | 1 | 0968 | Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long will it take all three together?

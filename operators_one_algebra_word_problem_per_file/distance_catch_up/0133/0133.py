@@ -6,7 +6,7 @@ Equation: 6t − 4t = 300
 Solve   : 2t = 300 → t = 150
 Answer  : 150 seconds
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_distance_catch_up_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6t − 4t = 300'
 SOLVE = '2t = 300 → t = 150'
 ANSWER = '150 seconds'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_distance_catch_up_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two runners start together on a {0} m track, one at {1} m/s and the other at {2} m/s. After how many seconds does the faster one lap the slower one?'
 NUMBERS = ['300', '4', '6']

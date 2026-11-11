@@ -6,7 +6,7 @@ Equation: 265/s = 320/(s + 11)
 Solve   : Cross-multiply: 265(s + 11) = 320s → s = 53
 Answer  : Truck 53 mph, car 64 mph
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_rational_equation_2 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '265/s = 320/(s + 11)'
 SOLVE = 'Cross-multiply: 265(s + 11) = 320s → s = 53'
 ANSWER = 'Truck 53 mph, car 64 mph'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_rational_equation_2'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A truck travels {0} miles in the same time a car travels {1} miles. The car is {2} mph faster. Find both speeds.'
 NUMBERS = ['265', '320', '11']

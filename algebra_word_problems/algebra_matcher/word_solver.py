@@ -22,6 +22,7 @@ import re
 from collections import namedtuple
 from fractions import Fraction
 
+import archive_families as AF
 import number_puzzle as NP
 
 Result = namedtuple("Result", "family values equation reading")
@@ -3159,6 +3160,7 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change,
             temperature_whole_hours, two_candles_equal, transversal_equal_angles,
             class_ratio_after_join, kinematics_time, pipes_and_drain,
             percent_spent_left, price_minus_coupon, complementary_supplementary]
+FAMILIES += AF.families()          # one family for every wording the word archive proved (archive_families.json, written by make_archive_families.py)
 
 
 def solve(problem):

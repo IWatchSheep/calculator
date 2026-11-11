@@ -6,7 +6,7 @@ Equation: 180(n − 2)/n = 150
 Solve   : Multiply by n: 180n − 360 = 150n → n = 12
 Answer  : 12 sides
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_geometry_polygons_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '180(n − 2)/n = 150'
 SOLVE = 'Multiply by n: 180n − 360 = 150n → n = 12'
 ANSWER = '12 sides'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_geometry_polygons_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Each interior angle of a regular polygon measures {0}°. How many sides does the polygon have?'
 NUMBERS = ['150']

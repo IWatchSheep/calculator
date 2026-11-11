@@ -6,7 +6,7 @@ Equation: 5r = 50
 Solve   : 5r = 50 → r = 10
 Answer  : 10 Ω
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_formula_3 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '5r = 50'
 SOLVE = '5r = 50 → r = 10'
 ANSWER = '10 Ω'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_formula_3'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Using V = IR, find the resistance (in ohms) when the voltage is {0} V and the current is {1} A.'
 NUMBERS = ['50', '5']

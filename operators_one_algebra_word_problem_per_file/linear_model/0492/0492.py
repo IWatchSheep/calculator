@@ -6,7 +6,7 @@ Equation: 15000 − 500y = 11000
 Solve   : 500y = 4000 → y = 8
 Answer  : 8 years
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: archive_linear_model_1 answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '15000 − 500y = 11000'
 SOLVE = '500y = 4000 → y = 8'
 ANSWER = '8 years'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'archive_linear_model_1'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A tractor bought for ${0} loses ${1} in value each year. After how many years will it be worth ${2}?'
 NUMBERS = ['15000.00', '500.00', '11000.00']
