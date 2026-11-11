@@ -170,6 +170,19 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Gus and Rosa can each paint a room alone in 12 and 30 hours. How long will it take all three together?"))
         self.assertIsNone(answers("Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long would Gus take alone?"))
 
+    def test_seesaw_balance_distance(self):
+        cases = [
+            ("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Theo (36 kg) sit to balance?", Fraction(23, 4)),
+            ("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Yara (36 kg) sits 6 m from the pivot. How far from the pivot must Priya (54 kg) sit to balance?", Fraction(4)),
+            ("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sofia (66 kg) sits 6 m from the pivot. How far from the pivot must Mateo (22 kg) sit to balance?", Fraction(18)),
+            ("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Ivan (35 kg) sits 1 m from the pivot. How far from the pivot must Pablo (70 kg) sit to balance?", Fraction(1, 2)),
+            ("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Sam (30 kg) sits 3 m from the pivot. How far from the pivot must Sofia (72 kg) sit to balance?", Fraction(5, 4)),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Jade (36 kg) sit to balance?"))
+        self.assertIsNone(answers("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How heavy is Theo?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
