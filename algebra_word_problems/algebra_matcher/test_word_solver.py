@@ -144,6 +144,19 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("A course grade is 75% coursework and 20% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86?"))
         self.assertIsNone(answers("A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What coursework average gives an overall grade of 86?"))
 
+    def test_round_trip_lake_distance(self):
+        cases = [
+            ("Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How far is the lake?", 60),
+            ("Bea drove to a lake at 60 mph and returned on the same road at 30 mph. The round trip took 10 hours. How far is the lake?", 200),
+            ("Kofi drove to a lake at 40 mph and returned on the same road at 20 mph. The round trip took 6 hours. How far is the lake?", 80),
+            ("Isla drove to a lake at 45 mph and returned on the same road at 30 mph. The round trip took 2 hours. How far is the lake?", 36),
+            ("Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake?", 160),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How long was the drive?"))
+        self.assertIsNone(answers("Aiden drove to a lake at 30 mph. The round trip took 5 hours. How far is the lake?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
