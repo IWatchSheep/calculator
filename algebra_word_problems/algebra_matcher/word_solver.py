@@ -3262,6 +3262,42 @@ def course_grade_final_exam(problem):
     return Result("course_grade_final_exam", [f], eq, "%s, so f = %s" % (eq, show_exact(f)))
 
 
+# Round trip to a lake: d/v1 + d/v2 = t, so d = t * v1 * v2 / (v1 + v2).
+_ROUND_TRIP_LAKE_DISTANCE = re.compile(
+    r"(?P<name>[a-z]+) drove to a lake at "
+    r"(?P<v1>\d+(?:\.\d+)?) mph and returned on the same road at "
+    r"(?P<v2>\d+(?:\.\d+)?) mph\. "
+    r"the round trip took "
+    r"(?P<t>\d+(?:\.\d+)?) hours?\. "
+    r"how far is the lake\?")
+
+
+def round_trip_lake_distance(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ROUND_TRIP_LAKE_DISTANCE.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(n[1] for n in numbers):
+        return None
+    v1 = Fraction(match.group("v1"))
+    v2 = Fraction(match.group("v2"))
+    t = Fraction(match.group("t"))
+    if [n[0] for n in numbers] != [v1, v2, t]:
+        return None
+    if v1 <= 0 or v2 <= 0 or t <= 0:
+        return None
+    d = t * v1 * v2 / (v1 + v2)
+    if d <= 0:
+        return None
+    if d / v1 + d / v2 != t:
+        return None
+    eq = "d/%s + d/%s = %s" % (show(v1), show(v2), show(t))
+    return Result("round_trip_lake_distance", [d], eq,
+                  "%s drove to a lake at %s mph and returned at %s mph. The round trip took %s hours, so the lake is %s miles away."
+                  % (match.group("name"), show(v1), show(v2), show(t), show_exact(d)))
+
+
 FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
@@ -3274,7 +3310,7 @@ FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_f
             two_rates_one_pile, least_for_profit,
             two_priced_items, plan_with_included, most_that_fits,
             line_from_two_points, election_margin, wind_same_time,
-            base_plus_extra_over_time, distance_speed_time, average_speed_two_leg_unknown_time,
+            base_plus_extra_over_time, distance_speed_time, average_speed_two_leg_unknown_time, round_trip_lake_distance,
             pages_per_day, opposite_angles_equal, rectangle_from_perimeter_area,
             temperature_whole_hours, two_candles_equal, transversal_equal_angles,
             class_ratio_after_join, kinematics_time, pipes_and_drain,

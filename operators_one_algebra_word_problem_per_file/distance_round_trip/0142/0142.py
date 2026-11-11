@@ -6,7 +6,7 @@ Equation: d/60 + d/30 = 10
 Solve   : Multiply by 60 → d = 200
 Answer  : 200 miles
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: round_trip_lake_distance answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'd/60 + d/30 = 10'
 SOLVE = 'Multiply by 60 → d = 200'
 ANSWER = '200 miles'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'round_trip_lake_distance'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Bea drove to a lake at {0} mph and returned on the same road at {1} mph. The round trip took {2} hours. How far is the lake?'
 NUMBERS = ['60', '30', '10']
