@@ -108,7 +108,7 @@ class Catalog(unittest.TestCase):
         items = catalog.load_catalog(os.path.join(LIB, "INDEX.md"))
         self.assertEqual(len(items), 479)
         self.assertEqual(len({i["category"] for i in items}), 55)
-        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 265)
+        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 270)
         savings = next(i for i in items if i["key"] == "savings/0848")
         self.assertIn("Ben has $150", savings["problem"])
         self.assertEqual(savings["id"], "0848")
@@ -132,7 +132,7 @@ class Computing(unittest.TestCase):
                 self.assertEqual(expected.family, m.FAMILY, key)
                 got = answer if isinstance(answer, list) else [answer]
                 self.assertEqual(got, [float(v) if v.denominator != 1 else int(v) for v in expected.values], key)
-        self.assertEqual(ready, 265)                                           # 250 word_solver + 15 number_puzzle; one stored problem per wording
+        self.assertEqual(ready, 270)                                           # 255 word_solver + 15 number_puzzle; one stored problem per wording
 
     def test_your_own_numbers(self):
         self.assertEqual(library.get("savings/0848").compute(), 16)
@@ -158,7 +158,7 @@ class InTheCalculator(unittest.TestCase):
             else:
                 ready += 1
                 self.assertEqual(row_tree.evaluate(node), lib.compute(), key)      # the boxes start with the stored numbers
-        self.assertEqual(ready, 265)
+        self.assertEqual(ready, 270)
 
     def test_a_list_of_answers_cannot_be_joined(self):
         from operator_row_math import row_tree

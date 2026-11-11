@@ -183,6 +183,19 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Jade (36 kg) sit to balance?"))
         self.assertIsNone(answers("On a seesaw, weight \u00d7 distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How heavy is Theo?"))
 
+    def test_more_invested_for_overall_rate(self):
+        cases = [
+            ("Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall?", 18000),
+            ("Emeka has $6,000.00 invested at 2%. How much more must be invested at 8% so that the total earns 5% overall?", 6000),
+            ("Yusuf has $19,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall?", 28500),
+            ("Wren has $16,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall?", 24000),
+            ("Tara has $1,500.00 invested at 2%. How much more must be invested at 7% so that the total earns 6% overall?", 6000),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Dev has $18,000.00 invested at 3%. How much more must be invested at 6% so that the total earns 6% overall?"))
+        self.assertIsNone(answers("Dev has $18,000.00 invested at 3%. How much interest does that earn?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
