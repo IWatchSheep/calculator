@@ -243,6 +243,46 @@ def work_together(problem):
                   "one takes %s and the other %s %ss; together t/%s + t/%s = 1, so t = %s %ss" % (show(a), show(b), units[0], show(a), show(b), show_exact(tt), units[0]))
 
 
+# Find the second person's time alone from the together time and the first person's time alone.
+# x = t * a / (a - t). The first name is the known alone time. The second name is the one asked.
+_PARTNER_ALONE_FROM_TOGETHER = re.compile(
+    r"working together, "
+    r"(?P<first>[a-z]+) and (?P<second>[a-z]+) "
+    r"can finish a job in "
+    r"(?P<t>\d+(?:\.\d+)?) hours?\. "
+    r"(?P<known_name>[a-z]+) alone takes "
+    r"(?P<a>\d+(?:\.\d+)?) hours?\. "
+    r"how long would (?P<asked_name>[a-z]+) "
+    r"take alone\?")
+
+
+def partner_alone_from_together(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PARTNER_ALONE_FROM_TOGETHER.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("known_name") != match.group("first") or match.group("asked_name") != match.group("second"):
+        return None
+    if match.group("first") == match.group("second"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(n[1] for n in numbers):
+        return None
+    t = Fraction(match.group("t"))
+    a = Fraction(match.group("a"))
+    if [n[0] for n in numbers] != [t, a]:
+        return None
+    if t <= 0 or a <= t:
+        return None
+    x = t * a / (a - t)
+    if x <= 0:
+        return None
+    if t / a + t / x != 1:
+        return None
+    eq = "%s/%s + %s/x = 1" % (show(t), show(a), show(t))
+    return Result("partner_alone_from_together", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
 # ---------------------------------------------------------------------------------------------------------
 # 4. a price after a percent change
 # ---------------------------------------------------------------------------------------------------------
@@ -3186,7 +3226,7 @@ def complementary_supplementary(problem):
                   "%s, so %sx = %s and x = %s; the angle described is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, percent_change, proportion, two_solution_mix, two_rate_interest,
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, percent_change, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

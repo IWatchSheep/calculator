@@ -117,6 +117,20 @@ class Families(unittest.TestCase):
         # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"
         self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"))
 
+    def test_partner_alone_from_together(self):
+        cases = [
+            ("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone?", 12),
+            ("Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone?", 6),
+            ("Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone?", 4),
+            ("Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. How long would Victor take alone?", 12),
+            ("Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone?", 6),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Working together, Hiro and Nia can finish a job in 3 hours. Nia alone takes 4 hours. How long would Hiro take alone?"))
+        self.assertIsNone(answers("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long do they take working together?"))
+        self.assertIsNone(WS.work_together("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
