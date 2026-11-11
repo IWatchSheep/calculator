@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 245 ready (230 word_solver, 15 number_puzzle), 234 reference.
+479 problems: 250 ready (235 word_solver, 15 number_puzzle), 229 reference.
 
 ## Age
 
@@ -38,11 +38,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in class B? | 13 students | Ready | archive_average_weighted_1 | `average_weighted/0019/` |
-| 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86? | 56 | Reference |  | `average_weighted/0020/` |
-| 0021 | A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85? | 94 | Reference |  | `average_weighted/0021/` |
-| 0024 | A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88? | 100 | Reference |  | `average_weighted/0024/` |
-| 0025 | A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85? | 67 | Reference |  | `average_weighted/0025/` |
-| 0028 | A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81? | 67 | Reference |  | `average_weighted/0028/` |
+| 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86? | 56 | Ready | course_grade_final_exam | `average_weighted/0020/` |
+| 0021 | A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85? | 94 | Ready | course_grade_final_exam | `average_weighted/0021/` |
+| 0024 | A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88? | 100 | Ready | course_grade_final_exam | `average_weighted/0024/` |
+| 0025 | A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85? | 67 | Ready | course_grade_final_exam | `average_weighted/0025/` |
+| 0028 | A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81? | 67 | Ready | course_grade_final_exam | `average_weighted/0028/` |
 
 ## Break-even
 

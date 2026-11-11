@@ -3226,7 +3226,43 @@ def complementary_supplementary(problem):
                   "%s, so %sx = %s and x = %s; the angle described is %s degrees" % (eq, show_exact(k + 1), show(total - c), show_exact(x), show_exact(other)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, percent_change, proportion, two_solution_mix, two_rate_interest,
+# Course grade: (c/100)*w + (e/100)*f = g. The two percents add to 100. f is the final exam score.
+_COURSE_GRADE_FINAL_EXAM = re.compile(
+    r"a course grade is "
+    r"(?P<c>\d+(?:\.\d+)?)% coursework and "
+    r"(?P<e>\d+(?:\.\d+)?)% final exam\. "
+    r"(?P<name>[a-z]+) has a coursework average of "
+    r"(?P<w>\d+(?:\.\d+)?)\. "
+    r"what final exam score gives an overall grade of "
+    r"(?P<g>\d+(?:\.\d+)?)\?")
+
+
+def course_grade_final_exam(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _COURSE_GRADE_FINAL_EXAM.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(n[1] for n in numbers):
+        return None
+    c = Fraction(match.group("c"))
+    e = Fraction(match.group("e"))
+    w = Fraction(match.group("w"))
+    g = Fraction(match.group("g"))
+    if [n[0] for n in numbers] != [c, e, w, g]:
+        return None
+    if c <= 0 or e <= 0 or w <= 0 or g <= 0 or c + e != 100:
+        return None
+    f = (g - (c / 100) * w) / (e / 100)
+    if f <= 0:
+        return None
+    if (c / 100) * w + (e / 100) * f != g:
+        return None
+    eq = "(%s/100)(%s) + (%s/100)f = %s" % (show(c), show(w), show(e), show(g))
+    return Result("course_grade_final_exam", [f], eq, "%s, so f = %s" % (eq, show_exact(f)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

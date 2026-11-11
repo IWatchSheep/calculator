@@ -131,6 +131,19 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long do they take working together?"))
         self.assertIsNone(WS.work_together("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone?"))
 
+    def test_course_grade_final_exam(self):
+        cases = [
+            ("A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86?", 56),
+            ("A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88?", 100),
+            ("A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81?", 67),
+            ("A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85?", 67),
+            ("A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85?", 94),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("A course grade is 75% coursework and 20% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86?"))
+        self.assertIsNone(answers("A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What coursework average gives an overall grade of 86?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
