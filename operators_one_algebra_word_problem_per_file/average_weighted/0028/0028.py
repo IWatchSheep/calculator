@@ -6,7 +6,7 @@ Equation: 0.7(87) + 0.3f = 81
 Solve   : 0.3f = 20.1 → f = 67
 Answer  : 67
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: course_grade_final_exam answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.7(87) + 0.3f = 81'
 SOLVE = '0.3f = 20.1 → f = 67'
 ANSWER = '67'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'course_grade_final_exam'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A course grade is {0}% coursework and {1}% final exam. Lena has a coursework average of {2}. What final exam score gives an overall grade of {3}?'
 NUMBERS = ['70', '30', '87', '81']

@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 235 ready (220 word_solver, 15 number_puzzle), 244 reference.
+479 problems: 250 ready (235 word_solver, 15 number_puzzle), 229 reference.
 
 ## Age
 
@@ -38,11 +38,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0019 | Class A has 13 students averaging 75. Class B averages 93. Together the classes average 84. How many students are in class B? | 13 students | Ready | archive_average_weighted_1 | `average_weighted/0019/` |
-| 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86? | 56 | Reference |  | `average_weighted/0020/` |
-| 0021 | A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85? | 94 | Reference |  | `average_weighted/0021/` |
-| 0024 | A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88? | 100 | Reference |  | `average_weighted/0024/` |
-| 0025 | A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85? | 67 | Reference |  | `average_weighted/0025/` |
-| 0028 | A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81? | 67 | Reference |  | `average_weighted/0028/` |
+| 0020 | A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86? | 56 | Ready | course_grade_final_exam | `average_weighted/0020/` |
+| 0021 | A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85? | 94 | Ready | course_grade_final_exam | `average_weighted/0021/` |
+| 0024 | A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88? | 100 | Ready | course_grade_final_exam | `average_weighted/0024/` |
+| 0025 | A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85? | 67 | Ready | course_grade_final_exam | `average_weighted/0025/` |
+| 0028 | A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81? | 67 | Ready | course_grade_final_exam | `average_weighted/0028/` |
 
 ## Break-even
 
@@ -119,12 +119,12 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0115/` |
+| 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part? | 4 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0115/` |
 | 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h? | 20 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0116/` |
-| 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0117/` |
-| 0120 | Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0120/` |
-| 0121 | Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0121/` |
-| 0124 | Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part? | 2 hours | Reference |  | `distance_average_speed/0124/` |
+| 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part? | 1 hour | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0117/` |
+| 0120 | Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part? | 1 hour | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0120/` |
+| 0121 | Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part? | 4 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0121/` |
+| 0124 | Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part? | 2 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0124/` |
 
 ## Distance (catch-up)
 
@@ -742,21 +742,21 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0967 | A new machine works 2 times as fast as an old one. Together they finish an order in 3 hours. How long would the old machine take alone? | 9 hours (new machine: 4.5 hours) | Ready | archive_work_rate_1 | `work_rate/0967/` |
 | 0968 | Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long will it take all three together? | 20/9 hours | Reference |  | `work_rate/0968/` |
 | 0969 | An inlet pipe fills a tank in 5 hours. A drain empties it in 6 hours. If both are open, how long does it take to fill the empty tank? | 30 hours | Ready | archive_work_rate_2 | `work_rate/0969/` |
-| 0970 | Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone? | 6 hours | Reference |  | `work_rate/0970/` |
+| 0970 | Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone? | 6 hours | Ready | partner_alone_from_together | `work_rate/0970/` |
 | 0971 | Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish? | 4/3 more hours | Reference |  | `work_rate/0971/` |
-| 0972 | Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. How long would Victor take alone? | 12 hours | Reference |  | `work_rate/0972/` |
+| 0972 | Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. How long would Victor take alone? | 12 hours | Ready | partner_alone_from_together | `work_rate/0972/` |
 | 0974 | Grace can do a job in 5 hours and Isla can do it in 15 hours. Grace works alone for 2 hours, then Isla joins. How much longer will it take to finish? | 2.25 more hours | Reference |  | `work_rate/0974/` |
 | 0976 | Lena can paint a fence in 5 hours. Ava can do it in 10 hours. How long will it take them working together? | 10/3 hours (3.33 h) | Ready | work_together | `work_rate/0976/` |
 | 0978 | Quinn, Jamal, and Sam can each paint a room alone in 24, 20, and 30 hours. How long will it take all three together? | 8 hours | Reference |  | `work_rate/0978/` |
 | 0980 | Rhea can do a job in 4 hours and Carla can do it in 12 hours. Rhea works alone for 2 hours, then Carla joins. How much longer will it take to finish? | 1.5 more hours | Reference |  | `work_rate/0980/` |
 | 0983 | Bea can mow a lawn in 12 hours. Yara can do it in 18 hours. How long will it take them working together? | 7.2 hours (7.20 h) | Ready | work_together | `work_rate/0983/` |
 | 0986 | Aiden, Lena, and Yara can each paint a room alone in 8, 30, and 20 hours. How long will it take all three together? | 4.8 hours | Reference |  | `work_rate/0986/` |
-| 0987 | Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone? | 6 hours | Reference |  | `work_rate/0987/` |
+| 0987 | Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone? | 6 hours | Ready | partner_alone_from_together | `work_rate/0987/` |
 | 0990 | Sofia, Grace, and Sam can each paint a room alone in 24, 15, and 10 hours. How long will it take all three together? | 4.8 hours | Reference |  | `work_rate/0990/` |
 | 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish? | 2.25 more hours | Reference |  | `work_rate/0991/` |
 | 0992 | Maya can wash the cars in 10 hours. Kira can do it in 20 hours. How long will it take them working together? | 20/3 hours (6.67 h) | Ready | work_together | `work_rate/0992/` |
-| 0995 | Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone? | 12 hours | Reference |  | `work_rate/0995/` |
-| 0997 | Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone? | 4 hours | Reference |  | `work_rate/0997/` |
+| 0995 | Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone? | 12 hours | Ready | partner_alone_from_together | `work_rate/0995/` |
+| 0997 | Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone? | 4 hours | Ready | partner_alone_from_together | `work_rate/0997/` |
 | 0998 | Grace, Uma, and Omar can each paint a room alone in 10, 30, and 24 hours. How long will it take all three together? | 40/7 hours | Reference |  | `work_rate/0998/` |
 | 0999 | Dana can clean the house in 15 hours. Priya can do it in 10 hours. How long will it take them working together? | 6 hours | Ready | work_together | `work_rate/0999/` |
 | 1000 | Dev can do a job in 12 hours and Pablo can do it in 3 hours. Dev works alone for 1 hour, then Pablo joins. How much longer will it take to finish? | 2.2 more hours | Reference |  | `work_rate/1000/` |

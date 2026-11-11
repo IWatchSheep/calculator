@@ -117,6 +117,33 @@ class Families(unittest.TestCase):
         # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"
         self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"))
 
+    def test_partner_alone_from_together(self):
+        cases = [
+            ("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone?", 12),
+            ("Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. How long would Emeka take alone?", 6),
+            ("Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone?", 4),
+            ("Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. How long would Victor take alone?", 12),
+            ("Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone?", 6),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Working together, Hiro and Nia can finish a job in 3 hours. Nia alone takes 4 hours. How long would Hiro take alone?"))
+        self.assertIsNone(answers("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long do they take working together?"))
+        self.assertIsNone(WS.work_together("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone?"))
+
+    def test_course_grade_final_exam(self):
+        cases = [
+            ("A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86?", 56),
+            ("A course grade is 60% coursework and 40% final exam. Rhea has a coursework average of 80. What final exam score gives an overall grade of 88?", 100),
+            ("A course grade is 70% coursework and 30% final exam. Lena has a coursework average of 87. What final exam score gives an overall grade of 81?", 67),
+            ("A course grade is 60% coursework and 40% final exam. Ivan has a coursework average of 97. What final exam score gives an overall grade of 85?", 67),
+            ("A course grade is 60% coursework and 40% final exam. Gus has a coursework average of 79. What final exam score gives an overall grade of 85?", 94),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("A course grade is 75% coursework and 20% final exam. Elena has a coursework average of 96. What final exam score gives an overall grade of 86?"))
+        self.assertIsNone(answers("A course grade is 75% coursework and 25% final exam. Elena has a coursework average of 96. What coursework average gives an overall grade of 86?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -1485,6 +1512,20 @@ class FreshWordings(unittest.TestCase):
                      "How fast does a car go in 4 hours at 40 km/h?",
                      "How long does it take to travel 160 km at 40 km/h for part of the day?"):
             self.assertIsNone(answers(text), text)
+
+    def test_average_speed_two_leg_unknown_time(self):
+        cases = [
+            ("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part?", 4),
+            ("Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part?", 1),
+            ("Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part?", 1),
+            ("Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part?", 4),
+            ("Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part?", 2),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How far was the second part?"))
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. How long was the second part?"))
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then 2 hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part?"))
 
     def test_heights_chores_distance_set(self):
         """Set 25: wordings for the three families added together, written after all three were finished and run once, untuned.
