@@ -27,7 +27,8 @@ THOUSANDS = re.compile(r"(?<=\d),(?=\d{3})")
 
 
 def stored_ids():
-    text = open(SOURCE, encoding="utf-8").read()
+    with open(SOURCE, encoding="utf-8") as f:
+        text = f.read()
     return re.findall(r"^#(\d{4}) \[", text, flags=re.M)
 
 
@@ -48,7 +49,8 @@ class Folders(unittest.TestCase):
             self.assertGreater(os.path.getsize(jpg), 4000, key)                 # a real picture, not an empty file
 
     def test_the_problem_files_hold_the_stored_text(self):
-        text = open(SOURCE, encoding="utf-8").read()
+        with open(SOURCE, encoding="utf-8") as f:
+            text = f.read()
         for key in library.keys():
             m = library.get(key)
             block = re.search(r"^#%s \[[^\]]+\]\n(.*?)\n-{20,}" % m.ID, text, flags=re.S | re.M).group(1)
@@ -59,7 +61,8 @@ class Folders(unittest.TestCase):
             self.assertEqual(m.TEMPLATE.format(*m.NUMBERS), THOUSANDS.sub("", m.PROBLEM), key)     # the template and the numbers rebuild the problem (thousands commas are dropped)
 
     def test_index_lists_every_problem(self):
-        index = open(os.path.join(LIB, "INDEX.md"), encoding="utf-8").read()
+        with open(os.path.join(LIB, "INDEX.md"), encoding="utf-8") as f:
+            index = f.read()
         for key in library.keys():
             self.assertIn("`%s/`" % key, index)
         self.assertIn("479 problems", index)

@@ -12,3 +12,23 @@ rust_calculator/
 algebra_word_problems/algebra_matcher/training_data.jsonl
 algebra_word_problems/rust_chess/python_version_of_rust_chess/game_files_kpk/
 algebra_word_problems/rust_chess/forming_chess-main/target/
+
+# Rust build files
+**/target/
+
+# PyCharm and RustRover settings
+**/.idea/
+
+# Python generated files
+**/__pycache__/
+*.pyc
+*.pyo
+**/.venv/
+**/venv/
+
+# Private environment files
+.env
+.env.*
+
+# Original Rust Git repository
+/rust_calculator/the_rust_version_of_calculator/

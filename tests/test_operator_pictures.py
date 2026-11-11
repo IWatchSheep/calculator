@@ -132,6 +132,9 @@ class InTheWindow(unittest.TestCase):
     def setUpClass(cls):
         try:
             import tkinter
+        except ImportError as exc:
+            raise unittest.SkipTest("no GUI available: %s" % exc)
+        try:
             import main
             cls.app = main.CalculatorGUI()
             cls.app.update()
@@ -140,7 +143,8 @@ class InTheWindow(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.app.destroy()
+        if hasattr(cls, "app"):
+            cls.app.destroy()
 
     def setUp(self):
         self.app._clear_all()

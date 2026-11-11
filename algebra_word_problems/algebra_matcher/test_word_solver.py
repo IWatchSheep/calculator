@@ -5,6 +5,7 @@
 3. The 100 hand-written matcher problems: every claim must be in the table of hand-calculated answers below.
 4. 33 fresh wordings (fresh_word_problems.py), written after the solver was finished and run once, untuned.
 """
+import os
 import re
 import sys
 import unittest
@@ -70,8 +71,10 @@ def values(*xs):
 class SourceHygiene(unittest.TestCase):
     def test_no_control_characters_in_the_source(self):
         # "\\b" written inside a normal string becomes a backspace: that once disabled a check in word_solver.py
+        here = os.path.dirname(os.path.abspath(__file__))
         for name in ("word_solver.py", "number_puzzle.py"):
-            text = open(name, encoding="utf-8").read()
+            with open(os.path.join(here, name), encoding="utf-8") as f:
+                text = f.read()
             bad = [i for i, c in enumerate(text) if ord(c) < 32 and c not in "\n\r\t"]
             self.assertEqual(bad, [], name + " contains control characters")
 
@@ -500,7 +503,8 @@ class FreshWordings(unittest.TestCase):
         import os
         here = os.path.dirname(os.path.abspath(__file__))
         for path in glob.glob(os.path.join(here, "*.py")):
-            data = open(path, "rb").read()
+            with open(path, "rb") as f:
+                data = f.read()
             bad = sorted({b for b in data if b < 32 and b not in (9, 10, 13)})
             self.assertEqual(bad, [], os.path.basename(path))
 
@@ -764,7 +768,8 @@ class FreshWordings(unittest.TestCase):
         import collections
         import os
         here = os.path.dirname(os.path.abspath(__file__))
-        text = open(os.path.join(here, "word_solver.py"), encoding="utf-8").read()
+        with open(os.path.join(here, "word_solver.py"), encoding="utf-8") as f:
+            text = f.read()
         names = re.findall(r"^([A-Za-z_]\w*)\s*=", text, flags=re.M) + re.findall(r"^def ([A-Za-z_]\w*)\(", text, flags=re.M)
         twice = sorted(n for n, c in collections.Counter(names).items() if c > 1)
         self.assertEqual(twice, [])
