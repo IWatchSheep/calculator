@@ -1358,7 +1358,7 @@ class CalculatorGUI(tk.Tk):
 
     # ---------- operators popup ----------
     def _word_catalog(self):
-        """The 1,000 algebra word problems, loaded once from INDEX.md."""
+        """The algebra word problems, one per wording, loaded once from INDEX.md."""
         if getattr(self, "_word_catalog_items", None) is None:
             import algebra_word_problem_catalog as catalog
             self._word_catalog_items = catalog.load_catalog(os.path.join(WORD_DIR, "INDEX.md"))

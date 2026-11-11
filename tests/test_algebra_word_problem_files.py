@@ -1,6 +1,6 @@
 """Checks the two algebra word problem folders.
 
-    operators_one_algebra_word_problem_per_file/<category>/<id>/<id>.py and <id>.jpg      the 1,000 problems and their diagrams
+    operators_one_algebra_word_problem_per_file/<category>/<id>/<id>.py and <id>.jpg      the 479 problems and their diagrams
     operator_row_math_for_algebra_word_problems/<category>/<id>/<id>.py                  how each problem is laid out as a row
 
 Run from the project root (standard library only):   python tests/test_algebra_word_problem_files.py
@@ -34,9 +34,9 @@ def stored_ids():
 class Folders(unittest.TestCase):
     def test_every_problem_has_a_folder_a_file_a_picture_and_a_row(self):
         ids = stored_ids()
-        self.assertEqual(len(ids), 1000)
+        self.assertEqual(len(ids), 479)
         keys = library.keys()
-        self.assertEqual(len(keys), 1000)
+        self.assertEqual(len(keys), 479)
         self.assertEqual(sorted(k.split("/")[1] for k in keys), sorted(ids))
         self.assertEqual(rows.keys(), keys)
         for key in keys:
@@ -62,7 +62,7 @@ class Folders(unittest.TestCase):
         index = open(os.path.join(LIB, "INDEX.md"), encoding="utf-8").read()
         for key in library.keys():
             self.assertIn("`%s/`" % key, index)
-        self.assertIn("1000 problems", index)
+        self.assertIn("479 problems", index)
 
 
 class Rows(unittest.TestCase):
@@ -103,9 +103,9 @@ class Catalog(unittest.TestCase):
     def test_the_index_lists_every_problem_and_its_diagram(self):
         import algebra_word_problem_catalog as catalog
         items = catalog.load_catalog(os.path.join(LIB, "INDEX.md"))
-        self.assertEqual(len(items), 1000)
+        self.assertEqual(len(items), 479)
         self.assertEqual(len({i["category"] for i in items}), 55)
-        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 554)
+        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 235)
         savings = next(i for i in items if i["key"] == "savings/0848")
         self.assertIn("Ben has $150", savings["problem"])
         self.assertEqual(savings["id"], "0848")
@@ -129,7 +129,7 @@ class Computing(unittest.TestCase):
                 self.assertEqual(expected.family, m.FAMILY, key)
                 got = answer if isinstance(answer, list) else [answer]
                 self.assertEqual(got, [float(v) if v.denominator != 1 else int(v) for v in expected.values], key)
-        self.assertEqual(ready, 554)                                           # 526 word_solver (349 + 177 archive families) + 28 number_puzzle
+        self.assertEqual(ready, 235)                                           # 220 word_solver + 15 number_puzzle; one stored problem per wording
 
     def test_your_own_numbers(self):
         self.assertEqual(library.get("savings/0848").compute(), 16)
@@ -155,7 +155,7 @@ class InTheCalculator(unittest.TestCase):
             else:
                 ready += 1
                 self.assertEqual(row_tree.evaluate(node), lib.compute(), key)      # the boxes start with the stored numbers
-        self.assertEqual(ready, 554)
+        self.assertEqual(ready, 235)
 
     def test_a_list_of_answers_cannot_be_joined(self):
         from operator_row_math import row_tree
