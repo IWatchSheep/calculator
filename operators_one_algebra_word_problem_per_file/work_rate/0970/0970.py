@@ -6,7 +6,7 @@ Equation: 4/12 + 4/x = 1
 Solve   : 4/x = 2/3 → x = 6
 Answer  : 6 hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: partner_alone_from_together answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4/12 + 4/x = 1'
 SOLVE = '4/x = 2/3 → x = 6'
 ANSWER = '6 hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'partner_alone_from_together'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Working together, Rhea and Emeka can finish a job in {0} hours. Rhea alone takes {1} hours. How long would Emeka take alone?'
 NUMBERS = ['4', '12']
