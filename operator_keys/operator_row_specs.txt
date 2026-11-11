@@ -630,3 +630,4 @@ physics/physics/oscillator_ground_density | {}{probability density|per metre} = 
 physics/physics/oscillator_ground_variance | {}{variance|square metres} = ħ{reduced Planck constant|1.054571817e-34 J s} / ( 2 × [m]{mass|kilograms} × [omega]{angular frequency|radians per second} )
 physics/physics/spin_z_up_probability | {}{probability|0 or 1} = P ( ↑ | [prepared]{prepared spin|1 is up along z, −1 is down along z} )
 physics/physics/spin_up_at_angle | {}{probability|0 to 1, spin up along the measurement axis} = ( 1 + cos ( [theta]{angle|radians from z to the measurement axis} ) ) / 2
+physics/physics/hydrogen_mean_radius | {}{mean radius|metres} = a0{Bohr radius of hydrogen|5.29177210903e-11 m} / ( 2 × [Z]{atomic number|1 for hydrogen, 2 for He+} ) × ( 3 × [n]{level|1, 2, 3, …} ² − [l]{angular momentum|0, 1, …, up to n − 1} × ( [l] + 1 ) )

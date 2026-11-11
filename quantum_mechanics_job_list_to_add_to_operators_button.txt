@@ -15,7 +15,10 @@ STATUS  (updated by Claude after each job)
   Job 4  DONE 2026-11-10: spin_z_up_probability(prepared) (1 or 0; anything but 1 or -1 declined, NaN included) and spin_up_at_angle(theta) = (1 + cos theta) / 2 (any
          real angle).  629 operators, 557 calculating.  Grok's numbers match exactly (1, 0; 1, 0.5, 0): the (1 + cos) / 2 form gives exactly 0.5 at pi/2 and exactly 0 at
          pi.  Checked: equals cos^2(theta/2); even in theta; the angles theta and theta + pi add to 1.
-  Jobs 5-6  waiting for Grok's numbers.
+  Job 5  DONE 2026-11-10: hydrogen_mean_radius(n, l, Z, a0=5.29177210903e-11) = (a0 / (2 Z)) [3 n^2 - l(l+1)] (physics/physics).  630 operators, 558 calculating.
+         Grok's four numbers match exactly (1.5, 5, 6 and 0.75 a0).  a0 is a filled-in constant (the same value bohr_radius uses).  Checked: it scales as 1 / Z against
+         bohr_radius(Z); the circular orbit l = n - 1 gives n^2 + n/2 in units of a0; lower l reaches farther out.
+  Job 6  waiting for Grok's numbers.
 
 Quantum mechanics is only partly in the calculator. Photon energy, the Bohr levels, the Rydberg formula, the infinite-well energies, the harmonic-oscillator energies, de Broglie, Compton’s shift, the photoelectric effect, and the Heisenberg bound are already there. The list below does not repeat them.
 

@@ -646,6 +646,7 @@ One folder per operator, holding `<name>.py` (formula + `compute()`) and `<name>
 | Oscillator ground-state variance | ⟨x²⟩ = ħ / (2 m ω) | ⟨x²⟩ = ħ / (2 m ω)   (the mean of x is 0, so this is the spread of the ground state of a quantum harmonic oscillator, in square metres; ħ = 1.054571817e-34 J s unless another is passed) | Ready | `physics/physics/oscillator_ground_variance/` |
 | Spin up along z | P(↑_z) | P(↑_z) = 1 if the spin-1/2 particle was prepared spin up along z, 0 if it was prepared spin down (the prepared value is 1 or −1) | Ready | `physics/physics/spin_z_up_probability/` |
 | Spin up at an angle | P = (1 + cos θ) / 2 | P = (1 + cos θ) / 2 = cos²(θ/2)   (a spin-1/2 particle prepared spin up along z is found spin up along an axis at angle θ from z, in radians; the (1 + cos θ) / 2 form makes 90° exactly 0.5 and 180° exactly 0) | Ready | `physics/physics/spin_up_at_angle/` |
+| Hydrogen mean radius | ⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)] | ⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)]   (the average distance of the electron from the nucleus in hydrogen or a one-electron ion, in metres; a₀ = 5.29177210903e-11 m is the hydrogen Bohr radius; it does not depend on the magnetic number) | Ready | `physics/physics/hydrogen_mean_radius/` |
 | Momentum | p = mv | p = m v | Ready | `physics/physics/momentum/` |
 | Impulse | J = FΔt | J = F Δt | Ready | `physics/physics/impulse/` |
 | Work | W = Fd | W = F d   (force parallel to displacement) | Ready | `physics/physics/work/` |

@@ -854,3 +854,13 @@ pub fn spin_up_at_angle(a: &[f64]) -> R {
     // theta
     n((1.0 + a[0].cos()) / 2.0)
 }
+
+// ---------- quantum mechanics, job 5 (the same operations as the Python file) ----------
+
+pub fn hydrogen_mean_radius(a: &[f64]) -> R {
+    // n, l, Z, a0
+    need(a[0] >= 1.0 && a[0].fract() == 0.0, "a level must be a positive whole number")?;
+    need(a[2] >= 1.0 && a[2].fract() == 0.0, "the atomic number must be a positive whole number")?;
+    need(a[1] >= 0.0 && a[1] <= a[0] - 1.0 && a[1].fract() == 0.0, "the angular momentum must be a whole number from 0 up to n - 1")?;
+    n(a[3] / (2.0 * a[2]) * (3.0 * a[0].powi(2) - a[1] * (a[1] + 1.0)))
+}

@@ -510,6 +510,7 @@ physics/physics/heisenberg_uncertainty	Heisenberg uncertainty principle	Δx·Δp
 physics/physics/hooke_s_law	Hooke's law	F = −kx	Physics	Physics	F = −k x	Ready	2	2	k,x	compute(k, x)
 physics/physics/hover_thrust	Hover thrust	T = mg	Physics	Physics	T = m g   (the upward force that balances the weight, g = 9.81 m/s²)	Ready	1	2	m	compute(m, g=9.81)
 physics/physics/hydraulic_press	Hydraulic press (Pascal's principle)	F₂ = F₁A₂/A₁	Physics	Physics	F₂ = F₁ A₂ / A₁   (pressure is the same everywhere in the fluid)	Ready	3	3	F1,A1,A2	compute(F1, A1, A2)
+physics/physics/hydrogen_mean_radius	Hydrogen mean radius	⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)]	Physics	Physics	⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)]   (the average distance of the electron from the nucleus in hydrogen or a one-electron ion, in metres; a₀ = 5.29177210903e-11 m is the hydrogen Bohr radius; it does not depend on the magnetic number)	Ready	3	4	n,l,Z	compute(n, l, Z, a0=5.29177210903e-11)
 physics/physics/hydrostatic_pressure	Hydrostatic pressure	P = ρgh	Physics	Physics	P = ρ g h   (pressure due to the fluid alone, g = 9.81 m/s²)	Ready	2	3	rho,h	compute(rho, h, g=9.81)
 physics/physics/ideal_gas_law	Ideal gas law	PV = nRT	Physics	Physics	P = n R T / V   (R = 8.314 J/(mol·K))	Ready	3	4	n,T,V	compute(n, T, V, R=8.314462618)
 physics/physics/impact_force	Tree impact force	F = mv² / 2s	Physics	Physics	F = m v² / (2 s)   (the average force to stop a mass from speed v over a distance s)	Ready	3	3	mass,speed,distance	compute(mass, speed, distance)

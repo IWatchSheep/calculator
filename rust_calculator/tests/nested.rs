@@ -1148,3 +1148,28 @@ fn the_spin_half_operators_give_the_numbers_of_the_work_plan_and_decline_with_it
     assert_eq!(call("spin_up_at_angle", &[1.5707963267948966]).unwrap(), 0.5);
     assert_eq!(call("spin_up_at_angle", &[3.141592653589793]).unwrap(), 0.0);
 }
+
+#[test]
+fn the_hydrogen_mean_radius_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/hydrogen_mean_radius").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let a0 = 5.29177210903e-11;
+    assert_eq!(call(&[1., 0., 1., a0]).unwrap(), 7.937658163545e-11);
+    assert_eq!(call(&[2., 1., 1., a0]).unwrap(), 2.645886054515e-10);
+    assert_eq!(call(&[2., 0., 1., a0]).unwrap(), 3.175063265418e-10);
+    assert_eq!(call(&[1., 0., 2., a0]).unwrap(), 3.9688290817725e-11);
+    let (level, atomic) = ("a level must be a positive whole number", "the atomic number must be a positive whole number");
+    let ang = "the angular momentum must be a whole number from 0 up to n - 1";
+    assert!(call(&[0., 0., 1., a0]).unwrap_err().contains(level));
+    assert!(call(&[1.5, 0., 1., a0]).unwrap_err().contains(level));
+    assert!(call(&[1., 0., 0., a0]).unwrap_err().contains(atomic));
+    assert!(call(&[1., 0., 1.5, a0]).unwrap_err().contains(atomic));
+    assert!(call(&[2., -1., 1., a0]).unwrap_err().contains(ang));
+    assert!(call(&[2., 2., 1., a0]).unwrap_err().contains(ang));
+    assert!(call(&[3., 0.5, 1., a0]).unwrap_err().contains(ang));
+}

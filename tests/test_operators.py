@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 629)
+        self.assertEqual(len(self.ops), 630)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 629)
+        self.assertEqual(len(status), 630)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -308,6 +308,8 @@ CASES = [
     (PH + "oscillator_ground_variance", (1, 2, 1), 0.25),
     (PH + "spin_z_up_probability", (1,), 1), (PH + "spin_z_up_probability", (-1,), 0),
     (PH + "spin_up_at_angle", (0,), 1), (PH + "spin_up_at_angle", (1.5707963267948966,), 0.5), (PH + "spin_up_at_angle", (3.141592653589793,), 0),
+    (PH + "hydrogen_mean_radius", (1, 0, 1), 7.937658163545e-11), (PH + "hydrogen_mean_radius", (2, 1, 1), 2.645886054515e-10),
+    (PH + "hydrogen_mean_radius", (2, 0, 1), 3.175063265418e-10), (PH + "hydrogen_mean_radius", (1, 0, 2), 3.9688290817725e-11),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1569,6 +1571,40 @@ class SpinHalfTests(unittest.TestCase):
             self.assertAlmostEqual(angle(t) + angle(t + math.pi), 1.0, places=14)   # the two outcomes along one axis add to 1
         self.assertAlmostEqual(angle(1.0), angle(-1.0), places=15)                  # even in theta
         self.assertAlmostEqual(angle(2 * math.pi), 1.0, places=14)                
+
+
+class HydrogenMeanRadiusTests(unittest.TestCase):
+    """Quantum mechanics, job 5: the mean distance of the electron from the nucleus."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "hydrogen_mean_radius").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        level, atomic = "a level must be a positive whole number", "the atomic number must be a positive whole number"
+        ang = "the angular momentum must be a whole number from 0 up to n - 1"
+        self.says((0, 0, 1), level)
+        self.says((1.5, 0, 1), level)
+        self.says((-1, 0, 1), level)
+        self.says((1, 0, 0), atomic)
+        self.says((1, 0, 1.5), atomic)
+        self.says((2, -1, 1), ang)
+        self.says((2, 2, 1), ang)
+        self.says((1, 1, 1), ang)
+        self.says((3, 0.5, 1), ang)
+
+    def test_the_physics(self):
+        r = get(PH + "hydrogen_mean_radius").compute
+        a0 = get(PH + "bohr_radius").compute(1)
+        for n, l, times in ((1, 0, 1.5), (2, 1, 5), (2, 0, 6), (3, 2, 10.5)):
+            self.assertAlmostEqual(r(n, l, 1) / a0, times, places=12)           # in units of the Bohr radius
+        for z in (1, 2, 3, 8):                                                  # shrinks as 1 / Z: the same as bohr_radius(Z) x (3 n^2 - l(l+1)) / 2
+            self.assertAlmostEqual(r(3, 1, z), get(PH + "bohr_radius").compute(z) * (27 - 2) / 2, delta=1e-12 * r(3, 1, z))
+        for n in (1, 2, 5, 10):                                                 # the circular orbit l = n - 1 gives a0 n^2 (1 + 1/(2n)) / Z
+            self.assertAlmostEqual(r(n, n - 1, 1) / a0, n * n + n / 2, places=10)
+        self.assertGreater(r(3, 0, 1), r(3, 1, 1))                              # a more eccentric orbit reaches farther out
+        self.assertEqual(r(2, 1, 1), r(2.0, 1.0, 1.0))
 
 
 class ErrorTests(unittest.TestCase):

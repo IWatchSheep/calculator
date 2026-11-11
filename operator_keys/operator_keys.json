@@ -1,6 +1,6 @@
 {
- "count": 629,
- "ready": 557,
+ "count": 630,
+ "ready": 558,
  "reference": 72,
  "operators": [
   {
@@ -22162,6 +22162,85 @@
       1
      ],
      "expected": 10
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/hydrogen_mean_radius",
+   "name": "Hydrogen mean radius",
+   "symbol": "⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)]",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "⟨r⟩ = (a₀ / (2 Z)) [3 n² − l(l+1)]   (the average distance of the electron from the nucleus in hydrogen or a one-electron ion, in metres; a₀ = 5.29177210903e-11 m is the hydrogen Bohr radius; it does not depend on the magnetic number)",
+   "status": "Ready",
+   "inputs": [
+    "n",
+    "l",
+    "Z"
+   ],
+   "input_kinds": [
+    "number",
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = a0 / ( 2 × □ ) × ( 3 × □ ² − □ × ( □ + 1 ) )",
+   "compute_signature": "compute(n, l, Z, a0=5.29177210903e-11)",
+   "compute_params": [
+    {
+     "name": "n",
+     "kind": "required"
+    },
+    {
+     "name": "l",
+     "kind": "required"
+    },
+    {
+     "name": "Z",
+     "kind": "required"
+    },
+    {
+     "name": "a0",
+     "kind": "optional",
+     "default": 5.29177210903e-11
+    }
+   ],
+   "required_args": 3,
+   "max_args": 4,
+   "varargs": false,
+   "arity": 3,
+   "examples": [
+    {
+     "args": [
+      1,
+      0,
+      1
+     ],
+     "expected": 7.937658163545e-11
+    },
+    {
+     "args": [
+      2,
+      1,
+      1
+     ],
+     "expected": 2.645886054515e-10
+    },
+    {
+     "args": [
+      2,
+      0,
+      1
+     ],
+     "expected": 3.175063265418e-10
+    },
+    {
+     "args": [
+      1,
+      0,
+      2
+     ],
+     "expected": 3.9688290817725e-11
     }
    ]
   },

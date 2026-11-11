@@ -79,6 +79,6 @@ fn row_accepts_typed_values() {
 fn every_ready_operator_has_a_calculation() {
     use rust_calculator::operator::CalcKind;
     let ready = ops::all_operators().iter().filter(|o| o.calc == CalcKind::Ready).count();
-    assert_eq!(ready, 557, "the Python library has 557 Ready operators");
-    assert_eq!(ops::all_operators().len(), 629);
+    assert_eq!(ready, 558, "the Python library has 558 Ready operators");
+    assert_eq!(ops::all_operators().len(), 630);
 }
