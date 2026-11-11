@@ -6,7 +6,7 @@ Equation: t/24 + t/20 + t/30 = 1
 Solve   : Combine rates: t(1/24 + 1/20 + 1/30) = 1 → t = 8
 Answer  : 8 hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_painters_together answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 't/24 + t/20 + t/30 = 1'
 SOLVE = 'Combine rates: t(1/24 + 1/20 + 1/30) = 1 → t = 8'
 ANSWER = '8 hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_painters_together'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Quinn, Jamal, and Sam can each paint a room alone in {0}, {1}, and {2} hours. How long will it take all three together?'
 NUMBERS = ['24', '20', '30']
