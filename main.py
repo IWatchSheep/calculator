@@ -590,6 +590,10 @@ class CalculatorGUI(tk.Tk):
                       stack_exponents=row_tree.stack_exponents(row["node"]), words=self._card_words(i),
                       on_words=lambda k, which, text, i=i: self._set_word(i, k, which, text),
                       on_focus=lambda k, which, i=i: self._word_focus_set(i, k, which)).pack(anchor="w", padx=6, pady=4)
+            say = row_tree.note(row["node"])
+            if say:                                       # a formula-only operator: one sentence under its cards, no box
+                tk.Label(row["inner"], text=say, bg=row["inner"].cget("bg"), fg="#555555", font=("Segoe UI", 9, "italic"),
+                         wraplength=900, justify="left").pack(anchor="w", padx=6, pady=(0, 4))
         row["refresh"]()
 
     def _set_result(self, i, text=None):

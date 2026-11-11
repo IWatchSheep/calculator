@@ -19,6 +19,7 @@ PATTERN = 'Module ( □ )'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. The whole statement is the definition.'    # formula only: what the row says (no box is added and compute() is unchanged)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'Module'), ('op', '('), ('dec', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

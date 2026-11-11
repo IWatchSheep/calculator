@@ -19,6 +19,7 @@ PATTERN = '□ ⊕ □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. The two spaces are not numbers. The two rows already show the sum and the dimension.'    # formula only: what the row says (no box is added and compute() is unchanged)
 WORDS = {0: ('first space', 'a vector space'), 2: ('second space', 'a vector space')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('dec', ''), ('op', '⊕'), ('dec', '')]      # cards left of "="

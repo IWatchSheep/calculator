@@ -32,7 +32,7 @@ def build_text():
         "",
         "pub static LAYOUTS: &[Layout] = &[",
     ]
-    count, stacked, worded = 0, [], []
+    count, stacked, worded, noted = 0, [], [], []
     for key in R.keys():
         m = R.get(key)
         smap = row_tree.slot_map(m)
@@ -56,6 +56,8 @@ def build_text():
             stacked.append(key)
         if getattr(m, "WORDS", None):
             worded.append((key, sorted(m.WORDS.items())))
+        if getattr(m, "NOTE", ""):
+            noted.append((key, m.NOTE))
     lines.append("];")
     lines.append("")
     lines.append("/// The operators whose rows draw an exponent in the column of the symbol it powers (STACK_EXPONENTS in the Python row file).")
@@ -65,6 +67,12 @@ def build_text():
     lines.append("pub static WORDS: &[(&str, &[(usize, &str, &str)])] = &[")
     for key, items in worded:
         lines.append("    (%s, &[%s])," % (rs(key), ", ".join("(%d, %s, %s)" % (n, rs(w[0]), rs(w[1])) for n, w in items)))
+    lines.append("];")
+    lines.append("")
+    lines.append("/// The one sentence a formula-only operator's row says (NOTE in the Python row file, from operator_keys/formula_only_notes.txt): (operator, note).")
+    lines.append("pub static NOTES: &[(&str, &str)] = &[")
+    for key, text in noted:
+        lines.append("    (%s, %s)," % (rs(key), rs(text)))
     lines.append("];")
     lines.append("")
     return "\n".join(lines), count

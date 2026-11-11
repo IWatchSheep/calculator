@@ -19,6 +19,7 @@ PATTERN = 'Branch cut ( □ )'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the multi-valued function. The cut is a curve, not a number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'Branch'), ('op', 'cut'), ('op', '('), ('dec', ''), ('op', ')')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

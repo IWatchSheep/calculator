@@ -38,9 +38,19 @@ impl Operator {
         self.inputs.len()
     }
 
+    /// What `=` answers for a formula-only operator: the old sentence, then its row's note ("Formula only. Needs the curve. ...").
+    fn reference_message(&self) -> String {
+        let note = crate::layout::note(self.key);
+        if note.is_empty() {
+            "this operator is reference-only (no calculation yet)".into()
+        } else {
+            format!("this operator is reference-only (no calculation yet). {note}")
+        }
+    }
+
     pub fn run(&self, args: &[f64]) -> Result<Value, String> {
         if self.calc != CalcKind::Ready {
-            return Err("this operator is reference-only (no calculation yet)".into());
+            return Err(self.reference_message());
         }
         let result = self.run_checked(args)?;
         if self.compute_v.is_some() {
@@ -57,7 +67,7 @@ impl Operator {
     /// Run with typed values (lists, matrices, sets, functions ...).  Numbers-only operators accept numbers.
     pub fn run_values(&self, args: &[Value]) -> Result<Value, String> {
         if self.calc != CalcKind::Ready {
-            return Err("this operator is reference-only (no calculation yet)".into());
+            return Err(self.reference_message());
         }
         let Some(f) = self.compute_v else {
             let nums: Result<Vec<f64>, String> = args.iter().map(|v| v.as_number()).collect();

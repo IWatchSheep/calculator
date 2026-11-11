@@ -19,6 +19,7 @@ PATTERN = '□ ≥ 0'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the multiplier. One of the four KKT rows.'    # formula only: what the row says (no box is added and compute() is unchanged)
 WORDS = {0: ('multiplier', 'lambda'), 2: ('zero', 'the multiplier is not negative')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('dec', ''), ('op', '≥'), ('op', '0')]      # cards left of "="

@@ -19,6 +19,7 @@ PATTERN = '| ℕ | = ℵ ₀'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. It is a cardinality, not a finite number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 LEVELS = [0, 0, 0, 0, 0, 1]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '|'), ('op', 'ℕ'), ('op', '|'), ('op', '='), ('op', 'ℵ'), ('op', '0')]      # cards left of "="

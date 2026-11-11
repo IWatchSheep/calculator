@@ -19,6 +19,7 @@ PATTERN = 'Chains have upper bounds ⇒ a maximal element exists'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. The whole statement is the theorem.'    # formula only: what the row says (no box is added and compute() is unchanged)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'Chains'), ('op', 'have'), ('op', 'upper'), ('op', 'bounds'), ('op', '⇒'), ('op', 'a'), ('op', 'maximal'), ('op', 'element'), ('op', 'exists')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

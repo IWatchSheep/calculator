@@ -19,6 +19,7 @@ PATTERN = '∫ □ □ □ = ∫ ∂ □ □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the form and the region. The theorem is an equality, not a missing number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', '∫'), ('dec', ''), ('dec', ''), ('dec', ''), ('op', '='), ('op', '∫'), ('op', '∂'), ('dec', ''), ('dec', '')]      # cards left of "="
 RIGHT = []    # cards right of "="  (the result box = Row 1's number card)

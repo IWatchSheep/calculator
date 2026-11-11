@@ -19,6 +19,7 @@ PATTERN = '[ K : F ] = dim F K'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. The degree is the dimension of K over F. No missing number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 WORDS = {1: ('bigger field', 'the field that contains F'), 3: ('smaller field', 'the field inside K'), 6: ('dimension', 'how many vectors are in a basis'), 7: ('smaller field', 'the dimension is counted over F'), 8: ('bigger field', 'the vector space whose dimension is taken')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card

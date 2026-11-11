@@ -19,6 +19,7 @@ PATTERN = 'L ⁻¹ { □ } = □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the transform F(s). The integral is not a number until F is given.'    # formula only: what the row says (no box is added and compute() is unchanged)
 LEVELS = [0, -1, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 WORDS = {0: ('Laplace transform', 'the transform being undone'), 1: ('inverse', 'go back from F of s to f of t'), 3: ('the transform', 'F of s'), 6: ('the function', 'f of t, recovered from F')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card

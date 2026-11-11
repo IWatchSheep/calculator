@@ -19,6 +19,7 @@ PATTERN = '□ ₚ □'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the point. The tangent space is a vector space, not a number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 LEVELS = [0, 1, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('dec', ''), ('op', 'p'), ('dec', '')]      # cards left of "="

@@ -19,6 +19,7 @@ PATTERN = 'd ² = 0'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. d² = 0 is the whole statement.'    # formula only: what the row says (no box is added and compute() is unchanged)
 LEVELS = [0, -1, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript or lower limit (one row down), 0 = on the line
 WORDS = {0: ('exterior derivative', 'apply d twice'), 1: ('two', 'the second application'), 3: ('zero', 'd of d is always the zero form')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 STACK_EXPONENTS = True    # an exponent card shares the column of the symbol it powers (one grid row up) instead of having a column of its own

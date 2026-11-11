@@ -191,6 +191,32 @@ def rewrite(key, dsl):
     open(path, "w", encoding="utf-8", newline="").write(src.replace("\n", nl))
 
 
+def read_notes():
+    """{key: note} from operator_keys/formula_only_notes.txt (lines  <key> — <note>)."""
+    notes = {}
+    with open(os.path.join(ROOT, "operator_keys", "formula_only_notes.txt"), encoding="utf-8") as f:
+        for line in f:
+            key, sep, note = line.rstrip().partition(" — ")
+            if sep and key.count("/") >= 2 and " " not in key:
+                notes[key] = note.strip()
+    return notes
+
+
+def write_note(key, note):
+    """Put  NOTE = '...'  (one sentence on the row of a formula-only operator, shown under the row and added to the answer of =) after the KINDS line."""
+    base = os.path.join(ROOT, "operator_row_math", *key.split("/"))
+    path = os.path.join(base, os.path.basename(base) + ".py")
+    src = open(path, encoding="utf-8", newline="").read()
+    crlf = chr(13) + chr(10)
+    lf = chr(10)
+    nl = crlf if crlf in src else lf
+    src = src.replace(crlf, lf)
+    src = re.sub(r"^NOTE = .*" + lf, "", src, flags=re.M)
+    line = "NOTE = %r    # formula only: what the row says (no box is added and compute() is unchanged)" % note + lf
+    src = re.sub(r"^(KINDS = .*" + lf + ")", lambda m: m.group(1) + line, src, count=1, flags=re.M)
+    open(path, "w", encoding="utf-8", newline="").write(src.replace(lf, nl))
+
+
 def main():
     specs = read_specs()
     if "--todo" in sys.argv:
@@ -204,6 +230,9 @@ def main():
         raise SystemExit("not operators: %s" % unknown)
     for key, dsl in specs.items():
         rewrite(key, dsl)
+    notes = read_notes()
+    for key, note in notes.items():
+        write_note(key, note)
     extra = {k: v for k, v in EXTRAS.items() if v}
     report = os.path.join(ROOT, "operator_keys", "operator_rows_with_extra_boxes.txt")
     with open(report, "w", encoding="utf-8") as f:
@@ -211,6 +240,7 @@ def main():
         f.write("Written by make_operator_row_files.py.  %d operators.\n\n" % len(extra))
         for k in sorted(extra):
             f.write("%s   extra boxes for: %s\n" % (k, ", ".join(extra[k])))
+    print("%d formula-only notes written" % len(notes))
     print("rewrote %d row files; %d have extra boxes (see operator_rows_with_extra_boxes.txt)" % (len(specs), len(extra)))
 
 

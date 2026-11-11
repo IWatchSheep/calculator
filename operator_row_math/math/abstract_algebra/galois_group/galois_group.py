@@ -19,6 +19,7 @@ PATTERN = 'Gal ( □ / □ )'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Needs the extension K/F. The group is not a number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 FRAC = [[], [], [[1, 'n']], [[1, 'bar']], [[1, 'd']], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'Gal'), ('op', '('), ('dec', ''), ('op', '/'), ('dec', ''), ('op', ')')]      # cards left of "="

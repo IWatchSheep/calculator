@@ -1190,3 +1190,23 @@ fn the_fermi_energy_gives_the_numbers_of_the_work_plan_and_declines_with_its_mes
     assert!(call(&[1., 0., 1.]).unwrap_err().contains("mass must be positive"));
     assert!(call(&[1., 1., 0.]).unwrap_err().contains("hbar must be positive"));
 }
+
+#[test]
+fn every_formula_only_operator_has_its_note_which_the_equals_answer_repeats() {
+    use rust_calculator::layout;
+    use rust_calculator::operator::CalcKind;
+    let mut reference = 0;
+    for op in ops::all_operators() {
+        let note = layout::note(op.key);
+        if op.calc == CalcKind::Reference {
+            reference += 1;
+            assert!(note.starts_with("Formula only."), "{}: {note:?}", op.key);
+            assert!(op.run(&[]).unwrap_err().contains(note), "{}", op.key);
+            assert_eq!(op.arity(), 0, "no box was added to {}", op.key);
+        } else {
+            assert_eq!(note, "", "{} calculates, so it has no formula-only note", op.key);
+        }
+    }
+    assert_eq!(reference, 72);
+    assert_eq!(layout::note("math/differential_geometry_and_tensors/geodesic"), "Formula only. Needs the curve. The row already writes γ.");
+}

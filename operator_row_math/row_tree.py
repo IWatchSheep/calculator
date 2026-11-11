@@ -149,6 +149,21 @@ def words(node):
     return out
 
 
+def note(node):
+    """The one sentence a formula-only operator's row says under its cards (NOTE in its row file, "Formula only. ..."), or "" for any other row."""
+    if not node:
+        return ""
+    own = getattr(node["mod"], "NOTE", "")
+    if own:
+        return own
+    for slot in node["slots"]:                  # the row's plain number wraps the operator: look inside the boxes too
+        if isinstance(slot, dict) and "mod" in slot:
+            inner = note(slot)
+            if inner:
+                return inner
+    return ""
+
+
 def stack_exponents(node):
     """True when the row's operator draws an exponent in the column of the symbol it powers (STACK_EXPONENTS in its row file)."""
     return bool(getattr(node["mod"], "STACK_EXPONENTS", False))
@@ -259,7 +274,7 @@ def evaluate(node):
 def _evaluate(node):
     mod = node["mod"]
     if mod.CALC == "reference":
-        raise ValueError("%s is reference only: it shows the formula but can't calculate yet." % mod.NAME)
+        raise ValueError("%s is reference only: it shows the formula but can't calculate yet.%s" % (mod.NAME, (" " + mod.NOTE) if getattr(mod, "NOTE", "") else ""))
     vals = []
     for slot in node["slots"]:
         if isinstance(slot, dict) and "adv" in slot:

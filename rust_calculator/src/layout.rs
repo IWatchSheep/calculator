@@ -236,6 +236,11 @@ pub fn words(key: &str) -> &'static [(usize, &'static str, &'static str)] {
     crate::layouts::WORDS.iter().find(|(k, _)| *k == key).map_or(&[], |(_, w)| *w)
 }
 
+/// The one sentence a formula-only operator's row says ("Formula only. ..."), or "" for any other operator (Python `NOTE`).
+pub fn note(key: &str) -> &'static str {
+    crate::layouts::NOTES.iter().find(|(k, _)| *k == key).map_or("", |(_, n)| *n)
+}
+
 /// Does this operator draw an exponent in the column of the symbol it powers (Python `STACK_EXPONENTS`)?
 pub fn stacks(key: &str) -> bool {
     crate::layouts::STACKED.contains(&key)

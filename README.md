@@ -15,6 +15,7 @@ appears. Every operator comes with a picture of its formula.
 - **631 operators**, 559 of which calculate (the other 72 show their formula only, see below).
 - **A picture of each formula** drawn with small square boxes for the inputs.
 - **Rows and joins:** results from several rows can be combined with `+ − × ÷ = ≠ < > ≤ ≥`.
+- **Formula-only cards say so:** the 72 operators that show a formula and do not calculate each carry one sentence under their row ("Formula only. Needs the curve.") and repeat it when `=` declines. No box is added and `=` never invents a number. The sentences are in `operator_keys/formula_only_notes.txt`.
 - **Operators inside operators:** put an operator into the box of another one.
 - **Advanced Input** for things a number pad cannot type: lists, matrices, functions, sets and graphs.
 - **Templates:** type your own math once, save it, and put it into a row whenever you want it.

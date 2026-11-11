@@ -811,6 +811,9 @@ impl CalculatorApp {
                     let is_target = i == self.doc.target_row;
                     let target_path = self.doc.target_path.clone();
                     let focused = self.ui_formula(ui, i, is_target, &target_path);
+                    if let Some(note) = self.doc.rows[i].op_key.as_deref().map(crate::layout::note).filter(|n| !n.is_empty()) {
+                        ui.label(RichText::new(note).italics().weak());           // a formula-only operator: one sentence under its cards, no box
+                    }
                     if let Some(b) = focused {
                         self.doc.target_row = i;
                         self.doc.target_path = b;

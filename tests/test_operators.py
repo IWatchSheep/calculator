@@ -1672,6 +1672,41 @@ class ErrorTests(unittest.TestCase):
             self.raises(key, (), NotImplementedError)
 
 
+class FormulaOnlyNoteTests(unittest.TestCase):
+    """Each of the 72 formula-only operators has a one-sentence note on its row ("Formula only. ..."); no other row has one; compute() and the boxes are unchanged."""
+
+    @classmethod
+    def setUpClass(cls):
+        from operator_row_math import row_tree, get as row
+        cls.row_tree, cls.row = row_tree, row
+        with open(os.path.join(ROOT, "operator_keys", "formula_only_notes.txt"), encoding="utf-8") as f:
+            cls.notes = dict(line.rstrip().split(" — ", 1) for line in f if " — " in line and line.split(" — ")[0].count("/") >= 2)
+
+    def test_every_formula_only_operator_has_its_note_and_no_other_row_does(self):
+        import operator_row_math as R
+        formula_only = {k for k in R.keys() if R.get(k).CALC == "reference"}
+        self.assertEqual(len(formula_only), 72)
+        self.assertEqual(set(self.notes), formula_only)
+        for k in R.keys():
+            note = getattr(R.get(k), "NOTE", "")
+            if k in formula_only:
+                self.assertEqual(note, self.notes[k], k)
+                self.assertTrue(note.startswith("Formula only."), k)
+                self.assertEqual(R.get(k).INPUTS, [], k)           # no box was added
+            else:
+                self.assertEqual(note, "", k)
+
+    def test_the_note_is_on_the_row_and_in_the_answer_of_equals(self):
+        key = "math/differential_geometry_and_tensors/geodesic"
+        node = self.row_tree.new_node(key)
+        self.assertEqual(self.row_tree.note(node), "Formula only. Needs the curve. The row already writes γ.")
+        with self.assertRaises(ValueError) as ctx:
+            self.row_tree.evaluate(node)
+        self.assertIn("reference only", str(ctx.exception))
+        self.assertIn("Formula only. Needs the curve.", str(ctx.exception))
+        self.assertEqual(self.row_tree.note(self.row_tree.new_node("geometry/geometry/circle_area")), "")   # a calculating row has none
+
+
 # --------------------------------------------------------------------------- 4. cross-checks
 class IdentityTests(unittest.TestCase):
     """Cross-check operators against each other, so one wrong operator cannot hide."""

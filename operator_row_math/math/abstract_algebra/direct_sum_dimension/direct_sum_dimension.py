@@ -19,6 +19,7 @@ PATTERN = 'dim ( A ⊕ B ) = dim A + dim B'
 CALC = 'reference'
 INPUTS = []    # what each box (left to right) is
 KINDS = []    # what to type in each box (see advanced_input.KINDS)
+NOTE = 'Formula only. Same pair of spaces. No missing number.'    # formula only: what the row says (no box is added and compute() is unchanged)
 WORDS = {0: ('dimension', 'the number of vectors in a basis'), 2: ('first space', 'a vector space'), 4: ('second space', 'a vector space'), 7: ('dimension', 'the number of vectors in a basis'), 8: ('first space', 'a vector space'), 10: ('dimension', 'the number of vectors in a basis'), 11: ('second space', 'a vector space')}    # the words each card of LEFT carries, {card index: (label, context)}: shown in the card's Label and Context boxes when the operator is used
 # ("box", "")  = small square box card      ("op", text) = operator card
 LEFT = [('op', 'dim'), ('op', '('), ('op', 'A'), ('op', '⊕'), ('op', 'B'), ('op', ')'), ('op', '='), ('op', 'dim'), ('op', 'A'), ('op', '+'), ('op', 'dim'), ('op', 'B')]      # cards left of "="
