@@ -56,7 +56,7 @@ class StructureTests(unittest.TestCase):
         cls.ops = load_all()
 
     def test_operator_count(self):
-        self.assertEqual(len(self.ops), 630)
+        self.assertEqual(len(self.ops), 631)
 
     def test_every_operator_has_required_metadata(self):
         for key, m in self.ops.items():
@@ -87,7 +87,7 @@ class StructureTests(unittest.TestCase):
         text = _index_text()
         status = {m.group(2): m.group(1)
                   for m in re.finditer(r"\| (Ready|Reference) \| `([^`]+)/` \|", text)}
-        self.assertEqual(len(status), 630)
+        self.assertEqual(len(status), 631)
         for key, st in status.items():
             if st == "Reference":
                 with self.assertRaises(NotImplementedError, msg=key):
@@ -310,6 +310,7 @@ CASES = [
     (PH + "spin_up_at_angle", (0,), 1), (PH + "spin_up_at_angle", (1.5707963267948966,), 0.5), (PH + "spin_up_at_angle", (3.141592653589793,), 0),
     (PH + "hydrogen_mean_radius", (1, 0, 1), 7.937658163545e-11), (PH + "hydrogen_mean_radius", (2, 1, 1), 2.645886054515e-10),
     (PH + "hydrogen_mean_radius", (2, 0, 1), 3.175063265418e-10), (PH + "hydrogen_mean_radius", (1, 0, 2), 3.9688290817725e-11),
+    (PH + "fermi_energy", (0.03377372788077926, 1, 1), 0.5), (PH + "fermi_energy", (1e28, 9.1093837015e-31), 2.7117355236930545e-19),
     (PH + "weight", (2,), 19.62), (PH + "work", (3, 4), 12),
     # ---- discrete & number theory
     (DN + "combinations", (5, 2), 10), (DN + "combinations", (5, 0), 1), (DN + "combinations", (10, 10), 1),
@@ -1605,6 +1606,33 @@ class HydrogenMeanRadiusTests(unittest.TestCase):
             self.assertAlmostEqual(r(n, n - 1, 1) / a0, n * n + n / 2, places=10)
         self.assertGreater(r(3, 0, 1), r(3, 1, 1))                              # a more eccentric orbit reaches farther out
         self.assertEqual(r(2, 1, 1), r(2.0, 1.0, 1.0))
+
+
+class FermiEnergyTests(unittest.TestCase):
+    """Quantum mechanics, job 6: the Fermi energy of a free-electron gas."""
+
+    def says(self, args, text):
+        with self.assertRaises(ValueError, msg=str(args)) as ctx:
+            get(PH + "fermi_energy").compute(*args)
+        self.assertIn(text, str(ctx.exception))
+
+    def test_the_declines(self):
+        self.says((0, 1, 1), "the density must be positive")
+        self.says((-1, 1, 1), "the density must be positive")
+        self.says((1, 0, 1), "mass must be positive")
+        self.says((1, -1, 1), "mass must be positive")
+        self.says((1, 1, 0), "hbar must be positive")
+
+    def test_the_physics(self):
+        ef = get(PH + "fermi_energy").compute
+        me = 9.1093837015e-31
+        self.assertAlmostEqual(ef(1 / (3 * math.pi ** 2), 1, 1), 0.5, places=15)
+        self.assertAlmostEqual(ef(8e28, me) / ef(1e28, me), 4.0, places=12)                  # E_F goes as n^(2/3): eight times the density, four times the energy
+        self.assertAlmostEqual(ef(1e28, 2 * me) * 2, ef(1e28, me), delta=1e-12 * ef(1e28, me))   # and as 1 / m
+        self.assertGreater(ef(8.5e28, me) / 1.602176634e-19, 5.0)                            # copper: about 7 eV
+        self.assertLess(ef(8.5e28, me) / 1.602176634e-19, 9.0)
+        k_f = (3 * math.pi ** 2 * 1e28) ** (1 / 3)                                           # E_F = hbar^2 k_F^2 / 2m
+        self.assertAlmostEqual(ef(1e28, me), 1.054571817e-34 ** 2 * k_f ** 2 / (2 * me), delta=1e-12 * ef(1e28, me))
 
 
 class ErrorTests(unittest.TestCase):

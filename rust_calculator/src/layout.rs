@@ -342,7 +342,7 @@ mod tests {
 
     #[test]
     fn every_operator_has_a_layout_whose_boxes_are_its_inputs() {
-        assert_eq!(crate::layouts::LAYOUTS.len(), 630);
+        assert_eq!(crate::layouts::LAYOUTS.len(), 631);
         for l in crate::layouts::LAYOUTS {
             let op = crate::ops::get(l.key).unwrap_or_else(|| panic!("no operator for layout {}", l.key));
             for c in l.cards {

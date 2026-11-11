@@ -18,7 +18,10 @@ STATUS  (updated by Claude after each job)
   Job 5  DONE 2026-11-10: hydrogen_mean_radius(n, l, Z, a0=5.29177210903e-11) = (a0 / (2 Z)) [3 n^2 - l(l+1)] (physics/physics).  630 operators, 558 calculating.
          Grok's four numbers match exactly (1.5, 5, 6 and 0.75 a0).  a0 is a filled-in constant (the same value bohr_radius uses).  Checked: it scales as 1 / Z against
          bohr_radius(Z); the circular orbit l = n - 1 gives n^2 + n/2 in units of a0; lower l reaches farther out.
-  Job 6  waiting for Grok's numbers.
+  Job 6  DONE 2026-11-10: fermi_energy(n, m, hbar=1.054571817e-34) = (hbar^2 / 2m)(3 pi^2 n)^(2/3) (physics/physics).  631 operators, 559 calculating.
+         Grok's numbers match exactly (0.5 for n = 1/(3 pi^2), m = hbar = 1; 2.7117355236930545e-19 for n = 1e28 and the electron mass).  Checked: goes as n^(2/3)
+         and 1/m; equals hbar^2 k_F^2 / 2m with k_F = (3 pi^2 n)^(1/3); copper's density gives about 7 eV.
+         THE QUANTUM MECHANICS LIST IS FINISHED.
 
 Quantum mechanics is only partly in the calculator. Photon energy, the Bohr levels, the Rydberg formula, the infinite-well energies, the harmonic-oscillator energies, de Broglie, Compton’s shift, the photoelectric effect, and the Heisenberg bound are already there. The list below does not repeat them.
 

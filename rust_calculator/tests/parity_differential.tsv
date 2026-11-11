@@ -5569,6 +5569,47 @@ physics/physics/faradays_law	-1 0.25 10	0.025
 physics/physics/faradays_law	7.5 3 0.5	-45.0
 physics/physics/faradays_law	5 -3 10	1.5
 physics/physics/faradays_law	5 2.5 -1	12.5
+physics/physics/fermi_energy	0.03377372788077926 1	5.560608586053407e-69
+physics/physics/fermi_energy	1e+28 9.1093837015e-31	2.7117355236930545e-19
+physics/physics/fermi_energy	100 0	ERR
+physics/physics/fermi_energy	2.5 5	1.960618039072311e-68
+physics/physics/fermi_energy	0 0.5	ERR
+physics/physics/fermi_energy	0.25 -3	ERR
+physics/physics/fermi_energy	1 -3	ERR
+physics/physics/fermi_energy	0 5	ERR
+physics/physics/fermi_energy	5 100	1.5561435688656076e-69
+physics/physics/fermi_energy	-1 3	ERR
+physics/physics/fermi_energy	-3 -1	ERR
+physics/physics/fermi_energy	0.5 0	ERR
+physics/physics/fermi_energy	-1 -1	ERR
+physics/physics/fermi_energy	0 0	ERR
+physics/physics/fermi_energy	100 3	3.8219212827383754e-67
+physics/physics/fermi_energy	10 5	4.940447876461627e-68
+physics/physics/fermi_energy	100 0.25	4.5863055392860497e-66
+physics/physics/fermi_energy	10 1	2.4702239382308135e-67
+physics/physics/fermi_energy	2 10	8.448047034559349e-69
+physics/physics/fermi_energy	-1 0.5	ERR
+physics/physics/fermi_energy	-3 100	ERR
+physics/physics/fermi_energy	3 0	ERR
+physics/physics/fermi_energy	-3 2.5	ERR
+physics/physics/fermi_energy	7.5 0.5	4.07824986625806e-67
+physics/physics/fermi_energy	2.5 2.5	3.921236078144622e-68
+physics/physics/fermi_energy	7.5 2.5	8.15649973251612e-68
+physics/physics/fermi_energy	10 100	2.4702239382308134e-69
+physics/physics/fermi_energy	0 2	ERR
+physics/physics/fermi_energy	2 -3	ERR
+physics/physics/fermi_energy	100 10	1.1465763848215124e-67
+physics/physics/fermi_energy	-1 10	ERR
+physics/physics/fermi_energy	0.5 2	1.6763048437170425e-68
+physics/physics/fermi_energy	7.5 -1	ERR
+physics/physics/fermi_energy	0 10	ERR
+physics/physics/fermi_energy	0.25 0.25	8.448047034559349e-68
+physics/physics/fermi_energy	2.5 0	ERR
+physics/physics/fermi_energy	7.5 5	4.07824986625806e-68
+physics/physics/fermi_energy	2.5 100	9.803090195361556e-70
+physics/physics/fermi_energy	3 3	3.690024427282234e-68
+physics/physics/fermi_energy	2 -1	ERR
+physics/physics/fermi_energy	7.5 100	2.03912493312903e-69
 physics/physics/final_velocity	1 2 3	7
 physics/physics/final_velocity	0.5 0.25 0.25	0.5625
 physics/physics/final_velocity	100 0.25 2.5	100.625

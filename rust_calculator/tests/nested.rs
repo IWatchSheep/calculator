@@ -1173,3 +1173,20 @@ fn the_hydrogen_mean_radius_gives_the_numbers_of_the_work_plan_and_declines_with
     assert!(call(&[2., 2., 1., a0]).unwrap_err().contains(ang));
     assert!(call(&[3., 0.5, 1., a0]).unwrap_err().contains(ang));
 }
+
+#[test]
+fn the_fermi_energy_gives_the_numbers_of_the_work_plan_and_declines_with_its_messages() {
+    use rust_calculator::value::Value;
+    let call = |xs: &[f64]| -> Result<f64, String> {
+        match (ops::get("physics/physics/fermi_energy").unwrap().compute)(xs)? {
+            Value::Number(x) => Ok(x),
+            o => panic!("{o:?}"),
+        }
+    };
+    let hb = 1.054571817e-34;
+    assert_eq!(call(&[0.03377372788077926, 1., 1.]).unwrap(), 0.5);
+    assert_eq!(call(&[1e28, 9.1093837015e-31, hb]).unwrap(), 2.7117355236930545e-19);
+    assert!(call(&[0., 1., 1.]).unwrap_err().contains("the density must be positive"));
+    assert!(call(&[1., 0., 1.]).unwrap_err().contains("mass must be positive"));
+    assert!(call(&[1., 1., 0.]).unwrap_err().contains("hbar must be positive"));
+}

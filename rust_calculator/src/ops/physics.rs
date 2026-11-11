@@ -864,3 +864,13 @@ pub fn hydrogen_mean_radius(a: &[f64]) -> R {
     need(a[1] >= 0.0 && a[1] <= a[0] - 1.0 && a[1].fract() == 0.0, "the angular momentum must be a whole number from 0 up to n - 1")?;
     n(a[3] / (2.0 * a[2]) * (3.0 * a[0].powi(2) - a[1] * (a[1] + 1.0)))
 }
+
+// ---------- quantum mechanics, job 6 (the same operations as the Python file) ----------
+
+pub fn fermi_energy(a: &[f64]) -> R {
+    // n, m, hbar
+    need(a[0] > 0.0, "the density must be positive")?;
+    need(a[1] > 0.0, "mass must be positive")?;
+    need(a[2] > 0.0, "hbar must be positive")?;
+    n(a[2].powi(2) / (2.0 * a[1]) * (3.0 * PI.powi(2) * a[0]).powf(2.0 / 3.0))
+}

@@ -1,6 +1,6 @@
 {
- "count": 630,
- "ready": 558,
+ "count": 631,
+ "ready": 559,
  "reference": 72,
  "operators": [
   {
@@ -21346,6 +21346,62 @@
       2
      ],
      "expected": 2
+    }
+   ]
+  },
+  {
+   "key": "physics/physics/fermi_energy",
+   "name": "Fermi energy",
+   "symbol": "E_F = (ħ² / 2 m) (3 π² n)^(2/3)",
+   "category": "Physics",
+   "subcategory": "Physics",
+   "formula": "E_F = (ħ² / 2 m) (3 π² n)^(2/3)   (the Fermi energy in joules of a three-dimensional free-electron gas at zero temperature; n is the number of electrons per cubic metre; ħ = 1.054571817e-34 J s unless another is passed; not a band structure)",
+   "status": "Ready",
+   "inputs": [
+    "n",
+    "m"
+   ],
+   "input_kinds": [
+    "number",
+    "number"
+   ],
+   "row_calc": "ready",
+   "pattern": "□ = ħ ² / ( 2 × □ ) × ( 3 × π ² × □ ) ^ ( 2 / 3 )",
+   "compute_signature": "compute(n, m, hbar=1.054571817e-34)",
+   "compute_params": [
+    {
+     "name": "n",
+     "kind": "required"
+    },
+    {
+     "name": "m",
+     "kind": "required"
+    },
+    {
+     "name": "hbar",
+     "kind": "optional",
+     "default": 1.054571817e-34
+    }
+   ],
+   "required_args": 2,
+   "max_args": 3,
+   "varargs": false,
+   "arity": 2,
+   "examples": [
+    {
+     "args": [
+      0.03377372788077926,
+      1,
+      1
+     ],
+     "expected": 0.5
+    },
+    {
+     "args": [
+      1e+28,
+      9.1093837015e-31
+     ],
+     "expected": 2.7117355236930545e-19
     }
    ]
   },

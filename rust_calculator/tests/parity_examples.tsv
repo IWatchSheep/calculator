@@ -297,6 +297,8 @@ physics/physics/exponential_smoothing	10 20 0	10
 physics/physics/exponential_smoothing	10 20 1	20
 physics/physics/faradays_law	10 0.5 2	-2.5
 physics/physics/faradays_law	1 -4 2	2
+physics/physics/fermi_energy	0.03377372788077926 1 1	0.5
+physics/physics/fermi_energy	1e+28 9.1093837015e-31	2.7117355236930545e-19
 physics/physics/final_velocity	1 2 3	7
 physics/physics/frequency	0.5	2
 physics/physics/gps_clock_correction	-7.213755992552251 45.651861866919695	38.438105874367444
