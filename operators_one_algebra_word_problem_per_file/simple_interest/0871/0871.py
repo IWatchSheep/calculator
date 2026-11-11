@@ -6,7 +6,7 @@ Equation: 0.04(19000) + 0.09x = 0.07(19000 + x)
 Solve   : x/50 = 570 → x = 570 × 50 = 28500
 Answer  : $28,500.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: more_invested_for_overall_rate answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.04(19000) + 0.09x = 0.07(19000 + x)'
 SOLVE = 'x/50 = 570 → x = 570 × 50 = 28500'
 ANSWER = '$28,500.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'more_invested_for_overall_rate'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Yusuf has ${0} invested at {1}%. How much more must be invested at {2}% so that the total earns {3}% overall?'
 NUMBERS = ['19000.00', '4', '9', '7']

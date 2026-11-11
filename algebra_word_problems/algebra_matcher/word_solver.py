@@ -3376,7 +3376,44 @@ def seesaw_balance_distance(problem):
     return Result("seesaw_balance_distance", [d], eq, "%s, so d = %s" % (eq, show_exact(d)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance,
+# More invested at a second rate so the combined money earns an overall rate.
+# x = P * (r3 - r1) / (r2 - r3). Rates are the percent numbers, not decimals.
+_MORE_INVESTED_FOR_OVERALL_RATE = re.compile(
+    r"(?P<name>[a-z]+) has "
+    r"\$(?P<P>\d+(?:\.\d+)?) invested at "
+    r"(?P<r1>\d+(?:\.\d+)?)%\. "
+    r"how much more must be invested at "
+    r"(?P<r2>\d+(?:\.\d+)?)% "
+    r"so that the total earns "
+    r"(?P<r3>\d+(?:\.\d+)?)% overall\?")
+
+
+def more_invested_for_overall_rate(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MORE_INVESTED_FOR_OVERALL_RATE.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or not numbers[0][1] or any(n[1] for n in numbers[1:]):
+        return None
+    P = Fraction(match.group("P"))
+    r1 = Fraction(match.group("r1"))
+    r2 = Fraction(match.group("r2"))
+    r3 = Fraction(match.group("r3"))
+    if [n[0] for n in numbers] != [P, r1, r2, r3]:
+        return None
+    if P <= 0 or r1 <= 0 or r2 <= 0 or r3 <= 0 or r2 == r3:
+        return None
+    x = P * (r3 - r1) / (r2 - r3)
+    if x <= 0:
+        return None
+    if (r1 / 100) * P + (r2 / 100) * x != (r3 / 100) * (P + x):
+        return None
+    eq = "(%s/100)(%s) + (%s/100)x = (%s/100)(%s + x)" % (show(r1), show(P), show(r2), show(r3), show(P))
+    return Result("more_invested_for_overall_rate", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

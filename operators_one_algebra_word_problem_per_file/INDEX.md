@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 265 ready (250 word_solver, 15 number_puzzle), 214 reference.
+479 problems: 270 ready (255 word_solver, 15 number_puzzle), 209 reference.
 
 ## Age
 
@@ -664,18 +664,18 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0862 | Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall? | $18,000.00 | Reference |  | `simple_interest/0862/` |
+| 0862 | Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall? | $18,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0862/` |
 | 0863 | Quinn invests $31,000.00, part at 2% and the rest at 3% simple annual interest. After one year the total interest is $770.00. How much was invested at each rate? | $16,000.00 at 2% and $15,000.00 at 3% | Ready | two_rate_interest | `simple_interest/0863/` |
 | 0864 | $16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a year. How much is in each? | $6,600.00 at 6%, $9,900.00 at 4% | Reference |  | `simple_interest/0864/` |
 | 0865 | How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year? | 6 years | Reference |  | `simple_interest/0865/` |
 | 0867 | Victor invests $20,500.00, part at 5% and the rest at 7% simple annual interest. After one year the total interest is $1,055.00. How much was invested at each rate? | $19,000.00 at 5% and $1,500.00 at 7% | Ready | two_rate_interest | `simple_interest/0867/` |
-| 0869 | Emeka has $6,000.00 invested at 2%. How much more must be invested at 8% so that the total earns 5% overall? | $6,000.00 | Reference |  | `simple_interest/0869/` |
-| 0871 | Yusuf has $19,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $28,500.00 | Reference |  | `simple_interest/0871/` |
+| 0869 | Emeka has $6,000.00 invested at 2%. How much more must be invested at 8% so that the total earns 5% overall? | $6,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0869/` |
+| 0871 | Yusuf has $19,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $28,500.00 | Ready | more_invested_for_overall_rate | `simple_interest/0871/` |
 | 0872 | Kofi invests $30,500.00, part at 2% and the rest at 4% simple annual interest. After one year the total interest is $830.00. How much was invested at each rate? | $19,500.00 at 2% and $11,000.00 at 4% | Ready | two_rate_interest | `simple_interest/0872/` |
 | 0874 | $15,000.00 earns $5,400.00 in simple interest over 9 years. What is the annual interest rate? | 4% | Ready | archive_simple_interest_1 | `simple_interest/0874/` |
 | 0875 | Dana invests $13,500.00, part at 2% and the rest at 5% simple annual interest. After one year the total interest is $450.00. How much was invested at each rate? | $7,500.00 at 2% and $6,000.00 at 5% | Ready | two_rate_interest | `simple_interest/0875/` |
-| 0876 | Wren has $16,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $24,000.00 | Reference |  | `simple_interest/0876/` |
-| 0880 | Tara has $1,500.00 invested at 2%. How much more must be invested at 7% so that the total earns 6% overall? | $6,000.00 | Reference |  | `simple_interest/0880/` |
+| 0876 | Wren has $16,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $24,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0876/` |
+| 0880 | Tara has $1,500.00 invested at 2%. How much more must be invested at 7% so that the total earns 6% overall? | $6,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0880/` |
 | 0881 | Mateo invests $40,000.00, part at 2% and the rest at 8% simple annual interest. After one year the total interest is $2,000.00. How much was invested at each rate? | $20,000.00 at 2% and $20,000.00 at 8% | Ready | two_rate_interest | `simple_interest/0881/` |
 
 ## System of equations
