@@ -1486,6 +1486,20 @@ class FreshWordings(unittest.TestCase):
                      "How long does it take to travel 160 km at 40 km/h for part of the day?"):
             self.assertIsNone(answers(text), text)
 
+    def test_average_speed_two_leg_unknown_time(self):
+        cases = [
+            ("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part?", 4),
+            ("Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part?", 1),
+            ("Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part?", 1),
+            ("Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part?", 4),
+            ("Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part?", 2),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How far was the second part?"))
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then some hours at 55 mph. How long was the second part?"))
+        self.assertIsNone(answers("Kofi drove 1 hour at 30 mph and then 2 hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part?"))
+
     def test_heights_chores_distance_set(self):
         """Set 25: wordings for the three families added together, written after all three were finished and run once, untuned.
         One answer is declined (a safe miss): "the total was $76" is not one of the total cues (came to / received / earned / made ...)."""

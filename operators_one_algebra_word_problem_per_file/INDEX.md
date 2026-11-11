@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 235 ready (220 word_solver, 15 number_puzzle), 244 reference.
+479 problems: 240 ready (225 word_solver, 15 number_puzzle), 239 reference.
 
 ## Age
 
@@ -119,12 +119,12 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0115/` |
+| 0115 | Kofi drove 1 hour at 30 mph and then some hours at 55 mph. The average speed for the whole trip was 50 mph. How long was the second part? | 4 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0115/` |
 | 0116 | A car goes from A to B at 60 km/h. How fast must it return so that the average speed for the round trip is 30 km/h? | 20 km/h | Ready | archive_distance_average_speed_1 | `distance_average_speed/0116/` |
-| 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0117/` |
-| 0120 | Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part? | 1 hour | Reference |  | `distance_average_speed/0120/` |
-| 0121 | Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part? | 4 hours | Reference |  | `distance_average_speed/0121/` |
-| 0124 | Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part? | 2 hours | Reference |  | `distance_average_speed/0124/` |
+| 0117 | Aiden drove 2 hours at 60 mph and then some hours at 45 mph. The average speed for the whole trip was 55 mph. How long was the second part? | 1 hour | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0117/` |
+| 0120 | Lena drove 2 hours at 30 mph and then some hours at 75 mph. The average speed for the whole trip was 45 mph. How long was the second part? | 1 hour | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0120/` |
+| 0121 | Emeka drove 1 hour at 50 mph and then some hours at 45 mph. The average speed for the whole trip was 46 mph. How long was the second part? | 4 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0121/` |
+| 0124 | Sofia drove 3 hours at 60 mph and then some hours at 75 mph. The average speed for the whole trip was 66 mph. How long was the second part? | 2 hours | Ready | average_speed_two_leg_unknown_time | `distance_average_speed/0124/` |
 
 ## Distance (catch-up)
 
