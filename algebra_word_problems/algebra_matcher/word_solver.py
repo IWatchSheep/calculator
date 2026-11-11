@@ -3337,7 +3337,46 @@ def three_painters_together(problem):
     return Result("three_painters_together", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest,
+# Seesaw: w1 * d1 = w2 * d. The numbers are first weight, first distance, second weight.
+_SEESAW_BALANCE_DISTANCE = re.compile(
+    "on a seesaw, weight \u00d7 distance from the pivot "
+    r"must be equal on both sides\. "
+    r"(?P<first>[a-z]+) "
+    r"\((?P<w1>\d+(?:\.\d+)?) kg\) "
+    r"sits (?P<d1>\d+(?:\.\d+)?) m from the pivot\. "
+    r"how far from the pivot must "
+    r"(?P<second>[a-z]+) "
+    r"\((?P<w2>\d+(?:\.\d+)?) kg\) "
+    r"sit to balance\?")
+
+
+def seesaw_balance_distance(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SEESAW_BALANCE_DISTANCE.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first") == match.group("second"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(n[1] for n in numbers):
+        return None
+    w1 = Fraction(match.group("w1"))
+    d1 = Fraction(match.group("d1"))
+    w2 = Fraction(match.group("w2"))
+    if [n[0] for n in numbers] != [w1, d1, w2]:
+        return None
+    if w1 <= 0 or d1 <= 0 or w2 <= 0:
+        return None
+    d = w1 * d1 / w2
+    if d <= 0:
+        return None
+    if w1 * d1 != w2 * d:
+        return None
+    eq = "%s \u00d7 %s = %sd" % (show(w1), show(d1), show(w2))
+    return Result("seesaw_balance_distance", [d], eq, "%s, so d = %s" % (eq, show_exact(d)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

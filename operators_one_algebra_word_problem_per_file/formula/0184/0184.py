@@ -6,7 +6,7 @@ Equation: 69 × 3 = 36d
 Solve   : 36d = 207 → d = 5.75
 Answer  : 5.75 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: seesaw_balance_distance answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '69 × 3 = 36d'
 SOLVE = '36d = 207 → d = 5.75'
 ANSWER = '5.75 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'seesaw_balance_distance'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'On a seesaw, weight × distance from the pivot must be equal on both sides. Jade ({0} kg) sits {1} m from the pivot. How far from the pivot must Theo ({2} kg) sit to balance?'
 NUMBERS = ['69', '3', '36']

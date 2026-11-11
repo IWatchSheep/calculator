@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 260 ready (245 word_solver, 15 number_puzzle), 219 reference.
+479 problems: 265 ready (250 word_solver, 15 number_puzzle), 214 reference.
 
 ## Age
 
@@ -200,13 +200,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω. | 3 A | Ready | archive_formula_1 | `formula/0181/` |
 | 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32) | 160°C (320°F) | Reference |  | `formula/0182/` |
 | 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume. | 6 cm³ | Ready | archive_formula_2 | `formula/0183/` |
-| 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Theo (36 kg) sit to balance? | 5.75 m | Reference |  | `formula/0184/` |
+| 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Theo (36 kg) sit to balance? | 5.75 m | Ready | seesaw_balance_distance | `formula/0184/` |
 | 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F? | 45°C | Reference |  | `formula/0188/` |
-| 0189 | On a seesaw, weight × distance from the pivot must be equal on both sides. Yara (36 kg) sits 6 m from the pivot. How far from the pivot must Priya (54 kg) sit to balance? | 4 m | Reference |  | `formula/0189/` |
-| 0195 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sofia (66 kg) sits 6 m from the pivot. How far from the pivot must Mateo (22 kg) sit to balance? | 18 m | Reference |  | `formula/0195/` |
-| 0203 | On a seesaw, weight × distance from the pivot must be equal on both sides. Ivan (35 kg) sits 1 m from the pivot. How far from the pivot must Pablo (70 kg) sit to balance? | 0.5 m | Reference |  | `formula/0203/` |
+| 0189 | On a seesaw, weight × distance from the pivot must be equal on both sides. Yara (36 kg) sits 6 m from the pivot. How far from the pivot must Priya (54 kg) sit to balance? | 4 m | Ready | seesaw_balance_distance | `formula/0189/` |
+| 0195 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sofia (66 kg) sits 6 m from the pivot. How far from the pivot must Mateo (22 kg) sit to balance? | 18 m | Ready | seesaw_balance_distance | `formula/0195/` |
+| 0203 | On a seesaw, weight × distance from the pivot must be equal on both sides. Ivan (35 kg) sits 1 m from the pivot. How far from the pivot must Pablo (70 kg) sit to balance? | 0.5 m | Ready | seesaw_balance_distance | `formula/0203/` |
 | 0204 | Using V = IR, find the resistance (in ohms) when the voltage is 50 V and the current is 5 A. | 10 Ω | Ready | archive_formula_3 | `formula/0204/` |
-| 0206 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sam (30 kg) sits 3 m from the pivot. How far from the pivot must Sofia (72 kg) sit to balance? | 1.25 m | Reference |  | `formula/0206/` |
+| 0206 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sam (30 kg) sits 3 m from the pivot. How far from the pivot must Sofia (72 kg) sit to balance? | 1.25 m | Ready | seesaw_balance_distance | `formula/0206/` |
 
 ## Fractions
 
