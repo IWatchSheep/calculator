@@ -1,4 +1,4 @@
-//! The 377 Ready algebra word problems as rows: each one, filled with its own numbers and computed by the Rust solver, gives what Python's `compute()` gives.
+//! The Ready algebra word problems as rows: each one, filled with its own numbers and computed by the Rust solver, gives what Python's `compute()` gives.
 
 use rust_calculator::layout::{self, CardKind};
 use rust_calculator::ops::{self, words};
@@ -33,14 +33,14 @@ fn every_ready_word_problem_gives_the_python_answer() {
         }
         count += 1;
     }
-    assert_eq!(count, 377);
+    assert_eq!(count, 189);
 }
 
 #[test]
 fn every_ready_word_problem_has_a_row_whose_boxes_are_its_numbers() {
-    assert_eq!(rust_calculator::word_layouts::WORD_LAYOUTS.len(), 377);
-    assert_eq!(words::items().len(), 1000);
-    assert_eq!(words::items().iter().filter(|i| i.ready).count(), 377);
+    assert_eq!(rust_calculator::word_layouts::WORD_LAYOUTS.len(), 189);
+    assert_eq!(words::items().len(), 479);
+    assert_eq!(words::items().iter().filter(|i| i.ready).count(), 189);
     for l in rust_calculator::word_layouts::WORD_LAYOUTS {
         let op = ops::get(l.key).unwrap_or_else(|| panic!("no operator for {}", l.key));
         for s in 0..op.arity() {

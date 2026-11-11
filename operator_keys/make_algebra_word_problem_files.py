@@ -371,8 +371,8 @@ def place(parent, stacked=False):
 
 def main():
     problems = read_problems()
-    if len(problems) != 1000:
-        raise SystemExit("expected 1000 problems, found %d" % len(problems))
+    if len(problems) != 479:
+        raise SystemExit("expected 479 problems, one per wording, found %d" % len(problems))
     index = {}
     counts = {"word_solver": 0, "number_puzzle": 0, None: 0}
     for n, p in enumerate(problems, 1):

@@ -1,8 +1,9 @@
 """
 ALGEBRA WORD PROBLEM GENERATOR
 ==============================
-Produces algebra_word_problems.txt: 1,000 word problems from 216 problem types, each with
-Problem / Let / Equation / Solve / Answer.
+Produces algebra_word_problems.txt: one stored problem per wording. A wording is the
+sentence with its numbers blanked. A second draw of the same wording is not stored:
+a slider on the unknown uses the stored equation.
 
 Run:   python3 algebra_problem_generator.py [output_file]
 Needs: Python 3.9+ only (standard library: random, math, fractions, re, collections).
@@ -21,8 +22,8 @@ HOW IT WORKS
     INEQ(...) inequality: checks the answer works and the next whole number does not
 - The random seed is fixed (20261109), so the same file is produced every run.
   Change the seed in R = random.Random(...) to get a different 1,000.
-- TARGET (near the bottom) sets how many problems to make. Templates are used in turn
-  (round-robin), so every type appears before any type repeats.
+- Templates are used in turn. A wording already stored (the same sentence with different
+  numbers) is skipped. The run stops when a full pass adds nothing new.
 
 WHERE EQUATION NUMBERS COME FROM
 Each template shows the formula that turns the problem's numbers into the equation, e.g.
@@ -1486,20 +1487,23 @@ def c_clock():
 # ======================================================================
 # GENERATE AND WRITE THE FILE
 # ======================================================================
-seen=set(); TARGET=1000
+import re as _re
+def _wording(text):
+    return _re.sub(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?", "#", text)
+seen=set()
 order=list(T); rounds=0
 counts={f.__name__:0 for f in T}
-while len(P)<TARGET and rounds<40:
-    rounds+=1; R.shuffle(order)
+while rounds<40:
+    rounds+=1; added=0; R.shuffle(order)
     for f in order:
-        if len(P)>=TARGET: break
         for _ in range(80):
             before=len(P)
             try: f()
             except (ZeroDivisionError,ValueError,AssertionError,OverflowError,TypeError): pass
             if len(P)>before:
-                if P[-1][1] in seen: P.pop(); continue
-                seen.add(P[-1][1]); counts[f.__name__]+=1; break
+                if _wording(P[-1][1]) in seen: P.pop(); continue
+                seen.add(_wording(P[-1][1])); counts[f.__name__]+=1; added+=1; break
+    if added==0: break
 import collections
 print("templates",len(T),"problems",len(P),"rounds",rounds)
 print("min/max per template",min(counts.values()),max(counts.values()))

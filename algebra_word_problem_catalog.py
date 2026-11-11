@@ -1,4 +1,4 @@
-"""The 1,000 algebra word problems as a list the calculator can show.
+"""The algebra word problems, one per wording, as a list the calculator can show.
 
 Read from operators_one_algebra_word_problem_per_file/INDEX.md. Each item is one problem:
 its category, id, text, Ready or Reference status, and the folder key (for example "savings/0848").
