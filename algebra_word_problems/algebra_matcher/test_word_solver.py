@@ -157,6 +157,19 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How long was the drive?"))
         self.assertIsNone(answers("Aiden drove to a lake at 30 mph. The round trip took 5 hours. How far is the lake?"))
 
+    def test_three_painters_together(self):
+        cases = [
+            ("Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long will it take all three together?", Fraction(20, 9)),
+            ("Aiden, Lena, and Yara can each paint a room alone in 8, 30, and 20 hours. How long will it take all three together?", Fraction(24, 5)),
+            ("Quinn, Jamal, and Sam can each paint a room alone in 24, 20, and 30 hours. How long will it take all three together?", Fraction(8)),
+            ("Grace, Uma, and Omar can each paint a room alone in 10, 30, and 24 hours. How long will it take all three together?", Fraction(40, 7)),
+            ("Sofia, Grace, and Sam can each paint a room alone in 24, 15, and 10 hours. How long will it take all three together?", Fraction(24, 5)),
+        ]
+        for sentence, expected in cases:
+            self.assertEqual(answers(sentence), values(expected), sentence)
+        self.assertIsNone(answers("Gus and Rosa can each paint a room alone in 12 and 30 hours. How long will it take all three together?"))
+        self.assertIsNone(answers("Gus, Rosa, and Bea can each paint a room alone in 12, 30, and 3 hours. How long would Gus take alone?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

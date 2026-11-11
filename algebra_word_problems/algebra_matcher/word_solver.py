@@ -3298,7 +3298,46 @@ def round_trip_lake_distance(problem):
                   % (match.group("name"), show(v1), show(v2), show(t), show_exact(d)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest,
+# Three painters: 1/t = 1/a + 1/b + 1/c. The three alone times are in the order the names are written.
+_THREE_PAINTERS_TOGETHER = re.compile(
+    r"(?P<name1>[a-z]+), "
+    r"(?P<name2>[a-z]+), and "
+    r"(?P<name3>[a-z]+) "
+    r"can each paint a room alone in "
+    r"(?P<a>\d+(?:\.\d+)?), "
+    r"(?P<b>\d+(?:\.\d+)?), and "
+    r"(?P<c>\d+(?:\.\d+)?) hours\. "
+    r"how long will it take all three together\?")
+
+
+def three_painters_together(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _THREE_PAINTERS_TOGETHER.fullmatch(text)
+    if match is None:
+        return None
+    names = [match.group("name1"), match.group("name2"), match.group("name3")]
+    if len(set(names)) != 3:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(n[1] for n in numbers):
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    c = Fraction(match.group("c"))
+    if [n[0] for n in numbers] != [a, b, c]:
+        return None
+    if a <= 0 or b <= 0 or c <= 0:
+        return None
+    t = 1 / (1 / a + 1 / b + 1 / c)
+    if t <= 0:
+        return None
+    if 1 / t != 1 / a + 1 / b + 1 / c:
+        return None
+    eq = "t/%s + t/%s + t/%s = 1" % (show(a), show(b), show(c))
+    return Result("three_painters_together", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
