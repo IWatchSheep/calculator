@@ -6,7 +6,7 @@ __pycache__/
 .env
 .env.*
 saved_templates.json
-rust_calculator/target/
+rust_calculator/
 
 # regenerable / build output inside algebra_word_problems
 algebra_word_problems/algebra_matcher/training_data.jsonl

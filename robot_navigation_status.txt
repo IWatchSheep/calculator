@@ -49,13 +49,10 @@ HOW TO ADD A BATCH  (what worked; the scripts were throw-away files in the scrat
   1. Write the Python operator files operators_one_operator_per_file/<group>/<name>/<name>.py (compute() with the plan's messages), the row files
      operator_row_math/<group>/<name>/<name>.py (copy a similar one: INPUTS, KINDS, CALC), INDEX.md lines, and one spec line per operator in
      operator_keys/operator_row_specs.txt (boxes in the order of compute()'s INPUTS is not required: boxes are matched by name).
-  2. Rust: a pub fn <name> in rust_calculator/src/ops/physics.rs (numbers only, optional g is the last number) or lists.rs / matrices.rs (lists, matrices,
-     or a list answer).  Same operations in the same order as Python.
-  3. Multi-row menu operators: operator_row_math/multirow_specs.py AND rust_calculator/src/multirow.rs (same texts; a drift test checks them), with
-     {"chain": k} / Fill::Row(k) for boxes that read an earlier row and links for boxes that copy another box.
-  4. Run: python operator_keys/make_operator_row_files.py, make_operator_keys.py, make_rust_ops.py, make_rust_layouts.py, make_value_grid.py;
+  3. Multi-row menu operators: operator_row_math/multirow_specs.py , with
+     {"chain": k} for boxes that read an earlier row and links for boxes that copy another box.
+  4. Run: python operator_keys/make_operator_row_files.py, make_operator_keys.py;
      draw pictures with python operator_keys/make_navier_stokes_pictures.py <keys> (only on this machine: it needs Cambria).
-  5. Update the counts (README.md, TESTING_GUIDE.md, operator_keys/README.md, rust_calculator/README.md and WORKLIST.md, layout.rs, pictures.rs,
-     tests/ops_smoke.rs, tests/test_operators.py, tests/test_operator_pictures.py).  Careful: a blanket sed of the old count also hits legitimate numbers
+  5. Update the counts (README.md, TESTING_GUIDE.md, operator_keys/README.md, tests/test_operators.py, tests/test_operator_pictures.py).  Careful: a blanket sed of the old count also hits legitimate numbers
      (2^3^2 = 512 in test_operators.py once became 523).
-  6. Tests: python -m unittest tests.test_operators tests.test_operator_pictures; cargo +1.83.0 test --release --locked in rust_calculator.
+  6. Tests: python -m unittest tests.test_operators tests.test_operator_pictures.

@@ -21,9 +21,8 @@ WHAT ALREADY EXISTS  (you saw part of it with the Navier-Stokes rows)
          write  symbol{label|context}  right after a symbol, e.g.   ρ{density|mass of fluid in each unit of volume (kg/m³)}
          write  {sub:y|label|context}  for a letter one grid row down.        Spaces inside the braces are fine; braces and | are not.
      python operator_keys/make_operator_row_files.py     writes  WORDS = {card index: (label, context)}  into operator_row_math/<operator>.py
-     python operator_keys/make_rust_layouts.py           copies WORDS into rust_calculator/src/layouts.rs  (do not edit those two by hand)
    The five Navier-Stokes rows are the worked example: look at their lines in operator_row_specs.txt.
-3. Several equations on several rows: operator_row_math/multirow_specs.py (Python) and rust_calculator/src/multirow.rs (Rust, hand-written, same text).
+3. Several equations on several rows: operator_row_math/multirow_specs.py (Python).
    Each row of a multi-row operator is an OPERATOR of its own (its own folder, row file and picture).  Rows are joined by a math sign.
    Navier-Stokes is the example: navier_stokes_equation (vector form) + x/y/z momentum + continuity = five rows.
 4. Pictures: operators_one_operator_per_file/<group>/<name>/<name>.jpg.  The Navier-Stokes ones are drawn FROM the cards of their rows by
@@ -37,7 +36,6 @@ Design rules that must stay true (they are in README.md, "Design rules for the r
    - Python and Rust must agree.  Files marked GENERATED are never edited by hand.
 How to run the checks:
    python -m unittest discover tests                                   (about 4 minutes, 710 tests)
-   cd rust_calculator && cargo +1.83.0 test --release --locked        (Rust 1.83; always --locked, see rust_calculator/README.md)
 
 
 STEP 1  -  words in the pictures, then words in the operators   (start here)

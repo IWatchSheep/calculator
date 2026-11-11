@@ -117,38 +117,6 @@ class RowFiles(unittest.TestCase):
                 self.assertNotIn(key + "   extra boxes", listed, key)
 
 
-class RustPort(unittest.TestCase):
-    def test_the_rust_layouts_are_up_to_date_with_the_python_rows(self):
-        """rust_calculator/src/layouts.rs is generated from the Python row files; if this fails run  python operator_keys/make_rust_layouts.py ."""
-        sys.path.insert(0, os.path.join(ROOT, "operator_keys"))
-        import make_rust_layouts as generator
-        text, count = generator.build_text()
-        self.assertEqual(count, 631)
-        with open(generator.OUT, encoding="utf-8", newline="") as f:
-            self.assertEqual(f.read().replace("\r\n", "\n"), text)
-
-    def test_the_rust_multi_row_texts_are_the_python_ones(self):
-        """The words that explain a multi-row operator (its title and each row's title) are the same in Python and in rust_calculator/src/multirow.rs."""
-        from operator_row_math import multirow_specs
-        with open(os.path.join(ROOT, "rust_calculator", "src", "multirow.rs"), encoding="utf-8") as f:
-            rust = f.read()
-        for key in ("physics/physics/navier_stokes_equation", "math/differential_geometry_and_tensors/exterior_derivative", "math/abstract_algebra/direct_sum",
-                    "math/abstract_algebra/field_extension", "math/optimization_and_numerical_methods/kkt_conditions",
-                    "geometry/geometry/heron_s_formula", "physics/physics/relativistic_doppler",
-                    "physics/physics/relativistic_kinetic_energy", "physics/physics/relativistic_momentum", "physics/physics/length_contraction",
-                    "physics/physics/time_dilation", "math/statistics_and_probability/standard_deviation",
-                    "math/statistics_and_probability/sample_standard_deviation", "physics/physics/gravitational_time_dilation",
-                    "math/statistics_and_probability/range", "math/statistics_and_probability/interquartile_range",
-                    "math/statistics_and_probability/variance_of_random_variable", "physics/physics/kalman_update_state", "physics/physics/pid_sum", "physics/physics/gps_clock_correction"):
-            spec = multirow_specs.get(key)
-            self.assertIn('title: "%s"' % spec["title"], rust, key)
-            for row in spec["rows"]:
-                fill = "&[%s]" % ", ".join("(%d, Fill::Row(%d))" % (k, v["chain"]) for k, v in row["fill"].items()) if "fill" in row else "&[]"    # a chained box: Fill::Row(k)
-                self.assertIn('RowSpec { title: "%s", node: NodeSpec { op: "%s", fill: %s } }' % (row["title"], row["op"], fill), rust, key)
-        for word in ("density", "viscosity", "pressure", "incompressible"):          # the explanation really is in words
-            self.assertIn(word, multirow_specs.get("physics/physics/navier_stokes_equation")["title"])
-
-
 class CardWords(unittest.TestCase):
     def test_the_words_line_up_with_the_cards_of_a_row(self):
         for key in ("physics/physics/gravitation", "math/arithmetic/addition", "physics/physics/navier_stokes_x_momentum"):

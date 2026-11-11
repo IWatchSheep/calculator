@@ -32,7 +32,7 @@ Where everything is (section 2) and the working rules (section 6) are things the
 
 1. WHAT THIS IS
 ---------------
-The calculator project (Python, GUI in main.py, Rust port in rust_calculator/) is getting an ALGEBRA WORD PROBLEM feature: text pasted in the Templates text box is split into word boxes and number boxes,
+The calculator project (Python, GUI in main.py) is getting an ALGEBRA WORD PROBLEM feature: text pasted in the Templates text box is split into word boxes and number boxes,
 matched to a problem type, and solved.  The user plans an operator for it later (see section 5, TO DO).  The STANDALONE SOLVER is wired into the calculator rows since 2026-11-09: a Ready problem picked in Operators > Algebra word problems is placed in a row and = calls its compute() (see section 7).  The operator that takes PASTED text is still not built.
 
 The solver's rule (from number_puzzle.py): a family answers ONLY when (1) its wording pattern matches, (2) EVERY number in the problem was given a role by the pattern, and (3) the answer passes a

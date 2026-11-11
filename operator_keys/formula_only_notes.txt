@@ -1,4 +1,4 @@
-One line for each of the 72 formula-only (Reference) operators:  <key> — <the note shown on its row>.  Written by Grok; read by make_operator_row_files.py (it puts a NOTE line in each row file) and by make_rust_layouts.py (rust_calculator/src/notes.rs).
+One line for each of the 72 formula-only (Reference) operators:  <key> — <the note shown on its row>.  Written by Grok; read by make_operator_row_files.py (it puts a NOTE line in each row file).
 Every note starts with "Formula only." and adds the missing object only when there really is one.  No box is added and compute() is unchanged: = still does not invent a number.
 
 math/abstract_algebra/direct_sum — Formula only. The two spaces are not numbers. The two rows already show the sum and the dimension.
