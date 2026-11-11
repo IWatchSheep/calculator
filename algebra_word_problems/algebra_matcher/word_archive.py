@@ -8,25 +8,36 @@ A stored problem is a board.  A game is one LINE: an equation shape, and one of 
 A slot is a role.  The shape may write a role twice.  Every number of the sentence gets exactly one slot.
 
 The shapes are the equation shapes of the stored problems (the book).  A book game is a stored problem whose stored EQUATION
-solves to its stored ANSWER.  A problem never reads its own book game: its EQUATION is never a hint for its own line.  The lines
-it tries come from OTHER problems, and its game is compared only with its own ANSWER, after the game has ended.
+solves to its stored ANSWER.  The stored equation of a problem, or of another problem of the same wording, is the answer key:
+  - a problem is offered a shape only when a problem of a DIFFERENT wording is a source of it;
+  - a book game is not a played game: it never makes a line "tried" and it is never a win;
+  - a line that won in another wording (a book game there, or a played game) is "similar".  Similar orders List 3.  It proves nothing.
+A game is compared only with the problem's own ANSWER, after the game has ended.
 
 List 1  the shapes forming in this sentence.  30: the shape has as many slots as the sentence has numbers.
-        60: a book sentence that used the shape also shares most of this sentence's words.  It does not read the played games.
+        60: a book sentence of another wording that used the shape also shares most of this sentence's words.
 List 2  every legal line of the List 1 shapes, the furthest formed shape first, then the numbers in sentence order.
 List 3  one row per legal line, from finished games: proven win, proven loss, tried, similar, never tried.
-        "similar" is a line that won in another wording.  A similar row is never proof.
-List 4  what the finished games actually got with each tried line: how many won, how many lost, and in which wordings.
-        Empty until a game of this wording, or a book game with one of these lines, has finished.
+List 4  what the finished games actually got with each tried or similar line: won here, lost here, other wordings it won in.
+        Empty until a game of this wording has finished or another wording has won with one of these lines.
 
 A pass plays one game for every problem: a proven win, else a line that has only won in this wording, else a similar line,
 else the first never-tried line.  A line that lost in this wording is never played there again.  The games are merged only after
 the pass, so a problem never reads its own game.  A wrong number is stored as a loss.  A problem with no line left is stored as
 a dead end.
 
-A wording is the sentence without its numbers, its names and the plural s after a number.  A wording is proven only when the
-same line was PLAYED and won on every stored problem of the wording, and there are at least two.  One win is only a candidate.
-answer() returns a number only from a proven line.  Anything else is None.
+A wording (the proof key) is the sentence without its numbers, people's names, the plural s after a number, and the name of
+the work ("paint a fence", "mow a lawn").  Cue words stay: sentences that differ by "more" and "less" are two wordings.
+A wording is proven only when the same line was PLAYED and won on every stored problem of the wording, and at least two of
+those problems have different numbers.  One win is only a candidate.  A game wins only when it gives every number the answer
+asks for: a line that gives one number loses a problem that asks for two.
+answer() returns a number only from a proven line.  Anything else is None.  It is not wired to = or to word_solver.FAMILIES.
+
+After the passes, every wording with two different sets of numbers is swept with GENERATED lines (word_generator.py): trees
+over the sentence's numbers and the fixed numbers 1, 2 and 100, smallest first, built from no stored equation.  A generated
+line that wins every stored problem is stored on its own.  A finished sweep that found none is stored as one loss record
+(size reached, problem ids, fixed numbers, generator version).  The record never answers, and it is void when a stored
+problem of the wording is added or the generator changes.
 
 The "templates" part of word_archive.json is the older final check (the stored equation solves to the stored answer); it is
 what make_archive_families.py reads.  The "games" part is the four lists' archive.  Standard library only.
@@ -36,14 +47,28 @@ import json
 import os
 import re
 import sys
+from fractions import Fraction
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import word_generator  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(HERE))
 PROBLEMS = os.path.join(ROOT, "operators_one_algebra_word_problem_per_file")
 ARCHIVE = os.path.join(HERE, "word_archive.json")
+GENERATED_MIN_TUPLES = 3      # a generated line is proven only on three independent sets of numbers (see _independent)
 MAX_SLOTS = 6                 # 7 numbers are 5,040 orders for every shape: those problems are left as dead ends
 STARTS = (0.0, 1.0, 2.0, 0.5, 10.0, 0.25, 5.0, -2.0, 20.0, 50.0, 8.0, 100.0, -10.0)
 NUMBER = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
+# Words that change the equation.  Two sentences that differ by one of these are two wordings, never one with a work name out.
+CUES = set("""more less fewer greater smaller larger older younger longer shorter faster slower higher lower heavier lighter
+    increased decreased increase decrease raised reduced added removed gained lost even odd complementary supplementary
+    exterior interior first second third fourth fifth half twice double triple quarter sum product difference quotient
+    square squares squared cube cubes hour hours minute minutes day days week weeks month months year years mile miles
+    penny pennies nickel nickels dime dimes quarters adult child before after ago together alone each per total with against
+    upstream downstream north south east west same opposite toward apart not no every all both either only fills empties
+    in out up down over under plus minus times
+    bicycle bicycles tricycle tricycles motorcycle motorcycles car cars""".split())
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
@@ -205,22 +230,36 @@ def template_of(text):
     return "".join(parts), numbers
 
 
-def answer_numbers(text, given=()):
-    """The numbers of a stored answer that a game may equal: outside brackets, a fraction read as a fraction, a clock time
-    (1:00) left out.  A number the sentence itself gave ("12 lb at $3") is left out when the answer has other numbers."""
+def asked_numbers(text):
+    """The numbers written in a stored answer, as exact fractions: outside brackets, a clock time (1:00) left out, and a
+    rounded copy of another number ("60/11 ≈ 5.45") left out."""
     text = re.sub(r"\([^)]*\)", "", text)
     text = re.sub(r"\d+:\d+", " ", text)
     text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
+    found = []
+    for whole, dec, bottom in re.findall(r"(-?\d+(\.\d+)?)(?:/(\d+))?", text.replace("−", "-")):
+        if bottom and int(bottom) == 0:
+            continue
+        found.append((Fraction(whole) / int(bottom) if bottom else Fraction(whole), len(dec) - 1 if dec and not bottom else None))
     out = []
-    for whole, _dec, bottom in re.findall(r"(-?\d+(\.\d+)?)(?:/(\d+))?", text.replace("−", "-")):
-        out.append(float(whole) / float(bottom) if bottom else float(whole))
-    pool = [float(g) for g in given]
-    asked = [a for a in out if not any(_same(a, g) for g in pool)]
-    return asked or out
+    for n, (value, places) in enumerate(found):
+        copy = places is not None and any(m != n and other != value and round(other, places) == value for m, (other, _p) in enumerate(found))
+        if not copy:
+            out.append(value)
+    return out
+
+
+def answer_numbers(text, given=()):
+    """The asked numbers of one answer as floats.  A number the sentence itself gave ("12 lb at $3") is left out when the
+    answer has other numbers.  (Inside a Book, the numbers a whole wording echoes are found from all its problems.)"""
+    out = asked_numbers(text)
+    pool = [Fraction(g) for g in given]
+    asked = [a for a in out if a not in pool]
+    return [float(a) for a in (asked or out)]
 
 
 def _same(a, b):
-    return abs(a - b) <= 1e-4 * max(1.0, abs(b))
+    return abs(a - b) <= 1e-6 * max(1.0, abs(b))
 
 
 class Book:
@@ -231,11 +270,26 @@ class Book:
         self.problems.sort(key=lambda p: p.ID)
         self.by_id = {p.ID: p for p in self.problems}
         self.lower = set(re.findall(r"\b[a-z]+\b", " ".join(p.TEMPLATE for p in self.problems)))
-        self.wording = {p.ID: self.wording_of(p.TEMPLATE) for p in self.problems}
-        self.words = {p.ID: set(re.findall(r"[a-z]+", self.wording[p.ID].lower())) for p in self.problems}
+        self.exact = {p.ID: self.exact_of(p.TEMPLATE) for p in self.problems}       # numbers, names and plurals out
+        self.key, self.work_names = self._proof_keys(sorted(set(self.exact.values())))
+        self.wording = {p.ID: self.key[self.exact[p.ID]] for p in self.problems}    # the proof key: the work name out too
+        self.words = {p.ID: set(re.findall(r"[a-z]+", self.exact[p.ID].lower())) for p in self.problems}
         self.mates = {}                                   # wording -> ids of its stored problems
         for p in self.problems:
             self.mates.setdefault(self.wording[p.ID], []).append(p.ID)
+        self.asked = {}                                   # id -> the numbers its answer asks for, or None
+        for ids in self.mates.values():
+            rows = [asked_numbers(self.by_id[i].ANSWER) for i in ids]
+            if len({len(r) for r in rows}) != 1 or not rows[0]:
+                for i in ids:
+                    self.asked[i] = None                  # the answers of the wording are not written the same way
+                continue
+            echo = [j for j in range(len(rows[0]))        # a place that repeats the same number of the sentence in every problem
+                    if any(all(len(self.by_id[i].NUMBERS) > n and Fraction(self.by_id[i].NUMBERS[n]) == r[j] for i, r in zip(ids, rows))
+                           for n in range(len(self.by_id[ids[0]].NUMBERS)))]
+            keep = [j for j in range(len(rows[0])) if j not in echo] or list(range(len(rows[0])))
+            for i, r in zip(ids, rows):
+                self.asked[i] = [r[j] for j in keep]
         self.shapes = {}                                  # shape -> {"slots": k, "sources": {id: order}}
         self.book_line = {}                               # id -> line of its own book game
         for p in self.problems:
@@ -246,10 +300,70 @@ class Book:
                 self.book_line[p.ID] = line_key(shape, order)
         self._code = {}
 
-    def wording_of(self, template):
+    def exact_of(self, template):
         """Names out (a capitalised word the book never writes in lower case), and the plural s after a number out."""
         text = re.sub(r"\b[A-Z][a-z]+\b", lambda m: m.group(0) if m.group(0).lower() in self.lower else "{name}", template)
-        return re.sub(r"(\{\d+\} [A-Za-z]{3,}?)s\b", r"\1", text)
+        return re.sub(r"(\{\d+\} [A-Za-z]{2,}?[a-rt-z])s\b", r"\1", text)
+
+    def wording_of(self, template):
+        """The proof key of a sentence.  A sentence the book does not hold keeps its own text: it has no stored problems."""
+        exact = self.exact_of(template)
+        return self.key.get(exact, exact)
+
+    @staticmethod
+    def _proof_keys(exacts):
+        """exact wording -> proof key, and the work names taken out of each key.
+
+        Two exact wordings are one proof key when they have the same number slots and differ only in one short run of
+        words (at most four on each side) that holds no cue word, no slot and no sign: the name of the work."""
+        tokens = {w: re.findall(r"\{\d+\}|\{name\}|[A-Za-z]+|\S", w) for w in exacts}
+        slots = {w: [t for t in tokens[w] if re.match(r"\{\d", t)] for w in exacts}
+
+        def middle(a, b):
+            i = 0
+            while i < min(len(a), len(b)) and a[i] == b[i]:
+                i += 1
+            j = 0
+            while j < min(len(a), len(b)) - i and a[-1 - j] == b[-1 - j]:
+                j += 1
+            return a[i:len(a) - j], b[i:len(b) - j], i, j
+
+        def work(run):
+            return (0 < len(run) <= 4 and any(len(t) >= 3 for t in run)
+                    and all(re.match(r"[A-Za-z]+$|-$", t) and t.lower() not in CUES for t in run))
+
+        parent = {w: w for w in exacts}
+
+        def find(w):
+            while parent[w] != w:
+                parent[w] = parent[parent[w]]
+                w = parent[w]
+            return w
+
+        for x, a in enumerate(exacts):
+            for b in exacts[x + 1:]:
+                if slots[a] != slots[b]:
+                    continue
+                da, db, i, j = middle(tokens[a], tokens[b])
+                if work(da) and work(db) and i + j >= 0.7 * max(len(tokens[a]), len(tokens[b])):
+                    parent[find(a)] = find(b)
+        groups = {}
+        for w in exacts:
+            groups.setdefault(find(w), []).append(w)
+        key, names = {}, {}
+        for members in groups.values():
+            if len(members) == 1:
+                key[members[0]] = members[0]
+                continue
+            first = tokens[members[0]]
+            i = min(middle(first, tokens[m])[2] for m in members[1:])
+            j = min(middle(first, tokens[m])[3] for m in members[1:])
+            j = min(j, len(first) - i)
+            proof = " ".join(first[:i] + ["{work}"] + first[len(first) - j:])
+            for m in members:
+                key[m] = proof
+            names[proof] = sorted(" ".join(tokens[m][i:len(tokens[m]) - j]) for m in members)
+        return key, names
 
     def _book_game(self, problem):
         """The shape and the order of a stored problem whose equation passes the final check and uses every number once or more."""
@@ -330,26 +444,27 @@ def split_line(key):
 # ---------------------------------------------------------------------------------------------------------------------------
 # the four lists
 # ---------------------------------------------------------------------------------------------------------------------------
-def list1(book, words, n_numbers, own_id=None):
+def list1(book, words, n_numbers, wording=None):
     """Shapes forming in a sentence: (score, shape).  30: the shape has as many slots as the sentence has numbers.
-    60: a book sentence that used the shape also shares most of this sentence's words (6 of every 10, counted over both)."""
+    60: a book sentence of another wording that used the shape shares most of this sentence's words (6 of every 10,
+    counted over both).  A shape whose only sources are problems of this wording is absent: that is the answer key."""
     rows = []
     for shape, info in book.shapes.items():
         if info["slots"] != n_numbers or n_numbers > MAX_SLOTS:
             continue
-        sources = [i for i in info["sources"] if i != own_id]
+        sources = [i for i in info["sources"] if book.wording[i] != wording]
         if not sources:
-            continue                                      # only this problem's own equation has the shape: not a hint for it
+            continue
         near = max(len(words & book.words[i]) / float(len(words | book.words[i]) or 1) for i in sources)
         rows.append((60 if near >= 0.6 else 30, round(near, 4), shape))
     rows.sort(key=lambda r: (-r[0], -r[1], r[2]))
     return [(score, shape) for score, _near, shape in rows]
 
 
-def list2(book, words, n_numbers, own_id=None):
+def list2(book, words, n_numbers, wording=None):
     """Every legal line of the List 1 shapes, in List 1's order, the numbers in sentence order first: (score, line)."""
     lines = []
-    for score, shape in list1(book, words, n_numbers, own_id):
+    for score, shape in list1(book, words, n_numbers, wording):
         for order in itertools.permutations(range(n_numbers)):
             lines.append((score, line_key(shape, order)))
     return lines
@@ -360,62 +475,63 @@ def _games(archive, wording):
 
 
 def winners(book, archive):
-    """line -> {wording: who won with it there}: the ids of book games, and "played" for a played line that never lost."""
+    """line -> the wordings it won in: a book game there, or a played line there that never lost."""
     won = {}
     for pid, key in book.book_line.items():
-        won.setdefault(key, {}).setdefault(book.wording[pid], set()).add(pid)
+        won.setdefault(key, set()).add(book.wording[pid])
     for wording, games in archive.get("games", {}).items():
         for key, record in games["lines"].items():
             if record["won"] and not record["lost"]:
-                won.setdefault(key, {}).setdefault(wording, set()).add("played")
+                won.setdefault(key, set()).add(wording)
     return won
 
 
-def _status(book, archive, wording, key, own_id, won):
-    """(status, won, lost) of one line for one problem.  The problem's own book game is never counted."""
+def _varied(book, wording):
+    """True when at least two stored problems of the wording have different numbers."""
+    return len({tuple(float(n) for n in book.by_id[i].NUMBERS) for i in book.mates.get(wording, [])}) >= 2
+
+
+def _status(book, archive, wording, key, won):
+    """(status, won, lost) of one line in one wording.  Only played games of this wording make it tried, won or lost."""
     record = archive.get("games", {}).get(wording, {"lines": {}})["lines"].get(key)
-    mates = book.mates.get(wording, [])
     if record and record["lost"]:
         return "proven loss", len(record["won"]), len(record["lost"])
-    if record and len(mates) >= 2 and set(record["won"]) >= set(mates):
+    if record and _varied(book, wording) and set(record["won"]) >= set(book.mates.get(wording, [])):
         return "proven win", len(record["won"]), 0
-    where = won.get(key, {})
-    book_wins = where.get(wording, set()) - {own_id, "played"}       # book games of the other problems of this wording
-    if record or book_wins:
-        return "tried", len(book_wins | set(record["won"] if record else ())), 0
-    if any(w != wording and who - {own_id} for w, who in where.items()):
+    if record:
+        return "tried", len(record["won"]), 0
+    if won.get(key, set()) - {wording}:
         return "similar", 0, 0
     return "never tried", 0, 0
 
 
-def list3(book, archive, wording, lines, own_id=None, won=None):
-    """One row per legal line: (line, status, won, lost).  Finished games of this wording, then other wordings (similar)."""
+def list3(book, archive, wording, lines, won=None):
+    """One row per legal line: (line, status, won, lost).  Played games of this wording, then other wordings (similar)."""
     won = winners(book, archive) if won is None else won
-    return [(key,) + _status(book, archive, wording, key, own_id, won) for _score, key in lines]
+    return [(key,) + _status(book, archive, wording, key, won) for _score, key in lines]
 
 
-def list4(book, archive, wording, rows, own_id=None, won=None):
+def list4(book, archive, wording, rows, won=None):
     """For every List 3 row that a finished game played: (line, won here, lost here, other wordings it won in), best first."""
     won = winners(book, archive) if won is None else won
     out = []
     for key, status, wins, losses in rows:
         if status != "never tried":
-            others = sum(1 for w, who in won.get(key, {}).items() if w != wording and who - {own_id})
-            out.append((key, wins, losses, others))
+            out.append((key, wins, losses, len(won.get(key, set()) - {wording})))
     out.sort(key=lambda r: (-(r[1] - r[2]), -r[3], r[0]))
     return out
 
 
 def lists_for(problem, book=None, archive=None):
-    """The four lists for one stored problem.  Its own equation and its own answer are not read."""
+    """The four lists for one stored problem.  Its own equation, its siblings' equations and its own answer are not read."""
     book = book or Book()
     archive = _read_archive() if archive is None else archive
     wording = book.wording[problem.ID]
-    lines = list2(book, book.words[problem.ID], len(problem.NUMBERS), problem.ID)
-    rows = list3(book, archive, wording, lines, problem.ID)
+    lines = list2(book, book.words[problem.ID], len(problem.NUMBERS), wording)
+    rows = list3(book, archive, wording, lines)
     return {"wording": wording,
-            "list1": list1(book, book.words[problem.ID], len(problem.NUMBERS), problem.ID),
-            "list2": lines, "list3": rows, "list4": list4(book, archive, wording, rows, problem.ID)}
+            "list1": list1(book, book.words[problem.ID], len(problem.NUMBERS), wording),
+            "list2": lines, "list3": rows, "list4": list4(book, archive, wording, rows)}
 
 
 def choose(rows):
@@ -431,31 +547,26 @@ def _choose_quick(book, archive, problem, won, state):
     """The same choice as choose(list3(...)), without building every row on every pass."""
     wording = book.wording[problem.ID]
     if problem.ID not in state["lines"]:
-        lines = [key for _score, key in list2(book, book.words[problem.ID], len(problem.NUMBERS), problem.ID)]
+        lines = [key for _score, key in list2(book, book.words[problem.ID], len(problem.NUMBERS), wording)]
         state["lines"][problem.ID] = (lines, {key: n for n, key in enumerate(lines)})
         state["next"][problem.ID] = 0
+        state["similar"][problem.ID] = [key for key in lines if state["book"].get(key, set()) - {wording}]   # book games elsewhere
     lines, place = state["lines"][problem.ID]
     record = archive.get("games", {}).get(wording, {"lines": {}})["lines"]
-    known = [key for key in record if key in place]
-    known += [book.book_line[i] for i in book.mates[wording] if i != problem.ID and book.book_line.get(i) in place]
     best = None
-    for key in known:
-        status = _status(book, archive, wording, key, problem.ID, won)[0]
-        rank = {"proven win": 0, "tried": 1}.get(status)
-        if rank is not None and (best is None or (rank, place[key]) < best):
-            best = (rank, place[key])
+    for key in record:
+        if key in place:
+            rank = {"proven win": 0, "tried": 1}.get(_status(book, archive, wording, key, won)[0])
+            if rank is not None and (best is None or (rank, place[key]) < best):
+                best = (rank, place[key])
     if best:
         return lines[best[1]]
-    similar = state["similar"].get(problem.ID)
-    if similar is None:                                   # lines of this problem that some other wording's book game won
-        similar = [key for key in lines if any(w != wording and who - {problem.ID, "played"} for w, who in won.get(key, {}).items())]
-        state["similar"][problem.ID] = similar
-    for key in similar:
+    for key in state["similar"][problem.ID]:
         if key not in record:
             best = place[key]
             break
-    for key, where in state["played_wins"].items():       # lines that played games of other wordings won
-        if key in place and key not in record and any(w != wording and "played" in who for w, who in where.items()):
+    for key in state["played_wins"]:                      # lines that played games of other wordings won since
+        if key in place and key not in record and won[key] - {wording}:
             if best is None or place[key] < best:
                 best = place[key]
     if best is not None:
@@ -470,8 +581,10 @@ def _choose_quick(book, archive, problem, won, state):
 def one_pass(book, archive, problems=None, state=None):
     """One game for every problem, merged after the pass.  Returns how many games added something new."""
     state = state if state is not None else {"lines": {}, "next": {}, "similar": {}}
+    if "book" not in state:
+        state["book"] = winners(book, {})
     won = winners(book, archive)
-    state["played_wins"] = {key: where for key, where in won.items() if any("played" in who for who in where.values())}
+    state["played_wins"] = {key for games in archive.get("games", {}).values() for key, r in games["lines"].items() if r["won"] and not r["lost"]}
     finished = []
     for problem in (problems or book.problems):
         key = _choose_quick(book, archive, problem, won, state)
@@ -485,7 +598,8 @@ def one_pass(book, archive, problems=None, state=None):
                 games["dead_end"].append(problem.ID)
             continue
         record = games["lines"].setdefault(key, {"won": [], "lost": []})
-        won_game = number is not None and any(_same(number, a) for a in answer_numbers(problem.ANSWER, problem.NUMBERS))
+        asked = book.asked[problem.ID]                    # a line gives one number: it loses when the answer asks for two
+        won_game = number is not None and asked is not None and len(asked) == 1 and _same(number, float(asked[0]))
         side = record["won"] if won_game else record["lost"]
         if problem.ID not in side:
             side.append(problem.ID)
@@ -494,9 +608,9 @@ def one_pass(book, archive, problems=None, state=None):
 
 
 def proven_line(book, archive, wording):
-    """The line that was played and won on every stored problem of the wording (two or more), or None."""
+    """The line that was played and won on every stored problem of the wording, two of them with different numbers, or None."""
     mates = book.mates.get(wording, [])
-    if len(mates) < 2:
+    if not _varied(book, wording):
         return None
     for key, record in sorted(archive.get("games", {}).get(wording, {"lines": {}})["lines"].items()):
         if not record["lost"] and set(record["won"]) >= set(mates):
@@ -504,27 +618,121 @@ def proven_line(book, archive, wording):
     return None
 
 
+# ---------------------------------------------------------------------------------------------------------------------------
+# generated lines (word_generator.py): one sweep for every wording, after the passes
+# ---------------------------------------------------------------------------------------------------------------------------
+def _sweepable(book, wording):
+    """The stored problems of a wording can be swept: two different sets of numbers, answers written the same way."""
+    ids = book.mates.get(wording, [])
+    first = book.by_id[ids[0]]
+    return (_varied(book, wording) and book.asked[ids[0]] is not None
+            and 1 <= len(first.NUMBERS) <= MAX_SLOTS and all(len(book.by_id[i].NUMBERS) == len(first.NUMBERS) for i in ids))
+
+
+def _cue_words(book, wording):
+    return set.union(*(book.words[i] for i in book.mates[wording]))
+
+
+def generated_record(book, archive, wording):
+    """The stored sweep of a wording when it is still valid: same problems, same fixed numbers, same generator."""
+    record = archive.get("generated", {}).get(wording)
+    if not record or record.get("version") != word_generator.VERSION:
+        return None
+    if record.get("ids") != sorted(book.mates.get(wording, [])):
+        return None                                       # a stored problem was added or removed: the sweep is void
+    if record.get("fixed") != word_generator.fixed_numbers(_cue_words(book, wording)):
+        return None
+    return record
+
+
+def sweep_wordings(book, archive, max_size=None, wordings=None):
+    """Sweep every wording that has no valid finished sweep up to max_size.  Returns how many wordings were swept."""
+    max_size = word_generator.MAX_SIZE if max_size is None else max_size
+    store = archive.setdefault("generated", {})
+    swept = 0
+    for wording in sorted(wordings if wordings is not None else book.mates):
+        if not _sweepable(book, wording):
+            store.pop(wording, None)
+            continue
+        old = generated_record(book, archive, wording)
+        if old and (old["line"] or old["size"] >= max_size or old.get("number_without_role")):
+            continue
+        ids = sorted(book.mates[wording])
+        rows = [list(book.by_id[i].NUMBERS) for i in ids]
+        targets = [[book.asked[i][j] for i in ids] for j in range(len(book.asked[ids[0]]))]
+        result = word_generator.sweep(rows, targets, _cue_words(book, wording), max_size)
+        # written only now, after every size up to result["size"] was finished on every one of these problems
+        store[wording] = {"version": word_generator.VERSION, "ids": ids, "fixed": result["fixed"], "size": result["size"],
+                          "line": result["line"], "open": result["open"], "tuples": _independent(book, wording)}
+        if result["number_without_role"]:                 # every asked number has a tree, but a number of the sentence has no role
+            store[wording]["number_without_role"] = True
+        swept += 1
+    for wording in [w for w in store if w not in book.mates]:
+        del store[wording]
+    return swept
+
+
+def _independent(book, wording):
+    """How many sets of numbers the wording has that are not one another scaled: (4, 5), (8, 10) and (12, 15) are one."""
+    seen = set()
+    for i in book.mates.get(wording, []):
+        row = [Fraction(n) for n in book.by_id[i].NUMBERS]
+        unit = next((n for n in row if n != 0), Fraction(1))
+        seen.add(tuple(n / unit for n in row))
+    return len(seen)
+
+
+def generated_candidate(book, archive, wording):
+    """The generated line that won every stored problem of the wording (one tree for each asked number), or None.
+    It is a candidate, not proof, until the wording has GENERATED_MIN_TUPLES independent sets of numbers."""
+    record = generated_record(book, archive, wording)
+    return record["line"] if record and record["line"] else None
+
+
+def generated_line(book, archive, wording):
+    """The proven generated line of a wording, or None."""
+    if _independent(book, wording) < GENERATED_MIN_TUPLES:
+        return None
+    return generated_candidate(book, archive, wording)
+
+
 def answer(text, book=None, archive=None):
-    """The number for a sentence, only from the proven line of its wording.  Anything else is None (a decline).
+    """The answer for a sentence, only from a proven line of its wording: a number, or a list when several are asked.
+    Anything else is None (a decline).
 
     A number that is the same in every stored problem of the wording was never tested with another value, so a sentence
-    that changes it is declined."""
+    that changes it is declined.  When a played book line and a generated line are both proven and give different
+    numbers for this sentence, it is declined."""
     book = book or Book()
     archive = _read_archive() if archive is None else archive
     template, numbers = template_of(text)
     wording = book.wording_of(template)
-    key = proven_line(book, archive, wording)
-    if key is None:
-        return None
-    shape, order = split_line(key)
-    if len(order) != len(numbers):
-        return None
+    if wording not in book.mates:
+        return None                                       # not a stored sentence shape, even with the work name out
     stored = [book.by_id[i].NUMBERS for i in book.mates[wording]]
+    if any(len(s) != len(numbers) for s in stored):
+        return None
     for place in range(len(numbers)):
         seen = {float(s[place]) for s in stored}
         if len(seen) == 1 and float(numbers[place]) not in seen:
             return None
-    return book.play(shape, order, numbers)
+    values = None
+    trees = generated_line(book, archive, wording)
+    if trees:
+        try:
+            values = [float(word_generator.evaluate(tree, numbers)) for tree in trees]
+        except ZeroDivisionError:
+            return None
+    key = proven_line(book, archive, wording)
+    if key is not None:
+        shape, order = split_line(key)
+        number = book.play(shape, order, numbers)
+        if number is None or (values is not None and (len(values) != 1 or not _same(number, values[0]))):
+            return None
+        values = [number]
+    if values is None:
+        return None
+    return values[0] if len(values) == 1 else values
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
@@ -533,7 +741,7 @@ def answer(text, book=None, archive=None):
 def _read_archive():
     """The archive file.  In the file a lost line is short: shape -> "order:times order:times"; here every line is a record."""
     if not os.path.isfile(ARCHIVE):
-        return {"templates": {}, "games": {}}
+        return {"templates": {}, "games": {}, "generated": {}}
     with open(ARCHIVE, encoding="utf-8") as handle:
         archive = json.load(handle)
     games = {}
@@ -545,6 +753,7 @@ def _read_archive():
                 lines.setdefault("%s | %s" % (shape, order), {"won": [], "lost": []})["lost"] += ["-"] * int(times or 1)
         games[wording] = {"lines": lines, "dead_end": list(stored.get("dead_end", []))}
     archive["games"] = games
+    archive.setdefault("generated", {})
     return archive
 
 
@@ -566,24 +775,26 @@ def _write_archive(archive):
 
 
 def summary(book, archive):
-    proven = [w for w in book.mates if proven_line(book, archive, w)]
-    won_once = dead = 0
-    for wording in book.mates:
-        games = archive.get("games", {}).get(wording, {"lines": {}, "dead_end": []})
-        if wording in proven:
-            continue
-        if any(r["won"] and not r["lost"] for r in games["lines"].values()):
-            won_once += 1
-        elif games["dead_end"]:
-            dead += 1
-    return {"wordings": len(book.mates), "proven": len(proven), "problems_in_proven": sum(len(book.mates[w]) for w in proven),
-            "candidates": won_once, "dead_ends": dead,
+    played = {w for w in book.mates if proven_line(book, archive, w)}
+    made = {w for w in book.mates if generated_line(book, archive, w)}
+    swept = [w for w in book.mates if generated_record(book, archive, w)]
+    maybe = {w for w in swept if generated_candidate(book, archive, w)} - made
+    either = played | made
+    count = lambda wordings: sum(len(book.mates[w]) for w in wordings)       # noqa: E731
+    return {"wordings": len(book.mates),
+            "proven_by_book_line": len(played), "problems_by_book_line": count(played),
+            "proven_by_generated_line": len(made), "problems_by_generated_line": count(made),
+            "proven": len(either), "problems_in_proven": count(either),
+            "reference_problems_in_proven": sum(1 for w in either for i in book.mates[w] if book.by_id[i].SOLVER is None),
+            "generated_candidates_too_few_tuples": len(maybe),
+            "swept": len(swept), "loss_records": len(swept) - len(made) - len(maybe),
+            "not_swept_one_set_of_numbers": sum(1 for w in book.mates if not _varied(book, w)),
             "games_played": sum(len(r["won"]) + len(r["lost"]) for g in archive.get("games", {}).values() for r in g["lines"].values())}
 
 
-def run(reference_only=True, passes=40, book=None, write=True):
-    """Play passes until one adds nothing (or the limit), then write the archive.  The games already in the file are kept,
-    so the next run goes on where this one stopped.
+def run(reference_only=True, passes=40, book=None, write=True, max_size=None):
+    """Play passes until one adds nothing (or the limit), sweep the wordings with generated lines, then write the archive.
+    The games and the finished sweeps already in the file are kept, so the next run goes on where this one stopped.
 
     Returns the archive.  Its "templates" part is the final check of the stored equations, as before."""
     book = book or Book()
@@ -592,14 +803,17 @@ def run(reference_only=True, passes=40, book=None, write=True):
     played, state = 0, {"lines": {}, "next": {}, "similar": {}}
     while played < passes and one_pass(book, archive, state=state):
         played += 1
-    archive["four_lists"] = dict(summary(book, archive), shapes=len(book.shapes), book_games=len(book.book_line), passes_this_run=played)
+    swept = sweep_wordings(book, archive, max_size)
+    archive["four_lists"] = dict(summary(book, archive), shapes=len(book.shapes), book_games=len(book.book_line),
+                                 passes_this_run=played, wordings_swept_this_run=swept)
+    archive["work_names"] = book.work_names               # what the proof key took out, for review
     if write:
         _write_archive(archive)
     return archive
 
 
 if __name__ == "__main__":
-    result = run(passes=int(sys.argv[1]) if len(sys.argv) > 1 else 40)
+    result = run(passes=int(sys.argv[1]) if len(sys.argv) > 1 else 40, max_size=int(sys.argv[2]) if len(sys.argv) > 2 else None)
     print("final check of the stored equations")
     print("  proven wordings: %d" % result["proven_wordings"])
     print("  candidate wordings (one matching problem): %d" % result["candidate_wordings"])
@@ -608,5 +822,12 @@ if __name__ == "__main__":
     print("four lists")
     print("  shapes in the book: %d, from %d book games" % (info["shapes"], info["book_games"]))
     print("  passes this run: %d, games in the archive: %d" % (info["passes_this_run"], info["games_played"]))
-    print("  wordings: %d, proven by play: %d (%d problems)" % (info["wordings"], info["proven"], info["problems_in_proven"]))
-    print("  wordings with a win that is not proof: %d, dead ends: %d" % (info["candidates"], info["dead_ends"]))
+    print("  wordings: %d" % info["wordings"])
+    print("  proven by a played book line:  %d wordings (%d problems)" % (info["proven_by_book_line"], info["problems_by_book_line"]))
+    print("  proven by a generated line:    %d wordings (%d problems)" % (info["proven_by_generated_line"], info["problems_by_generated_line"]))
+    print("  proven by either:              %d wordings (%d problems, %d of them reference-only)" % (
+        info["proven"], info["problems_in_proven"], info["reference_problems_in_proven"]))
+    print("  generated lines that won but have under %d independent sets of numbers (not proof): %d" % (
+        GENERATED_MIN_TUPLES, info["generated_candidates_too_few_tuples"]))
+    print("  swept this run: %d; loss records: %d; not swept (one set of numbers): %d" % (
+        info["wordings_swept_this_run"], info["loss_records"], info["not_swept_one_set_of_numbers"]))
