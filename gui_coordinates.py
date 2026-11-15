@@ -323,3 +323,83 @@ def arrow_at_position(row: int, column: int) -> Optional[str]:
     if pos not in ARROW_GRID_POSITIONS:
         raise KeyError(f"Position ({row}, {column}) is outside the 3x3 arrow grid")
     return ARROW_GRID_POSITIONS[pos]
+
+
+# ==============================================================================
+# Surrounding Card Component Layout Definitions
+# ==============================================================================
+
+CARD_LEAD_BUTTON_POSITION = GridPosition(
+    row=1, column=1, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+CARD_ARROW_GRID_POSITION = GridPosition(
+    row=1, column=2, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+CARD_LABEL_POSITION = GridPosition(
+    row=1, column=3, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+CARD_CONTEXT_POSITION = GridPosition(
+    row=1, column=4, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+CARD_TRAILING_BUTTON_POSITION = GridPosition(
+    row=1, column=5, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+
+
+class _CardComponentPositions(dict):
+    """Bidirectional mapping for card component positions.
+
+    Supports lookup by canonical string names, friendly aliases, and by GridPosition:
+        CARD_COMPONENT_POSITIONS["lead_button"] -> GridPosition(...)
+        CARD_COMPONENT_POSITIONS[GridPosition(...)] -> "lead_button"
+    """
+
+    def __init__(self, canonical_items: dict[str, GridPosition], aliases: dict[str, str]) -> None:
+        super().__init__(canonical_items)
+        self._aliases = aliases
+        self._by_pos = {pos: name for name, pos in canonical_items.items()}
+
+    def __getitem__(self, key: Any) -> Any:
+        if isinstance(key, GridPosition):
+            return self._by_pos[key]
+        if isinstance(key, str) and key in self._aliases:
+            key = self._aliases[key]
+        return super().__getitem__(key)
+
+    def __contains__(self, key: Any) -> bool:
+        if isinstance(key, GridPosition):
+            return key in self._by_pos
+        if isinstance(key, str) and key in self._aliases:
+            return True
+        return super().__contains__(key)
+
+    def get(self, key: Any, default: Any = None) -> Any:
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+
+CARD_COMPONENT_POSITIONS = _CardComponentPositions(
+    canonical_items={
+        "lead_button": CARD_LEAD_BUTTON_POSITION,
+        "arrow_grid": CARD_ARROW_GRID_POSITION,
+        "label_entry": CARD_LABEL_POSITION,
+        "context_entry": CARD_CONTEXT_POSITION,
+        "trailing_button": CARD_TRAILING_BUTTON_POSITION,
+    },
+    aliases={
+        "blue_plus": "lead_button",
+        "item_entry": "label_entry",
+        "orange_plus": "trailing_button",
+    },
+)
+
+
+def card_component_position(name: str) -> GridPosition:
+    """Return the GridPosition for a named card component."""
+    if name not in CARD_COMPONENT_POSITIONS:
+        raise KeyError(
+            f"Unknown card component {name!r}, valid components: {list(CARD_COMPONENT_POSITIONS.keys())}"
+        )
+    return CARD_COMPONENT_POSITIONS[name]

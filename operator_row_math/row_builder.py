@@ -15,8 +15,9 @@ import sys
 import tkinter as tk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from gui_style import (ARROW_BG, ARROW_GRID_POSITIONS, ARROWS, BLUE, CREAM,  # noqa: E402
-                       PALE_BLUE, PALE_ORANGE, btn)
+from gui_style import (ARROW_BG, ARROW_GRID_POSITIONS, ARROWS, BLUE,  # noqa: E402
+                       CARD_COMPONENT_POSITIONS, CREAM, PALE_BLUE, PALE_ORANGE,
+                       btn)
 
 BOX = "□"
 
@@ -67,10 +68,20 @@ def make_component(parent, center, kind, lead="+", on_pick=None, selected=False,
     on_focus(which) when a box is clicked).  None keeps the two plain placeholder boxes."""
     pick = on_pick or (lambda: None)
     f = tk.Frame(parent, bg=CREAM)
-    btn(f, lead, PALE_BLUE, fg=BLUE if lead == "+" else "black", font=("Segoe UI", 14, "bold"), width=3,
-        highlightbackground=BLUE, command=pick).grid(row=0, column=0, rowspan=3, padx=(0, 10))
+
+    # 1. Blue plus / lead button (column 1)
+    pos_lead = CARD_COMPONENT_POSITIONS["lead_button"]
+    lead_btn = btn(f, lead, PALE_BLUE, fg=BLUE if lead == "+" else "black", font=("Segoe UI", 14, "bold"), width=3,
+                   highlightbackground=BLUE, command=pick)
+    lead_btn.grid_pos = pos_lead
+    lead_btn.grid(**pos_lead.to_tkinter_grid(), padx=(0, 10))
+    f.lead_btn = lead_btn
+
+    # 2. Directional arrow grid container (column 2)
+    pos_grid = CARD_COMPONENT_POSITIONS["arrow_grid"]
     grid = tk.Frame(f, bg=CREAM)
-    grid.grid(row=0, column=1, rowspan=3)
+    grid.grid_pos = pos_grid
+    grid.grid(**pos_grid.to_tkinter_grid())
     grid.arrow_buttons = {}
     for pos, sym in ARROW_GRID_POSITIONS.items():
         if sym:
@@ -89,19 +100,51 @@ def make_component(parent, center, kind, lead="+", on_pick=None, selected=False,
             f.center_btn.grid_pos = pos
             f.center_btn.grid(**pos.to_tkinter_grid(), padx=1, pady=1)
             grid.arrow_buttons[pos] = f.center_btn
+
+    # 3. Label / item entry (column 3)
+    pos_label = CARD_COMPONENT_POSITIONS["label_entry"]
     label = "[Label]" if kind == "helper" else "[Item]"
     if words is None:
-        tk.Button(f, text=label, font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
-                  width=7, command=lambda: None).grid(row=0, column=2, rowspan=3, padx=6, ipady=4)
-        tk.Button(f, text="[Context]", font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
-                  width=9, command=lambda: None).grid(row=0, column=3, rowspan=3, padx=(0, 6), ipady=4)
+        label_widget = tk.Button(f, text=label, font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
+                                 width=7, command=lambda: None)
+        label_widget.grid_pos = pos_label
+        label_widget.grid(**pos_label.to_tkinter_grid(), padx=6, ipady=4)
+        f.label_btn = label_widget
     else:
         f.label_box = word_entry(f, label, words[0], 9, (lambda t: on_words(0, t)) if on_words else None, (lambda: on_focus(0)) if on_focus else None)
-        f.label_box.grid(row=0, column=2, rowspan=3, padx=6, ipady=4)
+        f.label_box.grid_pos = pos_label
+        f.label_box.grid(**pos_label.to_tkinter_grid(), padx=6, ipady=4)
+        label_widget = f.label_box
+
+    # 4. Context entry (column 4)
+    pos_context = CARD_COMPONENT_POSITIONS["context_entry"]
+    if words is None:
+        context_widget = tk.Button(f, text="[Context]", font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
+                                   width=9, command=lambda: None)
+        context_widget.grid_pos = pos_context
+        context_widget.grid(**pos_context.to_tkinter_grid(), padx=(0, 6), ipady=4)
+        f.context_btn = context_widget
+    else:
         f.context_box = word_entry(f, "[Context]", words[1], 14, (lambda t: on_words(1, t)) if on_words else None, (lambda: on_focus(1)) if on_focus else None)
-        f.context_box.grid(row=0, column=3, rowspan=3, padx=(0, 6), ipady=4)
-    btn(f, "+", PALE_ORANGE, fg="#c07000", font=("Segoe UI", 14, "bold"), width=3,
-        highlightbackground="#e0a060").grid(row=0, column=4, rowspan=3, padx=(0, 4))
+        f.context_box.grid_pos = pos_context
+        f.context_box.grid(**pos_context.to_tkinter_grid(), padx=(0, 6), ipady=4)
+        context_widget = f.context_box
+
+    # 5. Orange plus / trailing button (column 5)
+    pos_trailing = CARD_COMPONENT_POSITIONS["trailing_button"]
+    trailing_btn = btn(f, "+", PALE_ORANGE, fg="#c07000", font=("Segoe UI", 14, "bold"), width=3,
+                       highlightbackground="#e0a060")
+    trailing_btn.grid_pos = pos_trailing
+    trailing_btn.grid(**pos_trailing.to_tkinter_grid(), padx=(0, 4))
+    f.trailing_btn = trailing_btn
+
+    f.card_controls = {
+        pos_lead: lead_btn,
+        pos_grid: grid,
+        pos_label: label_widget,
+        pos_context: context_widget,
+        pos_trailing: trailing_btn,
+    }
     return f
 
 
