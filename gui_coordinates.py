@@ -937,3 +937,115 @@ def excel_to_card_position(excel_pos: GridPosition) -> tuple[int, GridPosition]:
         column_span=excel_pos.column_span,
         region=LayoutRegion.CARD_COMPONENT,
     )
+
+# ==============================================================================
+# Sizing and Grid Configuration for the 33-Column Excel Workspace
+# ==============================================================================
+
+EXCEL_COLUMN_WIDTHS: dict[int, int] = {
+    # Col 1: Row Indicator Label
+    EXCEL_COL_ROW_LABEL: 70,
+    # Col 2: Left Margin Spacer
+    EXCEL_COL_MARGIN: 10,
+    # Card Slot 1 (Cols 3..11, 9 columns)
+    EXCEL_COL_SLOT1_LEAD_BTN: 28,
+    EXCEL_COL_SLOT1_SPACER1: 8,
+    EXCEL_COL_SLOT1_ARROW_COL1: 24,
+    EXCEL_COL_SLOT1_ARROW_COL2: 26,
+    EXCEL_COL_SLOT1_ARROW_COL3: 24,
+    EXCEL_COL_SLOT1_LABEL: 65,
+    EXCEL_COL_SLOT1_CONTEXT: 85,
+    EXCEL_COL_SLOT1_SPACER2: 8,
+    EXCEL_COL_SLOT1_TRAILING_BTN: 28,
+    # Col 12: Spacer between Slot 1 and Slot 2
+    EXCEL_COL_SPACER_SLOT1_SLOT2: 16,
+    # Card Slot 2 (Cols 13..21, 9 columns - Math Expression)
+    EXCEL_COL_SLOT2_LEAD_BTN: 28,
+    EXCEL_COL_SLOT2_SPACER1: 8,
+    EXCEL_COL_SLOT2_ARROW_COL1: 24,
+    EXCEL_COL_SLOT2_ARROW_COL2: 26,
+    EXCEL_COL_SLOT2_ARROW_COL3: 24,
+    EXCEL_COL_SLOT2_LABEL: 65,
+    EXCEL_COL_SLOT2_CONTEXT: 85,
+    EXCEL_COL_SLOT2_SPACER2: 8,
+    EXCEL_COL_SLOT2_TRAILING_BTN: 28,
+    # Col 22: Spacer between Slot 2 and Actions
+    EXCEL_COL_SPACER_SLOT2_ACTIONS: 16,
+    # Col 23: Actions Slot
+    EXCEL_COL_ACTIONS: 110,
+    # Col 24: Spacer between Actions and Slot 3
+    EXCEL_COL_SPACER_ACTIONS_SLOT3: 16,
+    # Card Slot 3 (Cols 25..33, 9 columns - Result Card)
+    EXCEL_COL_SLOT3_LEAD_BTN: 28,
+    EXCEL_COL_SLOT3_SPACER1: 8,
+    EXCEL_COL_SLOT3_ARROW_COL1: 24,
+    EXCEL_COL_SLOT3_ARROW_COL2: 26,
+    EXCEL_COL_SLOT3_ARROW_COL3: 24,
+    EXCEL_COL_SLOT3_LABEL: 65,
+    EXCEL_COL_SLOT3_CONTEXT: 85,
+    EXCEL_COL_SLOT3_SPACER2: 8,
+    EXCEL_COL_SLOT3_TRAILING_BTN: 28,
+}
+
+
+def excel_column_width(column: int) -> int:
+    """Return the explicit pixel width for an authoritative Excel workspace column (1..33)."""
+    if column not in EXCEL_COLUMN_WIDTHS:
+        raise ValueError(f"column must be between 1 and {EXCEL_TOTAL_COLUMNS}, got {column!r}")
+    return EXCEL_COLUMN_WIDTHS[column]
+
+
+def excel_row_height(global_row: int) -> int:
+    """Return the explicit pixel height for an authoritative Excel workspace row (>= 1).
+
+    Row Heights by Role within the 6-Row Stride:
+      stride 1, 3: Card top and bottom arrow rows (24px)
+      stride 2: Card middle row with buttons and text fields (28px)
+      stride 4, 6: Empty spacer rows (10px)
+      stride 5: Helper heading row (22px)
+    """
+    if isinstance(global_row, bool) or not isinstance(global_row, int) or global_row < 1:
+        raise ValueError(f"global_row must be an integer >= 1, got {global_row!r}")
+    stride_idx = (global_row - 1) % EXCEL_CALCULATOR_ROW_STRIDE + 1
+    if stride_idx in (1, 3):
+        return 24
+    elif stride_idx == 2:
+        return 28
+    elif stride_idx in (4, 6):
+        return 10
+    elif stride_idx == 5:
+        return 22
+    return 24
+
+
+def excel_total_workspace_width() -> int:
+    """Return the total natural width of the 33 columns in pixels."""
+    return sum(EXCEL_COLUMN_WIDTHS.values())
+
+
+def excel_initial_workspace_height() -> int:
+    """Return the initial height of rows 1..9 in pixels."""
+    return sum(excel_row_height(r) for r in range(1, EXCEL_INITIAL_TOTAL_ROWS + 1))
+
+
+def configure_excel_workspace_grid(container: Any, num_calc_rows: int = 2) -> None:
+    """Configure a Tkinter frame or grid container with the authoritative 33 columns and N rows.
+
+    Columns: Exactly 33 columns (0-based columns 0..32) with explicit minsize and weight=0.
+    Rows: (6 * num_calc_rows - 3) rows (0-based rows 0..(total_rows - 1)) with explicit minsize and weight=0.
+    """
+    if num_calc_rows < 1:
+        raise ValueError(f"num_calc_rows must be >= 1, got {num_calc_rows!r}")
+
+    # 1. Configure all 33 columns (0-based 0..32) with explicit minsize and weight=0 (no uncontrolled stretching)
+    for col_1based in range(1, EXCEL_TOTAL_COLUMNS + 1):
+        col_0based = col_1based - 1
+        width = excel_column_width(col_1based)
+        container.grid_columnconfigure(col_0based, minsize=width, weight=0)
+
+    # 2. Configure rows based on the 6-row stride
+    total_rows = 6 * (num_calc_rows - 1) + 3
+    for row_1based in range(1, total_rows + 1):
+        row_0based = row_1based - 1
+        height = excel_row_height(row_1based)
+        container.grid_rowconfigure(row_0based, minsize=height, weight=0)

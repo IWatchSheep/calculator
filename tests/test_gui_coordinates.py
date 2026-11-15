@@ -54,6 +54,15 @@ from gui_coordinates import (
     EXCEL_COL_ACTIONS,
     EXCEL_COL_SLOT1_START,
     EXCEL_COL_SLOT1_END,
+    EXCEL_COL_SLOT1_LEAD_BTN,
+    EXCEL_COL_SLOT1_SPACER1,
+    EXCEL_COL_SLOT1_ARROW_COL1,
+    EXCEL_COL_SLOT1_ARROW_COL2,
+    EXCEL_COL_SLOT1_ARROW_COL3,
+    EXCEL_COL_SLOT1_LABEL,
+    EXCEL_COL_SLOT1_CONTEXT,
+    EXCEL_COL_SLOT1_SPACER2,
+    EXCEL_COL_SLOT1_TRAILING_BTN,
     EXCEL_COL_SLOT2_START,
     EXCEL_COL_SLOT2_END,
     EXCEL_COL_SLOT3_START,
@@ -64,6 +73,12 @@ from gui_coordinates import (
     excel_spacer_after_heading_row,
     excel_workspace_position,
     excel_workspace_positions,
+    EXCEL_COLUMN_WIDTHS,
+    excel_column_width,
+    excel_row_height,
+    excel_total_workspace_width,
+    excel_initial_workspace_height,
+    configure_excel_workspace_grid,
 )
 from gui_style import ARROW_BG, ARROWS, PALE_BLUE
 from operator_row_math.row_builder import make_component
@@ -1108,6 +1123,172 @@ class TestExcelWorkspaceCoordinates(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             excel_workspace_position(1, "nonexistent_control_xyz")
+
+
+class TestExcelWorkspacePreparedGrid(unittest.TestCase):
+    """Test Step 3 prepared 9-row x 33-column workspace grid configuration and sizing."""
+
+    def setUp(self):
+        try:
+            self.root = tk.Tk()
+            self.root.withdraw()
+        except tk.TclError:
+            self.root = None
+
+    def tearDown(self):
+        if self.root:
+            try:
+                self.root.destroy()
+            except Exception:
+                pass
+            self.root = None
+
+    def test_prepared_grid_33_columns_configured(self):
+        """Exactly 33 columns are configured with explicit widths and weight=0."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        frame = tk.Frame(self.root)
+        configure_excel_workspace_grid(frame, num_calc_rows=2)
+
+        for col_1based in range(1, EXCEL_TOTAL_COLUMNS + 1):
+            col_0based = col_1based - 1
+            info = frame.grid_columnconfigure(col_0based)
+            expected_width = EXCEL_COLUMN_WIDTHS[col_1based]
+            self.assertEqual(int(info.get("minsize", 0)), expected_width,
+                             f"Column {col_1based} width mismatch")
+            self.assertEqual(int(info.get("weight", 0)), 0,
+                             f"Column {col_1based} must have weight=0 to avoid uncontrolled stretching")
+
+    def test_prepared_grid_initial_9_rows_configured(self):
+        """Initial layout configures exactly 9 rows with defined heights matching roles."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        frame = tk.Frame(self.root)
+        configure_excel_workspace_grid(frame, num_calc_rows=2)
+
+        for row_1based in range(1, EXCEL_INITIAL_TOTAL_ROWS + 1):
+            row_0based = row_1based - 1
+            info = frame.grid_rowconfigure(row_0based)
+            expected_height = excel_row_height(row_1based)
+            self.assertEqual(int(info.get("minsize", 0)), expected_height,
+                             f"Row {row_1based} height mismatch")
+            self.assertEqual(int(info.get("weight", 0)), 0)
+
+        # Explicit role verification
+        # Calculator Row 1: rows 1..3 (24, 28, 24)
+        self.assertEqual(excel_row_height(1), 24)
+        self.assertEqual(excel_row_height(2), 28)
+        self.assertEqual(excel_row_height(3), 24)
+
+        # Spacers and Heading: rows 4..6 (10, 22, 10)
+        self.assertEqual(excel_row_height(4), 10)  # Spacer before heading
+        self.assertEqual(excel_row_height(5), 22)  # Helper card heading
+        self.assertEqual(excel_row_height(6), 10)  # Spacer after heading
+
+        # Calculator Row 2: rows 7..9 (24, 28, 24)
+        self.assertEqual(excel_row_height(7), 24)
+        self.assertEqual(excel_row_height(8), 28)
+        self.assertEqual(excel_row_height(9), 24)
+
+    def test_card_column_widths_match_card_specification(self):
+        """Card column widths in the 33-column grid correspond to Step 2 card specification."""
+        card_widths = [
+            excel_column_width(EXCEL_COL_SLOT1_LEAD_BTN),    # 28 (Lead btn)
+            excel_column_width(EXCEL_COL_SLOT1_SPACER1),     # 8  (Spacer 1)
+            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL1),  # 24 (Arrow Left)
+            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL2),  # 26 (Arrow Mid / Center)
+            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL3),  # 24 (Arrow Right)
+            excel_column_width(EXCEL_COL_SLOT1_LABEL),       # 65 (Label entry)
+            excel_column_width(EXCEL_COL_SLOT1_CONTEXT),     # 85 (Context entry)
+            excel_column_width(EXCEL_COL_SLOT1_SPACER2),     # 8  (Spacer 2)
+            excel_column_width(EXCEL_COL_SLOT1_TRAILING_BTN),# 28 (Trailing btn)
+        ]
+        self.assertEqual(card_widths, [28, 8, 24, 26, 24, 65, 85, 8, 28])
+
+        # Slots 1, 2, and 3 have identical card column width profiles
+        slot1_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT1_START, EXCEL_COL_SLOT1_END + 1)]
+        slot2_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT2_START, EXCEL_COL_SLOT2_END + 1)]
+        slot3_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT3_START, EXCEL_COL_SLOT3_END + 1)]
+        self.assertEqual(slot1_widths, card_widths)
+        self.assertEqual(slot2_widths, card_widths)
+        self.assertEqual(slot3_widths, card_widths)
+
+    def test_stride_for_additional_rows(self):
+        """configure_excel_workspace_grid correctly configures rows for arbitrary row counts."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        frame = tk.Frame(self.root)
+        # Configure for 3 calculator rows -> 6 * (3 - 1) + 3 = 15 rows
+        configure_excel_workspace_grid(frame, num_calc_rows=3)
+
+        for r in range(1, 16):
+            info = frame.grid_rowconfigure(r - 1)
+            self.assertEqual(int(info.get("minsize", 0)), excel_row_height(r))
+
+        # Check Calculator Row 3: heading at row 11, spacers at 10 and 12, cards at 13..15
+        self.assertEqual(excel_row_height(10), 10)
+        self.assertEqual(excel_row_height(11), 22)
+        self.assertEqual(excel_row_height(12), 10)
+        self.assertEqual(excel_row_height(13), 24)
+        self.assertEqual(excel_row_height(14), 28)
+        self.assertEqual(excel_row_height(15), 24)
+
+    def test_total_workspace_dimensions_predictable(self):
+        """Natural total width is bounded to 1126px without arbitrary expanding gaps."""
+        total_width = excel_total_workspace_width()
+        self.assertEqual(total_width, 1126)
+        # Fits comfortably within standard 1480px calculator window
+        self.assertLess(total_width, 1480)
+
+        initial_height = excel_initial_workspace_height()
+        self.assertEqual(initial_height, 194)
+
+    def test_live_gui_has_prepared_workspace_without_conflicting(self):
+        """CalculatorGUI retains active 5-column area while preparing 33-column excel_area."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        from main import CalculatorGUI
+        app = None
+        try:
+            app = CalculatorGUI()
+            app.withdraw()
+
+            # 1. Live area is unchanged and active
+            self.assertTrue(hasattr(app, "area"))
+            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(int(app.area.grid_columnconfigure(0).get("minsize", 0)), 170)
+            self.assertEqual(int(app.area.grid_columnconfigure(1).get("minsize", 0)), 430)
+
+            # 2. Prepared excel_area exists separately
+            self.assertTrue(hasattr(app, "excel_area"))
+            self.assertTrue(hasattr(app, "excel_workspace"))
+            self.assertEqual(app.excel_area, app.excel_workspace)
+
+            # 3. Exactly 33 columns and 9 rows are configured on excel_area
+            for c in range(33):
+                col_width = int(app.excel_area.grid_columnconfigure(c).get("minsize", 0))
+                self.assertEqual(col_width, excel_column_width(c + 1))
+                self.assertEqual(int(app.excel_area.grid_columnconfigure(c).get("weight", 0)), 0)
+
+            for r in range(9):
+                row_height = int(app.excel_area.grid_rowconfigure(r).get("minsize", 0))
+                self.assertEqual(row_height, excel_row_height(r + 1))
+
+            # 4. Activation hook swaps window smoothly
+            self.assertTrue(hasattr(app, "activate_excel_workspace"))
+            app.activate_excel_workspace()
+            self.assertEqual(app.area, app.excel_area)
+
+        finally:
+            if app:
+                try:
+                    app.destroy()
+                except Exception:
+                    pass
 
 
 if __name__ == "__main__":

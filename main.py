@@ -13,7 +13,8 @@ OPS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_on
 WORD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_one_algebra_word_problem_per_file")
 
 from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, PALE_ORANGE,  # noqa: F401
-                       PURPLE, RED, btn, main_row_position, main_row_positions)
+                       PURPLE, RED, btn, main_row_position, main_row_positions,
+                       configure_excel_workspace_grid, excel_total_workspace_width)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component
@@ -303,12 +304,20 @@ class CalculatorGUI(tk.Tk):
         rc.pack(side="left", fill="both", expand=True)
         area = tk.Frame(rc, bg=CREAM)
         win = rc.create_window((0, 0), window=area, anchor="nw")
+        self._rows_win = win
+
+        # Step 3: Prepare the 33-column Excel workspace frame separately from the live 5-column area
+        excel_area = tk.Frame(rc, bg=CREAM)
+        configure_excel_workspace_grid(excel_area, num_calc_rows=2)
+        self.excel_area = excel_area
+        self.excel_workspace = excel_area
 
         def fit(_e=None):
-            area.update_idletasks()
-            w = max(rc.winfo_width(), area.winfo_reqwidth())
-            rc.itemconfigure(win, width=w)
-            rc.configure(scrollregion=(0, 0, w, area.winfo_reqheight()))
+            active_area = self.area
+            active_area.update_idletasks()
+            w = max(rc.winfo_width(), active_area.winfo_reqwidth())
+            rc.itemconfigure(self._rows_win, width=w)
+            rc.configure(scrollregion=(0, 0, w, active_area.winfo_reqheight()))
         rc.bind("<Configure>", fit)
         self._fit_rows = fit
 
@@ -336,6 +345,12 @@ class CalculatorGUI(tk.Tk):
             self._add_row()
         self._select_only(0, (0,))                 # Row 1's box is ready for the number pad
         self._render_row(0)
+
+    def activate_excel_workspace(self):
+        """Step 4 migration hook: switch canvas viewport to the 33-column Excel grid."""
+        self.rows_canvas.itemconfigure(self._rows_win, window=self.excel_area)
+        self.area = self.excel_area
+        self._fit_rows()
 
     def _add_row(self):
         """Add one more row at the bottom (Next Row)."""
