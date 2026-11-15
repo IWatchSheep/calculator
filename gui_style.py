@@ -1,6 +1,8 @@
 """Colours, arrow layout and the do-nothing button helper shared by main.py and operator_row_math."""
 import tkinter as tk
 
+from gui_coordinates import GridPosition, LayoutRegion  # noqa: F401
+
 CREAM = "#fffbe6"
 BLUE = "#1e6fd9"
 GREEN = "#3cb043"
