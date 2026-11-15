@@ -13,7 +13,7 @@ OPS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_on
 WORD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_one_algebra_word_problem_per_file")
 
 from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, PALE_ORANGE,  # noqa: F401
-                       PURPLE, RED, btn)
+                       PURPLE, RED, btn, main_row_position, main_row_positions)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component
@@ -322,9 +322,9 @@ class CalculatorGUI(tk.Tk):
                 else:
                     rc.yview_scroll(-1 * (e.delta // 120), "units")
         self.bind("<MouseWheel>", wheel, add="+")
-        area.grid_columnconfigure(0, minsize=170)
-        area.grid_columnconfigure(1, minsize=430)
-        area.grid_columnconfigure(2, weight=1)
+        area.grid_columnconfigure(main_row_position(1, "row_label").to_zero_based()[1], minsize=170)
+        area.grid_columnconfigure(main_row_position(1, "helper_slot").to_zero_based()[1], minsize=430)
+        area.grid_columnconfigure(main_row_position(1, "math_expression").to_zero_based()[1], weight=1)
         self.rows = []
         self.op_target = 0
 
@@ -340,8 +340,10 @@ class CalculatorGUI(tk.Tk):
     def _add_row(self):
         """Add one more row at the bottom (Next Row)."""
         area, r = self.area, len(self.rows)
+        row_pos = main_row_positions(r + 1)
         labf = tk.Frame(area, bg=CREAM)
-        labf.grid(row=r, column=0, padx=10, pady=10)
+        labf.grid_pos = row_pos["row_label"]
+        labf.grid(**labf.grid_pos.to_tkinter_grid(), padx=10, pady=10)
         row_label = tk.Label(labf, text="Row %d" % (r + 1), bg="#b5dca8", fg="#2a6a20", relief="groove",
                              font=("Segoe UI", 11, "bold"), padx=6)
         row_label.pack()
@@ -349,7 +351,9 @@ class CalculatorGUI(tk.Tk):
         sub.pack()
         join_btn = None
         if r == 0:
-            self._join_note(area).grid(row=0, column=1, padx=(0, 20), pady=6, sticky="n")
+            note = self._join_note(area)
+            note.grid_pos = row_pos["helper_slot"]
+            note.grid(**note.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6, sticky="n")
         else:
             helper = tk.Frame(area, bg=CREAM)
             tk.Label(helper, text="helper card (slot 1)", fg="#b03010", bg=CREAM,
@@ -357,12 +361,14 @@ class CalculatorGUI(tk.Tk):
             card = self._component(helper, "□", "helper", on_pick=lambda r=r: self._set_target_row(r))
             card.pack()
             join_btn = card.center_btn
-            helper.grid(row=r, column=1, padx=(0, 20), pady=6, sticky="w")
+            helper.grid_pos = row_pos["helper_slot"]
+            helper.grid(**helper.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6, sticky="w")
         row = self._math_slot(area, r)
         row.update({"sub": sub, "join_btn": join_btn, "join": None, "mode": "full", "label": row_label,
-                    "is_result": False, "words": {}})
+                    "is_result": False, "words": {}, "grid_positions": row_pos})
         col3 = tk.Frame(area, bg=CREAM)
-        col3.grid(row=r, column=3, padx=8, pady=6)
+        col3.grid_pos = row_pos["math_actions"]
+        col3.grid(**col3.grid_pos.to_tkinter_grid(), padx=8, pady=6)
         edge = tk.Frame(col3, bg="black")          # black outline as in the picture
         edge.pack()
         tk.Button(edge, text="math to put on the left", bg="white", relief="flat", bd=0,
@@ -372,8 +378,12 @@ class CalculatorGUI(tk.Tk):
                   font=("Segoe UI", 7, "bold"), wraplength=110,
                   command=lambda i=r: self._clear_row_math(i)).pack(pady=(6, 0), fill="x")
         card = self._component(area, "□", "number", lead="=")
-        card.grid(row=r, column=4, padx=(0, 20), pady=6)
+        card.grid_pos = row_pos["result_card"]
+        card.grid(**card.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6)
         row["result"] = card.center_btn
+        row["result_card"] = card
+        row["label_frame"] = labf
+        row["actions_frame"] = col3
         row["node"] = row_tree.new_node("_number")      # default left side: one square box
         self.rows.append(row)
         self._render_row(r)
@@ -392,10 +402,11 @@ class CalculatorGUI(tk.Tk):
     def _math_slot(self, parent, r):
         """White area where the operator button's math is placed (the rows section scrolls to fit it)."""
         box = tk.Frame(parent, bg="white")
-        box.grid(row=r, column=2, sticky="nsew", pady=2)
+        box.grid_pos = main_row_position(r + 1, "math_expression")
+        box.grid(**box.grid_pos.to_tkinter_grid(), sticky="nsew", pady=2)
         inner = tk.Frame(box, bg="white", height=118)
         inner.pack(fill="both", expand=True)
-        row = {"inner": inner, "refresh": self._fit_rows, "node": None, "sel": None}
+        row = {"inner": inner, "refresh": self._fit_rows, "node": None, "sel": None, "box": box}
         self._slot_caption(inner)
         return row
 

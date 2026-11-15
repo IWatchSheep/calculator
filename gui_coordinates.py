@@ -403,3 +403,119 @@ def card_component_position(name: str) -> GridPosition:
             f"Unknown card component {name!r}, valid components: {list(CARD_COMPONENT_POSITIONS.keys())}"
         )
     return CARD_COMPONENT_POSITIONS[name]
+
+
+# ==============================================================================
+# Main Row Layout Definitions (Rows Area)
+# ==============================================================================
+
+ROW_COL_LABEL = 1
+ROW_COL_HELPER = 2
+ROW_COL_MATH = 3
+ROW_COL_ACTIONS = 4
+ROW_COL_RESULT = 5
+
+MAIN_ROW_COLUMNS: dict[str, int] = {
+    "row_label": ROW_COL_LABEL,
+    "helper_slot": ROW_COL_HELPER,
+    "math_expression": ROW_COL_MATH,
+    "math_actions": ROW_COL_ACTIONS,
+    "result_card": ROW_COL_RESULT,
+}
+
+MAIN_ROW_ALIASES: dict[str, str] = {
+    "row": "row_label",
+    "label": "row_label",
+    "row_label": "row_label",
+    "helper": "helper_slot",
+    "helper_slot": "helper_slot",
+    "join_note": "helper_slot",
+    "math": "math_expression",
+    "math_expression": "math_expression",
+    "actions": "math_actions",
+    "math_actions": "math_actions",
+    "result": "result_card",
+    "result_card": "result_card",
+}
+
+
+def main_row_position(
+    row: int,
+    column: int | str,
+    row_span: int = 1,
+    column_span: int = 1,
+) -> GridPosition:
+    """Return a 1-based GridPosition in LayoutRegion.ROWS_AREA.
+
+    `row` must be an integer >= 1.
+    `column` can be an integer (1..5) or a column name:
+        1 or "row_label" / "label"
+        2 or "helper_slot" / "helper" / "join_note"
+        3 or "math_expression" / "math"
+        4 or "math_actions" / "actions"
+        5 or "result_card" / "result"
+    """
+    if isinstance(row, bool) or not isinstance(row, int) or row < 1:
+        raise ValueError(f"row must be an integer >= 1, got {row!r}")
+
+    if isinstance(column, str):
+        canonical = MAIN_ROW_ALIASES.get(column, column)
+        if canonical not in MAIN_ROW_COLUMNS:
+            raise KeyError(
+                f"Unknown main row column {column!r}, valid columns: {list(MAIN_ROW_COLUMNS.keys())}"
+            )
+        col_idx = MAIN_ROW_COLUMNS[canonical]
+    else:
+        if isinstance(column, bool) or not isinstance(column, int) or not (1 <= column <= 5):
+            raise ValueError(f"column must be an integer 1..5, got {column!r}")
+        col_idx = column
+
+    return GridPosition(
+        row=row,
+        column=col_idx,
+        row_span=row_span,
+        column_span=column_span,
+        region=LayoutRegion.ROWS_AREA,
+    )
+
+
+def main_row_positions(row: int) -> dict[str, GridPosition]:
+    """Return a dictionary of all five logical GridPositions for a given 1-based row index."""
+    if isinstance(row, bool) or not isinstance(row, int) or row < 1:
+        raise ValueError(f"row must be an integer >= 1, got {row!r}")
+    return {
+        name: GridPosition(
+            row=row,
+            column=col_idx,
+            row_span=1,
+            column_span=1,
+            region=LayoutRegion.ROWS_AREA,
+        )
+        for name, col_idx in MAIN_ROW_COLUMNS.items()
+    }
+
+
+# Named positions for the first two initial calculator rows
+ROW_1_LABEL_POS = main_row_position(1, ROW_COL_LABEL)
+ROW_1_JOIN_NOTE_POS = main_row_position(1, ROW_COL_HELPER)
+ROW_1_MATH_POS = main_row_position(1, ROW_COL_MATH)
+ROW_1_ACTIONS_POS = main_row_position(1, ROW_COL_ACTIONS)
+ROW_1_RESULT_POS = main_row_position(1, ROW_COL_RESULT)
+
+ROW_1_ROW_LABEL_POS = ROW_1_LABEL_POS
+ROW_1_HELPER_SLOT_POS = ROW_1_JOIN_NOTE_POS
+ROW_1_MATH_EXPRESSION_POS = ROW_1_MATH_POS
+ROW_1_MATH_ACTIONS_POS = ROW_1_ACTIONS_POS
+ROW_1_RESULT_CARD_POS = ROW_1_RESULT_POS
+
+ROW_2_LABEL_POS = main_row_position(2, ROW_COL_LABEL)
+ROW_2_HELPER_POS = main_row_position(2, ROW_COL_HELPER)
+ROW_2_MATH_POS = main_row_position(2, ROW_COL_MATH)
+ROW_2_ACTIONS_POS = main_row_position(2, ROW_COL_ACTIONS)
+ROW_2_RESULT_POS = main_row_position(2, ROW_COL_RESULT)
+
+ROW_2_ROW_LABEL_POS = ROW_2_LABEL_POS
+ROW_2_HELPER_SLOT_POS = ROW_2_HELPER_POS
+ROW_2_MATH_EXPRESSION_POS = ROW_2_MATH_POS
+ROW_2_MATH_ACTIONS_POS = ROW_2_ACTIONS_POS
+ROW_2_RESULT_CARD_POS = ROW_2_RESULT_POS
