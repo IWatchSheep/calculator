@@ -15,7 +15,8 @@ import sys
 import tkinter as tk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from gui_style import ARROWS, ARROW_BG, BLUE, CREAM, PALE_BLUE, PALE_ORANGE, btn  # noqa: E402
+from gui_style import (ARROW_BG, ARROW_GRID_POSITIONS, ARROWS, BLUE, CREAM,  # noqa: E402
+                       PALE_BLUE, PALE_ORANGE, btn)
 
 BOX = "□"
 
@@ -70,20 +71,24 @@ def make_component(parent, center, kind, lead="+", on_pick=None, selected=False,
         highlightbackground=BLUE, command=pick).grid(row=0, column=0, rowspan=3, padx=(0, 10))
     grid = tk.Frame(f, bg=CREAM)
     grid.grid(row=0, column=1, rowspan=3)
-    for r in range(3):
-        for c in range(3):
-            sym = ARROWS[r][c]
-            if sym:
-                tk.Button(grid, text=sym, width=2, bg=ARROW_BG, relief="groove",
-                          command=lambda: None).grid(row=r, column=c, padx=1, pady=1)
-            else:
-                bg = "#fbd34d" if kind == "helper" else PALE_BLUE
-                if selected:
-                    bg = "#5b9bf0"
-                f.center_btn = tk.Button(grid, text=center, width=max(2, len(center) + 1), bg=bg,
-                                         relief="sunken" if selected else "solid", bd=3 if selected else 1,
-                                         font=("Segoe UI", 12, "bold"), command=pick)
-                f.center_btn.grid(row=r, column=c, padx=1, pady=1)
+    grid.arrow_buttons = {}
+    for pos, sym in ARROW_GRID_POSITIONS.items():
+        if sym:
+            b = tk.Button(grid, text=sym, width=2, bg=ARROW_BG, relief="groove",
+                          command=lambda: None)
+            b.grid_pos = pos
+            b.grid(**pos.to_tkinter_grid(), padx=1, pady=1)
+            grid.arrow_buttons[pos] = b
+        else:
+            bg = "#fbd34d" if kind == "helper" else PALE_BLUE
+            if selected:
+                bg = "#5b9bf0"
+            f.center_btn = tk.Button(grid, text=center, width=max(2, len(center) + 1), bg=bg,
+                                     relief="sunken" if selected else "solid", bd=3 if selected else 1,
+                                     font=("Segoe UI", 12, "bold"), command=pick)
+            f.center_btn.grid_pos = pos
+            f.center_btn.grid(**pos.to_tkinter_grid(), padx=1, pady=1)
+            grid.arrow_buttons[pos] = f.center_btn
     label = "[Label]" if kind == "helper" else "[Item]"
     if words is None:
         tk.Button(f, text=label, font=("Segoe UI", 12), bg="white", relief="solid", bd=1,

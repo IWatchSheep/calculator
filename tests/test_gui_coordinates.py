@@ -1,6 +1,7 @@
 """Focused unit tests for the common GUI coordinate convention."""
 import os
 import sys
+import tkinter as tk
 import unittest
 from dataclasses import FrozenInstanceError
 
@@ -8,7 +9,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from gui_coordinates import GridPosition, LayoutRegion
+from gui_coordinates import (ARROW_CENTER_POSITION, ARROW_GRID_POSITIONS,
+                             GridPosition, LayoutRegion, arrow_at_position)
+from gui_style import ARROW_BG, ARROWS, PALE_BLUE
+from operator_row_math.row_builder import make_component
 
 
 class TestGridPositionCoordinates(unittest.TestCase):
@@ -220,6 +224,126 @@ class TestLayoutRegionAndImmutability(unittest.TestCase):
         self.assertEqual(reconstructed.row_span, pos.row_span)
         self.assertEqual(reconstructed.column_span, pos.column_span)
         self.assertEqual(reconstructed.region, "toolbar")
+
+
+class TestArrowGridCoordinates(unittest.TestCase):
+    """Test directional arrow grid positions, layout mappings, and widget construction."""
+
+    def setUp(self):
+        try:
+            self.root = tk.Tk()
+            self.root.withdraw()
+        except tk.TclError:
+            self.root = None
+
+    def tearDown(self):
+        if self.root:
+            self.root.destroy()
+            self.root = None
+
+    def test_arrow_logical_positions(self):
+        """Each arrow occupies the exact 1-based logical position from the layout specification."""
+        expected = {
+            (1, 1): "↖",
+            (1, 2): "↑",
+            (1, 3): "↗",
+            (2, 1): "←",
+            (2, 2): None,  # Center square
+            (2, 3): "→",
+            (3, 1): "↙",
+            (3, 2): "↓",
+            (3, 3): "↘",
+        }
+        for (r, c), sym in expected.items():
+            pos = GridPosition(row=r, column=c, region=LayoutRegion.ARROW_GRID)
+            self.assertIn(pos, ARROW_GRID_POSITIONS)
+            self.assertEqual(ARROW_GRID_POSITIONS[pos], sym)
+            self.assertEqual(arrow_at_position(r, c), sym)
+
+        # Backward compatibility with ARROWS 2D array
+        for r in range(1, 4):
+            for c in range(1, 4):
+                self.assertEqual(ARROWS[r - 1][c - 1], expected[(r, c)])
+
+    def test_center_square_in_row_2_column_2(self):
+        """The center square occupies row 2, column 2 in the arrow grid."""
+        self.assertEqual(ARROW_CENTER_POSITION.row, 2)
+        self.assertEqual(ARROW_CENTER_POSITION.column, 2)
+        self.assertEqual(ARROW_CENTER_POSITION.region, LayoutRegion.ARROW_GRID)
+        self.assertIsNone(ARROW_GRID_POSITIONS[ARROW_CENTER_POSITION])
+        self.assertIsNone(arrow_at_position(2, 2))
+
+    def test_all_nine_positions_are_unique(self):
+        """All nine positions in the arrow grid are distinct in logical and 0-based coordinates."""
+        self.assertEqual(len(ARROW_GRID_POSITIONS), 9)
+        positions = list(ARROW_GRID_POSITIONS.keys())
+        self.assertEqual(len(set(positions)), 9)
+
+        # Ensure every position is in the ARROW_GRID region
+        for pos in positions:
+            self.assertEqual(pos.region, LayoutRegion.ARROW_GRID)
+            self.assertIn(pos.row, (1, 2, 3))
+            self.assertIn(pos.column, (1, 2, 3))
+
+        # Check uniqueness of zero-based conversions
+        zero_based = [pos.to_zero_based() for pos in positions]
+        self.assertEqual(len(set(zero_based)), 9)
+
+    def test_conversion_to_tkinter_coordinates(self):
+        """Coordinate conversion to Tkinter 0-based grid parameters is correct."""
+        for pos in ARROW_GRID_POSITIONS:
+            tk_grid = pos.to_tkinter_grid()
+            self.assertEqual(tk_grid["row"], pos.row - 1)
+            self.assertEqual(tk_grid["column"], pos.column - 1)
+            self.assertEqual(tk_grid["rowspan"], 1)
+            self.assertEqual(tk_grid["columnspan"], 1)
+
+            # Specific known cells
+            if pos.row == 1 and pos.column == 1:
+                self.assertEqual(tk_grid, {"row": 0, "column": 0, "rowspan": 1, "columnspan": 1})
+            elif pos.row == 2 and pos.column == 2:
+                self.assertEqual(tk_grid, {"row": 1, "column": 1, "rowspan": 1, "columnspan": 1})
+            elif pos.row == 3 and pos.column == 3:
+                self.assertEqual(tk_grid, {"row": 2, "column": 2, "rowspan": 1, "columnspan": 1})
+
+    def test_existing_arrow_functionality_and_widget_structure(self):
+        """Widget creation preserves center button, arrow styling, callbacks, and dimensions."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        picked = []
+        card = make_component(
+            self.root,
+            center="□",
+            kind="number",
+            on_pick=lambda: picked.append(True),
+        )
+
+        # Center button is attached and positioned at row 2, column 2
+        self.assertTrue(hasattr(card, "center_btn"))
+        self.assertEqual(card.center_btn.grid_pos, ARROW_CENTER_POSITION)
+        info = card.center_btn.grid_info()
+        self.assertEqual(int(info["row"]), 1)     # zero-based row 1 = logical row 2
+        self.assertEqual(int(info["column"]), 1)  # zero-based column 1 = logical column 2
+
+        # Trigger callback
+        card.center_btn.invoke()
+        self.assertEqual(picked, [True])
+
+        # Verify all 9 arrow buttons/center exist inside the grid frame
+        grid_frame = card.winfo_children()[1]  # child 0: lead button, child 1: arrow grid
+        self.assertTrue(hasattr(grid_frame, "arrow_buttons"))
+        self.assertEqual(len(grid_frame.arrow_buttons), 9)
+
+        for pos, btn_widget in grid_frame.arrow_buttons.items():
+            btn_info = btn_widget.grid_info()
+            self.assertEqual(int(btn_info["row"]), pos.row - 1)
+            self.assertEqual(int(btn_info["column"]), pos.column - 1)
+            if pos == ARROW_CENTER_POSITION:
+                self.assertEqual(btn_widget.cget("text"), "□")
+            else:
+                self.assertEqual(btn_widget.cget("text"), ARROW_GRID_POSITIONS[pos])
+                self.assertEqual(btn_widget.cget("relief"), "groove")
 
 
 if __name__ == "__main__":

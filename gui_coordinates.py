@@ -296,3 +296,30 @@ class GridPosition:
             column_span=data.get("column_span", 1),
             region=data.get("region"),
         )
+
+
+# ==============================================================================
+# Directional Arrow Grid (3x3) Layout Definitions
+# ==============================================================================
+
+ARROW_CENTER_POSITION = GridPosition(row=2, column=2, region=LayoutRegion.ARROW_GRID)
+
+ARROW_GRID_POSITIONS: dict[GridPosition, Optional[str]] = {
+    GridPosition(row=1, column=1, region=LayoutRegion.ARROW_GRID): "↖",
+    GridPosition(row=1, column=2, region=LayoutRegion.ARROW_GRID): "↑",
+    GridPosition(row=1, column=3, region=LayoutRegion.ARROW_GRID): "↗",
+    GridPosition(row=2, column=1, region=LayoutRegion.ARROW_GRID): "←",
+    ARROW_CENTER_POSITION: None,  # Center square box / operator center
+    GridPosition(row=2, column=3, region=LayoutRegion.ARROW_GRID): "→",
+    GridPosition(row=3, column=1, region=LayoutRegion.ARROW_GRID): "↙",
+    GridPosition(row=3, column=2, region=LayoutRegion.ARROW_GRID): "↓",
+    GridPosition(row=3, column=3, region=LayoutRegion.ARROW_GRID): "↘",
+}
+
+
+def arrow_at_position(row: int, column: int) -> Optional[str]:
+    """Return the arrow symbol at 1-based (row, column) in the arrow grid, or None for center."""
+    pos = GridPosition(row=row, column=column, region=LayoutRegion.ARROW_GRID)
+    if pos not in ARROW_GRID_POSITIONS:
+        raise KeyError(f"Position ({row}, {column}) is outside the 3x3 arrow grid")
+    return ARROW_GRID_POSITIONS[pos]
