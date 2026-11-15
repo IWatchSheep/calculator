@@ -86,6 +86,7 @@ class LayoutRegion(str, Enum):
     ADVANCED_POPUP = "advanced_popup"
     TEMPLATE_GUIDE_POPUP = "template_guide_popup"
     WORD_DIAGRAM_POPUP = "word_diagram_popup"
+    EXCEL_WORKSPACE = "excel_workspace"
 
 
 RegionType = Union[LayoutRegion, str, None]
@@ -519,3 +520,315 @@ ROW_2_HELPER_SLOT_POS = ROW_2_HELPER_POS
 ROW_2_MATH_EXPRESSION_POS = ROW_2_MATH_POS
 ROW_2_MATH_ACTIONS_POS = ROW_2_ACTIONS_POS
 ROW_2_RESULT_CARD_POS = ROW_2_RESULT_POS
+
+
+# ==============================================================================
+# Authoritative Excel Workspace Coordinate Specification (33 Columns x N Rows)
+# ==============================================================================
+
+EXCEL_TOTAL_COLUMNS: int = 33
+EXCEL_INITIAL_TOTAL_ROWS: int = 9
+EXCEL_ROWS_PER_CALCULATOR_ROW: int = 3
+EXCEL_CALCULATOR_ROW_STRIDE: int = 6
+
+# Global Column Assignments (1..33)
+EXCEL_COL_ROW_LABEL: int = 1
+EXCEL_COL_MARGIN: int = 2
+
+# Card Slot 1 (Helper Card / Join Note): Columns 3..11 (9 Columns)
+EXCEL_COL_SLOT1_START: int = 3
+EXCEL_COL_SLOT1_END: int = 11
+EXCEL_COL_SLOT1_LEAD_BTN: int = 3
+EXCEL_COL_SLOT1_SPACER1: int = 4
+EXCEL_COL_SLOT1_ARROW_COL1: int = 5
+EXCEL_COL_SLOT1_ARROW_COL2: int = 6
+EXCEL_COL_SLOT1_ARROW_COL3: int = 7
+EXCEL_COL_SLOT1_LABEL: int = 8
+EXCEL_COL_SLOT1_CONTEXT: int = 9
+EXCEL_COL_SLOT1_SPACER2: int = 10
+EXCEL_COL_SLOT1_TRAILING_BTN: int = 11
+
+# Spacer between Slot 1 and Slot 2
+EXCEL_COL_SPACER_SLOT1_SLOT2: int = 12
+
+# Card Slot 2 (Mathematical Expression): Columns 13..21 (9 Columns)
+EXCEL_COL_SLOT2_START: int = 13
+EXCEL_COL_SLOT2_END: int = 21
+EXCEL_COL_SLOT2_LEAD_BTN: int = 13
+EXCEL_COL_SLOT2_SPACER1: int = 14
+EXCEL_COL_SLOT2_ARROW_COL1: int = 15
+EXCEL_COL_SLOT2_ARROW_COL2: int = 16
+EXCEL_COL_SLOT2_ARROW_COL3: int = 17
+EXCEL_COL_SLOT2_LABEL: int = 18
+EXCEL_COL_SLOT2_CONTEXT: int = 19
+EXCEL_COL_SLOT2_SPACER2: int = 20
+EXCEL_COL_SLOT2_TRAILING_BTN: int = 21
+
+# Spacer between Slot 2 and Actions
+EXCEL_COL_SPACER_SLOT2_ACTIONS: int = 22
+
+# Actions Slot (Left-side mathematical actions): Column 23 (1 Column)
+EXCEL_COL_ACTIONS: int = 23
+
+# Spacer between Actions and Slot 3
+EXCEL_COL_SPACER_ACTIONS_SLOT3: int = 24
+
+# Card Slot 3 (Result Card): Columns 25..33 (9 Columns)
+EXCEL_COL_SLOT3_START: int = 25
+EXCEL_COL_SLOT3_END: int = 33
+EXCEL_COL_SLOT3_LEAD_BTN: int = 25
+EXCEL_COL_SLOT3_SPACER1: int = 26
+EXCEL_COL_SLOT3_ARROW_COL1: int = 27
+EXCEL_COL_SLOT3_ARROW_COL2: int = 28
+EXCEL_COL_SLOT3_ARROW_COL3: int = 29
+EXCEL_COL_SLOT3_LABEL: int = 30
+EXCEL_COL_SLOT3_CONTEXT: int = 31
+EXCEL_COL_SLOT3_SPACER2: int = 32
+EXCEL_COL_SLOT3_TRAILING_BTN: int = 33
+
+# Mapping of relative 9-column card offsets
+EXCEL_CARD_RELATIVE_COLUMNS: dict[str, int] = {
+    "lead_btn": 1,
+    "spacer_1": 2,
+    "arrow_col1": 3,
+    "arrow_col2": 4,
+    "center": 4,
+    "arrow_col3": 5,
+    "label": 6,
+    "context": 7,
+    "spacer_2": 8,
+    "trailing_btn": 9,
+}
+
+EXCEL_CARD_SLOT_BASE_COLUMNS: dict[int, int] = {
+    1: EXCEL_COL_SLOT1_START,
+    2: EXCEL_COL_SLOT2_START,
+    3: EXCEL_COL_SLOT3_START,
+}
+
+
+def excel_start_row(calc_row: int) -> int:
+    """Return the 1-based starting Excel row for calculator row k.
+
+    Formula: start_row = 6 * (calc_row - 1) + 1
+    k=1 -> 1  (rows 1..3)
+    k=2 -> 7  (rows 7..9)
+    k=3 -> 13 (rows 13..15)
+    k=4 -> 19 (rows 19..21)
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+    return 6 * (calc_row - 1) + 1
+
+
+def excel_heading_row(calc_row: int) -> int:
+    """Return the 1-based Excel heading row preceding calculator row k (k >= 2).
+
+    Formula: heading_row = excel_start_row(k) - 2 = 6 * k - 7
+    k=2 -> 5  ('helper card (slot 1)')
+    k=3 -> 11 ('helper card (slot 2)')
+    k=4 -> 17 ('helper card (slot 3)')
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 2:
+        raise ValueError(f"calc_row must be an integer >= 2 for heading rows, got {calc_row!r}")
+    return excel_start_row(calc_row) - 2
+
+
+def excel_spacer_before_heading_row(calc_row: int) -> int:
+    """Return the 1-based empty spacer row preceding the helper heading (k >= 2)."""
+    return excel_heading_row(calc_row) - 1
+
+
+def excel_spacer_after_heading_row(calc_row: int) -> int:
+    """Return the 1-based empty spacer row following the helper heading (k >= 2)."""
+    return excel_heading_row(calc_row) + 1
+
+
+# Canonical control mapping definitions within a 3-row calculator band
+EXCEL_ARROW_OFFSETS: dict[str, tuple[int, int]] = {
+    "arrow_nw": (0, 0),
+    "arrow_n": (0, 1),
+    "arrow_ne": (0, 2),
+    "arrow_w": (1, 0),
+    "center": (1, 1),
+    "arrow_e": (1, 2),
+    "arrow_sw": (2, 0),
+    "arrow_s": (2, 1),
+    "arrow_se": (2, 2),
+}
+
+
+def excel_workspace_position(
+    calc_row: int,
+    control_name: str,
+    row_span: int = 1,
+    column_span: int = 1,
+) -> GridPosition:
+    """Return the authoritative 1-based GridPosition in LayoutRegion.EXCEL_WORKSPACE.
+
+    Parameters:
+        calc_row: 1-based calculator row index (1, 2, 3, ...).
+        control_name: Name of the control to locate.
+        row_span: Number of logical rows occupied (default 1).
+        column_span: Number of logical columns occupied (default 1).
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+
+    r0 = excel_start_row(calc_row)
+    name = control_name.strip().lower()
+
+    # 1. Row Indicator Label
+    if name in ("row_label", "label_frame", "row_indicator"):
+        return GridPosition(row=r0, column=EXCEL_COL_ROW_LABEL, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 2. Slot 1 (Join Note for row 1; Helper Card for row >= 2)
+    if name in ("join_note_label", "slot1_join_note"):
+        if calc_row != 1:
+            raise ValueError(f"join_note_label only exists on calculator row 1, not row {calc_row}")
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=1, column_span=8,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("join_note_arrow", "join_note_down_arrow", "slot1_down_arrow"):
+        if calc_row != 1:
+            raise ValueError(f"join_note_arrow only exists on calculator row 1, not row {calc_row}")
+        return GridPosition(row=r0 + 2, column=EXCEL_COL_SLOT1_ARROW_COL2, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("helper_heading", "slot1_heading"):
+        if calc_row < 2:
+            raise ValueError(f"helper_heading only exists on calculator row >= 2, not row {calc_row}")
+        return GridPosition(row=excel_heading_row(calc_row), column=EXCEL_COL_SLOT1_START,
+                            row_span=1, column_span=6, region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot1_container", "helper_container"):
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=3, column_span=9,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot1_lead_btn", "helper_lead_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT1_LEAD_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot1_label", "helper_label"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT1_LABEL, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot1_context", "helper_context"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT1_CONTEXT, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot1_trailing_btn", "helper_trailing_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT1_TRAILING_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    for arrow_key, (dr, dc) in EXCEL_ARROW_OFFSETS.items():
+        if name in (f"slot1_{arrow_key}", f"helper_{arrow_key}"):
+            return GridPosition(row=r0 + dr, column=EXCEL_COL_SLOT1_ARROW_COL1 + dc, row_span=1, column_span=1,
+                                region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 3. Slot 2 (Mathematical Expression Area / Card)
+    if name in ("slot2_container", "math_viewport", "math_container", "math_slot"):
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT2_START, row_span=3, column_span=9,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot2_lead_btn", "math_lead_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT2_LEAD_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot2_label", "math_label"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT2_LABEL, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot2_context", "math_context"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT2_CONTEXT, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot2_trailing_btn", "math_trailing_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT2_TRAILING_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    for arrow_key, (dr, dc) in EXCEL_ARROW_OFFSETS.items():
+        if name in (f"slot2_{arrow_key}", f"math_{arrow_key}"):
+            return GridPosition(row=r0 + dr, column=EXCEL_COL_SLOT2_ARROW_COL1 + dc, row_span=1, column_span=1,
+                                region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 4. Actions Slot (Column 23)
+    if name in ("action_math_left", "action_top", "math_to_put_on_the_left"):
+        return GridPosition(row=r0, column=EXCEL_COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("action_clear_left", "action_bottom", "clear_math_on_the_left"):
+        return GridPosition(row=r0 + 2, column=EXCEL_COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 5. Slot 3 (Result Card)
+    if name in ("slot3_container", "result_container", "result_card"):
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT3_START, row_span=3, column_span=9,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot3_lead_btn", "result_lead_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT3_LEAD_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot3_label", "result_label"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT3_LABEL, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot3_context", "result_context"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT3_CONTEXT, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("slot3_trailing_btn", "result_trailing_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_COL_SLOT3_TRAILING_BTN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    for arrow_key, (dr, dc) in EXCEL_ARROW_OFFSETS.items():
+        if name in (f"slot3_{arrow_key}", f"result_{arrow_key}"):
+            return GridPosition(row=r0 + dr, column=EXCEL_COL_SLOT3_ARROW_COL1 + dc, row_span=1, column_span=1,
+                                region=LayoutRegion.EXCEL_WORKSPACE)
+
+    raise KeyError(f"Unknown Excel workspace control {control_name!r} for calculator row {calc_row}")
+
+
+def excel_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
+    """Return all canonical GridPositions for visible controls in calculator row k."""
+    r0 = excel_start_row(calc_row)
+    pos: dict[str, GridPosition] = {
+        "row_label": excel_workspace_position(calc_row, "row_label"),
+    }
+
+    # Slot 1
+    if calc_row == 1:
+        pos["join_note_label"] = excel_workspace_position(calc_row, "join_note_label")
+        pos["join_note_arrow"] = excel_workspace_position(calc_row, "join_note_arrow")
+    else:
+        pos["helper_heading"] = excel_workspace_position(calc_row, "helper_heading")
+        pos["helper_lead_btn"] = excel_workspace_position(calc_row, "helper_lead_btn")
+        for k in EXCEL_ARROW_OFFSETS:
+            pos[f"helper_{k}"] = excel_workspace_position(calc_row, f"helper_{k}")
+        pos["helper_label"] = excel_workspace_position(calc_row, "helper_label")
+        pos["helper_context"] = excel_workspace_position(calc_row, "helper_context")
+        pos["helper_trailing_btn"] = excel_workspace_position(calc_row, "helper_trailing_btn")
+
+    # Slot 2 (Math Expression)
+    pos["math_lead_btn"] = excel_workspace_position(calc_row, "math_lead_btn")
+    for k in EXCEL_ARROW_OFFSETS:
+        pos[f"math_{k}"] = excel_workspace_position(calc_row, f"math_{k}")
+    pos["math_label"] = excel_workspace_position(calc_row, "math_label")
+    pos["math_context"] = excel_workspace_position(calc_row, "math_context")
+    pos["math_trailing_btn"] = excel_workspace_position(calc_row, "math_trailing_btn")
+
+    # Actions
+    pos["action_math_left"] = excel_workspace_position(calc_row, "action_math_left")
+    pos["action_clear_left"] = excel_workspace_position(calc_row, "action_clear_left")
+
+    # Slot 3 (Result Card)
+    pos["result_lead_btn"] = excel_workspace_position(calc_row, "result_lead_btn")
+    for k in EXCEL_ARROW_OFFSETS:
+        pos[f"result_{k}"] = excel_workspace_position(calc_row, f"result_{k}")
+    pos["result_label"] = excel_workspace_position(calc_row, "result_label")
+    pos["result_context"] = excel_workspace_position(calc_row, "result_context")
+    pos["result_trailing_btn"] = excel_workspace_position(calc_row, "result_trailing_btn")
+
+    return pos

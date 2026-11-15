@@ -42,6 +42,14 @@ from gui_coordinates import (  # noqa: F401
     card_component_position,
     main_row_position,
     main_row_positions,
+    EXCEL_TOTAL_COLUMNS,
+    EXCEL_INITIAL_TOTAL_ROWS,
+    EXCEL_ROWS_PER_CALCULATOR_ROW,
+    EXCEL_CALCULATOR_ROW_STRIDE,
+    excel_start_row,
+    excel_heading_row,
+    excel_workspace_position,
+    excel_workspace_positions,
 )
 
 CREAM = "#fffbe6"
