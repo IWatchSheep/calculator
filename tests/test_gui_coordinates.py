@@ -12,6 +12,14 @@ if ROOT not in sys.path:
 from gui_coordinates import (
     ARROW_CENTER_POSITION,
     ARROW_GRID_POSITIONS,
+    CARD_9COL_ARROW_GRID_POS,
+    CARD_9COL_ARROW_POSITIONS,
+    CARD_9COL_CENTER_POS,
+    CARD_9COL_CONTEXT_POS,
+    CARD_9COL_LABEL_POS,
+    CARD_9COL_LEAD_BUTTON_POS,
+    CARD_9COL_TRAILING_BUTTON_POS,
+    CARD_CENTER_POSITION,
     CARD_ARROW_GRID_POSITION,
     CARD_COMPONENT_POSITIONS,
     CARD_CONTEXT_POSITION,
@@ -34,6 +42,8 @@ from gui_coordinates import (
     LayoutRegion,
     arrow_at_position,
     card_component_position,
+    card_to_excel_position,
+    excel_to_card_position,
     main_row_position,
     main_row_positions,
     EXCEL_TOTAL_COLUMNS,
@@ -363,35 +373,34 @@ class TestArrowGridCoordinates(unittest.TestCase):
             on_pick=lambda: picked.append(True),
         )
 
-        # Center button is attached and positioned at row 2, column 2
+        # Center button is attached and positioned at row 2, column 4 of the card
         self.assertTrue(hasattr(card, "center_btn"))
-        self.assertEqual(card.center_btn.grid_pos, ARROW_CENTER_POSITION)
+        self.assertEqual(card.center_btn.grid_pos, CARD_9COL_CENTER_POS)
         info = card.center_btn.grid_info()
         self.assertEqual(int(info["row"]), 1)     # zero-based row 1 = logical row 2
-        self.assertEqual(int(info["column"]), 1)  # zero-based column 1 = logical column 2
+        self.assertEqual(int(info["column"]), 3)  # zero-based column 3 = logical column 4
 
         # Trigger callback
         card.center_btn.invoke()
         self.assertEqual(picked, [True])
 
-        # Verify all 9 arrow buttons/center exist inside the grid frame
-        grid_frame = card.winfo_children()[1]  # child 0: lead button, child 1: arrow grid
-        self.assertTrue(hasattr(grid_frame, "arrow_buttons"))
-        self.assertEqual(len(grid_frame.arrow_buttons), 9)
+        # Verify all 9 arrow buttons/center exist on card.arrow_buttons
+        self.assertTrue(hasattr(card, "arrow_buttons"))
+        self.assertEqual(len(card.arrow_buttons), 9)
 
-        for pos, btn_widget in grid_frame.arrow_buttons.items():
+        for pos, btn_widget in card.arrow_buttons.items():
             btn_info = btn_widget.grid_info()
             self.assertEqual(int(btn_info["row"]), pos.row - 1)
             self.assertEqual(int(btn_info["column"]), pos.column - 1)
-            if pos == ARROW_CENTER_POSITION:
+            if pos == CARD_9COL_CENTER_POS:
                 self.assertEqual(btn_widget.cget("text"), "□")
             else:
-                self.assertEqual(btn_widget.cget("text"), ARROW_GRID_POSITIONS[pos])
+                self.assertEqual(btn_widget.cget("text"), CARD_9COL_ARROW_POSITIONS[pos])
                 self.assertEqual(btn_widget.cget("relief"), "groove")
 
 
 class TestCardComponentCoordinates(unittest.TestCase):
-    """Test the five surrounding card components' coordinates, spans, and widget mapping."""
+    """Test the authoritative 9-column card component layout and widget placement."""
 
     def setUp(self):
         try:
@@ -406,13 +415,14 @@ class TestCardComponentCoordinates(unittest.TestCase):
             self.root = None
 
     def test_card_components_logical_coordinates(self):
-        """Verify the exact 1-based coordinates and spans for all five card components."""
+        """Verify the exact 1-based coordinates and spans for the 9-column card layout."""
         expected = {
-            "lead_button": (1, 1, 3, 1),
-            "arrow_grid": (1, 2, 3, 1),
-            "label_entry": (1, 3, 3, 1),
-            "context_entry": (1, 4, 3, 1),
-            "trailing_button": (1, 5, 3, 1),
+            "lead_button": (2, 1, 1, 1),
+            "arrow_grid": (1, 3, 3, 3),
+            "center_square": (2, 4, 1, 1),
+            "label_entry": (2, 6, 1, 1),
+            "context_entry": (2, 7, 1, 1),
+            "trailing_button": (2, 9, 1, 1),
         }
         for name, (row, col, row_span, col_span) in expected.items():
             pos = CARD_COMPONENT_POSITIONS[name]
@@ -424,65 +434,57 @@ class TestCardComponentCoordinates(unittest.TestCase):
             self.assertEqual(card_component_position(name), pos)
 
         # Direct constant checks
-        self.assertEqual(CARD_LEAD_BUTTON_POSITION, CARD_COMPONENT_POSITIONS["lead_button"])
-        self.assertEqual(CARD_ARROW_GRID_POSITION, CARD_COMPONENT_POSITIONS["arrow_grid"])
-        self.assertEqual(CARD_LABEL_POSITION, CARD_COMPONENT_POSITIONS["label_entry"])
-        self.assertEqual(CARD_CONTEXT_POSITION, CARD_COMPONENT_POSITIONS["context_entry"])
-        self.assertEqual(CARD_TRAILING_BUTTON_POSITION, CARD_COMPONENT_POSITIONS["trailing_button"])
+        self.assertEqual(CARD_LEAD_BUTTON_POSITION, CARD_9COL_LEAD_BUTTON_POS)
+        self.assertEqual(CARD_ARROW_GRID_POSITION, CARD_9COL_ARROW_GRID_POS)
+        self.assertEqual(CARD_CENTER_POSITION, CARD_9COL_CENTER_POS)
+        self.assertEqual(CARD_LABEL_POSITION, CARD_9COL_LABEL_POS)
+        self.assertEqual(CARD_CONTEXT_POSITION, CARD_9COL_CONTEXT_POS)
+        self.assertEqual(CARD_TRAILING_BUTTON_POSITION, CARD_9COL_TRAILING_BUTTON_POS)
 
         # Check friendly aliases
         self.assertEqual(CARD_COMPONENT_POSITIONS["blue_plus"], CARD_LEAD_BUTTON_POSITION)
         self.assertEqual(CARD_COMPONENT_POSITIONS["item_entry"], CARD_LABEL_POSITION)
         self.assertEqual(CARD_COMPONENT_POSITIONS["orange_plus"], CARD_TRAILING_BUTTON_POSITION)
-
-        # Reverse lookup by GridPosition
-        self.assertEqual(CARD_COMPONENT_POSITIONS[CARD_LEAD_BUTTON_POSITION], "lead_button")
-        self.assertEqual(CARD_COMPONENT_POSITIONS[CARD_ARROW_GRID_POSITION], "arrow_grid")
-        self.assertEqual(CARD_COMPONENT_POSITIONS[CARD_LABEL_POSITION], "label_entry")
-        self.assertEqual(CARD_COMPONENT_POSITIONS[CARD_CONTEXT_POSITION], "context_entry")
-        self.assertEqual(CARD_COMPONENT_POSITIONS[CARD_TRAILING_BUTTON_POSITION], "trailing_button")
+        self.assertEqual(CARD_COMPONENT_POSITIONS["center"], CARD_CENTER_POSITION)
 
     def test_card_components_are_unique(self):
-        """All five components have distinct, non-overlapping columns."""
+        """Discrete card components occupy distinct columns with empty spacer columns 2 and 8."""
         positions = [
-            CARD_LEAD_BUTTON_POSITION,
-            CARD_ARROW_GRID_POSITION,
-            CARD_LABEL_POSITION,
-            CARD_CONTEXT_POSITION,
-            CARD_TRAILING_BUTTON_POSITION,
+            CARD_LEAD_BUTTON_POSITION,        # col 1
+            CARD_LABEL_POSITION,              # col 6
+            CARD_CONTEXT_POSITION,            # col 7
+            CARD_TRAILING_BUTTON_POSITION,    # col 9
         ]
-        self.assertEqual(len(positions), 5)
-        self.assertEqual(len(set(positions)), 5)
         columns = [p.column for p in positions]
-        self.assertEqual(columns, [1, 2, 3, 4, 5])
+        self.assertEqual(columns, [1, 6, 7, 9])
+        self.assertEqual(len(set(columns)), 4)
 
-        # Verify no two components overlap
-        for i in range(len(positions)):
-            for j in range(i + 1, len(positions)):
-                self.assertFalse(positions[i].overlaps(positions[j]))
+        # Arrow columns are 3, 4, 5
+        arrow_cols = {pos.column for pos in CARD_9COL_ARROW_POSITIONS}
+        self.assertEqual(arrow_cols, {3, 4, 5})
+
+        # Columns 2 and 8 are spacers and never occupied
+        all_cols = set(columns) | arrow_cols
+        self.assertNotIn(2, all_cols)
+        self.assertNotIn(8, all_cols)
+        self.assertEqual(all_cols, {1, 3, 4, 5, 6, 7, 9})
 
     def test_card_components_tkinter_grid_conversion(self):
         """Verify conversion to Tkinter zero-based grid parameters."""
         expected_tk = {
-            "lead_button": {"row": 0, "column": 0, "rowspan": 3, "columnspan": 1},
-            "arrow_grid": {"row": 0, "column": 1, "rowspan": 3, "columnspan": 1},
-            "label_entry": {"row": 0, "column": 2, "rowspan": 3, "columnspan": 1},
-            "context_entry": {"row": 0, "column": 3, "rowspan": 3, "columnspan": 1},
-            "trailing_button": {"row": 0, "column": 4, "rowspan": 3, "columnspan": 1},
+            "lead_button": {"row": 1, "column": 0, "rowspan": 1, "columnspan": 1},
+            "arrow_grid": {"row": 0, "column": 2, "rowspan": 3, "columnspan": 3},
+            "center_square": {"row": 1, "column": 3, "rowspan": 1, "columnspan": 1},
+            "label_entry": {"row": 1, "column": 5, "rowspan": 1, "columnspan": 1},
+            "context_entry": {"row": 1, "column": 6, "rowspan": 1, "columnspan": 1},
+            "trailing_button": {"row": 1, "column": 8, "rowspan": 1, "columnspan": 1},
         }
         for name, tk_dict in expected_tk.items():
             pos = CARD_COMPONENT_POSITIONS[name]
             self.assertEqual(pos.to_tkinter_grid(), tk_dict)
 
-    def test_nested_arrow_grid_isolation(self):
-        """Arrow grid outer container is in CARD_COMPONENT, inner arrows in ARROW_GRID."""
-        self.assertEqual(CARD_ARROW_GRID_POSITION.region, LayoutRegion.CARD_COMPONENT)
-        self.assertEqual(ARROW_CENTER_POSITION.region, LayoutRegion.ARROW_GRID)
-        # Even though both have coordinates in row 1-3, col 2, different regions never overlap
-        self.assertFalse(CARD_ARROW_GRID_POSITION.overlaps(ARROW_CENTER_POSITION))
-
     def test_make_component_surrounding_widgets_and_behavior(self):
-        """make_component creates and positions all five components with preserved behavior."""
+        """make_component creates and positions all 9-column controls with preserved behavior."""
         if self.root is None:
             self.skipTest("Tkinter display not available")
 
@@ -493,60 +495,76 @@ class TestCardComponentCoordinates(unittest.TestCase):
             kind="number",
             lead="+",
             on_pick=lambda: picked.append("picked"),
+            card_slot=3,
+            calc_row=1,
         )
 
-        # 1. Check card_controls dictionary
+        # 1. Check card attributes
         self.assertTrue(hasattr(card, "card_controls"))
-        self.assertEqual(len(card.card_controls), 5)
+        self.assertTrue(hasattr(card, "arrow_buttons"))
+        self.assertEqual(len(card.arrow_buttons), 9)
 
-        # 2. Check Blue plus / lead button
+        # 2. Check Blue plus / lead button at Card row 2, col 1 (Tkinter row 1, col 0)
         self.assertTrue(hasattr(card, "lead_btn"))
         self.assertEqual(card.lead_btn.grid_pos, CARD_LEAD_BUTTON_POSITION)
         info_lead = card.lead_btn.grid_info()
-        self.assertEqual(int(info_lead["row"]), 0)
+        self.assertEqual(int(info_lead["row"]), 1)
         self.assertEqual(int(info_lead["column"]), 0)
-        self.assertEqual(int(info_lead["rowspan"]), 3)
+        self.assertEqual(int(info_lead["rowspan"]), 1)
         self.assertEqual(card.lead_btn.cget("text"), "+")
         card.lead_btn.invoke()
         self.assertIn("picked", picked)
 
-        # 3. Check Directional arrow grid container
-        grid_frame = card.card_controls[CARD_ARROW_GRID_POSITION]
-        self.assertEqual(grid_frame.grid_pos, CARD_ARROW_GRID_POSITION)
-        info_grid = grid_frame.grid_info()
-        self.assertEqual(int(info_grid["row"]), 0)
-        self.assertEqual(int(info_grid["column"]), 1)
-        self.assertEqual(int(info_grid["rowspan"]), 3)
+        # 3. Check Center square button at Card row 2, col 4 (Tkinter row 1, col 3)
+        self.assertTrue(hasattr(card, "center_btn"))
+        self.assertEqual(card.center_btn.grid_pos, CARD_CENTER_POSITION)
+        info_center = card.center_btn.grid_info()
+        self.assertEqual(int(info_center["row"]), 1)
+        self.assertEqual(int(info_center["column"]), 3)
+        self.assertEqual(card.center_btn.cget("text"), "□")
 
-        # 4. Check Label placeholder button (words=None)
+        # 4. Check Label placeholder button at Card row 2, col 6 (Tkinter row 1, col 5)
         self.assertTrue(hasattr(card, "label_btn"))
         self.assertEqual(card.label_btn.grid_pos, CARD_LABEL_POSITION)
         info_label = card.label_btn.grid_info()
-        self.assertEqual(int(info_label["row"]), 0)
-        self.assertEqual(int(info_label["column"]), 2)
-        self.assertEqual(int(info_label["rowspan"]), 3)
+        self.assertEqual(int(info_label["row"]), 1)
+        self.assertEqual(int(info_label["column"]), 5)
+        self.assertEqual(int(info_label["rowspan"]), 1)
         self.assertEqual(card.label_btn.cget("text"), "[Item]")
 
-        # 5. Check Context placeholder button (words=None)
+        # 5. Check Context placeholder button at Card row 2, col 7 (Tkinter row 1, col 6)
         self.assertTrue(hasattr(card, "context_btn"))
         self.assertEqual(card.context_btn.grid_pos, CARD_CONTEXT_POSITION)
         info_ctx = card.context_btn.grid_info()
-        self.assertEqual(int(info_ctx["row"]), 0)
-        self.assertEqual(int(info_ctx["column"]), 3)
-        self.assertEqual(int(info_ctx["rowspan"]), 3)
+        self.assertEqual(int(info_ctx["row"]), 1)
+        self.assertEqual(int(info_ctx["column"]), 6)
+        self.assertEqual(int(info_ctx["rowspan"]), 1)
         self.assertEqual(card.context_btn.cget("text"), "[Context]")
 
-        # 6. Check Orange plus / trailing button
+        # 6. Check Orange plus / trailing button at Card row 2, col 9 (Tkinter row 1, col 8)
         self.assertTrue(hasattr(card, "trailing_btn"))
         self.assertEqual(card.trailing_btn.grid_pos, CARD_TRAILING_BUTTON_POSITION)
         info_trailing = card.trailing_btn.grid_info()
-        self.assertEqual(int(info_trailing["row"]), 0)
-        self.assertEqual(int(info_trailing["column"]), 4)
-        self.assertEqual(int(info_trailing["rowspan"]), 3)
+        self.assertEqual(int(info_trailing["row"]), 1)
+        self.assertEqual(int(info_trailing["column"]), 8)
+        self.assertEqual(int(info_trailing["rowspan"]), 1)
         self.assertEqual(card.trailing_btn.cget("text"), "+")
 
+        # 7. Check spacer columns (columns 1 and 7 in 0-based Tkinter) are empty
+        occupied_cols = {int(w.grid_info()["column"]) for w in card.winfo_children()}
+        self.assertNotIn(1, occupied_cols, "Tkinter column 1 (Card spacer 2) must remain empty")
+        self.assertNotIn(7, occupied_cols, "Tkinter column 7 (Card spacer 8) must remain empty")
+
+        # 8. Check global Excel coordinate traceability
+        excel_center = card.to_excel_coordinate(card.center_btn)
+        self.assertEqual(excel_center, GridPosition(row=2, column=28, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(card.to_excel_coordinate(card.lead_btn),
+                         GridPosition(row=2, column=25, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(card.to_excel_coordinate(card.trailing_btn),
+                         GridPosition(row=2, column=33, region=LayoutRegion.EXCEL_WORKSPACE))
+
     def test_make_component_with_word_entries(self):
-        """make_component creates word_entry widgets when words is provided."""
+        """make_component creates word_entry widgets at row 2, cols 6 & 7 with working callbacks."""
         if self.root is None:
             self.skipTest("Tkinter display not available")
 
@@ -559,6 +577,8 @@ class TestCardComponentCoordinates(unittest.TestCase):
             words=("apples", "in the basket"),
             on_words=lambda which, text: changed.append((which, text)),
             on_focus=lambda which: focused.append(which),
+            card_slot=1,
+            calc_row=2,
         )
 
         # In helper mode with words:
@@ -568,17 +588,68 @@ class TestCardComponentCoordinates(unittest.TestCase):
         self.assertEqual(card.context_box.grid_pos, CARD_CONTEXT_POSITION)
 
         info_lbl = card.label_box.grid_info()
-        self.assertEqual(int(info_lbl["row"]), 0)
-        self.assertEqual(int(info_lbl["column"]), 2)
-        self.assertEqual(int(info_lbl["rowspan"]), 3)
+        self.assertEqual(int(info_lbl["row"]), 1)
+        self.assertEqual(int(info_lbl["column"]), 5)  # Tkinter col 5 = Card col 6
+        self.assertEqual(int(info_lbl["rowspan"]), 1)
 
         info_ctx = card.context_box.grid_info()
-        self.assertEqual(int(info_ctx["row"]), 0)
-        self.assertEqual(int(info_ctx["column"]), 3)
-        self.assertEqual(int(info_ctx["rowspan"]), 3)
+        self.assertEqual(int(info_ctx["row"]), 1)
+        self.assertEqual(int(info_ctx["column"]), 6)  # Tkinter col 6 = Card col 7
+        self.assertEqual(int(info_ctx["rowspan"]), 1)
 
         self.assertEqual(card.label_box.get(), "apples")
         self.assertEqual(card.context_box.get(), "in the basket")
+
+        # Global Excel traceability for Helper Card in calc_row 2 (rows 7..9, cols 3..11)
+        self.assertEqual(card.to_excel_coordinate(card.label_box),
+                         GridPosition(row=8, column=8, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(card.to_excel_coordinate(card.context_box),
+                         GridPosition(row=8, column=9, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(card.to_excel_coordinate(card.center_btn),
+                         GridPosition(row=8, column=6, region=LayoutRegion.EXCEL_WORKSPACE))
+
+    def test_global_coordinate_translation_all_three_slots(self):
+        """Verify local 9-column card positions translate to exact global Excel slots."""
+        # Slot 1: Helper Card in calc_row 2 -> rows 7..9, cols 3..11
+        for local_pos in CARD_9COL_ARROW_POSITIONS:
+            g_pos = card_to_excel_position(local_pos, card_slot=1, calc_row=2)
+            self.assertEqual(g_pos.region, LayoutRegion.EXCEL_WORKSPACE)
+            self.assertEqual(g_pos.row, 7 + local_pos.row - 1)
+            self.assertEqual(g_pos.column, 3 + local_pos.column - 1)
+            slot, back_local = excel_to_card_position(g_pos)
+            self.assertEqual(slot, 1)
+            self.assertEqual(back_local, local_pos)
+
+        # Slot 2: Math Expression in calc_row 1 -> rows 1..3, cols 13..21
+        for local_pos in CARD_9COL_ARROW_POSITIONS:
+            g_pos = card_to_excel_position(local_pos, card_slot=2, calc_row=1)
+            self.assertEqual(g_pos.region, LayoutRegion.EXCEL_WORKSPACE)
+            self.assertEqual(g_pos.row, 1 + local_pos.row - 1)
+            self.assertEqual(g_pos.column, 13 + local_pos.column - 1)
+            slot, back_local = excel_to_card_position(g_pos)
+            self.assertEqual(slot, 2)
+            self.assertEqual(back_local, local_pos)
+
+        # Slot 3: Result Card in calc_row 1 -> rows 1..3, cols 25..33
+        for local_pos in CARD_9COL_ARROW_POSITIONS:
+            g_pos = card_to_excel_position(local_pos, card_slot=3, calc_row=1)
+            self.assertEqual(g_pos.region, LayoutRegion.EXCEL_WORKSPACE)
+            self.assertEqual(g_pos.row, 1 + local_pos.row - 1)
+            self.assertEqual(g_pos.column, 25 + local_pos.column - 1)
+            slot, back_local = excel_to_card_position(g_pos)
+            self.assertEqual(slot, 3)
+            self.assertEqual(back_local, local_pos)
+
+    def test_card_spacer_columns_configured(self):
+        """Spacer columns 2 and 8 are explicitly configured with minimum widths and no widgets."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+
+        card = make_component(self.root, center="□", kind="number")
+        col_info_1 = card.grid_columnconfigure(1)
+        col_info_7 = card.grid_columnconfigure(7)
+        self.assertGreaterEqual(col_info_1.get("minsize", 0), 8)
+        self.assertGreaterEqual(col_info_7.get("minsize", 0), 8)
 
 
 class TestMainRowCoordinates(unittest.TestCase):

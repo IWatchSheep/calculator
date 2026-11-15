@@ -50,6 +50,16 @@ from gui_coordinates import (  # noqa: F401
     excel_heading_row,
     excel_workspace_position,
     excel_workspace_positions,
+    CARD_9COL_LEAD_BUTTON_POS,
+    CARD_9COL_ARROW_GRID_POS,
+    CARD_9COL_CENTER_POS,
+    CARD_9COL_LABEL_POS,
+    CARD_9COL_CONTEXT_POS,
+    CARD_9COL_TRAILING_BUTTON_POS,
+    CARD_9COL_ARROW_POSITIONS,
+    CARD_CENTER_POSITION,
+    card_to_excel_position,
+    excel_to_card_position,
 )
 
 CREAM = "#fffbe6"

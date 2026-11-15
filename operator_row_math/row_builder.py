@@ -17,7 +17,11 @@ import tkinter as tk
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from gui_style import (ARROW_BG, ARROW_GRID_POSITIONS, ARROWS, BLUE,  # noqa: E402
                        CARD_COMPONENT_POSITIONS, CREAM, PALE_BLUE, PALE_ORANGE,
-                       btn)
+                       btn, CARD_9COL_LEAD_BUTTON_POS, CARD_9COL_ARROW_GRID_POS,
+                       CARD_9COL_CENTER_POS, CARD_9COL_LABEL_POS,
+                       CARD_9COL_CONTEXT_POS, CARD_9COL_TRAILING_BUTTON_POS,
+                       CARD_9COL_ARROW_POSITIONS, CARD_CENTER_POSITION,
+                       card_to_excel_position)
 
 BOX = "□"
 
@@ -59,92 +63,134 @@ def word_entry(parent, hint, value, width, on_change=None, on_focus=None):
     return e
 
 
-def make_component(parent, center, kind, lead="+", on_pick=None, selected=False, words=None, on_words=None, on_focus=None):
-    """One card.  kind: 'number' (blue centre) or 'helper' (yellow centre = operator card).
-    lead: text of the first button (blue "+"; the result card of a row uses "=").
-    on_pick: called when the blue + or the centre box is clicked (selects this card to be expanded).
-    selected: draw the centre box as the current target.
-    words: (label, context) of this card: the two boxes then take the words you type (on_words(which, text) is called as you type, 0 = Label / Item, 1 = Context;
-    on_focus(which) when a box is clicked).  None keeps the two plain placeholder boxes."""
+def make_component(parent, center, kind, lead="+", on_pick=None, selected=False,
+                   words=None, on_words=None, on_focus=None, card_slot=None, calc_row=1):
+    """One card reconstructed on the authoritative 9-column x 3-row Excel grid.
+
+    Columns:
+      1: Lead button (Blue + or =)
+      2: Empty spacer 1
+      3..5: 3x3 directional arrows and center square
+      6: Label / Item entry
+      7: Context entry
+      8: Empty spacer 2
+      9: Trailing button (Orange +)
+    """
+    if card_slot is None:
+        card_slot = 3 if lead == "=" else (1 if kind == "helper" else 2)
+
     pick = on_pick or (lambda: None)
     f = tk.Frame(parent, bg=CREAM)
+    f.card_slot = card_slot
+    f.calc_row = calc_row
 
-    # 1. Blue plus / lead button (column 1)
-    pos_lead = CARD_COMPONENT_POSITIONS["lead_button"]
+    # Configure 9 columns with predictable spacing; columns 1 and 7 (0-based) are empty spacers
+    f.grid_columnconfigure(0, minsize=28)  # Card col 1: Lead button
+    f.grid_columnconfigure(1, minsize=8)   # Card col 2: Empty spacer 1
+    f.grid_columnconfigure(2, minsize=24)  # Card col 3: Left arrow column
+    f.grid_columnconfigure(3, minsize=26)  # Card col 4: Mid arrow column / Center square
+    f.grid_columnconfigure(4, minsize=24)  # Card col 5: Right arrow column
+    f.grid_columnconfigure(5, minsize=65)  # Card col 6: Label / Item entry
+    f.grid_columnconfigure(6, minsize=85)  # Card col 7: Context entry
+    f.grid_columnconfigure(7, minsize=8)   # Card col 8: Empty spacer 2
+    f.grid_columnconfigure(8, minsize=28)  # Card col 9: Trailing button
+
+    # Row configure for 3 rows
+    f.grid_rowconfigure(0, minsize=24)     # Row 1 (Top arrows)
+    f.grid_rowconfigure(1, minsize=26)     # Row 2 (Middle: center square, lead, entries, trailing)
+    f.grid_rowconfigure(2, minsize=24)     # Row 3 (Bottom arrows)
+
+    # 1. Blue plus / lead button (column 1, row 2)
+    pos_lead = CARD_9COL_LEAD_BUTTON_POS
     lead_btn = btn(f, lead, PALE_BLUE, fg=BLUE if lead == "+" else "black", font=("Segoe UI", 14, "bold"), width=3,
                    highlightbackground=BLUE, command=pick)
     lead_btn.grid_pos = pos_lead
-    lead_btn.grid(**pos_lead.to_tkinter_grid(), padx=(0, 10))
+    lead_btn.excel_pos = card_to_excel_position(pos_lead, card_slot, calc_row)
+    lead_btn.grid(**pos_lead.to_tkinter_grid(), padx=(0, 2))
     f.lead_btn = lead_btn
 
-    # 2. Directional arrow grid container (column 2)
-    pos_grid = CARD_COMPONENT_POSITIONS["arrow_grid"]
-    grid = tk.Frame(f, bg=CREAM)
-    grid.grid_pos = pos_grid
-    grid.grid(**pos_grid.to_tkinter_grid())
-    grid.arrow_buttons = {}
-    for pos, sym in ARROW_GRID_POSITIONS.items():
+    # 2. Directional arrow buttons & center square (columns 3..5, rows 1..3)
+    f.arrow_buttons = {}
+    for pos, sym in CARD_9COL_ARROW_POSITIONS.items():
         if sym:
-            b = tk.Button(grid, text=sym, width=2, bg=ARROW_BG, relief="groove",
+            b = tk.Button(f, text=sym, width=2, bg=ARROW_BG, relief="groove",
                           command=lambda: None)
             b.grid_pos = pos
+            b.excel_pos = card_to_excel_position(pos, card_slot, calc_row)
             b.grid(**pos.to_tkinter_grid(), padx=1, pady=1)
-            grid.arrow_buttons[pos] = b
+            f.arrow_buttons[pos] = b
         else:
             bg = "#fbd34d" if kind == "helper" else PALE_BLUE
             if selected:
                 bg = "#5b9bf0"
-            f.center_btn = tk.Button(grid, text=center, width=max(2, len(center) + 1), bg=bg,
+            f.center_btn = tk.Button(f, text=center, width=max(2, len(center) + 1), bg=bg,
                                      relief="sunken" if selected else "solid", bd=3 if selected else 1,
                                      font=("Segoe UI", 12, "bold"), command=pick)
             f.center_btn.grid_pos = pos
+            f.center_btn.excel_pos = card_to_excel_position(pos, card_slot, calc_row)
             f.center_btn.grid(**pos.to_tkinter_grid(), padx=1, pady=1)
-            grid.arrow_buttons[pos] = f.center_btn
+            f.arrow_buttons[pos] = f.center_btn
 
-    # 3. Label / item entry (column 3)
-    pos_label = CARD_COMPONENT_POSITIONS["label_entry"]
+    # Backward compatibility: f.grid_frame and f.grid alias to f
+    f.grid_frame = f
+
+    # 3. Label / item entry (column 6, row 2)
+    pos_label = CARD_9COL_LABEL_POS
     label = "[Label]" if kind == "helper" else "[Item]"
     if words is None:
         label_widget = tk.Button(f, text=label, font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
                                  width=7, command=lambda: None)
         label_widget.grid_pos = pos_label
-        label_widget.grid(**pos_label.to_tkinter_grid(), padx=6, ipady=4)
+        label_widget.excel_pos = card_to_excel_position(pos_label, card_slot, calc_row)
+        label_widget.grid(**pos_label.to_tkinter_grid(), padx=4, ipady=4)
         f.label_btn = label_widget
     else:
         f.label_box = word_entry(f, label, words[0], 9, (lambda t: on_words(0, t)) if on_words else None, (lambda: on_focus(0)) if on_focus else None)
         f.label_box.grid_pos = pos_label
-        f.label_box.grid(**pos_label.to_tkinter_grid(), padx=6, ipady=4)
+        f.label_box.excel_pos = card_to_excel_position(pos_label, card_slot, calc_row)
+        f.label_box.grid(**pos_label.to_tkinter_grid(), padx=4, ipady=4)
         label_widget = f.label_box
 
-    # 4. Context entry (column 4)
-    pos_context = CARD_COMPONENT_POSITIONS["context_entry"]
+    # 4. Context entry (column 7, row 2)
+    pos_context = CARD_9COL_CONTEXT_POS
     if words is None:
         context_widget = tk.Button(f, text="[Context]", font=("Segoe UI", 12), bg="white", relief="solid", bd=1,
                                    width=9, command=lambda: None)
         context_widget.grid_pos = pos_context
-        context_widget.grid(**pos_context.to_tkinter_grid(), padx=(0, 6), ipady=4)
+        context_widget.excel_pos = card_to_excel_position(pos_context, card_slot, calc_row)
+        context_widget.grid(**pos_context.to_tkinter_grid(), padx=(0, 4), ipady=4)
         f.context_btn = context_widget
     else:
         f.context_box = word_entry(f, "[Context]", words[1], 14, (lambda t: on_words(1, t)) if on_words else None, (lambda: on_focus(1)) if on_focus else None)
         f.context_box.grid_pos = pos_context
-        f.context_box.grid(**pos_context.to_tkinter_grid(), padx=(0, 6), ipady=4)
+        f.context_box.excel_pos = card_to_excel_position(pos_context, card_slot, calc_row)
+        f.context_box.grid(**pos_context.to_tkinter_grid(), padx=(0, 4), ipady=4)
         context_widget = f.context_box
 
-    # 5. Orange plus / trailing button (column 5)
-    pos_trailing = CARD_COMPONENT_POSITIONS["trailing_button"]
+    # 5. Orange plus / trailing button (column 9, row 2)
+    pos_trailing = CARD_9COL_TRAILING_BUTTON_POS
     trailing_btn = btn(f, "+", PALE_ORANGE, fg="#c07000", font=("Segoe UI", 14, "bold"), width=3,
                        highlightbackground="#e0a060")
     trailing_btn.grid_pos = pos_trailing
-    trailing_btn.grid(**pos_trailing.to_tkinter_grid(), padx=(0, 4))
+    trailing_btn.excel_pos = card_to_excel_position(pos_trailing, card_slot, calc_row)
+    trailing_btn.grid(**pos_trailing.to_tkinter_grid(), padx=(2, 0))
     f.trailing_btn = trailing_btn
 
     f.card_controls = {
         pos_lead: lead_btn,
-        pos_grid: grid,
         pos_label: label_widget,
         pos_context: context_widget,
         pos_trailing: trailing_btn,
+        f.center_btn.grid_pos: f.center_btn,
     }
+    for pos, b in f.arrow_buttons.items():
+        f.card_controls[pos] = b
+
+    def to_excel_coordinate(widget_or_pos):
+        p = getattr(widget_or_pos, "grid_pos", widget_or_pos)
+        return card_to_excel_position(p, f.card_slot, f.calc_row)
+    f.to_excel_coordinate = to_excel_coordinate
+
     return f
 
 

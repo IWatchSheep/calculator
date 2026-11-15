@@ -330,21 +330,61 @@ def arrow_at_position(row: int, column: int) -> Optional[str]:
 # Surrounding Card Component Layout Definitions
 # ==============================================================================
 
-CARD_LEAD_BUTTON_POSITION = GridPosition(
-    row=1, column=1, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+# 9-Column Card Component Layout (Matching Excel Workspace Specification)
+CARD_COL_LEAD_BTN: int = 1
+CARD_COL_SPACER1: int = 2
+CARD_COL_ARROW_LEFT: int = 3
+CARD_COL_ARROW_MID: int = 4
+CARD_COL_ARROW_RIGHT: int = 5
+CARD_COL_LABEL: int = 6
+CARD_COL_CONTEXT: int = 7
+CARD_COL_SPACER2: int = 8
+CARD_COL_TRAILING_BTN: int = 9
+
+CARD_TOTAL_COLUMNS: int = 9
+CARD_TOTAL_ROWS: int = 3
+CARD_MIDDLE_ROW: int = 2
+
+# Authoritative 9-Column Card Positions in LayoutRegion.CARD_COMPONENT
+CARD_9COL_LEAD_BUTTON_POS = GridPosition(
+    row=2, column=CARD_COL_LEAD_BTN, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
-CARD_ARROW_GRID_POSITION = GridPosition(
-    row=1, column=2, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+CARD_9COL_ARROW_GRID_POS = GridPosition(
+    row=1, column=CARD_COL_ARROW_LEFT, row_span=3, column_span=3, region=LayoutRegion.CARD_COMPONENT
 )
-CARD_LABEL_POSITION = GridPosition(
-    row=1, column=3, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+CARD_9COL_CENTER_POS = GridPosition(
+    row=2, column=CARD_COL_ARROW_MID, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
-CARD_CONTEXT_POSITION = GridPosition(
-    row=1, column=4, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+CARD_9COL_LABEL_POS = GridPosition(
+    row=2, column=CARD_COL_LABEL, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
-CARD_TRAILING_BUTTON_POSITION = GridPosition(
-    row=1, column=5, row_span=3, column_span=1, region=LayoutRegion.CARD_COMPONENT
+CARD_9COL_CONTEXT_POS = GridPosition(
+    row=2, column=CARD_COL_CONTEXT, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
+CARD_9COL_TRAILING_BUTTON_POS = GridPosition(
+    row=2, column=CARD_COL_TRAILING_BTN, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
+)
+
+# Canonical 9-column references
+CARD_LEAD_BUTTON_POSITION = CARD_9COL_LEAD_BUTTON_POS
+CARD_ARROW_GRID_POSITION = CARD_9COL_ARROW_GRID_POS
+CARD_LABEL_POSITION = CARD_9COL_LABEL_POS
+CARD_CONTEXT_POSITION = CARD_9COL_CONTEXT_POS
+CARD_TRAILING_BUTTON_POSITION = CARD_9COL_TRAILING_BUTTON_POS
+CARD_CENTER_POSITION = CARD_9COL_CENTER_POS
+
+# 9-column arrow grid positions within the card (rows 1..3, columns 3..5)
+CARD_9COL_ARROW_POSITIONS: dict[GridPosition, str] = {
+    GridPosition(1, 3, region=LayoutRegion.CARD_COMPONENT): "↖",
+    GridPosition(1, 4, region=LayoutRegion.CARD_COMPONENT): "↑",
+    GridPosition(1, 5, region=LayoutRegion.CARD_COMPONENT): "↗",
+    GridPosition(2, 3, region=LayoutRegion.CARD_COMPONENT): "←",
+    GridPosition(2, 4, region=LayoutRegion.CARD_COMPONENT): "",  # Center square
+    GridPosition(2, 5, region=LayoutRegion.CARD_COMPONENT): "→",
+    GridPosition(3, 3, region=LayoutRegion.CARD_COMPONENT): "↙",
+    GridPosition(3, 4, region=LayoutRegion.CARD_COMPONENT): "↓",
+    GridPosition(3, 5, region=LayoutRegion.CARD_COMPONENT): "↘",
+}
 
 
 class _CardComponentPositions(dict):
@@ -385,6 +425,7 @@ CARD_COMPONENT_POSITIONS = _CardComponentPositions(
     canonical_items={
         "lead_button": CARD_LEAD_BUTTON_POSITION,
         "arrow_grid": CARD_ARROW_GRID_POSITION,
+        "center_square": CARD_CENTER_POSITION,
         "label_entry": CARD_LABEL_POSITION,
         "context_entry": CARD_CONTEXT_POSITION,
         "trailing_button": CARD_TRAILING_BUTTON_POSITION,
@@ -393,6 +434,8 @@ CARD_COMPONENT_POSITIONS = _CardComponentPositions(
         "blue_plus": "lead_button",
         "item_entry": "label_entry",
         "orange_plus": "trailing_button",
+        "center": "center_square",
+        "center_btn": "center_square",
     },
 )
 
@@ -832,3 +875,65 @@ def excel_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
     pos["result_trailing_btn"] = excel_workspace_position(calc_row, "result_trailing_btn")
 
     return pos
+
+def card_to_excel_position(
+    local_pos: GridPosition,
+    card_slot: int = 1,
+    calc_row: int = 1,
+) -> GridPosition:
+    """Translate a local 9-column card GridPosition to global Excel workspace coordinates.
+
+    card_slot:
+        1: Helper card (Excel columns 3..11)
+        2: Math expression slot (Excel columns 13..21)
+        3: Result card (Excel columns 25..33)
+    calc_row:
+        1-based calculator row index k >= 1.
+    """
+    if card_slot not in EXCEL_CARD_SLOT_BASE_COLUMNS:
+        raise ValueError(f"card_slot must be 1, 2, or 3, got {card_slot!r}")
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+
+    base_col = EXCEL_CARD_SLOT_BASE_COLUMNS[card_slot]
+    base_row = excel_start_row(calc_row)
+
+    global_col = base_col + local_pos.column - 1
+    global_row = base_row + local_pos.row - 1
+
+    return GridPosition(
+        row=global_row,
+        column=global_col,
+        row_span=local_pos.row_span,
+        column_span=local_pos.column_span,
+        region=LayoutRegion.EXCEL_WORKSPACE,
+    )
+
+
+def excel_to_card_position(excel_pos: GridPosition) -> tuple[int, GridPosition]:
+    """Translate a global Excel workspace coordinate to (card_slot, local_card_position)."""
+    col = excel_pos.column
+    if EXCEL_COL_SLOT1_START <= col <= EXCEL_COL_SLOT1_END:
+        slot = 1
+        base_col = EXCEL_COL_SLOT1_START
+    elif EXCEL_COL_SLOT2_START <= col <= EXCEL_COL_SLOT2_END:
+        slot = 2
+        base_col = EXCEL_COL_SLOT2_START
+    elif EXCEL_COL_SLOT3_START <= col <= EXCEL_COL_SLOT3_END:
+        slot = 3
+        base_col = EXCEL_COL_SLOT3_START
+    else:
+        raise ValueError(f"Excel column {col} does not fall within card slots 1, 2, or 3")
+
+    local_col = col - base_col + 1
+    local_row = (excel_pos.row - 1) % EXCEL_CALCULATOR_ROW_STRIDE + 1
+    if local_row > 3:
+        raise ValueError(f"Excel row {excel_pos.row} is outside the 3-row card band")
+
+    return slot, GridPosition(
+        row=local_row,
+        column=local_col,
+        row_span=excel_pos.row_span,
+        column_span=excel_pos.column_span,
+        region=LayoutRegion.CARD_COMPONENT,
+    )
