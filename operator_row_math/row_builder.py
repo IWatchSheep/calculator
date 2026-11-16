@@ -21,6 +21,11 @@ from gui_coordinates import (
     EXCEL_13COL_RESULT_BOX1,
     EXCEL_13COL_RESULT_TRAILING,
     excel_13col_start_row,
+    EXCEL_17COL_MATH_BOX1,
+    EXCEL_17COL_MATH_TRAILING,
+    EXCEL_17COL_RESULT_BOX1,
+    EXCEL_17COL_RESULT_TRAILING,
+    excel_17col_start_row,
 )
 from gui_style import (ARROW_BG, ARROW_GRID_POSITIONS, ARROWS, BLUE, GridPosition, LayoutRegion,  # noqa: E402
                        CARD_COMPONENT_POSITIONS, CREAM, PALE_BLUE, PALE_ORANGE,
@@ -112,18 +117,19 @@ def word_entry(parent, hint, value, width=10, on_change=None, on_focus=None):
 
 
 class DescriptionRegion(tk.Frame):
-    """Authoritative layout region for descriptive text boxes in 13-column Excel grid.
+    """Authoritative layout region for descriptive text boxes in 13-column or 17-column Excel grid.
 
-    Occupies Columns F..G (Math) or L..M (Result).
+    Occupies Columns F..G (Math) or L..M / P..Q (Result).
     Initially holds Box 1 and Orange + button.
     Auto-expands rightward as text is typed without moving Box 1's left edge.
     Clicking orange + adds Box 2, Box 3, etc. to the right, pushing orange + right.
     """
     def __init__(self, parent, role="math", calc_row=1, words=None, num_boxes=1,
-                 on_words=None, on_focus=None, on_add_box=None, **kwargs):
+                 on_words=None, on_focus=None, on_add_box=None, use_17col=True, **kwargs):
         super().__init__(parent, bg=CREAM, **kwargs)
         self.role = role  # "math" or "result"
         self.calc_row = calc_row
+        self.use_17col = use_17col
         self.on_words_cb = on_words
         self.on_focus_cb = on_focus
         self.on_add_box_cb = on_add_box
@@ -147,8 +153,12 @@ class DescriptionRegion(tk.Frame):
         self._box1 = None
         self._box2 = None
 
-        col_trailing = EXCEL_13COL_MATH_TRAILING if role == "math" else EXCEL_13COL_RESULT_TRAILING
-        r0 = excel_13col_start_row(calc_row)
+        if self.use_17col:
+            col_trailing = EXCEL_17COL_MATH_TRAILING if role == "math" else EXCEL_17COL_RESULT_TRAILING
+            r0 = excel_17col_start_row(calc_row)
+        else:
+            col_trailing = EXCEL_13COL_MATH_TRAILING if role == "math" else EXCEL_13COL_RESULT_TRAILING
+            r0 = excel_13col_start_row(calc_row)
 
         self.trailing_btn = btn(self, "+", PALE_ORANGE, fg="#c07000",
                                 font=("Segoe UI", 14, "bold"), width=3,
@@ -163,8 +173,12 @@ class DescriptionRegion(tk.Frame):
         self.trailing_btn.pack(side="left", padx=1, pady=2)
 
     def _create_box_widget(self, idx: int):
-        col_box1 = EXCEL_13COL_MATH_BOX1 if self.role == "math" else EXCEL_13COL_RESULT_BOX1
-        r0 = excel_13col_start_row(self.calc_row)
+        if self.use_17col:
+            col_box1 = EXCEL_17COL_MATH_BOX1 if self.role == "math" else EXCEL_17COL_RESULT_BOX1
+            r0 = excel_17col_start_row(self.calc_row)
+        else:
+            col_box1 = EXCEL_13COL_MATH_BOX1 if self.role == "math" else EXCEL_13COL_RESULT_BOX1
+            r0 = excel_13col_start_row(self.calc_row)
         hint = f"Descriptive Text Box {idx + 1}"
         val = self.words_data[idx] if idx < len(self.words_data) else ""
         b = word_entry(self, hint, val, width=10,
@@ -196,8 +210,12 @@ class DescriptionRegion(tk.Frame):
 
         self.trailing_btn.pack_forget()
         b = self._create_box_widget(new_idx)
-        col_trailing = EXCEL_13COL_MATH_TRAILING if self.role == "math" else EXCEL_13COL_RESULT_TRAILING
-        r0 = excel_13col_start_row(self.calc_row)
+        if self.use_17col:
+            col_trailing = EXCEL_17COL_MATH_TRAILING if self.role == "math" else EXCEL_17COL_RESULT_TRAILING
+            r0 = excel_17col_start_row(self.calc_row)
+        else:
+            col_trailing = EXCEL_13COL_MATH_TRAILING if self.role == "math" else EXCEL_13COL_RESULT_TRAILING
+            r0 = excel_13col_start_row(self.calc_row)
         trailing_col = col_trailing if self.num_boxes == 1 else col_trailing + (self.num_boxes - 1)
         self.trailing_btn.grid_pos = GridPosition(row=r0 + 1, column=trailing_col, region=LayoutRegion.EXCEL_WORKSPACE)
         self.trailing_btn.excel_pos = self.trailing_btn.grid_pos
@@ -255,8 +273,12 @@ class DescriptionRegion(tk.Frame):
                 b0.set_text("")
             elif hasattr(b0, "delete"):
                 b0.delete(0, "end")
-        col_trailing = EXCEL_13COL_MATH_TRAILING if self.role == "math" else EXCEL_13COL_RESULT_TRAILING
-        r0 = excel_13col_start_row(self.calc_row)
+        if self.use_17col:
+            col_trailing = EXCEL_17COL_MATH_TRAILING if self.role == "math" else EXCEL_17COL_RESULT_TRAILING
+            r0 = excel_17col_start_row(self.calc_row)
+        else:
+            col_trailing = EXCEL_13COL_MATH_TRAILING if self.role == "math" else EXCEL_13COL_RESULT_TRAILING
+            r0 = excel_13col_start_row(self.calc_row)
         self.trailing_btn.pack_forget()
         self.trailing_btn.grid_pos = GridPosition(row=r0 + 1, column=col_trailing, region=LayoutRegion.EXCEL_WORKSPACE)
         self.trailing_btn.excel_pos = self.trailing_btn.grid_pos

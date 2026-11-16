@@ -25,6 +25,33 @@ from gui_coordinates import (
     excel_13col_workspace_position,
     excel_13col_workspace_positions,
     excel_13col_total_row_positions,
+    EXCEL_17COL_TOTAL_COLUMNS,
+    EXCEL_17COL_ROW_LABEL,
+    EXCEL_17COL_MATH_SIGN,
+    EXCEL_17COL_NUMBER_MATH,
+    EXCEL_17COL_MATH_BOX1,
+    EXCEL_17COL_MATH_TRAILING,
+    EXCEL_17COL_ACTIONS,
+    EXCEL_17COL_RESULT_EQUALS,
+    EXCEL_17COL_PAREN_OPEN,
+    EXCEL_17COL_RESULT_BOX,
+    EXCEL_17COL_EXPONENT_1,
+    EXCEL_17COL_PAREN_CLOSE,
+    EXCEL_17COL_EXPONENT_2,
+    EXCEL_17COL_RESULT_BOX1,
+    EXCEL_17COL_RESULT_TRAILING,
+    EXCEL_17COL_COLUMN_WIDTHS,
+    EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS,
+    excel_17col_column_letter,
+    excel_17col_column_from_letter,
+    excel_17col_column_width,
+    excel_17col_effective_column_width,
+    excel_17col_total_width,
+    excel_17col_effective_total_width,
+    excel_17col_start_row,
+    excel_17col_workspace_position,
+    excel_17col_workspace_positions,
+    excel_17col_total_row_positions,
 )
 """Focused unit tests for the common GUI coordinate convention."""
 import os
@@ -844,17 +871,17 @@ class TestMainRowCoordinates(unittest.TestCase):
             for r_idx in range(2):
                 row_data = app.rows[r_idx]
                 r_num = r_idx + 1
-                r0 = excel_start_row(r_num)
+                r0 = excel_17col_start_row(r_num)
                 r0_zero = r0 - 1
 
                 # Verify logical mappings
                 self.assertIn("main_row_positions", row_data)
                 self.assertEqual(row_data["main_row_positions"], main_row_positions(r_num))
 
-                # Verify authoritative 33-column Excel grid positions
+                # Verify authoritative 17-column Excel grid positions
                 self.assertIn("grid_positions", row_data)
                 positions = row_data["grid_positions"]
-                self.assertEqual(positions, excel_workspace_positions(r_num))
+                self.assertEqual(positions, excel_17col_workspace_positions(r_num))
 
                 # Verify box (number/expression) in Excel column E (0-based column 4)
                 self.assertIn("box", row_data)
@@ -862,17 +889,17 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(box, "grid_pos"))
                 b_info = box.grid_info()
                 self.assertEqual(int(b_info["row"]), 1)  # row 1 inside its own row_frame
-                self.assertEqual(int(b_info["column"]), EXCEL_13COL_NUMBER_MATH - 1)
+                self.assertEqual(int(b_info["column"]), EXCEL_17COL_NUMBER_MATH - 1)
                 self.assertEqual(int(b_info["columnspan"]), 1)
                 self.assertEqual(int(b_info["rowspan"]), 1)
                 self.assertEqual(box.excel_pos.row, r0 + 1)
 
-                # Verify result box in Excel column K (0-based column 10)
+                # Verify result box in Excel column L (0-based column 11)
                 result_box = row_data.get("result_box", row_data["result"])
                 self.assertTrue(hasattr(result_box, "grid_pos"))
                 c_info = result_box.grid_info()
                 self.assertEqual(int(c_info["row"]), 1)
-                self.assertEqual(int(c_info["column"]), EXCEL_13COL_RESULT_BOX - 1)
+                self.assertEqual(int(c_info["column"]), EXCEL_17COL_RESULT_BOX - 1)
                 self.assertEqual(int(c_info["columnspan"]), 1)
                 self.assertEqual(int(c_info["rowspan"]), 1)
                 self.assertEqual(result_box.excel_pos.row, r0 + 1)
@@ -882,7 +909,7 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(labf, "grid_pos"))
                 l_info = labf.grid_info()
                 self.assertEqual(int(l_info["row"]), 0)
-                self.assertEqual(int(l_info["column"]), EXCEL_13COL_ROW_LABEL - 1)
+                self.assertEqual(int(l_info["column"]), EXCEL_17COL_ROW_LABEL - 1)
                 self.assertEqual(int(l_info["columnspan"]), 1)
                 self.assertEqual(int(l_info["rowspan"]), 3)
                 self.assertEqual(labf.excel_pos.row, r0)
@@ -892,7 +919,7 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(col3, "grid_pos"))
                 a_info = col3.grid_info()
                 self.assertEqual(int(a_info["row"]), 0)
-                self.assertEqual(int(a_info["column"]), EXCEL_13COL_ACTIONS - 1)
+                self.assertEqual(int(a_info["column"]), EXCEL_17COL_ACTIONS - 1)
                 self.assertEqual(int(a_info["columnspan"]), 1)
                 self.assertEqual(int(a_info["rowspan"]), 3)
                 self.assertEqual(col3.excel_pos.row, r0)
@@ -904,13 +931,13 @@ class TestMainRowCoordinates(unittest.TestCase):
 
             row_3 = app.rows[2]
             positions_3 = row_3["grid_positions"]
-            self.assertEqual(positions_3, excel_workspace_positions(3))
+            self.assertEqual(positions_3, excel_17col_workspace_positions(3))
 
             box_3 = row_3["box"]
             b3_info = box_3.grid_info()
             self.assertEqual(int(b3_info["row"]), 1)
-            self.assertEqual(int(b3_info["column"]), EXCEL_13COL_NUMBER_MATH - 1)
-            self.assertEqual(box_3.excel_pos.row, excel_13col_start_row(3) + 1)
+            self.assertEqual(int(b3_info["column"]), EXCEL_17COL_NUMBER_MATH - 1)
+            self.assertEqual(box_3.excel_pos.row, excel_17col_start_row(3) + 1)
 
         finally:
             if app is not None:
@@ -1393,9 +1420,9 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
             self.assertEqual(rf2.master, app.area)
 
             for rf in (rf1, rf2):
-                for c in range(13):
+                for c in range(17):
                     info = rf.grid_columnconfigure(c)
-                    self.assertEqual(int(info.get("minsize", 0)), excel_column_width(c + 1))
+                    self.assertEqual(int(info.get("minsize", 0)), excel_17col_column_width(c + 1))
                     self.assertEqual(int(info.get("weight", 0)), 0)
         finally:
             app.destroy()
@@ -1897,12 +1924,12 @@ class TestCheckpoint3BottomTotalRowAndKeypadWorkflow(unittest.TestCase):
             self.assertEqual(r3["equals_label"].cget("text"), "=")
             self.assertTrue(r3["result_box"].winfo_ismapped())
 
-            # Cols L..M: editable result description with orange +
+            # Cols P..Q: editable result description with orange +
             self.assertTrue(r3["result_desc"].winfo_ismapped())
             self.assertTrue(r3["result_desc"].box1.winfo_ismapped())
             self.assertTrue(r3["result_desc"].trailing_btn.winfo_ismapped())
             self.assertEqual(r3["result_desc"].trailing_btn.cget("text"), "+")
-            self.assertEqual(r3["grid_positions"], excel_13col_total_row_positions(3))
+            self.assertEqual(r3["grid_positions"], excel_17col_total_row_positions(3))
         finally:
             app.destroy()
 
@@ -2929,11 +2956,11 @@ class TestCheckpoint4MathematicalTemplatesAndGUI(unittest.TestCase):
             res_col = r0["result_box"].grid_info()["column"]
             rdesc_col = r0["result_desc"].grid_info()["column"]
 
-            # Excel Column assignments: E=4, F=5, K=10, L=11
+            # Excel Column assignments: E=4, F=5, L=11, P=15
             self.assertEqual(slot_col, 4)
             self.assertEqual(mdesc_col, 5)
-            self.assertEqual(res_col, 10)
-            self.assertEqual(rdesc_col, 11)
+            self.assertEqual(res_col, 11)
+            self.assertEqual(rdesc_col, 15)
 
             # Insert wide template
             app._place_operator_row("physics/physics/gravitation")
@@ -2967,7 +2994,7 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             cls.has_display = False
 
     def test_01_default_total_row_jk_alignment(self):
-        """1. Total row Column J (=) and Column K (result) vertically align with Rows 1 and 2 in 1+1=2."""
+        """1. Total row Column J (=), Column K ('('), and Column L (result) vertically align with Rows 1 and 2 in 1+1=2."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -2990,18 +3017,23 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             self.assertEqual(r1["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
 
-            # X-coordinates of Column K (result) must align exactly across all three rows
-            self.assertEqual(r0["result_box"].winfo_x(), 753)
-            self.assertEqual(r1["result_box"].winfo_x(), 753)
-            self.assertEqual(tot["result_box"].winfo_x(), 753)
+            # X-coordinates of Column K ('(') must align exactly across all three rows
+            self.assertEqual(r0["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
 
-            # Total row frame width must match default 1094 px
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+            # X-coordinates of Column L (result) must align exactly across all three rows
+            self.assertEqual(r0["result_box"].winfo_x(), 795)
+            self.assertEqual(r1["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
+
+            # Total row frame width must match default 1274 px
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
         finally:
             app.destroy()
 
     def test_02_expanded_row1_does_not_alter_total_row_default_widths(self):
-        """2. Expanded Row 1 does not stretch Total row; Total row maintains default J/K alignment with Row 2."""
+        """2. Expanded Row 1 does not stretch Total row; Total row maintains default J/K/L alignment with Row 2."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -3035,14 +3067,16 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             self.assertGreater(r0["row_frame"].winfo_reqwidth(), 2000)
 
             # Row 2 and Total row retain default width
-            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1094)
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
 
-            # Total row aligns with Row 2's default Column J and Column K
+            # Total row aligns with Row 2's default Column J, K, and L
             self.assertEqual(r1["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(r1["result_box"].winfo_x(), 753)
-            self.assertEqual(tot["result_box"].winfo_x(), 753)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(r1["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
         finally:
             app.destroy()
 
@@ -3063,13 +3097,14 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
                 app.update()
                 tot = app.rows[2]
                 self.assertEqual(tot["equals_label"].winfo_x(), 711)
-                self.assertEqual(tot["result_box"].winfo_x(), 753)
-                self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+                self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+                self.assertEqual(tot["result_box"].winfo_x(), 795)
+                self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
         finally:
             app.destroy()
 
     def test_04_clearing_and_starting_new_calculation(self):
-        """4. Clearing and starting a new calculation restores correct geometry and J/K alignment."""
+        """4. Clearing and starting a new calculation restores correct geometry and J/K/L alignment."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -3088,7 +3123,7 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             app._clear_all()
             app.update()
             self.assertEqual(len(app.rows), 1)
-            self.assertEqual(app.rows[0]["row_frame"].winfo_reqwidth(), 1094)
+            self.assertEqual(app.rows[0]["row_frame"].winfo_reqwidth(), 1274)
 
             # Second calculation
             app._key("7")
@@ -3100,13 +3135,14 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             tot = app.rows[2]
             self.assertEqual(tot["result_box"].cget("text"), "3")
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(tot["result_box"].winfo_x(), 753)
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
         finally:
             app.destroy()
 
     def test_05_total_row_independent_description_expansion(self):
-        """5. Total row description expansion preserves J and K positions while expanding row width."""
+        """5. Total row description expansion preserves J, K, and L positions while expanding row width."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -3126,12 +3162,13 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             tb2.set_text("Audited result")
             app.update()
 
-            # J and K positions remain anchored at default positions
+            # J, K, and L positions remain anchored at default positions
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(tot["result_box"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
 
             # Total row frame expands rightward to accommodate descriptions
-            self.assertGreater(tot["row_frame"].winfo_reqwidth(), 1094)
+            self.assertGreater(tot["row_frame"].winfo_reqwidth(), 1274)
         finally:
             app.destroy()
 
@@ -3348,6 +3385,390 @@ class Test17ColumnPEMDASCoordinateSpecification(unittest.TestCase):
         self.assertEqual(EXCEL_17COL_EXPONENT_2, EXCEL_17COL_PAREN_CLOSE + 1)
         # Open Parenthesis (Col K: 11) immediately precedes Result Box (Col L: 12)
         self.assertEqual(EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_RESULT_BOX - 1)
+
+
+
+
+class Test17ColumnGUIRowActivation(unittest.TestCase):
+    """Test Checkpoint 5 Step 2: Activation of 17-Column (A..Q) GUI layout with two exponent boxes."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            r = tk.Tk()
+            r.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_all_17_column_controls_present_in_every_input_row(self):
+        """1. Every calculator row contains all 17-column controls (A..Q)."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._add_row()
+            self.assertEqual(len(app.rows), 2)
+            for i, row in enumerate(app.rows):
+                # Row indicator (Col A)
+                self.assertIsNotNone(row.get("label_frame"))
+                self.assertIsNotNone(row.get("label"))
+                # Join operator button (Col C, row >= 2)
+                if i >= 1:
+                    self.assertIsNotNone(row.get("join_btn"))
+                # Math operand slot (Col E)
+                self.assertIsNotNone(row.get("box"))
+                # Math descriptive region (Cols F..G)
+                self.assertIsNotNone(row.get("math_desc"))
+                # Actions frame (Col I)
+                self.assertIsNotNone(row.get("actions_frame"))
+                # Equals sign (Col J)
+                self.assertIsNotNone(row.get("equals_label"))
+                # Open parenthesis button (Col K)
+                self.assertIsNotNone(row.get("paren_open_btn"))
+                self.assertIn("paren_open", row)
+                # Calculated result box (Col L)
+                self.assertIsNotNone(row.get("result_box"))
+                # Exponent Number Box 1 (Col M)
+                self.assertIsNotNone(row.get("exponent_1_box"))
+                # Close parenthesis button (Col N)
+                self.assertIsNotNone(row.get("paren_close_btn"))
+                self.assertIn("paren_close", row)
+                # Exponent Number Box 2 (Col O)
+                self.assertIsNotNone(row.get("exponent_2_box"))
+                # Result descriptive region (Cols P..Q)
+                self.assertIsNotNone(row.get("result_desc"))
+        finally:
+            app.destroy()
+
+    def test_02_tkinter_grid_info_matches_17_column_spec(self):
+        """2. Exact Tkinter grid coordinates match 17-column specification (sub-rows 0, 1, 2)."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            r0 = app.rows[0]
+            # Col A (0): Label frame, row 0..2 (rowspan 3)
+            self.assertEqual(r0["label_frame"].grid_info()["column"], 0)
+            self.assertEqual(r0["label_frame"].grid_info()["row"], 0)
+            self.assertEqual(r0["label_frame"].grid_info()["rowspan"], 3)
+
+            # Col E (4): Math slot, row 1
+            self.assertEqual(r0["box"].grid_info()["column"], 4)
+            self.assertEqual(r0["box"].grid_info()["row"], 1)
+
+            # Cols F..G (5..6): Math desc, row 1, columnspan 2
+            self.assertEqual(r0["math_desc"].grid_info()["column"], 5)
+            self.assertEqual(r0["math_desc"].grid_info()["row"], 1)
+            self.assertEqual(r0["math_desc"].grid_info()["columnspan"], 2)
+
+            # Col I (8): Actions frame, row 0..2 (rowspan 3)
+            self.assertEqual(r0["actions_frame"].grid_info()["column"], 8)
+            self.assertEqual(r0["actions_frame"].grid_info()["row"], 0)
+            self.assertEqual(r0["actions_frame"].grid_info()["rowspan"], 3)
+
+            # Col J (9): Equals label, row 1
+            self.assertEqual(r0["equals_label"].grid_info()["column"], 9)
+            self.assertEqual(r0["equals_label"].grid_info()["row"], 1)
+
+            # Col K (10): Open parenthesis button, row 1
+            self.assertEqual(r0["paren_open_btn"].grid_info()["column"], 10)
+            self.assertEqual(r0["paren_open_btn"].grid_info()["row"], 1)
+
+            # Col L (11): Result box, row 1
+            self.assertEqual(r0["result_box"].grid_info()["column"], 11)
+            self.assertEqual(r0["result_box"].grid_info()["row"], 1)
+
+            # Col M (12): Exponent Number Box 1, row 0 (top sub-row superscript!)
+            self.assertEqual(r0["exponent_1_box"].grid_info()["column"], 12)
+            self.assertEqual(r0["exponent_1_box"].grid_info()["row"], 0)
+
+            # Col N (13): Close parenthesis button, row 1
+            self.assertEqual(r0["paren_close_btn"].grid_info()["column"], 13)
+            self.assertEqual(r0["paren_close_btn"].grid_info()["row"], 1)
+
+            # Col O (14): Exponent Number Box 2, row 0 (top sub-row superscript!)
+            self.assertEqual(r0["exponent_2_box"].grid_info()["column"], 14)
+            self.assertEqual(r0["exponent_2_box"].grid_info()["row"], 0)
+
+            # Cols P..Q (15..16): Result desc, row 1, columnspan 2
+            self.assertEqual(r0["result_desc"].grid_info()["column"], 15)
+            self.assertEqual(r0["result_desc"].grid_info()["row"], 1)
+            self.assertEqual(r0["result_desc"].grid_info()["columnspan"], 2)
+        finally:
+            app.destroy()
+
+    def test_03_rendered_pixel_geometry_and_total_row_alignment(self):
+        """3. Rendered pixel geometry aligns vertically across Row 1, Row 2, and Total Row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            r0, r1, tot = app.rows[0], app.rows[1], app.rows[2]
+
+            # All controls align to the exact pixel across all 3 rows
+            for r in (r0, r1, tot):
+                self.assertEqual(r["equals_label"].winfo_x(), 711)
+                self.assertEqual(r["paren_open_btn"].winfo_x(), 753)
+                self.assertEqual(r["result_box"].winfo_x(), 795)
+                self.assertEqual(r["exponent_1_box"].winfo_x(), 913)
+                self.assertEqual(r["paren_close_btn"].winfo_x(), 953)
+                self.assertEqual(r["exponent_2_box"].winfo_x(), 1003)
+                self.assertEqual(r["result_desc"].winfo_x(), 1043)
+                self.assertEqual(r["row_frame"].winfo_reqwidth(), 1274)
+        finally:
+            app.destroy()
+
+    def test_04_parentheses_toggle_selected_and_unselected_states(self):
+        """4. Parentheses buttons toggle visible selected/unselected state."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            r0 = app.rows[0]
+            # Initial: unselected
+            self.assertFalse(r0["paren_open"])
+            self.assertFalse(r0["paren_close"])
+            self.assertEqual(r0["paren_open_btn"].cget("relief"), "raised")
+            self.assertEqual(r0["paren_close_btn"].cget("relief"), "raised")
+
+            # Toggle Open Parenthesis '('
+            app._toggle_paren_open(0)
+            self.assertTrue(r0["paren_open"])
+            self.assertEqual(r0["paren_open_btn"].cget("relief"), "sunken")
+            self.assertEqual(r0["paren_open_btn"].cget("bg"), "#b5dca8")
+
+            # Toggle Close Parenthesis ')'
+            app._toggle_paren_close(0)
+            self.assertTrue(r0["paren_close"])
+            self.assertEqual(r0["paren_close_btn"].cget("relief"), "sunken")
+            self.assertEqual(r0["paren_close_btn"].cget("bg"), "#b5dca8")
+
+            # Toggle back to unselected
+            app._toggle_paren_open(0)
+            self.assertFalse(r0["paren_open"])
+            self.assertEqual(r0["paren_open_btn"].cget("relief"), "raised")
+            self.assertEqual(r0["paren_open_btn"].cget("bg"), "white")
+
+            app._toggle_paren_close(0)
+            self.assertFalse(r0["paren_close"])
+            self.assertEqual(r0["paren_close_btn"].cget("relief"), "raised")
+            self.assertEqual(r0["paren_close_btn"].cget("bg"), "white")
+        finally:
+            app.destroy()
+
+    def test_05_exponent_boxes_editing_and_clearing(self):
+        """5. Exponent boxes support empty initial state, typing/editing numeric input, and clearing."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Initial state: empty
+            self.assertEqual(app._get_exponent_1(0), "")
+            self.assertEqual(app._get_exponent_2(0), "")
+
+            # Set exponents
+            app._set_exponent_1(0, "3")
+            app._set_exponent_2(0, "2")
+            self.assertEqual(app._get_exponent_1(0), "3")
+            self.assertEqual(app._get_exponent_2(0), "2")
+
+            # Clear exponents
+            app.rows[0]["exponent_1_box"].delete(0, tk.END)
+            app.rows[0]["exponent_2_box"].delete(0, tk.END)
+            self.assertEqual(app._get_exponent_1(0), "")
+            self.assertEqual(app._get_exponent_2(0), "")
+        finally:
+            app.destroy()
+
+    def test_06_independent_row_expansion_with_wide_templates(self):
+        """6. Wide template in Row 1 expands only Row 1; Row 2 and Total row retain 17-col default widths."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._place_operator_row("math/arithmetic/addition")
+            app._select_only(0, (0, 0))
+            app._key("4")
+            app._select_only(0, (0, 1))
+            app._key("6")
+            d1 = app.rows[0]["math_desc"]
+            d1.box1.set_text("Expanded description in Row 1")
+
+            app._join_key("+")
+            app._key("5")
+            app._equals()
+            app.update()
+
+            r0, r1, tot = app.rows[0], app.rows[1], app.rows[2]
+            # Row 1 expands independently
+            self.assertGreater(r0["row_frame"].winfo_reqwidth(), 1400)
+            # Row 2 and Total row retain default width 1274 px
+            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+            # Row 2 and Total row alignment preserved
+            self.assertEqual(r1["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(r1["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
+        finally:
+            app.destroy()
+
+    def test_07_result_description_expansion_in_columns_p_and_q(self):
+        """7. Result description auto-expands in Columns P and Q without distorting earlier columns."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            r0 = app.rows[0]
+            desc = r0["result_desc"]
+            desc.box1.set_text("Detailed description of the calculated result")
+            app.update()
+
+            # Columns J..O maintain fixed anchor positions
+            self.assertEqual(r0["equals_label"].winfo_x(), 711)
+            self.assertEqual(r0["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(r0["result_box"].winfo_x(), 795)
+            self.assertEqual(r0["exponent_1_box"].winfo_x(), 913)
+            self.assertEqual(r0["paren_close_btn"].winfo_x(), 953)
+            self.assertEqual(r0["exponent_2_box"].winfo_x(), 1003)
+            self.assertEqual(r0["result_desc"].winfo_x(), 1043)
+            self.assertGreater(r0["row_frame"].winfo_reqwidth(), 1274)
+        finally:
+            app.destroy()
+
+    def test_08_physical_keyboard_focus_isolation(self):
+        """8. Focus inside exponent box or description box isolates typing from calculator shortcuts."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_force()
+            app.update()
+
+            # Generate key events inside exponent box
+            exp1.insert(tk.END, "3")
+            # Global _on_key_press should not intercept
+            app.event_generate("<Key>", keysym="c")
+            app.update()
+
+            # App should NOT have cleared
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(exp1.get(), "3c")
+        finally:
+            app.destroy()
+
+    def test_09_clear_all_restores_blank_17_column_row_1(self):
+        """9. _clear_all() restores single empty 17-column Row 1 with cleared exponents and parens."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("3")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._join_key("+")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            # Clear all
+            app._clear_all()
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            r0 = app.rows[0]
+            self.assertFalse(r0["paren_open"])
+            self.assertFalse(r0["paren_close"])
+            self.assertEqual(app._get_exponent_1(0), "")
+            self.assertEqual(app._get_exponent_2(0), "")
+            self.assertEqual(r0["row_frame"].winfo_reqwidth(), 1274)
+        finally:
+            app.destroy()
+
+    def test_10_evaluation_guard_when_parentheses_or_exponents_active(self):
+        """10. Pressing '=' with active parens or exponents displays PEMDAS Step 3 explanation."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._equals()
+            app.update()
+
+            # Explanatory message shown in results
+            result_msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Step 3 (PEMDAS engine)", result_msg)
+            # Did not evaluate or create incorrect result row
+            self.assertEqual(len(app.rows), 1)
+
+            # Untoggle paren and add exponent
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "3")
+            app._equals()
+            app.update()
+
+            result_msg2 = app.results.get("1.0", "end").strip()
+            self.assertIn("Step 3 (PEMDAS engine)", result_msg2)
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_11_standard_math_evaluates_normally_without_new_controls(self):
+        """11. Standard math (1+1=2) evaluates accurately when new controls are inactive."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            tot = app.rows[2]
+            self.assertEqual(tot["result_box"].cget("text"), "2")
+            self.assertEqual(tot["label"].cget("text"), "Total")
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            self.assertEqual(tot["result_box"].winfo_x(), 795)
+        finally:
+            app.destroy()
 
 
 if __name__ == "__main__":

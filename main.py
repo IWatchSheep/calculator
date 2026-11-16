@@ -19,7 +19,15 @@ from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, 
                        excel_workspace_positions, EXCEL_COL_ROW_LABEL, EXCEL_COL_ACTIONS,
                        GridPosition, LayoutRegion, EXCEL_13COL_COLUMN_WIDTHS,
                        excel_13col_total_row_positions, excel_13col_start_row,
-                       EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX, EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS)
+                       EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX, EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS,
+                       EXCEL_17COL_COLUMN_WIDTHS, EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS,
+                       excel_17col_start_row, excel_17col_workspace_position,
+                       excel_17col_workspace_positions, excel_17col_total_row_positions,
+                       EXCEL_17COL_ROW_LABEL, EXCEL_17COL_MATH_SIGN, EXCEL_17COL_NUMBER_MATH,
+                       EXCEL_17COL_MATH_BOX1, EXCEL_17COL_MATH_TRAILING, EXCEL_17COL_ACTIONS,
+                       EXCEL_17COL_RESULT_EQUALS, EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_RESULT_BOX,
+                       EXCEL_17COL_EXPONENT_1, EXCEL_17COL_PAREN_CLOSE, EXCEL_17COL_EXPONENT_2,
+                       EXCEL_17COL_RESULT_BOX1, EXCEL_17COL_RESULT_TRAILING)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component, DescriptionRegion
@@ -438,27 +446,98 @@ class CalculatorGUI(tk.Tk):
             self.area = self.excel_area
             self._fit_rows()
 
+    def _toggle_paren_open(self, r):
+        """Toggle active/inactive state of Open Parenthesis '(' in row r."""
+        if r < 0 or r >= len(self.rows):
+            return
+        row = self.rows[r]
+        row["paren_open"] = not row.get("paren_open", False)
+        b = row.get("paren_open_btn")
+        if b is not None:
+            if row["paren_open"]:
+                b.configure(bg="#b5dca8", fg="#1b5e20", relief="sunken")
+            else:
+                b.configure(bg="white", fg="black", relief="raised")
+
+    def _toggle_paren_close(self, r):
+        """Toggle active/inactive state of Close Parenthesis ')' in row r."""
+        if r < 0 or r >= len(self.rows):
+            return
+        row = self.rows[r]
+        row["paren_close"] = not row.get("paren_close", False)
+        b = row.get("paren_close_btn")
+        if b is not None:
+            if row["paren_close"]:
+                b.configure(bg="#b5dca8", fg="#1b5e20", relief="sunken")
+            else:
+                b.configure(bg="white", fg="black", relief="raised")
+
+    def _has_active_17col_controls(self):
+        """Check if any row currently has parentheses toggled or exponents entered."""
+        for row in self.rows:
+            if row.get("is_result"):
+                continue
+            if row.get("paren_open"):
+                return True
+            if row.get("paren_close"):
+                return True
+            exp1 = row.get("exponent_1_box")
+            if exp1 is not None and exp1.get().strip():
+                return True
+            exp2 = row.get("exponent_2_box")
+            if exp2 is not None and exp2.get().strip():
+                return True
+        return False
+
+    def _get_exponent_1(self, r):
+        if r < 0 or r >= len(self.rows):
+            return ""
+        box = self.rows[r].get("exponent_1_box")
+        return box.get().strip() if box is not None else ""
+
+    def _set_exponent_1(self, r, text):
+        if r < 0 or r >= len(self.rows):
+            return
+        box = self.rows[r].get("exponent_1_box")
+        if box is not None:
+            box.delete(0, tk.END)
+            box.insert(0, str(text))
+
+    def _get_exponent_2(self, r):
+        if r < 0 or r >= len(self.rows):
+            return ""
+        box = self.rows[r].get("exponent_2_box")
+        return box.get().strip() if box is not None else ""
+
+    def _set_exponent_2(self, r, text):
+        if r < 0 or r >= len(self.rows):
+            return
+        box = self.rows[r].get("exponent_2_box")
+        if box is not None:
+            box.delete(0, tk.END)
+            box.insert(0, str(text))
+
     def _add_row(self):
-        """Add one more calculator row at the bottom using authoritative 13-column Excel coordinates in its own grid."""
+        """Add one more calculator row at the bottom using authoritative 17-column Excel coordinates in its own grid."""
         area, r = self.area, len(self.rows)
         k = r + 1
-        r0 = excel_start_row(k)
+        r0 = excel_17col_start_row(k)
 
         # Create independent grid container for this calculator row
         row_frame = tk.Frame(area, bg=CREAM)
         row_frame.grid(row=r, column=0, sticky="nw", padx=0, pady=(2, 6))
 
-        # Configure 13 columns with authoritative default widths
-        for col_1based, width in EXCEL_13COL_COLUMN_WIDTHS.items():
+        # Configure 17 columns with authoritative default widths
+        for col_1based, width in EXCEL_17COL_COLUMN_WIDTHS.items():
             row_frame.grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
 
-        # Configure 3 sub-rows (row 0: top actions/label, row 1: main controls, row 2: bottom actions)
+        # Configure 3 sub-rows (row 0: top actions/exponents, row 1: main controls, row 2: bottom actions)
         row_frame.grid_rowconfigure(0, minsize=26, weight=0)
         row_frame.grid_rowconfigure(1, minsize=44, weight=0)
         row_frame.grid_rowconfigure(2, minsize=26, weight=0)
 
         # 1. Col A: Row label indicator (Excel Col A: 1, 0-based 0, rows 0..2, rowspan=3)
-        row_pos = excel_workspace_position(k, "row_label")
+        row_pos = excel_17col_workspace_position(k, "row_label")
         labf = tk.Frame(row_frame, bg=CREAM)
         labf.grid_pos = row_pos
         labf.excel_pos = row_pos
@@ -472,7 +551,7 @@ class CalculatorGUI(tk.Tk):
         # 2. Col C: Math operator sign (Excel Col C: 3, 0-based 2, row 1)
         join_btn = None
         if k >= 2:
-            join_pos = excel_workspace_position(k, "math_sign")
+            join_pos = excel_17col_workspace_position(k, "math_sign")
             join_btn = btn(row_frame, "□", "#fbd34d", fg="black", font=("Segoe UI", 12, "bold"),
                            width=3, highlightbackground="#d0a020",
                            command=lambda r=r: self._set_target_row(r))
@@ -489,16 +568,17 @@ class CalculatorGUI(tk.Tk):
                                       num_boxes=row.get("card_box_counts", {}).get(0, 1),
                                       on_words=lambda which, text, r=r: self._set_word(r, 0, which, text),
                                       on_focus=lambda which, r=r: self._word_focus_set(r, 0, which),
-                                      on_add_box=lambda count, r=r: self._add_card_box(r, 0, count))
-        math_desc_pos = excel_workspace_position(k, "math_box1")
+                                      on_add_box=lambda count, r=r: self._add_card_box(r, 0, count),
+                                      use_17col=True)
+        math_desc_pos = excel_17col_workspace_position(k, "math_box1")
         math_desc.grid_pos = math_desc_pos
         math_desc.excel_pos = math_desc_pos
         math_desc.grid(row=1, column=5, columnspan=2, padx=2, pady=2, sticky="w")
 
         # 5. Col I: Actions (Excel Col I: 9, 0-based 8, rows 0..2, rowspan=3, width 130px)
-        actions_pos = excel_workspace_position(k, "actions_frame")
-        act_top_pos = excel_workspace_position(k, "action_math_left")
-        act_bot_pos = excel_workspace_position(k, "action_clear_left")
+        actions_pos = excel_17col_workspace_position(k, "actions_frame")
+        act_top_pos = excel_17col_workspace_position(k, "action_math_left")
+        act_bot_pos = excel_17col_workspace_position(k, "action_clear_left")
 
         col3 = tk.Frame(row_frame, bg=CREAM, width=130)
         col3.grid_pos = actions_pos
@@ -528,32 +608,67 @@ class CalculatorGUI(tk.Tk):
         btn_bot.grid(row=2, column=0, sticky="s", pady=(4, 0))
 
         # 6. Col J: Result Equals Sign (Excel Col J: 10, 0-based 9, row 1)
-        eq_pos = excel_workspace_position(k, "result_equals")
+        eq_pos = excel_17col_workspace_position(k, "result_equals")
         eq_lbl = tk.Label(row_frame, text="=", font=("Segoe UI", 16, "bold"), bg=CREAM, fg="black")
         eq_lbl.grid_pos = eq_pos
         eq_lbl.excel_pos = eq_pos
         eq_lbl.grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
 
-        # 7. Col K: Calculated Result Box (Excel Col K: 11, 0-based 10, row 1)
-        res_pos = excel_workspace_position(k, "result_box")
+        # 7. Col K: Open Parenthesis Button (Excel Col K: 11, 0-based 10, row 1)
+        paren_open_pos = excel_17col_workspace_position(k, "paren_open")
+        paren_open_btn = tk.Button(row_frame, text="(", bg="white", fg="black",
+                                   font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
+                                   command=lambda r=r: self._toggle_paren_open(r))
+        paren_open_btn.grid_pos = paren_open_pos
+        paren_open_btn.excel_pos = paren_open_pos
+        paren_open_btn.grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+
+        # 8. Col L: Calculated Result Box (Excel Col L: 12, 0-based 11, row 1)
+        res_pos = excel_17col_workspace_position(k, "result_box")
         res_btn = tk.Button(row_frame, text="□", bg=PALE_BLUE, fg="black",
                             font=("Segoe UI", 12, "bold"), relief="solid", bd=1,
                             command=lambda r=r: self._set_target_row(r))
         res_btn.grid_pos = res_pos
         res_btn.excel_pos = res_pos
-        res_btn.grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+        res_btn.grid(row=1, column=11, padx=2, pady=2, sticky="nsew")
 
-        # 8. Cols L..M: Result Descriptive Region (Excel Cols L..M: 12..13, 0-based 11..12, row 1)
+        # 9. Col M: Exponent Number Box 1 (Excel Col M: 13, 0-based 12, row 0, superscript to result)
+        exp1_pos = excel_17col_workspace_position(k, "exponent_1")
+        exp1_entry = tk.Entry(row_frame, width=4, font=("Segoe UI", 9), justify="center", bd=1,
+                              relief="solid", bg="white", fg="black")
+        exp1_entry.grid_pos = exp1_pos
+        exp1_entry.excel_pos = exp1_pos
+        exp1_entry.grid(row=0, column=12, padx=2, pady=(2, 0), sticky="s")
+
+        # 10. Col N: Close Parenthesis Button (Excel Col N: 14, 0-based 13, row 1)
+        paren_close_pos = excel_17col_workspace_position(k, "paren_close")
+        paren_close_btn = tk.Button(row_frame, text=")", bg="white", fg="black",
+                                    font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
+                                    command=lambda r=r: self._toggle_paren_close(r))
+        paren_close_btn.grid_pos = paren_close_pos
+        paren_close_btn.excel_pos = paren_close_pos
+        paren_close_btn.grid(row=1, column=13, padx=2, pady=2, sticky="nsew")
+
+        # 11. Col O: Exponent Number Box 2 (Excel Col O: 15, 0-based 14, row 0, superscript to group)
+        exp2_pos = excel_17col_workspace_position(k, "exponent_2")
+        exp2_entry = tk.Entry(row_frame, width=4, font=("Segoe UI", 9), justify="center", bd=1,
+                              relief="solid", bg="white", fg="black")
+        exp2_entry.grid_pos = exp2_pos
+        exp2_entry.excel_pos = exp2_pos
+        exp2_entry.grid(row=0, column=14, padx=2, pady=(2, 0), sticky="s")
+
+        # 12. Cols P..Q: Result Descriptive Region (Excel Cols P..Q: 16..17, 0-based 15..16, row 1)
         res_desc = DescriptionRegion(row_frame, role="result", calc_row=k,
                                      words=row.get("result_words", ()),
                                      num_boxes=row.get("result_box_count", 1),
                                      on_words=lambda which, text, r=r: self._set_result_word(r, which, text),
                                      on_focus=lambda which, r=r: self._word_focus_set(r, "result", which),
-                                     on_add_box=lambda count, r=r: self._add_result_box(r, count))
-        res_desc_pos = excel_workspace_position(k, "result_box1")
+                                     on_add_box=lambda count, r=r: self._add_result_box(r, count),
+                                     use_17col=True)
+        res_desc_pos = excel_17col_workspace_position(k, "result_box1")
         res_desc.grid_pos = res_desc_pos
         res_desc.excel_pos = res_desc_pos
-        res_desc.grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+        res_desc.grid(row=1, column=15, columnspan=2, padx=2, pady=2, sticky="w")
 
         res_desc.center_btn = res_btn
         res_desc.lead_btn = eq_lbl
@@ -572,7 +687,7 @@ class CalculatorGUI(tk.Tk):
             "helper_box_count": 1,
             "result_words": (),
             "result_box_count": 1,
-            "grid_positions": excel_workspace_positions(k),
+            "grid_positions": excel_17col_workspace_positions(k),
             "main_row_positions": main_row_positions(k),
             "math_desc": math_desc,
             "math_card": math_desc,
@@ -585,6 +700,14 @@ class CalculatorGUI(tk.Tk):
             "row_label_pos": row_pos,
             "label_frame": labf,
             "actions_frame": col3,
+            "paren_open_btn": paren_open_btn,
+            "paren_open": False,
+            "exponent_1_box": exp1_entry,
+            "exponent_1_entry": exp1_entry,
+            "paren_close_btn": paren_close_btn,
+            "paren_close": False,
+            "exponent_2_box": exp2_entry,
+            "exponent_2_entry": exp2_entry,
             "node": row_tree.new_node("_number"),
             "helper_card": None,
             "helper_heading": None,
@@ -600,7 +723,7 @@ class CalculatorGUI(tk.Tk):
     def _math_slot(self, parent, r):
         """Mathematical expression slot anchored to Excel Column E (width 110)."""
         k = r + 1
-        math_pos = excel_workspace_position(k, "number_for_math")
+        math_pos = excel_17col_workspace_position(k, "number_for_math")
         box = tk.Frame(parent, bg=CREAM, width=110, height=44)
         box.grid_pos = math_pos
         box.excel_pos = math_pos
@@ -674,15 +797,33 @@ class CalculatorGUI(tk.Tk):
         if row.get("equals_label") is not None:
             row["equals_label"].grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
             row["equals_label"].configure(text="=")
-            row["equals_label"].excel_pos = GridPosition(excel_13col_start_row(i + 1) + 1, EXCEL_13COL_RESULT_EQUALS, region=LayoutRegion.EXCEL_WORKSPACE)
+            row["equals_label"].excel_pos = excel_17col_workspace_position(i + 1, "result_equals")
+        if row.get("paren_open_btn") is not None:
+            row["paren_open"] = False
+            row["paren_open_btn"].configure(bg="white", fg="black", relief="raised")
+            row["paren_open_btn"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+            row["paren_open_btn"].excel_pos = excel_17col_workspace_position(i + 1, "paren_open")
         if row.get("result_box") is not None:
-            row["result_box"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
-            row["result_box"].excel_pos = GridPosition(excel_13col_start_row(i + 1) + 1, EXCEL_13COL_RESULT_BOX, region=LayoutRegion.EXCEL_WORKSPACE)
+            row["result_box"].grid(row=1, column=11, padx=2, pady=2, sticky="nsew")
+            row["result_box"].excel_pos = excel_17col_workspace_position(i + 1, "result_box")
+        if row.get("exponent_1_box") is not None:
+            row["exponent_1_box"].delete(0, tk.END)
+            row["exponent_1_box"].grid(row=0, column=12, padx=2, pady=(2, 0), sticky="s")
+            row["exponent_1_box"].excel_pos = excel_17col_workspace_position(i + 1, "exponent_1")
+        if row.get("paren_close_btn") is not None:
+            row["paren_close"] = False
+            row["paren_close_btn"].configure(bg="white", fg="black", relief="raised")
+            row["paren_close_btn"].grid(row=1, column=13, padx=2, pady=2, sticky="nsew")
+            row["paren_close_btn"].excel_pos = excel_17col_workspace_position(i + 1, "paren_close")
+        if row.get("exponent_2_box") is not None:
+            row["exponent_2_box"].delete(0, tk.END)
+            row["exponent_2_box"].grid(row=0, column=14, padx=2, pady=(2, 0), sticky="s")
+            row["exponent_2_box"].excel_pos = excel_17col_workspace_position(i + 1, "exponent_2")
         if row.get("result_desc") is not None:
-            row["result_desc"].grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
-        for col_1based, width in EXCEL_13COL_COLUMN_WIDTHS.items():
+            row["result_desc"].grid(row=1, column=15, columnspan=2, padx=2, pady=2, sticky="w")
+        for col_1based, width in EXCEL_17COL_COLUMN_WIDTHS.items():
             row["row_frame"].grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
-        row["grid_positions"] = excel_workspace_positions(i + 1)
+        row["grid_positions"] = excel_17col_workspace_positions(i + 1)
         self._set_result(i)
         self._render_row(i)
 
@@ -754,10 +895,10 @@ class CalculatorGUI(tk.Tk):
         row["sub"].configure(text="")
         row["row_frame"].grid(row=idx, column=0, sticky="nw", padx=0, pady=(2, 6))
 
-        # Apply authoritative effective default widths so empty columns (E, F, G, I)
-        # do not collapse, aligning Column J (=) and Column K (result) directly below
-        # standard mathematical rows on Columns J and K.
-        for col_1based, width in EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS.items():
+        # Apply authoritative effective default widths so empty columns (C, E, F, G, I)
+        # do not collapse, aligning Column J (=), Column K ('('), and Column L (result)
+        # directly below standard mathematical rows.
+        for col_1based, width in EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS.items():
             row["row_frame"].grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
 
         if row.get("join_btn") is not None:
@@ -776,17 +917,34 @@ class CalculatorGUI(tk.Tk):
         if row.get("equals_label") is not None:
             row["equals_label"].grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
             row["equals_label"].configure(text="=")
-            row["equals_label"].excel_pos = GridPosition(excel_13col_start_row(idx + 1) + 1, EXCEL_13COL_RESULT_EQUALS, region=LayoutRegion.EXCEL_WORKSPACE)
+            row["equals_label"].excel_pos = excel_17col_workspace_position(idx + 1, "result_equals")
+
+        if row.get("paren_open_btn") is not None:
+            row["paren_open_btn"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+            row["paren_open_btn"].excel_pos = excel_17col_workspace_position(idx + 1, "paren_open")
 
         self._set_result(idx, advanced_input.short_label(shown, 14))
         if row.get("result_box") is not None:
-            row["result_box"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
-            row["result_box"].excel_pos = GridPosition(excel_13col_start_row(idx + 1) + 1, EXCEL_13COL_RESULT_BOX, region=LayoutRegion.EXCEL_WORKSPACE)
+            row["result_box"].grid(row=1, column=11, padx=2, pady=2, sticky="nsew")
+            row["result_box"].excel_pos = excel_17col_workspace_position(idx + 1, "result_box")
+
+        if row.get("exponent_1_box") is not None:
+            row["exponent_1_box"].grid(row=0, column=12, padx=2, pady=(2, 0), sticky="s")
+            row["exponent_1_box"].excel_pos = excel_17col_workspace_position(idx + 1, "exponent_1")
+
+        if row.get("paren_close_btn") is not None:
+            row["paren_close_btn"].grid(row=1, column=13, padx=2, pady=2, sticky="nsew")
+            row["paren_close_btn"].excel_pos = excel_17col_workspace_position(idx + 1, "paren_close")
+
+        if row.get("exponent_2_box") is not None:
+            row["exponent_2_box"].grid(row=0, column=14, padx=2, pady=(2, 0), sticky="s")
+            row["exponent_2_box"].excel_pos = excel_17col_workspace_position(idx + 1, "exponent_2")
 
         if row.get("result_desc") is not None:
-            row["result_desc"].grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+            row["result_desc"].grid(row=1, column=15, columnspan=2, padx=2, pady=2, sticky="w")
+            row["result_desc"].excel_pos = excel_17col_workspace_position(idx + 1, "result_box1")
 
-        row["grid_positions"] = excel_13col_total_row_positions(idx + 1)
+        row["grid_positions"] = excel_17col_total_row_positions(idx + 1)
         self._fit_rows()
         self._scroll_to_row(idx)
 
@@ -1035,7 +1193,7 @@ class CalculatorGUI(tk.Tk):
                     b.num_boxes = math_desc.num_boxes
                     b.get_words = math_desc.get_words
                     b.to_excel_coordinate = math_desc.to_excel_coordinate
-                b.grid_pos = excel_workspace_position(i + 1, "number_for_math")
+                b.grid_pos = excel_17col_workspace_position(i + 1, "number_for_math")
                 b.excel_pos = b.grid_pos
                 b.pack(pady=4)
             else:
@@ -1111,6 +1269,10 @@ class CalculatorGUI(tk.Tk):
         (Row 2 has a join sign), the answer for all of them is printed in the row after the last one used (Row 3
         for Rows 1 and 2).  A single row prints nothing further down.  With a multi-row operator, every row is
         calculated and the results are joined by that operator's joins."""
+        if self._has_active_17col_controls():
+            self._say("Parentheses and exponents across rows will be evaluated in Step 3 (PEMDAS engine). "
+                      "Remove them or press = for standard evaluation.")
+            return
         if self.template is not None:
             return self._equals_template()
         if self._is_blank(self.rows[0]):
