@@ -163,24 +163,26 @@ class TestCheckpoint6AExpandableParentheses(unittest.TestCase):
             app._add_paren_pair(0)
             app.update()
 
-            # Shifted positions (P=2):
+            # Shifted positions (P=2 with Checkpoint 6C interleaved group exponents):
             # Col K (10): Blue +
             # Col L (11): Open paren 0
             # Col M (12): Open paren 1 (added)
             # Col N (13): Result box (shifted +1)
             # Col O (14): Exponent 1 (shifted +1)
             # Col P (15): Close paren 0 (shifted +1)
-            # Col Q (16): Close paren 1 (added)
-            # Col R (17): Exponent 2 (shifted +2)
-            # Col S (18): Result desc (shifted +2)
+            # Col Q (16): Exponent 2 Box 0 (paired with Close 0)
+            # Col R (17): Close paren 1 (added)
+            # Col S (18): Exponent 2 Box 1 (paired with Close 1)
+            # Col T (19): Result desc (shifted +3)
             self.assertEqual(row0["paren_open_btns"][0].excel_pos.column, 12)
             self.assertEqual(row0["paren_open_btns"][1].excel_pos.column, 13)
             self.assertEqual(row0["result_box"].excel_pos.column, 14)
             self.assertEqual(row0["exponent_1_box"].excel_pos.column, 15)
             self.assertEqual(row0["paren_close_btns"][0].excel_pos.column, 16)
-            self.assertEqual(row0["paren_close_btns"][1].excel_pos.column, 17)
-            self.assertEqual(row0["exponent_2_box"].excel_pos.column, 18)
-            self.assertEqual(row0["result_desc"].excel_pos.column, 19)
+            self.assertEqual(row0["exponent_2_boxes"][0].excel_pos.column, 17)
+            self.assertEqual(row0["paren_close_btns"][1].excel_pos.column, 18)
+            self.assertEqual(row0["exponent_2_boxes"][1].excel_pos.column, 19)
+            self.assertEqual(row0["result_desc"].excel_pos.column, 20)
         finally:
             app.destroy()
 

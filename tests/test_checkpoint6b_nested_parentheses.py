@@ -212,7 +212,8 @@ class TestCheckpoint6BNestedParentheses(unittest.TestCase):
         app._add_paren_pair(2)  # P=2 on Row 3
         app._toggle_paren_close(2, 0)
         app._toggle_paren_close(2, 1)
-        app.rows[2]["exponent_2_box"].insert(0, "2")
+        # In Checkpoint 6C, close paren 1 is paired with exponent_2_boxes[1] for the outer group
+        app.rows[2]["exponent_2_boxes"][1].insert(0, "2")
         app._equals()
         app.update()
 

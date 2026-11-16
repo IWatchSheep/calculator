@@ -308,7 +308,8 @@ class CalculatorGUI(tk.Tk):
         # Check if focus or event widget is one of the exponent boxes
         is_exponent_entry = False
         for r in self.rows:
-            if w in (r.get("exponent_1_box"), r.get("exponent_2_box")) or focused in (r.get("exponent_1_box"), r.get("exponent_2_box")):
+            exp_boxes = [r.get("exponent_1_box"), r.get("exponent_2_box")] + r.get("exponent_2_boxes", [])
+            if w in exp_boxes or focused in exp_boxes:
                 is_exponent_entry = True
                 break
 
@@ -546,7 +547,7 @@ class CalculatorGUI(tk.Tk):
         self._sync_closing_parentheses_capacity()
 
     def _ensure_paren_pairs(self, r, target_count):
-        """Ensure row r has at least target_count parenthesis pairs, adding buttons if needed."""
+        """Ensure row r has at least target_count parenthesis pairs, adding buttons and group exponent boxes if needed."""
         if r < 0 or r >= len(self.rows):
             return
         row = self.rows[r]
@@ -571,7 +572,16 @@ class CalculatorGUI(tk.Tk):
             row.setdefault("paren_close_btns", []).append(btn_close)
             row.setdefault("paren_close_states", []).append(False)
 
+            exp2_entry = tk.Entry(row_frame, width=4, font=("Segoe UI", 9), justify="center", bd=1,
+                                  relief="solid", bg="white", fg="black")
+            exp2_entry.bind("<FocusIn>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
+            exp2_entry.bind("<Button-1>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
+            exp2_entry.bind("<FocusOut>", lambda e, b=exp2_entry: self._on_exponent_focus_out(b), add="+")
+            row.setdefault("exponent_2_boxes", []).append(exp2_entry)
+
         row["paren_pairs_count"] = len(row["paren_open_btns"])
+        if row.get("exponent_2_boxes"):
+            row["exponent_2_box"] = row["exponent_2_boxes"][0]
         self._relayout_row(r)
 
     def _sync_closing_parentheses_capacity(self):
@@ -645,30 +655,35 @@ class CalculatorGUI(tk.Tk):
             row["exponent_1_box"].excel_pos = GridPosition(row=r0, column=13 + P, region=LayoutRegion.EXCEL_WORKSPACE)
             row["exponent_1_box"].grid_pos = row["exponent_1_box"].excel_pos
 
-        # Close parens (Col O onwards, shifted by P - 1): 0-based 13 + P .. 13 + 2P - 1
+        # Close parens and paired group exponents (Col O and P onwards)
+        # Interleaved: for each pair p in range(P):
+        #   Close paren p: column 13 + P + 2*p (row 1)
+        #   Exponent 2 box p: column 14 + P + 2*p (row 0)
         close_btns = row.get("paren_close_btns", [])
-        for p, btn_cl in enumerate(close_btns):
-            col_idx = 13 + P + p
-            btn_cl.grid(row=1, column=col_idx, padx=2, pady=2, sticky="nsew")
-            row_frame.grid_columnconfigure(col_idx, minsize=36, weight=0)
-            btn_cl.excel_pos = GridPosition(row=r0 + 1, column=14 + P + p, region=LayoutRegion.EXCEL_WORKSPACE)
-            btn_cl.grid_pos = btn_cl.excel_pos
+        exp2_boxes = row.get("exponent_2_boxes", [])
+        for p in range(P):
+            c_col = 13 + P + 2 * p
+            e_col = 14 + P + 2 * p
+            if p < len(close_btns):
+                btn_cl = close_btns[p]
+                btn_cl.grid(row=1, column=c_col, padx=2, pady=2, sticky="nsew")
+                row_frame.grid_columnconfigure(c_col, minsize=36, weight=0)
+                btn_cl.excel_pos = GridPosition(row=r0 + 1, column=14 + P + 2 * p, region=LayoutRegion.EXCEL_WORKSPACE)
+                btn_cl.grid_pos = btn_cl.excel_pos
+            if p < len(exp2_boxes):
+                eb = exp2_boxes[p]
+                eb.grid(row=0, column=e_col, padx=2, pady=(2, 0), sticky="s")
+                row_frame.grid_columnconfigure(e_col, minsize=48, weight=0)
+                eb.excel_pos = GridPosition(row=r0, column=15 + P + 2 * p, region=LayoutRegion.EXCEL_WORKSPACE)
+                eb.grid_pos = eb.excel_pos
 
-        # Exponent 2 (Col P, shifted by 2 * (P - 1)): 0-based 13 + 2 * P
-        exp2_col = 13 + 2 * P
-        if row.get("exponent_2_box") is not None:
-            row["exponent_2_box"].grid(row=0, column=exp2_col, padx=2, pady=(2, 0), sticky="s")
-            row_frame.grid_columnconfigure(exp2_col, minsize=48, weight=0)
-            row["exponent_2_box"].excel_pos = GridPosition(row=r0, column=14 + 2 * P, region=LayoutRegion.EXCEL_WORKSPACE)
-            row["exponent_2_box"].grid_pos = row["exponent_2_box"].excel_pos
-
-        # Result desc (Col Q..R, shifted by 2 * (P - 1)): 0-based 14 + 2 * P
-        res_desc_col = 14 + 2 * P
+        # Result desc (Col Q..R, shifted): 0-based 13 + 3 * P
+        res_desc_col = 13 + 3 * P
         if row.get("result_desc") is not None:
             row["result_desc"].grid(row=1, column=res_desc_col, columnspan=2, padx=2, pady=2, sticky="w")
             row_frame.grid_columnconfigure(res_desc_col, minsize=140, weight=0)
             row_frame.grid_columnconfigure(res_desc_col + 1, minsize=93, weight=0)
-            row["result_desc"].excel_pos = GridPosition(row=r0 + 1, column=15 + 2 * P, region=LayoutRegion.EXCEL_WORKSPACE)
+            row["result_desc"].excel_pos = GridPosition(row=r0 + 1, column=14 + 3 * P, region=LayoutRegion.EXCEL_WORKSPACE)
             row["result_desc"].grid_pos = row["result_desc"].excel_pos
 
         self._fit_rows()
@@ -685,6 +700,9 @@ class CalculatorGUI(tk.Tk):
             exp1 = row.get("exponent_1_box")
             if exp1 is not None and exp1.get().strip():
                 return True
+            for exp2 in row.get("exponent_2_boxes", []):
+                if exp2 is not None and exp2.get().strip():
+                    return True
             exp2 = row.get("exponent_2_box")
             if exp2 is not None and exp2.get().strip():
                 return True
@@ -852,17 +870,27 @@ class CalculatorGUI(tk.Tk):
             box.delete(0, tk.END)
             box.insert(0, str(text))
 
-    def _get_exponent_2(self, r):
+    def _get_exponent_2(self, r, p=0):
         if r < 0 or r >= len(self.rows):
             return ""
-        box = self.rows[r].get("exponent_2_box")
-        return box.get().strip() if box is not None else ""
+        row = self.rows[r]
+        boxes = row.get("exponent_2_boxes", [])
+        if p < len(boxes) and boxes[p] is not None:
+            return boxes[p].get().strip()
+        box = row.get("exponent_2_box")
+        return box.get().strip() if (box is not None and p == 0) else ""
 
-    def _set_exponent_2(self, r, text):
+    def _set_exponent_2(self, r, text, p=0):
         if r < 0 or r >= len(self.rows):
             return
-        box = self.rows[r].get("exponent_2_box")
-        if box is not None:
+        row = self.rows[r]
+        boxes = row.get("exponent_2_boxes", [])
+        if p < len(boxes) and boxes[p] is not None:
+            boxes[p].delete(0, tk.END)
+            boxes[p].insert(0, str(text))
+            return
+        box = row.get("exponent_2_box")
+        if box is not None and p == 0:
             box.delete(0, tk.END)
             box.insert(0, str(text))
 
@@ -1079,6 +1107,7 @@ class CalculatorGUI(tk.Tk):
             "paren_close": False,
             "exponent_2_box": exp2_entry,
             "exponent_2_entry": exp2_entry,
+            "exponent_2_boxes": [exp2_entry],
             "node": row_tree.new_node("_number"),
             "helper_card": None,
             "helper_heading": None,
@@ -1187,6 +1216,16 @@ class CalculatorGUI(tk.Tk):
             row["paren_close_states"] = [False]
             if row["paren_close_btns"]:
                 row["paren_close_btns"][0].configure(bg="white", fg="black", relief="raised")
+        if "exponent_2_boxes" in row:
+            for b in row["exponent_2_boxes"][1:]:
+                try:
+                    b.destroy()
+                except Exception:
+                    pass
+            row["exponent_2_boxes"] = row["exponent_2_boxes"][:1]
+            if row["exponent_2_boxes"]:
+                row["exponent_2_boxes"][0].delete(0, tk.END)
+                row["exponent_2_box"] = row["exponent_2_boxes"][0]
         row["paren_pairs_count"] = 1
         row["paren_open"] = False
         row["paren_close"] = False
@@ -1723,26 +1762,41 @@ class CalculatorGUI(tk.Tk):
         for idx, k in enumerate(used_rows):
             row = self.rows[k]
             open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
-            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
+            close_states = row.get("paren_close_states", [])
+            close_count = sum(1 for s in close_states if s) if close_states else (1 if row.get("paren_close") else 0)
             exp1_str = self._get_exponent_1(k)
-            exp2_str = self._get_exponent_2(k)
 
-            # Check for group exponent without close parenthesis
-            if exp2_str and close_count == 0:
-                self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
-                return
+            # Check for group exponent without close parenthesis and validate syntax
+            exp2_boxes = row.get("exponent_2_boxes", [])
+            if exp2_boxes:
+                for p_idx, exp_box in enumerate(exp2_boxes):
+                    p_text = exp_box.get().strip() if exp_box is not None else ""
+                    if p_text:
+                        is_active = close_states[p_idx] if p_idx < len(close_states) else False
+                        if not is_active:
+                            self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
+                            return
+                        try:
+                            self._parse_exponent_value(p_text)
+                        except ValueError as e:
+                            self._say("Row %d: %s" % (k + 1, e))
+                            return
+            else:
+                exp2_str = self._get_exponent_2(k)
+                if exp2_str and close_count == 0:
+                    self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
+                    return
+                if exp2_str:
+                    try:
+                        self._parse_exponent_value(exp2_str)
+                    except ValueError as e:
+                        self._say("Row %d: %s" % (k + 1, e))
+                        return
 
-            # Check exponent syntax
+            # Check exponent 1 syntax
             if exp1_str:
                 try:
                     self._parse_exponent_value(exp1_str)
-                except ValueError as e:
-                    self._say("Row %d: %s" % (k + 1, e))
-                    return
-
-            if exp2_str:
-                try:
-                    self._parse_exponent_value(exp2_str)
                 except ValueError as e:
                     self._say("Row %d: %s" % (k + 1, e))
                     return
@@ -1784,8 +1838,6 @@ class CalculatorGUI(tk.Tk):
         for idx, k in enumerate(used_rows):
             row = self.rows[k]
             open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
-            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
-            exp2_str = self._get_exponent_2(k)
 
             # Leading join symbol between rows
             if idx > 0:
@@ -1799,8 +1851,17 @@ class CalculatorGUI(tk.Tk):
             # Push this row's evaluated value
             stack[-1].operands.append(row_values[k])
 
-            # Closing parentheses on this row
-            for c_idx in range(close_count):
+            # Closing parentheses on this row paired 1-to-1 with their group exponents
+            close_states = row.get("paren_close_states", [])
+            active_closes = []
+            if close_states:
+                for p_idx, is_active in enumerate(close_states):
+                    if is_active:
+                        active_closes.append((p_idx, self._get_exponent_2(k, p_idx)))
+            elif row.get("paren_close"):
+                active_closes.append((0, self._get_exponent_2(k, 0)))
+
+            for p_idx, exp_str in active_closes:
                 if len(stack) <= 1:
                     self._say("Row %d has a closing parenthesis ')' without a matching opening parenthesis '('. "
                               "Please add '(' or remove ')'. " % (k + 1))
@@ -1816,10 +1877,9 @@ class CalculatorGUI(tk.Tk):
                         self._say(str(e_val))
                         return
 
-                # Exponent Box 2 applies to the outermost group closed on this row
-                if c_idx == close_count - 1 and exp2_str:
-                    exp2 = self._parse_exponent_value(exp2_str)
+                if exp_str:
                     try:
+                        exp2 = self._parse_exponent_value(exp_str)
                         sub_val = self._apply_exponent(sub_val, exp2)
                     except ValueError as e_exp:
                         self._say("Row %d: %s" % (k + 1, e_exp))
@@ -1851,9 +1911,7 @@ class CalculatorGUI(tk.Tk):
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
             row = self.rows[k]
             open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
-            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
             exp1_str = self._get_exponent_1(k)
-            exp2_str = self._get_exponent_2(k)
 
             if exp1_str:
                 base_part = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
@@ -1861,11 +1919,26 @@ class CalculatorGUI(tk.Tk):
                 base_part = cards
 
             open_prefix = "( " * open_count
-            close_suffix = " )" * close_count
-            row_part = "%s%s%s" % (open_prefix, base_part, close_suffix)
 
-            if exp2_str:
-                row_part = "%s^%s" % (row_part, exp2_str)
+            close_states = row.get("paren_close_states", [])
+            close_parts = []
+            if close_states:
+                for p_idx, is_active in enumerate(close_states):
+                    if is_active:
+                        exp_str = self._get_exponent_2(k, p_idx)
+                        if exp_str:
+                            close_parts.append(")^%s" % exp_str)
+                        else:
+                            close_parts.append(")")
+            elif row.get("paren_close"):
+                exp_str = self._get_exponent_2(k, 0)
+                if exp_str:
+                    close_parts.append(")^%s" % exp_str)
+                else:
+                    close_parts.append(")")
+
+            close_suffix = (" " + " ".join(close_parts)) if close_parts else ""
+            row_part = "%s%s%s" % (open_prefix, base_part, close_suffix)
 
             if idx == 0:
                 lines.append("Row 1:  %s" % row_part)
