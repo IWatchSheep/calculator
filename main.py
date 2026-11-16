@@ -489,6 +489,91 @@ class CalculatorGUI(tk.Tk):
                 return True
         return False
 
+    def _has_unsupported_pemdas_controls(self):
+        """Check if any row currently has parentheses toggled or Exponent Box 2 (group exponent) entered.
+        These features are reserved for subsequent stages of Step 3 (PEMDAS engine)."""
+        for row in self.rows:
+            if row.get("is_result"):
+                continue
+            if row.get("paren_open") or row.get("paren_close"):
+                return True
+            exp2 = row.get("exponent_2_box")
+            if exp2 is not None and exp2.get().strip():
+                return True
+        return False
+
+    @staticmethod
+    def _parse_exponent_value(s):
+        """Parse text from Exponent Box 1 (Column M).
+        Supports:
+          - Integers: '3', '0', '-2'
+          - Floats: '0.5', '-1.5'
+          - Fractions: '1/2', '1/3', '-1/4'
+        Returns int or float, or None if string is empty.
+        Raises ValueError on invalid syntax or division by zero.
+        """
+        if s is None:
+            return None
+        text = str(s).strip()
+        if not text:
+            return None
+        try:
+            return int(text)
+        except ValueError:
+            pass
+        try:
+            return float(text)
+        except ValueError:
+            pass
+        if "/" in text:
+            parts = text.split("/")
+            if len(parts) == 2:
+                try:
+                    num = float(parts[0].strip())
+                    den = float(parts[1].strip())
+                    if den == 0:
+                        raise ValueError("Division by zero in exponent.")
+                    val = num / den
+                    if val.is_integer() and abs(val) < 1e15:
+                        return int(val)
+                    return val
+                except ValueError as e:
+                    if "Division by zero" in str(e):
+                        raise
+                    pass
+        raise ValueError("Invalid exponent '%s'." % text)
+
+    @staticmethod
+    def _apply_exponent(base, exp):
+        """Raise base to power exp.
+        Supports int, float, complex base.
+        Raises ValueError on zero division, overflow, or math domain errors.
+        """
+        if exp is None:
+            return base
+        if isinstance(base, (list, tuple, set, dict)):
+            raise ValueError("Cannot apply exponent to structured data.")
+        try:
+            if isinstance(base, (int, float)) and base < 0 and isinstance(exp, float):
+                recip = 1.0 / exp
+                if abs(recip - round(recip)) < 1e-9 and int(round(recip)) % 2 == 1:
+                    res = -((-base) ** exp)
+                    if isinstance(res, float) and abs(res - round(res)) < 1e-12 and abs(res) < 1e15:
+                        return int(round(res))
+                    return res
+            res = base ** exp
+            if isinstance(res, complex) and abs(res.imag) < 1e-12:
+                res = res.real
+            if isinstance(res, float) and abs(res - round(res)) < 1e-12 and abs(res) < 1e15:
+                res = int(round(res))
+            return res
+        except ZeroDivisionError:
+            raise ValueError("Division by zero.")
+        except OverflowError:
+            raise ValueError("Exponent calculation overflow.")
+        except Exception as e:
+            raise ValueError("Cannot calculate power: %s" % e)
+
     def _get_exponent_1(self, r):
         if r < 0 or r >= len(self.rows):
             return ""
@@ -1269,9 +1354,9 @@ class CalculatorGUI(tk.Tk):
         (Row 2 has a join sign), the answer for all of them is printed in the row after the last one used (Row 3
         for Rows 1 and 2).  A single row prints nothing further down.  With a multi-row operator, every row is
         calculated and the results are joined by that operator's joins."""
-        if self._has_active_17col_controls():
-            self._say("Parentheses and exponents across rows will be evaluated in Step 3 (PEMDAS engine). "
-                      "Remove them or press = for standard evaluation.")
+        if self._has_unsupported_pemdas_controls():
+            self._say("Parentheses and group exponents (Exponent Box 2) will be evaluated in Step 3 (PEMDAS engine). "
+                      "Remove them or use Exponent Box 1 for individual row powers.")
             return
         if self.template is not None:
             return self._equals_template()
@@ -1289,10 +1374,22 @@ class CalculatorGUI(tk.Tk):
                 self._say("Row %d: %s" % (k + 1, e) if k else str(e))
                 return
             self._render_row(k)                 # the formula's answer box shows the answer
+            exp1_str = self._get_exponent_1(k)
+            if exp1_str:
+                try:
+                    exp1 = self._parse_exponent_value(exp1_str)
+                    v = self._apply_exponent(v, exp1)
+                except ValueError as e:
+                    self._say("Row %d: %s" % (k + 1, e) if k else str(e))
+                    return
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
             if k == 0:
                 total = v
-                lines.append("Row 1:  %s" % cards)
+                if exp1_str:
+                    row_desc = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
+                    lines.append("Row 1:  %s" % row_desc)
+                else:
+                    lines.append("Row 1:  %s" % cards)
             else:
                 if not row["join"]:
                     self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button."
@@ -1303,7 +1400,11 @@ class CalculatorGUI(tk.Tk):
                 except ValueError as e:
                     self._say(str(e))
                     return
-                lines.append("Row %d:  %s %s" % (k + 1, row["join"], cards))
+                if exp1_str:
+                    row_desc = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
+                    lines.append("Row %d:  %s %s" % (k + 1, row["join"], row_desc))
+                else:
+                    lines.append("Row %d:  %s %s" % (k + 1, row["join"], cards))
             self._set_result(k, advanced_input.short_label(row_tree.fmt(v), 14))      # the row's own answer, in its own card
             last = k
             used += 1
@@ -1389,6 +1490,14 @@ class CalculatorGUI(tk.Tk):
                 self._say("Row %d (%s): %s" % (i + 1, rs["title"], e))
                 return
             self._render_row(i)
+            exp1_str = self._get_exponent_1(i)
+            if exp1_str:
+                try:
+                    exp1 = self._parse_exponent_value(exp1_str)
+                    v = self._apply_exponent(v, exp1)
+                except ValueError as e:
+                    self._say("Row %d (%s): %s" % (i + 1, rs["title"], e) if len(spec["rows"]) > 1 else str(e))
+                    return
             results.append(v)
             self._set_result(i, advanced_input.short_label(row_tree.fmt(v), 14))
         try:

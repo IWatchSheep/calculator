@@ -3734,9 +3734,9 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             # Did not evaluate or create incorrect result row
             self.assertEqual(len(app.rows), 1)
 
-            # Untoggle paren and add exponent
+            # Untoggle paren and test Exponent Box 2 (group exponent) which is still guarded in Step 3A
             app._toggle_paren_open(0)
-            app._set_exponent_1(0, "3")
+            app._set_exponent_2(0, "3")
             app._equals()
             app.update()
 
@@ -3767,6 +3767,347 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
             self.assertEqual(tot["result_box"].winfo_x(), 795)
+        finally:
+            app.destroy()
+
+
+
+
+class TestStep3AIndividualRowExponentiation(unittest.TestCase):
+    """Checkpoint 5, Step 3A: Individual Row Exponentiation tests.
+
+    Verifies that Exponent Box 1 (Column M) applies an exponent to the mathematical
+    value of its own row (numbers and single-row templates), while Exponent Box 2
+    and cross-row parentheses remain guarded for subsequent PEMDAS stages.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_example_1_positive_integer_exponent(self):
+        """Example 1: Enter 2 in Row 1 Col E, 3 in Row 1 Col M -> Row 1 Col L displays 8."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._set_exponent_1(0, "3")
+            app._equals()
+            app.update()
+
+            # Row 1 Col L must display 8
+            self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+            # Only Row 1 active: no extra row or Total row created
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_02_example_2_positive_integer_exponent(self):
+        """Example 2: Enter 5 in Row 1 Col E, 2 in Row 1 Col M -> Row 1 Col L displays 25."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("5")
+            app._set_exponent_1(0, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "25")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_03_example_3_empty_exponent_box(self):
+        """Example 3: Enter 2 in Row 1 Col E, leave Col M empty -> Row 1 Col L displays 2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            # Col M left empty
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_04_example_4_single_row_mathematical_template_with_exponent(self):
+        """Example 4: 4 + 6 inside a single-row template, 2 in Col M -> Row 1 Col L displays 100."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app.tpl_entry.insert(0, "4 + 6")
+            app._tpl_preview()
+            app._set_exponent_1(0, "2")
+            app._equals()
+            app.update()
+
+            # (4 + 6)^2 = 10^2 = 100
+            self.assertEqual(app.rows[0]["result"].cget("text"), "100")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_05_zero_exponents(self):
+        """Zero exponents: 5^0 = 1, 0^0 = 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # 5^0 = 1
+            app._key("5")
+            app._set_exponent_1(0, "0")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "1")
+
+            # 0^0 = 1
+            app._clear_all()
+            app._key("0")
+            app._set_exponent_1(0, "0")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "1")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_06_negative_integer_exponents(self):
+        """Negative integer exponents: 2^-1 = 0.5, 2^-2 = 0.25."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._set_exponent_1(0, "-1")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "0.5")
+
+            app._set_exponent_1(0, "-2")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "0.25")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_07_fractional_exponents(self):
+        """Fractional exponents: 4^0.5 = 2, 8^(1/3) = 2, 27^(1/3) = 3."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # 4^0.5 = 2
+            app._key("4")
+            app._set_exponent_1(0, "0.5")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+            # 8^(1/3) = 2
+            app._clear_all()
+            app._key("8")
+            app._set_exponent_1(0, "1/3")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+            # 27^(1/3) = 3
+            app._clear_all()
+            app._key("2")
+            app._key("7")
+            app._set_exponent_1(0, "1/3")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "3")
+        finally:
+            app.destroy()
+
+    def test_08_invalid_exponent_text_handling(self):
+        """Invalid exponent text: 'abc' or '++' displays clear error message without crashing."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("5")
+            app._set_exponent_1(0, "abc")
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Invalid exponent", msg)
+            self.assertEqual(len(app.rows), 1)
+
+            app._set_exponent_1(0, "++")
+            app._equals()
+            app.update()
+            msg2 = app.results.get("1.0", "end").strip()
+            self.assertIn("Invalid exponent", msg2)
+        finally:
+            app.destroy()
+
+    def test_09_repeated_evaluation_consistency(self):
+        """Repeated evaluation: pressing '=' multiple times produces consistent result and no extra rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("3")
+            app._set_exponent_1(0, "4")
+            for _ in range(4):
+                app._equals()
+                app.update()
+                self.assertEqual(app.rows[0]["result"].cget("text"), "81")
+                self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_10_editing_base_or_exponent_after_evaluation(self):
+        """Editing base or exponent after evaluation updates result accurately upon re-evaluating."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Initial: 3^2 = 9
+            app._key("3")
+            app._set_exponent_1(0, "2")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "9")
+
+            # Edit exponent to 3: 3^3 = 27
+            app._set_exponent_1(0, "3")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "27")
+
+            # Edit base: backspace 3, type 4: 4^3 = 64
+            app._key("⌫")
+            app._key("4")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "64")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_11_division_by_zero_and_domain_errors(self):
+        """Division by zero: 0^-1 and 1/0 exponent are reported gracefully without crashing."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # 0^-1
+            app._key("0")
+            app._set_exponent_1(0, "-1")
+            app._equals()
+            app.update()
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Division by zero", msg)
+
+            # 1/0 exponent
+            app._clear_all()
+            app._key("5")
+            app._set_exponent_1(0, "1/0")
+            app._equals()
+            app.update()
+            msg2 = app.results.get("1.0", "end").strip()
+            self.assertIn("Division by zero", msg2)
+        finally:
+            app.destroy()
+
+    def test_12_multi_row_with_individual_row_exponents(self):
+        """Multi-row calculation: Row 1 (2^3 = 8) + Row 2 (5^2 = 25) = Row 3 Total (33)."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._set_exponent_1(0, "3")
+            app._next_row()
+            app._join_key("+")
+            app._key("5")
+            app._set_exponent_1(1, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "25")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "33")
+            self.assertEqual(app.rows[2]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_13_unsupported_controls_trigger_guard(self):
+        """Parentheses and Exponent Box 2 trigger the Step 3 safety guard message."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Test parenthesis open
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._equals()
+            app.update()
+            msg1 = app.results.get("1.0", "end").strip()
+            self.assertIn("Step 3 (PEMDAS engine)", msg1)
+            self.assertEqual(len(app.rows), 1)
+
+            # Test parenthesis close
+            app._toggle_paren_open(0)
+            app._toggle_paren_close(0)
+            app._equals()
+            app.update()
+            msg2 = app.results.get("1.0", "end").strip()
+            self.assertIn("Step 3 (PEMDAS engine)", msg2)
+
+            # Test Exponent Box 2 (group exponent)
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "4")
+            app._equals()
+            app.update()
+            msg3 = app.results.get("1.0", "end").strip()
+            self.assertIn("Step 3 (PEMDAS engine)", msg3)
+            self.assertEqual(len(app.rows), 1)
         finally:
             app.destroy()
 
