@@ -52,6 +52,38 @@ from gui_coordinates import (
     excel_17col_workspace_position,
     excel_17col_workspace_positions,
     excel_17col_total_row_positions,
+    EXCEL_18COL_TOTAL_COLUMNS,
+    EXCEL_18COL_LETTERS,
+    EXCEL_18COL_ROW_LABEL,
+    EXCEL_18COL_SPACER_AB,
+    EXCEL_18COL_MATH_SIGN,
+    EXCEL_18COL_SPACER_CD,
+    EXCEL_18COL_NUMBER_MATH,
+    EXCEL_18COL_MATH_BOX1,
+    EXCEL_18COL_MATH_TRAILING,
+    EXCEL_18COL_SPACER_GH,
+    EXCEL_18COL_ACTIONS,
+    EXCEL_18COL_RESULT_EQUALS,
+    EXCEL_18COL_PAREN_PLUS,
+    EXCEL_18COL_PAREN_OPEN,
+    EXCEL_18COL_RESULT_BOX,
+    EXCEL_18COL_EXPONENT_1,
+    EXCEL_18COL_PAREN_CLOSE,
+    EXCEL_18COL_EXPONENT_2,
+    EXCEL_18COL_RESULT_BOX1,
+    EXCEL_18COL_RESULT_TRAILING,
+    EXCEL_18COL_COLUMN_WIDTHS,
+    EXCEL_18COL_EFFECTIVE_DEFAULT_WIDTHS,
+    excel_18col_column_letter,
+    excel_18col_column_from_letter,
+    excel_18col_column_width,
+    excel_18col_effective_column_width,
+    excel_18col_total_width,
+    excel_18col_effective_total_width,
+    excel_18col_start_row,
+    excel_18col_workspace_position,
+    excel_18col_workspace_positions,
+    excel_18col_total_row_positions,
 )
 """Focused unit tests for the common GUI coordinate convention."""
 import os
@@ -871,17 +903,17 @@ class TestMainRowCoordinates(unittest.TestCase):
             for r_idx in range(2):
                 row_data = app.rows[r_idx]
                 r_num = r_idx + 1
-                r0 = excel_17col_start_row(r_num)
+                r0 = excel_18col_start_row(r_num)
                 r0_zero = r0 - 1
 
                 # Verify logical mappings
                 self.assertIn("main_row_positions", row_data)
                 self.assertEqual(row_data["main_row_positions"], main_row_positions(r_num))
 
-                # Verify authoritative 17-column Excel grid positions
+                # Verify authoritative 18-column Excel grid positions
                 self.assertIn("grid_positions", row_data)
                 positions = row_data["grid_positions"]
-                self.assertEqual(positions, excel_17col_workspace_positions(r_num))
+                self.assertEqual(positions, excel_18col_workspace_positions(r_num))
 
                 # Verify box (number/expression) in Excel column E (0-based column 4)
                 self.assertIn("box", row_data)
@@ -889,17 +921,17 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(box, "grid_pos"))
                 b_info = box.grid_info()
                 self.assertEqual(int(b_info["row"]), 1)  # row 1 inside its own row_frame
-                self.assertEqual(int(b_info["column"]), EXCEL_17COL_NUMBER_MATH - 1)
+                self.assertEqual(int(b_info["column"]), EXCEL_18COL_NUMBER_MATH - 1)
                 self.assertEqual(int(b_info["columnspan"]), 1)
                 self.assertEqual(int(b_info["rowspan"]), 1)
                 self.assertEqual(box.excel_pos.row, r0 + 1)
 
-                # Verify result box in Excel column L (0-based column 11)
+                # Verify result box in Excel column M (0-based column 12)
                 result_box = row_data.get("result_box", row_data["result"])
                 self.assertTrue(hasattr(result_box, "grid_pos"))
                 c_info = result_box.grid_info()
                 self.assertEqual(int(c_info["row"]), 1)
-                self.assertEqual(int(c_info["column"]), EXCEL_17COL_RESULT_BOX - 1)
+                self.assertEqual(int(c_info["column"]), EXCEL_18COL_RESULT_BOX - 1)
                 self.assertEqual(int(c_info["columnspan"]), 1)
                 self.assertEqual(int(c_info["rowspan"]), 1)
                 self.assertEqual(result_box.excel_pos.row, r0 + 1)
@@ -909,7 +941,7 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(labf, "grid_pos"))
                 l_info = labf.grid_info()
                 self.assertEqual(int(l_info["row"]), 0)
-                self.assertEqual(int(l_info["column"]), EXCEL_17COL_ROW_LABEL - 1)
+                self.assertEqual(int(l_info["column"]), EXCEL_18COL_ROW_LABEL - 1)
                 self.assertEqual(int(l_info["columnspan"]), 1)
                 self.assertEqual(int(l_info["rowspan"]), 3)
                 self.assertEqual(labf.excel_pos.row, r0)
@@ -919,7 +951,7 @@ class TestMainRowCoordinates(unittest.TestCase):
                 self.assertTrue(hasattr(col3, "grid_pos"))
                 a_info = col3.grid_info()
                 self.assertEqual(int(a_info["row"]), 0)
-                self.assertEqual(int(a_info["column"]), EXCEL_17COL_ACTIONS - 1)
+                self.assertEqual(int(a_info["column"]), EXCEL_18COL_ACTIONS - 1)
                 self.assertEqual(int(a_info["columnspan"]), 1)
                 self.assertEqual(int(a_info["rowspan"]), 3)
                 self.assertEqual(col3.excel_pos.row, r0)
@@ -931,13 +963,13 @@ class TestMainRowCoordinates(unittest.TestCase):
 
             row_3 = app.rows[2]
             positions_3 = row_3["grid_positions"]
-            self.assertEqual(positions_3, excel_17col_workspace_positions(3))
+            self.assertEqual(positions_3, excel_18col_workspace_positions(3))
 
             box_3 = row_3["box"]
             b3_info = box_3.grid_info()
             self.assertEqual(int(b3_info["row"]), 1)
-            self.assertEqual(int(b3_info["column"]), EXCEL_17COL_NUMBER_MATH - 1)
-            self.assertEqual(box_3.excel_pos.row, excel_17col_start_row(3) + 1)
+            self.assertEqual(int(b3_info["column"]), EXCEL_18COL_NUMBER_MATH - 1)
+            self.assertEqual(box_3.excel_pos.row, excel_18col_start_row(3) + 1)
 
         finally:
             if app is not None:
@@ -1420,9 +1452,9 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
             self.assertEqual(rf2.master, app.area)
 
             for rf in (rf1, rf2):
-                for c in range(17):
+                for c in range(18):
                     info = rf.grid_columnconfigure(c)
-                    self.assertEqual(int(info.get("minsize", 0)), excel_17col_column_width(c + 1))
+                    self.assertEqual(int(info.get("minsize", 0)), excel_18col_column_width(c + 1))
                     self.assertEqual(int(info.get("weight", 0)), 0)
         finally:
             app.destroy()
@@ -1929,7 +1961,7 @@ class TestCheckpoint3BottomTotalRowAndKeypadWorkflow(unittest.TestCase):
             self.assertTrue(r3["result_desc"].box1.winfo_ismapped())
             self.assertTrue(r3["result_desc"].trailing_btn.winfo_ismapped())
             self.assertEqual(r3["result_desc"].trailing_btn.cget("text"), "+")
-            self.assertEqual(r3["grid_positions"], excel_17col_total_row_positions(3))
+            self.assertEqual(r3["grid_positions"], excel_18col_total_row_positions(3))
         finally:
             app.destroy()
 
@@ -2956,11 +2988,11 @@ class TestCheckpoint4MathematicalTemplatesAndGUI(unittest.TestCase):
             res_col = r0["result_box"].grid_info()["column"]
             rdesc_col = r0["result_desc"].grid_info()["column"]
 
-            # Excel Column assignments: E=4, F=5, L=11, P=15
+            # Excel Column assignments: E=4, F=5, M=12, Q=16
             self.assertEqual(slot_col, 4)
             self.assertEqual(mdesc_col, 5)
-            self.assertEqual(res_col, 11)
-            self.assertEqual(rdesc_col, 15)
+            self.assertEqual(res_col, 12)
+            self.assertEqual(rdesc_col, 16)
 
             # Insert wide template
             app._place_operator_row("physics/physics/gravitation")
@@ -3017,18 +3049,23 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             self.assertEqual(r1["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
 
-            # X-coordinates of Column K ('(') must align exactly across all three rows
-            self.assertEqual(r0["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
+            # X-coordinates of Column K (blue +) must align exactly across all three rows
+            self.assertEqual(r0["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(r1["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
 
-            # X-coordinates of Column L (result) must align exactly across all three rows
-            self.assertEqual(r0["result_box"].winfo_x(), 795)
-            self.assertEqual(r1["result_box"].winfo_x(), 795)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            # X-coordinates of Column L ('(') must align exactly across all three rows
+            self.assertEqual(r0["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
 
-            # Total row frame width must match default 1274 px
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+            # X-coordinates of Column M (result) must align exactly across all three rows
+            self.assertEqual(r0["result_box"].winfo_x(), 837)
+            self.assertEqual(r1["result_box"].winfo_x(), 837)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
+
+            # Total row frame width must match default 1316 px
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3067,16 +3104,18 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             self.assertGreater(r0["row_frame"].winfo_reqwidth(), 2000)
 
             # Row 2 and Total row retain default width
-            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1274)
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1316)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1316)
 
-            # Total row aligns with Row 2's default Column J, K, and L
+            # Total row aligns with Row 2's default Column J, K, L, M
             self.assertEqual(r1["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(r1["result_box"].winfo_x(), 795)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            self.assertEqual(r1["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(r1["result_box"].winfo_x(), 837)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
         finally:
             app.destroy()
 
@@ -3097,9 +3136,10 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
                 app.update()
                 tot = app.rows[2]
                 self.assertEqual(tot["equals_label"].winfo_x(), 711)
-                self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-                self.assertEqual(tot["result_box"].winfo_x(), 795)
-                self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+                self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+                self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+                self.assertEqual(tot["result_box"].winfo_x(), 837)
+                self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3123,7 +3163,7 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             app._clear_all()
             app.update()
             self.assertEqual(len(app.rows), 1)
-            self.assertEqual(app.rows[0]["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(app.rows[0]["row_frame"].winfo_reqwidth(), 1316)
 
             # Second calculation
             app._key("7")
@@ -3135,9 +3175,10 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             tot = app.rows[2]
             self.assertEqual(tot["result_box"].cget("text"), "3")
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3162,13 +3203,14 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             tb2.set_text("Audited result")
             app.update()
 
-            # J, K, and L positions remain anchored at default positions
+            # J, K, L, and M positions remain anchored at default positions
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
 
             # Total row frame expands rightward to accommodate descriptions
-            self.assertGreater(tot["row_frame"].winfo_reqwidth(), 1274)
+            self.assertGreater(tot["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3475,28 +3517,32 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             self.assertEqual(r0["equals_label"].grid_info()["column"], 9)
             self.assertEqual(r0["equals_label"].grid_info()["row"], 1)
 
-            # Col K (10): Open parenthesis button, row 1
-            self.assertEqual(r0["paren_open_btn"].grid_info()["column"], 10)
+            # Col K (10): Blue + button, row 1
+            self.assertEqual(r0["paren_plus_btn"].grid_info()["column"], 10)
+            self.assertEqual(r0["paren_plus_btn"].grid_info()["row"], 1)
+
+            # Col L (11): Open parenthesis button, row 1
+            self.assertEqual(r0["paren_open_btn"].grid_info()["column"], 11)
             self.assertEqual(r0["paren_open_btn"].grid_info()["row"], 1)
 
-            # Col L (11): Result box, row 1
-            self.assertEqual(r0["result_box"].grid_info()["column"], 11)
+            # Col M (12): Result box, row 1
+            self.assertEqual(r0["result_box"].grid_info()["column"], 12)
             self.assertEqual(r0["result_box"].grid_info()["row"], 1)
 
-            # Col M (12): Exponent Number Box 1, row 0 (top sub-row superscript!)
-            self.assertEqual(r0["exponent_1_box"].grid_info()["column"], 12)
+            # Col N (13): Exponent Number Box 1, row 0 (top sub-row superscript!)
+            self.assertEqual(r0["exponent_1_box"].grid_info()["column"], 13)
             self.assertEqual(r0["exponent_1_box"].grid_info()["row"], 0)
 
-            # Col N (13): Close parenthesis button, row 1
-            self.assertEqual(r0["paren_close_btn"].grid_info()["column"], 13)
+            # Col O (14): Close parenthesis button, row 1
+            self.assertEqual(r0["paren_close_btn"].grid_info()["column"], 14)
             self.assertEqual(r0["paren_close_btn"].grid_info()["row"], 1)
 
-            # Col O (14): Exponent Number Box 2, row 0 (top sub-row superscript!)
-            self.assertEqual(r0["exponent_2_box"].grid_info()["column"], 14)
+            # Col P (15): Exponent Number Box 2, row 0 (top sub-row superscript!)
+            self.assertEqual(r0["exponent_2_box"].grid_info()["column"], 15)
             self.assertEqual(r0["exponent_2_box"].grid_info()["row"], 0)
 
-            # Cols P..Q (15..16): Result desc, row 1, columnspan 2
-            self.assertEqual(r0["result_desc"].grid_info()["column"], 15)
+            # Cols Q..R (16..17): Result desc, row 1, columnspan 2
+            self.assertEqual(r0["result_desc"].grid_info()["column"], 16)
             self.assertEqual(r0["result_desc"].grid_info()["row"], 1)
             self.assertEqual(r0["result_desc"].grid_info()["columnspan"], 2)
         finally:
@@ -3522,13 +3568,14 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             # All controls align to the exact pixel across all 3 rows
             for r in (r0, r1, tot):
                 self.assertEqual(r["equals_label"].winfo_x(), 711)
-                self.assertEqual(r["paren_open_btn"].winfo_x(), 753)
-                self.assertEqual(r["result_box"].winfo_x(), 795)
-                self.assertEqual(r["exponent_1_box"].winfo_x(), 913)
-                self.assertEqual(r["paren_close_btn"].winfo_x(), 953)
-                self.assertEqual(r["exponent_2_box"].winfo_x(), 1003)
-                self.assertEqual(r["result_desc"].winfo_x(), 1043)
-                self.assertEqual(r["row_frame"].winfo_reqwidth(), 1274)
+                self.assertEqual(r["paren_plus_btn"].winfo_x(), 753)
+                self.assertEqual(r["paren_open_btn"].winfo_x(), 795)
+                self.assertEqual(r["result_box"].winfo_x(), 837)
+                self.assertEqual(r["exponent_1_box"].winfo_x(), 955)
+                self.assertEqual(r["paren_close_btn"].winfo_x(), 995)
+                self.assertEqual(r["exponent_2_box"].winfo_x(), 1045)
+                self.assertEqual(r["result_desc"].winfo_x(), 1085)
+                self.assertEqual(r["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3622,16 +3669,18 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             r0, r1, tot = app.rows[0], app.rows[1], app.rows[2]
             # Row 1 expands independently
             self.assertGreater(r0["row_frame"].winfo_reqwidth(), 1400)
-            # Row 2 and Total row retain default width 1274 px
-            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1274)
-            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1274)
+            # Row 2 and Total row retain default width 1316 px
+            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1316)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1316)
             # Row 2 and Total row alignment preserved
             self.assertEqual(r1["equals_label"].winfo_x(), 711)
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(r1["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(r1["result_box"].winfo_x(), 795)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            self.assertEqual(r1["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(r1["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(r1["result_box"].winfo_x(), 837)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
         finally:
             app.destroy()
 
@@ -3648,15 +3697,16 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             desc.box1.set_text("Detailed description of the calculated result")
             app.update()
 
-            # Columns J..O maintain fixed anchor positions
+            # Columns J..P maintain fixed anchor positions
             self.assertEqual(r0["equals_label"].winfo_x(), 711)
-            self.assertEqual(r0["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(r0["result_box"].winfo_x(), 795)
-            self.assertEqual(r0["exponent_1_box"].winfo_x(), 913)
-            self.assertEqual(r0["paren_close_btn"].winfo_x(), 953)
-            self.assertEqual(r0["exponent_2_box"].winfo_x(), 1003)
-            self.assertEqual(r0["result_desc"].winfo_x(), 1043)
-            self.assertGreater(r0["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(r0["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(r0["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(r0["result_box"].winfo_x(), 837)
+            self.assertEqual(r0["exponent_1_box"].winfo_x(), 955)
+            self.assertEqual(r0["paren_close_btn"].winfo_x(), 995)
+            self.assertEqual(r0["exponent_2_box"].winfo_x(), 1045)
+            self.assertEqual(r0["result_desc"].winfo_x(), 1085)
+            self.assertGreater(r0["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3711,7 +3761,7 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             self.assertFalse(r0["paren_close"])
             self.assertEqual(app._get_exponent_1(0), "")
             self.assertEqual(app._get_exponent_2(0), "")
-            self.assertEqual(r0["row_frame"].winfo_reqwidth(), 1274)
+            self.assertEqual(r0["row_frame"].winfo_reqwidth(), 1316)
         finally:
             app.destroy()
 
@@ -3764,8 +3814,9 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             self.assertEqual(tot["result_box"].cget("text"), "2")
             self.assertEqual(tot["label"].cget("text"), "Total")
             self.assertEqual(tot["equals_label"].winfo_x(), 711)
-            self.assertEqual(tot["paren_open_btn"].winfo_x(), 753)
-            self.assertEqual(tot["result_box"].winfo_x(), 795)
+            self.assertEqual(tot["paren_plus_btn"].winfo_x(), 753)
+            self.assertEqual(tot["paren_open_btn"].winfo_x(), 795)
+            self.assertEqual(tot["result_box"].winfo_x(), 837)
         finally:
             app.destroy()
 
