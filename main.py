@@ -28,7 +28,7 @@ from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, 
                        EXCEL_17COL_RESULT_EQUALS, EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_RESULT_BOX,
                        EXCEL_17COL_EXPONENT_1, EXCEL_17COL_PAREN_CLOSE, EXCEL_17COL_EXPONENT_2,
                        EXCEL_17COL_RESULT_BOX1, EXCEL_17COL_RESULT_TRAILING,
-                       EXCEL_18COL_COLUMN_WIDTHS, EXCEL_18COL_EFFECTIVE_DEFAULT_WIDTHS,
+                       EXCEL_18COL_COLUMN_WIDTHS, excel_18col_column_letter, EXCEL_18COL_EFFECTIVE_DEFAULT_WIDTHS,
                        excel_18col_start_row, excel_18col_workspace_position,
                        excel_18col_workspace_positions, excel_18col_total_row_positions,
                        EXCEL_18COL_ROW_LABEL, EXCEL_18COL_MATH_SIGN, EXCEL_18COL_NUMBER_MATH,
@@ -1768,13 +1768,15 @@ class CalculatorGUI(tk.Tk):
 
             # Check for group exponent without close parenthesis and validate syntax
             exp2_boxes = row.get("exponent_2_boxes", [])
+            P = row.get("paren_pairs_count", 1)
             if exp2_boxes:
                 for p_idx, exp_box in enumerate(exp2_boxes):
                     p_text = exp_box.get().strip() if exp_box is not None else ""
                     if p_text:
                         is_active = close_states[p_idx] if p_idx < len(close_states) else False
                         if not is_active:
-                            self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
+                            col_letter = excel_18col_column_letter(15 + P + 2 * p_idx) if P > 1 else "P"
+                            self._say("Row %d has a group exponent (Column %s) without a closing parenthesis ')'." % (k + 1, col_letter))
                             return
                         try:
                             self._parse_exponent_value(p_text)
@@ -1784,7 +1786,7 @@ class CalculatorGUI(tk.Tk):
             else:
                 exp2_str = self._get_exponent_2(k)
                 if exp2_str and close_count == 0:
-                    self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
+                    self._say("Row %d has a group exponent (Column P) without a closing parenthesis ')'." % (k + 1))
                     return
                 if exp2_str:
                     try:

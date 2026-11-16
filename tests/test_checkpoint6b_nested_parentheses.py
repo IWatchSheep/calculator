@@ -497,7 +497,7 @@ class TestCheckpoint6BNestedParentheses(unittest.TestCase):
         app.update()
 
         msg = app.results.get("1.0", "end")
-        self.assertIn("group exponent (Column O) without a closing parenthesis", msg)
+        self.assertIn("group exponent (Column P) without a closing parenthesis", msg)
 
     def test_invalid_exponent_value_guard(self):
         """Invalid non-numeric exponent string displays error."""

@@ -469,7 +469,7 @@ class TestCheckpoint6CNestedGroupExponents(unittest.TestCase):
         app.update()
 
         msg = app.results.get("1.0", "end")
-        self.assertIn("group exponent (Column O) without a closing parenthesis", msg)
+        self.assertIn("group exponent (Column S) without a closing parenthesis", msg)
 
     def test_negative_and_fractional_nested_group_exponents(self):
         """Negative and fractional exponents on nested groups evaluate properly."""

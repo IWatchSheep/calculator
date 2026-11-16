@@ -1959,10 +1959,17 @@ EXCEL_18COL_EFFECTIVE_DEFAULT_WIDTHS: dict[int, int] = {
 
 
 def excel_18col_column_letter(column_1based: int) -> str:
-    """Return Excel column letter A..R for 1-based column index 1..18."""
-    if not (1 <= column_1based <= 18):
-        raise ValueError(f"Column index {column_1based} out of range 1..18")
-    return EXCEL_18COL_LETTERS[column_1based - 1]
+    """Return Excel column letter for 1-based column index (1=A..18=R, 19=S..)."""
+    if column_1based < 1:
+        raise ValueError(f"Column index {column_1based} out of range, must be >= 1")
+    if 1 <= column_1based <= 18:
+        return EXCEL_18COL_LETTERS[column_1based - 1]
+    result = []
+    col = column_1based
+    while col > 0:
+        col, rem = divmod(col - 1, 26)
+        result.append(chr(65 + rem))
+    return "".join(reversed(result))
 
 
 def excel_18col_column_from_letter(letter: str) -> int:

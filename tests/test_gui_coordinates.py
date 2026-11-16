@@ -3790,7 +3790,7 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             app.update()
 
             result_msg2 = app.results.get("1.0", "end").strip()
-            self.assertIn("group exponent (Column O) without a closing parenthesis", result_msg2)
+            self.assertIn("group exponent (Column P) without a closing parenthesis", result_msg2)
             self.assertEqual(len(app.rows), 1)
         finally:
             app.destroy()
@@ -4156,7 +4156,7 @@ class TestStep3AIndividualRowExponentiation(unittest.TestCase):
             app._equals()
             app.update()
             msg3 = app.results.get("1.0", "end").strip()
-            self.assertIn("group exponent (Column O) without a closing parenthesis", msg3)
+            self.assertIn("group exponent (Column P) without a closing parenthesis", msg3)
             self.assertEqual(len(app.rows), 1)
         finally:
             app.destroy()
@@ -4503,7 +4503,7 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             app.update()
 
             msg = app.results.get("1.0", "end").strip()
-            self.assertIn("group exponent (Column O) without a closing parenthesis", msg)
+            self.assertIn("group exponent (Column P) without a closing parenthesis", msg)
         finally:
             app.destroy()
 
