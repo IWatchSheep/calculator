@@ -591,6 +591,78 @@ class CalculatorGUI(tk.Tk):
         except Exception as e:
             raise ValueError("Cannot calculate power: %s" % e)
 
+    @staticmethod
+    def _op_precedence(op):
+        """PEMDAS operator precedence: Multiplication/Division = 2, Addition/Subtraction = 1, others = 0."""
+        if op in ("×", "*", "÷", "/"):
+            return 2
+        if op in ("+", "−", "-"):
+            return 1
+        return 0
+
+    @staticmethod
+    def _wrap_expression_leaf(v):
+        """Wrap an operand for insertion into a row_tree node."""
+        if isinstance(v, dict) and "mod" in v:
+            return v
+        return row_tree.advanced_slot("number", str(v), v, str(v))
+
+    def _make_expression_node(self, op, left, right):
+        """Construct an expression tree node for binary join operator op."""
+        join_keys = {
+            "+": "math/arithmetic/addition",
+            "−": "math/arithmetic/subtraction",
+            "-": "math/arithmetic/subtraction",
+            "×": "math/arithmetic/multiplication",
+            "*": "math/arithmetic/multiplication",
+            "÷": "math/arithmetic/division",
+            "/": "math/arithmetic/division",
+        }
+        key = join_keys.get(op)
+        if key:
+            node = row_tree.new_node(key)
+            node["slots"] = [self._wrap_expression_leaf(left), self._wrap_expression_leaf(right)]
+            return node
+        return {"custom_join": op, "left": self._wrap_expression_leaf(left), "right": self._wrap_expression_leaf(right)}
+
+    def _build_expression_tree(self, operands, operators):
+        """Build an expression tree representing standard PEMDAS precedence and left-to-right evaluation."""
+        if not operands:
+            return 0
+        if not operators:
+            return operands[0]
+        operand_stack = [operands[0]]
+        op_stack = []
+        for i, op in enumerate(operators):
+            while op_stack and self._op_precedence(op_stack[-1]) >= self._op_precedence(op):
+                top_op = op_stack.pop()
+                r = operand_stack.pop()
+                l = operand_stack.pop()
+                operand_stack.append(self._make_expression_node(top_op, l, r))
+            op_stack.append(op)
+            operand_stack.append(operands[i + 1])
+        while op_stack:
+            top_op = op_stack.pop()
+            r = operand_stack.pop()
+            l = operand_stack.pop()
+            operand_stack.append(self._make_expression_node(top_op, l, r))
+        return operand_stack[0]
+
+    def _eval_expression_tree(self, node):
+        """Evaluate an expression tree constructed by _build_expression_tree."""
+        if isinstance(node, (int, float, complex)):
+            return node
+        if isinstance(node, dict) and "adv" in node:
+            return node["value"]
+        if isinstance(node, dict) and "custom_join" in node:
+            l = self._eval_expression_tree(node["left"])
+            r = self._eval_expression_tree(node["right"])
+            return row_tree.join(node["custom_join"], l, r)
+        res = row_tree.evaluate(node)
+        if isinstance(res, float) and res.is_integer() and abs(res) < 1e15:
+            return int(res)
+        return res
+
     def _get_exponent_1(self, r):
         if r < 0 or r >= len(self.rows):
             return ""
@@ -1497,18 +1569,26 @@ class CalculatorGUI(tk.Tk):
             k = used_rows[idx]
             if k in group_by_start:
                 s, e = group_by_start[k]
-                g_val = row_values[s]
-                for j in range(s + 1, e + 1):
-                    row_j = self.rows[j]
-                    join_sym = row_j.get("join")
-                    if not join_sym:
-                        self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (j + 1))
-                        return
+                if s == e:
+                    g_val = row_values[s]
+                else:
+                    g_operands = [row_values[s]]
+                    g_operators = []
+                    for j in range(s + 1, e + 1):
+                        row_j = self.rows[j]
+                        join_sym = row_j.get("join")
+                        if not join_sym:
+                            self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (j + 1))
+                            return
+                        g_operators.append(join_sym)
+                        g_operands.append(row_values[j])
                     try:
-                        g_val = row_tree.join(join_sym, g_val, row_values[j])
+                        g_tree = self._build_expression_tree(g_operands, g_operators)
+                        g_val = self._eval_expression_tree(g_tree)
                     except ValueError as e_val:
                         self._say(str(e_val))
                         return
+
                 # Apply Exponent Box 2 (group exponent on row e)
                 exp2_str = self._get_exponent_2(e)
                 if exp2_str:
@@ -1533,26 +1613,20 @@ class CalculatorGUI(tk.Tk):
                 items.append({"val": row_values[k], "join": join_leading, "start": k, "end": k, "is_group": False})
                 idx += 1
 
-        # 5. Check for unsupported mixed precedence among top-level items (+ before ×)
-        if len(items) > 2:
-            joins = [it["join"] for it in items[1:]]
-            first_add_sub = next((i for i, j in enumerate(joins) if j in ("+", "−")), None)
-            last_mul_div = max((i for i, j in enumerate(joins) if j in ("×", "÷", "%")), default=-1)
-            if first_add_sub is not None and first_add_sub < last_mul_div:
-                self._say("Warning: Expression requires Step 3C PEMDAS precedence (+ before × across ungrouped rows). "
-                          "Please use parentheses to group operations explicitly.")
-                return
-
-        # 6. Evaluate total across items
-        total = items[0]["val"]
-        for it in items[1:]:
+        # 5. Evaluate total across items using PEMDAS
+        if len(items) == 1:
+            total = items[0]["val"]
+        else:
+            top_operands = [it["val"] for it in items]
+            top_operators = [it["join"] for it in items[1:]]
             try:
-                total = row_tree.join(it["join"], total, it["val"])
+                top_tree = self._build_expression_tree(top_operands, top_operators)
+                total = self._eval_expression_tree(top_tree)
             except ValueError as e_join:
                 self._say(str(e_join))
                 return
 
-        # 7. Format result rows and log lines
+        # 6. Format result rows and log lines
         lines = []
         for k in used_rows:
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))

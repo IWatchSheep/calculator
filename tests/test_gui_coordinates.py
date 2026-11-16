@@ -4479,7 +4479,7 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             app.destroy()
 
     def test_15_ungrouped_mixed_precedence_warning(self):
-        """Ungrouped mixed precedence (+ before *) displays explicit Step 3C warning."""
+        """Ungrouped mixed precedence (+ before *) evaluates correctly with Step 3C PEMDAS (2 + 3 * 4 = 14)."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -4496,8 +4496,10 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             app._equals()
             app.update()
 
-            msg = app.results.get("1.0", "end").strip()
-            self.assertIn("requires Step 3C PEMDAS precedence", msg)
+            self.assertEqual(app.rows[3]["result"].cget("text"), "14")
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "4")
         finally:
             app.destroy()
 
@@ -4608,6 +4610,495 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             ev3.char = "="
             res_code3 = app._on_key_press(ev3)
             self.assertEqual(res_code3, "break")
+        finally:
+            app.destroy()
+
+
+
+
+class TestStep3CFullPEMDASAcrossRows(unittest.TestCase):
+    """Checkpoint 5 Step 3C regression tests: Full PEMDAS across calculator rows."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            root = tk.Tk()
+            root.destroy()
+            cls.has_display = True
+        except Exception:
+            cls.has_display = False
+
+    def test_01_multiplication_precedence_over_addition(self):
+        """2 + 3 × 4 = 14: Multiplication takes precedence over addition across rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "4")
+            self.assertEqual(app.rows[3]["result"].cget("text"), "14")
+            self.assertTrue(app.rows[3].get("is_result"))
+        finally:
+            app.destroy()
+
+    def test_02_addition_after_multiplication(self):
+        """2 × 3 + 4 = 10: Left-to-right multiplication followed by addition."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("×")
+            app._key("3")
+            app._next_row()
+            app._join_key("+")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[3]["result"].cget("text"), "10")
+        finally:
+            app.destroy()
+
+    def test_03_division_precedence_over_subtraction(self):
+        """20 − 6 ÷ 2 = 17: Division takes precedence over subtraction across rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("20")
+            app._next_row()
+            app._join_key("−")
+            app._key("6")
+            app._next_row()
+            app._join_key("÷")
+            app._key("2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[3]["result"].cget("text"), "17")
+        finally:
+            app.destroy()
+
+    def test_04_equal_precedence_division_and_multiplication_left_to_right(self):
+        """20 ÷ 5 × 2 = 8: Equal precedence operators evaluate strictly left-to-right."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("20")
+            app._next_row()
+            app._join_key("÷")
+            app._key("5")
+            app._next_row()
+            app._join_key("×")
+            app._key("2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[3]["result"].cget("text"), "8")
+        finally:
+            app.destroy()
+
+    def test_05_equal_precedence_subtraction_left_to_right(self):
+        """10 − 3 − 2 = 5: Sequential subtraction evaluates strictly left-to-right."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("10")
+            app._next_row()
+            app._join_key("−")
+            app._key("3")
+            app._next_row()
+            app._join_key("−")
+            app._key("2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[3]["result"].cget("text"), "5")
+        finally:
+            app.destroy()
+
+    def test_06_mixed_precedence_four_rows(self):
+        """2 + 3 × 4 − 5 = 9: Multi-operator PEMDAS across four rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._next_row()
+            app._join_key("−")
+            app._key("5")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[4]["result"].cget("text"), "9")
+        finally:
+            app.destroy()
+
+    def test_07_parentheses_override_precedence(self):
+        """(2 + 3) × 4 = 20: Parentheses override operator precedence across rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "4")
+            self.assertEqual(app.rows[3]["result"].cget("text"), "20")
+        finally:
+            app.destroy()
+
+    def test_08_group_exponent_with_parentheses(self):
+        """(2 + 3)^2 = 25: Exponent Box 2 (Col O) applies to parenthesized group."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[2]["result"].cget("text"), "25")
+        finally:
+            app.destroy()
+
+    def test_09_individual_and_group_exponents(self):
+        """(2^3 + 1)^2 = 81: Individual exponent in Col M and group exponent in Col O."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "3")
+            app._next_row()
+            app._join_key("+")
+            app._key("1")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "81")
+        finally:
+            app.destroy()
+
+    def test_10_single_row_double_exponent(self):
+        """(2^2)^2 = 16: Single row with both exponents evaluates to 16 in Column L."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_11_mathematical_template_combined_with_multiplication(self):
+        """A single-row addition template joined to an ordinary multiplication row: [4 + 6] × 3 = 30."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        from operator_row_math import row_tree
+        app = CalculatorGUI()
+        app.update()
+        try:
+            mod_add = row_tree.new_node("math/arithmetic/addition")
+            mod_add["slots"] = ["4", "6"]
+            app.rows[0]["node"] = mod_add
+            app._render_row(0)
+
+            app._next_row()
+            app._join_key("×")
+            app._key("3")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "10")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "30")
+        finally:
+            app.destroy()
+
+    def test_12_multiplication_template_joined_to_addition(self):
+        """Ordinary addition row joined to a multiplication template: 2 + [3 × 4] = 14."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        from operator_row_math import row_tree
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            mod_mul = row_tree.new_node("math/arithmetic/multiplication")
+            mod_mul["slots"] = ["3", "4"]
+            app.rows[1]["node"] = mod_mul
+            app._render_row(1)
+
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "12")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "14")
+        finally:
+            app.destroy()
+
+    def test_13_editing_earlier_row_and_recalculating(self):
+        """Editing an earlier row updates the PEMDAS total dynamically."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[3]["result"].cget("text"), "14")
+
+            # Edit Row 0 from 2 to 5
+            app._pick_box(0, 0)
+            app._key("⌫")
+            app._key("5")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "5")
+            self.assertEqual(app.rows[3]["result"].cget("text"), "17")
+        finally:
+            app.destroy()
+
+    def test_14_division_by_zero_displays_clear_error(self):
+        """Division by zero across rows displays clear error message."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("20")
+            app._next_row()
+            app._join_key("÷")
+            app._key("0")
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Division by zero.", msg)
+        finally:
+            app.destroy()
+
+    def test_15_unmatched_parentheses_error_retained(self):
+        """Opening parenthesis without closing displays clear error."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("without a matching closing", msg)
+        finally:
+            app.destroy()
+
+    def test_16_nested_parentheses_unsupported_error_retained(self):
+        """Opening a second parenthesis before closing displays unsupported nesting message."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_open(1)
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Nested parentheses across rows are not supported", msg)
+        finally:
+            app.destroy()
+
+    def test_17_invalid_exponent_error_retained(self):
+        """Non-numeric exponent syntax displays clear error message."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._set_exponent_1(0, "abc")
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Invalid exponent 'abc'", msg)
+        finally:
+            app.destroy()
+
+    def test_18_preservation_of_descriptions_across_pemdas_eval(self):
+        """Descriptions in Columns F-G and P-Q are preserved during PEMDAS calculation."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._set_word(0, 0, 0, "Math Desc 1")
+            app._set_result_word(0, 0, "Result Desc 1")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["words"].get(0, ("", ""))[0], "Math Desc 1")
+            self.assertEqual(app.rows[0]["result_words"][0], "Result Desc 1")
+        finally:
+            app.destroy()
+
+    def test_19_keyboard_and_keypad_evaluation(self):
+        """Pressing Return or KP_Enter on keyboard triggers full PEMDAS evaluation."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+
+            # Simulate physical keyboard Return
+            ev = tk.Event()
+            ev.widget = app
+            ev.keysym = "Return"
+            ev.char = "\r"
+            app._on_key_press(ev)
+            app.update()
+
+            self.assertEqual(app.rows[3]["result"].cget("text"), "14")
+        finally:
+            app.destroy()
+
+    def test_20_clear_all_resets_to_one_row(self):
+        """Clearing multi-row expression resets cleanly to single row 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+
+            app._clear_all()
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(app.rows[0]["result"].cget("text"), "□")
+            self.assertEqual(app._get_exponent_1(0), "")
+            self.assertEqual(app._get_exponent_2(0), "")
         finally:
             app.destroy()
 
