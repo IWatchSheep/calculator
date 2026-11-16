@@ -311,6 +311,20 @@ class CalculatorGUI(tk.Tk):
             if ks in ("Escape",):
                 self._clear_all()
                 return "break"
+            if ch == "+" or ks in ("plus", "KP_Add"):
+                self._join_key("+")
+                return "break"
+            if ch in ("×", "*") or ks in ("asterisk", "KP_Multiply"):
+                self._join_key("×")
+                return "break"
+            if ch in ("÷", "/") or ks in ("slash", "KP_Divide"):
+                self._join_key("÷")
+                return "break"
+            if ch in ("−", "-") or ks in ("minus", "KP_Subtract"):
+                curr_text = w.get().strip() if hasattr(w, "get") else ""
+                if curr_text and curr_text != "-":
+                    self._join_key("−")
+                    return "break"
             return None
 
         # If focus or target widget is another Entry or Text widget, preserve natural text editing
@@ -484,6 +498,11 @@ class CalculatorGUI(tk.Tk):
     def _on_exponent_focus(self, box):
         """Track which exponent box was clicked or focused, so on-screen number pad routes to it."""
         self._active_exponent_box = box
+
+    def _on_exponent_focus_out(self, box):
+        """Clear active exponent box when focus leaves it."""
+        if getattr(self, "_active_exponent_box", None) == box:
+            self._active_exponent_box = None
 
     def _toggle_paren_close(self, r):
         """Toggle active/inactive state of Close Parenthesis ')' in row r."""
@@ -815,6 +834,7 @@ class CalculatorGUI(tk.Tk):
         exp1_entry.grid(row=0, column=12, padx=2, pady=(2, 0), sticky="s")
         exp1_entry.bind("<FocusIn>", lambda e, b=exp1_entry: self._on_exponent_focus(b), add="+")
         exp1_entry.bind("<Button-1>", lambda e, b=exp1_entry: self._on_exponent_focus(b), add="+")
+        exp1_entry.bind("<FocusOut>", lambda e, b=exp1_entry: self._on_exponent_focus_out(b), add="+")
 
         # 10. Col N: Close Parenthesis Button (Excel Col N: 14, 0-based 13, row 1)
         paren_close_pos = excel_17col_workspace_position(k, "paren_close")
@@ -834,6 +854,7 @@ class CalculatorGUI(tk.Tk):
         exp2_entry.grid(row=0, column=14, padx=2, pady=(2, 0), sticky="s")
         exp2_entry.bind("<FocusIn>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
         exp2_entry.bind("<Button-1>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
+        exp2_entry.bind("<FocusOut>", lambda e, b=exp2_entry: self._on_exponent_focus_out(b), add="+")
 
         # 12. Cols P..Q: Result Descriptive Region (Excel Cols P..Q: 16..17, 0-based 15..16, row 1)
         res_desc = DescriptionRegion(row_frame, role="result", calc_row=k,
@@ -1047,6 +1068,7 @@ class CalculatorGUI(tk.Tk):
         self.rows_canvas.yview_moveto(0.0)
         self.rows_canvas.xview_moveto(0.0)
         self._fit_rows()
+        self.focus_set()
 
         self.focus_set()
         self._say("Cleared. Click a square box and type a number, or open Operators.")
@@ -1129,6 +1151,9 @@ class CalculatorGUI(tk.Tk):
 
     def _set_target_row(self, i):
         """The row that operators, Next Row and the join keys act on (its Row label turns darker)."""
+        if self.op_target != i:
+            self._active_exponent_box = None
+            self.focus_set()
         self.op_target = i
         for k, r in enumerate(self.rows):
             r["label"].configure(bg="#6fcf5a" if k == i else "#b5dca8")
@@ -1138,6 +1163,7 @@ class CalculatorGUI(tk.Tk):
 
     def _select_only(self, i, path):
         """Exactly one box is selected at a time: the one just clicked (or the new row's number)."""
+        self._active_exponent_box = None
         for k, r in enumerate(self.rows):
             if k != i and r["sel"] is not None:
                 r["sel"] = None
@@ -1147,6 +1173,8 @@ class CalculatorGUI(tk.Tk):
 
     def _next_row(self):
         """Next Row: go to the next row (adding one at the bottom), ready to type its number."""
+        self._active_exponent_box = None
+        self.focus_set()
         i = self.op_target + 1
         while i >= len(self.rows):
             self._add_row()
@@ -1197,6 +1225,8 @@ class CalculatorGUI(tk.Tk):
 
     def _join_key(self, symbol):
         """A join key under the keypad: put the symbol in the helper card of the target row."""
+        self._active_exponent_box = None
+        self.focus_set()
         i = max(self.op_target, 1)
         # a second join key after the number of a joined row starts the NEXT row, like  1 + 1 + 1  on a calculator
         if i < len(self.rows) and self.rows[i].get("join") and not self.rows[i]["is_result"] and not self._is_blank(self.rows[i]):

@@ -5103,5 +5103,319 @@ class TestStep3CFullPEMDASAcrossRows(unittest.TestCase):
             app.destroy()
 
 
+
+
+class TestStep3DFocusRoutingAndRowCreation(unittest.TestCase):
+    """Checkpoint 5 Step 3D: Input focus routing and stale target prevention on row creation."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            root = tk.Tk()
+            root.destroy()
+            cls.has_display = True
+        except Exception:
+            cls.has_display = False
+
+    def test_01_user_reproduction_exponent1_then_join_then_digit(self):
+        """User case: Enter 2 in Col E, 3 in Exp 1, press +, press 1 -> 1 enters Row 2 Col E, not Exp 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # 1. Enter 2 in Row 1, Column E
+            app._key("2")
+
+            # 2. Click Row 1 Exponent Box 1, Column M, enter 3
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("3")
+            self.assertEqual(exp1.get(), "3")
+
+            # 3. Press mathematical + button on on-screen number pad
+            app._join_key("+")
+            app.update()
+            self.assertEqual(len(app.rows), 2)
+
+            # 4. Press 1 on on-screen number pad
+            app._key("1")
+
+            # 5. Verify Row 2 Col E contains 1, Row 1 Exp 1 still contains 3
+            self.assertEqual(exp1.get(), "3")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["1"])
+
+            # 6. Row 1 open paren, Row 2 close paren, enter 2 in Row 2 Exp 2
+            app._toggle_paren_open(0)
+            app._toggle_paren_close(1)
+            exp2 = app.rows[1]["exponent_2_box"]
+            exp2.focus_set()
+            app._on_exponent_focus(exp2)
+            app.update()
+            app._key("2")
+            self.assertEqual(exp2.get(), "2")
+
+            # 7. Press = and verify (2^3 + 1)^2 = 81
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[2]["result"].cget("text"), "81")
+        finally:
+            app.destroy()
+
+    def test_02_new_row_after_exponent2(self):
+        """Creating a new row after entering Exponent Box 2 clears active exponent target."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._toggle_paren_close(0)
+            exp2 = app.rows[0]["exponent_2_box"]
+            exp2.focus_set()
+            app._on_exponent_focus(exp2)
+            app.update()
+            app._key("2")
+            self.assertEqual(exp2.get(), "2")
+
+            # Press +
+            app._join_key("+")
+            app.update()
+            self.assertEqual(len(app.rows), 2)
+
+            # Next digit 5 enters Row 2 Col E
+            app._key("5")
+            self.assertEqual(exp2.get(), "2")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["5"])
+
+            app._equals()
+            app.update()
+            # (2)^2 + 5 = 4 + 5 = 9
+            self.assertEqual(app.rows[2]["result"].cget("text"), "9")
+        finally:
+            app.destroy()
+
+    def test_03_new_row_after_editing_descriptions(self):
+        """Creating a new row after editing descriptions directs subsequent input to new row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("10")
+            app._set_word(0, 0, 0, "My Label")
+            app._join_key("+")
+            app.update()
+
+            app._key("5")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["5"])
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[2]["result"].cget("text"), "15")
+        finally:
+            app.destroy()
+
+    def test_04_physical_keyboard_join_and_digit_after_exponent(self):
+        """Physical keyboard + inside an exponent box creates join row and routes next digit to Row 2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("3")
+
+            # Physical + on keyboard inside exponent box
+            ev_plus = tk.Event()
+            ev_plus.widget = exp1
+            ev_plus.keysym = "KP_Add"
+            ev_plus.char = "+"
+            res = app._on_key_press(ev_plus)
+            self.assertEqual(res, "break")
+            app.update()
+            self.assertEqual(len(app.rows), 2)
+
+            # Physical 1 on keyboard
+            ev_digit = tk.Event()
+            ev_digit.widget = app
+            ev_digit.keysym = "1"
+            ev_digit.char = "1"
+            app._on_key_press(ev_digit)
+            app.update()
+
+            self.assertEqual(exp1.get(), "3")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["1"])
+        finally:
+            app.destroy()
+
+    def test_05_manual_switching_between_rows_and_exponent_boxes(self):
+        """Switching focus manually between rows and exponent boxes directs digits to clicked widget."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+
+            # Focus Row 1 Exp 1 and type 2
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("2")
+            self.assertEqual(exp1.get(), "2")
+
+            # Click Row 2 Col E and append 4 -> "34"
+            app._pick_box(1, 0)
+            app.update()
+            app._key("4")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["34"])
+
+            # Focus Row 2 Exp 1 and type 3
+            exp1_r2 = app.rows[1]["exponent_1_box"]
+            exp1_r2.focus_set()
+            app._on_exponent_focus(exp1_r2)
+            app.update()
+            app._key("3")
+            self.assertEqual(exp1_r2.get(), "3")
+        finally:
+            app.destroy()
+
+    def test_06_clicking_exponent_box_again_allows_deliberate_editing(self):
+        """Explicitly clicking an exponent box after row creation allows deliberate editing."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("3")
+
+            # Create Row 2
+            app._join_key("+")
+            app.update()
+            app._key("1")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["1"])
+
+            # Deliberately click Row 1 Exp 1 again and edit: delete and type 4
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("⌫")
+            app._key("4")
+            self.assertEqual(exp1.get(), "4")
+        finally:
+            app.destroy()
+
+    def test_07_mathematical_template_slots_retain_correct_routing(self):
+        """Expanding a mathematical template and navigating between slots and new rows routes correctly."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        from operator_row_math import row_tree
+        app = CalculatorGUI()
+        app.update()
+        try:
+            mod_add = row_tree.new_node("math/arithmetic/addition")
+            mod_add["slots"] = ["4", ""]
+            app.rows[0]["node"] = mod_add
+            app._render_row(0)
+
+            # Select slot 1 of template and type 6
+            app._select_only(0, (1,))
+            app.update()
+            app._key("6")
+            self.assertEqual(app.rows[0]["node"]["slots"], ["4", "6"])
+
+            # Press × to create Row 2 and type 3
+            app._join_key("×")
+            app.update()
+            app._key("3")
+            self.assertEqual(app.rows[1]["node"]["slots"], ["3"])
+
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[2]["result"].cget("text"), "30")
+        finally:
+            app.destroy()
+
+    def test_08_repeated_row_creation_no_stale_focus(self):
+        """Creating multiple successive rows with join keys directs each digit to its respective row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._join_key("+")
+            app.update()
+            app._key("3")
+            app._join_key("×")
+            app.update()
+            app._key("4")
+            app._join_key("−")
+            app.update()
+            app._key("5")
+
+            self.assertEqual(app.rows[0]["node"]["slots"], ["2"])
+            self.assertEqual(app.rows[1]["node"]["slots"], ["3"])
+            self.assertEqual(app.rows[2]["node"]["slots"], ["4"])
+            self.assertEqual(app.rows[3]["node"]["slots"], ["5"])
+
+            app._equals()
+            app.update()
+            # 2 + (3 * 4) - 5 = 9
+            self.assertEqual(app.rows[4]["result"].cget("text"), "9")
+        finally:
+            app.destroy()
+
+    def test_09_clear_all_returns_input_to_row1_col_e(self):
+        """Clearing after focusing an exponent box restores input routing to Row 1 Column E."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("5")
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app.update()
+            app._key("2")
+
+            # Clear all
+            app._clear_all()
+            app.update()
+
+            # Next digit should go into Row 1 Column E, NOT exp1
+            app._key("7")
+            self.assertEqual(app.rows[0]["node"]["slots"], ["7"])
+            self.assertEqual(app._get_exponent_1(0), "")
+        finally:
+            app.destroy()
+
+
 if __name__ == "__main__":
     unittest.main()
