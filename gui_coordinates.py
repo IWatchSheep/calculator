@@ -1124,6 +1124,32 @@ EXCEL_13COL_COLUMN_WIDTHS: dict[int, int] = {
 }
 
 
+# Authoritative effective default column widths for an unexpanded 13-column mathematical row
+# Accounts for padding and natural dimensions of standard controls (e.g. DescriptionRegion spanning F..G and L..M)
+EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS: dict[int, int] = {
+    1: 160,   # Col A: Row label
+    2: 10,    # Col B: Spacer
+    3: 42,    # Col C: Math operator sign
+    4: 10,    # Col D: Spacer
+    5: 114,   # Col E: Number for math / math expression (110 + 4px padx)
+    6: 140,   # Col F: Descriptive text box 1 (natural width spanned with Col G)
+    7: 93,    # Col G: Orange plus sign button (spanned with Col F)
+    8: 10,    # Col H: Spacer
+    9: 130,   # Col I: Math actions ('math to put on the left')
+    10: 42,   # Col J: Equals sign (=)
+    11: 110,  # Col K: Result number box
+    12: 140,  # Col L: Descriptive text box 1 (result, spanned with Col M)
+    13: 93,   # Col M: Orange plus sign button (result)
+}
+
+
+def excel_13col_effective_column_width(column: int) -> int:
+    """Return the authoritative effective default pixel width of a 13-column Excel column (1-based)."""
+    if column in EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS:
+        return EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS[column]
+    return excel_column_width(column)
+
+
 EXCEL_COLUMN_WIDTHS: dict[int, int] = EXCEL_13COL_COLUMN_WIDTHS
 
 

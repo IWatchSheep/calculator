@@ -60,7 +60,7 @@ from gui_coordinates import (  # noqa: F401
     CARD_CENTER_POSITION,
     card_to_excel_position,
     excel_to_card_position,
-    EXCEL_COLUMN_WIDTHS, EXCEL_13COL_COLUMN_WIDTHS,
+    EXCEL_COLUMN_WIDTHS, EXCEL_13COL_COLUMN_WIDTHS, EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS, excel_13col_effective_column_width,
     excel_13col_total_row_positions, excel_13col_start_row,
     EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX,
     excel_column_width,

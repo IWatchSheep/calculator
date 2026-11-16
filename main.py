@@ -19,7 +19,7 @@ from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, 
                        excel_workspace_positions, EXCEL_COL_ROW_LABEL, EXCEL_COL_ACTIONS,
                        GridPosition, LayoutRegion, EXCEL_13COL_COLUMN_WIDTHS,
                        excel_13col_total_row_positions, excel_13col_start_row,
-                       EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX)
+                       EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX, EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component, DescriptionRegion
@@ -680,6 +680,8 @@ class CalculatorGUI(tk.Tk):
             row["result_box"].excel_pos = GridPosition(excel_13col_start_row(i + 1) + 1, EXCEL_13COL_RESULT_BOX, region=LayoutRegion.EXCEL_WORKSPACE)
         if row.get("result_desc") is not None:
             row["result_desc"].grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+        for col_1based, width in EXCEL_13COL_COLUMN_WIDTHS.items():
+            row["row_frame"].grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
         row["grid_positions"] = excel_workspace_positions(i + 1)
         self._set_result(i)
         self._render_row(i)
@@ -751,6 +753,12 @@ class CalculatorGUI(tk.Tk):
         row["label"].configure(text="Total", bg="#b5dca8", fg="#2a6a20")
         row["sub"].configure(text="")
         row["row_frame"].grid(row=idx, column=0, sticky="nw", padx=0, pady=(2, 6))
+
+        # Apply authoritative effective default widths so empty columns (E, F, G, I)
+        # do not collapse, aligning Column J (=) and Column K (result) directly below
+        # standard mathematical rows on Columns J and K.
+        for col_1based, width in EXCEL_13COL_EFFECTIVE_DEFAULT_WIDTHS.items():
+            row["row_frame"].grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
 
         if row.get("join_btn") is not None:
             row["join_btn"].grid_remove()

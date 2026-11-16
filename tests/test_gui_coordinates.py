@@ -2953,5 +2953,188 @@ class TestCheckpoint4MathematicalTemplatesAndGUI(unittest.TestCase):
             app.destroy()
 
 
+
+
+class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
+    """Test Checkpoint 4 targeted Total row alignment with authoritative default column geometry."""
+    @classmethod
+    def setUpClass(cls):
+        try:
+            r = tk.Tk()
+            r.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_default_total_row_jk_alignment(self):
+        """1. Total row Column J (=) and Column K (result) vertically align with Rows 1 and 2 in 1+1=2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            r0 = app.rows[0]
+            r1 = app.rows[1]
+            tot = app.rows[2]
+
+            # X-coordinates of Column J (=) must align exactly across all three rows
+            self.assertEqual(r0["equals_label"].winfo_x(), 711)
+            self.assertEqual(r1["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+
+            # X-coordinates of Column K (result) must align exactly across all three rows
+            self.assertEqual(r0["result_box"].winfo_x(), 753)
+            self.assertEqual(r1["result_box"].winfo_x(), 753)
+            self.assertEqual(tot["result_box"].winfo_x(), 753)
+
+            # Total row frame width must match default 1094 px
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+        finally:
+            app.destroy()
+
+    def test_02_expanded_row1_does_not_alter_total_row_default_widths(self):
+        """2. Expanded Row 1 does not stretch Total row; Total row maintains default J/K alignment with Row 2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Row 1: template + long description
+            app._place_operator_row("math/arithmetic/addition")
+            app._select_only(0, (0, 0))
+            app._key("4")
+            app._select_only(0, (0, 1))
+            app._key("6")
+            d1 = app.rows[0]["math_desc"]
+            d1.box1.set_text("Very long descriptive text causing Row 1 to expand far outward")
+            b2 = d1.add_box()
+            b2.set_text("Extra notes on calculation")
+
+            # Row 2: simple number 5
+            app._join_key("+")
+            app._key("5")
+
+            # Press =
+            app._equals()
+            app.update()
+
+            r0 = app.rows[0]
+            r1 = app.rows[1]
+            tot = app.rows[2]
+
+            # Row 1 expands independently
+            self.assertGreater(r0["row_frame"].winfo_reqwidth(), 2000)
+
+            # Row 2 and Total row retain default width
+            self.assertEqual(r1["row_frame"].winfo_reqwidth(), 1094)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+
+            # Total row aligns with Row 2's default Column J and Column K
+            self.assertEqual(r1["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+            self.assertEqual(r1["result_box"].winfo_x(), 753)
+            self.assertEqual(tot["result_box"].winfo_x(), 753)
+        finally:
+            app.destroy()
+
+    def test_03_repeated_evaluation_zero_alignment_drift(self):
+        """3. Repeated evaluation calls do not introduce alignment drift in Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+
+            for _ in range(4):
+                app._equals()
+                app.update()
+                tot = app.rows[2]
+                self.assertEqual(tot["equals_label"].winfo_x(), 711)
+                self.assertEqual(tot["result_box"].winfo_x(), 753)
+                self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+        finally:
+            app.destroy()
+
+    def test_04_clearing_and_starting_new_calculation(self):
+        """4. Clearing and starting a new calculation restores correct geometry and J/K alignment."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # First calculation
+            app._key("2")
+            app._join_key("+")
+            app._key("3")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+
+            # Clear
+            app._clear_all()
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(app.rows[0]["row_frame"].winfo_reqwidth(), 1094)
+
+            # Second calculation
+            app._key("7")
+            app._join_key("−")
+            app._key("4")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+            tot = app.rows[2]
+            self.assertEqual(tot["result_box"].cget("text"), "3")
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["result_box"].winfo_x(), 753)
+            self.assertEqual(tot["row_frame"].winfo_reqwidth(), 1094)
+        finally:
+            app.destroy()
+
+    def test_05_total_row_independent_description_expansion(self):
+        """5. Total row description expansion preserves J and K positions while expanding row width."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+
+            tot = app.rows[2]
+            td = tot["result_desc"]
+            td.box1.set_text("Batch summary description that expands to the right")
+            tb2 = td.add_box()
+            tb2.set_text("Audited result")
+            app.update()
+
+            # J and K positions remain anchored at default positions
+            self.assertEqual(tot["equals_label"].winfo_x(), 711)
+            self.assertEqual(tot["result_box"].winfo_x(), 753)
+
+            # Total row frame expands rightward to accommodate descriptions
+            self.assertGreater(tot["row_frame"].winfo_reqwidth(), 1094)
+        finally:
+            app.destroy()
+
+
 if __name__ == "__main__":
     unittest.main()
