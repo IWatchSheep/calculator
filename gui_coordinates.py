@@ -1437,3 +1437,385 @@ def excel_13col_total_row_positions(calc_row: int) -> dict[str, GridPosition]:
         "total_trailing": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_TRAILING,
                                        region=LayoutRegion.EXCEL_WORKSPACE),
     }
+
+
+# ==============================================================================
+# 17-COLUMN PEMDAS & TWO-EXPONENT EXCEL WORKSPACE SPECIFICATION (PROPOSED)
+# Reference: my_excel_sheet.txt (Rows 13-15, 19-21) & user_new_excel_sheet_img.png
+# ==============================================================================
+
+EXCEL_17COL_TOTAL_COLUMNS: int = 17
+EXCEL_17COL_ROWS_PER_CALCULATOR_ROW: int = 3
+EXCEL_17COL_CALCULATOR_ROW_STRIDE: int = 6
+EXCEL_17COL_EXAMPLE_START_ROW: int = 13  # Row 1 design example in Excel rows 13-15
+
+# 17 Column Letters: A..Q
+EXCEL_17COL_LETTERS: list[str] = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q"
+]
+
+# Authoritative 1-based column indices
+EXCEL_17COL_ROW_LABEL: int = 1          # Col A: Row label (e.g. 'row 1')
+EXCEL_17COL_SPACER_AB: int = 2          # Col B: Empty spacer
+EXCEL_17COL_MATH_SIGN: int = 3          # Col C: Math operator sign (+, −, ×, ÷)
+EXCEL_17COL_SPACER_CD: int = 4          # Col D: Empty spacer
+EXCEL_17COL_NUMBER_MATH: int = 5        # Col E: Number for math / math expression
+EXCEL_17COL_MATH_BOX1: int = 6          # Col F: Descriptive text box 1 (math)
+EXCEL_17COL_MATH_TRAILING: int = 7      # Col G: Orange plus sign button (math)
+EXCEL_17COL_SPACER_GH: int = 8          # Col H: Empty spacer
+EXCEL_17COL_ACTIONS: int = 9            # Col I: Math actions (put left / clear left)
+EXCEL_17COL_RESULT_EQUALS: int = 10     # Col J: Equals sign (=)
+EXCEL_17COL_PAREN_OPEN: int = 11        # Col K: Parenthesis open button '('
+EXCEL_17COL_RESULT_BOX: int = 12        # Col L: Mathematical result box
+EXCEL_17COL_EXPONENT_1: int = 13        # Col M: Exponent Number Box 1 (superscript to result)
+EXCEL_17COL_PAREN_CLOSE: int = 14       # Col N: Parenthesis close button ')'
+EXCEL_17COL_EXPONENT_2: int = 15        # Col O: Exponent Number Box 2 (superscript to group)
+EXCEL_17COL_RESULT_BOX1: int = 16       # Col P: Descriptive text box 1 (result)
+EXCEL_17COL_RESULT_TRAILING: int = 17   # Col Q: Orange plus sign button (result)
+
+# Aliases matching various naming conventions
+EXCEL_17COL_COL_A = EXCEL_17COL_ROW_LABEL
+EXCEL_17COL_COL_B = EXCEL_17COL_SPACER_AB
+EXCEL_17COL_COL_C = EXCEL_17COL_MATH_SIGN
+EXCEL_17COL_COL_D = EXCEL_17COL_SPACER_CD
+EXCEL_17COL_COL_E = EXCEL_17COL_NUMBER_MATH
+EXCEL_17COL_COL_F = EXCEL_17COL_MATH_BOX1
+EXCEL_17COL_COL_G = EXCEL_17COL_MATH_TRAILING
+EXCEL_17COL_COL_H = EXCEL_17COL_SPACER_GH
+EXCEL_17COL_COL_I = EXCEL_17COL_ACTIONS
+EXCEL_17COL_COL_J = EXCEL_17COL_RESULT_EQUALS
+EXCEL_17COL_COL_K = EXCEL_17COL_PAREN_OPEN
+EXCEL_17COL_COL_L = EXCEL_17COL_RESULT_BOX
+EXCEL_17COL_COL_M = EXCEL_17COL_EXPONENT_1
+EXCEL_17COL_COL_N = EXCEL_17COL_PAREN_CLOSE
+EXCEL_17COL_COL_O = EXCEL_17COL_EXPONENT_2
+EXCEL_17COL_COL_P = EXCEL_17COL_RESULT_BOX1
+EXCEL_17COL_COL_Q = EXCEL_17COL_RESULT_TRAILING
+
+# Base column pixel widths for 17 columns
+EXCEL_17COL_COLUMN_WIDTHS: dict[int, int] = {
+    1: 160,   # Col A: Row label
+    2: 10,    # Col B: Spacer
+    3: 42,    # Col C: Math operator sign
+    4: 10,    # Col D: Spacer
+    5: 110,   # Col E: Number for math / math expression
+    6: 90,    # Col F: Descriptive text box 1 (math)
+    7: 42,    # Col G: Orange plus sign button (math)
+    8: 10,    # Col H: Spacer
+    9: 130,   # Col I: Math actions ('math to put on the left')
+    10: 42,   # Col J: Equals sign (=)
+    11: 36,   # Col K: Parenthesis open button '('
+    12: 110,  # Col L: Result number box
+    13: 48,   # Col M: Exponent Number Box 1
+    14: 36,   # Col N: Parenthesis close button ')'
+    15: 48,   # Col O: Exponent Number Box 2
+    16: 90,   # Col P: Descriptive text box 1 (result)
+    17: 42,   # Col Q: Orange plus sign button (result)
+}
+
+# Authoritative effective default column widths for an unexpanded 17-column mathematical row
+# Accounts for natural widget sizes and padding of standard controls (DescriptionRegion spanning F..G and P..Q)
+EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS: dict[int, int] = {
+    1: 160,   # Col A: Row label
+    2: 10,    # Col B: Spacer
+    3: 42,    # Col C: Math operator sign
+    4: 10,    # Col D: Spacer
+    5: 114,   # Col E: Number for math / math expression (110 + 4px padx)
+    6: 140,   # Col F: Descriptive text box 1 (natural width spanned with Col G)
+    7: 93,    # Col G: Orange plus sign button (spanned with Col F)
+    8: 10,    # Col H: Spacer
+    9: 130,   # Col I: Math actions ('math to put on the left')
+    10: 42,   # Col J: Equals sign (=)
+    11: 36,   # Col K: Parenthesis open button '('
+    12: 110,  # Col L: Result number box
+    13: 48,   # Col M: Exponent Number Box 1
+    14: 36,   # Col N: Parenthesis close button ')'
+    15: 48,   # Col O: Exponent Number Box 2
+    16: 140,  # Col P: Descriptive text box 1 (result, spanned with Col Q)
+    17: 93,   # Col Q: Orange plus sign button (result)
+}
+
+
+def excel_17col_column_letter(column_1based: int) -> str:
+    """Return Excel column letter A..Q for 1-based column index 1..17."""
+    if not (1 <= column_1based <= 17):
+        raise ValueError(f"Column index {column_1based} out of range 1..17")
+    return EXCEL_17COL_LETTERS[column_1based - 1]
+
+
+def excel_17col_column_from_letter(letter: str) -> int:
+    """Return 1-based column index 1..17 for letter A..Q."""
+    clean = letter.strip().upper()
+    if clean not in EXCEL_17COL_LETTERS:
+        raise ValueError(f"Unknown column letter {letter!r}, valid: A..Q")
+    return EXCEL_17COL_LETTERS.index(clean) + 1
+
+
+def excel_17col_column_width(col: int) -> int:
+    """Return pixel width for 1-based column 1..17."""
+    if col not in EXCEL_17COL_COLUMN_WIDTHS:
+        raise KeyError(f"Column {col} not in 17-column layout")
+    return EXCEL_17COL_COLUMN_WIDTHS[col]
+
+
+def excel_17col_effective_column_width(col: int) -> int:
+    """Return effective default pixel width for 1-based column 1..17."""
+    if col in EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS:
+        return EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS[col]
+    return excel_17col_column_width(col)
+
+
+def excel_17col_total_width() -> int:
+    """Return total natural width of the 17 columns in pixels."""
+    return sum(EXCEL_17COL_COLUMN_WIDTHS.values())
+
+
+def excel_17col_effective_total_width() -> int:
+    """Return total effective default width of the 17 columns in pixels."""
+    return sum(EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS.values())
+
+
+def excel_17col_start_row(calc_row: int, use_example_offset: bool = True) -> int:
+    """Return 1-based starting Excel row for calculator row k using 6-row stride.
+
+    If use_example_offset is True (default), starts at Excel row 13 (Row 1 is 13..15, Row 2 is 19..21).
+    If use_example_offset is False, starts at Excel row 1 (Row 1 is 1..3, Row 2 is 7..9).
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+    base = EXCEL_17COL_EXAMPLE_START_ROW if use_example_offset else 1
+    return base + (calc_row - 1) * EXCEL_17COL_CALCULATOR_ROW_STRIDE
+
+
+def excel_17col_workspace_position(
+    calc_row: int,
+    control_name: str,
+    row_span: int = 1,
+    column_span: int = 1,
+    use_example_offset: bool = True,
+) -> GridPosition:
+    """Return authoritative 1-based GridPosition in 17-column LayoutRegion.EXCEL_WORKSPACE.
+
+    Precise Excel cells (Row 1 at 13..15, Row 2 at 19..21):
+      Row 1 (k=1):
+        - A13: row 1 label
+        - E14: number for math
+        - F14: descriptive text box 1
+        - G14: orange plus sign button
+        - I13: math to put on the left
+        - I15: clear math on the left
+        - J14: equals sign (=)
+        - K14: parenthesis open button '('
+        - L14: mathematical result box
+        - M13: exponent number box 1 (superscript in sub-row 0)
+        - N14: parenthesis close button ')'
+        - O13: exponent number box 2 (superscript in sub-row 0)
+        - P14: descriptive text box 1 (result)
+        - Q14: orange plus sign button (result)
+      Row 2 (k=2):
+        - A19: row 2 label
+        - C20: mathematical operator sign
+        - E20: number for math
+        - F20: descriptive text box 1
+        - G20: orange plus sign button
+        - I19: math to put on the left
+        - I21: clear math on the left
+        - J20: equals sign (=)
+        - K20: parenthesis open button '('
+        - L20: mathematical result box
+        - M19: exponent number box 1 (superscript in sub-row 0)
+        - N20: parenthesis close button ')'
+        - O19: exponent number box 2 (superscript in sub-row 0)
+        - P20: descriptive text box 1 (result)
+        - Q20: orange plus sign button (result)
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+
+    r0 = excel_17col_start_row(calc_row, use_example_offset=use_example_offset)
+    name = control_name.strip().lower()
+
+    # 1. Row Indicator Label: A13 (k=1), A19 (k=2)
+    if name in ("row_label", "label_frame", "row_indicator"):
+        return GridPosition(row=r0, column=EXCEL_17COL_ROW_LABEL, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 2. Math Operator Sign: C20 (k=2, active for k >= 2)
+    if name in ("math_sign", "join_operator", "join_sign", "operator_sign"):
+        if calc_row < 2:
+            raise ValueError(f"math_sign only exists on calculator row >= 2, not row {calc_row}")
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_SIGN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 3. Number or mathematical expression: E14 (k=1), E20 (k=2)
+    if name in ("number_for_math", "number_math", "math_operand", "box", "math_container"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_NUMBER_MATH, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 4. Descriptive Text Box 1 (Math): F14 (k=1), F20 (k=2)
+    if name in ("math_box1", "math_label", "math_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 5. Orange Plus Sign Button (Math): G14 (k=1), G20 (k=2)
+    if name in ("math_trailing", "math_orange_plus", "math_plus_button"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 6. Actions: I13 / I19 (top), I15 / I21 (bottom)
+    if name in ("action_math_left", "math_to_put_on_the_left"):
+        return GridPosition(row=r0, column=EXCEL_17COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("action_clear_left", "clear_math_on_the_left"):
+        return GridPosition(row=r0 + 2, column=EXCEL_17COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("actions_frame", "actions_container"):
+        return GridPosition(row=r0, column=EXCEL_17COL_ACTIONS, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 7. Result Equals Sign: J14 (k=1), J20 (k=2)
+    if name in ("result_lead", "result_equals", "equals_sign"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_EQUALS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 8. Open Parenthesis Button: K14 (k=1), K20 (k=2)
+    if name in ("paren_open", "parenthesis_open", "open_paren", "paren_open_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_OPEN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 9. Result Number Box: L14 (k=1), L20 (k=2)
+    if name in ("result_box", "result_number", "calculated_result"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 10. Exponent Number Box 1: M13 (k=1), M19 (k=2) (row 0, superscript to result)
+    if name in ("exponent_1", "exponent_box_1", "row_exponent", "result_exponent"):
+        return GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 11. Close Parenthesis Button: N14 (k=1), N20 (k=2)
+    if name in ("paren_close", "parenthesis_close", "close_paren", "paren_close_btn"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_CLOSE, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 12. Exponent Number Box 2: O13 (k=1), O19 (k=2) (row 0, superscript to group)
+    if name in ("exponent_2", "exponent_box_2", "group_exponent"):
+        return GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_2, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 13. Descriptive Text Box 1 (Result): P14 (k=1), P20 (k=2)
+    if name in ("result_box1", "result_label", "result_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 14. Orange Plus Sign Button (Result): Q14 (k=1), Q20 (k=2)
+    if name in ("result_trailing", "result_orange_plus", "result_plus_button"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 15. Total / Bottom Row Controls
+    if name in ("total_row_label", "total_label"):
+        return GridPosition(row=r0, column=EXCEL_17COL_ROW_LABEL, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_equals", "total_lead"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_EQUALS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_paren_open",):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_OPEN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_box", "final_result"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_exponent_1",):
+        return GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_paren_close",):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_CLOSE, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_exponent_2",):
+        return GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_2, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_box1", "total_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_trailing", "total_orange_plus"):
+        return GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    raise KeyError(f"Unknown 17-column control name: {control_name!r}")
+
+
+def excel_17col_workspace_positions(calc_row: int, use_example_offset: bool = True) -> dict[str, GridPosition]:
+    """Return dictionary of all standard 17-column control positions for calculator row k."""
+    r0 = excel_17col_start_row(calc_row, use_example_offset=use_example_offset)
+    pos: dict[str, GridPosition] = {
+        "row_label": GridPosition(row=r0, column=EXCEL_17COL_ROW_LABEL, row_span=3, column_span=1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "number_for_math": GridPosition(row=r0 + 1, column=EXCEL_17COL_NUMBER_MATH,
+                                        region=LayoutRegion.EXCEL_WORKSPACE),
+        "math_box1": GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_BOX1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "math_trailing": GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_TRAILING,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "action_math_left": GridPosition(row=r0, column=EXCEL_17COL_ACTIONS,
+                                         region=LayoutRegion.EXCEL_WORKSPACE),
+        "action_clear_left": GridPosition(row=r0 + 2, column=EXCEL_17COL_ACTIONS,
+                                          region=LayoutRegion.EXCEL_WORKSPACE),
+        "actions_frame": GridPosition(row=r0, column=EXCEL_17COL_ACTIONS, row_span=3, column_span=1,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_equals": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_EQUALS,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "paren_open": GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_OPEN,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_box": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "exponent_1": GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_1,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "paren_close": GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_CLOSE,
+                                    region=LayoutRegion.EXCEL_WORKSPACE),
+        "exponent_2": GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_2,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_box1": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX1,
+                                    region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_trailing": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_TRAILING,
+                                        region=LayoutRegion.EXCEL_WORKSPACE),
+    }
+    if calc_row >= 2:
+        pos["math_sign"] = GridPosition(row=r0 + 1, column=EXCEL_17COL_MATH_SIGN,
+                                        region=LayoutRegion.EXCEL_WORKSPACE)
+    return pos
+
+
+def excel_17col_total_row_positions(calc_row: int, use_example_offset: bool = True) -> dict[str, GridPosition]:
+    """Return dictionary of positions for the proposed 17-column bottom total row at calculator row k."""
+    r0 = excel_17col_start_row(calc_row, use_example_offset=use_example_offset)
+    return {
+        "row_label": GridPosition(row=r0, column=EXCEL_17COL_ROW_LABEL, row_span=3, column_span=1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_equals": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_EQUALS,
+                                     region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_paren_open": GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_OPEN,
+                                         region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_box": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_exponent_1": GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_1,
+                                         region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_paren_close": GridPosition(row=r0 + 1, column=EXCEL_17COL_PAREN_CLOSE,
+                                          region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_exponent_2": GridPosition(row=r0, column=EXCEL_17COL_EXPONENT_2,
+                                         region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_box1": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_BOX1,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_trailing": GridPosition(row=r0 + 1, column=EXCEL_17COL_RESULT_TRAILING,
+                                       region=LayoutRegion.EXCEL_WORKSPACE),
+    }

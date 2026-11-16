@@ -3136,5 +3136,219 @@ class TestCheckpoint4TotalRowAlignment(unittest.TestCase):
             app.destroy()
 
 
+
+
+class Test17ColumnPEMDASCoordinateSpecification(unittest.TestCase):
+    """Test 17-column PEMDAS and two-exponent coordinate specifications (Step 1)."""
+
+    def test_01_all_17_column_identities_and_letters(self):
+        """1. All 17 columns A through Q are identified with exact letters and indices."""
+        from gui_coordinates import (
+            EXCEL_17COL_TOTAL_COLUMNS, EXCEL_17COL_LETTERS,
+            excel_17col_column_letter, excel_17col_column_from_letter,
+            EXCEL_17COL_ROW_LABEL, EXCEL_17COL_SPACER_AB, EXCEL_17COL_MATH_SIGN,
+            EXCEL_17COL_SPACER_CD, EXCEL_17COL_NUMBER_MATH, EXCEL_17COL_MATH_BOX1,
+            EXCEL_17COL_MATH_TRAILING, EXCEL_17COL_SPACER_GH, EXCEL_17COL_ACTIONS,
+            EXCEL_17COL_RESULT_EQUALS, EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_RESULT_BOX,
+            EXCEL_17COL_EXPONENT_1, EXCEL_17COL_PAREN_CLOSE, EXCEL_17COL_EXPONENT_2,
+            EXCEL_17COL_RESULT_BOX1, EXCEL_17COL_RESULT_TRAILING
+        )
+        self.assertEqual(EXCEL_17COL_TOTAL_COLUMNS, 17)
+        expected_letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+                            "K", "L", "M", "N", "O", "P", "Q"]
+        self.assertEqual(EXCEL_17COL_LETTERS, expected_letters)
+
+        expected_indices = [
+            (EXCEL_17COL_ROW_LABEL, 1, "A"),
+            (EXCEL_17COL_SPACER_AB, 2, "B"),
+            (EXCEL_17COL_MATH_SIGN, 3, "C"),
+            (EXCEL_17COL_SPACER_CD, 4, "D"),
+            (EXCEL_17COL_NUMBER_MATH, 5, "E"),
+            (EXCEL_17COL_MATH_BOX1, 6, "F"),
+            (EXCEL_17COL_MATH_TRAILING, 7, "G"),
+            (EXCEL_17COL_SPACER_GH, 8, "H"),
+            (EXCEL_17COL_ACTIONS, 9, "I"),
+            (EXCEL_17COL_RESULT_EQUALS, 10, "J"),
+            (EXCEL_17COL_PAREN_OPEN, 11, "K"),
+            (EXCEL_17COL_RESULT_BOX, 12, "L"),
+            (EXCEL_17COL_EXPONENT_1, 13, "M"),
+            (EXCEL_17COL_PAREN_CLOSE, 14, "N"),
+            (EXCEL_17COL_EXPONENT_2, 15, "O"),
+            (EXCEL_17COL_RESULT_BOX1, 16, "P"),
+            (EXCEL_17COL_RESULT_TRAILING, 17, "Q"),
+        ]
+        for const_val, idx_1based, letter in expected_indices:
+            self.assertEqual(const_val, idx_1based)
+            self.assertEqual(excel_17col_column_letter(idx_1based), letter)
+            self.assertEqual(excel_17col_column_from_letter(letter), idx_1based)
+            # 1-based Excel to 0-based Tkinter conversion: col_0based == col_1based - 1
+            self.assertEqual(idx_1based - 1, ord(letter) - ord("A"))
+
+    def test_02_exact_cell_locations_row_1(self):
+        """2. Exact Excel cell locations for Calculator Row 1 in design example rows 13..15."""
+        from gui_coordinates import (
+            excel_17col_workspace_position, LayoutRegion
+        )
+        expected = {
+            "row_label": (13, 1, "A13"),
+            "action_math_left": (13, 9, "I13"),
+            "action_clear_left": (15, 9, "I15"),
+            "number_for_math": (14, 5, "E14"),
+            "math_box1": (14, 6, "F14"),
+            "math_trailing": (14, 7, "G14"),
+            "result_equals": (14, 10, "J14"),
+            "paren_open": (14, 11, "K14"),
+            "result_box": (14, 12, "L14"),
+            "exponent_1": (13, 13, "M13"),
+            "paren_close": (14, 14, "N14"),
+            "exponent_2": (13, 15, "O13"),
+            "result_box1": (14, 16, "P14"),
+            "result_trailing": (14, 17, "Q14"),
+        }
+        for name, (exp_row, exp_col, cell_str) in expected.items():
+            pos = excel_17col_workspace_position(1, name, use_example_offset=True)
+            self.assertEqual(pos.region, LayoutRegion.EXCEL_WORKSPACE)
+            self.assertEqual(pos.row, exp_row, f"{name} expected row {exp_row} ({cell_str}), got {pos.row}")
+            self.assertEqual(pos.column, exp_col, f"{name} expected column {exp_col} ({cell_str}), got {pos.column}")
+
+    def test_03_exact_cell_locations_row_2(self):
+        """3. Exact Excel cell locations for Calculator Row 2 in design example rows 19..21."""
+        from gui_coordinates import (
+            excel_17col_workspace_position, LayoutRegion
+        )
+        expected = {
+            "row_label": (19, 1, "A19"),
+            "math_sign": (20, 3, "C20"),
+            "number_for_math": (20, 5, "E20"),
+            "math_box1": (20, 6, "F20"),
+            "math_trailing": (20, 7, "G20"),
+            "action_math_left": (19, 9, "I19"),
+            "action_clear_left": (21, 9, "I21"),
+            "result_equals": (20, 10, "J20"),
+            "paren_open": (20, 11, "K20"),
+            "result_box": (20, 12, "L20"),
+            "exponent_1": (19, 13, "M19"),
+            "paren_close": (20, 14, "N20"),
+            "exponent_2": (19, 15, "O19"),
+            "result_box1": (20, 16, "P20"),
+            "result_trailing": (20, 17, "Q20"),
+        }
+        for name, (exp_row, exp_col, cell_str) in expected.items():
+            pos = excel_17col_workspace_position(2, name, use_example_offset=True)
+            self.assertEqual(pos.region, LayoutRegion.EXCEL_WORKSPACE)
+            self.assertEqual(pos.row, exp_row, f"{name} expected row {exp_row} ({cell_str}), got {pos.row}")
+            self.assertEqual(pos.column, exp_col, f"{name} expected column {exp_col} ({cell_str}), got {pos.column}")
+
+    def test_04_six_row_stride_and_additional_rows(self):
+        """4. Stride is 6 rows per calculator row across additional calculator rows."""
+        from gui_coordinates import (
+            excel_17col_start_row, EXCEL_17COL_CALCULATOR_ROW_STRIDE
+        )
+        self.assertEqual(EXCEL_17COL_CALCULATOR_ROW_STRIDE, 6)
+
+        # Design example offset (base 13)
+        self.assertEqual(excel_17col_start_row(1, use_example_offset=True), 13)
+        self.assertEqual(excel_17col_start_row(2, use_example_offset=True), 19)
+        self.assertEqual(excel_17col_start_row(3, use_example_offset=True), 25)
+        self.assertEqual(excel_17col_start_row(4, use_example_offset=True), 31)
+
+        # Standardized start row (base 1)
+        self.assertEqual(excel_17col_start_row(1, use_example_offset=False), 1)
+        self.assertEqual(excel_17col_start_row(2, use_example_offset=False), 7)
+        self.assertEqual(excel_17col_start_row(3, use_example_offset=False), 13)
+        self.assertEqual(excel_17col_start_row(4, use_example_offset=False), 19)
+
+    def test_05_subrow_mapping_and_tkinter_grid_coordinates(self):
+        """5. Sub-row mapping: Exponents in sub-row 0 (superscript); main controls in sub-row 1."""
+        from gui_coordinates import excel_17col_workspace_positions
+        pos1 = excel_17col_workspace_positions(1, use_example_offset=True)
+
+        # In independent row_frame: subrow = pos.row - r0
+        r0 = 13
+        # Sub-row 0: Exponents and top action
+        self.assertEqual(pos1["exponent_1"].row - r0, 0)
+        self.assertEqual(pos1["exponent_2"].row - r0, 0)
+        self.assertEqual(pos1["action_math_left"].row - r0, 0)
+
+        # Sub-row 1: Main controls (number, equals, paren open, result, paren close, descriptions)
+        self.assertEqual(pos1["number_for_math"].row - r0, 1)
+        self.assertEqual(pos1["math_box1"].row - r0, 1)
+        self.assertEqual(pos1["math_trailing"].row - r0, 1)
+        self.assertEqual(pos1["result_equals"].row - r0, 1)
+        self.assertEqual(pos1["paren_open"].row - r0, 1)
+        self.assertEqual(pos1["result_box"].row - r0, 1)
+        self.assertEqual(pos1["paren_close"].row - r0, 1)
+        self.assertEqual(pos1["result_box1"].row - r0, 1)
+        self.assertEqual(pos1["result_trailing"].row - r0, 1)
+
+        # Sub-row 2: Clear action
+        self.assertEqual(pos1["action_clear_left"].row - r0, 2)
+
+    def test_06_17_column_default_and_effective_widths(self):
+        """6. Default base and effective column widths for all 17 columns."""
+        from gui_coordinates import (
+            EXCEL_17COL_COLUMN_WIDTHS, EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS,
+            excel_17col_column_width, excel_17col_effective_column_width,
+            excel_17col_total_width, excel_17col_effective_total_width
+        )
+        self.assertEqual(len(EXCEL_17COL_COLUMN_WIDTHS), 17)
+        self.assertEqual(len(EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS), 17)
+
+        # Parenthesis buttons (K=11, N=14) have width 36 px
+        self.assertEqual(excel_17col_column_width(11), 36)
+        self.assertEqual(excel_17col_column_width(14), 36)
+
+        # Exponent boxes (M=13, O=15) have width 48 px
+        self.assertEqual(excel_17col_column_width(13), 48)
+        self.assertEqual(excel_17col_column_width(15), 48)
+
+        # Result box (L=12) has width 110 px
+        self.assertEqual(excel_17col_column_width(12), 110)
+
+        self.assertEqual(excel_17col_total_width(), sum(EXCEL_17COL_COLUMN_WIDTHS.values()))
+        self.assertEqual(excel_17col_effective_total_width(), sum(EXCEL_17COL_EFFECTIVE_DEFAULT_WIDTHS.values()))
+
+    def test_07_proposed_total_row_layout_17col(self):
+        """7. Proposed Total row layout: Col C empty, equals in J, paren in K, result in L, paren in N."""
+        from gui_coordinates import excel_17col_total_row_positions
+        tot = excel_17col_total_row_positions(3, use_example_offset=True)
+
+        self.assertNotIn("total_math_sign", tot)
+        self.assertEqual(tot["total_equals"].column, 10)       # Col J
+        self.assertEqual(tot["total_paren_open"].column, 11)   # Col K
+        self.assertEqual(tot["total_box"].column, 12)          # Col L
+        self.assertEqual(tot["total_exponent_1"].column, 13)   # Col M
+        self.assertEqual(tot["total_paren_close"].column, 14)  # Col N
+        self.assertEqual(tot["total_exponent_2"].column, 15)   # Col O
+        self.assertEqual(tot["total_box1"].column, 16)         # Col P
+        self.assertEqual(tot["total_trailing"].column, 17)     # Col Q
+
+    def test_08_active_13col_vs_proposed_17col_distinction(self):
+        """8. Active workspace remains 13-column; proposed 17-column specification is distinct and ready."""
+        import gui_coordinates as gc
+        # Active workspace constants are preserved on 13 columns
+        self.assertEqual(gc.EXCEL_TOTAL_COLUMNS, 13)
+        self.assertEqual(gc.EXCEL_13COL_TOTAL_COLUMNS, 13)
+        self.assertEqual(len(gc.EXCEL_COLUMN_WIDTHS), 13)
+        self.assertEqual(len(gc.EXCEL_13COL_COLUMN_WIDTHS), 13)
+
+        # Proposed 17-column specification is ready alongside
+        self.assertEqual(gc.EXCEL_17COL_TOTAL_COLUMNS, 17)
+        self.assertEqual(len(gc.EXCEL_17COL_COLUMN_WIDTHS), 17)
+
+    def test_09_mathematical_scope_documentation(self):
+        """9. Exponent scopes: Exponent 1 applies to row expression; Exponent 2 applies to parenthesized group."""
+        from gui_coordinates import (
+            EXCEL_17COL_EXPONENT_1, EXCEL_17COL_EXPONENT_2,
+            EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_PAREN_CLOSE, EXCEL_17COL_RESULT_BOX
+        )
+        # Exponent 1 (Col M: 13) immediately follows Result Box (Col L: 12)
+        self.assertEqual(EXCEL_17COL_EXPONENT_1, EXCEL_17COL_RESULT_BOX + 1)
+        # Exponent 2 (Col O: 15) immediately follows Close Parenthesis (Col N: 14)
+        self.assertEqual(EXCEL_17COL_EXPONENT_2, EXCEL_17COL_PAREN_CLOSE + 1)
+        # Open Parenthesis (Col K: 11) immediately precedes Result Box (Col L: 12)
+        self.assertEqual(EXCEL_17COL_PAREN_OPEN, EXCEL_17COL_RESULT_BOX - 1)
+
+
 if __name__ == "__main__":
     unittest.main()
