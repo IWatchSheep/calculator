@@ -2617,5 +2617,341 @@ class TestCheckpoint3RowLifecycle(unittest.TestCase):
             app.destroy()
 
 
+
+
+class TestCheckpoint4MathematicalTemplatesAndGUI(unittest.TestCase):
+    """Test Checkpoint 4: Mathematical templates interaction with 13-column independent rows."""
+    @classmethod
+    def setUpClass(cls):
+        try:
+            r = tk.Tk()
+            r.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_single_row_template_insertion_and_evaluation(self):
+        """1. Single-row template evaluates completely within Row 1 without creating Row 2 or Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            self.assertEqual(len(app.rows), 1)
+            # Insert single-row template (arithmetic addition)
+            app._place_operator_row("math/arithmetic/addition")
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+
+            # Fill slot 0 with 4 and slot 1 with 6
+            app._select_only(0, (0, 0))
+            app._key("4")
+            app._select_only(0, (0, 1))
+            app._key("6")
+            app.update()
+
+            self.assertEqual(app.rows[0]["node"]["slots"][0]["slots"], ["4", "6"])
+
+            # Press =
+            app._equals()
+            app.update()
+
+            # Remains 1 row; result in Row 1 Column K
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "10")
+            self.assertEqual(app.rows[0]["label"].cget("text"), "Row 1")
+            self.assertFalse(app.rows[0]["is_result"])
+        finally:
+            app.destroy()
+
+    def test_02_multi_row_calculation_combining_template_with_number(self):
+        """2. Multi-row calculation combining a template in Row 1 with Row 2 evaluates to bottom Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Row 1 template: 4 + 6
+            app._place_operator_row("math/arithmetic/addition")
+            app._select_only(0, (0, 0))
+            app._key("4")
+            app._select_only(0, (0, 1))
+            app._key("6")
+            app.update()
+
+            # Join + creates Row 2
+            app._join_key("+")
+            app.update()
+            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(app.rows[1]["join"], "+")
+
+            # Row 2 input: 5
+            app._key("5")
+            app.update()
+            self.assertEqual(app.rows[1]["node"]["slots"], ["5"])
+
+            # Press =
+            app._equals()
+            app.update()
+
+            # Bottom Total row appears at index 2
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "10")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "5")
+
+            total_row = app.rows[2]
+            self.assertEqual(total_row["label"].cget("text"), "Total")
+            self.assertIsNone(total_row["join"])
+            self.assertEqual(total_row["result_box"].cget("text"), "15")
+        finally:
+            app.destroy()
+
+    def test_03_wide_template_independent_row_expansion(self):
+        """3. Wide template expands only its own independent row without affecting other rows."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._add_row()
+            app.update()
+            rf0_init = app.rows[0]["row_frame"].winfo_reqwidth()
+            rf1_init = app.rows[1]["row_frame"].winfo_reqwidth()
+            self.assertEqual(rf0_init, rf1_init)
+
+            # Insert wide template in Row 1
+            app._place_operator_row("physics/physics/gravitation")
+            app.update()
+
+            rf0_after = app.rows[0]["row_frame"].winfo_reqwidth()
+            rf1_after = app.rows[1]["row_frame"].winfo_reqwidth()
+
+            # Row 1 expanded significantly
+            self.assertGreater(rf0_after, 3000)
+            # Row 2 remained at default width
+            self.assertEqual(rf1_after, rf1_init)
+            self.assertEqual(app.rows[1]["canvas"].master.winfo_width(), 110)
+        finally:
+            app.destroy()
+
+    def test_04_wide_template_and_long_descriptions_expand_together(self):
+        """4. Wide template and multiple expanded descriptions coexist without overlap."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._place_operator_row("physics/physics/gravitation")
+            app.update()
+
+            r0 = app.rows[0]
+            slot_cont = r0["canvas"].master
+            mdesc = r0["math_desc"]
+            rdesc = r0["result_desc"]
+
+            # Add multiple descriptions
+            mdesc.box1.set_text("Gravitational attraction")
+            b2 = mdesc.add_box()
+            b2.set_text("Two planetary masses")
+            rdesc.box1.set_text("Resulting force in Newtons")
+            app.update()
+
+            # 1. slot and mdesc do not overlap; mdesc is strictly to the right
+            self.assertGreaterEqual(mdesc.winfo_x(), slot_cont.winfo_x() + slot_cont.winfo_width())
+
+            # 2. In mdesc, orange + button is strictly to the right of the last box (b2)
+            self.assertGreaterEqual(mdesc.trailing_btn.winfo_x(), b2.winfo_x() + b2.winfo_width())
+
+            # 3. In rdesc, orange + button is strictly to the right of box1
+            self.assertGreaterEqual(rdesc.trailing_btn.winfo_x(), rdesc.box1.winfo_x() + rdesc.box1.winfo_width())
+
+            # 4. Math expression-tree slots are not modified by descriptions
+            cards = app._cards(0)
+            self.assertIn(("box", "", (0, 0)), cards)
+            self.assertIn(("box", "", (0, 1)), cards)
+            self.assertIn(("box", "", (0, 2)), cards)
+        finally:
+            app.destroy()
+
+    def test_05_physical_keyboard_entry_into_template_slots(self):
+        """5. Physical keyboard events navigate and enter values into template slots."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # 1. Open operators palette
+            app._toggle_operators()
+            app.update()
+            self.assertIsNotNone(getattr(app, "op_popup", None))
+
+            # 2. Insert single-row template into Row 1
+            app._place_operator_row("math/arithmetic/addition")
+            app.update()
+
+            # 3. Select first slot and type 8
+            app._select_only(0, (0, 0))
+            app.update()
+            (app.focus_get() or app).event_generate("<Key>", keysym="8")
+            app.update()
+
+            # 4. Select second slot and type 9
+            app._select_only(0, (0, 1))
+            app.update()
+            (app.focus_get() or app).event_generate("<Key>", keysym="9")
+            app.update()
+
+            # 5. Press =
+            (app.focus_get() or app).event_generate("<Key>", keysym="equal")
+            app.update()
+
+            # 6. Verify result in Row 1 Column K is 17
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "17")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            if getattr(app, "op_popup", None) is not None:
+                app.op_popup.destroy()
+            app.destroy()
+
+    def test_06_typing_in_description_box_does_not_trigger_math_keys(self):
+        """6. Typing in descriptive text boxes does not trigger mathematical commands."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            box = app.rows[0]["math_desc"].box1
+            box.focus_set()
+            app.update()
+
+            # Send physical keys while description box is focused
+            app.focus_get().event_generate("<Key>", keysym="3")
+            app.focus_get().event_generate("<Key>", keysym="plus")
+            app.focus_get().event_generate("<Key>", keysym="4")
+            app.update()
+
+            # Description box received the text
+            self.assertEqual(box.words_text(), "3+4")
+
+            # Mathematical row state was unaffected (no Row 2 created, math node blank)
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(app.rows[0]["node"]["slots"], [""])
+        finally:
+            app.destroy()
+
+    def test_07_clear_escape_restores_one_empty_row_after_template(self):
+        """7. Clear button and physical Escape cleanly restore exactly one empty Row 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # 1. Place template and add descriptions
+            app._place_operator_row("math/arithmetic/addition")
+            d1 = app.rows[0]["math_desc"]
+            d1.box1.set_text("First description")
+            b2 = d1.add_box()
+            b2.set_text("Second description")
+            app.update()
+            self.assertEqual(len(d1.boxes), 2)
+
+            # Press Red C
+            app._clear_all()
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            self.assertTrue(app._is_blank(app.rows[0]))
+            self.assertEqual(len(app.rows[0]["math_desc"].boxes), 1)
+            self.assertEqual(app.rows[0]["math_desc"].box1.words_text(), "")
+            self.assertEqual(app.op_target, 0)
+
+            # 2. Place template again and test Escape key
+            app._place_operator_row("physics/physics/gravitation")
+            app.update()
+            self.assertFalse(app._is_blank(app.rows[0]))
+
+            (app.focus_get() or app).event_generate("<Key>", keysym="Escape")
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            self.assertTrue(app._is_blank(app.rows[0]))
+        finally:
+            app.destroy()
+
+    def test_08_preservation_of_intentionally_multi_row_templates(self):
+        """8. Intentionally multi-row templates allocate required rows and reset back to 1 row on clear."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            key = "math/transforms_and_differential_equations/heat_equation"
+            app._place_operator_row(key)
+            app.update()
+
+            # Allocates 2 rows with join = and titles
+            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(app.rows[1]["join"], "=")
+            self.assertIsNotNone(app.rows[0].get("sub"))
+            self.assertIsNotNone(app.rows[1].get("sub"))
+
+            # Clear resets cleanly back to 1 row
+            app._clear_all()
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+            self.assertTrue(app._is_blank(app.rows[0]))
+        finally:
+            app.destroy()
+
+    def test_09_actual_rendered_geometry_and_horizontal_scrollability(self):
+        """9. Rendered Tkinter widget geometry conforms to 13-column layout and horizontal scrollability."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            r0 = app.rows[0]
+            # Column positions in independent row frame
+            slot_col = r0["canvas"].master.grid_info()["column"]
+            mdesc_col = r0["math_desc"].grid_info()["column"]
+            res_col = r0["result_box"].grid_info()["column"]
+            rdesc_col = r0["result_desc"].grid_info()["column"]
+
+            # Excel Column assignments: E=4, F=5, K=10, L=11
+            self.assertEqual(slot_col, 4)
+            self.assertEqual(mdesc_col, 5)
+            self.assertEqual(res_col, 10)
+            self.assertEqual(rdesc_col, 11)
+
+            # Insert wide template
+            app._place_operator_row("physics/physics/gravitation")
+            app.update()
+
+            # Horizontal scrollability
+            app.rows_canvas.xview_moveto(0.5)
+            app.update()
+            xv = app.rows_canvas.xview()
+            self.assertGreater(xv[0], 0.0)
+
+            # Reset scroll to origin
+            app.rows_canvas.xview_moveto(0.0)
+            app.update()
+            self.assertEqual(app.rows_canvas.xview()[0], 0.0)
+        finally:
+            app.destroy()
+
+
 if __name__ == "__main__":
     unittest.main()
