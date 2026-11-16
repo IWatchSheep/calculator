@@ -14,10 +14,13 @@ WORD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "operators_o
 
 from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, PALE_ORANGE,  # noqa: F401
                        PURPLE, RED, btn, main_row_position, main_row_positions,
-                       configure_excel_workspace_grid, excel_total_workspace_width)
+                       configure_excel_workspace_grid, excel_total_workspace_width,
+                       excel_start_row, excel_heading_row, excel_workspace_position,
+                       excel_workspace_positions, EXCEL_COL_ROW_LABEL, EXCEL_COL_ACTIONS,
+                       GridPosition, LayoutRegion, EXCEL_13COL_COLUMN_WIDTHS)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
-from operator_row_math.row_builder import build_row, make_component
+from operator_row_math.row_builder import build_row, make_component, DescriptionRegion
 from operator_row_math import advanced_input, multirow_specs, row_tree, template_math
 
 
@@ -281,9 +284,9 @@ class CalculatorGUI(tk.Tk):
         self.target_label.pack(anchor="w", padx=4, pady=3)
 
     # ---------- rows area ----------
-    def _component(self, parent, center, kind, lead="+", on_pick=None):
+    def _component(self, parent, center, kind, lead="+", on_pick=None, card_slot=None, calc_row=1, **kwargs):
         """kind: 'number' or 'helper'. Blue + | 3x3 arrows | Item/Label | Context | orange +"""
-        return make_component(parent, center, kind, lead, on_pick=on_pick)
+        return make_component(parent, center, kind, lead, on_pick=on_pick, card_slot=card_slot, calc_row=calc_row, **kwargs)
 
     def _build_rows_area(self):
         header = tk.Frame(self, bg="#e4e4e4")
@@ -302,20 +305,26 @@ class CalculatorGUI(tk.Tk):
         rvbar.pack(side="right", fill="y")
         rhbar.pack(side="bottom", fill="x")
         rc.pack(side="left", fill="both", expand=True)
-        area = tk.Frame(rc, bg=CREAM)
-        win = rc.create_window((0, 0), window=area, anchor="nw")
-        self._rows_win = win
 
-        # Step 3: Prepare the 33-column Excel workspace frame separately from the live 5-column area
+        # Step 4: The 33-column x 9-row Excel workspace is the primary active workspace!
         excel_area = tk.Frame(rc, bg=CREAM)
         configure_excel_workspace_grid(excel_area, num_calc_rows=2)
+        win = rc.create_window((0, 0), window=excel_area, anchor="nw")
+        self._rows_win = win
         self.excel_area = excel_area
         self.excel_workspace = excel_area
+        self.area = excel_area
 
         def fit(_e=None):
             active_area = self.area
             active_area.update_idletasks()
-            w = max(rc.winfo_width(), active_area.winfo_reqwidth())
+            max_row_w = 0
+            for r_data in getattr(self, "rows", []):
+                rf = r_data.get("row_frame")
+                if rf:
+                    rf.update_idletasks()
+                    max_row_w = max(max_row_w, rf.winfo_reqwidth())
+            w = max(rc.winfo_width(), active_area.winfo_reqwidth(), max_row_w)
             rc.itemconfigure(self._rows_win, width=w)
             rc.configure(scrollregion=(0, 0, w, active_area.winfo_reqheight()))
         rc.bind("<Configure>", fit)
@@ -331,103 +340,226 @@ class CalculatorGUI(tk.Tk):
                 else:
                     rc.yview_scroll(-1 * (e.delta // 120), "units")
         self.bind("<MouseWheel>", wheel, add="+")
-        area.grid_columnconfigure(main_row_position(1, "row_label").to_zero_based()[1], minsize=170)
-        area.grid_columnconfigure(main_row_position(1, "helper_slot").to_zero_based()[1], minsize=430)
-        area.grid_columnconfigure(main_row_position(1, "math_expression").to_zero_based()[1], weight=1)
+
         self.rows = []
         self.op_target = 0
-
-        self.area = area
         self.template = None          # the multi-row operator currently laid out (see multirow_specs.py)
-        # Row layout (as in the picture):
-        #   Row label | helper card (slot 1) | math from operator button | [math to put on the left] | = card
         for _ in range(2):
             self._add_row()
         self._select_only(0, (0,))                 # Row 1's box is ready for the number pad
         self._render_row(0)
 
     def activate_excel_workspace(self):
-        """Step 4 migration hook: switch canvas viewport to the 33-column Excel grid."""
-        self.rows_canvas.itemconfigure(self._rows_win, window=self.excel_area)
-        self.area = self.excel_area
-        self._fit_rows()
+        """Step 4 migration hook: ensure canvas viewport displays the 33-column Excel grid."""
+        if self._rows_win and hasattr(self, "excel_area"):
+            self.rows_canvas.itemconfigure(self._rows_win, window=self.excel_area)
+            self.area = self.excel_area
+            self._fit_rows()
 
     def _add_row(self):
-        """Add one more row at the bottom (Next Row)."""
+        """Add one more calculator row at the bottom using authoritative 13-column Excel coordinates in its own grid."""
         area, r = self.area, len(self.rows)
-        row_pos = main_row_positions(r + 1)
-        labf = tk.Frame(area, bg=CREAM)
-        labf.grid_pos = row_pos["row_label"]
-        labf.grid(**labf.grid_pos.to_tkinter_grid(), padx=10, pady=10)
-        row_label = tk.Label(labf, text="Row %d" % (r + 1), bg="#b5dca8", fg="#2a6a20", relief="groove",
+        k = r + 1
+        r0 = excel_start_row(k)
+
+        # Create independent grid container for this calculator row
+        row_frame = tk.Frame(area, bg=CREAM)
+        row_frame.grid(row=r, column=0, sticky="nw", padx=0, pady=(2, 6))
+
+        # Configure 13 columns with authoritative default widths
+        for col_1based, width in EXCEL_13COL_COLUMN_WIDTHS.items():
+            row_frame.grid_columnconfigure(col_1based - 1, minsize=width, weight=0)
+
+        # Configure 3 sub-rows (row 0: top actions/label, row 1: main controls, row 2: bottom actions)
+        row_frame.grid_rowconfigure(0, minsize=26, weight=0)
+        row_frame.grid_rowconfigure(1, minsize=44, weight=0)
+        row_frame.grid_rowconfigure(2, minsize=26, weight=0)
+
+        # 1. Col A: Row label indicator (Excel Col A: 1, 0-based 0, rows 0..2, rowspan=3)
+        row_pos = excel_workspace_position(k, "row_label")
+        labf = tk.Frame(row_frame, bg=CREAM)
+        labf.grid_pos = row_pos
+        labf.excel_pos = row_pos
+        labf.grid(row=0, column=0, rowspan=3, padx=4, pady=2, sticky="nsew")
+        row_label = tk.Label(labf, text="Row %d" % k, bg="#b5dca8", fg="#2a6a20", relief="groove",
                              font=("Segoe UI", 11, "bold"), padx=6)
-        row_label.pack()
-        sub = tk.Label(labf, text="", bg=CREAM, fg="#2a6a20", font=("Segoe UI", 8, "italic"), wraplength=150)
+        row_label.pack(pady=(4, 2))
+        sub = tk.Label(labf, text="", bg=CREAM, fg="#2a6a20", font=("Segoe UI", 8, "italic"), wraplength=60)
         sub.pack()
+
+        # 2. Col C: Math operator sign (Excel Col C: 3, 0-based 2, row 1)
         join_btn = None
-        if r == 0:
-            note = self._join_note(area)
-            note.grid_pos = row_pos["helper_slot"]
-            note.grid(**note.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6, sticky="n")
-        else:
-            helper = tk.Frame(area, bg=CREAM)
-            tk.Label(helper, text="helper card (slot 1)", fg="#b03010", bg=CREAM,
-                     font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=20)
-            card = self._component(helper, "□", "helper", on_pick=lambda r=r: self._set_target_row(r))
-            card.pack()
-            join_btn = card.center_btn
-            helper.grid_pos = row_pos["helper_slot"]
-            helper.grid(**helper.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6, sticky="w")
-        row = self._math_slot(area, r)
-        row.update({"sub": sub, "join_btn": join_btn, "join": None, "mode": "full", "label": row_label,
-                    "is_result": False, "words": {}, "grid_positions": row_pos})
-        col3 = tk.Frame(area, bg=CREAM)
-        col3.grid_pos = row_pos["math_actions"]
-        col3.grid(**col3.grid_pos.to_tkinter_grid(), padx=8, pady=6)
-        edge = tk.Frame(col3, bg="black")          # black outline as in the picture
-        edge.pack()
-        tk.Button(edge, text="math to put on the left", bg="white", relief="flat", bd=0,
-                  font=("Segoe UI", 7, "bold"), wraplength=110,
-                  command=lambda i=r: self._open_operators_for(i)).pack(padx=3, pady=3)
-        tk.Button(col3, text="clear math on the left", bg="#f4d0d0", relief="raised", bd=1,
-                  font=("Segoe UI", 7, "bold"), wraplength=110,
-                  command=lambda i=r: self._clear_row_math(i)).pack(pady=(6, 0), fill="x")
-        card = self._component(area, "□", "number", lead="=")
-        card.grid_pos = row_pos["result_card"]
-        card.grid(**card.grid_pos.to_tkinter_grid(), padx=(0, 20), pady=6)
-        row["result"] = card.center_btn
-        row["result_card"] = card
-        row["label_frame"] = labf
-        row["actions_frame"] = col3
-        row["node"] = row_tree.new_node("_number")      # default left side: one square box
+        if k >= 2:
+            join_pos = excel_workspace_position(k, "math_sign")
+            join_btn = btn(row_frame, "□", "#fbd34d", fg="black", font=("Segoe UI", 12, "bold"),
+                           width=3, highlightbackground="#d0a020",
+                           command=lambda r=r: self._set_target_row(r))
+            join_btn.grid_pos = join_pos
+            join_btn.excel_pos = join_pos
+            join_btn.grid(row=1, column=2, padx=2, pady=2, sticky="nsew")
+
+        # 3. Col E: Number / Mathematical expression (Excel Col E: 5, 0-based 4, row 1)
+        row = self._math_slot(row_frame, r)
+
+        # 4. Cols F..G: Math Descriptive Region (Excel Cols F..G: 6..7, 0-based 5..6, row 1)
+        math_desc = DescriptionRegion(row_frame, role="math", calc_row=k,
+                                      words=row.get("words", {}).get(0, ()),
+                                      num_boxes=row.get("card_box_counts", {}).get(0, 1),
+                                      on_words=lambda which, text, r=r: self._set_word(r, 0, which, text),
+                                      on_focus=lambda which, r=r: self._word_focus_set(r, 0, which),
+                                      on_add_box=lambda count, r=r: self._add_card_box(r, 0, count))
+        math_desc_pos = excel_workspace_position(k, "math_box1")
+        math_desc.grid_pos = math_desc_pos
+        math_desc.excel_pos = math_desc_pos
+        math_desc.grid(row=1, column=5, columnspan=2, padx=2, pady=2, sticky="w")
+
+        # 5. Col I: Actions (Excel Col I: 9, 0-based 8, rows 0..2, rowspan=3, width 130px)
+        actions_pos = excel_workspace_position(k, "actions_frame")
+        act_top_pos = excel_workspace_position(k, "action_math_left")
+        act_bot_pos = excel_workspace_position(k, "action_clear_left")
+
+        col3 = tk.Frame(row_frame, bg=CREAM, width=130)
+        col3.grid_pos = actions_pos
+        col3.excel_pos = actions_pos
+        col3.grid(row=0, column=8, rowspan=3, padx=4, pady=2, sticky="nsew")
+        col3.grid_rowconfigure(0, minsize=24)
+        col3.grid_rowconfigure(1, minsize=28)
+        col3.grid_rowconfigure(2, minsize=24)
+        col3.grid_columnconfigure(0, minsize=110)
+
+        edge = tk.Frame(col3, bg="black")
+        edge.grid_pos = act_top_pos
+        edge.excel_pos = act_top_pos
+        edge.grid(row=0, column=0, sticky="n")
+        btn_top = tk.Button(edge, text="math to put on the left", bg="white", relief="flat", bd=0,
+                            font=("Segoe UI", 7, "bold"), wraplength=100,
+                            command=lambda i=r: self._open_operators_for(i))
+        btn_top.excel_pos = act_top_pos
+        btn_top.grid_pos = act_top_pos
+        btn_top.pack(padx=2, pady=2)
+
+        btn_bot = tk.Button(col3, text="clear math on the left", bg="#f4d0d0", relief="raised", bd=1,
+                            font=("Segoe UI", 7, "bold"), wraplength=100,
+                            command=lambda i=r: self._clear_row_math(i))
+        btn_bot.grid_pos = act_bot_pos
+        btn_bot.excel_pos = act_bot_pos
+        btn_bot.grid(row=2, column=0, sticky="s", pady=(4, 0))
+
+        # 6. Col J: Result Equals Sign (Excel Col J: 10, 0-based 9, row 1)
+        eq_pos = excel_workspace_position(k, "result_equals")
+        eq_lbl = tk.Label(row_frame, text="=", font=("Segoe UI", 16, "bold"), bg=CREAM, fg="black")
+        eq_lbl.grid_pos = eq_pos
+        eq_lbl.excel_pos = eq_pos
+        eq_lbl.grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
+
+        # 7. Col K: Calculated Result Box (Excel Col K: 11, 0-based 10, row 1)
+        res_pos = excel_workspace_position(k, "result_box")
+        res_btn = tk.Button(row_frame, text="□", bg=PALE_BLUE, fg="black",
+                            font=("Segoe UI", 12, "bold"), relief="solid", bd=1,
+                            command=lambda r=r: self._set_target_row(r))
+        res_btn.grid_pos = res_pos
+        res_btn.excel_pos = res_pos
+        res_btn.grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+
+        # 8. Cols L..M: Result Descriptive Region (Excel Cols L..M: 12..13, 0-based 11..12, row 1)
+        res_desc = DescriptionRegion(row_frame, role="result", calc_row=k,
+                                     words=row.get("result_words", ()),
+                                     num_boxes=row.get("result_box_count", 1),
+                                     on_words=lambda which, text, r=r: self._set_result_word(r, which, text),
+                                     on_focus=lambda which, r=r: self._word_focus_set(r, "result", which),
+                                     on_add_box=lambda count, r=r: self._add_result_box(r, count))
+        res_desc_pos = excel_workspace_position(k, "result_box1")
+        res_desc.grid_pos = res_desc_pos
+        res_desc.excel_pos = res_desc_pos
+        res_desc.grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+
+        res_desc.center_btn = res_btn
+        res_desc.lead_btn = eq_lbl
+
+        row.update({
+            "row_frame": row_frame,
+            "sub": sub,
+            "join_btn": join_btn,
+            "join": None,
+            "mode": "full",
+            "label": row_label,
+            "is_result": False,
+            "words": {},
+            "card_box_counts": {},
+            "helper_words": (),
+            "helper_box_count": 1,
+            "result_words": (),
+            "result_box_count": 1,
+            "grid_positions": excel_workspace_positions(k),
+            "main_row_positions": main_row_positions(k),
+            "math_desc": math_desc,
+            "math_card": math_desc,
+            "result": res_btn,
+            "result_box": res_btn,
+            "result_card": res_desc,
+            "result_desc": res_desc,
+            "result_equals": eq_lbl,
+            "equals_label": eq_lbl,
+            "row_label_pos": row_pos,
+            "label_frame": labf,
+            "actions_frame": col3,
+            "node": row_tree.new_node("_number"),
+            "helper_card": None,
+            "helper_heading": None,
+        })
         self.rows.append(row)
         self._render_row(r)
         self._fit_rows()
         return r
 
     def _join_note(self, parent):
-        """Row 1 helper slot: the note and the big down arrow from the picture."""
-        f = tk.Frame(parent, bg=CREAM)
-        tk.Label(f, text="math operator to join rows 1 and 2", bg=CREAM, font=("Segoe UI", 9)).pack(pady=(4, 2))
-        c = tk.Canvas(f, width=70, height=80, bg=CREAM, highlightthickness=0)
-        c.create_polygon(22, 2, 48, 2, 48, 40, 66, 40, 35, 78, 4, 40, 22, 40, fill="white", outline="black", width=3)
-        c.pack()
-        return f
+        return None
 
     def _math_slot(self, parent, r):
-        """White area where the operator button's math is placed (the rows section scrolls to fit it)."""
-        box = tk.Frame(parent, bg="white")
-        box.grid_pos = main_row_position(r + 1, "math_expression")
-        box.grid(**box.grid_pos.to_tkinter_grid(), sticky="nsew", pady=2)
-        inner = tk.Frame(box, bg="white", height=118)
-        inner.pack(fill="both", expand=True)
-        row = {"inner": inner, "refresh": self._fit_rows, "node": None, "sel": None, "box": box}
+        """Mathematical expression slot anchored to Excel Column E (width 110)."""
+        k = r + 1
+        math_pos = excel_workspace_position(k, "number_for_math")
+        box = tk.Frame(parent, bg=CREAM, width=110, height=44)
+        box.grid_pos = math_pos
+        box.excel_pos = math_pos
+        box.grid(row=1, column=4, sticky="nsew", padx=2, pady=2)
+
+        canvas = tk.Canvas(box, bg=CREAM, highlightthickness=0, width=110, height=44)
+        canvas.pack(fill="both", expand=True)
+
+        inner = tk.Frame(canvas, bg=CREAM)
+        canvas_win = canvas.create_window((55, 22), window=inner, anchor="center")
+
+        def refresh():
+            self._fit_rows()
+            try:
+                inner.update_idletasks()
+                req_w = inner.winfo_reqwidth()
+                if req_w > 110:
+                    canvas.configure(width=req_w, scrollregion=(0, 0, req_w, 44))
+                    canvas.coords(canvas_win, 0, 0)
+                    canvas.itemconfigure(canvas_win, anchor="nw")
+                else:
+                    canvas.configure(width=110, scrollregion=(0, 0, 110, 44))
+                    canvas.coords(canvas_win, 55, 22)
+                    canvas.itemconfigure(canvas_win, anchor="center")
+            except Exception:
+                pass
+
+        row = {
+            "inner": inner,
+            "canvas": canvas,
+            "refresh": refresh,
+            "node": None,
+            "sel": None,
+            "box": box,
+        }
         self._slot_caption(inner)
         return row
 
     @staticmethod
     def _slot_caption(inner):
-        tk.Label(inner, text="math from operator button", bg="white", font=("Segoe UI", 9)
+        tk.Label(inner, text="math from operator button", bg=CREAM, font=("Segoe UI", 9)
                  ).pack(padx=40, pady=45, anchor="w")
 
     def _is_blank(self, row):
@@ -440,6 +572,7 @@ class CalculatorGUI(tk.Tk):
         row = self.rows[i]
         row["node"], row["sel"], row["is_result"] = row_tree.new_node("_number"), None, False
         row["words"] = {}
+        row["card_box_counts"] = {}
         row["sub"].configure(text="")
         if row["join_btn"] is not None:
             self._set_join(i, None)
@@ -529,7 +662,8 @@ class CalculatorGUI(tk.Tk):
     def _scroll_to_row(self, i):
         """Scroll the rows section so row i is in view."""
         self.rows_canvas.update_idletasks()
-        top = self.rows[i]["inner"].master.winfo_y()
+        box = self.rows[i].get("box")
+        top = box.winfo_y() if box else self.rows[i]["inner"].winfo_y()
         total = max(1, self.area.winfo_reqheight())
         self.rows_canvas.yview_moveto(min(1.0, max(0.0, top / total)))
 
@@ -577,30 +711,105 @@ class CalculatorGUI(tk.Tk):
         row = self.rows[i]
         base = row_tree.words(row["node"]) if row["node"] else []
         typed = row.get("words", {})
-        return [tuple(typed.get(k, w)) for k, w in enumerate(base)]
+        res = []
+        for k in range(max(len(base), len(typed))):
+            base_w = base[k] if k < len(base) else ("",)
+            w = typed.get(k, base_w)
+            res.append(tuple(w))
+        return res
 
     def _set_word(self, i, k, which, text):
-        """The person typed `text` into box `which` (0 = Label / Item, 1 = Context) of card k of row i."""
-        cur = list(self._card_words(i)[k])
+        """The person typed `text` into box `which` of card k of row i."""
+        all_words = self._card_words(i)
+        cur = list(all_words[k]) if k < len(all_words) else []
+        while len(cur) <= which:
+            cur.append("")
         cur[which] = text
         self.rows[i].setdefault("words", {})[k] = tuple(cur)
+
+    def _set_helper_word(self, r, which, text):
+        if r < len(self.rows):
+            cur = list(self.rows[r].get("helper_words", ()))
+            while len(cur) <= which:
+                cur.append("")
+            cur[which] = text
+            self.rows[r]["helper_words"] = tuple(cur)
+
+    def _add_helper_box(self, r, count):
+        if r < len(self.rows):
+            self.rows[r]["helper_box_count"] = count
+
+    def _set_result_word(self, r, which, text):
+        if r < len(self.rows):
+            cur = list(self.rows[r].get("result_words", ()))
+            while len(cur) <= which:
+                cur.append("")
+            cur[which] = text
+            self.rows[r]["result_words"] = tuple(cur)
+
+    def _add_result_box(self, r, count):
+        if r < len(self.rows):
+            self.rows[r]["result_box_count"] = count
+
+    def _add_card_box(self, i, k, count):
+        if i < len(self.rows):
+            self.rows[i].setdefault("card_box_counts", {})[k] = count
 
     def _word_focus_set(self, i, k, which):
         self._word_focus = (i, k, which)
 
     def _apply_word(self, which, text):
-        """The Descriptive Columns Console: put a word into the Label / Item (which = 0) or Context (which = 1) box last clicked.  which None = the box last clicked."""
+        """The Descriptive Columns Console: put a word into the box last clicked."""
         focus = getattr(self, "_word_focus", None)
         text = text.strip()
         if focus is None or not text:
-            self._say("Click a [Label] / [Item] or [Context] box on a card first, then pick or type a word.")
+            self._say("Click a descriptive text box on a card first, then pick or type a word.")
             return
         i, k, field = focus
-        if i >= len(self.rows) or k >= len(self._card_words(i)):
-            self._say("That card is gone: click a [Label] / [Item] or [Context] box again.")
+        target_field = field if which is None else which
+        if i >= len(self.rows):
+            self._say("That row is gone: click a descriptive text box again.")
             return
-        self._set_word(i, k, field if which is None else which, text)
-        self._render_row(i)
+        if k == "helper":
+            self._set_helper_word(i, target_field, text)
+            card = self.rows[i].get("helper_card")
+            if card:
+                while len(card.words_data) <= target_field:
+                    card.words_data.append("")
+                card.words_data[target_field] = text
+                if target_field == 0 and card.box1:
+                    card.box1.delete(0, "end")
+                    card.box1.insert(0, text)
+                    card.box1.configure(fg="black")
+                    card.box1.hinted = False
+                elif card._active_extra_box and card.current_page == target_field + 1:
+                    card._active_extra_box.delete(0, "end")
+                    card._active_extra_box.insert(0, text)
+                    card._active_extra_box.configure(fg="black")
+                    card._active_extra_box.hinted = False
+        elif k == "result":
+            self._set_result_word(i, target_field, text)
+            card = self.rows[i].get("result_card")
+            if card:
+                while len(card.words_data) <= target_field:
+                    card.words_data.append("")
+                card.words_data[target_field] = text
+                if target_field == 0 and card.box1:
+                    card.box1.delete(0, "end")
+                    card.box1.insert(0, text)
+                    card.box1.configure(fg="black")
+                    card.box1.hinted = False
+                elif card._active_extra_box and card.current_page == target_field + 1:
+                    card._active_extra_box.delete(0, "end")
+                    card._active_extra_box.insert(0, text)
+                    card._active_extra_box.configure(fg="black")
+                    card._active_extra_box.hinted = False
+        else:
+            if k >= len(self._card_words(i)):
+                self._say("That card is gone: click a descriptive text box again.")
+                return
+            self._set_word(i, k, target_field, text)
+            self._render_row(i)
 
     def _render_row(self, i):
         row = self.rows[i]
@@ -611,11 +820,39 @@ class CalculatorGUI(tk.Tk):
             self._slot_caption(row["inner"])
         else:
             sel = next((n for n, c in enumerate(cards) if c[2] is not None and c[2] == row["sel"]), None)
-            build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
-                      on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"]),
-                      stack_exponents=row_tree.stack_exponents(row["node"]), words=self._card_words(i),
-                      on_words=lambda k, which, text, i=i: self._set_word(i, k, which, text),
-                      on_focus=lambda k, which, i=i: self._word_focus_set(i, k, which)).pack(anchor="w", padx=6, pady=4)
+            card_box_counts = row.setdefault("card_box_counts", {})
+            if len(cards) == 1 and cards[0][0] == "box":
+                item = cards[0]
+                text = item[1] or "□"
+                bg = "#5b9bf0" if sel == 0 else PALE_BLUE
+                b = tk.Button(row["inner"], text=text, width=max(2, len(text) + 1), bg=bg,
+                              relief="sunken" if sel == 0 else "solid", bd=1,
+                              font=("Segoe UI", 12, "bold"),
+                              command=lambda: self._pick_box(i, 0))
+                b.center_btn = b
+                b.lead_btn = b
+                math_desc = row.get("math_desc")
+                if math_desc:
+                    b.box1 = math_desc.box1
+                    b.box2 = math_desc.box2
+                    b.trailing_btn = math_desc.trailing_btn
+                    b.boxes = math_desc.boxes
+                    b.num_boxes = math_desc.num_boxes
+                    b.get_words = math_desc.get_words
+                    b.to_excel_coordinate = math_desc.to_excel_coordinate
+                b.grid_pos = excel_workspace_position(i + 1, "number_for_math")
+                b.excel_pos = b.grid_pos
+                b.pack(pady=4)
+            else:
+                br = build_row(row["inner"], [(k, t) for k, t, _ in cards], [], stacked=(i > 0 and row["mode"] != "full"),
+                               on_pick=lambda k, i=i: self._pick_box(i, k), selected=sel, levels=row_tree.levels(row["node"]), fracs=row_tree.fracs(row["node"]),
+                               stack_exponents=row_tree.stack_exponents(row["node"]), words=self._card_words(i),
+                               num_boxes=card_box_counts,
+                               on_words=lambda k, which, text, i=i: self._set_word(i, k, which, text),
+                               on_focus=lambda k, which, i=i: self._word_focus_set(i, k, which),
+                               on_add_box=lambda k, count, i=i: self._add_card_box(i, k, count),
+                               card_slot=2, calc_row=i + 1)
+                br.pack(fill="both", expand=True)
             say = row_tree.note(row["node"])
             if say:                                       # a formula-only operator: one sentence under its cards, no box
                 tk.Label(row["inner"], text=say, bg=row["inner"].cget("bg"), fg="#555555", font=("Segoe UI", 9, "italic"),

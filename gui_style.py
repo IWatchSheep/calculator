@@ -60,12 +60,17 @@ from gui_coordinates import (  # noqa: F401
     CARD_CENTER_POSITION,
     card_to_excel_position,
     excel_to_card_position,
-    EXCEL_COLUMN_WIDTHS,
+    EXCEL_COLUMN_WIDTHS, EXCEL_13COL_COLUMN_WIDTHS,
     excel_column_width,
     excel_row_height,
     excel_total_workspace_width,
     excel_initial_workspace_height,
+    EXCEL_COL_ROW_LABEL,
+    EXCEL_COL_ACTIONS,
     configure_excel_workspace_grid,
+    excel_col_letter,
+    excel_col_number,
+    excel_cell_name,
 )
 
 CREAM = "#fffbe6"

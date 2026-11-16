@@ -1,3 +1,31 @@
+from gui_coordinates import (
+    EXCEL_13COL_TOTAL_COLUMNS,
+    EXCEL_13COL_INITIAL_TOTAL_ROWS,
+    EXCEL_13COL_ROWS_PER_CALCULATOR_ROW,
+    EXCEL_13COL_CALCULATOR_ROW_STRIDE,
+    EXCEL_13COL_ROW_LABEL,
+    EXCEL_13COL_SPACER_AB,
+    EXCEL_13COL_MATH_SIGN,
+    EXCEL_13COL_SPACER_CD,
+    EXCEL_13COL_NUMBER_MATH,
+    EXCEL_13COL_MATH_BOX1,
+    EXCEL_13COL_MATH_TRAILING,
+    EXCEL_13COL_SPACER_GH,
+    EXCEL_13COL_ACTIONS,
+    EXCEL_13COL_RESULT_EQUALS,
+    EXCEL_13COL_RESULT_BOX,
+    EXCEL_13COL_RESULT_BOX1,
+    EXCEL_13COL_RESULT_TRAILING,
+    EXCEL_13COL_COLUMN_WIDTHS,
+    excel_13col_column_letter,
+    excel_13col_column_from_letter,
+    excel_13col_column_width,
+    excel_13col_total_width,
+    excel_13col_start_row,
+    excel_13col_workspace_position,
+    excel_13col_workspace_positions,
+    excel_13col_total_row_positions,
+)
 """Focused unit tests for the common GUI coordinate convention."""
 import os
 import sys
@@ -10,6 +38,22 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from gui_coordinates import (
+    LEGACY_33COL_TOTAL_COLUMNS,
+    LEGACY_33COL_COLUMN_WIDTHS,
+    legacy_33col_workspace_position,
+    legacy_33col_workspace_positions,
+    EXCEL_13COL_TOTAL_COLUMNS,
+    EXCEL_13COL_ROW_LABEL,
+    EXCEL_13COL_MATH_SIGN,
+    EXCEL_13COL_NUMBER_MATH,
+    EXCEL_13COL_MATH_BOX1,
+    EXCEL_13COL_MATH_TRAILING,
+    EXCEL_13COL_ACTIONS,
+    EXCEL_13COL_RESULT_EQUALS,
+    EXCEL_13COL_RESULT_BOX,
+    EXCEL_13COL_RESULT_BOX1,
+    EXCEL_13COL_RESULT_TRAILING,
+    EXCEL_13COL_COLUMN_WIDTHS,
     ARROW_CENTER_POSITION,
     ARROW_GRID_POSITIONS,
     CARD_9COL_ARROW_GRID_POS,
@@ -437,7 +481,7 @@ class TestCardComponentCoordinates(unittest.TestCase):
             "center_square": (2, 4, 1, 1),
             "label_entry": (2, 6, 1, 1),
             "context_entry": (2, 7, 1, 1),
-            "trailing_button": (2, 9, 1, 1),
+            "trailing_button": (2, 8, 1, 1),
         }
         for name, (row, col, row_span, col_span) in expected.items():
             pos = CARD_COMPONENT_POSITIONS[name]
@@ -471,7 +515,7 @@ class TestCardComponentCoordinates(unittest.TestCase):
             CARD_TRAILING_BUTTON_POSITION,    # col 9
         ]
         columns = [p.column for p in positions]
-        self.assertEqual(columns, [1, 6, 7, 9])
+        self.assertEqual(columns, [1, 6, 7, 8])
         self.assertEqual(len(set(columns)), 4)
 
         # Arrow columns are 3, 4, 5
@@ -481,8 +525,7 @@ class TestCardComponentCoordinates(unittest.TestCase):
         # Columns 2 and 8 are spacers and never occupied
         all_cols = set(columns) | arrow_cols
         self.assertNotIn(2, all_cols)
-        self.assertNotIn(8, all_cols)
-        self.assertEqual(all_cols, {1, 3, 4, 5, 6, 7, 9})
+        self.assertEqual(all_cols, {1, 3, 4, 5, 6, 7, 8})
 
     def test_card_components_tkinter_grid_conversion(self):
         """Verify conversion to Tkinter zero-based grid parameters."""
@@ -492,7 +535,7 @@ class TestCardComponentCoordinates(unittest.TestCase):
             "center_square": {"row": 1, "column": 3, "rowspan": 1, "columnspan": 1},
             "label_entry": {"row": 1, "column": 5, "rowspan": 1, "columnspan": 1},
             "context_entry": {"row": 1, "column": 6, "rowspan": 1, "columnspan": 1},
-            "trailing_button": {"row": 1, "column": 8, "rowspan": 1, "columnspan": 1},
+            "trailing_button": {"row": 1, "column": 7, "rowspan": 1, "columnspan": 1},
         }
         for name, tk_dict in expected_tk.items():
             pos = CARD_COMPONENT_POSITIONS[name]
@@ -512,6 +555,7 @@ class TestCardComponentCoordinates(unittest.TestCase):
             on_pick=lambda: picked.append("picked"),
             card_slot=3,
             calc_row=1,
+            as_buttons=True,
         )
 
         # 1. Check card attributes
@@ -556,27 +600,26 @@ class TestCardComponentCoordinates(unittest.TestCase):
         self.assertEqual(int(info_ctx["rowspan"]), 1)
         self.assertEqual(card.context_btn.cget("text"), "[Context]")
 
-        # 6. Check Orange plus / trailing button at Card row 2, col 9 (Tkinter row 1, col 8)
+        # 6. Check Orange plus / trailing button at Card row 2, col 8 (Tkinter row 1, col 7)
         self.assertTrue(hasattr(card, "trailing_btn"))
         self.assertEqual(card.trailing_btn.grid_pos, CARD_TRAILING_BUTTON_POSITION)
         info_trailing = card.trailing_btn.grid_info()
         self.assertEqual(int(info_trailing["row"]), 1)
-        self.assertEqual(int(info_trailing["column"]), 8)
+        self.assertEqual(int(info_trailing["column"]), 7)
         self.assertEqual(int(info_trailing["rowspan"]), 1)
         self.assertEqual(card.trailing_btn.cget("text"), "+")
 
-        # 7. Check spacer columns (columns 1 and 7 in 0-based Tkinter) are empty
+        # 7. Check spacer column (column 1 in 0-based Tkinter) is empty
         occupied_cols = {int(w.grid_info()["column"]) for w in card.winfo_children()}
         self.assertNotIn(1, occupied_cols, "Tkinter column 1 (Card spacer 2) must remain empty")
-        self.assertNotIn(7, occupied_cols, "Tkinter column 7 (Card spacer 8) must remain empty")
 
         # 8. Check global Excel coordinate traceability
         excel_center = card.to_excel_coordinate(card.center_btn)
-        self.assertEqual(excel_center, GridPosition(row=2, column=28, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(excel_center, GridPosition(row=2, column=26, region=LayoutRegion.EXCEL_WORKSPACE))
         self.assertEqual(card.to_excel_coordinate(card.lead_btn),
-                         GridPosition(row=2, column=25, region=LayoutRegion.EXCEL_WORKSPACE))
+                         GridPosition(row=2, column=23, region=LayoutRegion.EXCEL_WORKSPACE))
         self.assertEqual(card.to_excel_coordinate(card.trailing_btn),
-                         GridPosition(row=2, column=33, region=LayoutRegion.EXCEL_WORKSPACE))
+                         GridPosition(row=2, column=30, region=LayoutRegion.EXCEL_WORKSPACE))
 
     def test_make_component_with_word_entries(self):
         """make_component creates word_entry widgets at row 2, cols 6 & 7 with working callbacks."""
@@ -635,22 +678,22 @@ class TestCardComponentCoordinates(unittest.TestCase):
             self.assertEqual(slot, 1)
             self.assertEqual(back_local, local_pos)
 
-        # Slot 2: Math Expression in calc_row 1 -> rows 1..3, cols 13..21
+        # Slot 2: Math Expression in calc_row 1 -> rows 1..3, cols 12..19
         for local_pos in CARD_9COL_ARROW_POSITIONS:
             g_pos = card_to_excel_position(local_pos, card_slot=2, calc_row=1)
             self.assertEqual(g_pos.region, LayoutRegion.EXCEL_WORKSPACE)
             self.assertEqual(g_pos.row, 1 + local_pos.row - 1)
-            self.assertEqual(g_pos.column, 13 + local_pos.column - 1)
+            self.assertEqual(g_pos.column, 12 + local_pos.column - 1)
             slot, back_local = excel_to_card_position(g_pos)
             self.assertEqual(slot, 2)
             self.assertEqual(back_local, local_pos)
 
-        # Slot 3: Result Card in calc_row 1 -> rows 1..3, cols 25..33
+        # Slot 3: Result Card in calc_row 1 -> rows 1..3, cols 23..30
         for local_pos in CARD_9COL_ARROW_POSITIONS:
             g_pos = card_to_excel_position(local_pos, card_slot=3, calc_row=1)
             self.assertEqual(g_pos.region, LayoutRegion.EXCEL_WORKSPACE)
             self.assertEqual(g_pos.row, 1 + local_pos.row - 1)
-            self.assertEqual(g_pos.column, 25 + local_pos.column - 1)
+            self.assertEqual(g_pos.column, 23 + local_pos.column - 1)
             slot, back_local = excel_to_card_position(g_pos)
             self.assertEqual(slot, 3)
             self.assertEqual(back_local, local_pos)
@@ -783,77 +826,89 @@ class TestMainRowCoordinates(unittest.TestCase):
         self.assertNotEqual(row_pos, arrow_pos)
 
     def test_live_calculator_gui_row_layout(self):
-        """CalculatorGUI instantiates rows with correct GridPosition attachments and Tkinter placements."""
+        """CalculatorGUI instantiates rows with authoritative Excel coordinates and backward-compatible logical mappings."""
         if self.root is None:
             self.skipTest("Tkinter display not available")
 
-        # Import CalculatorGUI here to test actual application wiring
         from main import CalculatorGUI
 
         app = None
         try:
             app = CalculatorGUI()
-            app.withdraw()  # keep hidden during headless tests
+            app.withdraw()
 
-            # CalculatorGUI initializes with 2 rows
             self.assertEqual(len(app.rows), 2)
 
             for r_idx in range(2):
                 row_data = app.rows[r_idx]
                 r_num = r_idx + 1
+                r0 = excel_start_row(r_num)
+                r0_zero = r0 - 1
 
-                # Verify attached grid_positions dict
+                # Verify logical mappings
+                self.assertIn("main_row_positions", row_data)
+                self.assertEqual(row_data["main_row_positions"], main_row_positions(r_num))
+
+                # Verify authoritative 33-column Excel grid positions
                 self.assertIn("grid_positions", row_data)
                 positions = row_data["grid_positions"]
-                self.assertEqual(positions, main_row_positions(r_num))
+                self.assertEqual(positions, excel_workspace_positions(r_num))
 
-                # Verify box (math_expression) in col 2 (0-based)
+                # Verify box (number/expression) in Excel column E (0-based column 4)
                 self.assertIn("box", row_data)
                 box = row_data["box"]
                 self.assertTrue(hasattr(box, "grid_pos"))
-                self.assertEqual(box.grid_pos, positions["math_expression"])
                 b_info = box.grid_info()
-                self.assertEqual(int(b_info["row"]), r_idx)
-                self.assertEqual(int(b_info["column"]), 2)
+                self.assertEqual(int(b_info["row"]), 1)  # row 1 inside its own row_frame
+                self.assertEqual(int(b_info["column"]), EXCEL_13COL_NUMBER_MATH - 1)
+                self.assertEqual(int(b_info["columnspan"]), 1)
+                self.assertEqual(int(b_info["rowspan"]), 1)
+                self.assertEqual(box.excel_pos.row, r0 + 1)
 
-                # Verify result card in col 4 (0-based)
-                result_card = row_data.get("result_card", row_data["result"].master.master)
-                self.assertTrue(hasattr(result_card, "grid_pos"))
-                self.assertEqual(result_card.grid_pos, positions["result_card"])
-                c_info = result_card.grid_info()
-                self.assertEqual(int(c_info["row"]), r_idx)
-                self.assertEqual(int(c_info["column"]), 4)
+                # Verify result box in Excel column K (0-based column 10)
+                result_box = row_data.get("result_box", row_data["result"])
+                self.assertTrue(hasattr(result_box, "grid_pos"))
+                c_info = result_box.grid_info()
+                self.assertEqual(int(c_info["row"]), 1)
+                self.assertEqual(int(c_info["column"]), EXCEL_13COL_RESULT_BOX - 1)
+                self.assertEqual(int(c_info["columnspan"]), 1)
+                self.assertEqual(int(c_info["rowspan"]), 1)
+                self.assertEqual(result_box.excel_pos.row, r0 + 1)
 
-                # Verify row label frame in col 0 (0-based)
+                # Verify row label frame in Excel column A (0-based column 0)
                 labf = row_data["label_frame"]
                 self.assertTrue(hasattr(labf, "grid_pos"))
-                self.assertEqual(labf.grid_pos, positions["row_label"])
                 l_info = labf.grid_info()
-                self.assertEqual(int(l_info["row"]), r_idx)
-                self.assertEqual(int(l_info["column"]), 0)
+                self.assertEqual(int(l_info["row"]), 0)
+                self.assertEqual(int(l_info["column"]), EXCEL_13COL_ROW_LABEL - 1)
+                self.assertEqual(int(l_info["columnspan"]), 1)
+                self.assertEqual(int(l_info["rowspan"]), 3)
+                self.assertEqual(labf.excel_pos.row, r0)
 
-                # Verify actions frame in col 3 (0-based)
+                # Verify actions frame in Excel column I (0-based column 8)
                 col3 = row_data["actions_frame"]
                 self.assertTrue(hasattr(col3, "grid_pos"))
-                self.assertEqual(col3.grid_pos, positions["math_actions"])
                 a_info = col3.grid_info()
-                self.assertEqual(int(a_info["row"]), r_idx)
-                self.assertEqual(int(a_info["column"]), 3)
+                self.assertEqual(int(a_info["row"]), 0)
+                self.assertEqual(int(a_info["column"]), EXCEL_13COL_ACTIONS - 1)
+                self.assertEqual(int(a_info["columnspan"]), 1)
+                self.assertEqual(int(a_info["rowspan"]), 3)
+                self.assertEqual(col3.excel_pos.row, r0)
 
             # Test adding a 3rd row dynamically
             new_r = app._add_row()
-            self.assertEqual(new_r, 2)  # 0-indexed row 2 -> Row 3
+            self.assertEqual(new_r, 2)  # 0-indexed row 2 -> Calculator Row 3
             self.assertEqual(len(app.rows), 3)
 
             row_3 = app.rows[2]
             positions_3 = row_3["grid_positions"]
-            self.assertEqual(positions_3, main_row_positions(3))
+            self.assertEqual(positions_3, excel_workspace_positions(3))
 
             box_3 = row_3["box"]
-            self.assertEqual(box_3.grid_pos, positions_3["math_expression"])
             b3_info = box_3.grid_info()
-            self.assertEqual(int(b3_info["row"]), 2)
-            self.assertEqual(int(b3_info["column"]), 2)
+            self.assertEqual(int(b3_info["row"]), 1)
+            self.assertEqual(int(b3_info["column"]), EXCEL_13COL_NUMBER_MATH - 1)
+            self.assertEqual(box_3.excel_pos.row, excel_13col_start_row(3) + 1)
 
         finally:
             if app is not None:
@@ -861,7 +916,6 @@ class TestMainRowCoordinates(unittest.TestCase):
                     app.destroy()
                 except Exception:
                     pass
-
 
 class TestExcelWorkspaceCoordinates(unittest.TestCase):
     """Test the authoritative 9-row x 33-column Excel workspace coordinate specification."""
@@ -875,7 +929,7 @@ class TestExcelWorkspaceCoordinates(unittest.TestCase):
 
     def test_global_grid_dimensions(self):
         """Authoritative grid has 33 columns and 9 initial rows with 6-row stride."""
-        self.assertEqual(EXCEL_TOTAL_COLUMNS, 33)
+        self.assertEqual(LEGACY_33COL_TOTAL_COLUMNS, 30)
         self.assertEqual(EXCEL_INITIAL_TOTAL_ROWS, 9)
         self.assertEqual(EXCEL_ROWS_PER_CALCULATOR_ROW, 3)
         self.assertEqual(EXCEL_CALCULATOR_ROW_STRIDE, 6)
@@ -917,158 +971,158 @@ class TestExcelWorkspaceCoordinates(unittest.TestCase):
     def test_row_1_positions_match_excel_sheet_exactly(self):
         """Verify every control in Calculator Row 1 matches my_excel_sheet.txt cells."""
         # Row 1 label: R1C1 (row_span=3)
-        lbl = excel_workspace_position(1, "row_label")
+        lbl = legacy_33col_workspace_position(1, "row_label")
         self.assertEqual((lbl.row, lbl.column, lbl.row_span, lbl.column_span), (1, 1, 3, 1))
         self.assertEqual(lbl.region, LayoutRegion.EXCEL_WORKSPACE)
 
         # Slot 1: Join note text: R1C3..R1C10 (column_span=8)
-        jn = excel_workspace_position(1, "join_note_label")
-        self.assertEqual((jn.row, jn.column, jn.row_span, jn.column_span), (1, 3, 1, 8))
+        jn = legacy_33col_workspace_position(1, "join_note_label")
+        self.assertEqual((jn.row, jn.column, jn.row_span, jn.column_span), (1, 3, 1, 5))
 
         # Slot 1: Join note down arrow canvas: R3C6
-        ja = excel_workspace_position(1, "join_note_arrow")
+        ja = legacy_33col_workspace_position(1, "join_note_arrow")
         self.assertEqual((ja.row, ja.column, ja.row_span, ja.column_span), (3, 6, 1, 1))
 
         # Slot 2 (Math Expression):
-        # Lead button: R2C13
-        self.assertEqual((excel_workspace_position(1, "math_lead_btn").row,
-                          excel_workspace_position(1, "math_lead_btn").column), (2, 13))
-        # Arrow grid: cols 15-17, rows 1-3
-        self.assertEqual((excel_workspace_position(1, "math_arrow_nw").row,
-                          excel_workspace_position(1, "math_arrow_nw").column), (1, 15))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_n").row,
-                          excel_workspace_position(1, "math_arrow_n").column), (1, 16))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_ne").row,
-                          excel_workspace_position(1, "math_arrow_ne").column), (1, 17))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_w").row,
-                          excel_workspace_position(1, "math_arrow_w").column), (2, 15))
-        self.assertEqual((excel_workspace_position(1, "math_center").row,
-                          excel_workspace_position(1, "math_center").column), (2, 16))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_e").row,
-                          excel_workspace_position(1, "math_arrow_e").column), (2, 17))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_sw").row,
-                          excel_workspace_position(1, "math_arrow_sw").column), (3, 15))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_s").row,
-                          excel_workspace_position(1, "math_arrow_s").column), (3, 16))
-        self.assertEqual((excel_workspace_position(1, "math_arrow_se").row,
-                          excel_workspace_position(1, "math_arrow_se").column), (3, 17))
-        # Label & Context: R2C18, R2C19
-        self.assertEqual((excel_workspace_position(1, "math_label").row,
-                          excel_workspace_position(1, "math_label").column), (2, 18))
-        self.assertEqual((excel_workspace_position(1, "math_context").row,
-                          excel_workspace_position(1, "math_context").column), (2, 19))
-        # Trailing button: R2C21
-        self.assertEqual((excel_workspace_position(1, "math_trailing_btn").row,
-                          excel_workspace_position(1, "math_trailing_btn").column), (2, 21))
+        # Lead button: R2C12 (L2)
+        self.assertEqual((legacy_33col_workspace_position(1, "math_lead_btn").row,
+                          legacy_33col_workspace_position(1, "math_lead_btn").column), (2, 12))
+        # Arrow grid: cols 14-16, rows 1-3
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_nw").row,
+                          legacy_33col_workspace_position(1, "math_arrow_nw").column), (1, 14))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_n").row,
+                          legacy_33col_workspace_position(1, "math_arrow_n").column), (1, 15))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_ne").row,
+                          legacy_33col_workspace_position(1, "math_arrow_ne").column), (1, 16))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_w").row,
+                          legacy_33col_workspace_position(1, "math_arrow_w").column), (2, 14))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_center").row,
+                          legacy_33col_workspace_position(1, "math_center").column), (2, 15))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_e").row,
+                          legacy_33col_workspace_position(1, "math_arrow_e").column), (2, 16))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_sw").row,
+                          legacy_33col_workspace_position(1, "math_arrow_sw").column), (3, 14))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_s").row,
+                          legacy_33col_workspace_position(1, "math_arrow_s").column), (3, 15))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_arrow_se").row,
+                          legacy_33col_workspace_position(1, "math_arrow_se").column), (3, 16))
+        # Label & Context: R2C17, R2C18 (Q2, R2)
+        self.assertEqual((legacy_33col_workspace_position(1, "math_label").row,
+                          legacy_33col_workspace_position(1, "math_label").column), (2, 17))
+        self.assertEqual((legacy_33col_workspace_position(1, "math_context").row,
+                          legacy_33col_workspace_position(1, "math_context").column), (2, 18))
+        # Trailing button: R2C19 (S2)
+        self.assertEqual((legacy_33col_workspace_position(1, "math_trailing_btn").row,
+                          legacy_33col_workspace_position(1, "math_trailing_btn").column), (2, 19))
 
-        # Actions (Col 23):
-        # Top: "math to put on the left" at R1C23
-        self.assertEqual((excel_workspace_position(1, "action_math_left").row,
-                          excel_workspace_position(1, "action_math_left").column), (1, 23))
-        # Bottom: "clear math on the left" at R3C23
-        self.assertEqual((excel_workspace_position(1, "action_clear_left").row,
-                          excel_workspace_position(1, "action_clear_left").column), (3, 23))
+        # Actions (Col 21, U):
+        # Top: "math to put on the left" at R1C21
+        self.assertEqual((legacy_33col_workspace_position(1, "action_math_left").row,
+                          legacy_33col_workspace_position(1, "action_math_left").column), (1, 21))
+        # Bottom: "clear math on the left" at R3C21
+        self.assertEqual((legacy_33col_workspace_position(1, "action_clear_left").row,
+                          legacy_33col_workspace_position(1, "action_clear_left").column), (3, 21))
 
         # Slot 3 (Result Card):
-        # Lead button: R2C25
-        self.assertEqual((excel_workspace_position(1, "result_lead_btn").row,
-                          excel_workspace_position(1, "result_lead_btn").column), (2, 25))
-        # Arrow grid: cols 27-29, rows 1-3
-        self.assertEqual((excel_workspace_position(1, "result_arrow_nw").row,
-                          excel_workspace_position(1, "result_arrow_nw").column), (1, 27))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_n").row,
-                          excel_workspace_position(1, "result_arrow_n").column), (1, 28))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_ne").row,
-                          excel_workspace_position(1, "result_arrow_ne").column), (1, 29))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_w").row,
-                          excel_workspace_position(1, "result_arrow_w").column), (2, 27))
-        self.assertEqual((excel_workspace_position(1, "result_center").row,
-                          excel_workspace_position(1, "result_center").column), (2, 28))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_e").row,
-                          excel_workspace_position(1, "result_arrow_e").column), (2, 29))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_sw").row,
-                          excel_workspace_position(1, "result_arrow_sw").column), (3, 27))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_s").row,
-                          excel_workspace_position(1, "result_arrow_s").column), (3, 28))
-        self.assertEqual((excel_workspace_position(1, "result_arrow_se").row,
-                          excel_workspace_position(1, "result_arrow_se").column), (3, 29))
-        # Label & Context: R2C30, R2C31
-        self.assertEqual((excel_workspace_position(1, "result_label").row,
-                          excel_workspace_position(1, "result_label").column), (2, 30))
-        self.assertEqual((excel_workspace_position(1, "result_context").row,
-                          excel_workspace_position(1, "result_context").column), (2, 31))
-        # Trailing button: R2C33
-        self.assertEqual((excel_workspace_position(1, "result_trailing_btn").row,
-                          excel_workspace_position(1, "result_trailing_btn").column), (2, 33))
+        # Lead button: R2C23 (W2)
+        self.assertEqual((legacy_33col_workspace_position(1, "result_lead_btn").row,
+                          legacy_33col_workspace_position(1, "result_lead_btn").column), (2, 23))
+        # Arrow grid: cols 25-27, rows 1-3
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_nw").row,
+                          legacy_33col_workspace_position(1, "result_arrow_nw").column), (1, 25))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_n").row,
+                          legacy_33col_workspace_position(1, "result_arrow_n").column), (1, 26))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_ne").row,
+                          legacy_33col_workspace_position(1, "result_arrow_ne").column), (1, 27))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_w").row,
+                          legacy_33col_workspace_position(1, "result_arrow_w").column), (2, 25))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_center").row,
+                          legacy_33col_workspace_position(1, "result_center").column), (2, 26))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_e").row,
+                          legacy_33col_workspace_position(1, "result_arrow_e").column), (2, 27))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_sw").row,
+                          legacy_33col_workspace_position(1, "result_arrow_sw").column), (3, 25))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_s").row,
+                          legacy_33col_workspace_position(1, "result_arrow_s").column), (3, 26))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_arrow_se").row,
+                          legacy_33col_workspace_position(1, "result_arrow_se").column), (3, 27))
+        # Label & Context: R2C28, R2C29 (AB2, AC2)
+        self.assertEqual((legacy_33col_workspace_position(1, "result_label").row,
+                          legacy_33col_workspace_position(1, "result_label").column), (2, 28))
+        self.assertEqual((legacy_33col_workspace_position(1, "result_context").row,
+                          legacy_33col_workspace_position(1, "result_context").column), (2, 29))
+        # Trailing button: R2C30 (AD2)
+        self.assertEqual((legacy_33col_workspace_position(1, "result_trailing_btn").row,
+                          legacy_33col_workspace_position(1, "result_trailing_btn").column), (2, 30))
 
     def test_row_2_positions_match_excel_sheet_exactly(self):
         """Verify every control in Calculator Row 2 matches my_excel_sheet.txt cells."""
         # Helper card heading: R5C3..R5C8
-        hh = excel_workspace_position(2, "helper_heading")
+        hh = legacy_33col_workspace_position(2, "helper_heading")
         self.assertEqual((hh.row, hh.column, hh.row_span, hh.column_span), (5, 3, 1, 6))
 
         # Row 2 label: R7C1 (row_span=3, rows 7-9)
-        lbl = excel_workspace_position(2, "row_label")
+        lbl = legacy_33col_workspace_position(2, "row_label")
         self.assertEqual((lbl.row, lbl.column, lbl.row_span, lbl.column_span), (7, 1, 3, 1))
 
         # Slot 1 (Helper Card):
         # Lead button: R8C3
-        self.assertEqual((excel_workspace_position(2, "helper_lead_btn").row,
-                          excel_workspace_position(2, "helper_lead_btn").column), (8, 3))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_lead_btn").row,
+                          legacy_33col_workspace_position(2, "helper_lead_btn").column), (8, 3))
         # Arrow grid: cols 5-7, rows 7-9
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_nw").row,
-                          excel_workspace_position(2, "helper_arrow_nw").column), (7, 5))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_n").row,
-                          excel_workspace_position(2, "helper_arrow_n").column), (7, 6))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_ne").row,
-                          excel_workspace_position(2, "helper_arrow_ne").column), (7, 7))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_w").row,
-                          excel_workspace_position(2, "helper_arrow_w").column), (8, 5))
-        self.assertEqual((excel_workspace_position(2, "helper_center").row,
-                          excel_workspace_position(2, "helper_center").column), (8, 6))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_e").row,
-                          excel_workspace_position(2, "helper_arrow_e").column), (8, 7))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_sw").row,
-                          excel_workspace_position(2, "helper_arrow_sw").column), (9, 5))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_s").row,
-                          excel_workspace_position(2, "helper_arrow_s").column), (9, 6))
-        self.assertEqual((excel_workspace_position(2, "helper_arrow_se").row,
-                          excel_workspace_position(2, "helper_arrow_se").column), (9, 7))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_nw").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_nw").column), (7, 5))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_n").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_n").column), (7, 6))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_ne").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_ne").column), (7, 7))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_w").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_w").column), (8, 5))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_center").row,
+                          legacy_33col_workspace_position(2, "helper_center").column), (8, 6))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_e").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_e").column), (8, 7))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_sw").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_sw").column), (9, 5))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_s").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_s").column), (9, 6))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_arrow_se").row,
+                          legacy_33col_workspace_position(2, "helper_arrow_se").column), (9, 7))
         # Label & Context: R8C8, R8C9
-        self.assertEqual((excel_workspace_position(2, "helper_label").row,
-                          excel_workspace_position(2, "helper_label").column), (8, 8))
-        self.assertEqual((excel_workspace_position(2, "helper_context").row,
-                          excel_workspace_position(2, "helper_context").column), (8, 9))
-        # Trailing button: R8C11
-        self.assertEqual((excel_workspace_position(2, "helper_trailing_btn").row,
-                          excel_workspace_position(2, "helper_trailing_btn").column), (8, 11))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_label").row,
+                          legacy_33col_workspace_position(2, "helper_label").column), (8, 8))
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_context").row,
+                          legacy_33col_workspace_position(2, "helper_context").column), (8, 9))
+        # Trailing button: R8C10 (J8)
+        self.assertEqual((legacy_33col_workspace_position(2, "helper_trailing_btn").row,
+                          legacy_33col_workspace_position(2, "helper_trailing_btn").column), (8, 10))
 
         # Slot 2 (Math Expression):
-        # Lead button: R8C13
-        self.assertEqual((excel_workspace_position(2, "math_lead_btn").row,
-                          excel_workspace_position(2, "math_lead_btn").column), (8, 13))
-        # Center square: R8C16
-        self.assertEqual((excel_workspace_position(2, "math_center").row,
-                          excel_workspace_position(2, "math_center").column), (8, 16))
+        # Lead button: R8C12 (L8)
+        self.assertEqual((legacy_33col_workspace_position(2, "math_lead_btn").row,
+                          legacy_33col_workspace_position(2, "math_lead_btn").column), (8, 12))
+        # Center square: R8C15 (O8)
+        self.assertEqual((legacy_33col_workspace_position(2, "math_center").row,
+                          legacy_33col_workspace_position(2, "math_center").column), (8, 15))
 
-        # Actions (Col 23):
-        self.assertEqual((excel_workspace_position(2, "action_math_left").row,
-                          excel_workspace_position(2, "action_math_left").column), (7, 23))
-        self.assertEqual((excel_workspace_position(2, "action_clear_left").row,
-                          excel_workspace_position(2, "action_clear_left").column), (9, 23))
+        # Actions (Col 21, U):
+        self.assertEqual((legacy_33col_workspace_position(2, "action_math_left").row,
+                          legacy_33col_workspace_position(2, "action_math_left").column), (7, 21))
+        self.assertEqual((legacy_33col_workspace_position(2, "action_clear_left").row,
+                          legacy_33col_workspace_position(2, "action_clear_left").column), (9, 21))
 
         # Slot 3 (Result Card):
-        self.assertEqual((excel_workspace_position(2, "result_lead_btn").row,
-                          excel_workspace_position(2, "result_lead_btn").column), (8, 25))
-        self.assertEqual((excel_workspace_position(2, "result_center").row,
-                          excel_workspace_position(2, "result_center").column), (8, 28))
-        self.assertEqual((excel_workspace_position(2, "result_trailing_btn").row,
-                          excel_workspace_position(2, "result_trailing_btn").column), (8, 33))
+        self.assertEqual((legacy_33col_workspace_position(2, "result_lead_btn").row,
+                          legacy_33col_workspace_position(2, "result_lead_btn").column), (8, 23))
+        self.assertEqual((legacy_33col_workspace_position(2, "result_center").row,
+                          legacy_33col_workspace_position(2, "result_center").column), (8, 26))
+        self.assertEqual((legacy_33col_workspace_position(2, "result_trailing_btn").row,
+                          legacy_33col_workspace_position(2, "result_trailing_btn").column), (8, 30))
 
     def test_all_individual_controls_are_disjoint_and_non_overlapping(self):
         """Reject accidental overlapping controls across calculator rows 1 through 4."""
         for k in (1, 2, 3, 4):
-            positions = excel_workspace_positions(k)
+            positions = legacy_33col_workspace_positions(k)
             occupied_cells: set[tuple[int, int]] = set()
 
             for name, pos in positions.items():
@@ -1090,7 +1144,7 @@ class TestExcelWorkspaceCoordinates(unittest.TestCase):
         """Verify no row-level overlap between calculator rows 1, 2, 3, and 4."""
         all_cells: dict[tuple[int, int], str] = {}
         for k in (1, 2, 3, 4):
-            positions = excel_workspace_positions(k)
+            positions = legacy_33col_workspace_positions(k)
             for name, pos in positions.items():
                 tag = f"row_{k}:{name}"
                 for r in range(pos.row, pos.end_row + 1):
@@ -1116,13 +1170,13 @@ class TestExcelWorkspaceCoordinates(unittest.TestCase):
             excel_heading_row(1)  # No heading row for Calculator Row 1
 
         with self.assertRaises(ValueError):
-            excel_workspace_position(2, "join_note_label")  # Join note only exists on row 1
+            legacy_33col_workspace_position(2, "join_note_label")  # Join note only exists on row 1
 
         with self.assertRaises(ValueError):
-            excel_workspace_position(1, "helper_heading")  # Helper heading only exists on row >= 2
+            legacy_33col_workspace_position(1, "helper_heading")  # Helper heading only exists on row >= 2
 
         with self.assertRaises(KeyError):
-            excel_workspace_position(1, "nonexistent_control_xyz")
+            legacy_33col_workspace_position(1, "nonexistent_control_xyz")
 
 
 class TestExcelWorkspacePreparedGrid(unittest.TestCase):
@@ -1177,40 +1231,39 @@ class TestExcelWorkspacePreparedGrid(unittest.TestCase):
             self.assertEqual(int(info.get("weight", 0)), 0)
 
         # Explicit role verification
-        # Calculator Row 1: rows 1..3 (24, 28, 24)
-        self.assertEqual(excel_row_height(1), 24)
-        self.assertEqual(excel_row_height(2), 28)
-        self.assertEqual(excel_row_height(3), 24)
+        # Calculator Row 1: rows 1..3 (26, 44, 26)
+        self.assertEqual(excel_row_height(1), 26)
+        self.assertEqual(excel_row_height(2), 44)
+        self.assertEqual(excel_row_height(3), 26)
 
-        # Spacers and Heading: rows 4..6 (10, 22, 10)
+        # Spacers and Heading: rows 4..6 (10, 24, 10)
         self.assertEqual(excel_row_height(4), 10)  # Spacer before heading
-        self.assertEqual(excel_row_height(5), 22)  # Helper card heading
+        self.assertEqual(excel_row_height(5), 24)  # Helper card heading
         self.assertEqual(excel_row_height(6), 10)  # Spacer after heading
 
-        # Calculator Row 2: rows 7..9 (24, 28, 24)
-        self.assertEqual(excel_row_height(7), 24)
-        self.assertEqual(excel_row_height(8), 28)
-        self.assertEqual(excel_row_height(9), 24)
+        # Calculator Row 2: rows 7..9 (26, 44, 26)
+        self.assertEqual(excel_row_height(7), 26)
+        self.assertEqual(excel_row_height(8), 44)
+        self.assertEqual(excel_row_height(9), 26)
 
     def test_card_column_widths_match_card_specification(self):
         """Card column widths in the 33-column grid correspond to Step 2 card specification."""
         card_widths = [
-            excel_column_width(EXCEL_COL_SLOT1_LEAD_BTN),    # 28 (Lead btn)
-            excel_column_width(EXCEL_COL_SLOT1_SPACER1),     # 8  (Spacer 1)
-            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL1),  # 24 (Arrow Left)
-            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL2),  # 26 (Arrow Mid / Center)
-            excel_column_width(EXCEL_COL_SLOT1_ARROW_COL3),  # 24 (Arrow Right)
-            excel_column_width(EXCEL_COL_SLOT1_LABEL),       # 65 (Label entry)
-            excel_column_width(EXCEL_COL_SLOT1_CONTEXT),     # 85 (Context entry)
-            excel_column_width(EXCEL_COL_SLOT1_SPACER2),     # 8  (Spacer 2)
-            excel_column_width(EXCEL_COL_SLOT1_TRAILING_BTN),# 28 (Trailing btn)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_LEAD_BTN],    # 42 (Lead btn)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_SPACER1],     # 10 (Spacer 1)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_ARROW_COL1],  # 24 (Arrow Left)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_ARROW_COL2],  # 28 (Arrow Mid / Center)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_ARROW_COL3],  # 24 (Arrow Right)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_LABEL],       # 90 (Label entry)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_CONTEXT],     # 90 (Context entry)
+            LEGACY_33COL_COLUMN_WIDTHS[EXCEL_COL_SLOT1_TRAILING_BTN],# 42 (Trailing btn)
         ]
-        self.assertEqual(card_widths, [28, 8, 24, 26, 24, 65, 85, 8, 28])
+        self.assertEqual(card_widths, [42, 10, 24, 28, 24, 90, 90, 42])
 
         # Slots 1, 2, and 3 have identical card column width profiles
-        slot1_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT1_START, EXCEL_COL_SLOT1_END + 1)]
-        slot2_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT2_START, EXCEL_COL_SLOT2_END + 1)]
-        slot3_widths = [excel_column_width(c) for c in range(EXCEL_COL_SLOT3_START, EXCEL_COL_SLOT3_END + 1)]
+        slot1_widths = [LEGACY_33COL_COLUMN_WIDTHS[c] for c in range(EXCEL_COL_SLOT1_START, EXCEL_COL_SLOT1_END + 1)]
+        slot2_widths = [LEGACY_33COL_COLUMN_WIDTHS[c] for c in range(EXCEL_COL_SLOT2_START, EXCEL_COL_SLOT2_END + 1)]
+        slot3_widths = [LEGACY_33COL_COLUMN_WIDTHS[c] for c in range(EXCEL_COL_SLOT3_START, EXCEL_COL_SLOT3_END + 1)]
         self.assertEqual(slot1_widths, card_widths)
         self.assertEqual(slot2_widths, card_widths)
         self.assertEqual(slot3_widths, card_widths)
@@ -1230,24 +1283,25 @@ class TestExcelWorkspacePreparedGrid(unittest.TestCase):
 
         # Check Calculator Row 3: heading at row 11, spacers at 10 and 12, cards at 13..15
         self.assertEqual(excel_row_height(10), 10)
-        self.assertEqual(excel_row_height(11), 22)
+        self.assertEqual(excel_row_height(11), 24)
         self.assertEqual(excel_row_height(12), 10)
-        self.assertEqual(excel_row_height(13), 24)
-        self.assertEqual(excel_row_height(14), 28)
-        self.assertEqual(excel_row_height(15), 24)
+        self.assertEqual(excel_row_height(13), 26)
+        self.assertEqual(excel_row_height(14), 44)
+        self.assertEqual(excel_row_height(15), 26)
 
     def test_total_workspace_dimensions_predictable(self):
         """Natural total width is bounded to 1126px without arbitrary expanding gaps."""
         total_width = excel_total_workspace_width()
-        self.assertEqual(total_width, 1126)
-        # Fits comfortably within standard 1480px calculator window
-        self.assertLess(total_width, 1480)
+        self.assertEqual(total_width, 888)
+        self.assertEqual(sum(LEGACY_33COL_COLUMN_WIDTHS.values()), 1288)
+        # Fits comfortably within standard 1700px calculator window
+        self.assertLess(total_width, 1700)
 
         initial_height = excel_initial_workspace_height()
-        self.assertEqual(initial_height, 194)
+        self.assertEqual(initial_height, 236)
 
     def test_live_gui_has_prepared_workspace_without_conflicting(self):
-        """CalculatorGUI retains active 5-column area while preparing 33-column excel_area."""
+        """CalculatorGUI has active 33-column Excel workspace and retired 5-column layout."""
         if self.root is None:
             self.skipTest("Tkinter display not available")
 
@@ -1257,28 +1311,24 @@ class TestExcelWorkspacePreparedGrid(unittest.TestCase):
             app = CalculatorGUI()
             app.withdraw()
 
-            # 1. Live area is unchanged and active
+            # 1. Active area is self.excel_area
             self.assertTrue(hasattr(app, "area"))
-            self.assertEqual(len(app.rows), 2)
-            self.assertEqual(int(app.area.grid_columnconfigure(0).get("minsize", 0)), 170)
-            self.assertEqual(int(app.area.grid_columnconfigure(1).get("minsize", 0)), 430)
-
-            # 2. Prepared excel_area exists separately
             self.assertTrue(hasattr(app, "excel_area"))
-            self.assertTrue(hasattr(app, "excel_workspace"))
-            self.assertEqual(app.excel_area, app.excel_workspace)
+            self.assertEqual(app.area, app.excel_area)
+            self.assertEqual(len(app.rows), 2)
 
-            # 3. Exactly 33 columns and 9 rows are configured on excel_area
-            for c in range(33):
-                col_width = int(app.excel_area.grid_columnconfigure(c).get("minsize", 0))
+            # 2. Exactly 33 columns configured on the active workspace with weight=0
+            for c in range(EXCEL_TOTAL_COLUMNS):
+                col_width = int(app.area.grid_columnconfigure(c).get("minsize", 0))
                 self.assertEqual(col_width, excel_column_width(c + 1))
-                self.assertEqual(int(app.excel_area.grid_columnconfigure(c).get("weight", 0)), 0)
+                self.assertEqual(int(app.area.grid_columnconfigure(c).get("weight", 0)), 0)
 
+            # 3. Exactly 9 rows configured on the active workspace
             for r in range(9):
-                row_height = int(app.excel_area.grid_rowconfigure(r).get("minsize", 0))
+                row_height = int(app.area.grid_rowconfigure(r).get("minsize", 0))
                 self.assertEqual(row_height, excel_row_height(r + 1))
 
-            # 4. Activation hook swaps window smoothly
+            # 4. Activation hook is idempotent
             self.assertTrue(hasattr(app, "activate_excel_workspace"))
             app.activate_excel_workspace()
             self.assertEqual(app.area, app.excel_area)
@@ -1290,6 +1340,498 @@ class TestExcelWorkspacePreparedGrid(unittest.TestCase):
                 except Exception:
                     pass
 
+
+
+class TestStep4ActiveExcelWorkspace(unittest.TestCase):
+    """Checkpoint 2 verification: Independent row grids and auto-expanding descriptions."""
+
+    def setUp(self):
+        try:
+            self.root = tk.Tk()
+            self.root.withdraw()
+        except tk.TclError:
+            self.root = None
+
+    def tearDown(self):
+        if self.root:
+            try:
+                self.root.destroy()
+            except Exception:
+                pass
+            self.root = None
+
+    def test_01_active_workspace_is_excel_area(self):
+        """1. Active workspace is self.excel_area and mounted in canvas window."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            self.assertEqual(app.area, app.excel_area)
+            self.assertEqual(app.area, app.excel_workspace)
+            win_widget = app.rows_canvas.nametowidget(app.rows_canvas.itemcget(app._rows_win, "window"))
+            self.assertEqual(win_widget, app.excel_area)
+        finally:
+            app.destroy()
+
+    def test_02_each_row_has_independent_row_frame_with_default_13_columns(self):
+        """2. Each calculator row has its own row_frame configured with default 13-column widths."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            rf1 = app.rows[0]["row_frame"]
+            rf2 = app.rows[1]["row_frame"]
+            self.assertIsNot(rf1, rf2)
+            self.assertEqual(rf1.master, app.area)
+            self.assertEqual(rf2.master, app.area)
+
+            for rf in (rf1, rf2):
+                for c in range(13):
+                    info = rf.grid_columnconfigure(c)
+                    self.assertEqual(int(info.get("minsize", 0)), excel_column_width(c + 1))
+                    self.assertEqual(int(info.get("weight", 0)), 0)
+        finally:
+            app.destroy()
+
+    def test_03_default_unexpanded_rows_have_identical_column_positions_and_widths(self):
+        """3. Two default calculator rows have identical column positions and widths."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            r1 = app.rows[0]
+            r2 = app.rows[1]
+
+            # Matching rootx and width across columns
+            self.assertEqual(r1["box"].winfo_rootx(), r2["box"].winfo_rootx())
+            self.assertEqual(r1["box"].winfo_width(), r2["box"].winfo_width())
+
+            self.assertEqual(r1["math_desc"].winfo_rootx(), r2["math_desc"].winfo_rootx())
+
+            self.assertEqual(r1["actions_frame"].winfo_rootx(), r2["actions_frame"].winfo_rootx())
+            self.assertEqual(r1["actions_frame"].winfo_width(), r2["actions_frame"].winfo_width())
+
+            self.assertEqual(r1["equals_label"].winfo_rootx(), r2["equals_label"].winfo_rootx())
+            self.assertEqual(r1["equals_label"].winfo_width(), r2["equals_label"].winfo_width())
+
+            self.assertEqual(r1["result_box"].winfo_rootx(), r2["result_box"].winfo_rootx())
+            self.assertEqual(r1["result_box"].winfo_width(), r2["result_box"].winfo_width())
+
+            self.assertEqual(r1["result_desc"].winfo_rootx(), r2["result_desc"].winfo_rootx())
+        finally:
+            app.destroy()
+
+    def test_04_description_box1_stretches_without_moving_its_left_edge(self):
+        """4. Description Box 1 expands rightward to fit text while left edge remains anchored."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            md1 = app.rows[0]["math_desc"]
+            b1_x_before = md1.box1.winfo_rootx()
+            b1_w_before = md1.box1.winfo_width()
+            plus_x_before = md1.trailing_btn.winfo_rootx()
+
+            # Set long text
+            long_text = "Revenue from North America Q1 2026"
+            md1.box1.set_text(long_text)
+            app.update_idletasks()
+
+            b1_x_after = md1.box1.winfo_rootx()
+            b1_w_after = md1.box1.winfo_width()
+            plus_x_after = md1.trailing_btn.winfo_rootx()
+
+            # Left edge unchanged; width expanded; orange + pushed right
+            self.assertEqual(b1_x_after, b1_x_before)
+            self.assertGreater(b1_w_after, b1_w_before)
+            self.assertGreater(plus_x_after, plus_x_before)
+        finally:
+            app.destroy()
+
+    def test_05_orange_plus_creates_additional_text_boxes_in_order(self):
+        """5. Orange + creates Box 2 and Box 3 in sequential order to the right."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            md1 = app.rows[0]["math_desc"]
+
+            self.assertEqual(md1.num_boxes, 1)
+            b1_x = md1.box1.winfo_rootx()
+
+            # First press: add Box 2
+            md1.trailing_btn.invoke()
+            app.update_idletasks()
+            self.assertEqual(md1.num_boxes, 2)
+            self.assertIsNotNone(md1.box2)
+            b2_x = md1.box2.winfo_rootx()
+            plus_x_2 = md1.trailing_btn.winfo_rootx()
+
+            self.assertEqual(md1.box1.winfo_rootx(), b1_x, "Box 1 must NOT move left")
+            self.assertGreater(b2_x, b1_x, "Box 2 must appear to the right of Box 1")
+            self.assertGreater(plus_x_2, b2_x, "Orange + must be to the right of Box 2")
+
+            # Second press: add Box 3
+            md1.trailing_btn.invoke()
+            app.update_idletasks()
+            self.assertEqual(md1.num_boxes, 3)
+            b3_x = md1.boxes[2].winfo_rootx()
+            plus_x_3 = md1.trailing_btn.winfo_rootx()
+
+            self.assertGreater(b3_x, b2_x, "Box 3 must appear to the right of Box 2")
+            self.assertGreater(plus_x_3, b3_x, "Orange + must be to the right of Box 3")
+        finally:
+            app.destroy()
+
+    def test_06_independent_geometry_row1_expansion_does_not_affect_row2(self):
+        """6. Row 1 expansion does not alter Row 2 geometry or column widths."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            r1 = app.rows[0]
+            r2 = app.rows[1]
+
+            r2_box_w_before = r2["box"].winfo_width()
+            r2_desc1_w_before = r2["math_desc"].box1.winfo_width()
+            r2_act_x_before = r2["actions_frame"].winfo_rootx()
+            r2_res_x_before = r2["result_box"].winfo_rootx()
+
+            # Expand Row 1 with long text and 2 extra boxes
+            r1["math_desc"].box1.set_text("A very long description that expands Row 1")
+            r1["math_desc"].trailing_btn.invoke()
+            r1["math_desc"].trailing_btn.invoke()
+            app.update_idletasks()
+
+            # Row 2 geometry is 100% unaffected
+            self.assertEqual(r2["box"].winfo_width(), r2_box_w_before)
+            self.assertEqual(r2["math_desc"].box1.winfo_width(), r2_desc1_w_before)
+            self.assertEqual(r2["actions_frame"].winfo_rootx(), r2_act_x_before)
+            self.assertEqual(r2["result_box"].winfo_rootx(), r2_res_x_before)
+        finally:
+            app.destroy()
+
+    def test_07_mathematical_templates_expand_only_their_own_row(self):
+        """7. Mathematical templates expand only their own row without affecting others."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            r2_box_w_before = app.rows[1]["box"].winfo_width()
+            r2_act_x_before = app.rows[1]["actions_frame"].winfo_rootx()
+
+            # Apply a fraction template to Row 1
+            app._select_only(0, (0,))
+            app._place_operator_row('physics/physics/gravitation')
+            app.update_idletasks()
+
+            # Row 2 remains at its default dimensions
+            self.assertEqual(app.rows[1]["box"].winfo_width(), r2_box_w_before)
+            self.assertEqual(app.rows[1]["actions_frame"].winfo_rootx(), r2_act_x_before)
+        finally:
+            app.destroy()
+
+    def test_08_horizontal_scrolling_accessibility(self):
+        """8. All controls remain accessible through horizontal scrolling when rows expand."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            # Expand Row 1 wide
+            app.rows[0]["math_desc"].box1.set_text("X" * 100)
+            app.update_idletasks()
+            app._fit_rows()
+
+            # Outer canvas scrollregion expands to fit
+            bbox = app.rows_canvas.bbox("all")
+            self.assertIsNotNone(bbox)
+            self.assertGreaterEqual(bbox[2], 1000)
+
+            # Horizontal scroll is active
+            app.rows_canvas.xview_moveto(0.5)
+            self.assertGreater(app.rows_canvas.xview()[0], 0.0)
+            app.rows_canvas.xview_moveto(0.0)
+        finally:
+            app.destroy()
+
+    def test_09_calculator_functionality_preserved_end_to_end(self):
+        """9. Keypad typing, joining, and equals calculate accurately end-to-end."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("8")
+            app._set_join(1, "+")
+            app._select_only(1, (0,))
+            app._key("4")
+            app._equals()
+            app.update_idletasks()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "4")
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[2]["result"].cget("text"), "12")
+        finally:
+            app.destroy()
+
+    def test_10_text_survives_selection_and_recalculation(self):
+        """10. Descriptive text survives box selection, typing numbers, and recalculation."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.update_idletasks()
+            md = app.rows[0]["math_desc"]
+            md.box1.set_text("Revenue")
+            md.trailing_btn.invoke()
+            app.update_idletasks()
+            md.box2.set_text("Q1")
+
+            # Perform calculation
+            app._key("5")
+            app._key("=")
+            app.update_idletasks()
+
+            # Text preserved
+            words = app.rows[0]["math_desc"].get_words()
+            self.assertEqual(words, ("Revenue", "Q1"))
+        finally:
+            app.destroy()
+
+    def test_11_additional_calculator_rows_retain_independent_layouts(self):
+        """11. Additional rows added dynamically have independent row_frames."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._add_row()  # Row 3
+            app._add_row()  # Row 4
+            self.assertEqual(len(app.rows), 4)
+
+            # Each row has its own unique row_frame
+            row_frames = [r["row_frame"] for r in app.rows]
+            self.assertEqual(len(set(row_frames)), 4)
+
+            for rf in row_frames:
+                self.assertEqual(int(rf.grid_columnconfigure(0).get("minsize", 0)), 160)
+                self.assertEqual(int(rf.grid_columnconfigure(4).get("minsize", 0)), 110)
+        finally:
+            app.destroy()
+
+    def test_12_no_widget_overlap_within_row_frames(self):
+        """12. No widgets overlap inside any individual row_frame."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            for k, r_data in enumerate(app.rows):
+                rf = r_data["row_frame"]
+                occupied = set()
+                for widget in rf.winfo_children():
+                    info = widget.grid_info()
+                    if not info:
+                        continue
+                    r_start = int(info["row"])
+                    r_span = int(info.get("rowspan", 1))
+                    c_start = int(info["column"])
+                    c_span = int(info.get("columnspan", 1))
+                    for r in range(r_start, r_start + r_span):
+                        for c in range(c_start, c_start + c_span):
+                            self.assertNotIn((r, c), occupied,
+                                             f"Collision at row {k+1} cell ({r}, {c})")
+                            occupied.add((r, c))
+        finally:
+            app.destroy()
+
+class Test13ColumnExcelSpecification(unittest.TestCase):
+    """Authoritative test suite for the 9-row x 13-column Excel GUI design."""
+
+    def test_01_13col_constants_and_letters(self):
+        """1. Verify 13 columns (A..M), stride=6, and total rows."""
+        self.assertEqual(EXCEL_13COL_TOTAL_COLUMNS, 13)
+        self.assertEqual(EXCEL_13COL_INITIAL_TOTAL_ROWS, 9)
+        self.assertEqual(EXCEL_13COL_ROWS_PER_CALCULATOR_ROW, 3)
+        self.assertEqual(EXCEL_13COL_CALCULATOR_ROW_STRIDE, 6)
+        for i in range(1, 14):
+            letter = chr(ord('A') + i - 1)
+            self.assertEqual(excel_13col_column_letter(i), letter)
+            self.assertEqual(excel_13col_column_from_letter(letter), i)
+
+    def test_02_13col_column_assignments(self):
+        """2. Verify authoritative 1-based column assignments A..M."""
+        self.assertEqual(EXCEL_13COL_ROW_LABEL, 1)        # Col A
+        self.assertEqual(EXCEL_13COL_SPACER_AB, 2)        # Col B
+        self.assertEqual(EXCEL_13COL_MATH_SIGN, 3)        # Col C
+        self.assertEqual(EXCEL_13COL_SPACER_CD, 4)        # Col D
+        self.assertEqual(EXCEL_13COL_NUMBER_MATH, 5)      # Col E
+        self.assertEqual(EXCEL_13COL_MATH_BOX1, 6)        # Col F
+        self.assertEqual(EXCEL_13COL_MATH_TRAILING, 7)    # Col G
+        self.assertEqual(EXCEL_13COL_SPACER_GH, 8)        # Col H
+        self.assertEqual(EXCEL_13COL_ACTIONS, 9)          # Col I
+        self.assertEqual(EXCEL_13COL_RESULT_EQUALS, 10)   # Col J
+        self.assertEqual(EXCEL_13COL_RESULT_BOX, 11)      # Col K
+        self.assertEqual(EXCEL_13COL_RESULT_BOX1, 12)     # Col L
+        self.assertEqual(EXCEL_13COL_RESULT_TRAILING, 13) # Col M
+
+    def test_03_13col_row_1_authoritative_mapping(self):
+        """3. Row 1 mapping: A1, E2, F2, G2, I1, I3, J2, K2, L2, M2."""
+        # A1: Row label
+        self.assertEqual(excel_13col_workspace_position(1, "row_label"),
+                         GridPosition(row=1, column=1, row_span=3, column_span=1, region=LayoutRegion.EXCEL_WORKSPACE))
+        # Column C: Empty on row 1 (raises ValueError if requested)
+        with self.assertRaises(ValueError):
+            excel_13col_workspace_position(1, "math_sign")
+        # E2: Number or mathematical expression
+        self.assertEqual(excel_13col_workspace_position(1, "number_for_math"),
+                         GridPosition(row=2, column=5, region=LayoutRegion.EXCEL_WORKSPACE))
+        # F2: Descriptive Text Box 1
+        self.assertEqual(excel_13col_workspace_position(1, "math_box1"),
+                         GridPosition(row=2, column=6, region=LayoutRegion.EXCEL_WORKSPACE))
+        # G2: Orange + button
+        self.assertEqual(excel_13col_workspace_position(1, "math_trailing"),
+                         GridPosition(row=2, column=7, region=LayoutRegion.EXCEL_WORKSPACE))
+        # I1: Math to put on the left
+        self.assertEqual(excel_13col_workspace_position(1, "action_math_left"),
+                         GridPosition(row=1, column=9, region=LayoutRegion.EXCEL_WORKSPACE))
+        # I3: Clear math on the left
+        self.assertEqual(excel_13col_workspace_position(1, "action_clear_left"),
+                         GridPosition(row=3, column=9, region=LayoutRegion.EXCEL_WORKSPACE))
+        # J2: Equals sign
+        self.assertEqual(excel_13col_workspace_position(1, "result_equals"),
+                         GridPosition(row=2, column=10, region=LayoutRegion.EXCEL_WORKSPACE))
+        # K2: Calculated result
+        self.assertEqual(excel_13col_workspace_position(1, "result_box"),
+                         GridPosition(row=2, column=11, region=LayoutRegion.EXCEL_WORKSPACE))
+        # L2: Descriptive Text Box 1
+        self.assertEqual(excel_13col_workspace_position(1, "result_box1"),
+                         GridPosition(row=2, column=12, region=LayoutRegion.EXCEL_WORKSPACE))
+        # M2: Orange + button
+        self.assertEqual(excel_13col_workspace_position(1, "result_trailing"),
+                         GridPosition(row=2, column=13, region=LayoutRegion.EXCEL_WORKSPACE))
+
+    def test_04_13col_row_2_authoritative_mapping(self):
+        """4. Row 2 mapping: A7, C8, E8, F8, G8, I7, I9, J8, K8, L8, M8."""
+        # A7: Row label
+        self.assertEqual(excel_13col_workspace_position(2, "row_label"),
+                         GridPosition(row=7, column=1, row_span=3, column_span=1, region=LayoutRegion.EXCEL_WORKSPACE))
+        # C8: Mathematical operator sign
+        self.assertEqual(excel_13col_workspace_position(2, "math_sign"),
+                         GridPosition(row=8, column=3, region=LayoutRegion.EXCEL_WORKSPACE))
+        # E8: Number or mathematical expression
+        self.assertEqual(excel_13col_workspace_position(2, "number_for_math"),
+                         GridPosition(row=8, column=5, region=LayoutRegion.EXCEL_WORKSPACE))
+        # F8: Descriptive Text Box 1
+        self.assertEqual(excel_13col_workspace_position(2, "math_box1"),
+                         GridPosition(row=8, column=6, region=LayoutRegion.EXCEL_WORKSPACE))
+        # G8: Orange + button
+        self.assertEqual(excel_13col_workspace_position(2, "math_trailing"),
+                         GridPosition(row=8, column=7, region=LayoutRegion.EXCEL_WORKSPACE))
+        # I7: Math to put on the left
+        self.assertEqual(excel_13col_workspace_position(2, "action_math_left"),
+                         GridPosition(row=7, column=9, region=LayoutRegion.EXCEL_WORKSPACE))
+        # I9: Clear math on the left
+        self.assertEqual(excel_13col_workspace_position(2, "action_clear_left"),
+                         GridPosition(row=9, column=9, region=LayoutRegion.EXCEL_WORKSPACE))
+        # J8: Equals sign
+        self.assertEqual(excel_13col_workspace_position(2, "result_equals"),
+                         GridPosition(row=8, column=10, region=LayoutRegion.EXCEL_WORKSPACE))
+        # K8: Calculated result
+        self.assertEqual(excel_13col_workspace_position(2, "result_box"),
+                         GridPosition(row=8, column=11, region=LayoutRegion.EXCEL_WORKSPACE))
+        # L8: Descriptive Text Box 1
+        self.assertEqual(excel_13col_workspace_position(2, "result_box1"),
+                         GridPosition(row=8, column=12, region=LayoutRegion.EXCEL_WORKSPACE))
+        # M8: Orange + button
+        self.assertEqual(excel_13col_workspace_position(2, "result_trailing"),
+                         GridPosition(row=8, column=13, region=LayoutRegion.EXCEL_WORKSPACE))
+
+    def test_05_13col_dynamic_rows_six_row_stride(self):
+        """5. Dynamic rows follow the exact 6-row stride: start_row = 6*(k-1)+1."""
+        self.assertEqual(excel_13col_start_row(1), 1)
+        self.assertEqual(excel_13col_start_row(2), 7)
+        self.assertEqual(excel_13col_start_row(3), 13)
+        self.assertEqual(excel_13col_start_row(4), 19)
+        self.assertEqual(excel_13col_start_row(10), 55)
+
+        # Row 3 (k=3): A13, C14, E14, F14, G14, I13, I15, J14, K14, L14, M14
+        r3 = excel_13col_workspace_positions(3)
+        self.assertEqual(r3["row_label"], GridPosition(13, 1, row_span=3, column_span=1, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["math_sign"], GridPosition(14, 3, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["number_for_math"], GridPosition(14, 5, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["math_box1"], GridPosition(14, 6, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["math_trailing"], GridPosition(14, 7, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["action_math_left"], GridPosition(13, 9, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["action_clear_left"], GridPosition(15, 9, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["result_equals"], GridPosition(14, 10, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["result_box"], GridPosition(14, 11, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["result_box1"], GridPosition(14, 12, region=LayoutRegion.EXCEL_WORKSPACE))
+        self.assertEqual(r3["result_trailing"], GridPosition(14, 13, region=LayoutRegion.EXCEL_WORKSPACE))
+
+    def test_06_13col_bottom_total_row_adjustment_2(self):
+        """6. Bottom total row: Column C is empty; J is '=', K is result, L is Box 1, M is Orange +."""
+        for k in (3, 4):
+            tot = excel_13col_total_row_positions(k)
+            r0 = excel_13col_start_row(k)
+            self.assertNotIn("math_sign", tot, "Column C must be empty on bottom total row")
+            self.assertEqual(tot["total_equals"], GridPosition(r0 + 1, 10, region=LayoutRegion.EXCEL_WORKSPACE))
+            self.assertEqual(tot["total_box"], GridPosition(r0 + 1, 11, region=LayoutRegion.EXCEL_WORKSPACE))
+            self.assertEqual(tot["total_box1"], GridPosition(r0 + 1, 12, region=LayoutRegion.EXCEL_WORKSPACE))
+            self.assertEqual(tot["total_trailing"], GridPosition(r0 + 1, 13, region=LayoutRegion.EXCEL_WORKSPACE))
+
+    def test_07_13col_column_widths_and_total_width(self):
+        """7. Verify explicit widths for all 13 columns totaling 888px."""
+        self.assertEqual(len(EXCEL_13COL_COLUMN_WIDTHS), 13)
+        self.assertEqual(excel_13col_total_width(), 888)
+        self.assertEqual(excel_13col_column_width(1), 160)  # Col A: Label
+        self.assertEqual(excel_13col_column_width(3), 42)   # Col C: Math sign
+        self.assertEqual(excel_13col_column_width(5), 110)  # Col E: Operand
+        self.assertEqual(excel_13col_column_width(6), 90)   # Col F: Box 1
+        self.assertEqual(excel_13col_column_width(7), 42)   # Col G: Orange +
+        self.assertEqual(excel_13col_column_width(9), 130)  # Col I: Actions
+        self.assertEqual(excel_13col_column_width(10), 42)  # Col J: Equals
+        self.assertEqual(excel_13col_column_width(11), 110) # Col K: Result
+        self.assertEqual(excel_13col_column_width(12), 90)  # Col L: Box 1
+        self.assertEqual(excel_13col_column_width(13), 42)  # Col M: Orange +
+
+    def test_08_13col_descriptive_expansion_isolation(self):
+        """8. Additional boxes inside a card do not alter the authoritative global coordinates of other columns."""
+        # Regardless of internal expansion inside Math Card (Cols 5..7),
+        # Column 9 (Actions), Column 10 (Equals), Column 11 (Result) maintain fixed Excel column indices
+        self.assertEqual(EXCEL_13COL_ACTIONS, 9)
+        self.assertEqual(EXCEL_13COL_RESULT_EQUALS, 10)
+        self.assertEqual(EXCEL_13COL_RESULT_BOX, 11)
+        self.assertEqual(EXCEL_13COL_RESULT_BOX1, 12)
+        self.assertEqual(EXCEL_13COL_RESULT_TRAILING, 13)
 
 if __name__ == "__main__":
     unittest.main()

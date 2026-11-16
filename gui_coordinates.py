@@ -1,4 +1,4 @@
-"""Logical GUI coordinate convention and layout definitions.
+﻿"""Logical GUI coordinate convention and layout definitions.
 
 This module establishes a central, framework-independent, 1-based logical coordinate
 convention to unify the visual layout of the Python calculator (Tkinter) and the
@@ -338,10 +338,10 @@ CARD_COL_ARROW_MID: int = 4
 CARD_COL_ARROW_RIGHT: int = 5
 CARD_COL_LABEL: int = 6
 CARD_COL_CONTEXT: int = 7
-CARD_COL_SPACER2: int = 8
-CARD_COL_TRAILING_BTN: int = 9
+CARD_COL_SPACER2: int = 7
+CARD_COL_TRAILING_BTN: int = 8
 
-CARD_TOTAL_COLUMNS: int = 9
+CARD_TOTAL_COLUMNS: int = 8
 CARD_TOTAL_ROWS: int = 3
 CARD_MIDDLE_ROW: int = 2
 
@@ -361,9 +361,10 @@ CARD_9COL_LABEL_POS = GridPosition(
 CARD_9COL_CONTEXT_POS = GridPosition(
     row=2, column=CARD_COL_CONTEXT, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
-CARD_9COL_TRAILING_BUTTON_POS = GridPosition(
+CARD_8COL_TRAILING_BUTTON_POS = GridPosition(
     row=2, column=CARD_COL_TRAILING_BTN, row_span=1, column_span=1, region=LayoutRegion.CARD_COMPONENT
 )
+CARD_9COL_TRAILING_BUTTON_POS = CARD_8COL_TRAILING_BUTTON_POS
 
 # Canonical 9-column references
 CARD_LEAD_BUTTON_POSITION = CARD_9COL_LEAD_BUTTON_POS
@@ -566,21 +567,43 @@ ROW_2_RESULT_CARD_POS = ROW_2_RESULT_POS
 
 
 # ==============================================================================
-# Authoritative Excel Workspace Coordinate Specification (33 Columns x N Rows)
+# Authoritative Excel Workspace Coordinate Specification (13 Columns x N Rows)
+# Reference: my_excel_sheet.txt & user_new_design.png
 # ==============================================================================
 
-EXCEL_TOTAL_COLUMNS: int = 33
+EXCEL_TOTAL_COLUMNS: int = 13
 EXCEL_INITIAL_TOTAL_ROWS: int = 9
 EXCEL_ROWS_PER_CALCULATOR_ROW: int = 3
 EXCEL_CALCULATOR_ROW_STRIDE: int = 6
 
-# Global Column Assignments (1..33)
-EXCEL_COL_ROW_LABEL: int = 1
+# 13 Column Letters: A..M
+EXCEL_LETTERS: list[str] = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
+]
+
+# Authoritative 1-based column indices (13-Column Layout)
+EXCEL_COL_ROW_LABEL: int = 1          # Col A: Row label (e.g. 'row 1')
+EXCEL_COL_SPACER_AB: int = 2          # Col B: Empty spacer
+EXCEL_COL_MATH_SIGN: int = 3          # Col C: Math operator sign (+, −, ×, ÷)
+EXCEL_COL_SPACER_CD: int = 4          # Col D: Empty spacer
+EXCEL_COL_NUMBER_MATH: int = 5        # Col E: Number for math / math expression
+EXCEL_COL_MATH_BOX1: int = 6          # Col F: Descriptive text box 1 (math)
+EXCEL_COL_MATH_TRAILING: int = 7      # Col G: Orange plus sign button (math)
+EXCEL_COL_SPACER_GH: int = 8          # Col H: Empty spacer
+EXCEL_COL_ACTIONS: int = 9            # Col I: Math actions (put left / clear left)
+EXCEL_COL_RESULT_EQUALS: int = 10     # Col J: Equals sign (=)
+EXCEL_COL_RESULT_BOX: int = 11        # Col K: Calculated result box
+EXCEL_COL_RESULT_BOX1: int = 12       # Col L: Descriptive text box 1 (result)
+EXCEL_COL_RESULT_TRAILING: int = 13   # Col M: Orange plus sign button (result)
+
+# Legacy 33-Column Constants (preserved for backward compatibility)
+LEGACY_33COL_TOTAL_COLUMNS: int = 30
+LEGACY_33COL_INITIAL_TOTAL_ROWS: int = 9
 EXCEL_COL_MARGIN: int = 2
 
-# Card Slot 1 (Helper Card / Join Note): Columns 3..11 (9 Columns)
+# Card Slot 1 (Helper Card / Join Note): Columns 3..10 (8 Columns, C..J)
 EXCEL_COL_SLOT1_START: int = 3
-EXCEL_COL_SLOT1_END: int = 11
+EXCEL_COL_SLOT1_END: int = 10
 EXCEL_COL_SLOT1_LEAD_BTN: int = 3
 EXCEL_COL_SLOT1_SPACER1: int = 4
 EXCEL_COL_SLOT1_ARROW_COL1: int = 5
@@ -588,46 +611,46 @@ EXCEL_COL_SLOT1_ARROW_COL2: int = 6
 EXCEL_COL_SLOT1_ARROW_COL3: int = 7
 EXCEL_COL_SLOT1_LABEL: int = 8
 EXCEL_COL_SLOT1_CONTEXT: int = 9
-EXCEL_COL_SLOT1_SPACER2: int = 10
-EXCEL_COL_SLOT1_TRAILING_BTN: int = 11
+EXCEL_COL_SLOT1_SPACER2: int = 9
+EXCEL_COL_SLOT1_TRAILING_BTN: int = 10
 
 # Spacer between Slot 1 and Slot 2
-EXCEL_COL_SPACER_SLOT1_SLOT2: int = 12
+EXCEL_COL_SPACER_SLOT1_SLOT2: int = 11
 
-# Card Slot 2 (Mathematical Expression): Columns 13..21 (9 Columns)
-EXCEL_COL_SLOT2_START: int = 13
-EXCEL_COL_SLOT2_END: int = 21
-EXCEL_COL_SLOT2_LEAD_BTN: int = 13
-EXCEL_COL_SLOT2_SPACER1: int = 14
-EXCEL_COL_SLOT2_ARROW_COL1: int = 15
-EXCEL_COL_SLOT2_ARROW_COL2: int = 16
-EXCEL_COL_SLOT2_ARROW_COL3: int = 17
-EXCEL_COL_SLOT2_LABEL: int = 18
-EXCEL_COL_SLOT2_CONTEXT: int = 19
-EXCEL_COL_SLOT2_SPACER2: int = 20
-EXCEL_COL_SLOT2_TRAILING_BTN: int = 21
+# Card Slot 2 (Mathematical Expression): Columns 12..19 (8 Columns, L..S)
+EXCEL_COL_SLOT2_START: int = 12
+EXCEL_COL_SLOT2_END: int = 19
+EXCEL_COL_SLOT2_LEAD_BTN: int = 12
+EXCEL_COL_SLOT2_SPACER1: int = 13
+EXCEL_COL_SLOT2_ARROW_COL1: int = 14
+EXCEL_COL_SLOT2_ARROW_COL2: int = 15
+EXCEL_COL_SLOT2_ARROW_COL3: int = 16
+EXCEL_COL_SLOT2_LABEL: int = 17
+EXCEL_COL_SLOT2_CONTEXT: int = 18
+EXCEL_COL_SLOT2_SPACER2: int = 18
+EXCEL_COL_SLOT2_TRAILING_BTN: int = 19
 
 # Spacer between Slot 2 and Actions
-EXCEL_COL_SPACER_SLOT2_ACTIONS: int = 22
+EXCEL_COL_SPACER_SLOT2_ACTIONS: int = 20
 
-# Actions Slot (Left-side mathematical actions): Column 23 (1 Column)
-EXCEL_COL_ACTIONS: int = 23
+# Actions Slot (Left-side mathematical actions): Column 21 (1 Column, U)
+EXCEL_COL_ACTIONS: int = 21
 
 # Spacer between Actions and Slot 3
-EXCEL_COL_SPACER_ACTIONS_SLOT3: int = 24
+EXCEL_COL_SPACER_ACTIONS_SLOT3: int = 22
 
-# Card Slot 3 (Result Card): Columns 25..33 (9 Columns)
-EXCEL_COL_SLOT3_START: int = 25
-EXCEL_COL_SLOT3_END: int = 33
-EXCEL_COL_SLOT3_LEAD_BTN: int = 25
-EXCEL_COL_SLOT3_SPACER1: int = 26
-EXCEL_COL_SLOT3_ARROW_COL1: int = 27
-EXCEL_COL_SLOT3_ARROW_COL2: int = 28
-EXCEL_COL_SLOT3_ARROW_COL3: int = 29
-EXCEL_COL_SLOT3_LABEL: int = 30
-EXCEL_COL_SLOT3_CONTEXT: int = 31
-EXCEL_COL_SLOT3_SPACER2: int = 32
-EXCEL_COL_SLOT3_TRAILING_BTN: int = 33
+# Card Slot 3 (Result Card): Columns 23..30 (8 Columns, W..AD)
+EXCEL_COL_SLOT3_START: int = 23
+EXCEL_COL_SLOT3_END: int = 30
+EXCEL_COL_SLOT3_LEAD_BTN: int = 23
+EXCEL_COL_SLOT3_SPACER1: int = 24
+EXCEL_COL_SLOT3_ARROW_COL1: int = 25
+EXCEL_COL_SLOT3_ARROW_COL2: int = 26
+EXCEL_COL_SLOT3_ARROW_COL3: int = 27
+EXCEL_COL_SLOT3_LABEL: int = 28
+EXCEL_COL_SLOT3_CONTEXT: int = 29
+EXCEL_COL_SLOT3_SPACER2: int = 29
+EXCEL_COL_SLOT3_TRAILING_BTN: int = 30
 
 # Mapping of relative 9-column card offsets
 EXCEL_CARD_RELATIVE_COLUMNS: dict[str, int] = {
@@ -639,8 +662,8 @@ EXCEL_CARD_RELATIVE_COLUMNS: dict[str, int] = {
     "arrow_col3": 5,
     "label": 6,
     "context": 7,
-    "spacer_2": 8,
-    "trailing_btn": 9,
+    "spacer_2": 7,
+    "trailing_btn": 8,
 }
 
 EXCEL_CARD_SLOT_BASE_COLUMNS: dict[int, int] = {
@@ -701,13 +724,13 @@ EXCEL_ARROW_OFFSETS: dict[str, tuple[int, int]] = {
 }
 
 
-def excel_workspace_position(
+def legacy_33col_workspace_position(
     calc_row: int,
     control_name: str,
     row_span: int = 1,
     column_span: int = 1,
 ) -> GridPosition:
-    """Return the authoritative 1-based GridPosition in LayoutRegion.EXCEL_WORKSPACE.
+    """Return legacy 33-column GridPosition in LayoutRegion.EXCEL_WORKSPACE.
 
     Parameters:
         calc_row: 1-based calculator row index (1, 2, 3, ...).
@@ -730,7 +753,7 @@ def excel_workspace_position(
     if name in ("join_note_label", "slot1_join_note"):
         if calc_row != 1:
             raise ValueError(f"join_note_label only exists on calculator row 1, not row {calc_row}")
-        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=1, column_span=8,
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=1, column_span=5,
                             region=LayoutRegion.EXCEL_WORKSPACE)
 
     if name in ("join_note_arrow", "join_note_down_arrow", "slot1_down_arrow"):
@@ -746,7 +769,7 @@ def excel_workspace_position(
                             row_span=1, column_span=6, region=LayoutRegion.EXCEL_WORKSPACE)
 
     if name in ("slot1_container", "helper_container"):
-        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=3, column_span=9,
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT1_START, row_span=3, column_span=8,
                             region=LayoutRegion.EXCEL_WORKSPACE)
 
     if name in ("slot1_lead_btn", "helper_lead_btn"):
@@ -772,7 +795,7 @@ def excel_workspace_position(
 
     # 3. Slot 2 (Mathematical Expression Area / Card)
     if name in ("slot2_container", "math_viewport", "math_container", "math_slot"):
-        return GridPosition(row=r0, column=EXCEL_COL_SLOT2_START, row_span=3, column_span=9,
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT2_START, row_span=3, column_span=8,
                             region=LayoutRegion.EXCEL_WORKSPACE)
 
     if name in ("slot2_lead_btn", "math_lead_btn"):
@@ -797,6 +820,10 @@ def excel_workspace_position(
                                 region=LayoutRegion.EXCEL_WORKSPACE)
 
     # 4. Actions Slot (Column 23)
+    if name in ("actions_container", "actions_frame", "math_actions"):
+        return GridPosition(row=r0, column=EXCEL_COL_ACTIONS, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
     if name in ("action_math_left", "action_top", "math_to_put_on_the_left"):
         return GridPosition(row=r0, column=EXCEL_COL_ACTIONS, row_span=1, column_span=1,
                             region=LayoutRegion.EXCEL_WORKSPACE)
@@ -807,7 +834,7 @@ def excel_workspace_position(
 
     # 5. Slot 3 (Result Card)
     if name in ("slot3_container", "result_container", "result_card"):
-        return GridPosition(row=r0, column=EXCEL_COL_SLOT3_START, row_span=3, column_span=9,
+        return GridPosition(row=r0, column=EXCEL_COL_SLOT3_START, row_span=3, column_span=8,
                             region=LayoutRegion.EXCEL_WORKSPACE)
 
     if name in ("slot3_lead_btn", "result_lead_btn"):
@@ -834,47 +861,65 @@ def excel_workspace_position(
     raise KeyError(f"Unknown Excel workspace control {control_name!r} for calculator row {calc_row}")
 
 
-def excel_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
-    """Return all canonical GridPositions for visible controls in calculator row k."""
+def legacy_33col_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
+    """Return legacy 33-column GridPositions for visible controls in calculator row k."""
     r0 = excel_start_row(calc_row)
     pos: dict[str, GridPosition] = {
-        "row_label": excel_workspace_position(calc_row, "row_label"),
+        "row_label": legacy_33col_workspace_position(calc_row, "row_label"),
     }
 
     # Slot 1
     if calc_row == 1:
-        pos["join_note_label"] = excel_workspace_position(calc_row, "join_note_label")
-        pos["join_note_arrow"] = excel_workspace_position(calc_row, "join_note_arrow")
+        pos["join_note_label"] = legacy_33col_workspace_position(calc_row, "join_note_label")
+        pos["join_note_arrow"] = legacy_33col_workspace_position(calc_row, "join_note_arrow")
     else:
-        pos["helper_heading"] = excel_workspace_position(calc_row, "helper_heading")
-        pos["helper_lead_btn"] = excel_workspace_position(calc_row, "helper_lead_btn")
+        pos["helper_heading"] = legacy_33col_workspace_position(calc_row, "helper_heading")
+        pos["helper_lead_btn"] = legacy_33col_workspace_position(calc_row, "helper_lead_btn")
         for k in EXCEL_ARROW_OFFSETS:
-            pos[f"helper_{k}"] = excel_workspace_position(calc_row, f"helper_{k}")
-        pos["helper_label"] = excel_workspace_position(calc_row, "helper_label")
-        pos["helper_context"] = excel_workspace_position(calc_row, "helper_context")
-        pos["helper_trailing_btn"] = excel_workspace_position(calc_row, "helper_trailing_btn")
+            pos[f"helper_{k}"] = legacy_33col_workspace_position(calc_row, f"helper_{k}")
+        pos["helper_label"] = legacy_33col_workspace_position(calc_row, "helper_label")
+        pos["helper_context"] = legacy_33col_workspace_position(calc_row, "helper_context")
+        pos["helper_trailing_btn"] = legacy_33col_workspace_position(calc_row, "helper_trailing_btn")
 
     # Slot 2 (Math Expression)
-    pos["math_lead_btn"] = excel_workspace_position(calc_row, "math_lead_btn")
+    pos["math_lead_btn"] = legacy_33col_workspace_position(calc_row, "math_lead_btn")
     for k in EXCEL_ARROW_OFFSETS:
-        pos[f"math_{k}"] = excel_workspace_position(calc_row, f"math_{k}")
-    pos["math_label"] = excel_workspace_position(calc_row, "math_label")
-    pos["math_context"] = excel_workspace_position(calc_row, "math_context")
-    pos["math_trailing_btn"] = excel_workspace_position(calc_row, "math_trailing_btn")
+        pos[f"math_{k}"] = legacy_33col_workspace_position(calc_row, f"math_{k}")
+    pos["math_label"] = legacy_33col_workspace_position(calc_row, "math_label")
+    pos["math_context"] = legacy_33col_workspace_position(calc_row, "math_context")
+    pos["math_trailing_btn"] = legacy_33col_workspace_position(calc_row, "math_trailing_btn")
 
     # Actions
-    pos["action_math_left"] = excel_workspace_position(calc_row, "action_math_left")
-    pos["action_clear_left"] = excel_workspace_position(calc_row, "action_clear_left")
+    pos["action_math_left"] = legacy_33col_workspace_position(calc_row, "action_math_left")
+    pos["action_clear_left"] = legacy_33col_workspace_position(calc_row, "action_clear_left")
 
     # Slot 3 (Result Card)
-    pos["result_lead_btn"] = excel_workspace_position(calc_row, "result_lead_btn")
+    pos["result_lead_btn"] = legacy_33col_workspace_position(calc_row, "result_lead_btn")
     for k in EXCEL_ARROW_OFFSETS:
-        pos[f"result_{k}"] = excel_workspace_position(calc_row, f"result_{k}")
-    pos["result_label"] = excel_workspace_position(calc_row, "result_label")
-    pos["result_context"] = excel_workspace_position(calc_row, "result_context")
-    pos["result_trailing_btn"] = excel_workspace_position(calc_row, "result_trailing_btn")
+        pos[f"result_{k}"] = legacy_33col_workspace_position(calc_row, f"result_{k}")
+    pos["result_label"] = legacy_33col_workspace_position(calc_row, "result_label")
+    pos["result_context"] = legacy_33col_workspace_position(calc_row, "result_context")
+    pos["result_trailing_btn"] = legacy_33col_workspace_position(calc_row, "result_trailing_btn")
 
     return pos
+
+
+def excel_workspace_position(
+    calc_row: int,
+    control_name: str,
+    row_span: int = 1,
+    column_span: int = 1,
+) -> GridPosition:
+    """Return the authoritative 1-based GridPosition in 13-column LayoutRegion.EXCEL_WORKSPACE."""
+    try:
+        return excel_13col_workspace_position(calc_row, control_name, row_span, column_span)
+    except (KeyError, ValueError):
+        return legacy_33col_workspace_position(calc_row, control_name, row_span, column_span)
+
+
+def excel_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
+    """Return authoritative 13-column GridPositions for visible controls in calculator row k."""
+    return excel_13col_workspace_positions(calc_row)
 
 def card_to_excel_position(
     local_pos: GridPosition,
@@ -938,88 +983,184 @@ def excel_to_card_position(excel_pos: GridPosition) -> tuple[int, GridPosition]:
         region=LayoutRegion.CARD_COMPONENT,
     )
 
+
+def excel_col_letter(col_1based: int) -> str:
+    """Convert 1-based column number to Excel column letter(s): 1->A, 26->Z, 27->AA, 33->AG."""
+    if isinstance(col_1based, bool) or not isinstance(col_1based, int) or col_1based < 1:
+        raise ValueError(f"col_1based must be an integer >= 1, got {col_1based!r}")
+    result = ""
+    n = col_1based
+    while n > 0:
+        n, remainder = divmod(n - 1, 26)
+        result = chr(65 + remainder) + result
+    return result
+
+
+def excel_col_number(col_name: str) -> int:
+    """Convert Excel column letter(s) to 1-based column number: 'A'->1, 'M'->13, 'U'->21, 'AG'->33."""
+    if not isinstance(col_name, str) or not col_name.strip():
+        raise ValueError(f"col_name must be a non-empty string, got {col_name!r}")
+    name = col_name.strip().upper()
+    n = 0
+    for ch in name:
+        if not ('A' <= ch <= 'Z'):
+            raise ValueError(f"Invalid column letter: {col_name!r}")
+        n = n * 26 + (ord(ch) - ord('A') + 1)
+    return n
+
+
+def excel_cell_name(row_1based: int, col_1based: int) -> str:
+    """Return Excel cell name such as 'M2', 'U2', 'M8', 'U8', 'C8', 'K8'."""
+    return f"{excel_col_letter(col_1based)}{row_1based}"
+
+
 # ==============================================================================
 # Sizing and Grid Configuration for the 33-Column Excel Workspace
 # ==============================================================================
 
-EXCEL_COLUMN_WIDTHS: dict[int, int] = {
-    # Col 1: Row Indicator Label
-    EXCEL_COL_ROW_LABEL: 70,
-    # Col 2: Left Margin Spacer
+LEGACY_33COL_COLUMN_WIDTHS: dict[int, int] = {
+    # Col 1 (A): Row Indicator Label
+    1: 70,
+    # Col 2 (B): Left Margin Spacer
     EXCEL_COL_MARGIN: 10,
-    # Card Slot 1 (Cols 3..11, 9 columns)
-    EXCEL_COL_SLOT1_LEAD_BTN: 28,
-    EXCEL_COL_SLOT1_SPACER1: 8,
+    # Card Slot 1 (Cols 3..10, C..J, 8 columns - Helper Card)
+    EXCEL_COL_SLOT1_LEAD_BTN: 42,
+    EXCEL_COL_SLOT1_SPACER1: 10,
     EXCEL_COL_SLOT1_ARROW_COL1: 24,
-    EXCEL_COL_SLOT1_ARROW_COL2: 26,
+    EXCEL_COL_SLOT1_ARROW_COL2: 28,
     EXCEL_COL_SLOT1_ARROW_COL3: 24,
-    EXCEL_COL_SLOT1_LABEL: 65,
-    EXCEL_COL_SLOT1_CONTEXT: 85,
-    EXCEL_COL_SLOT1_SPACER2: 8,
-    EXCEL_COL_SLOT1_TRAILING_BTN: 28,
-    # Col 12: Spacer between Slot 1 and Slot 2
+    EXCEL_COL_SLOT1_LABEL: 90,
+    EXCEL_COL_SLOT1_CONTEXT: 90,
+    EXCEL_COL_SLOT1_TRAILING_BTN: 42,
+    # Col 11 (K): Spacer between Slot 1 and Slot 2
     EXCEL_COL_SPACER_SLOT1_SLOT2: 16,
-    # Card Slot 2 (Cols 13..21, 9 columns - Math Expression)
-    EXCEL_COL_SLOT2_LEAD_BTN: 28,
-    EXCEL_COL_SLOT2_SPACER1: 8,
+    # Card Slot 2 (Cols 12..19, L..S, 8 columns - Math Expression)
+    EXCEL_COL_SLOT2_LEAD_BTN: 42,
+    EXCEL_COL_SLOT2_SPACER1: 10,
     EXCEL_COL_SLOT2_ARROW_COL1: 24,
-    EXCEL_COL_SLOT2_ARROW_COL2: 26,
+    EXCEL_COL_SLOT2_ARROW_COL2: 28,
     EXCEL_COL_SLOT2_ARROW_COL3: 24,
-    EXCEL_COL_SLOT2_LABEL: 65,
-    EXCEL_COL_SLOT2_CONTEXT: 85,
-    EXCEL_COL_SLOT2_SPACER2: 8,
-    EXCEL_COL_SLOT2_TRAILING_BTN: 28,
-    # Col 22: Spacer between Slot 2 and Actions
+    EXCEL_COL_SLOT2_LABEL: 90,
+    EXCEL_COL_SLOT2_CONTEXT: 90,
+    EXCEL_COL_SLOT2_TRAILING_BTN: 42,
+    # Col 20 (T): Spacer between Slot 2 and Actions
     EXCEL_COL_SPACER_SLOT2_ACTIONS: 16,
-    # Col 23: Actions Slot
+    # Col 21 (U): Actions Slot
     EXCEL_COL_ACTIONS: 110,
-    # Col 24: Spacer between Actions and Slot 3
+    # Col 22 (V): Spacer between Actions and Slot 3
     EXCEL_COL_SPACER_ACTIONS_SLOT3: 16,
-    # Card Slot 3 (Cols 25..33, 9 columns - Result Card)
-    EXCEL_COL_SLOT3_LEAD_BTN: 28,
-    EXCEL_COL_SLOT3_SPACER1: 8,
+    # Card Slot 3 (Cols 23..30, W..AD, 8 columns - Result Card)
+    EXCEL_COL_SLOT3_LEAD_BTN: 42,
+    EXCEL_COL_SLOT3_SPACER1: 10,
     EXCEL_COL_SLOT3_ARROW_COL1: 24,
-    EXCEL_COL_SLOT3_ARROW_COL2: 26,
+    EXCEL_COL_SLOT3_ARROW_COL2: 28,
     EXCEL_COL_SLOT3_ARROW_COL3: 24,
-    EXCEL_COL_SLOT3_LABEL: 65,
-    EXCEL_COL_SLOT3_CONTEXT: 85,
-    EXCEL_COL_SLOT3_SPACER2: 8,
-    EXCEL_COL_SLOT3_TRAILING_BTN: 28,
+    EXCEL_COL_SLOT3_LABEL: 90,
+    EXCEL_COL_SLOT3_CONTEXT: 90,
+    EXCEL_COL_SLOT3_TRAILING_BTN: 42,
 }
 
 
+# ==============================================================================
+# Authoritative 13-Column Excel Workspace Specification (13 Columns x N Rows)
+# Reference: my_excel_sheet.txt & user_new_design.png
+# ==============================================================================
+
+EXCEL_13COL_TOTAL_COLUMNS: int = 13
+EXCEL_13COL_INITIAL_TOTAL_ROWS: int = 9
+EXCEL_13COL_ROWS_PER_CALCULATOR_ROW: int = 3
+EXCEL_13COL_CALCULATOR_ROW_STRIDE: int = 6
+
+# 13 Column Letters: A..M
+EXCEL_13COL_LETTERS: list[str] = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
+]
+
+# Authoritative 1-based column indices
+EXCEL_13COL_ROW_LABEL: int = 1          # Col A: Row label (e.g. 'row 1')
+EXCEL_13COL_SPACER_AB: int = 2          # Col B: Empty spacer
+EXCEL_13COL_MATH_SIGN: int = 3          # Col C: Math operator sign (+, −, ×, ÷)
+EXCEL_13COL_SPACER_CD: int = 4          # Col D: Empty spacer
+EXCEL_13COL_NUMBER_MATH: int = 5        # Col E: Number for math / math expression
+EXCEL_13COL_MATH_BOX1: int = 6          # Col F: Descriptive text box 1 (math)
+EXCEL_13COL_MATH_TRAILING: int = 7      # Col G: Orange plus sign button (math)
+EXCEL_13COL_SPACER_GH: int = 8          # Col H: Empty spacer
+EXCEL_13COL_ACTIONS: int = 9            # Col I: Math actions (put left / clear left)
+EXCEL_13COL_RESULT_EQUALS: int = 10     # Col J: Equals sign (=)
+EXCEL_13COL_RESULT_BOX: int = 11        # Col K: Calculated result box
+EXCEL_13COL_RESULT_BOX1: int = 12       # Col L: Descriptive text box 1 (result)
+EXCEL_13COL_RESULT_TRAILING: int = 13   # Col M: Orange plus sign button (result)
+
+# Aliases matching various naming conventions
+EXCEL_13COL_COL_A = EXCEL_13COL_ROW_LABEL
+EXCEL_13COL_COL_B = EXCEL_13COL_SPACER_AB
+EXCEL_13COL_COL_C = EXCEL_13COL_MATH_SIGN
+EXCEL_13COL_COL_D = EXCEL_13COL_SPACER_CD
+EXCEL_13COL_COL_E = EXCEL_13COL_NUMBER_MATH
+EXCEL_13COL_COL_F = EXCEL_13COL_MATH_BOX1
+EXCEL_13COL_COL_G = EXCEL_13COL_MATH_TRAILING
+EXCEL_13COL_COL_H = EXCEL_13COL_SPACER_GH
+EXCEL_13COL_COL_I = EXCEL_13COL_ACTIONS
+EXCEL_13COL_COL_J = EXCEL_13COL_RESULT_EQUALS
+EXCEL_13COL_COL_K = EXCEL_13COL_RESULT_BOX
+EXCEL_13COL_COL_L = EXCEL_13COL_RESULT_BOX1
+EXCEL_13COL_COL_M = EXCEL_13COL_RESULT_TRAILING
+
+# Exact column pixel widths for 13 columns (sum = 888px)
+EXCEL_13COL_COLUMN_WIDTHS: dict[int, int] = {
+    1: 160,   # Col A: Row label
+    2: 10,    # Col B: Spacer
+    3: 42,    # Col C: Math operator sign
+    4: 10,    # Col D: Spacer
+    5: 110,   # Col E: Number for math / math expression
+    6: 90,    # Col F: Descriptive text box 1
+    7: 42,    # Col G: Orange plus sign button
+    8: 10,    # Col H: Spacer
+    9: 130,   # Col I: Math actions ('math to put on the left')
+    10: 42,   # Col J: Equals sign (=)
+    11: 110,  # Col K: Result number box
+    12: 90,   # Col L: Descriptive text box 1 (result)
+    13: 42,   # Col M: Orange plus sign button (result)
+}
+
+
+EXCEL_COLUMN_WIDTHS: dict[int, int] = EXCEL_13COL_COLUMN_WIDTHS
+
+
 def excel_column_width(column: int) -> int:
-    """Return the explicit pixel width for an authoritative Excel workspace column (1..33)."""
-    if column not in EXCEL_COLUMN_WIDTHS:
-        raise ValueError(f"column must be between 1 and {EXCEL_TOTAL_COLUMNS}, got {column!r}")
-    return EXCEL_COLUMN_WIDTHS[column]
+    """Return the explicit pixel width for an authoritative Excel workspace column (1..13)."""
+    if column in EXCEL_13COL_COLUMN_WIDTHS:
+        return EXCEL_13COL_COLUMN_WIDTHS[column]
+    if column in LEGACY_33COL_COLUMN_WIDTHS:
+        return LEGACY_33COL_COLUMN_WIDTHS[column]
+    raise ValueError(f"column must be between 1 and {EXCEL_TOTAL_COLUMNS}, got {column!r}")
 
 
 def excel_row_height(global_row: int) -> int:
     """Return the explicit pixel height for an authoritative Excel workspace row (>= 1).
 
     Row Heights by Role within the 6-Row Stride:
-      stride 1, 3: Card top and bottom arrow rows (24px)
-      stride 2: Card middle row with buttons and text fields (28px)
+      stride 1, 3: Card top and bottom arrow rows (26px)
+      stride 2: Card middle row with buttons and text fields (44px)
       stride 4, 6: Empty spacer rows (10px)
-      stride 5: Helper heading row (22px)
+      stride 5: Helper heading row (24px)
     """
     if isinstance(global_row, bool) or not isinstance(global_row, int) or global_row < 1:
         raise ValueError(f"global_row must be an integer >= 1, got {global_row!r}")
     stride_idx = (global_row - 1) % EXCEL_CALCULATOR_ROW_STRIDE + 1
     if stride_idx in (1, 3):
-        return 24
+        return 26
     elif stride_idx == 2:
-        return 28
+        return 44
     elif stride_idx in (4, 6):
         return 10
     elif stride_idx == 5:
-        return 22
-    return 24
+        return 24
+    return 26
 
 
 def excel_total_workspace_width() -> int:
-    """Return the total natural width of the 33 columns in pixels."""
+    """Return the total natural width of the 13 columns in pixels (888px)."""
     return sum(EXCEL_COLUMN_WIDTHS.values())
 
 
@@ -1029,15 +1170,15 @@ def excel_initial_workspace_height() -> int:
 
 
 def configure_excel_workspace_grid(container: Any, num_calc_rows: int = 2) -> None:
-    """Configure a Tkinter frame or grid container with the authoritative 33 columns and N rows.
+    """Configure a Tkinter frame or grid container with the authoritative 13 columns and N rows.
 
-    Columns: Exactly 33 columns (0-based columns 0..32) with explicit minsize and weight=0.
-    Rows: (6 * num_calc_rows - 3) rows (0-based rows 0..(total_rows - 1)) with explicit minsize and weight=0.
+    Columns: Exactly 13 columns (0-based columns 0..12) with explicit minsize and weight=0.
+    Rows: (6 * (num_calc_rows - 1) + 3) rows (0-based rows 0..(total_rows - 1)) with explicit minsize and weight=0.
     """
     if num_calc_rows < 1:
         raise ValueError(f"num_calc_rows must be >= 1, got {num_calc_rows!r}")
 
-    # 1. Configure all 33 columns (0-based 0..32) with explicit minsize and weight=0 (no uncontrolled stretching)
+    # 1. Configure all 13 columns (0-based 0..12) with explicit minsize and weight=0 (no uncontrolled stretching)
     for col_1based in range(1, EXCEL_TOTAL_COLUMNS + 1):
         col_0based = col_1based - 1
         width = excel_column_width(col_1based)
@@ -1049,3 +1190,224 @@ def configure_excel_workspace_grid(container: Any, num_calc_rows: int = 2) -> No
         row_0based = row_1based - 1
         height = excel_row_height(row_1based)
         container.grid_rowconfigure(row_0based, minsize=height, weight=0)
+
+
+def excel_13col_column_letter(column_1based: int) -> str:
+    """Return Excel column letter A..M for 1-based column index 1..13."""
+    if not (1 <= column_1based <= 13):
+        raise ValueError(f"Column index {column_1based} out of range 1..13")
+    return EXCEL_13COL_LETTERS[column_1based - 1]
+
+
+def excel_13col_column_from_letter(letter: str) -> int:
+    """Return 1-based column index 1..13 for letter A..M."""
+    clean = letter.strip().upper()
+    if clean not in EXCEL_13COL_LETTERS:
+        raise ValueError(f"Unknown column letter {letter!r}, valid: A..M")
+    return EXCEL_13COL_LETTERS.index(clean) + 1
+
+
+def excel_13col_column_width(col: int) -> int:
+    """Return pixel width for 1-based column 1..13."""
+    if col not in EXCEL_13COL_COLUMN_WIDTHS:
+        raise KeyError(f"Column {col} not in 13-column layout")
+    return EXCEL_13COL_COLUMN_WIDTHS[col]
+
+
+def excel_13col_total_width() -> int:
+    """Return total natural width of the 13 columns in pixels."""
+    return sum(EXCEL_13COL_COLUMN_WIDTHS.values())
+
+
+def excel_13col_start_row(calc_row: int) -> int:
+    """Return 1-based starting Excel row for calculator row k using 6-row stride: 6*(k-1)+1."""
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+    return 6 * (calc_row - 1) + 1
+
+
+def excel_13col_workspace_position(
+    calc_row: int,
+    control_name: str,
+    row_span: int = 1,
+    column_span: int = 1,
+) -> GridPosition:
+    """Return authoritative 1-based GridPosition in 13-column LayoutRegion.EXCEL_WORKSPACE.
+
+    Mapping reference:
+      Row 1 (k=1):
+        - A1: row 1 label
+        - E2: number for math
+        - F2: descriptive text box 1
+        - G2: orange plus sign button
+        - I1: math to put on the left
+        - I3: clear math on the left
+        - J2: equals sign (=)
+        - K2: calculated result
+        - L2: descriptive text box 1
+        - M2: orange plus sign button
+      Row 2 (k=2):
+        - A7: row 2 label
+        - C8: mathematical operator sign
+        - E8: number for math
+        - F8: descriptive text box 1
+        - G8: orange plus sign button
+        - I7: math to put on the left
+        - I9: clear math on the left
+        - J8: equals sign (=)
+        - K8: calculated result
+        - L8: descriptive text box 1
+        - M8: orange plus sign button
+      Total Row (Adjustment 2):
+        - Col C: empty
+        - Col J: equals sign (=)
+        - Col K: final calculated result
+        - Col L: descriptive text box 1
+        - Col M: orange plus sign button
+    """
+    if isinstance(calc_row, bool) or not isinstance(calc_row, int) or calc_row < 1:
+        raise ValueError(f"calc_row must be an integer >= 1, got {calc_row!r}")
+
+    r0 = excel_13col_start_row(calc_row)
+    name = control_name.strip().lower()
+
+    # 1. Row Indicator Label: A1 (k=1), A7 (k=2)
+    if name in ("row_label", "label_frame", "row_indicator"):
+        return GridPosition(row=r0, column=EXCEL_13COL_ROW_LABEL, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 2. Math Operator Sign: C8 (k=2, active for k >= 2)
+    if name in ("math_sign", "join_operator", "join_sign", "operator_sign"):
+        if calc_row < 2:
+            raise ValueError(f"math_sign only exists on calculator row >= 2, not row {calc_row}")
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_SIGN, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 3. Number or mathematical expression: E2 (k=1), E8 (k=2)
+    if name in ("number_for_math", "number_math", "math_operand", "box", "math_container"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_NUMBER_MATH, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 4. Descriptive Text Box 1 (Math): F2 (k=1), F8 (k=2)
+    if name in ("math_box1", "math_label", "math_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 5. Orange Plus Sign Button (Math): G2 (k=1), G8 (k=2)
+    if name in ("math_trailing", "math_orange_plus", "math_plus_button"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 6. Actions: I1 / I7 (top), I3 / I9 (bottom)
+    if name in ("action_math_left", "math_to_put_on_the_left"):
+        return GridPosition(row=r0, column=EXCEL_13COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("action_clear_left", "clear_math_on_the_left"):
+        return GridPosition(row=r0 + 2, column=EXCEL_13COL_ACTIONS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("actions_frame", "actions_container"):
+        return GridPosition(row=r0, column=EXCEL_13COL_ACTIONS, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 7. Result Equals Sign: J2 (k=1), J8 (k=2)
+    if name in ("result_lead", "result_equals", "equals_sign"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_EQUALS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 8. Result Number Box: K2 (k=1), K8 (k=2)
+    if name in ("result_box", "result_number", "calculated_result"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 9. Descriptive Text Box 1 (Result): L2 (k=1), L8 (k=2)
+    if name in ("result_box1", "result_label", "result_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 10. Orange Plus Sign Button (Result): M2 (k=1), M8 (k=2)
+    if name in ("result_trailing", "result_orange_plus", "result_plus_button"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    # 11. Total / Bottom Row Controls (Adjustment 2)
+    if name in ("total_row_label", "total_label"):
+        return GridPosition(row=r0, column=EXCEL_13COL_ROW_LABEL, row_span=3, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_equals", "total_lead"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_EQUALS, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_box", "final_result"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_box1", "total_descriptive_1"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX1, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    if name in ("total_trailing", "total_orange_plus"):
+        return GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_TRAILING, row_span=1, column_span=1,
+                            region=LayoutRegion.EXCEL_WORKSPACE)
+
+    raise KeyError(f"Unknown 13-column control name: {control_name!r}")
+
+
+def excel_13col_workspace_positions(calc_row: int) -> dict[str, GridPosition]:
+    """Return dictionary of all standard 13-column control positions for calculator row k."""
+    r0 = excel_13col_start_row(calc_row)
+    pos: dict[str, GridPosition] = {
+        "row_label": GridPosition(row=r0, column=EXCEL_13COL_ROW_LABEL, row_span=3, column_span=1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "number_for_math": GridPosition(row=r0 + 1, column=EXCEL_13COL_NUMBER_MATH,
+                                        region=LayoutRegion.EXCEL_WORKSPACE),
+        "math_box1": GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_BOX1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "math_trailing": GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_TRAILING,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "action_math_left": GridPosition(row=r0, column=EXCEL_13COL_ACTIONS,
+                                         region=LayoutRegion.EXCEL_WORKSPACE),
+        "action_clear_left": GridPosition(row=r0 + 2, column=EXCEL_13COL_ACTIONS,
+                                          region=LayoutRegion.EXCEL_WORKSPACE),
+        "actions_frame": GridPosition(row=r0, column=EXCEL_13COL_ACTIONS, row_span=3, column_span=1,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_equals": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_EQUALS,
+                                      region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_box": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_box1": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX1,
+                                    region=LayoutRegion.EXCEL_WORKSPACE),
+        "result_trailing": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_TRAILING,
+                                        region=LayoutRegion.EXCEL_WORKSPACE),
+    }
+    if calc_row >= 2:
+        pos["math_sign"] = GridPosition(row=r0 + 1, column=EXCEL_13COL_MATH_SIGN,
+                                        region=LayoutRegion.EXCEL_WORKSPACE)
+    return pos
+
+
+def excel_13col_total_row_positions(calc_row: int) -> dict[str, GridPosition]:
+    """Return dictionary of positions for the bottom total row at calculator row k.
+
+    Adjustment 2 requirements:
+      - Column C: empty (no math sign on bottom total row)
+      - Column J: '=' equals sign
+      - Column K: final calculated result
+      - Column L: descriptive text box 1
+      - Column M: orange + control
+    """
+    r0 = excel_13col_start_row(calc_row)
+    return {
+        "row_label": GridPosition(row=r0, column=EXCEL_13COL_ROW_LABEL, row_span=3, column_span=1,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_equals": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_EQUALS,
+                                     region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_box": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX,
+                                  region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_box1": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_BOX1,
+                                   region=LayoutRegion.EXCEL_WORKSPACE),
+        "total_trailing": GridPosition(row=r0 + 1, column=EXCEL_13COL_RESULT_TRAILING,
+                                       region=LayoutRegion.EXCEL_WORKSPACE),
+    }
