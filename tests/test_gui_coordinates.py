@@ -3716,7 +3716,7 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             app.destroy()
 
     def test_10_evaluation_guard_when_parentheses_or_exponents_active(self):
-        """10. Pressing '=' with active parens or exponents displays PEMDAS Step 3 explanation."""
+        """10. Pressing '=' with invalid parens or orphaned exp2 displays clear validation error."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -3728,20 +3728,19 @@ class Test17ColumnGUIRowActivation(unittest.TestCase):
             app._equals()
             app.update()
 
-            # Explanatory message shown in results
+            # Unmatched open paren error shown in results
             result_msg = app.results.get("1.0", "end").strip()
-            self.assertIn("Step 3 (PEMDAS engine)", result_msg)
-            # Did not evaluate or create incorrect result row
+            self.assertIn("opening parenthesis '(' without a matching closing", result_msg)
             self.assertEqual(len(app.rows), 1)
 
-            # Untoggle paren and test Exponent Box 2 (group exponent) which is still guarded in Step 3A
+            # Untoggle paren and test Exponent Box 2 without close paren
             app._toggle_paren_open(0)
             app._set_exponent_2(0, "3")
             app._equals()
             app.update()
 
             result_msg2 = app.results.get("1.0", "end").strip()
-            self.assertIn("Step 3 (PEMDAS engine)", result_msg2)
+            self.assertIn("group exponent (Column O) without a closing parenthesis", result_msg2)
             self.assertEqual(len(app.rows), 1)
         finally:
             app.destroy()
@@ -4076,38 +4075,539 @@ class TestStep3AIndividualRowExponentiation(unittest.TestCase):
             app.destroy()
 
     def test_13_unsupported_controls_trigger_guard(self):
-        """Parentheses and Exponent Box 2 trigger the Step 3 safety guard message."""
+        """Unmatched parens, orphaned exp2, and ungrouped mixed precedence report validation messages."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
         app = CalculatorGUI()
         app.update()
         try:
-            # Test parenthesis open
+            # Test parenthesis open without close
             app._key("2")
             app._toggle_paren_open(0)
             app._equals()
             app.update()
             msg1 = app.results.get("1.0", "end").strip()
-            self.assertIn("Step 3 (PEMDAS engine)", msg1)
+            self.assertIn("opening parenthesis '(' without a matching closing", msg1)
             self.assertEqual(len(app.rows), 1)
 
-            # Test parenthesis close
+            # Test parenthesis close without open
             app._toggle_paren_open(0)
             app._toggle_paren_close(0)
             app._equals()
             app.update()
             msg2 = app.results.get("1.0", "end").strip()
-            self.assertIn("Step 3 (PEMDAS engine)", msg2)
+            self.assertIn("closing parenthesis ')' without a matching opening", msg2)
 
-            # Test Exponent Box 2 (group exponent)
+            # Test Exponent Box 2 without close paren
             app._toggle_paren_close(0)
             app._set_exponent_2(0, "4")
             app._equals()
             app.update()
             msg3 = app.results.get("1.0", "end").strip()
-            self.assertIn("Step 3 (PEMDAS engine)", msg3)
+            self.assertIn("group exponent (Column O) without a closing parenthesis", msg3)
             self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+
+
+
+class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
+    """Checkpoint 5, Step 3B: Parentheses and Group Exponentiation tests.
+
+    Verifies that:
+      - Parenthesis buttons and Exponent Box 2 evaluate grouped expressions.
+      - User's single-row test (2^2)^2 = 16 displays 16 in Row 1 Col L with no extra row.
+      - Multi-row parenthesized groups evaluate accurately:
+          Example A: (2 + 3)^2 = 25
+          Example B: (2^3 + 1)^2 = 81
+          Example C: (2 + 3) * 4 = 20
+      - Group exponents of 0, negative group exponents, and re-evaluation work.
+      - Unmatched parens, orphaned exp2, nested parens, and ungrouped mixed precedence
+        are safely validated with clear messages.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_user_example_single_row_double_exponent_16(self):
+        """User example: Row 1 base 2, '(' toggled, exp1=2, ')' toggled, exp2=2 -> (2^2)^2 = 16 in Col L."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "2")
+            app._equals()
+            app.update()
+
+            # Row 1 Col L must display 16
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+            # Must not create a second row or Total row
+            self.assertEqual(len(app.rows), 1)
+            # Results console contains ( 2^2 )^2
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("16", msg)
+        finally:
+            app.destroy()
+
+    def test_02_example_a_multi_row_parentheses_with_group_exponent_25(self):
+        """Example A: Row 1 '( 2', Row 2 '+ 3 )^2' -> Total = (2 + 3)^2 = 25."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "25")
+            self.assertEqual(app.rows[2]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_03_example_b_multi_row_with_both_exponents_81(self):
+        """Example B: Row 1 '( 2^3', Row 2 '+ 1 )^2' -> Total = (2^3 + 1)^2 = (8 + 1)^2 = 81."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "3")
+            app._next_row()
+            app._join_key("+")
+            app._key("1")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "81")
+        finally:
+            app.destroy()
+
+    def test_04_example_c_parenthesized_group_then_multiplication_20(self):
+        """Example C: Row 1 '( 2', Row 2 '+ 3 )', Row 3 '* 4' -> Total = (2 + 3) * 4 = 20."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            self.assertEqual(len(app.rows), 4)
+            self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result"].cget("text"), "3")
+            self.assertEqual(app.rows[2]["result"].cget("text"), "4")
+            self.assertEqual(app.rows[3]["result_box"].cget("text"), "20")
+        finally:
+            app.destroy()
+
+    def test_05_parentheses_without_group_exponent(self):
+        """Parentheses without group exponent: (2 + 3) = 5."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            # No Exp 2
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "5")
+        finally:
+            app.destroy()
+
+    def test_06_group_exponent_zero(self):
+        """Group exponent of zero: (2 + 3)^0 = 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "0")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "1")
+        finally:
+            app.destroy()
+
+    def test_07_group_exponent_negative(self):
+        """Negative group exponent: (2 + 2)^-1 = 0.25."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("2")
+            app._toggle_paren_close(1)
+            app._set_exponent_2(1, "-1")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "0.25")
+        finally:
+            app.destroy()
+
+    def test_08_re_evaluation_after_modifying_inputs(self):
+        """Re-evaluating after modifying base or exponent updates result accurately."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # (2^2)^2 = 16
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "2")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+
+            # Change Exp 2 to 3: (2^2)^3 = 64
+            app._set_exponent_2(0, "3")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "64")
+
+            # Change base to 3: (3^2)^3 = 729
+            app._key("⌫")
+            app._key("3")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "729")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_09_clear_all_restores_parentheses_and_both_exponent_boxes(self):
+        """Clear (C) resets parenthesis toggles and both exponent boxes back to empty default."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "2")
+            app._equals()
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+
+            app._clear_all()
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+            self.assertFalse(app.rows[0]["paren_open"])
+            self.assertFalse(app.rows[0]["paren_close"])
+            self.assertEqual(app._get_exponent_1(0), "")
+            self.assertEqual(app._get_exponent_2(0), "")
+            self.assertEqual(app.rows[0]["paren_open_btn"].cget("relief"), "raised")
+            self.assertEqual(app.rows[0]["paren_close_btn"].cget("relief"), "raised")
+        finally:
+            app.destroy()
+
+    def test_10_single_row_calculation_without_adding_second_row(self):
+        """Single-row evaluation with parentheses and exponents never adds a Row 2 or Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("5")
+            app._toggle_paren_open(0)
+            app._toggle_paren_close(0)
+            app._set_exponent_2(0, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "25")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_11_unmatched_opening_parenthesis(self):
+        """Opening parenthesis without closing parenthesis displays clear error."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            # No close paren
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("opening parenthesis '(' without a matching closing", msg)
+        finally:
+            app.destroy()
+
+    def test_12_unmatched_closing_parenthesis(self):
+        """Closing parenthesis without opening parenthesis displays clear error."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_close(1)
+            # No open paren
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("closing parenthesis ')' without a matching opening", msg)
+        finally:
+            app.destroy()
+
+    def test_13_group_exponent_without_closing_parenthesis(self):
+        """Group exponent in Column O without closing parenthesis displays clear error."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._set_exponent_2(0, "3")
+            # No close paren
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("group exponent (Column O) without a closing parenthesis", msg)
+        finally:
+            app.destroy()
+
+    def test_14_nested_parentheses_unsupported_error(self):
+        """Opening a second parenthesis before closing first reports unsupported nesting."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._toggle_paren_open(1)  # nested open!
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("Nested parentheses across rows are not supported", msg)
+        finally:
+            app.destroy()
+
+    def test_15_ungrouped_mixed_precedence_warning(self):
+        """Ungrouped mixed precedence (+ before *) displays explicit Step 3C warning."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._next_row()
+            app._join_key("+")
+            app._key("3")
+            app._next_row()
+            app._join_key("×")
+            app._key("4")
+            app._equals()
+            app.update()
+
+            msg = app.results.get("1.0", "end").strip()
+            self.assertIn("requires Step 3C PEMDAS precedence", msg)
+        finally:
+            app.destroy()
+
+    def test_16_preserves_step_3a_individual_exponentiation(self):
+        """Standard Step 3A individual row exponentiation continues working without parentheses."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("5")
+            app._set_exponent_1(0, "2")
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "25")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+
+    def test_17_onscreen_number_pad_types_into_exponent_boxes(self):
+        """Clicking on-screen number pad (0-9, backspace, sign) enters digits into focused exponent box."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Type into Column E using on-screen number pad
+            app._pick_box(0, 0)
+            app._key("2")
+            self.assertEqual(app.rows[0]["node"]["slots"][0], "2")
+
+            # Toggle '('
+            app._toggle_paren_open(0)
+
+            # Focus Exponent Box 1 and type '2' using on-screen number pad
+            exp1 = app.rows[0]["exponent_1_box"]
+            exp1.focus_set()
+            app._on_exponent_focus(exp1)
+            app._key("2")
+            self.assertEqual(exp1.get(), "2")
+
+            # Toggle ')'
+            app._toggle_paren_close(0)
+
+            # Focus Exponent Box 2, type '3', backspace, type '2' using on-screen number pad
+            exp2 = app.rows[0]["exponent_2_box"]
+            exp2.focus_set()
+            app._on_exponent_focus(exp2)
+            app._key("3")
+            self.assertEqual(exp2.get(), "3")
+            app._key("⌫")
+            self.assertEqual(exp2.get(), "")
+            app._key("2")
+            self.assertEqual(exp2.get(), "2")
+
+            # Click '=' on the on-screen number pad
+            app._equals()
+            app.update()
+
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+            self.assertEqual(len(app.rows), 1)
+        finally:
+            app.destroy()
+
+    def test_18_physical_numpad_evaluates_when_in_exponent_box(self):
+        """Pressing Enter, KP_Enter, '=', or 'KP_Equal' while in an exponent box triggers calculation."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("2")
+            app._toggle_paren_open(0)
+            app._set_exponent_1(0, "2")
+            app._toggle_paren_close(0)
+            exp2 = app.rows[0]["exponent_2_box"]
+            exp2.delete(0, tk.END)
+            exp2.insert(0, "2")
+            exp2.focus_set()
+
+            # Test physical Return
+            ev1 = tk.Event()
+            ev1.widget = exp2
+            ev1.keysym = "Return"
+            ev1.char = "\r"
+            res_code1 = app._on_key_press(ev1)
+            self.assertEqual(res_code1, "break")
+            app.update()
+            self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+
+            # Test physical KP_Enter
+            ev2 = tk.Event()
+            ev2.widget = exp2
+            ev2.keysym = "KP_Enter"
+            ev2.char = "\r"
+            res_code2 = app._on_key_press(ev2)
+            self.assertEqual(res_code2, "break")
+
+            # Test physical KP_Equal
+            ev3 = tk.Event()
+            ev3.widget = exp2
+            ev3.keysym = "KP_Equal"
+            ev3.char = "="
+            res_code3 = app._on_key_press(ev3)
+            self.assertEqual(res_code3, "break")
         finally:
             app.destroy()
 

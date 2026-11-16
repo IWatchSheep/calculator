@@ -294,10 +294,32 @@ class CalculatorGUI(tk.Tk):
         w = event.widget
         focused = self.focus_get()
 
-        # If focus or target widget is an Entry or Text widget, preserve natural text editing
+        ks = event.keysym
+        ch = event.char
+
+        # Check if focus or event widget is one of the exponent boxes
+        is_exponent_entry = False
+        for r in self.rows:
+            if w in (r.get("exponent_1_box"), r.get("exponent_2_box")) or focused in (r.get("exponent_1_box"), r.get("exponent_2_box")):
+                is_exponent_entry = True
+                break
+
+        if is_exponent_entry:
+            if ch == "=" or ks in ("equal", "KP_Equal", "Return", "KP_Enter"):
+                self._equals()
+                return "break"
+            if ks in ("Escape",):
+                self._clear_all()
+                return "break"
+            return None
+
+        # If focus or target widget is another Entry or Text widget, preserve natural text editing
         if (isinstance(w, (tk.Entry, tk.Text, ttk.Combobox, ttk.Entry)) or
             (hasattr(w, "winfo_class") and w.winfo_class() in ("Entry", "Text", "TEntry", "TCombobox")) or
             (focused is not None and focused != self and hasattr(focused, "winfo_class") and focused.winfo_class() in ("Entry", "Text", "TEntry", "TCombobox"))):
+            if ks in ("Return", "KP_Enter"):
+                self._equals()
+                return "break"
             return None
 
         ks = event.keysym
@@ -459,6 +481,10 @@ class CalculatorGUI(tk.Tk):
             else:
                 b.configure(bg="white", fg="black", relief="raised")
 
+    def _on_exponent_focus(self, box):
+        """Track which exponent box was clicked or focused, so on-screen number pad routes to it."""
+        self._active_exponent_box = box
+
     def _toggle_paren_close(self, r):
         """Toggle active/inactive state of Close Parenthesis ')' in row r."""
         if r < 0 or r >= len(self.rows):
@@ -490,16 +516,7 @@ class CalculatorGUI(tk.Tk):
         return False
 
     def _has_unsupported_pemdas_controls(self):
-        """Check if any row currently has parentheses toggled or Exponent Box 2 (group exponent) entered.
-        These features are reserved for subsequent stages of Step 3 (PEMDAS engine)."""
-        for row in self.rows:
-            if row.get("is_result"):
-                continue
-            if row.get("paren_open") or row.get("paren_close"):
-                return True
-            exp2 = row.get("exponent_2_box")
-            if exp2 is not None and exp2.get().strip():
-                return True
+        """In Step 3B, parentheses and Exponent Box 2 (group exponent) are fully active."""
         return False
 
     @staticmethod
@@ -724,6 +741,8 @@ class CalculatorGUI(tk.Tk):
         exp1_entry.grid_pos = exp1_pos
         exp1_entry.excel_pos = exp1_pos
         exp1_entry.grid(row=0, column=12, padx=2, pady=(2, 0), sticky="s")
+        exp1_entry.bind("<FocusIn>", lambda e, b=exp1_entry: self._on_exponent_focus(b), add="+")
+        exp1_entry.bind("<Button-1>", lambda e, b=exp1_entry: self._on_exponent_focus(b), add="+")
 
         # 10. Col N: Close Parenthesis Button (Excel Col N: 14, 0-based 13, row 1)
         paren_close_pos = excel_17col_workspace_position(k, "paren_close")
@@ -741,6 +760,8 @@ class CalculatorGUI(tk.Tk):
         exp2_entry.grid_pos = exp2_pos
         exp2_entry.excel_pos = exp2_pos
         exp2_entry.grid(row=0, column=14, padx=2, pady=(2, 0), sticky="s")
+        exp2_entry.bind("<FocusIn>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
+        exp2_entry.bind("<Button-1>", lambda e, b=exp2_entry: self._on_exponent_focus(b), add="+")
 
         # 12. Cols P..Q: Result Descriptive Region (Excel Cols P..Q: 16..17, 0-based 15..16, row 1)
         res_desc = DescriptionRegion(row_frame, role="result", calc_row=k,
@@ -922,6 +943,7 @@ class CalculatorGUI(tk.Tk):
     def _clear_all(self):
         """C / Clear: back to the start. Exactly one empty Row 1, no join symbols, no extra rows, results cleared."""
         self.template = None
+        self._active_exponent_box = None
         self._tpl_preview_state, self._tpl_previewed, self._tpl_applied = None, None, False
 
         # Destroy and remove all extra mathematical and total rows (rows beyond Row 1)
@@ -1312,6 +1334,27 @@ class CalculatorGUI(tk.Tk):
 
     def _key(self, ch):
         """Number pad: type into the selected box (click a box first); ⌫ deletes."""
+        # Route to active exponent box if one is focused/selected
+        active_exp = getattr(self, "_active_exponent_box", None)
+        if active_exp is not None and active_exp.winfo_exists():
+            if ch == "⌫":
+                curr = active_exp.get()
+                if curr:
+                    active_exp.delete(len(curr) - 1, tk.END)
+            elif ch == "±":
+                curr = active_exp.get().strip()
+                if curr.startswith("-"):
+                    active_exp.delete(0, tk.END)
+                    active_exp.insert(0, curr[1:])
+                else:
+                    active_exp.delete(0, tk.END)
+                    active_exp.insert(0, "-" + curr)
+            elif ch in "0123456789.":
+                if ch == "." and "." in active_exp.get():
+                    return
+                active_exp.insert(tk.END, ch)
+            return
+
         sel = self._selected_box()
         if sel is None:
             self._say("Click a square box first, then type its number on the number pad.")
@@ -1354,26 +1397,88 @@ class CalculatorGUI(tk.Tk):
         (Row 2 has a join sign), the answer for all of them is printed in the row after the last one used (Row 3
         for Rows 1 and 2).  A single row prints nothing further down.  With a multi-row operator, every row is
         calculated and the results are joined by that operator's joins."""
-        if self._has_unsupported_pemdas_controls():
-            self._say("Parentheses and group exponents (Exponent Box 2) will be evaluated in Step 3 (PEMDAS engine). "
-                      "Remove them or use Exponent Box 1 for individual row powers.")
-            return
         if self.template is not None:
             return self._equals_template()
         if self._is_blank(self.rows[0]):
             self._say("Type a number in Row 1 first: click its square box, then use the number pad "
                       "(or pick an operator with 'math to put on the left').")
             return
-        total, lines, last, used = None, [], 0, 0
+
+        # 1. Identify used mathematical rows
+        used_rows = []
         for k, row in enumerate(self.rows):
-            if row["is_result"] or (k > 0 and self._is_blank(row) and not row["join"]):
+            if row.get("is_result") or (k > 0 and self._is_blank(row) and not row.get("join")):
                 continue
+            used_rows.append(k)
+
+        if not used_rows:
+            return
+
+        # 2. Validate parentheses and exponents across used rows
+        open_row = None
+        groups = []  # list of (start_k, end_k)
+        for k in used_rows:
+            row = self.rows[k]
+            has_open = bool(row.get("paren_open"))
+            has_close = bool(row.get("paren_close"))
+            exp1_str = self._get_exponent_1(k)
+            exp2_str = self._get_exponent_2(k)
+
+            # Check for group exponent without close parenthesis
+            if exp2_str and not has_close:
+                self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
+                return
+
+            # Check exponent syntax
+            if exp1_str:
+                try:
+                    self._parse_exponent_value(exp1_str)
+                except ValueError as e:
+                    self._say("Row %d: %s" % (k + 1, e))
+                    return
+
+            if exp2_str:
+                try:
+                    self._parse_exponent_value(exp2_str)
+                except ValueError as e:
+                    self._say("Row %d: %s" % (k + 1, e))
+                    return
+
+            if has_open and has_close:
+                if open_row is not None:
+                    self._say("Nested parentheses across rows are not supported. "
+                              "Please close the open parenthesis from Row %d first." % (open_row + 1))
+                    return
+                groups.append((k, k))
+            elif has_open:
+                if open_row is not None:
+                    self._say("Nested parentheses across rows are not supported. "
+                              "Please close the open parenthesis from Row %d first." % (open_row + 1))
+                    return
+                open_row = k
+            elif has_close:
+                if open_row is None:
+                    self._say("Row %d has a closing parenthesis ')' without a matching opening parenthesis '('. "
+                              "Please add '(' or remove ')'. " % (k + 1))
+                    return
+                groups.append((open_row, k))
+                open_row = None
+
+        if open_row is not None:
+            self._say("Row %d has an opening parenthesis '(' without a matching closing parenthesis ')'. "
+                      "Please close it with ')' or remove '('." % (open_row + 1))
+            return
+
+        # 3. Evaluate each row's individual expression and Exponent Box 1
+        row_values = {}
+        for k in used_rows:
+            row = self.rows[k]
             try:
                 v = row_tree.evaluate(row["node"])
             except ValueError as e:
                 self._say("Row %d: %s" % (k + 1, e) if k else str(e))
                 return
-            self._render_row(k)                 # the formula's answer box shows the answer
+            self._render_row(k)
             exp1_str = self._get_exponent_1(k)
             if exp1_str:
                 try:
@@ -1382,45 +1487,123 @@ class CalculatorGUI(tk.Tk):
                 except ValueError as e:
                     self._say("Row %d: %s" % (k + 1, e) if k else str(e))
                     return
-            cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
-            if k == 0:
-                total = v
-                if exp1_str:
-                    row_desc = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
-                    lines.append("Row 1:  %s" % row_desc)
-                else:
-                    lines.append("Row 1:  %s" % cards)
+            row_values[k] = v
+
+        # 4. Form top-level items (groups and ungrouped rows)
+        group_by_start = {s: (s, e) for s, e in groups}
+        items = []
+        idx = 0
+        while idx < len(used_rows):
+            k = used_rows[idx]
+            if k in group_by_start:
+                s, e = group_by_start[k]
+                g_val = row_values[s]
+                for j in range(s + 1, e + 1):
+                    row_j = self.rows[j]
+                    join_sym = row_j.get("join")
+                    if not join_sym:
+                        self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (j + 1))
+                        return
+                    try:
+                        g_val = row_tree.join(join_sym, g_val, row_values[j])
+                    except ValueError as e_val:
+                        self._say(str(e_val))
+                        return
+                # Apply Exponent Box 2 (group exponent on row e)
+                exp2_str = self._get_exponent_2(e)
+                if exp2_str:
+                    try:
+                        exp2 = self._parse_exponent_value(exp2_str)
+                        g_val = self._apply_exponent(g_val, exp2)
+                    except ValueError as e_val:
+                        self._say("Row %d: %s" % (e + 1, e_val))
+                        return
+                join_leading = self.rows[s].get("join") if s > 0 else None
+                if s > 0 and not join_leading:
+                    self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (s + 1))
+                    return
+                items.append({"val": g_val, "join": join_leading, "start": s, "end": e, "is_group": True})
+                while idx < len(used_rows) and used_rows[idx] <= e:
+                    idx += 1
             else:
-                if not row["join"]:
-                    self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button."
-                              % (k + 1))
+                join_leading = self.rows[k].get("join") if k > 0 else None
+                if k > 0 and not join_leading:
+                    self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (k + 1))
                     return
-                try:
-                    total = row_tree.join(row["join"], total, v)
-                except ValueError as e:
-                    self._say(str(e))
-                    return
-                if exp1_str:
-                    row_desc = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
-                    lines.append("Row %d:  %s %s" % (k + 1, row["join"], row_desc))
-                else:
-                    lines.append("Row %d:  %s %s" % (k + 1, row["join"], cards))
-            self._set_result(k, advanced_input.short_label(row_tree.fmt(v), 14))      # the row's own answer, in its own card
-            last = k
-            used += 1
-        if used > 1:                                  # joined rows: the answer for all of them goes in the next row (Row 3 for Rows 1 and 2)
+                items.append({"val": row_values[k], "join": join_leading, "start": k, "end": k, "is_group": False})
+                idx += 1
+
+        # 5. Check for unsupported mixed precedence among top-level items (+ before ×)
+        if len(items) > 2:
+            joins = [it["join"] for it in items[1:]]
+            first_add_sub = next((i for i, j in enumerate(joins) if j in ("+", "−")), None)
+            last_mul_div = max((i for i, j in enumerate(joins) if j in ("×", "÷", "%")), default=-1)
+            if first_add_sub is not None and first_add_sub < last_mul_div:
+                self._say("Warning: Expression requires Step 3C PEMDAS precedence (+ before × across ungrouped rows). "
+                          "Please use parentheses to group operations explicitly.")
+                return
+
+        # 6. Evaluate total across items
+        total = items[0]["val"]
+        for it in items[1:]:
+            try:
+                total = row_tree.join(it["join"], total, it["val"])
+            except ValueError as e_join:
+                self._say(str(e_join))
+                return
+
+        # 7. Format result rows and log lines
+        lines = []
+        for k in used_rows:
+            cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
+            row = self.rows[k]
+            has_open = bool(row.get("paren_open"))
+            has_close = bool(row.get("paren_close"))
+            exp1_str = self._get_exponent_1(k)
+            exp2_str = self._get_exponent_2(k)
+
+            if exp1_str:
+                base_part = "(%s)^%s" % (cards, exp1_str) if len(cards.split()) > 1 else "%s^%s" % (cards, exp1_str)
+            else:
+                base_part = cards
+
+            if has_open and has_close:
+                row_part = "( %s )" % base_part
+            elif has_open:
+                row_part = "( %s" % base_part
+            elif has_close:
+                row_part = "%s )" % base_part
+            else:
+                row_part = base_part
+
+            if exp2_str:
+                row_part = "%s^%s" % (row_part, exp2_str)
+
+            if k == 0:
+                lines.append("Row 1:  %s" % row_part)
+            else:
+                lines.append("Row %d:  %s %s" % (k + 1, row.get("join"), row_part))
+
+        if len(used_rows) > 1:
+            # Multi-row calculation: each input row shows its own value in Column L
+            for k in used_rows:
+                self._set_result(k, advanced_input.short_label(row_tree.fmt(row_values[k]), 14))
+            last = used_rows[-1]
             self._show_result_row(last + 1, total)
             for j in range(last + 2, len(self.rows)):
                 if self.rows[j].get("is_result"):
                     self._reset_row(j)
                     self.rows[j]["row_frame"].grid_remove()
-            lines.append("=  %s     (all %d rows joined, shown in Row %d)" % (row_tree.fmt(total), used, last + 2))
+            lines.append("=  %s     (all %d rows joined, shown in Row %d)" % (row_tree.fmt(total), len(used_rows), last + 2))
         else:
+            # Single-row calculation: Row 1 Column L shows the final evaluated total
+            self._set_result(0, advanced_input.short_label(row_tree.fmt(total), 14))
             for j in range(1, len(self.rows)):
                 if self.rows[j].get("is_result"):
                     self._reset_row(j)
                     self.rows[j]["row_frame"].grid_remove()
             lines.append("=  %s     (shown in Row 1's answer card, right of the =)" % row_tree.fmt(total))
+
         self._say("\n".join(lines))
 
     def _sync_links(self):
@@ -1513,6 +1696,7 @@ class CalculatorGUI(tk.Tk):
 
     def _pick_box(self, i, k):
         """Click on a card's blue + / box: that number becomes the target the next operator expands."""
+        self._active_exponent_box = None
         if self.rows[i]["is_result"]:
             self._reset_row(i)
             k = 0
