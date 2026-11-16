@@ -4508,7 +4508,7 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             app.destroy()
 
     def test_14_nested_parentheses_unsupported_error(self):
-        """Opening a second parenthesis before closing first reports unsupported nesting."""
+        """Opening nested parentheses across rows without closing them reports unmatched opening parenthesis in Checkpoint 6B."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -4525,7 +4525,7 @@ class TestStep3BParenthesesAndGroupExponentiation(unittest.TestCase):
             app.update()
 
             msg = app.results.get("1.0", "end").strip()
-            self.assertIn("Nested parentheses across rows are not supported", msg)
+            self.assertIn("opening parenthesis '(' without a matching closing", msg)
         finally:
             app.destroy()
 
@@ -5038,7 +5038,7 @@ class TestStep3CFullPEMDASAcrossRows(unittest.TestCase):
             app.destroy()
 
     def test_16_nested_parentheses_unsupported_error_retained(self):
-        """Opening a second parenthesis before closing displays unsupported nesting message."""
+        """Opening nested parentheses across rows without closing displays unmatched opening parenthesis in Checkpoint 6B."""
         if not self.has_display:
             self.skipTest("Tkinter display not available")
         from main import CalculatorGUI
@@ -5055,7 +5055,7 @@ class TestStep3CFullPEMDASAcrossRows(unittest.TestCase):
             app.update()
 
             msg = app.results.get("1.0", "end").strip()
-            self.assertIn("Nested parentheses across rows are not supported", msg)
+            self.assertIn("opening parenthesis '(' without a matching closing", msg)
         finally:
             app.destroy()
 

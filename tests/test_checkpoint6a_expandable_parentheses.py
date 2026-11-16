@@ -433,8 +433,7 @@ class TestCheckpoint6AExpandableParentheses(unittest.TestCase):
             app.update()
 
             msg = app.results.get("1.0", "end")
-            self.assertIn("Expandable nested parentheses are active in the GUI (Stage 6A)", msg)
-            self.assertIn("Stage 6B", msg)
+            self.assertIn("opening parenthesis '(' without a matching closing parenthesis ')'", msg)
         finally:
             app.destroy()
 

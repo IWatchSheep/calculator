@@ -511,6 +511,7 @@ class CalculatorGUI(tk.Tk):
                 row["paren_open_btn"].configure(bg="#b5dca8", fg="#1b5e20", relief="sunken")
             else:
                 row["paren_open_btn"].configure(bg="white", fg="black", relief="raised")
+        self._sync_closing_parentheses_capacity()
 
     def _on_exponent_focus(self, box):
         """Track which exponent box was clicked or focused, so on-screen number pad routes to it."""
@@ -542,33 +543,65 @@ class CalculatorGUI(tk.Tk):
                 row["paren_close_btn"].configure(bg="#b5dca8", fg="#1b5e20", relief="sunken")
             else:
                 row["paren_close_btn"].configure(bg="white", fg="black", relief="raised")
+        self._sync_closing_parentheses_capacity()
+
+    def _ensure_paren_pairs(self, r, target_count):
+        """Ensure row r has at least target_count parenthesis pairs, adding buttons if needed."""
+        if r < 0 or r >= len(self.rows):
+            return
+        row = self.rows[r]
+        row_frame = row.get("row_frame")
+        if not row_frame:
+            return
+
+        current = row.get("paren_pairs_count", len(row.get("paren_open_btns", [])))
+        if target_count <= current:
+            return
+
+        for p_idx in range(current, target_count):
+            btn_open = tk.Button(row_frame, text="(", bg="white", fg="black",
+                                 font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
+                                 command=lambda r=r, p=p_idx: self._toggle_paren_open(r, p))
+            row.setdefault("paren_open_btns", []).append(btn_open)
+            row.setdefault("paren_open_states", []).append(False)
+
+            btn_close = tk.Button(row_frame, text=")", bg="white", fg="black",
+                                  font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
+                                  command=lambda r=r, p=p_idx: self._toggle_paren_close(r, p))
+            row.setdefault("paren_close_btns", []).append(btn_close)
+            row.setdefault("paren_close_states", []).append(False)
+
+        row["paren_pairs_count"] = len(row["paren_open_btns"])
+        self._relayout_row(r)
+
+    def _sync_closing_parentheses_capacity(self):
+        """Ensure subsequent rows provide enough closing parenthesis buttons for any active,
+        unmatched opening parentheses from preceding rows."""
+        unmatched = 0
+        for r, row in enumerate(self.rows):
+            if row.get("is_result"):
+                continue
+
+            needed_pairs = max(1, unmatched)
+            current_pairs = row.get("paren_pairs_count", len(row.get("paren_open_btns", [])))
+
+            if needed_pairs > current_pairs:
+                self._ensure_paren_pairs(r, needed_pairs)
+
+            open_count = sum(1 for s in row.get("paren_open_states", []) if s)
+            close_count = sum(1 for s in row.get("paren_close_states", []) if s)
+            unmatched = max(0, unmatched + open_count - close_count)
 
     def _add_paren_pair(self, r):
         """Add another pair of opening and closing parentheses to row r, expanding grid to the right."""
         if r < 0 or r >= len(self.rows):
             return
         row = self.rows[r]
-        row_frame = row.get("row_frame")
-        if row_frame is None:
-            return
-
-        p_idx = len(row.get("paren_open_btns", []))
-        btn_open = tk.Button(row_frame, text="(", bg="white", fg="black",
-                             font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
-                             command=lambda r=r, p=p_idx: self._toggle_paren_open(r, p))
-        row.setdefault("paren_open_btns", []).append(btn_open)
-        row.setdefault("paren_open_states", []).append(False)
-
-        btn_close = tk.Button(row_frame, text=")", bg="white", fg="black",
-                              font=("Segoe UI", 12, "bold"), relief="raised", bd=1, width=3,
-                              command=lambda r=r, p=p_idx: self._toggle_paren_close(r, p))
-        row.setdefault("paren_close_btns", []).append(btn_close)
-        row.setdefault("paren_close_states", []).append(False)
-
-        row["paren_pairs_count"] = len(row["paren_open_btns"])
-        self._relayout_row(r)
+        current = row.get("paren_pairs_count", len(row.get("paren_open_btns", [])))
+        self._ensure_paren_pairs(r, current + 1)
         self._say("Row %d: Added parenthesis pair %d. Total pairs on this row: %d." % (
-            r + 1, p_idx + 1, row["paren_pairs_count"]))
+            r + 1, current + 1, row["paren_pairs_count"]))
+        self._sync_closing_parentheses_capacity()
 
     def _relayout_row(self, r):
         """Re-grid widgets for row r based on its independent parenthesis pair count."""
@@ -792,11 +825,11 @@ class CalculatorGUI(tk.Tk):
 
     def _eval_expression_tree(self, node):
         """Evaluate an expression tree constructed by _build_expression_tree."""
-        if isinstance(node, (int, float, complex)):
+        if not isinstance(node, dict):
             return node
-        if isinstance(node, dict) and "adv" in node:
+        if "adv" in node:
             return node["value"]
-        if isinstance(node, dict) and "custom_join" in node:
+        if "custom_join" in node:
             l = self._eval_expression_tree(node["left"])
             r = self._eval_expression_tree(node["right"])
             return row_tree.join(node["custom_join"], l, r)
@@ -1051,6 +1084,7 @@ class CalculatorGUI(tk.Tk):
             "helper_heading": None,
         })
         self.rows.append(row)
+        self._sync_closing_parentheses_capacity()
         self._render_row(r)
         self._fit_rows()
         return r
@@ -1685,26 +1719,16 @@ class CalculatorGUI(tk.Tk):
         if not used_rows:
             return
 
-        # Safety Guard (Stage 6A): Check if multiple expandable parentheses are active
-        has_multi_open = any(sum(1 for s in r.get("paren_open_states", []) if s) > 1 for r in (self.rows[k] for k in used_rows))
-        has_multi_close = any(sum(1 for s in r.get("paren_close_states", []) if s) > 1 for r in (self.rows[k] for k in used_rows))
-        if has_multi_open or has_multi_close:
-            self._say("Expandable nested parentheses are active in the GUI (Stage 6A). "
-                      "Nested expression evaluation will be enabled in Stage 6B.")
-            return
-
-        # 2. Validate parentheses and exponents across used rows
-        open_row = None
-        groups = []  # list of (start_k, end_k)
-        for k in used_rows:
+        # 2. Pre-validate exponents and join symbols across used rows
+        for idx, k in enumerate(used_rows):
             row = self.rows[k]
-            has_open = bool(row.get("paren_open"))
-            has_close = bool(row.get("paren_close"))
+            open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
+            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
             exp1_str = self._get_exponent_1(k)
             exp2_str = self._get_exponent_2(k)
 
             # Check for group exponent without close parenthesis
-            if exp2_str and not has_close:
+            if exp2_str and close_count == 0:
                 self._say("Row %d has a group exponent (Column O) without a closing parenthesis ')'." % (k + 1))
                 return
 
@@ -1723,30 +1747,9 @@ class CalculatorGUI(tk.Tk):
                     self._say("Row %d: %s" % (k + 1, e))
                     return
 
-            if has_open and has_close:
-                if open_row is not None:
-                    self._say("Nested parentheses across rows are not supported. "
-                              "Please close the open parenthesis from Row %d first." % (open_row + 1))
-                    return
-                groups.append((k, k))
-            elif has_open:
-                if open_row is not None:
-                    self._say("Nested parentheses across rows are not supported. "
-                              "Please close the open parenthesis from Row %d first." % (open_row + 1))
-                    return
-                open_row = k
-            elif has_close:
-                if open_row is None:
-                    self._say("Row %d has a closing parenthesis ')' without a matching opening parenthesis '('. "
-                              "Please add '(' or remove ')'. " % (k + 1))
-                    return
-                groups.append((open_row, k))
-                open_row = None
-
-        if open_row is not None:
-            self._say("Row %d has an opening parenthesis '(' without a matching closing parenthesis ')'. "
-                      "Please close it with ')' or remove '('." % (open_row + 1))
-            return
+            if idx > 0 and not row.get("join"):
+                self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (k + 1))
+                return
 
         # 3. Evaluate each row's individual expression and Exponent Box 1
         row_values = {}
@@ -1768,78 +1771,87 @@ class CalculatorGUI(tk.Tk):
                     return
             row_values[k] = v
 
-        # 4. Form top-level items (groups and ungrouped rows)
-        group_by_start = {s: (s, e) for s, e in groups}
-        items = []
-        idx = 0
-        while idx < len(used_rows):
-            k = used_rows[idx]
-            if k in group_by_start:
-                s, e = group_by_start[k]
-                if s == e:
-                    g_val = row_values[s]
+        # 4. Evaluate nested expression across rows using stack-based frame parser
+        class _ParenFrame:
+            def __init__(self, start_row, depth=0):
+                self.start_row = start_row
+                self.depth = depth
+                self.operands = []
+                self.operators = []
+
+        stack = [_ParenFrame(start_row=used_rows[0], depth=0)]
+
+        for idx, k in enumerate(used_rows):
+            row = self.rows[k]
+            open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
+            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
+            exp2_str = self._get_exponent_2(k)
+
+            # Leading join symbol between rows
+            if idx > 0:
+                join_sym = row.get("join")
+                stack[-1].operators.append(join_sym)
+
+            # Opening parentheses on this row
+            for _ in range(open_count):
+                stack.append(_ParenFrame(start_row=k, depth=len(stack)))
+
+            # Push this row's evaluated value
+            stack[-1].operands.append(row_values[k])
+
+            # Closing parentheses on this row
+            for c_idx in range(close_count):
+                if len(stack) <= 1:
+                    self._say("Row %d has a closing parenthesis ')' without a matching opening parenthesis '('. "
+                              "Please add '(' or remove ')'. " % (k + 1))
+                    return
+                frame = stack.pop()
+                if len(frame.operands) == 1 and not frame.operators:
+                    sub_val = frame.operands[0]
                 else:
-                    g_operands = [row_values[s]]
-                    g_operators = []
-                    for j in range(s + 1, e + 1):
-                        row_j = self.rows[j]
-                        join_sym = row_j.get("join")
-                        if not join_sym:
-                            self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (j + 1))
-                            return
-                        g_operators.append(join_sym)
-                        g_operands.append(row_values[j])
                     try:
-                        g_tree = self._build_expression_tree(g_operands, g_operators)
-                        g_val = self._eval_expression_tree(g_tree)
+                        sub_tree = self._build_expression_tree(frame.operands, frame.operators)
+                        sub_val = self._eval_expression_tree(sub_tree)
                     except ValueError as e_val:
                         self._say(str(e_val))
                         return
 
-                # Apply Exponent Box 2 (group exponent on row e)
-                exp2_str = self._get_exponent_2(e)
-                if exp2_str:
+                # Exponent Box 2 applies to the outermost group closed on this row
+                if c_idx == close_count - 1 and exp2_str:
+                    exp2 = self._parse_exponent_value(exp2_str)
                     try:
-                        exp2 = self._parse_exponent_value(exp2_str)
-                        g_val = self._apply_exponent(g_val, exp2)
-                    except ValueError as e_val:
-                        self._say("Row %d: %s" % (e + 1, e_val))
+                        sub_val = self._apply_exponent(sub_val, exp2)
+                    except ValueError as e_exp:
+                        self._say("Row %d: %s" % (k + 1, e_exp))
                         return
-                join_leading = self.rows[s].get("join") if s > 0 else None
-                if s > 0 and not join_leading:
-                    self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (s + 1))
-                    return
-                items.append({"val": g_val, "join": join_leading, "start": s, "end": e, "is_group": True})
-                while idx < len(used_rows) and used_rows[idx] <= e:
-                    idx += 1
-            else:
-                join_leading = self.rows[k].get("join") if k > 0 else None
-                if k > 0 and not join_leading:
-                    self._say("Row %d needs a join symbol: click + − × ÷ = above the Advanced Input button." % (k + 1))
-                    return
-                items.append({"val": row_values[k], "join": join_leading, "start": k, "end": k, "is_group": False})
-                idx += 1
 
-        # 5. Evaluate total across items using PEMDAS
-        if len(items) == 1:
-            total = items[0]["val"]
+                stack[-1].operands.append(sub_val)
+
+        # Check for unclosed opening parentheses
+        if len(stack) > 1:
+            self._say("Row %d has an opening parenthesis '(' without a matching closing parenthesis ')'. "
+                      "Please close it with ')' or remove '('." % (stack[-1].start_row + 1))
+            return
+
+        # 5. Evaluate total across items
+        top_frame = stack[0]
+        if len(top_frame.operands) == 1 and not top_frame.operators:
+            total = top_frame.operands[0]
         else:
-            top_operands = [it["val"] for it in items]
-            top_operators = [it["join"] for it in items[1:]]
             try:
-                top_tree = self._build_expression_tree(top_operands, top_operators)
+                top_tree = self._build_expression_tree(top_frame.operands, top_frame.operators)
                 total = self._eval_expression_tree(top_tree)
-            except ValueError as e_join:
-                self._say(str(e_join))
+            except ValueError as e_top:
+                self._say(str(e_top))
                 return
 
         # 6. Format result rows and log lines
         lines = []
-        for k in used_rows:
+        for idx, k in enumerate(used_rows):
             cards = " ".join((t if t else "□") for _, t, _p in self._cards(k))
             row = self.rows[k]
-            has_open = bool(row.get("paren_open"))
-            has_close = bool(row.get("paren_close"))
+            open_count = sum(1 for s in row.get("paren_open_states", []) if s) if row.get("paren_open_states") else (1 if row.get("paren_open") else 0)
+            close_count = sum(1 for s in row.get("paren_close_states", []) if s) if row.get("paren_close_states") else (1 if row.get("paren_close") else 0)
             exp1_str = self._get_exponent_1(k)
             exp2_str = self._get_exponent_2(k)
 
@@ -1848,19 +1860,14 @@ class CalculatorGUI(tk.Tk):
             else:
                 base_part = cards
 
-            if has_open and has_close:
-                row_part = "( %s )" % base_part
-            elif has_open:
-                row_part = "( %s" % base_part
-            elif has_close:
-                row_part = "%s )" % base_part
-            else:
-                row_part = base_part
+            open_prefix = "( " * open_count
+            close_suffix = " )" * close_count
+            row_part = "%s%s%s" % (open_prefix, base_part, close_suffix)
 
             if exp2_str:
                 row_part = "%s^%s" % (row_part, exp2_str)
 
-            if k == 0:
+            if idx == 0:
                 lines.append("Row 1:  %s" % row_part)
             else:
                 lines.append("Row %d:  %s %s" % (k + 1, row.get("join"), row_part))
