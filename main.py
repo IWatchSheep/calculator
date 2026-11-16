@@ -17,7 +17,9 @@ from gui_style import (ARROWS, ARROW_BG, BLUE, CREAM, GREEN, ORANGE, PALE_BLUE, 
                        configure_excel_workspace_grid, excel_total_workspace_width,
                        excel_start_row, excel_heading_row, excel_workspace_position,
                        excel_workspace_positions, EXCEL_COL_ROW_LABEL, EXCEL_COL_ACTIONS,
-                       GridPosition, LayoutRegion, EXCEL_13COL_COLUMN_WIDTHS)
+                       GridPosition, LayoutRegion, EXCEL_13COL_COLUMN_WIDTHS,
+                       excel_13col_total_row_positions, excel_13col_start_row,
+                       EXCEL_13COL_RESULT_EQUALS, EXCEL_13COL_RESULT_BOX)
 import operator_row_math
 import operators_one_operator_per_file as operators_library
 from operator_row_math.row_builder import build_row, make_component, DescriptionRegion
@@ -264,8 +266,88 @@ class CalculatorGUI(tk.Tk):
         self._build_rows_area()
         self._build_results()
         self._build_bottom()
+        self._setup_keyboard_handling()
+        self.focus_set()
         self.update_idletasks()      # tall enough for the keypad, join keys and Advanced Input button
         self.geometry("1700x%d" % min(max(850, self.winfo_reqheight()), self.winfo_screenheight() - 70))
+
+    def _setup_keyboard_handling(self):
+        """Bind physical keyboard input to drive the calculator keypad and mathematical operations."""
+        self.bind("<Key>", self._on_key_press)
+        self.bind_all("<Key>", self._on_key_press)
+
+    def _on_key_press(self, event):
+        """Handle physical keyboard presses for digits, operators, and evaluation.
+
+        When focus is inside an editable text box (such as a descriptive Entry field),
+        do not intercept so normal typing (including punctuation, math symbols, and spaces)
+        and auto-expansion proceed undisturbed.
+        """
+        w = event.widget
+        focused = self.focus_get()
+
+        # If focus or target widget is an Entry or Text widget, preserve natural text editing
+        if (isinstance(w, (tk.Entry, tk.Text, ttk.Combobox, ttk.Entry)) or
+            (hasattr(w, "winfo_class") and w.winfo_class() in ("Entry", "Text", "TEntry", "TCombobox")) or
+            (focused is not None and focused != self and hasattr(focused, "winfo_class") and focused.winfo_class() in ("Entry", "Text", "TEntry", "TCombobox"))):
+            return None
+
+        ks = event.keysym
+        ch = event.char
+
+        # Digits 0..9
+        if ks in ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+                  "KP_0", "KP_1", "KP_2", "KP_3", "KP_4", "KP_5", "KP_6", "KP_7", "KP_8", "KP_9") or (ch and ch in "0123456789"):
+            digit = ch if (ch and ch in "0123456789") else (ks[-1] if ks.startswith("KP_") else ks)
+            self._key(digit)
+            return "break"
+
+        # Decimal point
+        elif ks in ("period", "KP_Decimal") or ch == ".":
+            self._key(".")
+            return "break"
+
+        # Mathematical operations:
+        # Addition / next-row progression
+        elif ch == "+" or ks in ("plus", "KP_Add"):
+            self._join_key("+")
+            return "break"
+
+        # Subtraction / next-row progression
+        elif ch in ("-", "−") or ks in ("minus", "KP_Subtract"):
+            self._join_key("−")
+            return "break"
+
+        # Multiplication / next-row progression
+        elif ch in ("*", "×") or ks in ("asterisk", "KP_Multiply"):
+            self._join_key("×")
+            return "break"
+
+        # Division / next-row progression
+        elif ch in ("/", "÷") or ks in ("slash", "KP_Divide"):
+            self._join_key("÷")
+            return "break"
+
+        # Equals / Evaluation
+        elif ch == "=" or ks in ("equal", "KP_Equal"):
+            self._equals()
+            return "break"
+
+        elif ks in ("Return", "KP_Enter"):
+            self._equals()
+            return "break"
+
+        # Backspace
+        elif ks in ("BackSpace",):
+            self._key("⌫")
+            return "break"
+
+        # Escape: clear/cancel
+        elif ks in ("Escape",):
+            self._clear_all()
+            return "break"
+
+        return None
 
     # ---------- top ----------
     def _build_toolbar(self):
@@ -344,7 +426,7 @@ class CalculatorGUI(tk.Tk):
         self.rows = []
         self.op_target = 0
         self.template = None          # the multi-row operator currently laid out (see multirow_specs.py)
-        for _ in range(2):
+        for _ in range(1):
             self._add_row()
         self._select_only(0, (0,))                 # Row 1's box is ready for the number pad
         self._render_row(0)
@@ -573,9 +655,32 @@ class CalculatorGUI(tk.Tk):
         row["node"], row["sel"], row["is_result"] = row_tree.new_node("_number"), None, False
         row["words"] = {}
         row["card_box_counts"] = {}
+        row["label"].configure(text="Row %d" % (i + 1),
+                                bg="#6fcf5a" if i == self.op_target else "#b5dca8",
+                                fg="#2a6a20")
         row["sub"].configure(text="")
-        if row["join_btn"] is not None:
+        row["row_frame"].grid(row=i, column=0, sticky="nw", padx=0, pady=(2, 6))
+        if i >= 1 and row.get("join_btn") is not None:
+            row["join_btn"].grid(row=1, column=2, padx=2, pady=2, sticky="nsew")
             self._set_join(i, None)
+        elif row.get("join_btn") is not None:
+            row["join_btn"].grid_remove()
+        if row.get("box") is not None:
+            row["box"].grid(row=1, column=4, padx=2, pady=2, sticky="nsew")
+        if row.get("math_desc") is not None:
+            row["math_desc"].grid(row=1, column=5, columnspan=2, padx=2, pady=2, sticky="w")
+        if row.get("actions_frame") is not None:
+            row["actions_frame"].grid(row=0, column=8, rowspan=3, padx=4, pady=2, sticky="nsew")
+        if row.get("equals_label") is not None:
+            row["equals_label"].grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
+            row["equals_label"].configure(text="=")
+            row["equals_label"].excel_pos = GridPosition(excel_13col_start_row(i + 1) + 1, EXCEL_13COL_RESULT_EQUALS, region=LayoutRegion.EXCEL_WORKSPACE)
+        if row.get("result_box") is not None:
+            row["result_box"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+            row["result_box"].excel_pos = GridPosition(excel_13col_start_row(i + 1) + 1, EXCEL_13COL_RESULT_BOX, region=LayoutRegion.EXCEL_WORKSPACE)
+        if row.get("result_desc") is not None:
+            row["result_desc"].grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+        row["grid_positions"] = excel_workspace_positions(i + 1)
         self._set_result(i)
         self._render_row(i)
 
@@ -584,23 +689,44 @@ class CalculatorGUI(tk.Tk):
         self._reset_chains()
         for k, row in enumerate(self.rows):
             row_tree.clear_outputs(row["node"])
-            if row["is_result"]:
-                self._reset_row(k)
-            else:
-                self._set_result(k)
+            self._set_result(k, None)
 
     def _clear_all(self):
-        """C / Clear: back to the start. Every row empty, no join symbols, no multi-row operator, results cleared."""
+        """C / Clear: back to the start. Exactly one empty Row 1, no join symbols, no extra rows, results cleared."""
         self.template = None
         self._tpl_preview_state, self._tpl_previewed, self._tpl_applied = None, None, False
-        for k, row in enumerate(self.rows):
-            row["mode"] = "full"
-            self._reset_row(k)
+
+        # Destroy and remove all extra mathematical and total rows (rows beyond Row 1)
+        for k in range(1, len(self.rows)):
+            try:
+                self.rows[k]["row_frame"].destroy()
+            except Exception:
+                pass
+        self.rows = self.rows[:1]
+
+        # Restore Row 1 to its initial empty state
+        row = self.rows[0]
+        row["mode"] = "full"
+        self._reset_row(0)
+
+        # Clear entered descriptive text and restore exactly 1 box
+        if "math_desc" in row and hasattr(row["math_desc"], "reset"):
+            row["math_desc"].reset()
+        if "result_desc" in row and hasattr(row["result_desc"], "reset"):
+            row["result_desc"].reset()
+
         self._set_target_row(0)
         self._select_only(0, (0,))
         self._render_row(0)
-        self.target_label.configure(text="Selected Target: Row 1 | Addend 1 | Col 1: Number ('o')")
+        self.target_label.configure(text="Selected Target: Row 1 | Addend 1 | Col 1: Number ('□')")
         self._refresh_adv_target()
+
+        # Reset outer canvas scroll position to the beginning and update scrollregion
+        self.rows_canvas.yview_moveto(0.0)
+        self.rows_canvas.xview_moveto(0.0)
+        self._fit_rows()
+
+        self.focus_set()
         self._say("Cleared. Click a square box and type a number, or open Operators.")
 
     def _clear_row_math(self, i):
@@ -613,7 +739,7 @@ class CalculatorGUI(tk.Tk):
                 r["mode"] = "full"
 
     def _show_result_row(self, idx, total):
-        """Print the result: the row after the last used row becomes  = <total>."""
+        """Print the result: the row after the last used row becomes = <total>."""
         while idx >= len(self.rows):
             self._add_row()
         row = self.rows[idx]
@@ -621,10 +747,39 @@ class CalculatorGUI(tk.Tk):
         node = row_tree.new_node("_number")
         node["slots"] = [shown]
         row["node"], row["sel"], row["is_result"] = node, None, True
-        row["sub"].configure(text="result")
-        self._set_join(idx, "=")
+
+        row["label"].configure(text="Total", bg="#b5dca8", fg="#2a6a20")
+        row["sub"].configure(text="")
+        row["row_frame"].grid(row=idx, column=0, sticky="nw", padx=0, pady=(2, 6))
+
+        if row.get("join_btn") is not None:
+            row["join_btn"].grid_remove()
+        row["join"] = None
+
+        if row.get("box") is not None:
+            row["box"].grid_remove()
+
+        if row.get("math_desc") is not None:
+            row["math_desc"].grid_remove()
+
+        if row.get("actions_frame") is not None:
+            row["actions_frame"].grid_remove()
+
+        if row.get("equals_label") is not None:
+            row["equals_label"].grid(row=1, column=9, padx=2, pady=2, sticky="nsew")
+            row["equals_label"].configure(text="=")
+            row["equals_label"].excel_pos = GridPosition(excel_13col_start_row(idx + 1) + 1, EXCEL_13COL_RESULT_EQUALS, region=LayoutRegion.EXCEL_WORKSPACE)
+
         self._set_result(idx, advanced_input.short_label(shown, 14))
-        self._render_row(idx)
+        if row.get("result_box") is not None:
+            row["result_box"].grid(row=1, column=10, padx=2, pady=2, sticky="nsew")
+            row["result_box"].excel_pos = GridPosition(excel_13col_start_row(idx + 1) + 1, EXCEL_13COL_RESULT_BOX, region=LayoutRegion.EXCEL_WORKSPACE)
+
+        if row.get("result_desc") is not None:
+            row["result_desc"].grid(row=1, column=11, columnspan=2, padx=2, pady=2, sticky="w")
+
+        row["grid_positions"] = excel_13col_total_row_positions(idx + 1)
+        self._fit_rows()
         self._scroll_to_row(idx)
 
     def _set_target_row(self, i):
@@ -643,6 +798,7 @@ class CalculatorGUI(tk.Tk):
                 r["sel"] = None
                 self._render_row(k)
         self.rows[i]["sel"] = path
+        self.focus_set()
 
     def _next_row(self):
         """Next Row: go to the next row (adding one at the bottom), ready to type its number."""
@@ -660,12 +816,39 @@ class CalculatorGUI(tk.Tk):
                   "a join symbol  + − × ÷ =  above the Advanced Input button." % (i + 1))
 
     def _scroll_to_row(self, i):
-        """Scroll the rows section so row i is in view."""
+        """Scroll the rows section only if row i is not currently fully visible in the canvas viewport."""
+        if i >= len(self.rows):
+            return
         self.rows_canvas.update_idletasks()
-        box = self.rows[i].get("box")
-        top = box.winfo_y() if box else self.rows[i]["inner"].winfo_y()
-        total = max(1, self.area.winfo_reqheight())
-        self.rows_canvas.yview_moveto(min(1.0, max(0.0, top / total)))
+        rf = self.rows[i].get("row_frame")
+        if not rf:
+            return
+
+        total_h = max(1, self.area.winfo_reqheight())
+        visible_h = self.rows_canvas.winfo_height()
+        if visible_h <= 1:
+            visible_h = 290
+
+        if total_h <= visible_h:
+            self.rows_canvas.yview_moveto(0.0)
+            return
+
+        row_top = rf.winfo_y()
+        row_h = rf.winfo_height() if rf.winfo_height() > 0 else rf.winfo_reqheight()
+        row_bottom = row_top + row_h
+
+        y1, y2 = self.rows_canvas.yview()
+        current_top_px = y1 * total_h
+        current_bottom_px = current_top_px + visible_h
+
+        if row_top >= current_top_px and row_bottom <= current_bottom_px:
+            return
+
+        if row_bottom > current_bottom_px:
+            target_top_px = row_bottom - visible_h
+            self.rows_canvas.yview_moveto(min(1.0, max(0.0, target_top_px / total_h)))
+        elif row_top < current_top_px:
+            self.rows_canvas.yview_moveto(max(0.0, row_top / total_h))
 
     def _join_key(self, symbol):
         """A join key under the keypad: put the symbol in the helper card of the target row."""
@@ -694,6 +877,8 @@ class CalculatorGUI(tk.Tk):
 
     def _set_join(self, i, symbol):
         """Show the join operator in row i's helper card (None puts the small box back)."""
+        while i >= len(self.rows):
+            self._add_row()
         row = self.rows[i]
         row["join"] = symbol
         if row["join_btn"] is not None:
@@ -750,10 +935,12 @@ class CalculatorGUI(tk.Tk):
     def _add_result_box(self, r, count):
         if r < len(self.rows):
             self.rows[r]["result_box_count"] = count
+            self._fit_rows()
 
     def _add_card_box(self, i, k, count):
         if i < len(self.rows):
             self.rows[i].setdefault("card_box_counts", {})[k] = count
+            self._fit_rows()
 
     def _word_focus_set(self, i, k, which):
         self._word_focus = (i, k, which)
@@ -952,8 +1139,16 @@ class CalculatorGUI(tk.Tk):
             used += 1
         if used > 1:                                  # joined rows: the answer for all of them goes in the next row (Row 3 for Rows 1 and 2)
             self._show_result_row(last + 1, total)
+            for j in range(last + 2, len(self.rows)):
+                if self.rows[j].get("is_result"):
+                    self._reset_row(j)
+                    self.rows[j]["row_frame"].grid_remove()
             lines.append("=  %s     (all %d rows joined, shown in Row %d)" % (row_tree.fmt(total), used, last + 2))
         else:
+            for j in range(1, len(self.rows)):
+                if self.rows[j].get("is_result"):
+                    self._reset_row(j)
+                    self.rows[j]["row_frame"].grid_remove()
             lines.append("=  %s     (shown in Row 1's answer card, right of the =)" % row_tree.fmt(total))
         self._say("\n".join(lines))
 
@@ -1050,6 +1245,7 @@ class CalculatorGUI(tk.Tk):
                                          "- pick an operator to expand it" % (i + 1, n))
         self._render_row(i)
         self._refresh_adv_target()
+        self.focus_set()
 
     def _open_operators_for(self, i):
         """The row's 'math to put on the left' button: open (or retarget) the Operators pop-up."""
@@ -1089,6 +1285,7 @@ class CalculatorGUI(tk.Tk):
         self._invalidate()
         self._render_row(i)
         self._refresh_adv_target()
+        self.focus_set()
         mod = new["mod"]
         if node is not None:
             n = template_math.empty_boxes(new)
@@ -1135,6 +1332,7 @@ class CalculatorGUI(tk.Tk):
         self._say("%s needs %d rows.\n%s\n%s\nJoined with %s. Fill the boxes in every row, then press =."
                   % (name, need, steps, spec["title"], " ".join(spec["joins"])))
         self._refresh_adv_target()
+        self.focus_set()
 
     # ---------- mathematical templates (typed math saved for later) ----------
     # The steps:  1 type math   2 Preview Posted   3 Save Template   4 pick it in the list + Apply Template
@@ -1589,6 +1787,7 @@ class CalculatorGUI(tk.Tk):
         self.adv_popup = pop
         select_kind("list")
         self._refresh_adv_target()
+        self.focus_set()
         # place to the right of the keypad (beside the Operators pop-up if that is open)
         self.update_idletasks()
         pop.update_idletasks()

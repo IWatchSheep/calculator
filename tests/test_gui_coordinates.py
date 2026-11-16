@@ -837,6 +837,8 @@ class TestMainRowCoordinates(unittest.TestCase):
             app = CalculatorGUI()
             app.withdraw()
 
+            self.assertEqual(len(app.rows), 1)
+            app._add_row()
             self.assertEqual(len(app.rows), 2)
 
             for r_idx in range(2):
@@ -1315,7 +1317,7 @@ class TestExcelWorkspacePreparedGrid(unittest.TestCase):
             self.assertTrue(hasattr(app, "area"))
             self.assertTrue(hasattr(app, "excel_area"))
             self.assertEqual(app.area, app.excel_area)
-            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(len(app.rows), 1)
 
             # 2. Exactly 33 columns configured on the active workspace with weight=0
             for c in range(EXCEL_TOTAL_COLUMNS):
@@ -1383,6 +1385,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         app = CalculatorGUI()
         app.withdraw()
         try:
+            app._add_row()
             rf1 = app.rows[0]["row_frame"]
             rf2 = app.rows[1]["row_frame"]
             self.assertIsNot(rf1, rf2)
@@ -1405,6 +1408,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         app = CalculatorGUI()
         app.withdraw()
         try:
+            app._add_row()
             app.update_idletasks()
             r1 = app.rows[0]
             r2 = app.rows[1]
@@ -1504,6 +1508,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         app = CalculatorGUI()
         app.withdraw()
         try:
+            app._add_row()
             app.update_idletasks()
             r1 = app.rows[0]
             r2 = app.rows[1]
@@ -1535,6 +1540,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         app = CalculatorGUI()
         app.withdraw()
         try:
+            app._add_row()
             app.update_idletasks()
             r2_box_w_before = app.rows[1]["box"].winfo_width()
             r2_act_x_before = app.rows[1]["actions_frame"].winfo_rootx()
@@ -1585,8 +1591,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         try:
             app._select_only(0, (0,))
             app._key("8")
-            app._set_join(1, "+")
-            app._select_only(1, (0,))
+            app._join_key("+")
             app._key("4")
             app._equals()
             app.update_idletasks()
@@ -1632,6 +1637,7 @@ class TestStep4ActiveExcelWorkspace(unittest.TestCase):
         app = CalculatorGUI()
         app.withdraw()
         try:
+            app._add_row()  # Row 2
             app._add_row()  # Row 3
             app._add_row()  # Row 4
             self.assertEqual(len(app.rows), 4)
@@ -1832,6 +1838,784 @@ class Test13ColumnExcelSpecification(unittest.TestCase):
         self.assertEqual(EXCEL_13COL_RESULT_BOX, 11)
         self.assertEqual(EXCEL_13COL_RESULT_BOX1, 12)
         self.assertEqual(EXCEL_13COL_RESULT_TRAILING, 13)
+
+
+
+class TestCheckpoint3BottomTotalRowAndKeypadWorkflow(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        try:
+            cls.root = tk.Tk()
+            cls.root.withdraw()
+        except tk.TclError:
+            cls.root = None
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.root is not None:
+            try:
+                cls.root.destroy()
+            except Exception:
+                pass
+
+    def test_example_a_two_row_arithmetic(self):
+        """Example A: Row 1 = 1, Row 2 = + 1, Result Row 3 = 2."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertFalse(app.rows[0]["is_result"])
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "1")
+
+            self.assertFalse(app.rows[1]["is_result"])
+            self.assertEqual(app.rows[1]["join"], "+")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "1")
+
+            r3 = app.rows[2]
+            self.assertTrue(r3["is_result"])
+            self.assertEqual(r3["label"].cget("text"), "Total")
+            self.assertEqual(r3["result_box"].cget("text"), "2")
+
+            # Geometry: Col C empty, Col E empty, Col F..G empty, Col I empty
+            self.assertFalse(r3["join_btn"].winfo_ismapped())
+            self.assertFalse(r3["box"].winfo_ismapped())
+            self.assertFalse(r3["math_desc"].winfo_ismapped())
+            self.assertFalse(r3["actions_frame"].winfo_ismapped())
+
+            # Col J '=' and Col K result are mapped
+            self.assertTrue(r3["equals_label"].winfo_ismapped())
+            self.assertEqual(r3["equals_label"].cget("text"), "=")
+            self.assertTrue(r3["result_box"].winfo_ismapped())
+
+            # Cols L..M: editable result description with orange +
+            self.assertTrue(r3["result_desc"].winfo_ismapped())
+            self.assertTrue(r3["result_desc"].box1.winfo_ismapped())
+            self.assertTrue(r3["result_desc"].trailing_btn.winfo_ismapped())
+            self.assertEqual(r3["result_desc"].trailing_btn.cget("text"), "+")
+            self.assertEqual(r3["grid_positions"], excel_13col_total_row_positions(3))
+        finally:
+            app.destroy()
+
+    def test_example_b_three_row_arithmetic(self):
+        """Example B: Row 1 = 1, Row 2 = + 1, Row 3 = + 1, Final Row 4 = 3."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            self.assertEqual(len(app.rows), 4)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "1")
+
+            r4 = app.rows[3]
+            self.assertTrue(r4["is_result"])
+            self.assertEqual(r4["label"].cget("text"), "Total")
+            self.assertEqual(r4["result_box"].cget("text"), "3")
+            self.assertFalse(r4["join_btn"].winfo_ismapped())
+            self.assertFalse(r4["box"].winfo_ismapped())
+            self.assertFalse(r4["actions_frame"].winfo_ismapped())
+            self.assertTrue(r4["equals_label"].winfo_ismapped())
+            self.assertTrue(r4["result_box"].winfo_ismapped())
+            self.assertTrue(r4["result_desc"].winfo_ismapped())
+        finally:
+            app.destroy()
+
+    def test_example_c_math_template_and_precedence(self):
+        """Example C: Template (1 + 1) on Row 1, Row 2 = + 1, Final Row 3 = 3."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app.op_target = 0
+            app._place_operator_row("math/arithmetic/addition")
+            boxes = [c[2] for c in app._cards(0) if c[0] == "box"]
+            self.assertEqual(len(boxes), 2)
+            app._select_only(0, boxes[0])
+            app._key("1")
+            app._select_only(0, boxes[1])
+            app._key("1")
+
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "2")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "3")
+            self.assertTrue(app.rows[2]["is_result"])
+            self.assertEqual(app.rows[2]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_no_duplicate_total_rows_on_repeated_evaluations(self):
+        """Repeatedly pressing = refreshes the total row without adding duplicates."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            self.assertEqual(len(app.rows), 3)
+
+            app._equals()
+            self.assertEqual(len(app.rows), 3)
+
+            app._equals()
+            self.assertEqual(len(app.rows), 3)
+            total_count = sum(1 for r in app.rows if r.get("is_result"))
+            self.assertEqual(total_count, 1)
+        finally:
+            app.destroy()
+
+    def test_total_row_refreshes_when_inputs_change(self):
+        """Total row value refreshes when mathematical inputs change and = is pressed."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("2")
+            app._join_key("+")
+            app._key("3")
+            app._equals()
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "5")
+
+            app.rows[1]["node"]["slots"] = ["7"]
+            app._render_row(1)
+            app._equals()
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "9")
+            self.assertEqual(len(app.rows), 3)
+        finally:
+            app.destroy()
+
+    def test_total_row_editable_descriptions_and_orange_plus(self):
+        """Total row has editable description box and orange + adds more boxes to the right."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            r3 = app.rows[2]
+            desc = r3["result_desc"]
+            desc.box1.set_text("Fiscal Q4 Aggregated Total")
+            b1_x = desc.box1.winfo_rootx()
+
+            b2 = desc.add_box()
+            b2.set_text("Verified by Auditor")
+            app.update_idletasks()
+
+            self.assertEqual(len(desc.boxes), 2)
+            self.assertEqual(desc.box1.get(), "Fiscal Q4 Aggregated Total")
+            self.assertEqual(b2.get(), "Verified by Auditor")
+
+            self.assertEqual(desc.box1.winfo_rootx(), b1_x)
+            self.assertGreater(desc.trailing_btn.winfo_rootx(), b2.winfo_rootx() + b2.winfo_width())
+        finally:
+            app.destroy()
+
+    def test_state_preservation_across_recalculation_and_row_continuation(self):
+        """Descriptive text is preserved when recalculating or continuing calculations."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            r3 = app.rows[2]
+            r3["result_desc"].box1.set_text("Important Note")
+            self.assertEqual(r3["result_desc"].box1.get(), "Important Note")
+
+            app._equals()
+            app.update_idletasks()
+            self.assertEqual(r3["result_desc"].box1.get(), "Important Note")
+
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            self.assertEqual(len(app.rows), 4)
+            self.assertFalse(app.rows[2]["is_result"])
+            self.assertTrue(app.rows[3]["is_result"])
+            self.assertEqual(app.rows[3]["result_box"].cget("text"), "3")
+        finally:
+            app.destroy()
+
+    def test_independent_total_row_geometry(self):
+        """Total row uses independent row_frame with default 13-col widths and expands without affecting rows above."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update_idletasks()
+
+            r1_w_before = app.rows[0]["row_frame"].winfo_width()
+            r2_w_before = app.rows[1]["row_frame"].winfo_width()
+            r3_frame = app.rows[2]["row_frame"]
+
+            desc = app.rows[2]["result_desc"]
+            desc.box1.set_text("A very long description that expands the total row")
+            b2 = desc.add_box()
+            b2.set_text("Another long supplementary note for the total row")
+            app.update_idletasks()
+
+            self.assertEqual(app.rows[0]["row_frame"].winfo_width(), r1_w_before)
+            self.assertEqual(app.rows[1]["row_frame"].winfo_width(), r2_w_before)
+            self.assertGreater(r3_frame.winfo_width(), r1_w_before)
+        finally:
+            app.destroy()
+
+    def test_strict_separation_of_two_plus_buttons(self):
+        """Mathematical + creates/joins rows, orange + only adds descriptive boxes."""
+        if self.root is None:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.withdraw()
+        try:
+            self.assertEqual(len(app.rows), 1)
+            r1_desc = app.rows[0]["math_desc"]
+            init_boxes = len(r1_desc.boxes)
+            r1_desc.trailing_btn.invoke()
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(len(r1_desc.boxes), init_boxes + 1)
+
+            app._select_only(0, (0,))
+            app._key("1")
+            app._join_key("+")
+            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(app.rows[1]["join"], "+")
+        finally:
+            app.destroy()
+
+
+
+class TestCheckpoint3PhysicalKeyboardInput(unittest.TestCase):
+    """Test physical keyboard input, focus transitions, and descriptive entry isolation."""
+    @classmethod
+    def setUpClass(cls):
+        try:
+            r = tk.Tk()
+            r.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def _send_key(self, app, keysym, widget=None):
+        target = widget or app.focus_get() or app
+        target.event_generate("<Key>", keysym=keysym)
+        app.update()
+
+    def test_physical_keyboard_example_a(self):
+        """Example A: Physical keyboard 1 + 1 = produces final total 2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            for k in ["1", "plus", "1", "equal"]:
+                self._send_key(app, k)
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "2")
+            self.assertTrue(app.rows[2]["is_result"])
+            self.assertEqual(app.rows[2]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_physical_keyboard_example_b(self):
+        """Example B: Physical keyboard 1 + 1 + 1 = produces final total 3."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            for k in ["1", "plus", "1", "plus", "1", "equal"]:
+                self._send_key(app, k)
+
+            self.assertEqual(len(app.rows), 4)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[1]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[3]["result_box"].cget("text"), "3")
+            self.assertTrue(app.rows[3]["is_result"])
+            self.assertEqual(app.rows[3]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_physical_keyboard_example_c(self):
+        """Example C: Physical keyboard 8 * 4 = produces final total 32."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            for k in ["8", "asterisk", "4", "Return"]:
+                self._send_key(app, k)
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[1]["join"], "×")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "32")
+            self.assertTrue(app.rows[2]["is_result"])
+            self.assertEqual(app.rows[2]["label"].cget("text"), "Total")
+        finally:
+            app.destroy()
+
+    def test_physical_keyboard_example_d_descriptive_entry_isolation(self):
+        """Example D: Typing 'Apples + oranges = fruit' in description box enters text without triggering calculation."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # Set up 2 mathematical rows first
+            for k in ["1", "plus", "1", "equal"]:
+                self._send_key(app, k)
+            self.assertEqual(len(app.rows), 3)
+
+            # Focus Descriptive Text Box 1
+            box1 = app.rows[0]["math_desc"].box1
+            box1.focus_force()
+            app.update()
+
+            test_str = "Apples + oranges = fruit"
+            for ch in test_str:
+                ks = ch if ch.isalnum() else ("space" if ch == " " else ("plus" if ch == "+" else ("equal" if ch == "=" else ch)))
+                box1.event_generate("<Key>", keysym=ks)
+            app.update()
+
+            # Verify entire string appears in descriptive box
+            self.assertEqual(box1.get(), test_str)
+            # Verify no rows were created and calculation was not re-triggered
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "2")
+        finally:
+            app.destroy()
+
+    def test_physical_keyboard_example_e_focus_transition_back_to_math(self):
+        """Example E: Clicking mathematical box after descriptive entry resumes calculation normally."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # 1. Edit a descriptive box
+            box1 = app.rows[0]["math_desc"].box1
+            box1.focus_force()
+            app.update()
+            box1.set_text("Some text")
+
+            # 2. Click mathematical box in Row 1 to switch focus
+            app._pick_box(0, 0)
+            app.focus_force()
+            app.update()
+
+            # 3. Clear and type calculation with keyboard
+            app._clear_all()
+            app.focus_force()
+            app.update()
+
+            for k in ["5", "minus", "2", "equal"]:
+                self._send_key(app, k)
+
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[1]["join"], "−")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "3")
+            self.assertTrue(app.rows[2]["is_result"])
+        finally:
+            app.destroy()
+
+    def test_physical_keyboard_subtraction_division_decimal_and_backspace(self):
+        """Physical keyboard handles subtraction (-), division (/), decimals (.), BackSpace, and Escape."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # Division: 12 / 3 = 4
+            for k in ["1", "2", "slash", "3", "equal"]:
+                self._send_key(app, k)
+
+            self.assertEqual(app.rows[1]["join"], "÷")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "4")
+
+            # Escape clears
+            self._send_key(app, "Escape")
+            self.assertTrue(app._is_blank(app.rows[0]))
+
+            # Backspace: 15 -> BackSpace -> 1 + 9 = 10
+            for k in ["1", "5", "BackSpace", "plus", "9", "equal"]:
+                self._send_key(app, k)
+
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "1")
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "10")
+        finally:
+            app.destroy()
+
+
+
+
+class TestCheckpoint3RowLifecycle(unittest.TestCase):
+    """Test start with one row and clear back to one row lifecycle."""
+    @classmethod
+    def setUpClass(cls):
+        try:
+            r = tk.Tk()
+            r.destroy()
+            cls.has_display = True
+        except tk.TclError:
+            cls.has_display = False
+
+    def test_01_initial_state_single_row(self):
+        """1. Calculator launches with exactly one mathematical row (Row 1), no Row 2, no Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            self.assertEqual(len(app.rows), 1)
+            r1 = app.rows[0]
+            self.assertEqual(r1["label"].cget("text"), "Row 1")
+            self.assertFalse(r1["is_result"])
+            self.assertTrue(r1["box"].winfo_ismapped())
+            self.assertTrue(r1["math_desc"].winfo_ismapped())
+            self.assertTrue(r1["result_box"].winfo_ismapped())
+            self.assertIsNone(r1.get("join"))
+        finally:
+            app.destroy()
+
+    def test_02_math_join_creates_row2(self):
+        """2. Typing math in Row 1 and pressing join operator creates Row 2 with operator in Col C."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app.update()
+            self.assertEqual(len(app.rows), 2)
+            r2 = app.rows[1]
+            self.assertEqual(r2["join"], "+")
+            self.assertEqual(r2["label"].cget("text"), "Row 2")
+            self.assertFalse(r2["is_result"])
+            self.assertEqual(app.op_target, 1)
+            self.assertEqual(app._selected_box(), (1, (0,)))
+        finally:
+            app.destroy()
+
+    def test_03_further_joins_add_rows(self):
+        """3. Successive joins dynamically create Row 3 and Row 4 as required."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._join_key("−")
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[2]["join"], "−")
+
+            app._key("1")
+            app._join_key("×")
+            app.update()
+            self.assertEqual(len(app.rows), 4)
+            self.assertEqual(app.rows[3]["join"], "×")
+        finally:
+            app.destroy()
+
+    def test_04_single_row_template_stays_in_row1(self):
+        """4. Single-row mathematical template from Operators button remains entirely inside Row 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app.op_target = 0
+            app._place_operator_row("math/arithmetic/addition")
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+            cards = app._cards(0)
+            self.assertGreater(len(cards), 1)
+        finally:
+            app.destroy()
+
+    def test_05_single_row_evaluation(self):
+        """5. Pressing = with a single row evaluates that row without creating Row 2 or Total row."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("7")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "7")
+            self.assertFalse(app.rows[0]["is_result"])
+        finally:
+            app.destroy()
+
+    def test_06_multiple_row_evaluation_displays_single_total_row(self):
+        """6. Multiple rows evaluate to exactly one bottom Total row; no duplicates on repeated equals."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+            self.assertTrue(app.rows[2]["is_result"])
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "2")
+
+            # Repeated equals does not add duplicate total rows
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 3)
+            self.assertTrue(app.rows[2]["is_result"])
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "2")
+        finally:
+            app.destroy()
+
+    def test_07_red_c_clears_back_to_one_row(self):
+        """7. Red C button restores visible workspace to exactly one empty Row 1 and resets descriptions."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # Build 4 rows with descriptions
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._join_key("+")
+            app._key("1")
+            app._equals()
+            app.update()
+            self.assertEqual(len(app.rows), 4)
+
+            # Add extra descriptions to Row 1
+            d1 = app.rows[0]["math_desc"]
+            d1.box1.set_text("Initial description")
+            b2 = d1.add_box()
+            b2.set_text("Extra note")
+            app.update()
+            self.assertEqual(len(d1.boxes), 2)
+
+            # Press Red C (_clear_all)
+            app._clear_all()
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            r1 = app.rows[0]
+            self.assertEqual(r1["label"].cget("text"), "Row 1")
+            self.assertTrue(app._is_blank(r1))
+            self.assertEqual(app.op_target, 0)
+            self.assertEqual(app._selected_box(), (0, (0,)))
+
+            # Descriptions reset to 1 empty box
+            self.assertEqual(len(d1.boxes), 1)
+            self.assertEqual(d1.box1.words_text(), "")
+        finally:
+            app.destroy()
+
+    def test_08_physical_escape_performs_full_clear_to_one_row(self):
+        """8. Physical Escape performs the same full reset back to one empty Row 1."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            for k in ["1", "plus", "1", "equal"]:
+                (app.focus_get() or app).event_generate("<Key>", keysym=k)
+                app.update()
+            self.assertEqual(len(app.rows), 3)
+
+            (app.focus_get() or app).event_generate("<Key>", keysym="Escape")
+            app.update()
+
+            self.assertEqual(len(app.rows), 1)
+            self.assertTrue(app._is_blank(app.rows[0]))
+        finally:
+            app.destroy()
+
+    def test_09_new_calculation_after_clearing(self):
+        """9. Typing a new calculation after clearing works accurately end-to-end."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.focus_force()
+        app.update()
+        try:
+            # 1. First calculation: 8 * 4 = 32
+            for k in ["8", "asterisk", "4", "equal"]:
+                (app.focus_get() or app).event_generate("<Key>", keysym=k)
+                app.update()
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "32")
+
+            # 2. Clear
+            (app.focus_get() or app).event_generate("<Key>", keysym="Escape")
+            app.update()
+            self.assertEqual(len(app.rows), 1)
+
+            # 3. New calculation: 3 + 7 = 10
+            for k in ["3", "plus", "7", "equal"]:
+                (app.focus_get() or app).event_generate("<Key>", keysym=k)
+                app.update()
+            self.assertEqual(len(app.rows), 3)
+            self.assertEqual(app.rows[2]["result_box"].cget("text"), "10")
+        finally:
+            app.destroy()
+
+    def test_10_no_stale_state_after_clearing(self):
+        """10. No stale mathematical values or descriptive text remain after clearing."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            app._key("9")
+            app.rows[0]["math_desc"].box1.set_text("Cost")
+            app.rows[0]["result_desc"].box1.set_text("Expected")
+            app._clear_all()
+            app.update()
+
+            self.assertEqual(app.rows[0]["node"]["slots"], [""])
+            self.assertEqual(app.rows[0]["math_desc"].box1.words_text(), "")
+            self.assertEqual(app.rows[0]["result_desc"].box1.words_text(), "")
+            self.assertEqual(app.rows[0]["result_box"].cget("text"), "□")
+        finally:
+            app.destroy()
+
+    def test_11_enter_number_and_description_then_join_retains_row1_visible(self):
+        """11. Entering 1, typing 'mouse' in description, and clicking + retains Row 1 visible and adds Row 2."""
+        if not self.has_display:
+            self.skipTest("Tkinter display not available")
+        from main import CalculatorGUI
+        app = CalculatorGUI()
+        app.update()
+        try:
+            # 1. Enter 1 in Row 1
+            app._key("1")
+            app.update()
+
+            # 2. Type 'mouse' in Row 1's description box
+            box = app.rows[0]["math_desc"].box1
+            box.focus_set()
+            box.set_text("mouse")
+            app.update()
+
+            # 3. Press + join key
+            app._join_key("+")
+            app.update()
+
+            # Both rows exist and are mapped
+            self.assertEqual(len(app.rows), 2)
+            self.assertEqual(app.rows[0]["row_frame"].grid_info()["row"], 0)
+            self.assertEqual(app.rows[1]["row_frame"].grid_info()["row"], 1)
+            self.assertTrue(app.rows[0]["row_frame"].winfo_ismapped())
+            self.assertTrue(app.rows[1]["row_frame"].winfo_ismapped())
+
+            # Row 1 text and math are preserved
+            self.assertEqual(app.rows[0]["math_desc"].box1.words_text(), "mouse")
+            self.assertEqual(app.rows[0]["node"]["slots"], ["1"])
+
+            # Row 2 has join + and is selected
+            self.assertEqual(app.rows[1]["join"], "+")
+            self.assertEqual(app.op_target, 1)
+
+            # Canvas yview keeps Row 1 in full view (yview top is 0.0)
+            self.assertEqual(app.rows_canvas.yview()[0], 0.0)
+        finally:
+            app.destroy()
+
 
 if __name__ == "__main__":
     unittest.main()

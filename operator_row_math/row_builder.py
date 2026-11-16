@@ -238,6 +238,34 @@ class DescriptionRegion(tk.Frame):
         if self.on_focus_cb:
             self.on_focus_cb(idx)
 
+    def reset(self):
+        """Reset description region to exactly 1 empty box and restore default orange + position."""
+        for b in self.boxes[1:]:
+            try:
+                b.destroy()
+            except Exception:
+                pass
+        self.boxes = self.boxes[:1]
+        self._box2 = None
+        self.num_boxes = 1
+        self.words_data = [""]
+        if self.boxes:
+            b0 = self.boxes[0]
+            if hasattr(b0, "set_text"):
+                b0.set_text("")
+            elif hasattr(b0, "delete"):
+                b0.delete(0, "end")
+        col_trailing = EXCEL_13COL_MATH_TRAILING if self.role == "math" else EXCEL_13COL_RESULT_TRAILING
+        r0 = excel_13col_start_row(self.calc_row)
+        self.trailing_btn.pack_forget()
+        self.trailing_btn.grid_pos = GridPosition(row=r0 + 1, column=col_trailing, region=LayoutRegion.EXCEL_WORKSPACE)
+        self.trailing_btn.excel_pos = self.trailing_btn.grid_pos
+        self.trailing_btn.pack(side="left", padx=1, pady=2)
+        if self.on_add_box_cb:
+            self.on_add_box_cb(1)
+        if self.on_words_cb:
+            self.on_words_cb(0, "")
+
     def get_words(self):
         self._flush_active_extra_text()
         return tuple(self.words_data[:len(self.boxes)])
