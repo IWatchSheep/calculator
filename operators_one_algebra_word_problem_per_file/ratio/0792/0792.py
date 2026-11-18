@@ -6,7 +6,7 @@ Equation: 6k + 4k = 82500
 Solve   : 10k = 82500 → k = 8250
 Answer  : Caleb $49,500.00, Quinn $33,000.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: profit_shared_in_investment_ratio answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6k + 4k = 82500'
 SOLVE = '10k = 82500 → k = 8250'
 ANSWER = 'Caleb $49,500.00, Quinn $33,000.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'profit_shared_in_investment_ratio'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Caleb and Quinn invested in a business in the ratio {0}:{1}. They share a profit of ${2} in the same ratio. How much does each get?'
 NUMBERS = ['6', '4', '82500.00']

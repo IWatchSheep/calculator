@@ -318,6 +318,23 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("The ratio of Yusuf's coins to Dev's is 3:5. After Yusuf gives Dev 12 coins, the ratio is 1:7. How many did each have at first?"))
         self.assertIsNone(WS.marbles_given_ratio_changes("The ratio of Yusuf's marbles to Yusuf's is 3:5. After Yusuf gives Yusuf 12 marbles, the ratio is 1:7. How many did each have at first?"))
 
+    def test_profit_shared_in_investment_ratio(self):
+        cases = [
+            ("Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get?", 15000, 7500),
+            ("Caleb and Quinn invested in a business in the ratio 6:4. They share a profit of $82,500.00 in the same ratio. How much does each get?", 49500, 33000),
+            ("Finn and Jade invested in a business in the ratio 4:2. They share a profit of $10,500.00 in the same ratio. How much does each get?", 7000, 3500),
+            ("Aiden and Quinn invested in a business in the ratio 1:3. They share a profit of $10,000.00 in the same ratio. How much does each get?", 2500, 7500),
+            ("Zane and Wes invested in a business in the ratio 5:2. They share a profit of $50,750.00 in the same ratio. How much does each get?", 36250, 14500),
+        ]
+        for sentence, first_share, second_share in cases:
+            result = WS.profit_shared_in_investment_ratio(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(first_share), Fraction(second_share)], sentence)
+        self.assertIsNone(answers("Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does Sofia get?"))
+        self.assertIsNone(answers("Sofia and Pablo invested in a business in the ratio 2:0. They share a profit of $22,500.00 in the same ratio. How much does each get?"))
+        self.assertIsNone(answers("Sofia and Pablo split a loss of $22,500.00 in the ratio 2:1. How much does each get?"))
+        self.assertIsNone(WS.profit_shared_in_investment_ratio("Sofia and Sofia invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
