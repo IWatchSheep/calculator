@@ -85,7 +85,8 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("Two numbers add up to 71 and one of them is 9 larger than the other. What are they?"), values(31, 40))
         self.assertEqual(answers("A 93 cm board is cut into two pieces. One piece is 25 cm longer than the other. How long is each piece?"), values(34, 59))
         self.assertEqual(answers("Kofi is 2 years older than Priya. The sum of their ages is 38. How old is each?"), values(18, 20))
-        self.assertIsNone(answers("The sum of two numbers is 30 and their product is 200. Find the numbers."))
+        # a sum and product was a required decline here until two_numbers_sum_and_product; it is now answered (10 and 20)
+        self.assertEqual(answers("The sum of two numbers is 30 and their product is 200. Find the numbers."), values(10, 20))
         self.assertIsNone(answers("The sum of two numbers is 20 and their difference is 30. Find the numbers."))   # a negative number
 
     def test_consecutive(self):
@@ -380,7 +381,7 @@ class Families(unittest.TestCase):
             self.assertEqual(result.values, [Fraction(expected)], sentence)
         self.assertIsNone(WS.fewest_weeks_to_have_at_least("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"))
         self.assertIsNone(answers("Elena has $160 and saves $40 a week. What is the fewest weeks needed to have exactly $670?"))
-        self.assertIsNone(answers("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?"))
+        self.assertIsNone(WS.fewest_weeks_to_have_at_least("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?"))
         self.assertIsNone(answers("Elena has $670 and saves $40 a week. What is the fewest weeks needed to have at least $670?"))
 
     def test_bowling_games_plus_shoe_rental(self):
@@ -535,6 +536,142 @@ class Families(unittest.TestCase):
         self.assertIsNone(WS.works_alone_one_hour_then_joins("Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish?"))
         self.assertIsNone(answers("Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much of the job is left?"))
 
+    def test_mean_of_listed_missing(self):
+        cases = [
+            ("The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the missing number?", 59),
+            ("The mean of 5 numbers is 36. 4 of them are 18, 50, 34, 36. What is the missing number?", 42),
+        ]
+        for sentence, missing in cases:
+            result = WS.mean_of_listed_missing(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(missing)], sentence)
+        self.assertIsNone(WS.mean_of_listed_missing("The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the median?"))
+        self.assertIsNone(answers("The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the range?"))
+
+    def test_rent_fee_plus_use_equals_buy(self):
+        cases = [
+            ("Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying?", 9),
+            ("Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost the same as buying?", 35),
+        ]
+        for sentence, uses in cases:
+            result = WS.rent_fee_plus_use_equals_buy(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(uses)], sentence)
+        self.assertIsNone(WS.rent_fee_plus_use_equals_buy("Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying?"))
+        self.assertIsNone(answers("Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. What is the rental fee?"))
+
+    def test_rent_per_use_equals_buy(self):
+        cases = [
+            ("Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying?", 19),
+            ("Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buying?", 51),
+        ]
+        for sentence, uses in cases:
+            result = WS.rent_per_use_equals_buy(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(uses)], sentence)
+        self.assertIsNone(WS.rent_per_use_equals_buy("Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying?"))
+        self.assertIsNone(answers("Buying a kayak costs $475. Renting costs $25 per use. How much is one rental?"))
+
+    def test_reverse_digits_sum_and_diff(self):
+        cases = [
+            ("The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original. Find the original number.", 92),
+            ("The digits of a two-digit number add up to 12. When the digits are reversed, the new number is 18 more than the original. Find the original number.", 57),
+        ]
+        for sentence, number in cases:
+            result = WS.reverse_digits_sum_and_diff(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(number)], sentence)
+        self.assertIsNone(WS.reverse_digits_sum_and_diff("The digits of a two-digit number add up to 11. Find the original number."))
+        self.assertIsNone(answers("The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original. Find the tens digit."))
+
+    def test_linear_pair_two_angles(self):
+        cases = [
+            ("Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles.", [22, 117, 63]),
+            ("Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles.", [33, 117, 63]),
+        ]
+        for sentence, vals in cases:
+            result = WS.linear_pair_two_angles(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.linear_pair_two_angles("Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B?"))
+        self.assertIsNone(answers("Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find x only."))
+
+    def test_straight_line_angles_a_b(self):
+        cases = [
+            ("Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B?", [26, 24, 156]),
+            ("Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B?", [10, 12, 168]),
+            ("Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B?", [40, 158, 22]),
+        ]
+        for sentence, vals in cases:
+            result = WS.straight_line_angles_a_b(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.straight_line_angles_a_b("Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles."))
+        self.assertIsNone(answers("Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What is A only?"))
+
+    def test_square_side_linear_perimeter(self):
+        cases = [
+            ("Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length.", [28, 29]),
+            ("Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length.", [7, 22]),
+        ]
+        for sentence, vals in cases:
+            result = WS.square_side_linear_perimeter(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.square_side_linear_perimeter("Each side of a square is (1x + 1) cm. The area is 116 cm. Find x and the side length."))
+        self.assertIsNone(answers("Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find the area."))
+
+    def test_two_numbers_sum_and_product(self):
+        cases = [
+            ("Two numbers add up to 56 and multiply to 780. What are they?", [26, 30]),
+            ("The sum of two numbers is 43 and their product is 456. Find the numbers.", [19, 24]),
+        ]
+        for sentence, vals in cases:
+            result = WS.two_numbers_sum_and_product(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.two_numbers_sum_and_product("The sum of two numbers is 43 and their difference is 5. Find the numbers."))
+        self.assertIsNone(answers("Two numbers add up to 56 and multiply to 780. What is their difference?"))
+
+    def test_three_part_mix_ratio(self):
+        cases = [
+            ("A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used?", [96, 48, 60]),
+            ("A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used?", [16, 32, 40]),
+            ("A mix uses red, blue, and yellow paint in the ratio 7:4:2. The total is 390 mL. How much of each is used?", [210, 120, 60]),
+        ]
+        for sentence, vals in cases:
+            result = WS.three_part_mix_ratio(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.three_part_mix_ratio("A mix uses cement and sand in the ratio 8:4. The total is 204 kg. How much of each is used?"))
+        self.assertIsNone(answers("A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much cement is used?"))
+
+    def test_weeks_until_item(self):
+        cases = [
+            ("Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough?", 10),
+            ("Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough?", 13),
+            ("Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough?", 18),
+        ]
+        for sentence, weeks in cases:
+            result = WS.weeks_until_item(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(weeks)], sentence)
+        guitar = "Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?"
+        self.assertEqual(WS.weeks_until_guitar(guitar).values, [Fraction(24)])
+        self.assertIsNone(answers("Ben has $70 and saves $15 per week to buy a laptop that costs $220. How much more does he need?"))
+
+    def test_adult_and_child_tickets(self):
+        cases = [
+            ("Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of each were sold?", [300, 299]),
+            ("Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of each were sold?", [97, 128]),
+        ]
+        for sentence, vals in cases:
+            result = WS.adult_and_child_tickets(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.adult_and_child_tickets("Adult tickets to a museum cost $10 and child tickets cost $4. How many of each were sold?"))
+        self.assertIsNone(answers("Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How much money was collected?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -569,7 +706,7 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("If a printer prints 48 pages in 3 minutes, how many pages will two printers print in 10 minutes?"))
         self.assertIsNone(answers("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?"))
         self.assertIsNone(answers("If 6 workers build a wall in 12 days, how long would 9 workers take?"))
-        self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
+        self.assertIsNone(WS.proportion("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
         # two typists on one pile of words was a required decline here until the two_rates_one_pile family; it is now answered (16 minutes)
         self.assertEqual(answers("Two typists type 55 and 35 words per minute. Working together, how long will they take to type 1440 words?"), values(16))
 
@@ -636,7 +773,7 @@ class Families(unittest.TestCase):
         # other interest shapes: time, equal interest, an extra amount, compound, commission, one amount at one rate only
         self.assertIsNone(answers("How many years will it take $24,500.00 to earn $11,025.00 in simple interest at 5% per year?"))
         self.assertIsNone(answers("$25,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each?"))
-        self.assertIsNone(answers("Tara has $12,000.00 invested at 3%. How much more must be invested at 8% so that the total earns 7% overall?"))
+        self.assertIsNone(WS.two_rate_interest("Tara has $12,000.00 invested at 3%. How much more must be invested at 8% so that the total earns 7% overall?"))
         self.assertIsNone(answers("Ben invests $9,000, part at 4% and the rest at 6%, compounded monthly. The interest after a year is $450. How much at each rate?"))
         self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"))
         self.assertIsNone(answers("A bank pays 3% on $4,000 and 5% on another amount. The total interest is $380. How much is the other amount?"))
@@ -777,7 +914,7 @@ class DevelopmentWordings(unittest.TestCase):
         from fresh_word_problems import FRESH
         solved, declined, required = score(FRESH)
         print("  development wordings (first fresh set): %d solved, %d declined, %d required declines correct" % (solved, declined, required))
-        self.assertEqual((solved, declined, required), (22, 0, 11))      # 21/0/12 before consecutive_product answered the product-of-integers item
+        self.assertEqual((solved, declined, required), (23, 0, 10))      # 22/0/11 before two_numbers_sum_and_product answered the sum-and-product item
 
 
 class DevelopmentWordingsLater(unittest.TestCase):

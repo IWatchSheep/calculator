@@ -6,7 +6,7 @@ Equation: x(56 − x) = 780
 Solve   : x² − 56x + 780 = 0 → x = 26 (the other root, 30, gives the same pair)
 Answer  : 26 and 30
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_numbers_sum_and_product answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x(56 − x) = 780'
 SOLVE = 'x² − 56x + 780 = 0 → x = 26 (the other root, 30, gives the same pair)'
 ANSWER = '26 and 30'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_numbers_sum_and_product'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two numbers add up to {0} and multiply to {1}. What are they?'
 NUMBERS = ['56', '780']

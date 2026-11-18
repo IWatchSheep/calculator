@@ -6,7 +6,7 @@ Equation: 4(x + 1) = 116
 Solve   : 4x = 112 → x = 28
 Answer  : x = 28; side = 29 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: square_side_linear_perimeter answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4(x + 1) = 116'
 SOLVE = '4x = 112 → x = 28'
 ANSWER = 'x = 28; side = 29 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'square_side_linear_perimeter'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Each side of a square is ({0}x + {1}) cm. The perimeter is {2} cm. Find x and the side length.'
 NUMBERS = ['1', '1', '116']

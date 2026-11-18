@@ -9,7 +9,7 @@ FRESH = [
     ("Two numbers add up to 71 and one of them is 9 larger than the other. What are they?", [31, 40]),
     ("A 120 cm rope is cut into two pieces. One piece is 30 cm longer than the other. How long are the pieces?", [45, 75]),
     ("Dev is 6 years older than Mia. The sum of their ages is 40. How old is each?", [17, 23]),
-    ("The sum of two numbers is 30 and their product is 200. Find the numbers.", None),
+    ("The sum of two numbers is 30 and their product is 200. Find the numbers.", [10, 20]),  # was a required decline until two_numbers_sum_and_product
     ("The sum of two numbers is 21 and one is twice the other. Find the numbers.", None),
     # ---- consecutive integers
     ("The sum of 3 consecutive integers is 60. Find them.", [19, 20, 21]),

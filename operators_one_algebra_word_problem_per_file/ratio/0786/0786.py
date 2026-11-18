@@ -6,7 +6,7 @@ Equation: 2k + 4k + 5k = 88
 Solve   : 11k = 88 → k = 8
 Answer  : 16, 32, 40 g
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_part_mix_ratio answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2k + 4k + 5k = 88'
 SOLVE = '11k = 88 → k = 8'
 ANSWER = '16, 32, 40 g'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_part_mix_ratio'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A mix uses flour, sugar, and butter in the ratio {0}:{1}:{2}. The total is {3} g. How much of each is used?'
 NUMBERS = ['2', '4', '5', '88']

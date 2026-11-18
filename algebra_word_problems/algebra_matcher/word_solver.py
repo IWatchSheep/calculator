@@ -4445,7 +4445,442 @@ def works_alone_one_hour_then_joins(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins,
+def _ax_plus_c(a, op, c):
+    a, c = Fraction(a), Fraction(c)
+    return a, (c if op == "+" else -c)
+
+
+_MEAN_OF_LISTED_MISSING = re.compile(
+    r"the mean of (?P<n>\d+) numbers is (?P<mean>\d+(?:\.\d+)?)\. "
+    r"(?P<k>\d+) of them are (?P<listed>\d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*)\. "
+    r"what is the missing number\?")
+
+
+def mean_of_listed_missing(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MEAN_OF_LISTED_MISSING.fullmatch(text)
+    if match is None:
+        return None
+    n = Fraction(match.group("n"))
+    mean = Fraction(match.group("mean"))
+    k = Fraction(match.group("k"))
+    listed = [Fraction(x) for x in match.group("listed").split(", ")]
+    numbers = digit_numbers(problem)
+    values = [n, mean, k] + listed
+    if len(numbers) != len(values) or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    if [num[0] for num in numbers] != values:
+        return None
+    if n.denominator != 1 or k.denominator != 1 or n < 2 or k != n - 1 or k != len(listed):
+        return None
+    missing = n * mean - sum(listed, Fraction(0))
+    if n * mean != sum(listed, Fraction(0)) + missing:
+        return None
+    listed_text = " + ".join(show(x) for x in listed)
+    eq = "(%s + x)/%s = %s" % (listed_text, show(n), show(mean))
+    return Result(
+        "mean_of_listed_missing",
+        [missing],
+        eq,
+        "%s, so x = %s" % (eq, show_exact(missing))
+    )
+
+
+_RENT_FEE_PLUS_USE_EQUALS_BUY = re.compile(
+    r"buying a (?P<item>[a-z]+(?: [a-z]+)*) costs "
+    r"\$(?P<buy>\d+(?:\.\d+)?)\. "
+    r"renting one costs "
+    r"\$(?P<fee>\d+(?:\.\d+)?) once plus "
+    r"\$(?P<per>\d+(?:\.\d+)?) per use\. "
+    r"after how many uses does renting cost the same as buying\?")
+
+
+def rent_fee_plus_use_equals_buy(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RENT_FEE_PLUS_USE_EQUALS_BUY.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    buy = Fraction(match.group("buy"))
+    fee = Fraction(match.group("fee"))
+    per = Fraction(match.group("per"))
+    if [n[0] for n in numbers] != [buy, fee, per]:
+        return None
+    if buy <= 0 or fee < 0 or per <= 0 or fee >= buy:
+        return None
+    uses = (buy - fee) / per
+    if uses <= 0 or uses.denominator != 1:
+        return None
+    if fee + per * uses != buy:
+        return None
+    eq = "%s + %s*n = %s" % (show(fee), show(per), show(buy))
+    return Result(
+        "rent_fee_plus_use_equals_buy",
+        [uses],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(uses))
+    )
+
+
+_RENT_PER_USE_EQUALS_BUY = re.compile(
+    r"buying a (?P<item>[a-z]+(?: [a-z]+)*) costs "
+    r"\$(?P<buy>\d+(?:\.\d+)?)\. "
+    r"renting costs "
+    r"\$(?P<per>\d+(?:\.\d+)?) per use\. "
+    r"after how many uses would renting cost the same as buying\?")
+
+
+def rent_per_use_equals_buy(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RENT_PER_USE_EQUALS_BUY.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or [n[1] for n in numbers] != [True, True]:
+        return None
+    buy = Fraction(match.group("buy"))
+    per = Fraction(match.group("per"))
+    if [n[0] for n in numbers] != [buy, per]:
+        return None
+    if buy <= 0 or per <= 0:
+        return None
+    uses = buy / per
+    if uses <= 0 or uses.denominator != 1:
+        return None
+    if per * uses != buy:
+        return None
+    eq = "%s*n = %s" % (show(per), show(buy))
+    return Result(
+        "rent_per_use_equals_buy",
+        [uses],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(uses))
+    )
+
+
+_REVERSE_DIGITS_SUM_AND_DIFF = re.compile(
+    r"the digits of a two-digit number add up to (?P<s>\d+)\. "
+    r"when the digits are reversed, the new number is (?P<d>\d+) "
+    r"(?P<dir>more|less) than the original\. find the original number[.?]")
+
+
+def reverse_digits_sum_and_diff(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _REVERSE_DIGITS_SUM_AND_DIFF.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or [n[1] for n in numbers] != [False, False]:
+        return None
+    s = Fraction(match.group("s"))
+    d = Fraction(match.group("d"))
+    if [n[0] for n in numbers] != [s, d]:
+        return None
+    if s.denominator != 1 or d.denominator != 1 or d % 9 != 0 or s < 1 or s > 18 or d <= 0:
+        return None
+    step = d / 9
+    if match.group("dir") == "more":
+        # (10u + t) - (10t + u) = d  =>  u - t = d/9
+        tens = (s - step) / 2
+        units = s - tens
+    else:
+        # (10t + u) - (10u + t) = d  =>  t - u = d/9
+        tens = (s + step) / 2
+        units = s - tens
+    if tens.denominator != 1 or units.denominator != 1:
+        return None
+    tens, units = int(tens), int(units)
+    if tens < 1 or tens > 9 or units < 1 or units > 9:
+        return None
+    original = 10 * tens + units
+    reversed_n = 10 * units + tens
+    if tens + units != s:
+        return None
+    if match.group("dir") == "more" and reversed_n - original != d:
+        return None
+    if match.group("dir") == "less" and original - reversed_n != d:
+        return None
+    eq = "t + u = %s; 9(u - t) = %s" % (show(s), show(d if match.group("dir") == "more" else -d))
+    return Result(
+        "reverse_digits_sum_and_diff",
+        [Fraction(original)],
+        eq,
+        "%s, so the original number is %s" % (eq, show_exact(original))
+    )
+
+
+_LINEAR_PAIR_TWO_ANGLES = re.compile(
+    r"two angles form a linear pair\. one measures "
+    r"\((?P<a1>\d+)x (?P<op1>[+\-]) (?P<c1>\d+)\)° and the other "
+    r"\((?P<a2>\d+)x (?P<op2>[+\-]) (?P<c2>\d+)\)°\. find both angles[.?]")
+
+
+def linear_pair_two_angles(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LINEAR_PAIR_TWO_ANGLES.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(n[1] for n in numbers):
+        return None
+    a1, c1 = _ax_plus_c(match.group("a1"), match.group("op1"), match.group("c1"))
+    a2, c2 = _ax_plus_c(match.group("a2"), match.group("op2"), match.group("c2"))
+    raw = [Fraction(match.group(g)) for g in ("a1", "c1", "a2", "c2")]
+    if [n[0] for n in numbers] != raw:
+        return None
+    if a1 + a2 == 0:
+        return None
+    x = (180 - c1 - c2) / (a1 + a2)
+    ang1 = a1 * x + c1
+    ang2 = a2 * x + c2
+    if ang1 <= 0 or ang2 <= 0 or ang1 >= 180 or ang2 >= 180:
+        return None
+    if ang1 + ang2 != 180:
+        return None
+    eq = "(%sx %s %s) + (%sx %s %s) = 180" % (
+        show(a1), "+" if c1 >= 0 else "−", show(abs(c1)),
+        show(a2), "+" if c2 >= 0 else "−", show(abs(c2)),
+    )
+    return Result(
+        "linear_pair_two_angles",
+        [x, ang1, ang2],
+        eq,
+        "%s, so x = %s and the angles are %s° and %s°" % (eq, show_exact(x), show_exact(ang1), show_exact(ang2))
+    )
+
+
+_STRAIGHT_LINE_ANGLES_A_B = re.compile(
+    r"angles a and b lie on a straight line\. "
+    r"a = \((?P<a1>\d+)x (?P<op1>[+\-]) (?P<c1>\d+)\)° and "
+    r"b = \((?P<a2>\d+)x (?P<op2>[+\-]) (?P<c2>\d+)\)°\. what are a and b\?")
+
+
+def straight_line_angles_a_b(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _STRAIGHT_LINE_ANGLES_A_B.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(n[1] for n in numbers):
+        return None
+    a1, c1 = _ax_plus_c(match.group("a1"), match.group("op1"), match.group("c1"))
+    a2, c2 = _ax_plus_c(match.group("a2"), match.group("op2"), match.group("c2"))
+    raw = [Fraction(match.group(g)) for g in ("a1", "c1", "a2", "c2")]
+    if [n[0] for n in numbers] != raw:
+        return None
+    if a1 + a2 == 0:
+        return None
+    x = (180 - c1 - c2) / (a1 + a2)
+    ang1 = a1 * x + c1
+    ang2 = a2 * x + c2
+    if ang1 <= 0 or ang2 <= 0 or ang1 >= 180 or ang2 >= 180:
+        return None
+    if ang1 + ang2 != 180:
+        return None
+    eq = "(%sx %s %s) + (%sx %s %s) = 180" % (
+        show(a1), "+" if c1 >= 0 else "−", show(abs(c1)),
+        show(a2), "+" if c2 >= 0 else "−", show(abs(c2)),
+    )
+    return Result(
+        "straight_line_angles_a_b",
+        [x, ang1, ang2],
+        eq,
+        "%s, so x = %s and the angles are %s° and %s°" % (eq, show_exact(x), show_exact(ang1), show_exact(ang2))
+    )
+
+
+_SQUARE_SIDE_LINEAR_PERIMETER = re.compile(
+    r"each side of a square is "
+    r"\((?P<a>\d+)x (?P<op>[+\-]) (?P<c>\d+)\) cm\. "
+    r"the perimeter is (?P<p>\d+(?:\.\d+)?) cm\. find x and the side length[.?]")
+
+
+def square_side_linear_perimeter(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SQUARE_SIDE_LINEAR_PERIMETER.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(n[1] for n in numbers):
+        return None
+    a, c = _ax_plus_c(match.group("a"), match.group("op"), match.group("c"))
+    p = Fraction(match.group("p"))
+    raw = [Fraction(match.group("a")), Fraction(match.group("c")), p]
+    if [n[0] for n in numbers] != raw:
+        return None
+    if a == 0:
+        return None
+    side = p / 4
+    x = (side - c) / a
+    if side <= 0:
+        return None
+    if 4 * (a * x + c) != p:
+        return None
+    eq = "4(%sx %s %s) = %s" % (show(a), "+" if c >= 0 else "−", show(abs(c)), show(p))
+    return Result(
+        "square_side_linear_perimeter",
+        [x, side],
+        eq,
+        "%s, so x = %s and the side is %s" % (eq, show_exact(x), show_exact(side))
+    )
+
+
+_TWO_NUMBERS_SUM_AND_PRODUCT = re.compile(
+    r"(?:two numbers add up to (?P<s1>\d+(?:\.\d+)?) and multiply to (?P<p1>\d+(?:\.\d+)?)\. what are they\?"
+    r"|the sum of two numbers is (?P<s2>\d+(?:\.\d+)?) and their product is (?P<p2>\d+(?:\.\d+)?)\. find the numbers[.?])")
+
+
+def two_numbers_sum_and_product(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_NUMBERS_SUM_AND_PRODUCT.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(n[1] for n in numbers):
+        return None
+    s = Fraction(match.group("s1") or match.group("s2"))
+    p = Fraction(match.group("p1") or match.group("p2"))
+    if [n[0] for n in numbers] != [s, p]:
+        return None
+    disc = s * s - 4 * p
+    root = _isqrt_exact(int(disc)) if disc.denominator == 1 else None
+    if root is None:
+        return None
+    x1 = (s - root) / 2
+    x2 = (s + root) / 2
+    if x1 + x2 != s or x1 * x2 != p:
+        return None
+    eq = "x + y = %s; xy = %s" % (show(s), show(p))
+    return Result(
+        "two_numbers_sum_and_product",
+        [x1, x2],
+        eq,
+        "%s, so the numbers are %s and %s" % (eq, show_exact(x1), show_exact(x2))
+    )
+
+
+_THREE_PART_MIX_RATIO = re.compile(
+    r"a mix uses (?P<parts>.+?) in the ratio "
+    r"(?P<a>\d+):(?P<b>\d+):(?P<c>\d+)\. "
+    r"the total is (?P<total>\d+(?:\.\d+)?) (?P<unit>[a-z]+)\. "
+    r"how much of each is used\?")
+
+
+def three_part_mix_ratio(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _THREE_PART_MIX_RATIO.fullmatch(text)
+    if match is None:
+        return None
+    if re.search(r"\d", match.group("parts")):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(n[1] for n in numbers):
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    c = Fraction(match.group("c"))
+    total = Fraction(match.group("total"))
+    if [n[0] for n in numbers] != [a, b, c, total]:
+        return None
+    parts = a + b + c
+    if a <= 0 or b <= 0 or c <= 0 or total <= 0 or parts <= 0:
+        return None
+    one = total / parts
+    amounts = [a * one, b * one, c * one]
+    if sum(amounts) != total:
+        return None
+    eq = "%sk + %sk + %sk = %s" % (show(a), show(b), show(c), show(total))
+    return Result(
+        "three_part_mix_ratio",
+        amounts,
+        eq,
+        "%s, so the amounts are %s, %s, %s" % (eq, show_exact(amounts[0]), show_exact(amounts[1]), show_exact(amounts[2]))
+    )
+
+
+_WEEKS_UNTIL_ITEM = re.compile(
+    r"(?P<name>[a-z]+) has "
+    r"\$(?P<start>\d+(?:\.\d+)?) "
+    r"and saves "
+    r"\$(?P<rate>\d+(?:\.\d+)?) per week "
+    r"to buy (?:a )?(?P<item>[a-z]+(?: [a-z]+)*) that costs "
+    r"\$(?P<target>\d+(?:\.\d+)?)\. "
+    r"how many weeks until there is enough\?")
+
+
+def weeks_until_item(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WEEKS_UNTIL_ITEM.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    start = Fraction(match.group("start"))
+    rate = Fraction(match.group("rate"))
+    target = Fraction(match.group("target"))
+    if [n[0] for n in numbers] != [start, rate, target]:
+        return None
+    if start < 0 or rate <= 0 or start >= target:
+        return None
+    weeks = (target - start) / rate
+    if weeks <= 0 or weeks.denominator != 1:
+        return None
+    if start + rate * weeks != target:
+        return None
+    eq = "%s + %s*w = %s" % (show(start), show(rate), show(target))
+    return Result(
+        "weeks_until_item",
+        [weeks],
+        eq,
+        "%s, so w = %s" % (eq, show_exact(weeks))
+    )
+
+
+_ADULT_AND_CHILD_TICKETS = re.compile(
+    r"adult tickets to a (?P<venue>museum|concert) cost "
+    r"\$(?P<adult>\d+(?:\.\d+)?) "
+    r"and child tickets cost "
+    r"\$(?P<child>\d+(?:\.\d+)?)\. "
+    r"(?P<count>\d+) tickets were sold for a total of "
+    r"\$(?P<total>\d+(?:\.\d+)?)\. "
+    r"how many of each were sold\?")
+
+
+def adult_and_child_tickets(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ADULT_AND_CHILD_TICKETS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [True, True, False, True]:
+        return None
+    adult = Fraction(match.group("adult"))
+    child = Fraction(match.group("child"))
+    count = Fraction(match.group("count"))
+    total = Fraction(match.group("total"))
+    if [n[0] for n in numbers] != [adult, child, count, total]:
+        return None
+    if adult <= child or child < 0 or count <= 0 or count.denominator != 1:
+        return None
+    adults = (total - child * count) / (adult - child)
+    children = count - adults
+    if adults.denominator != 1 or children.denominator != 1 or adults <= 0 or children <= 0:
+        return None
+    if adult * adults + child * children != total:
+        return None
+    eq = "%s*a + %s*(%s - a) = %s" % (show(adult), show(child), show(count), show(total))
+    return Result(
+        "adult_and_child_tickets",
+        [adults, children],
+        eq,
+        "%s, so a = %s adult and %s child tickets" % (eq, show_exact(adults), show_exact(children))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
