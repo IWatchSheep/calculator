@@ -6,7 +6,7 @@ Equation: 5t + 24(2 − t) = 38.5
 Solve   : 19t = 9.5 → t = 0.5
 Answer  : 0.5 h walking, 1.5 h on the bus
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: walk_then_bus_unknown_time answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '5t + 24(2 − t) = 38.5'
 SOLVE = '19t = 9.5 → t = 0.5'
 ANSWER = '0.5 h walking, 1.5 h on the bus'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'walk_then_bus_unknown_time'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Kira walked at {0} km/h and then rode a bus at {1} km/h. The whole trip was {2} km and took {3} hours. How long was the walk?'
 NUMBERS = ['5', '24', '38.5', '2']

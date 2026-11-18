@@ -3450,7 +3450,48 @@ def overtime_hours_time_and_a_half(problem):
     return Result("overtime_hours_time_and_a_half", [overtime], eq, "%s, so h = %s" % (eq, show_exact(overtime)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half,
+# Walk then bus. The only answer is the walking time.
+# walk * t + bus * (T - t) = D.
+_WALK_THEN_BUS_UNKNOWN_TIME = re.compile(
+    r"(?P<name>[a-z]+) walked at "
+    r"(?P<walk>\d+(?:\.\d+)?) km/h "
+    r"and then rode a bus at "
+    r"(?P<bus>\d+(?:\.\d+)?) km/h\. "
+    r"the whole trip was "
+    r"(?P<distance>\d+(?:\.\d+)?) km "
+    r"and took (?P<total>\d+(?:\.\d+)?) hours\. "
+    r"how long was the walk\?")
+
+
+def walk_then_bus_unknown_time(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WALK_THEN_BUS_UNKNOWN_TIME.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [False, False, False, False]:
+        return None
+    walk = Fraction(match.group("walk"))
+    bus = Fraction(match.group("bus"))
+    distance = Fraction(match.group("distance"))
+    total = Fraction(match.group("total"))
+    if [n[0] for n in numbers] != [walk, bus, distance, total]:
+        return None
+    if walk <= 0 or bus <= walk or total <= 0 or distance <= 0:
+        return None
+    walking_time = (bus * total - distance) / (bus - walk)
+    if walking_time <= 0 or walking_time >= total:
+        return None
+    bus_time = total - walking_time
+    if bus_time <= 0:
+        return None
+    if walk * walking_time + bus * bus_time != distance:
+        return None
+    eq = "%st + %s(%s - t) = %s" % (show(walk), show(bus), show(total), show(distance))
+    return Result("walk_then_bus_unknown_time", [walking_time], eq, "%s, so t = %s" % (eq, show_exact(walking_time)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
