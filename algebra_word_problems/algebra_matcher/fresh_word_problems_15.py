@@ -13,7 +13,7 @@ FRESH = [
     ("The sum of three numbers is 60. The first two add to 35 and the second and third add to 40. Find the numbers.", [15, 20, 25]),
     ("Three numbers add up to 45. The first and last add to 30 and the last two add to 25. What are the numbers?", [10, 15, 20]),
     ("A boat goes 20 km downstream in 2 hours and 20 km upstream in 2 hours. How fast is the current?", [0]),
-    ("A rower goes 12 km downstream in 2 hours and 18 km upstream in 2 hours. What is the speed in still water?", None),
+    ("A rower goes 12 km downstream in 2 hours and 18 km upstream in 2 hours. What is the speed in still water?", [Fraction(15, 2)]),
     ("Water is mixed into concentrate in the ratio 5:1. How much of each is needed for 30 litres of water?", [6, 30]),
     ("Sand is mixed with cement in the ratio 3:1. How much cement is needed for 24 kg of sand in total?", None),
     ("The sum of three numbers is 30. The first two add to 18 and the last two add to 20. What is the largest?", [12]),
