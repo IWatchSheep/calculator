@@ -56,6 +56,51 @@ HAND_ANSWERS = {
     "Using d = rt, how long does a 210 km trip take at 70 km/h?": [3],
     "You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?": [10, 10],
     "How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?": [10, 20],
+    "Jo is three years older than her brother. Together their ages total 27. How old is Jo?": [15],
+    "Mum is 4 times as old as Lily. In 6 years their ages will add up to 62. What are their ages today?": [10, 40],
+    "A rectangle is twice as long as it is wide and goes 72 cm all the way round. How wide is it?": [12],
+    "A garden's length exceeds its width by 5 m. It covers 84 square metres. Give the width.": [7],
+    "The three angles of a triangle are in proportion 2 to 3 to 4. What is the biggest?": [80],
+    "Two angles add up to 90 degrees and one is 30 more than the other. Find them.": [30, 60],
+    "A 13 m ladder rests against a wall with its base 5 m out. How high does it reach?": [12],
+    "A slow train leaves at 40 mph. Two hours later a fast train sets off after it on the same track at 60 mph. How long until the fast one catches it?": [4],
+    "A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?": [15],
+    "How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?": [Fraction(24, 5)],
+    "15 is 20 percent of which number?": [75],
+    "A cab costs $3 to get in and $2 every mile after. I paid $19. How far did I go?": [8],
+    "Gym A: $50 to join plus $20 a month. Gym B: no joining fee but $30 a month. After how many months do they cost the same?": [5],
+    "If 6 workers take 10 days to dig a ditch, how long would 4 workers take?": [15],
+    "A ball is thrown up at 48 ft/s from the ground, h = -16t² + 48t. When does it land?": [3],
+    "The digits of a two-digit number sum to 9. Swap them and the number goes up by 27. What is the number?": [36],
+    "A 60 cm ribbon is cut so the pieces are in the ratio 1 to 4. How long is the short piece?": [12],
+    "You can spend no more than $60. Each ride ticket costs $4 and entry is $12. What's the most ride tickets you can buy?": [12],
+    "What is the lowest score I can get on my last exam and still average at least 80, if I have 75 and 78 so far?": [87],
+    "A candle 30 cm tall burns 2 cm an hour; another 24 cm tall burns 1 cm an hour. When are they equally tall?": [6],
+    "Convert: what Celsius temperature equals 98.6 Fahrenheit using F = 9/5 C + 32?": [37],
+    "Two trains are 300 miles apart and head toward each other at 70 and 80 mph. When do they meet?": [2],
+    "I drove to the beach at 60 mph and back at 40 mph. The whole drive took 5 hours. How far is the beach?": [120],
+    "A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?": [12000],
+    "Every team played every other team once and there were 28 games. How many teams?": [8],
+    "The angles inside a regular polygon are each 140 degrees. How many sides?": [9],
+    "A seesaw balances when a 30 kg child sits 2 m from the middle. Where must a 20 kg child sit on the other side?": [3],
+    "When do the hands of a clock line up between 4 and 5 o'clock?": [Fraction(240, 11)],
+    "40% of a club are boys and there are 24 girls. How many members?": [40],
+    "A shop has fixed costs of $500 a day. Each mug costs $3 to make and sells for $8. How many mugs to break even?": [100],
+    "A car worth $24,000 loses $2,000 of value per year. When is it worth $10,000?": [7],
+    "A tank is a quarter full. Add 30 litres and it's three quarters full. How big is it?": [60],
+    "A 2 m tall pole casts a 3 m shadow, and a tree casts a 15 m shadow. How tall is the tree?": [10],
+    "The mean of five numbers is 12. Four of them are 10, 14, 9 and 15. What is the fifth?": [12],
+    "A square patio's side is increased by 3 m and its area goes up by 51 m². How long was each side?": [7],
+    "Sam has $40 and saves $12 a week to buy a $160 bike. How many weeks?": [10],
+    "A 90 cm stick is broken into pieces in the ratio 4:5. How long is each piece?": [40, 50],
+    "A plumber charges $60 to come out plus $45 an hour. The bill was $195. How many hours did they work?": [3],
+    "At 60 km/h a trip takes 3 hours. How long at 90 km/h?": [2],
+    "A number squared plus 3 times the number equals 40. What is the positive number?": [5],
+    "Grandpa is 50 years older than his grandson. Their combined age is 74. How old is the grandson?": [12],
+    "I've got a pile of 5-cent and 10-cent coins, 40 in all, adding up to $3.10. How many dimes are in there?": [22],
+    "Our class sold cookies at $2 and brownies at $3. We sold 85 treats and made $205. How many brownies did we sell?": [35],
+    "Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pens?": [7],
+    "A parking lot has motorbikes and cars, 25 vehicles with 80 wheels. How many cars?": [15],
 }
 
 
@@ -115,8 +160,8 @@ class Families(unittest.TestCase):
         # the bare word "both" must keep working
         self.assertEqual(answers("One printer finishes a job in 4 hours and another in 12 hours. Running both, how long does the job take?"), values(3))
         self.assertEqual(answers("Two machines finish an order in 8 hours and 12 hours respectively. How long will it take them together?"), values(Fraction(24, 5)))
-        # regression: found by this test file, the stem "empt" must also catch "empties", "leaks" and "plug"
-        self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"))
+        # work_together still declines the leak wording; tap_and_leak_fill answers the bath/plug sentence
+        self.assertEqual(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?"), values(15))
 
     def test_partner_alone_from_together(self):
         cases = [
@@ -1179,6 +1224,231 @@ class Families(unittest.TestCase):
         self.assertEqual(result.values, [Fraction(9), Fraction(1), Fraction(11)])
         self.assertIsNone(answers("Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find their product."))
 
+    def test_spelled_older_age_sum(self):
+        result = WS.spelled_older_age_sum("Jo is three years older than her brother. Together their ages total 27. How old is Jo?")
+        self.assertEqual(result.values, [Fraction(15)])
+        self.assertIsNone(answers("Jo is three years older than her brother. Together their ages total 27. How old is her brother?"))
+
+    def test_times_as_old_add_up_today(self):
+        result = WS.times_as_old_add_up_today("Mum is 4 times as old as Lily. In 6 years their ages will add up to 62. What are their ages today?")
+        self.assertEqual(result.values, [Fraction(10), Fraction(40)])
+        self.assertIsNone(answers("Mum is 4 times as old as Lily. In 6 years their ages will add up to 62. How old is Mum alone?"))
+
+    def test_rectangle_twice_long_around(self):
+        result = WS.rectangle_twice_long_around("A rectangle is twice as long as it is wide and goes 72 cm all the way round. How wide is it?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("A rectangle is twice as long as it is wide and goes 72 cm all the way round. How long is it?"))
+
+    def test_garden_length_exceeds_area(self):
+        result = WS.garden_length_exceeds_area("A garden's length exceeds its width by 5 m. It covers 84 square metres. Give the width.")
+        self.assertEqual(result.values, [Fraction(7)])
+        self.assertIsNone(answers("A garden's length exceeds its width by 5 m. It covers 84 square metres. Give the length."))
+
+    def test_triangle_angles_in_proportion(self):
+        result = WS.triangle_angles_in_proportion("The three angles of a triangle are in proportion 2 to 3 to 4. What is the biggest?")
+        self.assertEqual(result.values, [Fraction(80)])
+        self.assertIsNone(answers("The three angles of a triangle are in proportion 2 to 3 to 4. What is the smallest?"))
+
+    def test_two_angles_sum_one_more(self):
+        result = WS.two_angles_sum_one_more("Two angles add up to 90 degrees and one is 30 more than the other. Find them.")
+        self.assertEqual(result.values, [Fraction(30), Fraction(60)])
+        self.assertIsNone(answers("Two angles add up to 90 degrees and one is 30 more than the other. Find their product."))
+
+    def test_ladder_wall_base_height(self):
+        result = WS.ladder_wall_base_height("A 13 m ladder rests against a wall with its base 5 m out. How high does it reach?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("A 13 m ladder rests against a wall with its base 5 m out. How far is the top from the base?"))
+
+    def test_later_same_track_catch(self):
+        result = WS.later_same_track_catch("A slow train leaves at 40 mph. Two hours later a fast train sets off after it on the same track at 60 mph. How long until the fast one catches it?")
+        self.assertEqual(result.values, [Fraction(4)])
+        self.assertIsNone(answers("A slow train leaves at 40 mph. Two hours later a fast train sets off after it on the same track at 60 mph. How far have they gone?"))
+
+    def test_tap_and_leak_fill(self):
+        result = WS.tap_and_leak_fill("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to fill it?")
+        self.assertEqual(result.values, [Fraction(15)])
+        self.assertIsNone(answers("A tap fills a bath in 10 minutes but the plug leaks and empties it in 30 minutes. With both going, how long to empty it?"))
+
+    def test_pour_water_to_dilute(self):
+        result = WS.pour_water_to_dilute("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?")
+        self.assertEqual(result.values, [Fraction(24, 5)])
+        self.assertIsNone(answers("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%? What is the new volume?"))
+
+    def test_n_is_p_percent_of_which(self):
+        result = WS.n_is_p_percent_of_which("15 is 20 percent of which number?")
+        self.assertEqual(result.values, [Fraction(75)])
+        self.assertIsNone(answers("15 is 20 percent of which number? What is 20 percent of 15?"))
+
+    def test_cab_flag_plus_per_mile(self):
+        result = WS.cab_flag_plus_per_mile("A cab costs $3 to get in and $2 every mile after. I paid $19. How far did I go?")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("A cab costs $3 to get in and $2 every mile after. I paid $19. How much was the flag drop?"))
+
+    def test_gym_join_vs_monthly_equal(self):
+        result = WS.gym_join_vs_monthly_equal("Gym A: $50 to join plus $20 a month. Gym B: no joining fee but $30 a month. After how many months do they cost the same?")
+        self.assertEqual(result.values, [Fraction(5)])
+        self.assertIsNone(answers("Gym A: $50 to join plus $20 a month. Gym B: no joining fee but $30 a month. Which gym is cheaper after 12 months?"))
+
+    def test_workers_days_inverse(self):
+        result = WS.workers_days_inverse("If 6 workers take 10 days to dig a ditch, how long would 4 workers take?")
+        self.assertEqual(result.values, [Fraction(15)])
+        self.assertIsNone(answers("If 6 workers take 10 days to dig a ditch, how long would 4 workers take working twice as fast?"))
+
+    def test_thrown_up_from_ground(self):
+        result = WS.thrown_up_from_ground("A ball is thrown up at 48 ft/s from the ground, h = -16t² + 48t. When does it land?")
+        self.assertEqual(result.values, [Fraction(3)])
+        self.assertIsNone(answers("A ball is thrown up at 48 ft/s from the ground, h = -16t² + 48t. When does it land? What is the max height?"))
+
+    def test_two_digit_sum_swap_up(self):
+        result = WS.two_digit_sum_swap_up("The digits of a two-digit number sum to 9. Swap them and the number goes up by 27. What is the number?")
+        self.assertEqual(result.values, [Fraction(36)])
+        self.assertIsNone(answers("The digits of a two-digit number sum to 9. Swap them and the number goes up by 27. What is the swapped number?"))
+
+    def test_ribbon_cut_ratio_short(self):
+        result = WS.ribbon_cut_ratio_short("A 60 cm ribbon is cut so the pieces are in the ratio 1 to 4. How long is the short piece?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("A 60 cm ribbon is cut so the pieces are in the ratio 1 to 4. How long is the long piece?"))
+
+    def test_budget_entry_plus_ride_tickets(self):
+        result = WS.budget_entry_plus_ride_tickets("You can spend no more than $60. Each ride ticket costs $4 and entry is $12. What's the most ride tickets you can buy?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("You can spend no more than $60. Each ride ticket costs $4 and entry is $12. What's the leftover money?"))
+
+    def test_lowest_last_exam_two_known(self):
+        result = WS.lowest_last_exam_two_known("What is the lowest score I can get on my last exam and still average at least 80, if I have 75 and 78 so far?")
+        self.assertEqual(result.values, [Fraction(87)])
+        self.assertIsNone(answers("What is the lowest score I can get on my last exam and still average at least 80, if I have 75 and 78 so far? What is the mean of the first two?"))
+
+    def test_two_candles_burn_equal(self):
+        result = WS.two_candles_burn_equal("A candle 30 cm tall burns 2 cm an hour; another 24 cm tall burns 1 cm an hour. When are they equally tall?")
+        self.assertEqual(result.values, [Fraction(6)])
+        self.assertIsNone(answers("A candle 30 cm tall burns 2 cm an hour; another 24 cm tall burns 1 cm an hour. How tall are they then?"))
+
+    def test_fahrenheit_given_formula(self):
+        result = WS.fahrenheit_given_formula("Convert: what Celsius temperature equals 98.6 Fahrenheit using F = 9/5 C + 32?")
+        self.assertEqual(result.values, [Fraction(37)])
+        self.assertIsNone(answers("Convert: what Celsius temperature equals 98.6 Fahrenheit using F = 9/5 C + 32? What is 32 Fahrenheit?"))
+
+    def test_trains_apart_toward_meet(self):
+        result = WS.trains_apart_toward_meet("Two trains are 300 miles apart and head toward each other at 70 and 80 mph. When do they meet?")
+        self.assertEqual(result.values, [Fraction(2)])
+        self.assertIsNone(answers("Two trains are 300 miles apart and head toward each other at 70 and 80 mph. How far has the first gone?"))
+
+    def test_beach_round_trip_two_speeds(self):
+        result = WS.beach_round_trip_two_speeds("I drove to the beach at 60 mph and back at 40 mph. The whole drive took 5 hours. How far is the beach?")
+        self.assertEqual(result.values, [Fraction(120)])
+        self.assertIsNone(answers("I drove to the beach at 60 mph and back at 40 mph. The whole drive took 5 hours. What was the average speed?"))
+
+    def test_salesperson_week_plus_percent(self):
+        result = WS.salesperson_week_plus_percent("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?")
+        self.assertEqual(result.values, [Fraction(12000)])
+        self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What was the commission?"))
+
+    def test_every_team_played_once(self):
+        result = WS.every_team_played_once("Every team played every other team once and there were 28 games. How many teams?")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("Every team played every other team once and there were 28 games. How many games did each team play?"))
+
+    def test_regular_polygon_each_interior(self):
+        result = WS.regular_polygon_each_interior("The angles inside a regular polygon are each 140 degrees. How many sides?")
+        self.assertEqual(result.values, [Fraction(9)])
+        self.assertIsNone(answers("The angles inside a regular polygon are each 140 degrees. What is the exterior angle?"))
+
+    def test_seesaw_child_other_side(self):
+        result = WS.seesaw_child_other_side("A seesaw balances when a 30 kg child sits 2 m from the middle. Where must a 20 kg child sit on the other side?")
+        self.assertEqual(result.values, [Fraction(3)])
+        self.assertIsNone(answers("A seesaw balances when a 30 kg child sits 2 m from the middle. Where must a 20 kg child sit on the other side? What is the torque?"))
+
+    def test_clock_hands_line_up_hours(self):
+        result = WS.clock_hands_line_up_hours("When do the hands of a clock line up between 4 and 5 o'clock?")
+        self.assertEqual(result.values, [Fraction(240, 11)])
+        self.assertIsNone(answers("When do the hands of a clock line up between 4 and 5 o'clock? When are they opposite?"))
+
+    def test_percent_boys_given_girls_club(self):
+        result = WS.percent_boys_given_girls_club("40% of a club are boys and there are 24 girls. How many members?")
+        self.assertEqual(result.values, [Fraction(40)])
+        self.assertIsNone(answers("40% of a club are boys and there are 24 girls. How many boys?"))
+
+    def test_shop_fixed_make_sell_break_even(self):
+        result = WS.shop_fixed_make_sell_break_even("A shop has fixed costs of $500 a day. Each mug costs $3 to make and sells for $8. How many mugs to break even?")
+        self.assertEqual(result.values, [Fraction(100)])
+        self.assertIsNone(answers("A shop has fixed costs of $500 a day. Each mug costs $3 to make and sells for $8. What is the profit on 100 mugs?"))
+
+    def test_car_loses_value_until(self):
+        result = WS.car_loses_value_until("A car worth $24,000 loses $2,000 of value per year. When is it worth $10,000?")
+        self.assertEqual(result.values, [Fraction(7)])
+        self.assertIsNone(answers("A car worth $24,000 loses $2,000 of value per year. When is it worth $10,000? What is it worth after 1 year?"))
+
+    def test_tank_quarter_add_three_quarters(self):
+        result = WS.tank_quarter_add_three_quarters("A tank is a quarter full. Add 30 litres and it's three quarters full. How big is it?")
+        self.assertEqual(result.values, [Fraction(60)])
+        self.assertIsNone(answers("A tank is a quarter full. Add 30 litres and it's three quarters full. How much was in it at first?"))
+
+    def test_pole_and_tree_shadows(self):
+        result = WS.pole_and_tree_shadows("A 2 m tall pole casts a 3 m shadow, and a tree casts a 15 m shadow. How tall is the tree?")
+        self.assertEqual(result.values, [Fraction(10)])
+        self.assertIsNone(answers("A 2 m tall pole casts a 3 m shadow, and a tree casts a 15 m shadow. How long is the tree's shadow at noon?"))
+
+    def test_mean_of_five_listed_fifth(self):
+        result = WS.mean_of_five_listed_fifth("The mean of five numbers is 12. Four of them are 10, 14, 9 and 15. What is the fifth?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("The mean of five numbers is 12. Four of them are 10, 14, 9 and 15. What is their sum?"))
+
+    def test_square_side_grow_area(self):
+        result = WS.square_side_grow_area("A square patio's side is increased by 3 m and its area goes up by 51 m². How long was each side?")
+        self.assertEqual(result.values, [Fraction(7)])
+        self.assertIsNone(answers("A square patio's side is increased by 3 m and its area goes up by 51 m². What is the new area?"))
+
+    def test_weeks_until_bike(self):
+        result = WS.weeks_until_bike("Sam has $40 and saves $12 a week to buy a $160 bike. How many weeks?")
+        self.assertEqual(result.values, [Fraction(10)])
+        self.assertIsNone(answers("Sam has $40 and saves $12 a week to buy a $160 bike. How much is left after 3 weeks?"))
+
+    def test_stick_broken_two_ratio(self):
+        result = WS.stick_broken_two_ratio("A 90 cm stick is broken into pieces in the ratio 4:5. How long is each piece?")
+        self.assertEqual(result.values, [Fraction(40), Fraction(50)])
+        self.assertIsNone(answers("A 90 cm stick is broken into pieces in the ratio 4:5. How long is the longer piece only?"))
+
+    def test_plumber_come_out_plus_hour(self):
+        result = WS.plumber_come_out_plus_hour("A plumber charges $60 to come out plus $45 an hour. The bill was $195. How many hours did they work?")
+        self.assertEqual(result.values, [Fraction(3)])
+        self.assertIsNone(answers("A plumber charges $60 to come out plus $45 an hour. The bill was $195. How much was the hourly part?"))
+
+    def test_trip_faster_same_distance(self):
+        result = WS.trip_faster_same_distance("At 60 km/h a trip takes 3 hours. How long at 90 km/h?")
+        self.assertEqual(result.values, [Fraction(2)])
+        self.assertIsNone(answers("At 60 km/h a trip takes 3 hours. How long at 90 km/h? How far is the trip?"))
+
+    def test_number_square_plus_times(self):
+        result = WS.number_square_plus_times("A number squared plus 3 times the number equals 40. What is the positive number?")
+        self.assertEqual(result.values, [Fraction(5)])
+        self.assertIsNone(answers("A number squared plus 3 times the number equals 40. What is the negative number?"))
+
+    def test_grandpa_older_combined(self):
+        result = WS.grandpa_older_combined("Grandpa is 50 years older than his grandson. Their combined age is 74. How old is the grandson?")
+        self.assertEqual(result.values, [Fraction(12)])
+        self.assertIsNone(answers("Grandpa is 50 years older than his grandson. Their combined age is 74. How old is Grandpa?"))
+
+    def test_cents_two_coins_dimes(self):
+        result = WS.cents_two_coins_dimes("I've got a pile of 5-cent and 10-cent coins, 40 in all, adding up to $3.10. How many dimes are in there?")
+        self.assertEqual(result.values, [Fraction(22)])
+        self.assertIsNone(answers("I've got a pile of 5-cent and 10-cent coins, 40 in all, adding up to $3.10. How many nickels are in there?"))
+
+    def test_cookies_brownies_count(self):
+        result = WS.cookies_brownies_count("Our class sold cookies at $2 and brownies at $3. We sold 85 treats and made $205. How many brownies did we sell?")
+        self.assertEqual(result.values, [Fraction(35)])
+        self.assertIsNone(answers("Our class sold cookies at $2 and brownies at $3. We sold 85 treats and made $205. How many cookies did we sell?"))
+
+    def test_pens_pencils_cents(self):
+        result = WS.pens_pencils_cents("Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pens?")
+        self.assertEqual(result.values, [Fraction(7)])
+        self.assertIsNone(answers("Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pencils?"))
+
+    def test_motorbikes_cars_wheels(self):
+        result = WS.motorbikes_cars_wheels("A parking lot has motorbikes and cars, 25 vehicles with 80 wheels. How many cars?")
+        self.assertEqual(result.values, [Fraction(15)])
+        self.assertIsNone(answers("A parking lot has motorbikes and cars, 25 vehicles with 80 wheels. How many motorbikes?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -1255,7 +1525,7 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("You need 20 litres of 30% acid. You have 10% and 50% acid. How much of the 10% do you use?"), values(10, 10))
         self.assertEqual(answers("How many ounces of a 20% sugar syrup must be combined with 50% syrup to get 30 oz of 40% syrup?"), values(10, 20))
         # other mixing shapes: water, pure, evaporate, drain, replace, price per pound, adding to an existing amount
-        self.assertIsNone(answers("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?"))
+        self.assertEqual(answers("How much pure water should I pour into 8 litres of 40% bleach solution to make it 25%?"), values(Fraction(24, 5)))
         self.assertIsNone(answers("How many liters of water must be added to 10 liters of a 40% solution to make it 25%?"))
         self.assertIsNone(answers("How many liters of a 20% solution must be added to 10 liters of a 50% solution to make a 40% solution?"))
         # (a price-per-pound blend was a decline here until the price_blend family: it is not a percent mixture, see test_price_blend)
@@ -1282,7 +1552,7 @@ class Families(unittest.TestCase):
         self.assertIsNone(WS.two_rate_interest("$25,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each?"))
         self.assertIsNone(WS.two_rate_interest("Tara has $12,000.00 invested at 3%. How much more must be invested at 8% so that the total earns 7% overall?"))
         self.assertIsNone(answers("Ben invests $9,000, part at 4% and the rest at 6%, compounded monthly. The interest after a year is $450. How much at each rate?"))
-        self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"))
+        self.assertEqual(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"), values(12000))
         self.assertIsNone(answers("A bank pays 3% on $4,000 and 5% on another amount. The total interest is $380. How much is the other amount?"))
         # a cue for a real split can also match another sentence (found by Grok): "two such investments", and "part / the rest" of a YEAR
         self.assertIsNone(answers("Lea invests $10,000, part at 3% and the rest at 5%. Two such investments earn $420 in interest in one year. How much is in each?"))
@@ -1320,7 +1590,7 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Two pens and a pad cost $5.00. Four pens and two pads cost $10.00. Find the price of each."))
         self.assertIsNone(answers("An apple and a pear cost $1.30. Two apples and three pears cost $0.50. Find the price of each."))
         # a different system: coins / heads and legs / a total count are not two purchases
-        self.assertIsNone(answers("Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pens?"))
+        self.assertEqual(answers("Pens cost 50 cents and pencils 20 cents. I bought 18 items for $5.70. How many pens?"), values(7))
 
     def test_every_number_needs_a_role(self):
         # one extra number the patterns do not use -> decline, whatever the rest says
