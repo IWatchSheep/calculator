@@ -6,7 +6,7 @@ Equation: x + (2x + 5) = 26
 Solve   : 3x = 21 → x = 7
 Answer  : Caleb: 7, Isla: 19
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: more_than_times_stamps answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + (2x + 5) = 26'
 SOLVE = '3x = 21 → x = 7'
 ANSWER = 'Caleb: 7, Isla: 19'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'more_than_times_stamps'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Isla has {0} more than {1} times as many stamps as Caleb. Together they have {2} stamps. How many does each have?'
 NUMBERS = ['5', '2', '26']
