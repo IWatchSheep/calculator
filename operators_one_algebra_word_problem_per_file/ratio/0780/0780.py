@@ -6,7 +6,7 @@ Equation: 2x + x + (x + 6500) = 64500
 Solve   : 4x = 58000 → x = 14500
 Answer  : Wes $29,000.00, Nia $14,500.00, Noah $21,000.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: estate_three_heirs_times_and_more answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2x + x + (x + 6500) = 64500'
 SOLVE = '4x = 58000 → x = 14500'
 ANSWER = 'Wes $29,000.00, Nia $14,500.00, Noah $21,000.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'estate_three_heirs_times_and_more'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'An estate of ${0} is split among three heirs. Wes gets {1} times as much as Nia, and Noah gets ${2} more than Nia. How much does each receive?'
 NUMBERS = ['64500.00', '2', '6500.00']

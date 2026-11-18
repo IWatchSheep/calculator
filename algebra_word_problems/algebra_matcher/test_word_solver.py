@@ -284,6 +284,23 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Aiden has 3 times as much money as Fatima. After Fatima gives Aiden $43, they have the same amount. How much did each have at first?"))
         self.assertIsNone(WS.give_until_equal_money("Aiden has 3 times as much money as Aiden. After Aiden gives Aiden $43, they have the same amount. How much did each have at first?"))
 
+    def test_estate_three_heirs_times_and_more(self):
+        cases = [
+            ("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Nia. How much does each receive?", 29000, 14500, 21000),
+            ("An estate of $92,000.00 is split among three heirs. Finn gets 3 times as much as Sam, and Ben gets $2,000.00 more than Sam. How much does each receive?", 54000, 18000, 20000),
+            ("An estate of $71,000.00 is split among three heirs. Jamal gets 3 times as much as Maya, and Noah gets $6,000.00 more than Maya. How much does each receive?", 39000, 13000, 19000),
+            ("An estate of $31,500.00 is split among three heirs. Xena gets 3 times as much as Dana, and Finn gets $9,000.00 more than Dana. How much does each receive?", 13500, 4500, 13500),
+            ("An estate of $88,500.00 is split among three heirs. Theo gets 3 times as much as Kira, and Umar gets $1,000.00 more than Kira. How much does each receive?", 52500, 17500, 18500),
+        ]
+        for sentence, times_share, base_share, extra_share in cases:
+            result = WS.estate_three_heirs_times_and_more(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(times_share), Fraction(base_share), Fraction(extra_share)], sentence)
+        self.assertIsNone(answers("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Nia. How much does Wes receive?"))
+        self.assertIsNone(answers("An estate of $64,500.00 is split among three heirs. Wes gets 1 times as much as Nia, and Noah gets $6,500.00 more than Nia. How much does each receive?"))
+        self.assertIsNone(answers("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Wes. How much does each receive?"))
+        self.assertIsNone(WS.estate_three_heirs_times_and_more("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Wes, and Noah gets $6,500.00 more than Wes. How much does each receive?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
