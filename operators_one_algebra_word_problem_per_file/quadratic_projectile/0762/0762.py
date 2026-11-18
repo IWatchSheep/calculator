@@ -6,7 +6,7 @@ Equation: −16t² + 24t + 16 = 0
 Solve   : Factor/quadratic formula → t = 2 (other root t = -0.5 rejected)
 Answer  : 2 seconds
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: projectile_hit_ground answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '−16t² + 24t + 16 = 0'
 SOLVE = 'Factor/quadratic formula → t = 2 (other root t = -0.5 rejected)'
 ANSWER = '2 seconds'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'projectile_hit_ground'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rock is launched upward from a height of {0} ft at {1} ft/s. Its height is h = −{2}t² + {3}t + {4}. After how many seconds does it hit the ground?'
 NUMBERS = ['16', '24', '16', '24', '16']

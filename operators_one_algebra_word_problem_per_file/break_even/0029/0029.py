@@ -6,7 +6,7 @@ Equation: 38 + 0.15x = 26.5 + 0.2x
 Solve   : 0.05x = 11.5 → x = 230
 Answer  : 230 kWhs
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_plans_same_cost answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '38 + 0.15x = 26.5 + 0.2x'
 SOLVE = '0.05x = 11.5 → x = 230'
 ANSWER = '230 kWhs'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_plans_same_cost'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Electric utility plan A costs ${0} plus ${1} per kWh. Plan B costs ${2} plus ${3} per kWh. For how many kWhs do they cost the same?'
 NUMBERS = ['38.00', '0.15', '26.50', '0.20']

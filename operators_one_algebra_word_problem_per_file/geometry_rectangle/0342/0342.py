@@ -6,7 +6,7 @@ Equation: 2w + 2(w + 2) = 132
 Solve   : 4w + 4 = 132 → w = 32
 Answer  : Width 32 cm, length 34 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_length_from_width_perimeter answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2w + 2(w + 2) = 132'
 SOLVE = '4w + 4 = 132 → w = 32'
 ANSWER = 'Width 32 cm, length 34 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_length_from_width_perimeter'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The length of a rectangle is {0} more than its width. The perimeter is {1} cm. Find the dimensions.'
 NUMBERS = ['2', '132']

@@ -672,6 +672,136 @@ class Families(unittest.TestCase):
         self.assertIsNone(WS.adult_and_child_tickets("Adult tickets to a museum cost $10 and child tickets cost $4. How many of each were sold?"))
         self.assertIsNone(answers("Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How much money was collected?"))
 
+    def test_two_plans_same_cost(self):
+        cases = [
+            ("Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do they cost the same?", 230),
+            ("Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they cost the same?", 340),
+        ]
+        for sentence, x in cases:
+            result = WS.two_plans_same_cost(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(x)], sentence)
+        self.assertIsNone(WS.two_plans_same_cost("Car rental A costs $38.00 plus $0.15 per mile. Plan B costs $26.50 plus $0.20 per mile. For how many miles do they cost the same?"))
+        self.assertIsNone(answers("Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. Which plan is cheaper at 100 kWh?"))
+
+    def test_food_truck_meals_cover_costs(self):
+        result = WS.food_truck_meals_cover_costs("A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs?")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.values, [Fraction(50)])
+        self.assertIsNone(WS.food_truck_meals_cover_costs("It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even?"))
+        self.assertIsNone(answers("A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. What is the profit on 50 meals?"))
+
+    def test_print_run_posters_break_even(self):
+        result = WS.print_run_posters_break_even("It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even?")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.values, [Fraction(125)])
+        self.assertIsNone(WS.print_run_posters_break_even("A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs?"))
+        self.assertIsNone(answers("It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. What is the profit on 125 posters?"))
+
+    def test_tank_fill_from_fraction(self):
+        cases = [
+            ("A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold?", 6),
+            ("A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity?", 400),
+        ]
+        for sentence, cap in cases:
+            result = WS.tank_fill_from_fraction(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(cap)], sentence)
+        self.assertIsNone(WS.tank_fill_from_fraction("A tank is 2/5 full. After 200 liters are added, it is 9/10 full. How much was added?"))
+        self.assertIsNone(answers("A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much empty space remains?"))
+
+    def test_rectangle_length_from_width_perimeter(self):
+        cases = [
+            ("The length of a rectangle is 3 less than 3 times its width. The perimeter is 178 cm. Find the dimensions.", [23, 66]),
+            ("The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the dimensions.", [32, 34]),
+            ("The length of a rectangle is 5 more than 3 times its width. The perimeter is 170 cm. Find the dimensions.", [20, 65]),
+        ]
+        for sentence, vals in cases:
+            result = WS.rectangle_length_from_width_perimeter(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.rectangle_length_from_width_perimeter("The length of a rectangle is 2 more than its width. The area is 132 cm. Find the dimensions."))
+        self.assertIsNone(answers("The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the area."))
+
+    def test_lowest_next_score_few_tests(self):
+        cases = [
+            ("Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85?", 97),
+            ("Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88?", 91),
+            ("Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75?", 95),
+        ]
+        for sentence, score in cases:
+            result = WS.lowest_next_score_few_tests(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(score)], sentence)
+        five = "Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80?"
+        self.assertIsNone(WS.lowest_next_score_few_tests(five))
+        self.assertEqual(WS.lowest_next_score_for_average(five).values, [Fraction(85)])
+        self.assertIsNone(answers("Isla's test scores are 94, 64. What is the highest score on the next test that keeps an average of at most 85?"))
+
+    def test_items_sold_for_given_profit(self):
+        cases = [
+            ("A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to make a profit of $452?", 92),
+            ("A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make a profit of $302?", 526),
+        ]
+        for sentence, n in cases:
+            result = WS.items_sold_for_given_profit(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(n)], sentence)
+        candle = "A candle shop has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to make a profit of $452?"
+        self.assertIsNone(WS.items_sold_for_given_profit(candle))
+        self.assertIsNone(answers("A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to break even?"))
+
+    def test_projectile_hit_ground(self):
+        cases = [
+            ("A rocket is launched upward from a height of 96 ft at 16 ft/s. Its height is h = −16t² + 16t + 96. After how many seconds does it hit the ground?", 3),
+            ("A rock is launched upward from a height of 16 ft at 24 ft/s. Its height is h = −16t² + 24t + 16. After how many seconds does it hit the ground?", 2),
+            ("A stone is launched upward from a height of 32 ft at 124 ft/s. Its height is h = −16t² + 124t + 32. After how many seconds does it hit the ground?", 8),
+        ]
+        for sentence, t in cases:
+            result = WS.projectile_hit_ground(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(t)], sentence)
+        self.assertIsNone(WS.projectile_hit_ground("A rocket is launched upward from a height of 96 ft at 16 ft/s. After how many seconds does it hit the ground?"))
+        self.assertIsNone(answers("A rocket is launched upward from a height of 96 ft at 16 ft/s. Its height is h = −16t² + 16t + 96. What is the maximum height?"))
+
+    def test_stack_of_cans_rows(self):
+        cases = [
+            ("A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in total. How many rows are there?", 5),
+            ("A stack of cans has 8 cans in the top row, and each row below has 2 more than the row above. The stack has 260 cans in total. How many rows are there?", 13),
+        ]
+        for sentence, n in cases:
+            result = WS.stack_of_cans_rows(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(n)], sentence)
+        self.assertIsNone(WS.stack_of_cans_rows("A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in total. How many cans are in the bottom row?"))
+        self.assertIsNone(answers("How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326?"))
+
+    def test_number_plus_reciprocal(self):
+        cases = [
+            ("A number plus its reciprocal equals 2.5. Find the number.", [Fraction(1, 2), 2]),
+            ("A number plus its reciprocal equals 10/3. Find the number.", [Fraction(1, 3), 3]),
+        ]
+        for sentence, vals in cases:
+            result = WS.number_plus_reciprocal(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.number_plus_reciprocal("A number plus its reciprocal equals 2.5. Find the reciprocal."))
+        self.assertIsNone(answers("A number minus its reciprocal equals 2.5. Find the number."))
+
+    def test_two_linear_equations_xy(self):
+        cases = [
+            ("Two numbers x and y satisfy −4x − 3y = 9 and 5x − 3y = -18. Find x and y.", [-3, 1]),
+            ("Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y.", [1, -9]),
+            ("Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y.", [4, 2]),
+            ("Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y.", [-9, -2]),
+        ]
+        for sentence, vals in cases:
+            result = WS.two_linear_equations_xy(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(WS.two_linear_equations_xy("Two numbers x and y satisfy 3x + 5y = 22. Find x and y."))
+        self.assertIsNone(answers("Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x + y."))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

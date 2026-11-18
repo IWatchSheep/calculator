@@ -4880,7 +4880,500 @@ def adult_and_child_tickets(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets,
+_TWO_PLANS_SAME_COST = re.compile(
+    r"(?P<kind>electric utility|phone) plan a costs "
+    r"\$(?P<a>\d+(?:\.\d+)?) plus "
+    r"\$(?P<ra>\d+(?:\.\d+)?) per (?P<u1>kwh|minute)\. "
+    r"plan b costs "
+    r"\$(?P<b>\d+(?:\.\d+)?) plus "
+    r"\$(?P<rb>\d+(?:\.\d+)?) per (?P<u2>kwh|minute)\. "
+    r"for how many (?P<q>kwhs|minutes) do they cost the same\?")
+
+
+def two_plans_same_cost(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_PLANS_SAME_COST.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("u1") != match.group("u2"):
+        return None
+    if match.group("u1") == "kwh" and match.group("q") != "kwhs":
+        return None
+    if match.group("u1") == "minute" and match.group("q") != "minutes":
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [True, True, True, True]:
+        return None
+    a = Fraction(match.group("a"))
+    ra = Fraction(match.group("ra"))
+    b = Fraction(match.group("b"))
+    rb = Fraction(match.group("rb"))
+    if [n[0] for n in numbers] != [a, ra, b, rb]:
+        return None
+    if ra == rb:
+        return None
+    x = (a - b) / (rb - ra)
+    if x <= 0:
+        return None
+    if a + ra * x != b + rb * x:
+        return None
+    eq = "%s + %s*x = %s + %s*x" % (show(a), show(ra), show(b), show(rb))
+    return Result(
+        "two_plans_same_cost",
+        [x],
+        eq,
+        "%s, so x = %s" % (eq, show_exact(x))
+    )
+
+
+_FOOD_TRUCK_MEALS_COVER_COSTS = re.compile(
+    r"a food truck pays \$(?P<fixed>\d+(?:\.\d+)?) in daily costs, "
+    r"and each meal costs \$(?P<cost>\d+(?:\.\d+)?) in ingredients\. "
+    r"meals sell for \$(?P<price>\d+(?:\.\d+)?)\. "
+    r"how many meals a day cover the costs\?")
+
+
+def food_truck_meals_cover_costs(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _FOOD_TRUCK_MEALS_COVER_COSTS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    fixed = Fraction(match.group("fixed"))
+    cost = Fraction(match.group("cost"))
+    price = Fraction(match.group("price"))
+    if [n[0] for n in numbers] != [fixed, cost, price]:
+        return None
+    if price <= cost or fixed <= 0:
+        return None
+    n = fixed / (price - cost)
+    if n <= 0 or n.denominator != 1:
+        return None
+    if price * n != fixed + cost * n:
+        return None
+    eq = "%s*n = %s + %s*n" % (show(price), show(fixed), show(cost))
+    return Result(
+        "food_truck_meals_cover_costs",
+        [n],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(n))
+    )
+
+
+_PRINT_RUN_POSTERS_BREAK_EVEN = re.compile(
+    r"it costs \$(?P<setup>\d+(?:\.\d+)?) to set up a print run plus "
+    r"\$(?P<each>\d+(?:\.\d+)?) per poster\. "
+    r"posters sell for \$(?P<price>\d+(?:\.\d+)?) each\. "
+    r"how many must be sold to break even\?")
+
+
+def print_run_posters_break_even(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PRINT_RUN_POSTERS_BREAK_EVEN.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    setup = Fraction(match.group("setup"))
+    each = Fraction(match.group("each"))
+    price = Fraction(match.group("price"))
+    if [n[0] for n in numbers] != [setup, each, price]:
+        return None
+    if price <= each or setup <= 0:
+        return None
+    n = setup / (price - each)
+    if n <= 0 or n.denominator != 1:
+        return None
+    if price * n != setup + each * n:
+        return None
+    eq = "%s*n = %s + %s*n" % (show(price), show(setup), show(each))
+    return Result(
+        "print_run_posters_break_even",
+        [n],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(n))
+    )
+
+
+_TANK_FILL_FROM_FRACTION = re.compile(
+    r"(?:a gas tank is (?P<a1>\d+)/(?P<b1>\d+) full\. adding (?P<add1>\d+(?:\.\d+)?) gallons fills it to (?P<c1>\d+)/(?P<d1>\d+)\. how much does the tank hold\?"
+    r"|a tank is (?P<a2>\d+)/(?P<b2>\d+) full\. after (?P<add2>\d+(?:\.\d+)?) liters are added, it is (?P<c2>\d+)/(?P<d2>\d+) full\. what is the tank's capacity\?)")
+
+
+def tank_fill_from_fraction(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TANK_FILL_FROM_FRACTION.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if match.group("a1") is not None:
+        parts = [match.group(g) for g in ("a1", "b1", "add1", "c1", "d1")]
+    else:
+        parts = [match.group(g) for g in ("a2", "b2", "add2", "c2", "d2")]
+    vals = [Fraction(x) for x in parts]
+    if len(numbers) != 5 or any(n[1] for n in numbers) or [n[0] for n in numbers] != vals:
+        return None
+    start = vals[0] / vals[1]
+    added = vals[2]
+    end = vals[3] / vals[4]
+    if end <= start or added <= 0:
+        return None
+    cap = added / (end - start)
+    if cap <= 0:
+        return None
+    if start * cap + added != end * cap:
+        return None
+    eq = "(%s/%s)c + %s = (%s/%s)c" % (show(vals[0]), show(vals[1]), show(added), show(vals[3]), show(vals[4]))
+    return Result(
+        "tank_fill_from_fraction",
+        [cap],
+        eq,
+        "%s, so c = %s" % (eq, show_exact(cap))
+    )
+
+
+_RECTANGLE_LENGTH_FROM_WIDTH_PERIMETER = re.compile(
+    r"the length of a rectangle is "
+    r"(?:(?P<k_less>\d+) less than (?P<m_less>\d+) times its width"
+    r"|(?P<k_more>\d+) more than its width"
+    r"|(?P<k_more_times>\d+) more than (?P<m_more>\d+) times its width)"
+    r"\. the perimeter is (?P<p>\d+(?:\.\d+)?) cm\. find the dimensions\.")
+
+
+def rectangle_length_from_width_perimeter(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RECTANGLE_LENGTH_FROM_WIDTH_PERIMETER.fullmatch(text)
+    if match is None:
+        return None
+    p = Fraction(match.group("p"))
+    if match.group("k_less") is not None:
+        k = Fraction(match.group("k_less"))
+        m = Fraction(match.group("m_less"))
+        expected = [k, m, p]
+        length_from = lambda w: m * w - k
+    elif match.group("k_more_times") is not None:
+        k = Fraction(match.group("k_more_times"))
+        m = Fraction(match.group("m_more"))
+        expected = [k, m, p]
+        length_from = lambda w: m * w + k
+    else:
+        k = Fraction(match.group("k_more"))
+        m = Fraction(1)
+        expected = [k, p]
+        length_from = lambda w: w + k
+    numbers = digit_numbers(problem)
+    if len(numbers) != len(expected) or any(n[1] for n in numbers) or [n[0] for n in numbers] != expected:
+        return None
+    # 2w + 2 L(w) = P
+    # For L = m w + c with c = ±k: 2w + 2m w + 2c = P, w = (P - 2c) / (2 + 2m)
+    sample_c = length_from(0)
+    denom = 2 + 2 * m
+    if denom == 0:
+        return None
+    w = (p - 2 * sample_c) / denom
+    length = length_from(w)
+    if w <= 0 or length <= 0:
+        return None
+    if 2 * w + 2 * length != p:
+        return None
+    eq = "2w + 2(%s) = %s" % (
+        "%sw %s %s" % (show(m), "+" if sample_c >= 0 else "−", show(abs(sample_c))) if m != 1 or sample_c != 0 else "w + %s" % show(k),
+        show(p),
+    )
+    return Result(
+        "rectangle_length_from_width_perimeter",
+        [w, length],
+        eq,
+        "%s, so w = %s and L = %s" % (eq, show_exact(w), show_exact(length))
+    )
+
+
+_LOWEST_NEXT_SCORE_FEW_TESTS = re.compile(
+    r"(?P<name>[a-z]+)'s test scores are "
+    r"(?P<listed>\d+(?:, \d+){1,3})\. "
+    r"what is the lowest score on the next test "
+    r"that gives an average of at least (?P<target>\d+)\?")
+
+
+def lowest_next_score_few_tests(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LOWEST_NEXT_SCORE_FEW_TESTS.fullmatch(text)
+    if match is None:
+        return None
+    scores = [Fraction(x) for x in match.group("listed").split(", ")]
+    if not (2 <= len(scores) <= 4):
+        return None
+    target = Fraction(match.group("target"))
+    numbers = digit_numbers(problem)
+    expected = scores + [target]
+    if len(numbers) != len(expected) or any(n[1] for n in numbers) or [n[0] for n in numbers] != expected:
+        return None
+    k = len(scores) + 1
+    needed = target * k - sum(scores)
+    if needed < 0:
+        return None
+    if needed.denominator == 1:
+        lowest = needed
+    else:
+        lowest = Fraction((needed.numerator + needed.denominator - 1) // needed.denominator)
+    if lowest < 0:
+        return None
+    if all(s <= 100 for s in scores) and target <= 100 and lowest > 100:
+        return None
+    if (sum(scores) + lowest) / k < target:
+        return None
+    if lowest > 0 and (sum(scores) + (lowest - 1)) / k >= target:
+        return None
+    listed = " + ".join(show(s) for s in scores)
+    eq = "(%s + x)/%s >= %s" % (listed, show(k), show(target))
+    return Result(
+        "lowest_next_score_few_tests",
+        [lowest],
+        eq,
+        "%s, so the lowest whole score is %s" % (eq, show_exact(lowest))
+    )
+
+
+_ITEMS_SOLD_FOR_GIVEN_PROFIT = re.compile(
+    r"a (?P<who>t-shirt business|bakery stall) has fixed costs of "
+    r"\$(?P<fixed>\d+(?:\.\d+)?)\. "
+    r"each item costs \$(?P<cost>\d+(?:\.\d+)?) to make and sells for "
+    r"\$(?P<price>\d+(?:\.\d+)?)\. "
+    r"how many items must be sold to make a profit of "
+    r"\$(?P<profit>\d+(?:\.\d+)?)\?")
+
+
+def items_sold_for_given_profit(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ITEMS_SOLD_FOR_GIVEN_PROFIT.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [True, True, True, True]:
+        return None
+    fixed = Fraction(match.group("fixed"))
+    cost = Fraction(match.group("cost"))
+    price = Fraction(match.group("price"))
+    profit = Fraction(match.group("profit"))
+    if [n[0] for n in numbers] != [fixed, cost, price, profit]:
+        return None
+    if price <= cost or fixed < 0 or profit < 0:
+        return None
+    n = (profit + fixed) / (price - cost)
+    if n <= 0 or n.denominator != 1:
+        return None
+    if price * n - (fixed + cost * n) != profit:
+        return None
+    eq = "%s*n - (%s + %s*n) = %s" % (show(price), show(fixed), show(cost), show(profit))
+    return Result(
+        "items_sold_for_given_profit",
+        [n],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(n))
+    )
+
+
+_PROJECTILE_HIT_GROUND = re.compile(
+    r"a (?P<object>rocket|rock|stone) is launched upward from a height of "
+    r"(?P<h>\d+(?:\.\d+)?) ft at (?P<v>\d+(?:\.\d+)?) ft/s\. "
+    r"its height is h = -(?P<g>\d+(?:\.\d+)?)t² \+ (?P<v2>\d+(?:\.\d+)?)t \+ (?P<h2>\d+(?:\.\d+)?)\. "
+    r"after how many seconds does it hit the ground\?")
+
+
+def projectile_hit_ground(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PROJECTILE_HIT_GROUND.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    h = Fraction(match.group("h"))
+    v = Fraction(match.group("v"))
+    g = Fraction(match.group("g"))
+    v2 = Fraction(match.group("v2"))
+    h2 = Fraction(match.group("h2"))
+    if len(numbers) != 5 or any(n[1] for n in numbers):
+        return None
+    if [n[0] for n in numbers] != [h, v, g, v2, h2]:
+        return None
+    if v != v2 or h != h2 or g <= 0 or h <= 0 or v < 0:
+        return None
+    disc = v * v + 4 * g * h
+    root = _isqrt_exact(int(disc)) if disc.denominator == 1 else None
+    if root is None:
+        return None
+    t = (v + root) / (2 * g)
+    if t <= 0:
+        return None
+    if -g * t * t + v * t + h != 0:
+        return None
+    eq = "-%s*t² + %s*t + %s = 0" % (show(g), show(v), show(h))
+    return Result(
+        "projectile_hit_ground",
+        [t],
+        eq,
+        "%s, so t = %s" % (eq, show_exact(t))
+    )
+
+
+_STACK_OF_CANS_ROWS = re.compile(
+    r"a stack of cans has (?P<a>\d+) cans? in the top row, "
+    r"and each row below has (?P<d>\d+) more than the row above\. "
+    r"the stack has (?P<s>\d+) cans in total\. how many rows are there\?")
+
+
+def stack_of_cans_rows(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _STACK_OF_CANS_ROWS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(n[1] for n in numbers):
+        return None
+    a = Fraction(match.group("a"))
+    d = Fraction(match.group("d"))
+    total = Fraction(match.group("s"))
+    if [n[0] for n in numbers] != [a, d, total]:
+        return None
+    if a <= 0 or d <= 0 or total <= 0:
+        return None
+    # d n^2 + (2a - d) n - 2 total = 0
+    aa = d
+    bb = 2 * a - d
+    cc = -2 * total
+    disc = bb * bb - 4 * aa * cc
+    root = _isqrt_exact(int(disc)) if disc.denominator == 1 else None
+    if root is None or aa == 0:
+        return None
+    n = (-bb + root) / (2 * aa)
+    if n <= 0 or n.denominator != 1:
+        return None
+    if n / 2 * (2 * a + (n - 1) * d) != total:
+        return None
+    eq = "(n/2)(2*%s + (n - 1)*%s) = %s" % (show(a), show(d), show(total))
+    return Result(
+        "stack_of_cans_rows",
+        [n],
+        eq,
+        "%s, so n = %s" % (eq, show_exact(n))
+    )
+
+
+_NUMBER_PLUS_RECIPROCAL = re.compile(
+    r"a number plus its reciprocal equals "
+    r"(?:(?P<k>\d+(?:\.\d+)?)|(?P<num>\d+)/(?P<den>\d+))"
+    r"\. find the number\.")
+
+
+def number_plus_reciprocal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _NUMBER_PLUS_RECIPROCAL.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if match.group("k") is not None:
+        k = Fraction(match.group("k"))
+        expected = [k]
+    else:
+        k = Fraction(match.group("num")) / Fraction(match.group("den"))
+        expected = [Fraction(match.group("num")), Fraction(match.group("den"))]
+    if len(numbers) != len(expected) or any(n[1] for n in numbers) or [n[0] for n in numbers] != expected:
+        return None
+    disc = k * k - 4
+    if disc < 0:
+        return None
+    if disc.denominator == 1:
+        root = _isqrt_exact(int(disc))
+        if root is None:
+            return None
+        root = Fraction(root)
+    else:
+        # (p/q)^2 = disc
+        if disc.numerator < 0:
+            return None
+        rn = _isqrt_exact(disc.numerator)
+        rd = _isqrt_exact(disc.denominator)
+        if rn is None or rd is None:
+            return None
+        root = Fraction(rn, rd)
+    x1 = (k - root) / 2
+    x2 = (k + root) / 2
+    if x1 == 0 or x2 == 0:
+        return None
+    if x1 + 1 / x1 != k or x2 + 1 / x2 != k:
+        return None
+    pair = [x1, x2] if x1 <= x2 else [x2, x1]
+    eq = "x + 1/x = %s" % show(k)
+    return Result(
+        "number_plus_reciprocal",
+        pair,
+        eq,
+        "%s, so x = %s or %s" % (eq, show_exact(pair[0]), show_exact(pair[1]))
+    )
+
+
+_XY_EQ = re.compile(
+    r"(?P<sx>-)?(?P<ax>\d+)?x (?P<sy>[+-]) (?P<ay>\d+)?y = (?P<sc>-)?(?P<c>\d+)")
+_TWO_LINEAR_EQUATIONS_XY = re.compile(
+    r"two numbers x and y satisfy (?P<e1>.+?) and (?P<e2>.+?)\. find x and y\.")
+
+
+def _xy_line(eq):
+    match = _XY_EQ.fullmatch(eq.strip())
+    if match is None:
+        return None
+    ax = Fraction(match.group("ax") or 1)
+    if match.group("sx") == "-":
+        ax = -ax
+    ay = Fraction(match.group("ay") or 1)
+    if match.group("sy") == "-":
+        ay = -ay
+    c = Fraction(match.group("c"))
+    if match.group("sc") == "-":
+        c = -c
+    digits = []
+    if match.group("ax"):
+        digits.append(Fraction(match.group("ax")))
+    if match.group("ay"):
+        digits.append(Fraction(match.group("ay")))
+    digits.append(Fraction(match.group("c")))
+    return ax, ay, c, digits
+
+
+def two_linear_equations_xy(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_LINEAR_EQUATIONS_XY.fullmatch(text)
+    if match is None:
+        return None
+    line1 = _xy_line(match.group("e1"))
+    line2 = _xy_line(match.group("e2"))
+    if line1 is None or line2 is None:
+        return None
+    a1, b1, c1, d1 = line1
+    a2, b2, c2, d2 = line2
+    numbers = digit_numbers(problem)
+    expected = d1 + d2
+    if len(numbers) != len(expected) or any(n[1] for n in numbers) or [n[0] for n in numbers] != expected:
+        return None
+    det = a1 * b2 - a2 * b1
+    if det == 0:
+        return None
+    x = (c1 * b2 - c2 * b1) / det
+    y = (a1 * c2 - a2 * c1) / det
+    if a1 * x + b1 * y != c1 or a2 * x + b2 * y != c2:
+        return None
+    eq = "%sx + %sy = %s; %sx + %sy = %s" % (show(a1), show(b1), show(c1), show(a2), show(b2), show(c2))
+    return Result(
+        "two_linear_equations_xy",
+        [x, y],
+        eq,
+        "%s, so x = %s and y = %s" % (eq, show_exact(x), show_exact(y))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
