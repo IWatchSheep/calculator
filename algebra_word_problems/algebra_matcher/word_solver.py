@@ -8192,7 +8192,755 @@ def motorbikes_cars_wheels(problem):
     eq = "2*m + 4*c = %s; m + c = %s" % (show(w), show(n))
     return Result("motorbikes_cars_wheels", [counts[1]], eq, "%s, so cars = %s" % (eq, show_exact(counts[1])))
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay, formula_perimeter_solve_width, fahrenheit_twice_celsius, fahrenheit_to_celsius, rental_car_days_plus_miles, item_coupon_when_coupon_exceeds_paid, sound_travel_time, raised_plus_per_item_to_goal, loses_value_each_year, part_is_percent_of_whole, split_bill_including_tip, percent_boys_given_girls, percent_up_then_down_ending, weekly_pay_plus_percent_of_sales, scale_model_from_real, map_scale_distance, similar_shadows_height, square_more_than_times_number, consecutive_squares_sum, square_plus_times_equals, polygon_diagonals_to_sides, triangular_sum_from_one, rope_cut_in_ratio, savings_jar_week_n, split_equal_simple_interest, simple_interest_years, ago_older_was_twice, clock_hands_together, jar_three_coins, average_of_consecutive, consecutive_times_smallest_vs_largest, plane_with_and_against_wind, two_digit_units_times_tens, round_trip_faster_return, diophantus_life_ages, exterior_equals_remote_interiors, vertical_angles_linear_pair_measures, isosceles_vertex_less_than_base, square_side_increase_area, rectangle_twice_width_area_same, pen_against_barn_two_dimensions, open_box_cut_squares, path_around_square_garden, aquarium_volume_depth, fewest_minutes_plan_b_cheaper, greatest_whole_garden_width, least_sales_for_pay_floor, drain_replace_pure_antifreeze, three_numbers_times_and_more, fraction_add_to_both, jog_minus_cycle_time, three_numbers_pair_sums, spelled_older_age_sum, times_as_old_add_up_today, rectangle_twice_long_around, garden_length_exceeds_area, triangle_angles_in_proportion, two_angles_sum_one_more, ladder_wall_base_height, later_same_track_catch, tap_and_leak_fill, pour_water_to_dilute, n_is_p_percent_of_which, cab_flag_plus_per_mile, gym_join_vs_monthly_equal, workers_days_inverse, thrown_up_from_ground, two_digit_sum_swap_up, ribbon_cut_ratio_short, budget_entry_plus_ride_tickets, lowest_last_exam_two_known, two_candles_burn_equal, fahrenheit_given_formula, trains_apart_toward_meet, beach_round_trip_two_speeds, salesperson_week_plus_percent, every_team_played_once, regular_polygon_each_interior, seesaw_child_other_side, clock_hands_line_up_hours, percent_boys_given_girls_club, shop_fixed_make_sell_break_even, car_loses_value_until, tank_quarter_add_three_quarters, pole_and_tree_shadows, mean_of_five_listed_fifth, square_side_grow_area, weeks_until_bike, stick_broken_two_ratio, plumber_come_out_plus_hour, trip_faster_same_distance, number_square_plus_times, grandpa_older_combined, cents_two_coins_dimes, cookies_brownies_count, pens_pencils_cents, motorbikes_cars_wheels,
+_YARD_PERIMETER_LENGTH_MORE = re.compile(
+    r"the perimeter of a rectangular yard is (?P<p>\d+(?:\.\d+)?) ft and the length is (?P<d>\d+(?:\.\d+)?) ft more than the width\. what are the dimensions\?")
+
+
+def yard_perimeter_length_more(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _YARD_PERIMETER_LENGTH_MORE.fullmatch(text)
+    if match is None:
+        return None
+    p, d = Fraction(match.group("p")), Fraction(match.group("d"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, d]:
+        return None
+    w = (p / 2 - d) / 2
+    length = w + d
+    if w <= 0 or length <= 0 or 2 * (w + length) != p:
+        return None
+    eq = "2(w + (w + %s)) = %s" % (show(d), show(p))
+    return Result("yard_perimeter_length_more", [w, length], eq, "%s, so w = %s and l = %s" % (eq, show_exact(w), show_exact(length)))
+
+
+_ISOSCELES_SIDES_LONGER_BASE = re.compile(
+    r"an isosceles triangle's equal sides are each (?P<d>\d+(?:\.\d+)?) cm longer than its base, and the perimeter is (?P<p>\d+(?:\.\d+)?) cm\. find the base\.")
+
+
+def isosceles_sides_longer_base(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ISOSCELES_SIDES_LONGER_BASE.fullmatch(text)
+    if match is None:
+        return None
+    d, p = Fraction(match.group("d")), Fraction(match.group("p"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d, p]:
+        return None
+    b = (p - 2 * d) / 3
+    if b <= 0 or 2 * (b + d) + b != p:
+        return None
+    eq = "2(b + %s) + b = %s" % (show(d), show(p))
+    return Result("isosceles_sides_longer_base", [b], eq, "%s, so b = %s" % (eq, show_exact(b)))
+
+
+_STRAIGHT_LINE_TWO_AX_C = re.compile(
+    r"two angles on a straight line are \((?P<a1>\d+)x (?P<op1>[+\-]) (?P<c1>\d+)\)° and \((?P<a2>\d+)x (?P<op2>[+\-]) (?P<c2>\d+)\)°\. find x\.")
+
+
+def straight_line_two_ax_c(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _STRAIGHT_LINE_TWO_AX_C.fullmatch(text)
+    if match is None:
+        return None
+    a1, c1 = _ax_plus_c(match.group("a1"), match.group("op1"), match.group("c1"))
+    a2, c2 = _ax_plus_c(match.group("a2"), match.group("op2"), match.group("c2"))
+    numbers = digit_numbers(problem)
+    raw = [Fraction(match.group(g)) for g in ("a1", "c1", "a2", "c2")]
+    if len(numbers) != 4 or any(n[1] for n in numbers) or [n[0] for n in numbers] != raw:
+        return None
+    if a1 + a2 == 0:
+        return None
+    x = (180 - c1 - c2) / (a1 + a2)
+    if a1 * x + c1 + a2 * x + c2 != 180:
+        return None
+    if not (0 < a1 * x + c1 < 180 and 0 < a2 * x + c2 < 180):
+        return None
+    eq = "(%sx %s %s) + (%sx %s %s) = 180" % (
+        show(a1), "+" if c1 >= 0 else "−", show(abs(c1)),
+        show(a2), "+" if c2 >= 0 else "−", show(abs(c2)))
+    return Result("straight_line_two_ax_c", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_POLYGON_HAS_DIAGONALS = re.compile(
+    r"how many diagonals\.\.\. no: a polygon has (?P<d>\d+) diagonals\. how many sides does it have\?")
+
+
+def polygon_has_diagonals(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _POLYGON_HAS_DIAGONALS.fullmatch(text)
+    if match is None:
+        return None
+    d = Fraction(match.group("d"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 1 or numbers[0][1] or numbers[0][0] != d:
+        return None
+    n = _positive_quadratic(1, -3, -2 * d)
+    if n is None or n.denominator != 1 or n < 3:
+        return None
+    if n * (n - 3) / 2 != d:
+        return None
+    eq = "n(n - 3)/2 = %s" % show(d)
+    return Result("polygon_has_diagonals", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_KITE_STRING_HEIGHT = re.compile(
+    r"a kite string is (?P<h>\d+(?:\.\d+)?) m long and the kite is directly above a point (?P<b>\d+(?:\.\d+)?) m away from the person\. how high is the kite\?")
+
+
+def kite_string_height(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _KITE_STRING_HEIGHT.fullmatch(text)
+    if match is None:
+        return None
+    h, b = Fraction(match.group("h")), Fraction(match.group("b"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [h, b]:
+        return None
+    reach = _pyth_leg(h, b)
+    if reach is None:
+        return None
+    eq = "x² + %s² = %s²" % (show(b), show(h))
+    return Result("kite_string_height", [reach], eq, "%s, so x = %s" % (eq, show_exact(reach)))
+
+
+_PLANE_WIND_SPEED_ONLY = re.compile(
+    r"a plane flies (?P<d>\d+(?:\.\d+)?) km with the wind in (?P<t1>\d+(?:\.\d+)?) hours and returns against the wind in (?P<t2>\d+(?:\.\d+)?) hours\. find the wind speed\.")
+
+
+def plane_wind_speed_only(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PLANE_WIND_SPEED_ONLY.fullmatch(text)
+    if match is None:
+        return None
+    d, t1, t2 = Fraction(match.group("d")), Fraction(match.group("t1")), Fraction(match.group("t2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d, t1, t2]:
+        return None
+    if t1 <= 0 or t2 <= 0 or t1 == t2:
+        return None
+    w = (d / t1 - d / t2) / 2
+    if w <= 0:
+        return None
+    eq = "(p + w)*%s = %s; (p - w)*%s = %s" % (show(t1), show(d), show(t2), show(d))
+    return Result("plane_wind_speed_only", [w], eq, "%s, so w = %s" % (eq, show_exact(w)))
+
+
+_TWO_GARDENERS_OTHER_ALONE = re.compile(
+    r"working together, two gardeners weed a park in (?P<t>\d+(?:\.\d+)?) hours\. one alone would need (?P<a>\d+(?:\.\d+)?) hours\. how long would the other need alone\?")
+
+
+def two_gardeners_other_alone(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_GARDENERS_OTHER_ALONE.fullmatch(text)
+    if match is None:
+        return None
+    t, a = Fraction(match.group("t")), Fraction(match.group("a"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [t, a]:
+        return None
+    if t <= 0 or a <= t:
+        return None
+    x = t * a / (a - t)
+    if x <= 0 or t / a + t / x != 1:
+        return None
+    eq = "%s/%s + %s/x = 1" % (show(t), show(a), show(t))
+    return Result("two_gardeners_other_alone", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_BUCKET_DILUTED_WITH_WATER = re.compile(
+    r"a (?P<v>\d+(?:\.\d+)?)-litre bucket of (?P<p>\d+(?:\.\d+)?)% paint thinner is diluted with water down to (?P<q>\d+(?:\.\d+)?)%\. how much water is added\?")
+
+
+def bucket_diluted_with_water(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BUCKET_DILUTED_WITH_WATER.fullmatch(text)
+    if match is None:
+        return None
+    v, p, q = Fraction(match.group("v")), Fraction(match.group("p")), Fraction(match.group("q"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [v, p, q]:
+        return None
+    if not (0 < q < p <= 100) or v <= 0:
+        return None
+    w = v * (p / q - 1)
+    if w <= 0 or p * v != q * (v + w):
+        return None
+    eq = "%s*%s = %s*(%s + w)" % (show(p), show(v), show(q), show(v))
+    return Result("bucket_diluted_with_water", [w], eq, "%s, so w = %s" % (eq, show_exact(w)))
+
+
+_PHONE_PLANS_CENTS_EQUAL = re.compile(
+    r"phone plan a is \$(?P<a>\d+(?:\.\d+)?) plus (?P<ca>\d+) cents a minute; plan b is \$(?P<b>\d+(?:\.\d+)?) plus (?P<cb>\d+) cents a minute\. at how many minutes are they equal\?")
+
+
+def phone_plans_cents_equal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PHONE_PLANS_CENTS_EQUAL.fullmatch(text)
+    if match is None:
+        return None
+    a, ca, b, cb = (Fraction(match.group(g)) for g in ("a", "ca", "b", "cb"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, True, False] or [n[0] for n in numbers] != [a, ca, b, cb]:
+        return None
+    ra, rb = ca / 100, cb / 100
+    if ra == rb:
+        return None
+    m = (b - a) / (ra - rb)
+    if m <= 0 or a + ra * m != b + rb * m:
+        return None
+    eq = "%s + (%s/100)*m = %s + (%s/100)*m" % (show(a), show(ca), show(b), show(cb))
+    return Result("phone_plans_cents_equal", [m], eq, "%s, so m = %s" % (eq, show_exact(m)))
+
+
+_STONE_THROWN_UP_LAND = re.compile(
+    r"a stone is dropped\.\.\. thrown upward at (?P<v>\d+(?:\.\d+)?) ft/s from ground level with h = -(?P<g>\d+(?:\.\d+)?)t² \+ (?P<v2>\d+(?:\.\d+)?)t\. when does it come back down\?")
+
+
+def stone_thrown_up_land(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _STONE_THROWN_UP_LAND.fullmatch(text)
+    if match is None:
+        return None
+    v, g, v2 = Fraction(match.group("v")), Fraction(match.group("g")), Fraction(match.group("v2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [v, g, v2]:
+        return None
+    if v != v2 or g <= 0 or v <= 0:
+        return None
+    t = v / g
+    if t <= 0 or -g * t * t + v * t != 0:
+        return None
+    eq = "-%s*t² + %s*t = 0" % (show(g), show(v))
+    return Result("stone_thrown_up_land", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+_TWO_PLANTS_GROW_EQUAL = re.compile(
+    r"two plants are (?P<h1>\d+(?:\.\d+)?) cm and (?P<h2>\d+(?:\.\d+)?) cm tall\. the first grows (?P<r1>\d+(?:\.\d+)?) cm per week and the second (?P<r2>\d+(?:\.\d+)?) cm per week\. when will they be the same height\?")
+
+
+def two_plants_grow_equal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_PLANTS_GROW_EQUAL.fullmatch(text)
+    if match is None:
+        return None
+    h1, h2, r1, r2 = (Fraction(match.group(g)) for g in ("h1", "h2", "r1", "r2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [h1, h2, r1, r2]:
+        return None
+    if r1 == r2:
+        return None
+    t = (h2 - h1) / (r1 - r2)
+    if t <= 0 or h1 + r1 * t != h2 + r2 * t:
+        return None
+    eq = "%s + %s*t = %s + %s*t" % (show(h1), show(r1), show(h2), show(r2))
+    return Result("two_plants_grow_equal", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+_BEADS_THREE_RATIO_BLUE = re.compile(
+    r"red, white and blue beads are in the ratio (?P<a>\d+):(?P<b>\d+):(?P<c>\d+), with (?P<n>\d+) beads total\. how many blue beads\?")
+
+
+def beads_three_ratio_blue(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BEADS_THREE_RATIO_BLUE.fullmatch(text)
+    if match is None:
+        return None
+    a, b, c, n = (Fraction(match.group(g)) for g in ("a", "b", "c", "n"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [num[0] for num in numbers] != [a, b, c, n]:
+        return None
+    parts = a + b + c
+    if parts <= 0:
+        return None
+    blue = n * c / parts
+    if blue <= 0 or blue > n:
+        return None
+    eq = "blue = %s*%s/(%s + %s + %s)" % (show(n), show(c), show(a), show(b), show(c))
+    return Result("beads_three_ratio_blue", [blue], eq, "%s, so blue = %s" % (eq, show_exact(blue)))
+
+
+_BLEND_FROM_TWO_POUND_PRICES = re.compile(
+    r"a (?P<n>\d+(?:\.\d+)?) lb blend worth \$(?P<m>\d+(?:\.\d+)?) a pound is made from \$(?P<a>\d+(?:\.\d+)?) a pound coffee and \$(?P<b>\d+(?:\.\d+)?) a pound coffee\. how many pounds of each\?")
+
+
+def blend_from_two_pound_prices(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BLEND_FROM_TWO_POUND_PRICES.fullmatch(text)
+    if match is None:
+        return None
+    n, m, a, b = (Fraction(match.group(g)) for g in ("n", "m", "a", "b"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [False, True, True, True] or [num[0] for num in numbers] != [n, m, a, b]:
+        return None
+    counts = _two_counts(n, a, b, m * n)
+    if counts is None:
+        return None
+    eq = "%s*x + %s*(%s - x) = %s" % (show(a), show(b), show(n), show(m * n))
+    return Result("blend_from_two_pound_prices", [counts[0], counts[1]], eq, "%s, so %s lb and %s lb" % (eq, show_exact(counts[0]), show_exact(counts[1])))
+
+
+_MATH_SCORES_NEXT_AVERAGE = re.compile(
+    r"my scores in math are (?P<a>\d+(?:\.\d+)?), (?P<b>\d+(?:\.\d+)?) and (?P<c>\d+(?:\.\d+)?)\. what score on the next exam brings my average up to (?P<m>\d+(?:\.\d+)?)\?")
+
+
+def math_scores_next_average(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MATH_SCORES_NEXT_AVERAGE.fullmatch(text)
+    if match is None:
+        return None
+    a, b, c, m = (Fraction(match.group(g)) for g in ("a", "b", "c", "m"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, c, m]:
+        return None
+    x = 4 * m - (a + b + c)
+    eq = "(%s + %s + %s + x)/4 = %s" % (show(a), show(b), show(c), show(m))
+    return Result("math_scores_next_average", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_BARN_DUCKS_GOATS_HEADS_FEET = re.compile(
+    r"a barn holds ducks and goats\. counting heads gives (?P<h>\d+) and counting feet gives (?P<f>\d+)\. how many ducks are there\?")
+
+
+def barn_ducks_goats_heads_feet(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BARN_DUCKS_GOATS_HEADS_FEET.fullmatch(text)
+    if match is None:
+        return None
+    h, f = Fraction(match.group("h")), Fraction(match.group("f"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [h, f]:
+        return None
+    counts = _two_counts(h, 2, 4, f)
+    if counts is None:
+        return None
+    eq = "2*d + 4*g = %s; d + g = %s" % (show(f), show(h))
+    return Result("barn_ducks_goats_heads_feet", [counts[0], counts[1]], eq, "%s, so ducks = %s and goats = %s" % (eq, show_exact(counts[0]), show_exact(counts[1])))
+
+
+_CYCLIST_SPELLED_HOURS_CATCH = re.compile(
+    r"a cyclist leaves home at (?P<s>\d+(?:\.\d+)?) mph\. (?P<h>two|three|four|five|six|seven|eight|nine|ten) hours later her friend follows on the same road at (?P<f>\d+(?:\.\d+)?) mph\. how long after her friend leaves until she is caught\?")
+
+
+def cyclist_spelled_hours_catch(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CYCLIST_SPELLED_HOURS_CATCH.fullmatch(text)
+    if match is None:
+        return None
+    s, h, f = Fraction(match.group("s")), fr(match.group("h")), Fraction(match.group("f"))
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [s, f] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    if f <= s or h <= 0:
+        return None
+    t = s * h / (f - s)
+    if t <= 0 or s * (t + h) != f * t:
+        return None
+    eq = "%s*(t + %s) = %s*t" % (show(s), show(h), show(f))
+    return Result("cyclist_spelled_hours_catch", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+_WHOLE_NUMBERS_FOLLOW_PRODUCT = re.compile(
+    r"two whole numbers that follow each other multiply to (?P<p>\d+)\. which numbers are they\?")
+
+
+def whole_numbers_follow_product(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WHOLE_NUMBERS_FOLLOW_PRODUCT.fullmatch(text)
+    if match is None:
+        return None
+    p = Fraction(match.group("p"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 1 or numbers[0][1] or numbers[0][0] != p:
+        return None
+    x = _positive_quadratic(1, 1, -p)
+    if x is None or x.denominator != 1:
+        return None
+    if x * (x + 1) != p:
+        return None
+    eq = "x(x + 1) = %s" % show(p)
+    return Result("whole_numbers_follow_product", [x, x + 1], eq, "%s, so the numbers are %s and %s" % (eq, show_exact(x), show_exact(x + 1)))
+
+
+_MOTORBOAT_STILL_WATER = re.compile(
+    r"a motorboat goes (?P<d1>\d+(?:\.\d+)?) miles with the current in (?P<t1>\d+(?:\.\d+)?) hours and (?P<d2>\d+(?:\.\d+)?) miles against the current in (?P<t2>\d+(?:\.\d+)?) hours\. what is the speed of the boat in still water\?")
+
+
+def motorboat_still_water(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MOTORBOAT_STILL_WATER.fullmatch(text)
+    if match is None:
+        return None
+    d1, t1, d2, t2 = (Fraction(match.group(g)) for g in ("d1", "t1", "d2", "t2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d1, t1, d2, t2]:
+        return None
+    if t1 <= 0 or t2 <= 0:
+        return None
+    still = (d1 / t1 + d2 / t2) / 2
+    if still <= 0:
+        return None
+    eq = "(d/%s + u/%s)/2" % (show(t1), show(t2))
+    return Result("motorboat_still_water", [still], eq, "%s, so still water is %s" % (eq, show_exact(still)))
+
+
+_TWO_JARS_GROW_EQUAL = re.compile(
+    r"savings jar a holds \$(?P<a>\d+(?:\.\d+)?) and grows by \$(?P<ra>\d+(?:\.\d+)?) a week\. jar b holds \$(?P<b>\d+(?:\.\d+)?) and grows by \$(?P<rb>\d+(?:\.\d+)?) a week\. after how many weeks are they equal\?")
+
+
+def two_jars_grow_equal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_JARS_GROW_EQUAL.fullmatch(text)
+    if match is None:
+        return None
+    a, ra, b, rb = (Fraction(match.group(g)) for g in ("a", "ra", "b", "rb"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, True, True, True] or [n[0] for n in numbers] != [a, ra, b, rb]:
+        return None
+    if ra == rb:
+        return None
+    w = (b - a) / (ra - rb)
+    if w <= 0 or a + ra * w != b + rb * w:
+        return None
+    eq = "%s + %s*w = %s + %s*w" % (show(a), show(ra), show(b), show(rb))
+    return Result("two_jars_grow_equal", [w], eq, "%s, so w = %s" % (eq, show_exact(w)))
+
+
+_CATERER_PLUS_PER_PERSON = re.compile(
+    r"a caterer charges \$(?P<f>\d+(?:\.\d+)?) plus \$(?P<r>\d+(?:\.\d+)?) per person\. the invoice came to \$(?P<t>\d+(?:\.\d+)?)\. how many people ate\?")
+
+
+def caterer_plus_per_person(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CATERER_PLUS_PER_PERSON.fullmatch(text)
+    if match is None:
+        return None
+    f, r, t = Fraction(match.group("f")), Fraction(match.group("r")), Fraction(match.group("t"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [True, True, True] or [n[0] for n in numbers] != [f, r, t]:
+        return None
+    if r <= 0 or t <= f:
+        return None
+    n = (t - f) / r
+    if n <= 0:
+        return None
+    eq = "%s + %s*n = %s" % (show(f), show(r), show(t))
+    return Result("caterer_plus_per_person", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_JUICE_ADDED_TO_CHEAPER = re.compile(
+    r"how many liters of juice worth \$(?P<a>\d+(?:\.\d+)?) per liter must be added to (?P<v>\d+(?:\.\d+)?) liters of juice worth \$(?P<b>\d+(?:\.\d+)?) per liter to make a mix worth \$(?P<m>\d+(?:\.\d+)?) per liter\?")
+
+
+def juice_added_to_cheaper(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _JUICE_ADDED_TO_CHEAPER.fullmatch(text)
+    if match is None:
+        return None
+    a, v, b, m = (Fraction(match.group(g)) for g in ("a", "v", "b", "m"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, True, True] or [n[0] for n in numbers] != [a, v, b, m]:
+        return None
+    if a == m:
+        return None
+    x = v * (m - b) / (a - m)
+    if x <= 0 or a * x + b * v != m * (x + v):
+        return None
+    eq = "%s*x + %s*%s = %s*(x + %s)" % (show(a), show(b), show(v), show(m), show(v))
+    return Result("juice_added_to_cheaper", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_TRIANGLE_RATIO_EACH_ANGLE = re.compile(
+    r"in a triangle the three angles are in the ratio (?P<a>\d+):(?P<b>\d+):(?P<c>\d+)\. find each angle\.")
+
+
+def triangle_ratio_each_angle(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TRIANGLE_RATIO_EACH_ANGLE.fullmatch(text)
+    if match is None:
+        return None
+    a, b, c = Fraction(match.group("a")), Fraction(match.group("b")), Fraction(match.group("c"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, c]:
+        return None
+    parts = a + b + c
+    if parts <= 0:
+        return None
+    vals = [180 * a / parts, 180 * b / parts, 180 * c / parts]
+    if sum(vals) != 180:
+        return None
+    eq = "180*(%s:%s:%s)/%s" % (show(a), show(b), show(c), show(parts))
+    return Result("triangle_ratio_each_angle", vals, eq, "%s, so the angles are %s, %s, %s" % (eq, show_exact(vals[0]), show_exact(vals[1]), show_exact(vals[2])))
+
+
+_TIMES_AS_OLD_LATER_TWICE = re.compile(
+    r"(?P<a>[a-z]+) is (?P<k>\d+) times as old as (?P<b>[a-z]+)\. in (?P<y>\d+) years, (?P=a) will be twice as old as (?P=b)\. how old is each now\?")
+
+
+def times_as_old_later_twice(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TIMES_AS_OLD_LATER_TWICE.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("a") == match.group("b"):
+        return None
+    k, y = Fraction(match.group("k")), Fraction(match.group("y"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [k, y]:
+        return None
+    if k <= 2:
+        return None
+    young = y / (k - 2)
+    older = k * young
+    if young <= 0 or older <= 0 or older + y != 2 * (young + y):
+        return None
+    eq = "%s*x + %s = 2(x + %s)" % (show(k), show(y), show(y))
+    return Result("times_as_old_later_twice", [young, older], eq, "%s, so x = %s and %s*x = %s" % (eq, show_exact(young), show(k), show_exact(older)))
+
+
+_BUS_SPLIT_EQUAL_PER_PERSON = re.compile(
+    r"a concert bus costs \$(?P<f>\d+(?:\.\d+)?) plus \$(?P<r>\d+(?:\.\d+)?) per ticket\. the bus is split equally and each person pays \$(?P<p>\d+(?:\.\d+)?) in total\. how many people\?")
+
+
+def bus_split_equal_per_person(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BUS_SPLIT_EQUAL_PER_PERSON.fullmatch(text)
+    if match is None:
+        return None
+    f, r, p = Fraction(match.group("f")), Fraction(match.group("r")), Fraction(match.group("p"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [True, True, True] or [n[0] for n in numbers] != [f, r, p]:
+        return None
+    if p <= r:
+        return None
+    n = f / (p - r)
+    if n <= 0 or (f + r * n) / n != p:
+        return None
+    eq = "(%s + %s*n)/n = %s" % (show(f), show(r), show(p))
+    return Result("bus_split_equal_per_person", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_TWO_FLOURS_POUNDS = re.compile(
+    r"a bakery sold (?P<n>\d+(?:\.\d+)?) lb of two flours, one at \$(?P<a>\d+(?:\.\d+)?)/lb and one at \$(?P<b>\d+(?:\.\d+)?)/lb, for \$(?P<t>\d+(?:\.\d+)?)\. how many lb of each\?")
+
+
+def two_flours_pounds(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_FLOURS_POUNDS.fullmatch(text)
+    if match is None:
+        return None
+    n, a, b, t = (Fraction(match.group(g)) for g in ("n", "a", "b", "t"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [False, True, True, True] or [num[0] for num in numbers] != [n, a, b, t]:
+        return None
+    counts = _two_counts(n, a, b, t)
+    if counts is None:
+        return None
+    eq = "%s*x + %s*(%s - x) = %s" % (show(a), show(b), show(n), show(t))
+    return Result("two_flours_pounds", [counts[0], counts[1]], eq, "%s, so %s lb and %s lb" % (eq, show_exact(counts[0]), show_exact(counts[1])))
+
+
+_CLOUD_INCLUDED_GB_EXTRA = re.compile(
+    r"a cloud plan costs \$(?P<base>\d+(?:\.\d+)?) a month and includes (?P<inc>\d+) gb\. every additional gb costs \$(?P<r>\d+(?:\.\d+)?)\. the total came to \$(?P<t>\d+(?:\.\d+)?)\. how many gb were stored\?")
+
+
+def cloud_included_gb_extra(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CLOUD_INCLUDED_GB_EXTRA.fullmatch(text)
+    if match is None:
+        return None
+    base, inc, r, t = (Fraction(match.group(g)) for g in ("base", "inc", "r", "t"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, True, True] or [n[0] for n in numbers] != [base, inc, r, t]:
+        return None
+    if r <= 0 or t < base:
+        return None
+    extra = (t - base) / r
+    total = inc + extra
+    if extra < 0 or total <= 0:
+        return None
+    eq = "%s + %s*(g - %s) = %s" % (show(base), show(r), show(inc), show(t))
+    return Result("cloud_included_gb_extra", [total], eq, "%s, so g = %s" % (eq, show_exact(total)))
+
+
+_WINNER_PERCENT_MARGIN_VOTES = re.compile(
+    r"in a race between two people, the winner received (?P<p>\d+(?:\.\d+)?)% of the votes and won by (?P<m>\d+) votes\. how many votes were cast\?")
+
+
+def winner_percent_margin_votes(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WINNER_PERCENT_MARGIN_VOTES.fullmatch(text)
+    if match is None:
+        return None
+    p, m = Fraction(match.group("p")), Fraction(match.group("m"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, m]:
+        return None
+    if p <= 50 or p >= 100:
+        return None
+    n = m * 100 / (2 * p - 100)
+    if n <= 0:
+        return None
+    eq = "(2*%s/100 - 1)*n = %s" % (show(p), show(m))
+    return Result("winner_percent_margin_votes", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_ALLOWANCE_PLUS_TASKS_MONTHS = re.compile(
+    r"(?P<name>[a-z]+) gets \$(?P<base>\d+(?:\.\d+)?) allowance a month plus \$(?P<r>\d+(?:\.\d+)?) for each extra task\. for (?P<m>\d+) months the total was \$(?P<t>\d+(?:\.\d+)?)\. how many extra tasks were done\?")
+
+
+def allowance_plus_tasks_months(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ALLOWANCE_PLUS_TASKS_MONTHS.fullmatch(text)
+    if match is None:
+        return None
+    base, r, m, t = (Fraction(match.group(g)) for g in ("base", "r", "m", "t"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, True, False, True] or [n[0] for n in numbers] != [base, r, m, t]:
+        return None
+    if r <= 0 or m <= 0:
+        return None
+    tasks = (t - base * m) / r
+    if tasks < 0:
+        return None
+    eq = "%s*%s + %s*k = %s" % (show(base), show(m), show(r), show(t))
+    return Result("allowance_plus_tasks_months", [tasks], eq, "%s, so k = %s" % (eq, show_exact(tasks)))
+
+
+_BOAT_COVERS_THEN_FARTHER = re.compile(
+    r"a boat covers (?P<d>\d+(?:\.\d+)?) km in (?P<t>\d+(?:\.\d+)?) hours\. at this speed, how far does it go in (?P<t2>\d+(?:\.\d+)?) hours\?")
+
+
+def boat_covers_then_farther(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _BOAT_COVERS_THEN_FARTHER.fullmatch(text)
+    if match is None:
+        return None
+    d, t, t2 = Fraction(match.group("d")), Fraction(match.group("t")), Fraction(match.group("t2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d, t, t2]:
+        return None
+    if t <= 0 or t2 <= 0:
+        return None
+    d2 = d / t * t2
+    eq = "d/%s = x/%s" % (show(t), show(t2))
+    return Result("boat_covers_then_farther", [d2], eq, "%s, so x = %s" % (eq, show_exact(d2)))
+
+
+_CATS_DOGS_RATIO_THEN_EQUAL = re.compile(
+    r"the ratio of cats to dogs at a shelter is (?P<a>\d+):(?P<b>\d+)\. after (?P<more>\d+) more cats arrive, the ratio becomes 1:1\. how many animals were there originally\?")
+
+
+def cats_dogs_ratio_then_equal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CATS_DOGS_RATIO_THEN_EQUAL.fullmatch(text)
+    if match is None:
+        return None
+    a, b, more = Fraction(match.group("a")), Fraction(match.group("b")), Fraction(match.group("more"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 5 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, more, Fraction(1), Fraction(1)]:
+        return None
+    if a == b:
+        return None
+    k = more / (b - a)
+    if k <= 0:
+        return None
+    orig = k * (a + b)
+    if a * k + more != b * k:
+        return None
+    eq = "%s*k + %s = %s*k" % (show(a), show(more), show(b))
+    return Result("cats_dogs_ratio_then_equal", [orig], eq, "%s, so original total = %s" % (eq, show_exact(orig)))
+
+
+_PUMP_LITRES_IN_MINUTES = re.compile(
+    r"a pump moves (?P<d>\d+(?:\.\d+)?) litres in (?P<t>\d+(?:\.\d+)?) minutes\. how many litres does it move in (?P<t2>\d+(?:\.\d+)?) minutes\?")
+
+
+def pump_litres_in_minutes(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PUMP_LITRES_IN_MINUTES.fullmatch(text)
+    if match is None:
+        return None
+    d, t, t2 = Fraction(match.group("d")), Fraction(match.group("t")), Fraction(match.group("t2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d, t, t2]:
+        return None
+    if t <= 0 or t2 <= 0:
+        return None
+    d2 = d / t * t2
+    eq = "%s/%s = x/%s" % (show(d), show(t), show(t2))
+    return Result("pump_litres_in_minutes", [d2], eq, "%s, so x = %s" % (eq, show_exact(d2)))
+
+
+_TWO_PIPES_AND_DRAIN_FILL = re.compile(
+    r"pipe a fills a pool in (?P<a>\d+(?:\.\d+)?) hours, pipe b in (?P<b>\d+(?:\.\d+)?) hours, and a drain empties it in (?P<d>\d+(?:\.\d+)?) hours\. with everything open, how long does it take to fill the empty pool\?")
+
+
+def two_pipes_and_drain_fill(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_PIPES_AND_DRAIN_FILL.fullmatch(text)
+    if match is None:
+        return None
+    a, b, d = Fraction(match.group("a")), Fraction(match.group("b")), Fraction(match.group("d"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, d]:
+        return None
+    rate = 1 / a + 1 / b - 1 / d
+    if rate <= 0:
+        return None
+    t = 1 / rate
+    if t <= 0:
+        return None
+    eq = "1/%s + 1/%s - 1/%s = 1/t" % (show(a), show(b), show(d))
+    return Result("two_pipes_and_drain_fill", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+_SPENT_PERCENT_HAD_LEFT = re.compile(
+    r"(?P<name>[a-z]+) spent (?P<p>\d+(?:\.\d+)?)% of an allowance on games and had \$(?P<left>\d+(?:\.\d+)?) left\. how much was the allowance\?")
+
+
+def spent_percent_had_left(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SPENT_PERCENT_HAD_LEFT.fullmatch(text)
+    if match is None:
+        return None
+    p, left = Fraction(match.group("p")), Fraction(match.group("left"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or [flag for _v, flag, _s, _e in numbers] != [False, True] or [n[0] for n in numbers] != [p, left]:
+        return None
+    if not (0 < p < 100):
+        return None
+    n = left * 100 / (100 - p)
+    if n <= 0:
+        return None
+    eq = "(100 - %s)/100 * n = %s" % (show(p), show(left))
+    return Result("spent_percent_had_left", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_SPLIT_TWO_RATES_CD = re.compile(
+    r"(?P<name>[a-z]+) splits \$(?P<p>\d+(?:\.\d+)?) between a savings account at (?P<r1>\d+(?:\.\d+)?)% and a cd at (?P<r2>\d+(?:\.\d+)?)%\. she earned \$(?P<i>\d+(?:\.\d+)?) in interest this year\. how much is in the cd\?")
+
+
+def split_two_rates_cd(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SPLIT_TWO_RATES_CD.fullmatch(text)
+    if match is None:
+        return None
+    p, r1, r2, i = (Fraction(match.group(g)) for g in ("p", "r1", "r2", "i"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, False, True] or [n[0] for n in numbers] != [p, r1, r2, i]:
+        return None
+    if r1 == r2:
+        return None
+    cd = (i * 100 - r1 * p) / (r2 - r1)
+    sav = p - cd
+    if cd <= 0 or sav <= 0:
+        return None
+    if r1 * sav / 100 + r2 * cd / 100 != i:
+        return None
+    eq = "(%s/100)*(%s - x) + (%s/100)*x = %s" % (show(r1), show(p), show(r2), show(i))
+    return Result("split_two_rates_cd", [sav, cd], eq, "%s, so the CD holds %s" % (eq, show_exact(cd)))
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay, formula_perimeter_solve_width, fahrenheit_twice_celsius, fahrenheit_to_celsius, rental_car_days_plus_miles, item_coupon_when_coupon_exceeds_paid, sound_travel_time, raised_plus_per_item_to_goal, loses_value_each_year, part_is_percent_of_whole, split_bill_including_tip, percent_boys_given_girls, percent_up_then_down_ending, weekly_pay_plus_percent_of_sales, scale_model_from_real, map_scale_distance, similar_shadows_height, square_more_than_times_number, consecutive_squares_sum, square_plus_times_equals, polygon_diagonals_to_sides, triangular_sum_from_one, rope_cut_in_ratio, savings_jar_week_n, split_equal_simple_interest, simple_interest_years, ago_older_was_twice, clock_hands_together, jar_three_coins, average_of_consecutive, consecutive_times_smallest_vs_largest, plane_with_and_against_wind, two_digit_units_times_tens, round_trip_faster_return, diophantus_life_ages, exterior_equals_remote_interiors, vertical_angles_linear_pair_measures, isosceles_vertex_less_than_base, square_side_increase_area, rectangle_twice_width_area_same, pen_against_barn_two_dimensions, open_box_cut_squares, path_around_square_garden, aquarium_volume_depth, fewest_minutes_plan_b_cheaper, greatest_whole_garden_width, least_sales_for_pay_floor, drain_replace_pure_antifreeze, three_numbers_times_and_more, fraction_add_to_both, jog_minus_cycle_time, three_numbers_pair_sums, spelled_older_age_sum, times_as_old_add_up_today, rectangle_twice_long_around, garden_length_exceeds_area, triangle_angles_in_proportion, two_angles_sum_one_more, ladder_wall_base_height, later_same_track_catch, tap_and_leak_fill, pour_water_to_dilute, n_is_p_percent_of_which, cab_flag_plus_per_mile, gym_join_vs_monthly_equal, workers_days_inverse, thrown_up_from_ground, two_digit_sum_swap_up, ribbon_cut_ratio_short, budget_entry_plus_ride_tickets, lowest_last_exam_two_known, two_candles_burn_equal, fahrenheit_given_formula, trains_apart_toward_meet, beach_round_trip_two_speeds, salesperson_week_plus_percent, every_team_played_once, regular_polygon_each_interior, seesaw_child_other_side, clock_hands_line_up_hours, percent_boys_given_girls_club, shop_fixed_make_sell_break_even, car_loses_value_until, tank_quarter_add_three_quarters, pole_and_tree_shadows, mean_of_five_listed_fifth, square_side_grow_area, weeks_until_bike, stick_broken_two_ratio, plumber_come_out_plus_hour, trip_faster_same_distance, number_square_plus_times, grandpa_older_combined, cents_two_coins_dimes, cookies_brownies_count, pens_pencils_cents, motorbikes_cars_wheels, yard_perimeter_length_more, isosceles_sides_longer_base, straight_line_two_ax_c, polygon_has_diagonals, kite_string_height, plane_wind_speed_only, two_gardeners_other_alone, bucket_diluted_with_water, phone_plans_cents_equal, stone_thrown_up_land, two_plants_grow_equal, beads_three_ratio_blue, blend_from_two_pound_prices, math_scores_next_average, barn_ducks_goats_heads_feet, cyclist_spelled_hours_catch, whole_numbers_follow_product, motorboat_still_water, two_jars_grow_equal, caterer_plus_per_person, juice_added_to_cheaper, triangle_ratio_each_angle, times_as_old_later_twice, bus_split_equal_per_person, two_flours_pounds, cloud_included_gb_extra, winner_percent_margin_votes, allowance_plus_tasks_months, boat_covers_then_farther, cats_dogs_ratio_then_equal, pump_litres_in_minutes, two_pipes_and_drain_fill, spent_percent_had_left, split_two_rates_cd,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

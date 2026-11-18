@@ -62,8 +62,8 @@ Run everything from algebra_word_problems/algebra_matcher/ :   python -m unittes
   families in word_solver.FAMILIES:               104 (58 written by hand + 46 archive families from archive_families.json)
   generated problems claimed by the solver:       526 of 1,000, WRONG: 0   (349 by the hand families + 177 by the archive families)
   generated problems still unclaimed:             474   (184 distinct wording shapes, listed in the appendix)
-  hand-written problems answered:                 84 by the word solver (HAND_ANSWERS, all match the hand-calculated answers); number-puzzle still answers the remaining puzzle sentences in HAND_TEST / FRESH_TEST;
-                                                  the stored catalog is 478 Ready + 1 Reference (0950, linearly dependent prices). 45 new families cover unmatched HAND/FRESH wordings without changing existing families.
+  hand-written problems answered:                 96 by the word solver (HAND_ANSWERS, all match the hand-calculated answers); number-puzzle still answers the remaining puzzle sentences in HAND_TEST / FRESH_TEST;
+                                                  the stored catalog is 478 Ready + 1 Reference (0950, linearly dependent prices). A later batch added 34 more families for leftover HAND/FRESH and fresh-set sentences. The roof Pythagorean wording is left unclaimed because 5 m and 12 m never enter the equation.
   tests:                                          175 word-solver, number-puzzle and archive-family tests, all pass (python -m unittest test_word_solver test_number_puzzle test_archive_families); tests/test_word_archive.py has 3 more
   fresh sets:                                     49 files (fresh_word_problems.py ... fresh_word_problems_49.py); sets 4, 43 and a few others are "development sets" (they found a hole and were fixed; see the notes in the results file)
   git:                                            branch main, last commit before Batch 45 is bb7e45f (Batch 45 is the next commit), pushed to https://github.com/IWatchSheep/calculator
