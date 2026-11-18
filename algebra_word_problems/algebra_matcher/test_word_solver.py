@@ -196,6 +196,24 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Dev has $18,000.00 invested at 3%. How much more must be invested at 6% so that the total earns 6% overall?"))
         self.assertIsNone(answers("Dev has $18,000.00 invested at 3%. How much interest does that earn?"))
 
+    def test_overtime_hours_time_and_a_half(self):
+        cases = [
+            ("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many overtime hours were worked?", 5),
+            ("Pablo earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $832.00. How many overtime hours were worked?", 8),
+            ("Priya earns $12/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $552.00. How many overtime hours were worked?", 4),
+            ("Caleb earns $18/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $801.00. How many overtime hours were worked?", 3),
+            ("Jamal earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $808.00. How many overtime hours were worked?", 7),
+        ]
+        for sentence, expected in cases:
+            result = WS.overtime_hours_time_and_a_half(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(expected)], sentence)
+            self.assertEqual(len(result.values), 1, sentence)
+        self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $800.00. How many overtime hours were worked?"))
+        self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many hours did Sam work?"))
+        self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and double time after that. Last week's pay was $950.00. How many overtime hours were worked?"))
+        self.assertIsNone(WS.overtime_hours_time_and_a_half("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $955.00. How many overtime hours were worked?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
