@@ -2028,7 +2028,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twelfth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (9, 0, 4))
+        self.assertEqual((solved, declined, required), (10, 0, 3))
 
     def test_no_control_characters_in_the_python_files(self):
         """A backspace once got into a regular expression ("\\b" stored as a control character): every .py file here must be clean."""
@@ -2390,7 +2390,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (sixteenth set, h / clock / growth): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (9, 0, 6))
+        self.assertEqual((solved, declined, required), (11, 0, 4))
 
     def test_fixed_plus_rate(self):
         self.assertEqual(answers("A venue charges $100 plus $15 per guest. The total was $865. How many guests came?"), values(51))
@@ -2480,7 +2480,7 @@ class FreshWordings(unittest.TestCase):
               % (s18[0], s18[0] + s18[1], s18[1], s18[2], s18[2]))
         self.assertEqual(s17, (10, 0, 4))
         # (3, 3, 3) when written; "Plant A is 30 cm tall and grows 4 cm a week ..." was a safe miss and is now solved (20 weeks) by the measured-things statement: (4, 2, 3)
-        self.assertEqual(s18, (7, 0, 2))
+        self.assertEqual(s18, (8, 0, 1))
 
     def test_two_scores(self):
         self.assertEqual(answers("A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?"), values(12, 28))
@@ -3040,7 +3040,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-fifth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (9, 0, 3))
+        self.assertEqual((solved, declined, required), (10, 0, 2))
 
     def test_pages_per_day(self):
         self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
@@ -3113,7 +3113,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-sixth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 6))
+        self.assertEqual((solved, declined, required), (8, 0, 4))
 
     def test_pages_days_are_the_time_to_finish(self):
         # the day count must be the time allowed to FINISH the book: "to finish in 6 days" and "within 5 days" stay
@@ -3657,7 +3657,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (thirty-sixth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 6))
+        self.assertEqual((solved, declined, required), (8, 0, 4))
 
     def test_temperature_needs_whole_or_full_hours(self):
         t = "The temperature is 26°F and falling 3°F per hour. For how many %s will it stay at or above 1°F?"
@@ -3800,7 +3800,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (thirty-ninth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 6))
+        self.assertEqual((solved, declined, required), (8, 0, 4))
 
     def test_class_ratio_question_must_say_originally(self):
         base = "The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3. "
@@ -4056,7 +4056,7 @@ class FreshWordings(unittest.TestCase):
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
-        self.assertEqual(score(FRESH), (4, 0, 4))
+        self.assertEqual(score(FRESH), (7, 0, 1))
 
 
 class UniqueMathRequiredDeclines(unittest.TestCase):

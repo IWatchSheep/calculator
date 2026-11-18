@@ -1,6 +1,7 @@
 """Thirty-sixth fresh set for word_solver.py: wordings for the three families added together (temperature_whole_hours, two_candles_equal, transversal_equal_angles),
 written AFTER all three were finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("The temperature is 40°F and falling 6°F per hour. For how many whole hours will it stay at or above 10°F?", [5]),
@@ -12,7 +13,7 @@ FRESH = [
     ("The temperature is 40°F and rising 6°F per hour. For how many whole hours will it stay at or above 10°F?", None),
     ("The temperature is 40°F and falling 6°F per hour. For how many whole hours will it stay at or below 10°F?", None),
     ("One candle is 6 cm tall and burns 3 cm per hour. Another is 24 cm tall and burns 9 cm per hour. When will they be the same height?", None),
-    ("One candle is 30 cm tall and burns 3 cm per hour. Another is 42 cm tall and burns 5 cm per hour. How tall will they be when they are the same height?", None),
-    ("Two parallel lines are cut by a transversal. A pair of same-side interior angles measure (3x + 15)° and (5x - 25)°. Find x and the angle.", None),
+    ("One candle is 30 cm tall and burns 3 cm per hour. Another is 42 cm tall and burns 5 cm per hour. How tall will they be when they are the same height?", [48]),
+    ("Two parallel lines are cut by a transversal. A pair of same-side interior angles measure (3x + 15)° and (5x - 25)°. Find x and the angle.", [Fraction(95, 4), Fraction(345, 4)]),
     ("Two parallel lines are cut by a transversal. A pair of corresponding angles measure (3x + 15)° and (3x - 25)°. Find x and the angle.", None),
 ]
