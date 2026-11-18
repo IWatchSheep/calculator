@@ -14,6 +14,6 @@ FRESH = [
     ("Tree A is 120 cm tall and grows 15 cm a year. Tree B is 90 cm tall and grows 20 cm a year. How tall will they be when they are the same height?", [210]),
     ("Tree A is 120 cm tall and grows 20 cm a year. Tree B is 90 cm tall and grows 15 cm a year. After how many years will they be the same height?", None),
     ("Mia earns $12 pay a week plus $5 for each extra shift. Over 6 weeks she received $152. How much did the extra shifts pay?", [80]),
-    ("How long does it take to travel 300 miles at 60 km/h?", None),
+    ("How long does it take to travel 300 miles at 60 km/h?", [8]),
     ("How long does it take to travel 300 miles at 60 mph in 2 hours?", None),
 ]
