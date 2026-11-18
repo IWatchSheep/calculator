@@ -6,7 +6,7 @@ Equation: c + w = 50;  3c − w = 90
 Solve   : Solve by elimination → c = 35, w = 15
 Answer  : 35 correct, 15 wrong
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: test_correct_and_wrong_penalty answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'c + w = 50;  3c − w = 90'
 SOLVE = 'Solve by elimination → c = 35, w = 15'
 ANSWER = '35 correct, 15 wrong'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'test_correct_and_wrong_penalty'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A test has {0} questions. Each correct answer earns {1} points and each wrong answer loses {2}. Priya answered every question and scored {3}. How many were correct?'
 NUMBERS = ['50', '3', '1', '90']

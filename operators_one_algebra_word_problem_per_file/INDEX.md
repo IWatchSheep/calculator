@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 326 ready (311 word_solver, 15 number_puzzle), 153 reference.
+479 problems: 330 ready (315 word_solver, 15 number_puzzle), 149 reference.
 
 ## Age
 
@@ -694,7 +694,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there? | 8 tables of 4, 9 tables of 8 | Reference |  | `system_of_equations/0891/` |
 | 0892 | The sum of two numbers is 126 and their difference is 100. Find the numbers. | 113 and 13 | Ready | sum_difference | `system_of_equations/0892/` |
 | 0893 | A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many of each are there? | 54 motorcycles and 59 cars | Reference |  | `system_of_equations/0893/` |
-| 0894 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question and scored 180. How many were correct? | 46 correct, 4 wrong | Reference |  | `system_of_equations/0894/` |
+| 0894 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question and scored 180. How many were correct? | 46 correct, 4 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0894/` |
 | 0895 | A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many of each were rented? | 10 2-person and 3 4-person | Reference |  | `system_of_equations/0895/` |
 | 0896 | A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each? | 27 $10 bills and 11 $20 bills | Reference |  | `system_of_equations/0896/` |
 | 0900 | A lot has bicycles and tricycles. There are 112 vehicles and 277 wheels. How many of each are there? | 59 bicycles and 53 tricycles | Reference |  | `system_of_equations/0900/` |
@@ -703,17 +703,17 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0904 | Vera is 5 times as old as Xena. In 18 years, Vera will be 3 times as old as Xena. How old is each now? | Vera 90, Xena 18 | Ready | ages_later_multiple | `system_of_equations/0904/` |
 | 0908 | 2 coffees and 5 muffins cost $33.85. 3 coffees and 5 muffins cost $37.90. Find the price of one of each. | coffees: $4.05 each, muffins: $5.15 each | Ready | two_purchases | `system_of_equations/0908/` |
 | 0910 | Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y. | x = 1, y = -9 | Reference |  | `system_of_equations/0910/` |
-| 0911 | A test has 50 questions. Each correct answer earns 3 points and each wrong answer loses 1. Priya answered every question and scored 90. How many were correct? | 35 correct, 15 wrong | Reference |  | `system_of_equations/0911/` |
+| 0911 | A test has 50 questions. Each correct answer earns 3 points and each wrong answer loses 1. Priya answered every question and scored 90. How many were correct? | 35 correct, 15 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0911/` |
 | 0912 | Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y. | x = 4, y = 2 | Reference |  | `system_of_equations/0912/` |
 | 0920 | A farm has chickens and pigs. There are 48 heads and 138 legs. How many of each are there? | 27 chickens and 21 pigs | Ready | heads_and_feet | `system_of_equations/0920/` |
 | 0921 | 1 notebooks and 6 pens cost $32.85. 1 notebooks and 3 pens cost $19.20. Find the price of one of each. | notebooks: $5.55 each, pens: $4.55 each | Ready | two_purchases | `system_of_equations/0921/` |
 | 0923 | Kofi bought 36 stamps, some at 55¢ and some at 70¢, for $21.30. How many of each? | 26 at 55¢, 10 at 70¢ | Ready | two_prices_known_count | `system_of_equations/0923/` |
 | 0924 | Hiro is 5 times as old as Xena. In 2 years, Hiro will be 4 times as old as Xena. How old is each now? | Hiro 30, Xena 6 | Ready | ages_later_multiple | `system_of_equations/0924/` |
-| 0925 | A test has 30 questions. Each correct answer earns 5 points and each wrong answer loses 2. Zoe answered every question and scored 52. How many were correct? | 16 correct, 14 wrong | Reference |  | `system_of_equations/0925/` |
+| 0925 | A test has 30 questions. Each correct answer earns 5 points and each wrong answer loses 2. Zoe answered every question and scored 52. How many were correct? | 16 correct, 14 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0925/` |
 | 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y. | x = -9, y = -2 | Reference |  | `system_of_equations/0928/` |
 | 0931 | Kira is 4 times as old as Ava. In 8 years, Kira will be 2 times as old as Ava. How old is each now? | Kira 16, Ava 4 | Ready | ages_later_multiple | `system_of_equations/0931/` |
 | 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there? | 4 spiders and 13 beetles | Reference |  | `system_of_equations/0932/` |
-| 0936 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Noah answered every question and scored 75. How many were correct? | 25 correct, 25 wrong | Reference |  | `system_of_equations/0936/` |
+| 0936 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Noah answered every question and scored 75. How many were correct? | 25 correct, 25 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0936/` |
 | 0941 | Omar bought 39 stamps, some at 50¢ and some at 75¢, for $23.00. How many of each? | 25 at 50¢, 14 at 75¢ | Ready | two_prices_known_count | `system_of_equations/0941/` |
 | 0942 | Gus bought 40 stamps, some at 44¢ and some at 63¢, for $21.97. How many of each? | 17 at 44¢, 23 at 63¢ | Ready | two_prices_known_count | `system_of_equations/0942/` |
 

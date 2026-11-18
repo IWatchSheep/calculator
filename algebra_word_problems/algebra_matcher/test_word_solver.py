@@ -399,6 +399,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $4.00. How many games were bowled?"))
         self.assertIsNone(answers("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $10.00. How many games were bowled?"))
 
+    def test_test_correct_and_wrong_penalty(self):
+        cases = [
+            ("A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question and scored 180. How many were correct?", 46, 4),
+            ("A test has 50 questions. Each correct answer earns 3 points and each wrong answer loses 1. Priya answered every question and scored 90. How many were correct?", 35, 15),
+            ("A test has 30 questions. Each correct answer earns 5 points and each wrong answer loses 2. Zoe answered every question and scored 52. How many were correct?", 16, 14),
+            ("A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Noah answered every question and scored 75. How many were correct?", 25, 25),
+        ]
+        for sentence, correct, wrong in cases:
+            result = WS.test_correct_and_wrong_penalty(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(correct), Fraction(wrong)], sentence)
+        self.assertIsNone(WS.test_correct_and_wrong_penalty("92 points from 40 field goals, all 2- and 3-pointers. How many of each?"))
+        self.assertIsNone(answers("A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question and scored 180. How many were skipped?"))
+        self.assertIsNone(WS.test_correct_and_wrong_penalty("A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?"))
+        self.assertIsNone(answers("A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus left some blank and scored 180. How many were correct?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

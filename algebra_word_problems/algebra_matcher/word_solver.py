@@ -3977,7 +3977,59 @@ def bowling_games_plus_shoe_rental(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental,
+# Every question answered: c + w = N, p*c - q*w = S.
+# Answers are c, w.
+_TEST_CORRECT_AND_WRONG_PENALTY = re.compile(
+    r"a test has "
+    r"(?P<total>\d+) questions\. "
+    r"each correct answer earns "
+    r"(?P<correct_points>\d+) points "
+    r"and each wrong answer loses "
+    r"(?P<wrong_penalty>\d+)\. "
+    r"(?P<name>[a-z]+) answered every question "
+    r"and scored (?P<score>\d+)\. "
+    r"how many were correct\?")
+
+
+def test_correct_and_wrong_penalty(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TEST_CORRECT_AND_WRONG_PENALTY.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [False, False, False, False]:
+        return None
+    total = Fraction(match.group("total"))
+    correct_points = Fraction(match.group("correct_points"))
+    wrong_penalty = Fraction(match.group("wrong_penalty"))
+    score = Fraction(match.group("score"))
+    if [n[0] for n in numbers] != [total, correct_points, wrong_penalty, score]:
+        return None
+    if total <= 0 or correct_points <= 0 or wrong_penalty <= 0:
+        return None
+    denominator = correct_points + wrong_penalty
+    if denominator <= 0:
+        return None
+    correct = (score + wrong_penalty * total) / denominator
+    wrong = total - correct
+    if correct <= 0 or wrong <= 0 or correct.denominator != 1 or wrong.denominator != 1:
+        return None
+    if correct + wrong != total:
+        return None
+    if correct_points * correct - wrong_penalty * wrong != score:
+        return None
+    eq = "c + w = %s; %s*c - %s*w = %s" % (
+        show(total), show(correct_points), show(wrong_penalty), show(score)
+    )
+    return Result(
+        "test_correct_and_wrong_penalty",
+        [correct, wrong],
+        eq,
+        "%s, so c = %s and w = %s" % (eq, show_exact(correct), show_exact(wrong))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
