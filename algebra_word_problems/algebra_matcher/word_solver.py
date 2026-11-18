@@ -3681,7 +3681,69 @@ def estate_three_heirs_times_and_more(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more,
+# After a gift the marble ratio changes.
+# (a*k - g)/(b*k + g) = c/d. Answers are a*k, b*k.
+_MARBLES_GIVEN_RATIO_CHANGES = re.compile(
+    r"the ratio of "
+    r"(?P<giver>[a-z]+)'s marbles to "
+    r"(?P<receiver>[a-z]+)'s is "
+    r"(?P<a>\d+):(?P<b>\d+)\. "
+    r"after (?P=giver) gives (?P=receiver) "
+    r"(?P<gift>\d+) marbles, "
+    r"the ratio is "
+    r"(?P<c>\d+):(?P<d>\d+)\. "
+    r"how many did each have at first\?")
+
+
+def marbles_given_ratio_changes(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MARBLES_GIVEN_RATIO_CHANGES.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("giver") == match.group("receiver"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 5 or [n[1] for n in numbers] != [False, False, False, False, False]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    gift = Fraction(match.group("gift"))
+    c = Fraction(match.group("c"))
+    d = Fraction(match.group("d"))
+    if [n[0] for n in numbers] != [a, b, gift, c, d]:
+        return None
+    if a <= 0 or b <= 0 or c <= 0 or d <= 0 or gift <= 0:
+        return None
+    denominator = d * a - c * b
+    if denominator <= 0:
+        return None
+    scale = gift * (c + d) / denominator
+    if scale <= 0:
+        return None
+    first = a * scale
+    second = b * scale
+    if first <= 0 or second <= 0 or first.denominator != 1 or second.denominator != 1:
+        return None
+    first_after = first - gift
+    second_after = second + gift
+    if first_after <= 0 or second_after <= 0:
+        return None
+    if d * first_after != c * second_after or b * first != a * second:
+        return None
+    if first_after + second_after != first + second:
+        return None
+    eq = "(%s*k - %s)/(%s*k + %s) = %s/%s" % (show(a), show(gift), show(b), show(gift), show(c), show(d))
+    return Result(
+        "marbles_given_ratio_changes",
+        [first, second],
+        eq,
+        "%s, so k = %s, %s*k = %s, and %s*k = %s" % (
+            eq, show_exact(scale), show(a), show_exact(first), show(b), show_exact(second)
+        )
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

@@ -301,6 +301,23 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Wes. How much does each receive?"))
         self.assertIsNone(WS.estate_three_heirs_times_and_more("An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Wes, and Noah gets $6,500.00 more than Wes. How much does each receive?"))
 
+    def test_marbles_given_ratio_changes(self):
+        cases = [
+            ("The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did each have at first?", 18, 30),
+            ("The ratio of Hana's marbles to Maya's is 1:1. After Hana gives Maya 23 marbles, the ratio is 1:3. How many did each have at first?", 46, 46),
+            ("The ratio of Ben's marbles to Carla's is 3:5. After Ben gives Carla 16 marbles, the ratio is 1:7. How many did each have at first?", 24, 40),
+            ("The ratio of Yusuf's marbles to Zane's is 5:6. After Yusuf gives Zane 18 marbles, the ratio is 2:9. How many did each have at first?", 30, 36),
+            ("The ratio of Gus's marbles to Kira's is 6:5. After Gus gives Kira 16 marbles, the ratio is 4:7. How many did each have at first?", 48, 40),
+        ]
+        for sentence, first, second in cases:
+            result = WS.marbles_given_ratio_changes(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(first), Fraction(second)], sentence)
+        self.assertIsNone(answers("The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did Yusuf have at first?"))
+        self.assertIsNone(answers("The ratio of Yusuf's marbles to Dev's is 3:5. After Dev gives Yusuf 12 marbles, the ratio is 1:7. How many did each have at first?"))
+        self.assertIsNone(answers("The ratio of Yusuf's coins to Dev's is 3:5. After Yusuf gives Dev 12 coins, the ratio is 1:7. How many did each have at first?"))
+        self.assertIsNone(WS.marbles_given_ratio_changes("The ratio of Yusuf's marbles to Yusuf's is 3:5. After Yusuf gives Yusuf 12 marbles, the ratio is 1:7. How many did each have at first?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

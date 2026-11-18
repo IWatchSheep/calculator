@@ -6,7 +6,7 @@ Equation: (k − 23)/(k + 23) = 1/3
 Solve   : Multiply both sides by the denominator and collect terms → k = 46
 Answer  : Hana 46, Maya 46
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: marbles_given_ratio_changes answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(k − 23)/(k + 23) = 1/3'
 SOLVE = 'Multiply both sides by the denominator and collect terms → k = 46'
 ANSWER = 'Hana 46, Maya 46'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'marbles_given_ratio_changes'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "The ratio of Hana's marbles to Maya's is {0}:{1}. After Hana gives Maya {2} marbles, the ratio is {3}:{4}. How many did each have at first?"
 NUMBERS = ['1', '1', '23', '1', '3']
