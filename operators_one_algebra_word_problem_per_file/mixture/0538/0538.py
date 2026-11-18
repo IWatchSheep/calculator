@@ -6,7 +6,7 @@ Equation: 0.3(4) + x = 0.8(4 + x)
 Solve   : x/5 = 2 → x = 2 × 5 = 10
 Answer  : 10 L
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: pure_antifreeze_added answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.3(4) + x = 0.8(4 + x)'
 SOLVE = 'x/5 = 2 → x = 2 × 5 = 10'
 ANSWER = '10 L'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'pure_antifreeze_added'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'How many liters of pure antifreeze must be added to {0} L of a {1}% antifreeze mix to get a {2}% mix?'
 NUMBERS = ['4', '30', '80']

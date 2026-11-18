@@ -6,7 +6,7 @@ Equation: x + y = 113;  2x + 4y = 344
 Solve   : 2x + 4(113 − x) = 344 → x = 54, y = 59
 Answer  : 54 motorcycles and 59 cars
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: lot_two_wheel_vehicles answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + y = 113;  2x + 4y = 344'
 SOLVE = '2x + 4(113 − x) = 344 → x = 54, y = 59'
 ANSWER = '54 motorcycles and 59 cars'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'lot_two_wheel_vehicles'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A lot has motorcycles and cars. There are {0} vehicles and {1} wheels. How many of each are there?'
 NUMBERS = ['113', '344']

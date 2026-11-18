@@ -6,7 +6,7 @@ Equation: 1000 + 0.02s = 490 + 0.05s
 Solve   : 0.03s = 510 → s = 17000
 Answer  : $17,000.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_jobs_same_commission_pay answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '1000 + 0.02s = 490 + 0.05s'
 SOLVE = '0.03s = 510 → s = 17000'
 ANSWER = '$17,000.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_jobs_same_commission_pay'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Job A pays ${0} a month plus {1}% commission. Job B pays ${2} a month plus {3}% commission. At what monthly sales total do both pay the same?'
 NUMBERS = ['1000', '2', '490', '5']

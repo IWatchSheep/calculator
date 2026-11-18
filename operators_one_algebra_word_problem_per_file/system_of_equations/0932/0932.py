@@ -6,7 +6,7 @@ Equation: x + y = 17;  8x + 6y = 110
 Solve   : 8x + 6(17 − x) = 110 → x = 4, y = 13
 Answer  : 4 spiders and 13 beetles
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: farm_spiders_and_beetles answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + y = 17;  8x + 6y = 110'
 SOLVE = '8x + 6(17 − x) = 110 → x = 4, y = 13'
 ANSWER = '4 spiders and 13 beetles'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'farm_spiders_and_beetles'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A farm has spiders and beetles. There are {0} bugs and {1} legs. How many of each are there?'
 NUMBERS = ['17', '110']

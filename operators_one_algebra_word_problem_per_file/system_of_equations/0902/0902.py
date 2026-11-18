@@ -6,7 +6,7 @@ Equation: x + y = 16;  4x + 6y = 74
 Solve   : Solve by elimination → x = 11, y = 5
 Answer  : 11 4-person and 5 6-person
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: camp_two_seat_sizes answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + y = 16;  4x + 6y = 74'
 SOLVE = 'Solve by elimination → x = 11, y = 5'
 ANSWER = '11 4-person and 5 6-person'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'camp_two_seat_sizes'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A camp rents {0} paddle boats for {1} campers, filling every seat. Some paddle boats hold {2} people and the rest hold {3}. How many of each were rented?'
 NUMBERS = ['16', '74', '4', '6']

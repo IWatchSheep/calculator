@@ -6,7 +6,7 @@ Equation: n(n − 1)/2 = 45
 Solve   : n² − n − 90 = 0 → n = 10 (the other root, -9, is rejected)
 Answer  : 10
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: handshake_or_round_robin_count answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'n(n − 1)/2 = 45'
 SOLVE = 'n² − n − 90 = 0 → n = 10 (the other root, -9, is rejected)'
 ANSWER = '10'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'handshake_or_round_robin_count'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'In a round-robin tournament each team plays every other team once, for {0} games. How many teams are there?'
 NUMBERS = ['45']

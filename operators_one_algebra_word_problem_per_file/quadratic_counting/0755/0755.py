@@ -6,7 +6,7 @@ Equation: n(n − 1)/2 = 10
 Solve   : n² − n − 20 = 0 → n = 5 (the other root, -4, is rejected)
 Answer  : 5
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: handshake_or_round_robin_count answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'n(n − 1)/2 = 10'
 SOLVE = 'n² − n − 20 = 0 → n = 5 (the other root, -4, is rejected)'
 ANSWER = '5'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'handshake_or_round_robin_count'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'At a party everyone shook hands with everyone else exactly once, for {0} handshakes. How many people were there?'
 NUMBERS = ['10']

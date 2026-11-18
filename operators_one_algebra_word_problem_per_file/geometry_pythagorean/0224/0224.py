@@ -6,7 +6,7 @@ Equation: x² + 4² = 5²
 Solve   : x² − 9 = 0 → x = 3 (the other root, -3, is rejected)
 Answer  : 3 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_side_and_diagonal answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x² + 4² = 5²'
 SOLVE = 'x² − 9 = 0 → x = 3 (the other root, -3, is rejected)'
 ANSWER = '3 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_side_and_diagonal'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rectangular field is {0} m long. A diagonal path across it is {1} m long. How wide is the field?'
 NUMBERS = ['4', '5']

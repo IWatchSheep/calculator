@@ -6,7 +6,7 @@ Equation: x + (x + 11) + (2x − 5) = 122
 Solve   : 4x = 116 → x = 29
 Answer  : 29 in, 40 in, 53 in
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: triangle_three_sides_perimeter answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + (x + 11) + (2x − 5) = 122'
 SOLVE = '4x = 116 → x = 29'
 ANSWER = '29 in, 40 in, 53 in'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'triangle_three_sides_perimeter'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A triangle's second side is {0} in longer than the first, and its third side is {1} in less than twice the first. If the perimeter is {2} in, how long is each side?"
 NUMBERS = ['11', '5', '122']
