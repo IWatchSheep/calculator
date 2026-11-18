@@ -3413,7 +3413,44 @@ def more_invested_for_overall_rate(problem):
     return Result("more_invested_for_overall_rate", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate,
+# Overtime at time-and-a-half. The only answer is the overtime hours.
+# regular * wage + h * (3/2) * wage = pay.
+_OVERTIME_HOURS_TIME_AND_A_HALF = re.compile(
+    r"(?P<name>[a-z]+) earns "
+    r"\$(?P<wage>\d+(?:\.\d+)?)/hour "
+    r"for the first (?P<regular>\d+(?:\.\d+)?) hours "
+    r"and time-and-a-half after that\. "
+    r"last week's pay was "
+    r"\$(?P<pay>\d+(?:\.\d+)?)\. "
+    r"how many overtime hours were worked\?")
+
+
+def overtime_hours_time_and_a_half(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _OVERTIME_HOURS_TIME_AND_A_HALF.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, False, True]:
+        return None
+    wage = Fraction(match.group("wage"))
+    regular = Fraction(match.group("regular"))
+    pay = Fraction(match.group("pay"))
+    if [n[0] for n in numbers] != [wage, regular, pay]:
+        return None
+    if wage <= 0 or regular <= 0 or pay <= regular * wage:
+        return None
+    half = Fraction(3, 2)
+    overtime = (pay - regular * wage) / (wage * half)
+    if overtime <= 0 or overtime.denominator != 1:
+        return None
+    if regular * wage + overtime * half * wage != pay:
+        return None
+    eq = "%s(%s) + %sh = %s" % (show(regular), show(wage), show(wage * half), show(pay))
+    return Result("overtime_hours_time_and_a_half", [overtime], eq, "%s, so h = %s" % (eq, show_exact(overtime)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

@@ -6,7 +6,7 @@ Equation: 40(16) + 24h = 832
 Solve   : 24h = 192 → h = 8
 Answer  : 8 overtime hours (48 hours total)
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: overtime_hours_time_and_a_half answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '40(16) + 24h = 832'
 SOLVE = '24h = 192 → h = 8'
 ANSWER = '8 overtime hours (48 hours total)'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'overtime_hours_time_and_a_half'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "Pablo earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?"
 NUMBERS = ['16', '40', '832.00']
