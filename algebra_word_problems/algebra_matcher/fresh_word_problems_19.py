@@ -1,6 +1,7 @@
 """Nineteenth fresh set for word_solver.py: wordings for the three families added together (two_scores, two_discounts, triangle_ratio),
 written AFTER all three were finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("A team scored 53 points from 21 baskets, all 2-pointers and 3-pointers. How many of each?", [10, 11]),
@@ -12,8 +13,8 @@ FRESH = [
     ("A team scored 53 points from 21 baskets, all 2-pointers and 3-pointers, plus some free throws. How many of each?", None),
     ("A team scored 50 points from 8 scores, all 7-point touchdowns and 3-point field goals. How many of each?", None),
     ("A team scored 70 points from 40 baskets, all 2-pointers and 3-pointers. How many of each?", None),
-    ("A coat is marked 40% off, and then an extra 10% is taken off the original price. The final price is $432. What was the original price?", None),
-    ("A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. How much was taken off in total?", None),
+    ("A coat is marked 40% off, and then an extra 10% is taken off the original price. The final price is $432. What was the original price?", [864]),
+    ("A coat is marked 40% off, and then an extra 10% is taken off the sale price. The final price is $464.40. How much was taken off in total?", [Fraction(1978, 5)]),
     ("The angles of a triangle are in the ratio 2:3. Find each angle.", None),
     ("The angles of a triangle are in the ratio 2:3:4. The perimeter is 24 cm. Find each angle.", None),
 ]

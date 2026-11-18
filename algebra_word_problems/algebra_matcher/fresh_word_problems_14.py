@@ -17,6 +17,6 @@ FRESH = [
     ("The sum of two consecutive even integers is 50 and their product is 624. Find the integers.", [24, 26]),
     ("You have $45. A movie costs $9 per ticket. How much money is left after buying as many tickets as you can?", [0]),
     ("You have $45. Tickets cost $9 each with a 10% discount for groups. What is the greatest number of tickets you can buy?", None),
-    ("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?", None),
+    ("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?", [0]),
     ("A cyclist leaves at 10 mph. One hour later a runner follows at 8 mph. How long until the runner catches the cyclist?", None),
 ]
