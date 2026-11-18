@@ -267,6 +267,23 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Tara has 3 more than 4 times as many coins as Aiden. Together they have 38 coins. How many does each have?"))
         self.assertIsNone(WS.more_than_times_stamps("Tara has 3 more than 4 times as many stamps as Aiden. Together they have 3 stamps. How many does each have?"))
 
+    def test_give_until_equal_money(self):
+        cases = [
+            ("Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much did each have at first?", 43, 129),
+            ("Grace has 4 times as much money as Nia. After Grace gives Nia $42, they have the same amount. How much did each have at first?", 28, 112),
+            ("Wren has 3 times as much money as Sam. After Wren gives Sam $15, they have the same amount. How much did each have at first?", 15, 45),
+            ("Ben has 3 times as much money as Dev. After Ben gives Dev $38, they have the same amount. How much did each have at first?", 38, 114),
+            ("Victor has 2 times as much money as Yara. After Victor gives Yara $25, they have the same amount. How much did each have at first?", 50, 100),
+        ]
+        for sentence, smaller, larger in cases:
+            result = WS.give_until_equal_money(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(smaller), Fraction(larger)], sentence)
+        self.assertIsNone(answers("Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much does Fatima have after?"))
+        self.assertIsNone(answers("Aiden has 1 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much did each have at first?"))
+        self.assertIsNone(answers("Aiden has 3 times as much money as Fatima. After Fatima gives Aiden $43, they have the same amount. How much did each have at first?"))
+        self.assertIsNone(WS.give_until_equal_money("Aiden has 3 times as much money as Aiden. After Aiden gives Aiden $43, they have the same amount. How much did each have at first?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

@@ -6,7 +6,7 @@ Equation: 4x − 42 = x + 42
 Solve   : 3x = 84 → x = 28
 Answer  : Nia $28, Grace $112
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: give_until_equal_money answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4x − 42 = x + 42'
 SOLVE = '3x = 84 → x = 28'
 ANSWER = 'Nia $28, Grace $112'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'give_until_equal_money'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Grace has {0} times as much money as Nia. After Grace gives Nia ${1}, they have the same amount. How much did each have at first?'
 NUMBERS = ['4', '42']
