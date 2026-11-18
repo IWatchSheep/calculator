@@ -3579,7 +3579,54 @@ def more_than_times_stamps(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps,
+# Giver has k times the receiver. After a gift they are equal.
+# k*x - g = x + g. Answers are x, then k*x.
+_GIVE_UNTIL_EQUAL_MONEY = re.compile(
+    r"(?P<giver>[a-z]+) has "
+    r"(?P<k>\d+) times as much money as "
+    r"(?P<receiver>[a-z]+)\. "
+    r"after (?P=giver) gives (?P=receiver) "
+    r"\$(?P<gift>\d+(?:\.\d+)?), "
+    r"they have the same amount\. "
+    r"how much did each have at first\?")
+
+
+def give_until_equal_money(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _GIVE_UNTIL_EQUAL_MONEY.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("giver") == match.group("receiver"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or [n[1] for n in numbers] != [False, True]:
+        return None
+    k = Fraction(match.group("k"))
+    gift = Fraction(match.group("gift"))
+    if [n[0] for n in numbers] != [k, gift]:
+        return None
+    if k.denominator != 1 or k < 2 or gift <= 0:
+        return None
+    smaller = (2 * gift) / (k - 1)
+    larger = k * smaller
+    if smaller <= 0 or larger <= 0:
+        return None
+    giver_after = larger - gift
+    receiver_after = smaller + gift
+    if giver_after <= 0 or receiver_after <= 0 or giver_after != receiver_after:
+        return None
+    if larger != k * smaller:
+        return None
+    eq = "%s*x - %s = x + %s" % (show(k), show(gift), show(gift))
+    return Result(
+        "give_until_equal_money",
+        [smaller, larger],
+        eq,
+        "%s, so x = %s and %s*x = %s" % (eq, show_exact(smaller), show(k), show_exact(larger))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

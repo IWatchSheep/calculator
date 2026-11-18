@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 290 ready (275 word_solver, 15 number_puzzle), 189 reference.
+479 problems: 295 ready (280 word_solver, 15 number_puzzle), 184 reference.
 
 ## Age
 
@@ -452,23 +452,23 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0573 | If you divide a number by 7 and add 1, you get -3. What was the number? | -28 | Ready | number_puzzle | `number_puzzle/0573/` |
 | 0574 | Five times a number, decreased by 19, is 106. Find the number. | 25 | Ready | number_puzzle | `number_puzzle/0574/` |
 | 0575 | One-fourth of a number plus one-half of the same number is 48. Find the number. | 64 | Ready | number_puzzle | `number_puzzle/0575/` |
-| 0576 | Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much did each have at first? | Fatima $43, Aiden $129 | Reference |  | `number_puzzle/0576/` |
+| 0576 | Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. How much did each have at first? | Fatima $43, Aiden $129 | Ready | give_until_equal_money | `number_puzzle/0576/` |
 | 0577 | 1/2 of a number plus 27 is 39. Find the number. | 24 | Ready | number_puzzle | `number_puzzle/0577/` |
 | 0578 | 6 times a number minus 4 equals 5 times the number plus 6. Find the number. | 10 | Ready | number_puzzle | `number_puzzle/0578/` |
-| 0579 | Grace has 4 times as much money as Nia. After Grace gives Nia $42, they have the same amount. How much did each have at first? | Nia $28, Grace $112 | Reference |  | `number_puzzle/0579/` |
+| 0579 | Grace has 4 times as much money as Nia. After Grace gives Nia $42, they have the same amount. How much did each have at first? | Nia $28, Grace $112 | Ready | give_until_equal_money | `number_puzzle/0579/` |
 | 0581 | One-third of a number is 4 more than one-fifth of it. Find the number. | 30 | Ready | number_puzzle | `number_puzzle/0581/` |
 | 0582 | A number divided by 9, then increased by 9, gives 10. Find the number. | 9 | Ready | number_puzzle | `number_puzzle/0582/` |
 | 0584 | When 4 is subtracted from a number and the result is multiplied by 5, the answer is 60. Find the number. | 16 | Ready | number_puzzle | `number_puzzle/0584/` |
 | 0585 | Grace has 9 more than 4 times as many stamps as Uma. Together they have 139 stamps. How many does each have? | Uma: 26, Grace: 113 | Ready | more_than_times_stamps | `number_puzzle/0585/` |
 | 0586 | 9 times a number, increased by 31, is 229. Find the number. | 22 | Ready | number_puzzle | `number_puzzle/0586/` |
-| 0591 | Wren has 3 times as much money as Sam. After Wren gives Sam $15, they have the same amount. How much did each have at first? | Sam $15, Wren $45 | Reference |  | `number_puzzle/0591/` |
+| 0591 | Wren has 3 times as much money as Sam. After Wren gives Sam $15, they have the same amount. How much did each have at first? | Sam $15, Wren $45 | Ready | give_until_equal_money | `number_puzzle/0591/` |
 | 0594 | Caleb has 12 more than 3 times as many stamps as Bea. Together they have 88 stamps. How many does each have? | Bea: 19, Caleb: 69 | Ready | more_than_times_stamps | `number_puzzle/0594/` |
 | 0596 | One-fourth of a number is 2 more than one-fifth of it. Find the number. | 40 | Ready | number_puzzle | `number_puzzle/0596/` |
-| 0597 | Ben has 3 times as much money as Dev. After Ben gives Dev $38, they have the same amount. How much did each have at first? | Dev $38, Ben $114 | Reference |  | `number_puzzle/0597/` |
+| 0597 | Ben has 3 times as much money as Dev. After Ben gives Dev $38, they have the same amount. How much did each have at first? | Dev $38, Ben $114 | Ready | give_until_equal_money | `number_puzzle/0597/` |
 | 0600 | Isla has 5 more than 2 times as many stamps as Caleb. Together they have 26 stamps. How many does each have? | Caleb: 7, Isla: 19 | Ready | more_than_times_stamps | `number_puzzle/0600/` |
 | 0603 | If you divide a number by 5 and add 10, you get 26. What was the number? | 80 | Ready | number_puzzle | `number_puzzle/0603/` |
 | 0604 | Four times a number, increased by 1, is 117. Find the number. | 29 | Ready | number_puzzle | `number_puzzle/0604/` |
-| 0607 | Victor has 2 times as much money as Yara. After Victor gives Yara $25, they have the same amount. How much did each have at first? | Yara $50, Victor $100 | Reference |  | `number_puzzle/0607/` |
+| 0607 | Victor has 2 times as much money as Yara. After Victor gives Yara $25, they have the same amount. How much did each have at first? | Yara $50, Victor $100 | Ready | give_until_equal_money | `number_puzzle/0607/` |
 | 0608 | 6 times the difference of a number and 11 is -108. What is the number? | -7 | Ready | number_puzzle | `number_puzzle/0608/` |
 | 0610 | 9 times a number, decreased by 11, is 205. Find the number. | 24 | Ready | number_puzzle | `number_puzzle/0610/` |
 | 0611 | Maya has 5 more than 4 times as many stamps as Ben. Together they have 285 stamps. How many does each have? | Ben: 56, Maya: 229 | Ready | more_than_times_stamps | `number_puzzle/0611/` |
