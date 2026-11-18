@@ -430,6 +430,21 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there if 3 are pennies?"))
         self.assertIsNone(WS.nickels_and_quarters_count("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How much is that in cents?"))
 
+    def test_hour_later_toward_meet(self):
+        cases = [
+            ("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How long after Jamal leaves do they meet?", 3),
+            ("Carla and Zane live 370 miles apart. Carla drives toward Zane at 58 mph. 1 hour later, Zane starts driving toward Carla at 46 mph. How long after Zane leaves do they meet?", 3),
+            ("Victor and Aiden live 327 miles apart. Victor drives toward Aiden at 63 mph. 1 hour later, Aiden starts driving toward Victor at 69 mph. How long after Aiden leaves do they meet?", 2),
+        ]
+        for sentence, hours in cases:
+            result = WS.hour_later_toward_meet(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(hours)], sentence)
+        self.assertIsNone(WS.hour_later_toward_meet("Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Emeka at 65 mph. How long after Quinn leaves do they meet?"))
+        self.assertIsNone(WS.hour_later_toward_meet("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. Jamal drives toward Carla at 41 mph. How long until they meet?"))
+        self.assertIsNone(answers("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How far has Carla driven when they meet?"))
+        self.assertIsNone(answers("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How long after Carla leaves do they meet?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

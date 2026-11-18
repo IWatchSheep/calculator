@@ -4070,7 +4070,64 @@ def nickels_and_quarters_count(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count,
+_HOUR_LATER_TOWARD_MEET = re.compile(
+    r"(?P<first_person>[a-z]+) and "
+    r"(?P<second_person>[a-z]+) live "
+    r"(?P<distance>\d+(?:\.\d+)?) miles apart\. "
+    r"(?P=first_person) drives toward "
+    r"(?P=second_person) at "
+    r"(?P<speed1>\d+(?:\.\d+)?) mph\. "
+    r"(?P<delay>1) hour later, "
+    r"(?P=second_person) starts driving toward "
+    r"(?P=first_person) at "
+    r"(?P<speed2>\d+(?:\.\d+)?) mph\. "
+    r"how long after (?P=second_person) "
+    r"leaves do they meet\?")
+
+
+def hour_later_toward_meet(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _HOUR_LATER_TOWARD_MEET.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first_person") == match.group("second_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [False, False, False, False]:
+        return None
+    distance = Fraction(match.group("distance"))
+    speed1 = Fraction(match.group("speed1"))
+    delay = Fraction(match.group("delay"))
+    speed2 = Fraction(match.group("speed2"))
+    if [n[0] for n in numbers] != [distance, speed1, delay, speed2]:
+        return None
+    if delay != 1 or distance <= 0 or speed1 <= 0 or speed2 <= 0:
+        return None
+    distance_before_second_leaves = speed1 * delay
+    if distance <= distance_before_second_leaves:
+        return None
+    combined_speed = speed1 + speed2
+    if combined_speed <= 0:
+        return None
+    time = (distance - distance_before_second_leaves) / combined_speed
+    if time <= 0:
+        return None
+    first_distance = speed1 * (time + delay)
+    second_distance = speed2 * time
+    if first_distance + second_distance != distance:
+        return None
+    if first_distance <= 0 or second_distance <= 0:
+        return None
+    eq = "%s*(t + 1) + %s*t = %s" % (show(speed1), show(speed2), show(distance))
+    return Result(
+        "hour_later_toward_meet",
+        [time],
+        eq,
+        "%s, so t = %s" % (eq, show_exact(time))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
