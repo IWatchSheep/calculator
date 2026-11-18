@@ -6,7 +6,7 @@ Equation: 7k + 4k + 2k = 390
 Solve   : 13k = 390 → k = 30
 Answer  : 210, 120, 60 mL
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_part_mix_ratio answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '7k + 4k + 2k = 390'
 SOLVE = '13k = 390 → k = 30'
 ANSWER = '210, 120, 60 mL'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_part_mix_ratio'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A mix uses red, blue, and yellow paint in the ratio {0}:{1}:{2}. The total is {3} mL. How much of each is used?'
 NUMBERS = ['7', '4', '2', '390']

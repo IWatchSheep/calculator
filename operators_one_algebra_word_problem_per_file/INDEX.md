@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 352 ready (337 word_solver, 15 number_puzzle), 127 reference.
+479 problems: 377 ready (362 word_solver, 15 number_puzzle), 102 reference.
 
 ## Age
 
@@ -25,11 +25,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0010 | The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the missing number? | 59 | Reference |  | `average/0010/` |
+| 0010 | The mean of 4 numbers is 41. 3 of them are 56, 32, 17. What is the missing number? | 59 | Ready | mean_of_listed_missing | `average/0010/` |
 | 0011 | Ava scored 87, 71, 73, 89, 97 on 5 tests. What score is needed on the next test to average 86? | 99 | Ready | average_needed | `average/0011/` |
 | 0013 | Oscar scored 93, 81, 67, 64 on 4 tests. What score is needed on the next test to average 79? | 90 | Ready | average_needed | `average/0013/` |
 | 0014 | Tara scored 94, 77, 83, 85, 92, 73 on 6 tests. What score is needed on the next test to average 86? | 98 | Ready | average_needed | `average/0014/` |
-| 0015 | The mean of 5 numbers is 36. 4 of them are 18, 50, 34, 36. What is the missing number? | 42 | Reference |  | `average/0015/` |
+| 0015 | The mean of 5 numbers is 36. 4 of them are 18, 50, 34, 36. What is the missing number? | 42 | Ready | mean_of_listed_missing | `average/0015/` |
 | 0016 | Mateo scored 60, 94, 80, 60, 98, 62 on 6 tests. What score is needed on the next test to average 76? | 78 | Ready | average_needed | `average/0016/` |
 | 0018 | Maya scored 62, 75, 94 on 3 tests. What score is needed on the next test to average 79? | 85 | Ready | average_needed | `average/0018/` |
 
@@ -52,13 +52,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is the total cost the same? | 16 months | Ready | archive_break_even_1 | `break_even/0030/` |
 | 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same? | $17,000.00 | Reference |  | `break_even/0031/` |
 | 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs? | 50 meals | Reference |  | `break_even/0032/` |
-| 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying? | 9 uses | Reference |  | `break_even/0033/` |
+| 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying? | 9 uses | Ready | rent_fee_plus_use_equals_buy | `break_even/0033/` |
 | 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost the same? | 70 miles | Ready | archive_break_even_2 | `break_even/0035/` |
 | 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even? | 125 posters | Reference |  | `break_even/0036/` |
-| 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost the same as buying? | 35 uses | Reference |  | `break_even/0037/` |
-| 0040 | Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 19 uses | Reference |  | `break_even/0040/` |
+| 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost the same as buying? | 35 uses | Ready | rent_fee_plus_use_equals_buy | `break_even/0037/` |
+| 0040 | Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 19 uses | Ready | rent_per_use_equals_buy | `break_even/0040/` |
 | 0042 | Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they cost the same? | 340 minutes | Reference |  | `break_even/0042/` |
-| 0047 | Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 51 uses | Reference |  | `break_even/0047/` |
+| 0047 | Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 51 uses | Ready | rent_per_use_equals_buy | `break_even/0047/` |
 
 ## Clock
 
@@ -102,8 +102,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0095 | In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find the number. | 39 | Reference |  | `digits/0095/` |
-| 0096 | The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original. Find the original number. | 92 | Reference |  | `digits/0096/` |
-| 0098 | The digits of a two-digit number add up to 12. When the digits are reversed, the new number is 18 more than the original. Find the original number. | 57 | Reference |  | `digits/0098/` |
+| 0096 | The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original. Find the original number. | 92 | Ready | reverse_digits_sum_and_diff | `digits/0096/` |
+| 0098 | The digits of a two-digit number add up to 12. When the digits are reversed, the new number is 18 more than the original. Find the original number. | 57 | Ready | reverse_digits_sum_and_diff | `digits/0098/` |
 
 ## Direct variation
 
@@ -245,21 +245,21 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0238 | Where two lines cross, opposite angles are (2x + 4)° and (5x − 110)°. Find the angle. | x = 38; each angle is 80° | Ready | opposite_angles_equal | `geometry_angles/0238/` |
 | 0239 | Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (2x + 24)° and (1x + 49)°. Find x and the angle. | x = 25; each angle is 74° | Ready | transversal_equal_angles | `geometry_angles/0239/` |
 | 0240 | Two angles are complementary. One angle is 12 less than 5 times the other. Find both angles. | 17° and 73° | Ready | complementary_supplementary | `geometry_angles/0240/` |
-| 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles. | x = 22; the angles are 117° and 63° | Reference |  | `geometry_angles/0241/` |
+| 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles. | x = 22; the angles are 117° and 63° | Ready | linear_pair_two_angles | `geometry_angles/0241/` |
 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles. | 54°, 54°, 72° | Ready | archive_geometry_angles_1 | `geometry_angles/0242/` |
 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angles. | 21°, 63°, 96° | Ready | archive_geometry_angles_2 | `geometry_angles/0243/` |
 | 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find x and the exterior angle. | x = 17; exterior angle = 73° | Reference |  | `geometry_angles/0244/` |
 | 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles. | 14° and 76° | Ready | complementary_supplementary | `geometry_angles/0249/` |
-| 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B? | x = 26; the angles are 24° and 156° | Reference |  | `geometry_angles/0251/` |
+| 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B? | x = 26; the angles are 24° and 156° | Ready | straight_line_angles_a_b | `geometry_angles/0251/` |
 | 0252 | Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. Find the angle. | x = 36; each angle is 98° | Ready | opposite_angles_equal | `geometry_angles/0252/` |
 | 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure. | x = 15; each angle is 77° | Reference |  | `geometry_angles/0253/` |
-| 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B? | x = 10; the angles are 12° and 168° | Reference |  | `geometry_angles/0254/` |
+| 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B? | x = 10; the angles are 12° and 168° | Ready | straight_line_angles_a_b | `geometry_angles/0254/` |
 | 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles. | 64°, 64°, 52° | Reference |  | `geometry_angles/0256/` |
 | 0257 | Two parallel lines are cut by a transversal. A pair of corresponding angles measure (4x + 4)° and (6x − 54)°. Find x and the angle. | x = 29; each angle is 120° | Ready | transversal_equal_angles | `geometry_angles/0257/` |
-| 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles. | x = 33; the angles are 117° and 63° | Reference |  | `geometry_angles/0262/` |
+| 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles. | x = 33; the angles are 117° and 63° | Ready | linear_pair_two_angles | `geometry_angles/0262/` |
 | 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles. | 31° and 149° | Ready | complementary_supplementary | `geometry_angles/0263/` |
 | 0265 | Where two lines cross, opposite angles are (6x + 7)° and (3x + 31)°. Find the angle. | x = 8; each angle is 55° | Ready | opposite_angles_equal | `geometry_angles/0265/` |
-| 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B? | x = 40; the angles are 158° and 22° | Reference |  | `geometry_angles/0270/` |
+| 0270 | Angles A and B lie on a straight line. A = (4x − 2)° and B = (1x − 18)°. What are A and B? | x = 40; the angles are 158° and 22° | Ready | straight_line_angles_a_b | `geometry_angles/0270/` |
 | 0273 | Two parallel lines are cut by a transversal. A pair of alternate interior angles measure (2x + 1)° and (1x + 33)°. Find x and the angle. | x = 32; each angle is 65° | Ready | transversal_equal_angles | `geometry_angles/0273/` |
 
 ## Geometry (area)
@@ -275,9 +275,9 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0292 | Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length. | x = 28; side = 29 cm | Reference |  | `geometry_perimeter/0292/` |
+| 0292 | Each side of a square is (1x + 1) cm. The perimeter is 116 cm. Find x and the side length. | x = 28; side = 29 cm | Ready | square_side_linear_perimeter | `geometry_perimeter/0292/` |
 | 0293 | A window is a rectangle 17 ft tall topped by an equilateral triangle. The triangle's sides equal the rectangle's width. The outside perimeter is 91 ft. How wide is the window? | 19 ft | Ready | archive_geometry_perimeter_1 | `geometry_perimeter/0293/` |
-| 0298 | Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length. | x = 7; side = 22 cm | Reference |  | `geometry_perimeter/0298/` |
+| 0298 | Each side of a square is (4x − 6) cm. The perimeter is 88 cm. Find x and the side length. | x = 7; side = 22 cm | Ready | square_side_linear_perimeter | `geometry_perimeter/0298/` |
 
 ## Geometry (polygons)
 
@@ -564,8 +564,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0731 | The square of a positive number plus 16 times the number equals 720. Find the number. | 20 | Reference |  | `quadratic/0731/` |
 | 0732 | A polygon has 5 diagonals. Using D = n(n − 3)/2, how many sides does it have? | 5 sides | Reference |  | `quadratic/0732/` |
 | 0733 | The product of two consecutive positive integers is 12. Find the integers. | 3 and 4 | Ready | consecutive_product | `quadratic/0733/` |
-| 0734 | Two numbers add up to 56 and multiply to 780. What are they? | 26 and 30 | Reference |  | `quadratic/0734/` |
-| 0736 | The sum of two numbers is 43 and their product is 456. Find the numbers. | 19 and 24 | Reference |  | `quadratic/0736/` |
+| 0734 | Two numbers add up to 56 and multiply to 780. What are they? | 26 and 30 | Ready | two_numbers_sum_and_product | `quadratic/0734/` |
+| 0736 | The sum of two numbers is 43 and their product is 456. Find the numbers. | 19 and 24 | Ready | two_numbers_sum_and_product | `quadratic/0736/` |
 | 0741 | The product of two consecutive positive even integers is 224. Find the integers. | 14 and 16 | Ready | consecutive_product | `quadratic/0741/` |
 | 0753 | The product of two consecutive positive odd integers is 35. Find the integers. | 5 and 7 | Ready | consecutive_product | `quadratic/0753/` |
 
@@ -604,12 +604,12 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0779 | The ratio of boys to girls in a class is 3:8. After 4 more girls join, the ratio becomes 1:3. How many students were there originally? | 44 students (12 boys, 32 girls) | Ready | class_ratio_after_join | `ratio/0779/` |
 | 0780 | An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Nia. How much does each receive? | Wes $29,000.00, Nia $14,500.00, Noah $21,000.00 | Ready | estate_three_heirs_times_and_more | `ratio/0780/` |
-| 0781 | A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used? | 96, 48, 60 kg | Reference |  | `ratio/0781/` |
+| 0781 | A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used? | 96, 48, 60 kg | Ready | three_part_mix_ratio | `ratio/0781/` |
 | 0782 | The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did each have at first? | Yusuf 18, Dev 30 | Ready | marbles_given_ratio_changes | `ratio/0782/` |
 | 0783 | Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get? | Sofia $15,000.00, Pablo $7,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0783/` |
 | 0784 | A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece? | 2 m and 8 m | Reference |  | `ratio/0784/` |
 | 0785 | A 105 cm board is cut into two pieces. One piece is 7 cm longer than the other. How long is each piece? | 49 cm and 56 cm | Ready | sum_difference | `ratio/0785/` |
-| 0786 | A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used? | 16, 32, 40 g | Reference |  | `ratio/0786/` |
+| 0786 | A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used? | 16, 32, 40 g | Ready | three_part_mix_ratio | `ratio/0786/` |
 | 0787 | The ratio of Hana's marbles to Maya's is 1:1. After Hana gives Maya 23 marbles, the ratio is 1:3. How many did each have at first? | Hana 46, Maya 46 | Ready | marbles_given_ratio_changes | `ratio/0787/` |
 | 0790 | An estate of $92,000.00 is split among three heirs. Finn gets 3 times as much as Sam, and Ben gets $2,000.00 more than Sam. How much does each receive? | Finn $54,000.00, Sam $18,000.00, Ben $20,000.00 | Ready | estate_three_heirs_times_and_more | `ratio/0790/` |
 | 0792 | Caleb and Quinn invested in a business in the ratio 6:4. They share a profit of $82,500.00 in the same ratio. How much does each get? | Caleb $49,500.00, Quinn $33,000.00 | Ready | profit_shared_in_investment_ratio | `ratio/0792/` |
@@ -619,7 +619,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0802 | The ratio of Yusuf's marbles to Zane's is 5:6. After Yusuf gives Zane 18 marbles, the ratio is 2:9. How many did each have at first? | Yusuf 30, Zane 36 | Ready | marbles_given_ratio_changes | `ratio/0802/` |
 | 0804 | An estate of $31,500.00 is split among three heirs. Xena gets 3 times as much as Dana, and Finn gets $9,000.00 more than Dana. How much does each receive? | Xena $13,500.00, Dana $4,500.00, Finn $13,500.00 | Ready | estate_three_heirs_times_and_more | `ratio/0804/` |
 | 0805 | Aiden and Quinn invested in a business in the ratio 1:3. They share a profit of $10,000.00 in the same ratio. How much does each get? | Aiden $2,500.00, Quinn $7,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0805/` |
-| 0808 | A mix uses red, blue, and yellow paint in the ratio 7:4:2. The total is 390 mL. How much of each is used? | 210, 120, 60 mL | Reference |  | `ratio/0808/` |
+| 0808 | A mix uses red, blue, and yellow paint in the ratio 7:4:2. The total is 390 mL. How much of each is used? | 210, 120, 60 mL | Ready | three_part_mix_ratio | `ratio/0808/` |
 | 0809 | The ratio of Gus's marbles to Kira's is 6:5. After Gus gives Kira 16 marbles, the ratio is 4:7. How many did each have at first? | Gus 48, Kira 40 | Ready | marbles_given_ratio_changes | `ratio/0809/` |
 | 0810 | An estate of $88,500.00 is split among three heirs. Theo gets 3 times as much as Kira, and Umar gets $1,000.00 more than Kira. How much does each receive? | Theo $52,500.00, Kira $17,500.00, Umar $18,500.00 | Ready | estate_three_heirs_times_and_more | `ratio/0810/` |
 | 0811 | Zane and Wes invested in a business in the ratio 5:2. They share a profit of $50,750.00 in the same ratio. How much does each get? | Zane $36,250.00, Wes $14,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0811/` |
@@ -644,14 +644,14 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0848 | Ben has $150 saved and adds $25 each week. Ava has $310 saved and adds $15 each week. After how many weeks will they have the same amount? | 16 weeks (each will have $550) | Ready | savings_equal | `savings/0848/` |
-| 0849 | Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough? | 10 weeks | Reference |  | `savings/0849/` |
+| 0849 | Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough? | 10 weeks | Ready | weeks_until_item | `savings/0849/` |
 | 0850 | Victor has $0 saved and adds $25 each week. Kira has $180 saved and adds $10 each week. After how many weeks will they have the same amount? | 12 weeks (each will have $300) | Ready | savings_equal | `savings/0850/` |
 | 0851 | Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough? | 24 weeks | Ready | weeks_until_guitar | `savings/0851/` |
-| 0852 | Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough? | 13 weeks | Reference |  | `savings/0852/` |
+| 0852 | Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough? | 13 weeks | Ready | weeks_until_item | `savings/0852/` |
 | 0853 | Yusuf has $350 saved and adds $25 each week. Umar has $630 saved and adds $20 each week. After how many weeks will they have the same amount? | 56 weeks (each will have $1750) | Ready | savings_equal | `savings/0853/` |
 | 0854 | Lena has $0 and saves $30 per week to buy a guitar that costs $750. How many weeks until there is enough? | 25 weeks | Ready | weeks_until_guitar | `savings/0854/` |
 | 0855 | Rhea has $330 saved and adds $15 each week. Jamal has $440 saved and adds $10 each week. After how many weeks will they have the same amount? | 22 weeks (each will have $660) | Ready | savings_equal | `savings/0855/` |
-| 0856 | Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough? | 18 weeks | Reference |  | `savings/0856/` |
+| 0856 | Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough? | 18 weeks | Ready | weeks_until_item | `savings/0856/` |
 
 ## Sequences
 
@@ -729,8 +729,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0959 | Adult tickets to a movie screening cost $12 and child tickets cost $6. 167 tickets were sold for a total of $1404. How many of each were sold? | 67 adult and 100 child tickets | Ready | archive_tickets_1 | `tickets/0959/` |
-| 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of each were sold? | 300 adult and 299 child tickets | Reference |  | `tickets/0960/` |
-| 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of each were sold? | 97 adult and 128 child tickets | Reference |  | `tickets/0962/` |
+| 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of each were sold? | 300 adult and 299 child tickets | Ready | adult_and_child_tickets | `tickets/0960/` |
+| 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of each were sold? | 97 adult and 128 child tickets | Ready | adult_and_child_tickets | `tickets/0962/` |
 
 ## Work rate
 

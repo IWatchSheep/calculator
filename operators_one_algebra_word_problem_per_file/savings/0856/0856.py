@@ -6,7 +6,7 @@ Equation: 50 + 15w = 320
 Solve   : 15w = 270 → w = 18
 Answer  : 18 weeks
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: weeks_until_item answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '50 + 15w = 320'
 SOLVE = '15w = 270 → w = 18'
 ANSWER = '18 weeks'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'weeks_until_item'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Finn has ${0} and saves ${1} per week to buy concert tickets that costs ${2}. How many weeks until there is enough?'
 NUMBERS = ['50', '15', '320']

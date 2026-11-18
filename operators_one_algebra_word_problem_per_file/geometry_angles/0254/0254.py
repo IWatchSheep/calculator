@@ -6,7 +6,7 @@ Equation: (x + 2) + (3x + 138) = 180
 Solve   : 4x = 40 → x = 10
 Answer  : x = 10; the angles are 12° and 168°
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: straight_line_angles_a_b answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(x + 2) + (3x + 138) = 180'
 SOLVE = '4x = 40 → x = 10'
 ANSWER = 'x = 10; the angles are 12° and 168°'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'straight_line_angles_a_b'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Angles A and B lie on a straight line. A = ({0}x + {1})° and B = ({2}x + {3})°. What are A and B?'
 NUMBERS = ['1', '2', '3', '138']

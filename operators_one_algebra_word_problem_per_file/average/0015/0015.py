@@ -6,7 +6,7 @@ Equation: (18 + 50 + 34 + 36 + x)/5 = 36
 Solve   : x/5 = 8.4 → x = 8.4 × 5 = 42
 Answer  : 42
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: mean_of_listed_missing answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(18 + 50 + 34 + 36 + x)/5 = 36'
 SOLVE = 'x/5 = 8.4 → x = 8.4 × 5 = 42'
 ANSWER = '42'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'mean_of_listed_missing'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The mean of {0} numbers is {1}. {2} of them are {3}, {4}, {5}, {6}. What is the missing number?'
 NUMBERS = ['5', '36', '4', '18', '50', '34', '36']
