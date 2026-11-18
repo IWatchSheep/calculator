@@ -6,7 +6,7 @@ Equation: x + 4x = 10
 Solve   : 5x = 10 → x = 2
 Answer  : 2 m and 8 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rope_cut_in_ratio answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + 4x = 10'
 SOLVE = '5x = 10 → x = 2'
 ANSWER = '2 m and 8 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rope_cut_in_ratio'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A {0} m rope is cut into two pieces in the ratio {1}:{2}. How long is each piece?'
 NUMBERS = ['10', '1', '4']

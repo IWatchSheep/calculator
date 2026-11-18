@@ -6,7 +6,7 @@ Equation: (9/5)c + 32 = 113
 Solve   : 1.8c = 81 → c = 45
 Answer  : 45°C
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: fahrenheit_to_celsius answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(9/5)c + 32 = 113'
 SOLVE = '1.8c = 81 → c = 45'
 ANSWER = '45°C'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'fahrenheit_to_celsius'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Using F = ({0}/{1})C + {2}, what Celsius temperature equals {3}°F?'
 NUMBERS = ['9', '5', '32', '113']

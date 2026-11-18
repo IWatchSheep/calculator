@@ -6,7 +6,7 @@ Equation: n(n − 3)/2 = 5
 Solve   : n² − 3n − 10 = 0 → n = 5 (the other root, -2, is rejected)
 Answer  : 5 sides
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: polygon_diagonals_to_sides answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'n(n − 3)/2 = 5'
 SOLVE = 'n² − 3n − 10 = 0 → n = 5 (the other root, -2, is rejected)'
 ANSWER = '5 sides'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'polygon_diagonals_to_sides'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A polygon has {0} diagonals. Using D = n(n − {1})/{2}, how many sides does it have?'
 NUMBERS = ['5', '3', '2']

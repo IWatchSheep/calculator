@@ -6,7 +6,7 @@ Equation: n(n + 1)/2 = 1326
 Solve   : n² + n − 2652 = 0 → n = 51 (the other root, -52, is rejected)
 Answer  : 51 numbers (1 through 51)
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: triangular_sum_from_one answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'n(n + 1)/2 = 1326'
 SOLVE = 'n² + n − 2652 = 0 → n = 51 (the other root, -52, is rejected)'
 ANSWER = '51 numbers (1 through 51)'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'triangular_sum_from_one'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'How many consecutive whole numbers, starting from {0}, must be added to get a sum of {1}? (Use {2} + {3} + … + n = n(n + {4})/{5}.)'
 NUMBERS = ['1', '1326', '1', '2', '1', '2']

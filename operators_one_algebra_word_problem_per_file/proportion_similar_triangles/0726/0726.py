@@ -6,7 +6,7 @@ Equation: 6/10 = h/150
 Solve   : h/150 = 0.6 → h = 0.6 × 150 = 90
 Answer  : 90
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: similar_shadows_height answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6/10 = h/150'
 SOLVE = 'h/150 = 0.6 → h = 0.6 × 150 = 90'
 ANSWER = '90'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'similar_shadows_height'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'At noon a {0} m post casts a {1} m shadow, and a building nearby casts a {2} m shadow. How tall is the building?'
 NUMBERS = ['6', '10', '150']

@@ -6,7 +6,7 @@ Equation: x² + (x + 1)² = 85
 Solve   : x² + x − 42 = 0 → x = 6 (the other root, -7, is rejected)
 Answer  : 6 and 7
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: consecutive_squares_sum answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x² + (x + 1)² = 85'
 SOLVE = 'x² + x − 42 = 0 → x = 6 (the other root, -7, is rejected)'
 ANSWER = '6 and 7'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'consecutive_squares_sum'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The sum of the squares of two consecutive positive integers is {0}. Find the integers.'
 NUMBERS = ['85']

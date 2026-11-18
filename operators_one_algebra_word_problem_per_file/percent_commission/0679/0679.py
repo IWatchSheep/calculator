@@ -6,7 +6,7 @@ Equation: 750 + 0.05s = 1625
 Solve   : s/20 = 875 → s = 875 × 20 = 17500
 Answer  : $17,500.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: weekly_pay_plus_percent_of_sales answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '750 + 0.05s = 1625'
 SOLVE = 's/20 = 875 → s = 875 × 20 = 17500'
 ANSWER = '$17,500.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'weekly_pay_plus_percent_of_sales'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A salesperson gets ${0} per week plus {1}% of everything they sell. To earn ${2} in a week, how much must they sell?'
 NUMBERS = ['750', '5', '1625.00']

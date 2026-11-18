@@ -924,6 +924,131 @@ class Families(unittest.TestCase):
         self.assertEqual(result.values, [Fraction(17000)])
         self.assertIsNone(answers("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. Which job pays more at $1000 in sales?"))
 
+    def test_formula_perimeter_solve_width(self):
+        result = WS.formula_perimeter_solve_width("Solve P = 2l + 2w for w when P = 70 and l = 27.")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("Solve P = 2l + 2w for l when P = 70 and w = 8."))
+
+    def test_fahrenheit_twice_celsius(self):
+        result = WS.fahrenheit_twice_celsius("At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32)")
+        self.assertEqual(result.values, [Fraction(160)])
+        self.assertIsNone(answers("At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32) Also find Kelvin."))
+
+    def test_fahrenheit_to_celsius(self):
+        result = WS.fahrenheit_to_celsius("Using F = (9/5)C + 32, what Celsius temperature equals 113°F?")
+        self.assertEqual(result.values, [Fraction(45)])
+        self.assertIsNone(answers("Using F = (9/5)C + 32, what Fahrenheit temperature equals 45°C?"))
+
+    def test_rental_car_days_plus_miles(self):
+        result = WS.rental_car_days_plus_miles("A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven?")
+        self.assertEqual(result.values, [Fraction(190)])
+        self.assertIsNone(answers("A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How much was the daily fee?"))
+
+    def test_item_coupon_when_coupon_exceeds_paid(self):
+        result = WS.item_coupon_when_coupon_exceeds_paid("Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?")
+        self.assertEqual(result.values, [Fraction(4)])
+        self.assertIsNone(WS.item_coupon_when_coupon_exceeds_paid("Pens cost $4.50 each. With a $2 coupon, Bea paid $8.00. How many pens were bought?"))
+
+    def test_sound_travel_time(self):
+        result = WS.sound_travel_time("Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the thunder be heard?")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many miles away is the storm?"))
+
+    def test_raised_plus_per_item_to_goal(self):
+        result = WS.raised_plus_per_item_to_goal("A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 goal?")
+        self.assertEqual(result.values, [Fraction(38)])
+        self.assertIsNone(answers("A club has raised $30 so far. At its car wash it charges $12 per car. How much more money is needed?"))
+
+    def test_loses_value_each_year(self):
+        result = WS.loses_value_each_year("A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00?")
+        self.assertEqual(result.values, [Fraction(4)])
+        self.assertIsNone(answers("A delivery van bought for $22,000.00 loses $3,800.00 in value each year. What is it worth after 2 years?"))
+
+    def test_part_is_percent_of_whole(self):
+        result = WS.part_is_percent_of_whole("3 is 30% of what number?")
+        self.assertEqual(result.values, [Fraction(10)])
+        self.assertIsNone(answers("3 is 30% of 10. What is 40% of 10?"))
+
+    def test_split_bill_including_tip(self):
+        result = WS.split_bill_including_tip("9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip?")
+        self.assertEqual(result.values, [Fraction(1260)])
+        self.assertIsNone(answers("9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What did each pay before the tip?"))
+
+    def test_percent_boys_given_girls(self):
+        result = WS.percent_boys_given_girls("20% of the students in a club are boys. There are 136 girls. How many students are in the club?")
+        self.assertEqual(result.values, [Fraction(170)])
+        self.assertIsNone(answers("20% of the students in a club are boys. There are 136 girls. How many boys are in the club?"))
+
+    def test_percent_up_then_down_ending(self):
+        result = WS.percent_up_then_down_ending("A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price?")
+        self.assertEqual(result.values, [Fraction(880)])
+        self.assertIsNone(answers("A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the price after the rise?"))
+
+    def test_weekly_pay_plus_percent_of_sales(self):
+        result = WS.weekly_pay_plus_percent_of_sales("A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell?")
+        self.assertEqual(result.values, [Fraction(17500)])
+        self.assertIsNone(WS.weekly_base_plus_commission_sales("A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell?"))
+
+    def test_scale_model_from_real(self):
+        result = WS.scale_model_from_real("A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the model?")
+        self.assertEqual(result.values, [Fraction(1)])
+        self.assertIsNone(answers("A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the real car in meters?"))
+
+    def test_map_scale_distance(self):
+        result = WS.map_scale_distance("On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they on the map?")
+        self.assertEqual(result.values, [Fraction(19)])
+        self.assertIsNone(answers("On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they in miles?"))
+
+    def test_similar_shadows_height(self):
+        result = WS.similar_shadows_height("At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building?")
+        self.assertEqual(result.values, [Fraction(90)])
+        self.assertIsNone(answers("At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How long is the post's shadow in feet?"))
+
+    def test_square_more_than_times_number(self):
+        result = WS.square_more_than_times_number("The square of a positive number is 48 more than 2 times the number. Find the number.")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("The square of a positive number is 48 more than 2 times the number. Find both roots."))
+
+    def test_consecutive_squares_sum(self):
+        result = WS.consecutive_squares_sum("The sum of the squares of two consecutive positive integers is 85. Find the integers.")
+        self.assertEqual(result.values, [Fraction(6), Fraction(7)])
+        self.assertIsNone(answers("The sum of the squares of two consecutive even integers is 100. Find the integers."))
+
+    def test_square_plus_times_equals(self):
+        result = WS.square_plus_times_equals("The square of a positive number plus 16 times the number equals 720. Find the number.")
+        self.assertEqual(result.values, [Fraction(20)])
+        self.assertIsNone(answers("The square of a positive number plus 16 times the number equals 720. Find both roots."))
+
+    def test_polygon_diagonals_to_sides(self):
+        result = WS.polygon_diagonals_to_sides("A polygon has 5 diagonals. Using D = n(n − 3)/2, how many sides does it have?")
+        self.assertEqual(result.values, [Fraction(5)])
+        self.assertIsNone(answers("A polygon has 5 diagonals. Using D = n(n − 3)/2, how many triangles can it be divided into?"))
+
+    def test_triangular_sum_from_one(self):
+        result = WS.triangular_sum_from_one("How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2.)")
+        self.assertEqual(result.values, [Fraction(51)])
+        self.assertIsNone(answers("How many consecutive whole numbers, starting from 2, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2.)"))
+
+    def test_rope_cut_in_ratio(self):
+        result = WS.rope_cut_in_ratio("A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece?")
+        self.assertEqual(result.values, [Fraction(2), Fraction(8)])
+        self.assertIsNone(answers("A 10 m rope is cut into two pieces in the ratio 1:4. How much longer is the second piece?"))
+
+    def test_savings_jar_week_n(self):
+        result = WS.savings_jar_week_n("A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63?")
+        self.assertEqual(result.values, [Fraction(9)])
+        self.assertIsNone(answers("A savings jar holds $15 in week 1 and grows by $6 each week. How much does it hold in week 9?"))
+
+    def test_split_equal_simple_interest(self):
+        result = WS.split_equal_simple_interest("$16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a year. How much is in each?")
+        self.assertEqual(result.values, [Fraction(6600), Fraction(9900)])
+        self.assertIsNone(answers("$16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a year. How much interest does each earn?"))
+
+    def test_simple_interest_years(self):
+        result = WS.simple_interest_years("How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year?")
+        self.assertEqual(result.values, [Fraction(6)])
+        self.assertIsNone(answers("How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year? What is the final amount?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -1023,8 +1148,8 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("I put some money in an account at 3% and the rest at 5%, $10,000 total. I earned $420 in interest in a year. How much was at 5%?"), values(4000, 6000))
         self.assertEqual(answers("$8,000 was invested, some at 6% and some at 4%. The total yearly interest was $400. How much was invested at 6%?"), values(4000, 4000))
         # other interest shapes: time, equal interest, an extra amount, compound, commission, one amount at one rate only
-        self.assertIsNone(answers("How many years will it take $24,500.00 to earn $11,025.00 in simple interest at 5% per year?"))
-        self.assertIsNone(answers("$25,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each?"))
+        self.assertIsNone(WS.two_rate_interest("How many years will it take $24,500.00 to earn $11,025.00 in simple interest at 5% per year?"))
+        self.assertIsNone(WS.two_rate_interest("$25,000.00 is split between two accounts paying 10% and 6% simple interest. Both accounts earn the same interest in a year. How much is in each?"))
         self.assertIsNone(WS.two_rate_interest("Tara has $12,000.00 invested at 3%. How much more must be invested at 8% so that the total earns 7% overall?"))
         self.assertIsNone(answers("Ben invests $9,000, part at 4% and the rest at 6%, compounded monthly. The interest after a year is $450. How much at each rate?"))
         self.assertIsNone(answers("A salesperson gets $500 a week plus 5% of sales. Last week they got $1,100. What were their sales?"))
@@ -3321,10 +3446,11 @@ class FreshWordings(unittest.TestCase):
             self.assertIsNone(answers(bad), bad)
 
     def test_price_minus_coupon(self):
-        """"Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00" is 14 (3.5n - 3 = 46).  The count is a positive whole number and a coupon larger than the amount paid declines."""
+        """"Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00" is 14 (3.5n - 3 = 46).  The count is a positive whole number. A coupon larger than the amount paid is still a count when n is whole."""
         self.assertEqual(answers("Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought?"), values(14))
         self.assertEqual(answers("Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought?"), values(3))
-        for bad in ("Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?", "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $47.00. How many notebooks were bought?",
+        self.assertEqual(answers("Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought?"), values(4))
+        for bad in ("Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $47.00. How many notebooks were bought?",
                     "Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many pens were bought?"):
             self.assertIsNone(answers(bad), bad)
 
@@ -3338,10 +3464,10 @@ class FreshWordings(unittest.TestCase):
             self.assertIsNone(answers(bad), bad)
 
     def test_percent_coupon_angle_set(self):
-        """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 6 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 8 required declines,
-        0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected."""
+        """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 7 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 7 required declines,
+        0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected. The sandwich coupon larger than the amount paid is now a whole count."""
         from fresh_word_problems_49 import FRESH
-        self.assertEqual(score(FRESH), (6, 1, 8))
+        self.assertEqual(score(FRESH), (7, 1, 7))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH

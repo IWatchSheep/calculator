@@ -6,7 +6,7 @@ Equation: 1.25b / 9 = 175
 Solve   : (5/36)b = 175 → b = 1260
 Answer  : $1,260.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: split_bill_including_tip answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '1.25b / 9 = 175'
 SOLVE = '(5/36)b = 175 → b = 1260'
 ANSWER = '$1,260.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'split_bill_including_tip'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = '{0} friends split a restaurant bill equally, including a {1}% tip. Each paid ${2}. What was the bill before the tip?'
 NUMBERS = ['9', '25', '175.00']

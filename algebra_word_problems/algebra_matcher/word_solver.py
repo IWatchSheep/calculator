@@ -5830,7 +5830,641 @@ def two_jobs_same_commission_pay(problem):
     return Result("two_jobs_same_commission_pay", [s], eq, "%s, so s = %s" % (eq, show_exact(s)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay,
+def _sqrt_frac(d):
+    if d < 0:
+        return None
+    rn, rd = _isqrt_exact(d.numerator), _isqrt_exact(d.denominator)
+    if rn is None or rd is None:
+        return None
+    return Fraction(rn, rd)
+
+
+def _positive_quadratic(a, b, c):
+    if a == 0:
+        return None
+    root = _sqrt_frac(b * b - 4 * a * c)
+    if root is None:
+        return None
+    for sign in (1, -1):
+        x = (-b + sign * root) / (2 * a)
+        if x > 0 and a * x * x + b * x + c == 0:
+            return x
+    return None
+
+
+_FORMULA_PERIMETER_SOLVE_WIDTH = re.compile(
+    r"solve p = (?P<a>\d+)l \+ (?P<b>\d+)w for w when p = (?P<p>\d+(?:\.\d+)?) and l = (?P<l>\d+(?:\.\d+)?)\.")
+
+
+def formula_perimeter_solve_width(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _FORMULA_PERIMETER_SOLVE_WIDTH.fullmatch(text)
+    if match is None:
+        return None
+    a, b, p, length = (Fraction(match.group(k)) for k in ("a", "b", "p", "l"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, p, length]:
+        return None
+    if a <= 0 or b <= 0:
+        return None
+    w = (p - a * length) / b
+    if w <= 0:
+        return None
+    if a * length + b * w != p:
+        return None
+    eq = "%s*%s + %s*w = %s" % (show(a), show(length), show(b), show(p))
+    return Result("formula_perimeter_solve_width", [w], eq, "%s, so w = %s" % (eq, show_exact(w)))
+
+
+_FAHRENHEIT_TWICE_CELSIUS = re.compile(
+    r"at what celsius temperature is the fahrenheit reading exactly (?P<k>\d+(?:\.\d+)?) times the celsius reading\? "
+    r"\(f = \((?P<n>\d+)/(?P<d>\d+)\)c \+ (?P<b>\d+)\)$")
+
+
+def fahrenheit_twice_celsius(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _FAHRENHEIT_TWICE_CELSIUS.fullmatch(text)
+    if match is None:
+        return None
+    k, n, d, b = (Fraction(match.group(g)) for g in ("k", "n", "d", "b"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [num[0] for num in numbers] != [k, n, d, b]:
+        return None
+    if d == 0:
+        return None
+    slope = n / d
+    if k == slope:
+        return None
+    c = b / (k - slope)
+    if (slope * c + b) != k * c:
+        return None
+    eq = "(%s/%s)c + %s = %s*c" % (show(n), show(d), show(b), show(k))
+    return Result("fahrenheit_twice_celsius", [c], eq, "%s, so c = %s" % (eq, show_exact(c)))
+
+
+_FAHRENHEIT_TO_CELSIUS = re.compile(
+    r"using f = \((?P<n>\d+)/(?P<d>\d+)\)c \+ (?P<b>\d+), what celsius temperature equals (?P<f>\d+(?:\.\d+)?)°f\?")
+
+
+def fahrenheit_to_celsius(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _FAHRENHEIT_TO_CELSIUS.fullmatch(text)
+    if match is None:
+        return None
+    n, d, b, f = (Fraction(match.group(g)) for g in ("n", "d", "b", "f"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [num[0] for num in numbers] != [n, d, b, f]:
+        return None
+    if n == 0 or d == 0:
+        return None
+    c = (f - b) * d / n
+    if n / d * c + b != f:
+        return None
+    eq = "(%s/%s)c + %s = %s" % (show(n), show(d), show(b), show(f))
+    return Result("fahrenheit_to_celsius", [c], eq, "%s, so c = %s" % (eq, show_exact(c)))
+
+
+_RENTAL_CAR_DAYS_PLUS_MILES = re.compile(
+    r"a rental car costs \$(?P<day>\d+(?:\.\d+)?) per day plus \$(?P<mile>\d+(?:\.\d+)?) per mile. "
+    r"a (?P<days>\d+)-day rental cost \$(?P<total>\d+(?:\.\d+)?). how many miles were driven\?")
+
+
+def rental_car_days_plus_miles(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RENTAL_CAR_DAYS_PLUS_MILES.fullmatch(text)
+    if match is None:
+        return None
+    day, mile, days, total = (Fraction(match.group(g)) for g in ("day", "mile", "days", "total"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, True, False, True]:
+        return None
+    if [n[0] for n in numbers] != [day, mile, days, total]:
+        return None
+    if day <= 0 or mile <= 0 or days <= 0 or total <= day * days:
+        return None
+    miles = (total - day * days) / mile
+    if miles <= 0 or miles.denominator != 1:
+        return None
+    if day * days + mile * miles != total:
+        return None
+    eq = "%s*%s + %s*m = %s" % (show(day), show(days), show(mile), show(total))
+    return Result("rental_car_days_plus_miles", [miles], eq, "%s, so m = %s" % (eq, show_exact(miles)))
+
+
+_ITEM_COUPON_WHEN_COUPON_EXCEEDS_PAID = re.compile(
+    r"(?P<item>[a-z]+(?: [a-z]+){0,3}) cost \$(?P<price>\d+(?:\.\d+)?) each. "
+    r"with a \$(?P<coupon>\d+(?:\.\d+)?) coupon, [a-z]+ paid \$(?P<paid>\d+(?:\.\d+)?). "
+    r"how many (?P=item) were bought\?")
+
+
+def item_coupon_when_coupon_exceeds_paid(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ITEM_COUPON_WHEN_COUPON_EXCEEDS_PAID.fullmatch(text)
+    if match is None:
+        return None
+    price, coupon, paid = Fraction(match.group("price")), Fraction(match.group("coupon")), Fraction(match.group("paid"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or not all(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [price, coupon, paid]:
+        return None
+    if price <= 0 or coupon <= 0 or paid < 0 or coupon <= paid:
+        return None
+    n = (paid + coupon) / price
+    if n.denominator != 1 or n <= 0:
+        return None
+    if price * n - coupon != paid:
+        return None
+    eq = "%s*n - %s = %s" % (show(price), show(coupon), show(paid))
+    return Result("item_coupon_when_coupon_exceeds_paid", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_SOUND_TRAVEL_TIME = re.compile(
+    r"sound travels about (?P<v>\d+(?:\.\d+)?) m/s, so d = (?P<v2>\d+(?:\.\d+)?)t. "
+    r"a storm is (?P<dist>\d+(?:\.\d+)?) m away. how many seconds after the lightning flash will the thunder be heard\?")
+
+
+def sound_travel_time(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SOUND_TRAVEL_TIME.fullmatch(text)
+    if match is None:
+        return None
+    v, v2, dist = Fraction(match.group("v")), Fraction(match.group("v2")), Fraction(match.group("dist"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [v, v2, dist]:
+        return None
+    if v <= 0 or v != v2 or dist <= 0:
+        return None
+    t = dist / v
+    if t <= 0:
+        return None
+    if v * t != dist:
+        return None
+    eq = "%s*t = %s" % (show(v), show(dist))
+    return Result("sound_travel_time", [t], eq, "%s, so t = %s" % (eq, show_exact(t)))
+
+
+_RAISED_PLUS_PER_ITEM_TO_GOAL = re.compile(
+    r"a club has raised \$(?P<have>\d+(?:\.\d+)?) so far. at its car wash it charges \$(?P<rate>\d+(?:\.\d+)?) per car. "
+    r"how many more cars must it sell to reach its \$(?P<goal>\d+(?:\.\d+)?) goal\?")
+
+
+def raised_plus_per_item_to_goal(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RAISED_PLUS_PER_ITEM_TO_GOAL.fullmatch(text)
+    if match is None:
+        return None
+    have, rate, goal = Fraction(match.group("have")), Fraction(match.group("rate")), Fraction(match.group("goal"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or not all(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [have, rate, goal]:
+        return None
+    if rate <= 0 or goal <= have:
+        return None
+    n = (goal - have) / rate
+    if n <= 0 or n.denominator != 1:
+        return None
+    if have + rate * n != goal:
+        return None
+    eq = "%s + %s*n = %s" % (show(have), show(rate), show(goal))
+    return Result("raised_plus_per_item_to_goal", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_LOSES_VALUE_EACH_YEAR = re.compile(
+    r"a delivery van bought for \$(?P<start>\d+(?:\.\d+)?) loses \$(?P<loss>\d+(?:\.\d+)?) in value each year. "
+    r"after how many years will it be worth \$(?P<end>\d+(?:\.\d+)?)\?")
+
+
+def loses_value_each_year(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LOSES_VALUE_EACH_YEAR.fullmatch(text)
+    if match is None:
+        return None
+    start, loss, end = Fraction(match.group("start")), Fraction(match.group("loss")), Fraction(match.group("end"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or not all(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [start, loss, end]:
+        return None
+    if loss <= 0 or start <= end:
+        return None
+    y = (start - end) / loss
+    if y <= 0 or y.denominator != 1:
+        return None
+    if start - loss * y != end:
+        return None
+    eq = "%s - %s*y = %s" % (show(start), show(loss), show(end))
+    return Result("loses_value_each_year", [y], eq, "%s, so y = %s" % (eq, show_exact(y)))
+
+
+_PART_IS_PERCENT_OF_WHOLE = re.compile(
+    r"(?P<part>\d+(?:\.\d+)?) is (?P<pct>\d+(?:\.\d+)?)% of what number\?")
+
+
+def part_is_percent_of_whole(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PART_IS_PERCENT_OF_WHOLE.fullmatch(text)
+    if match is None:
+        return None
+    part, pct = Fraction(match.group("part")), Fraction(match.group("pct"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [part, pct]:
+        return None
+    if pct <= 0:
+        return None
+    whole = part / (pct / 100)
+    if whole <= 0:
+        return None
+    if (pct / 100) * whole != part:
+        return None
+    eq = "(%s/100)*x = %s" % (show(pct), show(part))
+    return Result("part_is_percent_of_whole", [whole], eq, "%s, so x = %s" % (eq, show_exact(whole)))
+
+
+_SPLIT_BILL_INCLUDING_TIP = re.compile(
+    r"(?P<n>\d+) friends split a restaurant bill equally, including a (?P<tip>\d+(?:\.\d+)?)% tip. "
+    r"each paid \$(?P<each>\d+(?:\.\d+)?). what was the bill before the tip\?")
+
+
+def split_bill_including_tip(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SPLIT_BILL_INCLUDING_TIP.fullmatch(text)
+    if match is None:
+        return None
+    n, tip, each = Fraction(match.group("n")), Fraction(match.group("tip")), Fraction(match.group("each"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [False, False, True] or [num[0] for num in numbers] != [n, tip, each]:
+        return None
+    if n <= 0 or n.denominator != 1 or tip < 0 or each <= 0:
+        return None
+    factor = 1 + tip / 100
+    bill = n * each / factor
+    if bill <= 0:
+        return None
+    if factor * bill / n != each:
+        return None
+    eq = "%s*(1 + %s/100)*b / %s = %s" % (show(n), show(tip), show(n), show(each))
+    return Result("split_bill_including_tip", [bill], eq, "%s, so b = %s" % (eq, show_exact(bill)))
+
+
+_PERCENT_BOYS_GIVEN_GIRLS = re.compile(
+    r"(?P<p>\d+(?:\.\d+)?)% of the students in a club are boys. there are (?P<g>\d+) girls. how many students are in the club\?")
+
+
+def percent_boys_given_girls(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PERCENT_BOYS_GIVEN_GIRLS.fullmatch(text)
+    if match is None:
+        return None
+    p, g = Fraction(match.group("p")), Fraction(match.group("g"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, g]:
+        return None
+    if p < 0 or p >= 100 or g <= 0:
+        return None
+    club = g / ((100 - p) / 100)
+    if club <= 0 or club.denominator != 1:
+        return None
+    if (100 - p) / 100 * club != g:
+        return None
+    eq = "((100 - %s)/100)*n = %s" % (show(p), show(g))
+    return Result("percent_boys_given_girls", [club], eq, "%s, so n = %s" % (eq, show_exact(club)))
+
+
+_PERCENT_UP_THEN_DOWN_ENDING = re.compile(
+    r"a stock's price rose (?P<up>\d+(?:\.\d+)?)% one month and then fell (?P<down>\d+(?:\.\d+)?)% the next, "
+    r"ending at \$(?P<end>\d+(?:\.\d+)?). what was the starting price\?")
+
+
+def percent_up_then_down_ending(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PERCENT_UP_THEN_DOWN_ENDING.fullmatch(text)
+    if match is None:
+        return None
+    up, down, end = Fraction(match.group("up")), Fraction(match.group("down")), Fraction(match.group("end"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [False, False, True] or [n[0] for n in numbers] != [up, down, end]:
+        return None
+    rise, fall = 1 + up / 100, 1 - down / 100
+    if rise <= 0 or fall <= 0 or end <= 0:
+        return None
+    start = end / (rise * fall)
+    if start <= 0:
+        return None
+    if rise * fall * start != end:
+        return None
+    eq = "s*(1 + %s/100)*(1 - %s/100) = %s" % (show(up), show(down), show(end))
+    return Result("percent_up_then_down_ending", [start], eq, "%s, so s = %s" % (eq, show_exact(start)))
+
+
+_WEEKLY_PAY_PLUS_PERCENT_OF_SALES = re.compile(
+    r"a salesperson gets \$(?P<base>\d+(?:\.\d+)?) per week plus (?P<pct>\d+(?:\.\d+)?)% of everything they sell. "
+    r"to earn \$(?P<pay>\d+(?:\.\d+)?) in a week, how much must they sell\?")
+
+
+def weekly_pay_plus_percent_of_sales(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WEEKLY_PAY_PLUS_PERCENT_OF_SALES.fullmatch(text)
+    if match is None:
+        return None
+    base, pct, pay = Fraction(match.group("base")), Fraction(match.group("pct")), Fraction(match.group("pay"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [True, False, True] or [n[0] for n in numbers] != [base, pct, pay]:
+        return None
+    if base < 0 or pct <= 0 or pay <= base:
+        return None
+    sales = (pay - base) / (pct / 100)
+    if sales <= 0:
+        return None
+    if base + (pct / 100) * sales != pay:
+        return None
+    eq = "%s + %s*s = %s" % (show(base), show(pct / 100), show(pay))
+    return Result("weekly_pay_plus_percent_of_sales", [sales], eq, "%s, so s = %s" % (eq, show_exact(sales)))
+
+
+_SCALE_MODEL_FROM_REAL = re.compile(
+    r"a model car is built at a (?P<a>\d+):(?P<b>\d+) scale. the real car is (?P<real>\d+(?:\.\d+)?) cm long. how long is the model\?")
+
+
+def scale_model_from_real(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SCALE_MODEL_FROM_REAL.fullmatch(text)
+    if match is None:
+        return None
+    a, b, real = Fraction(match.group("a")), Fraction(match.group("b")), Fraction(match.group("real"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, real]:
+        return None
+    if a <= 0 or b <= 0 or real <= 0:
+        return None
+    model = real * a / b
+    if model <= 0:
+        return None
+    if model / real != a / b:
+        return None
+    eq = "x/%s = %s/%s" % (show(real), show(a), show(b))
+    return Result("scale_model_from_real", [model], eq, "%s, so x = %s" % (eq, show_exact(model)))
+
+
+_MAP_SCALE_DISTANCE = re.compile(
+    r"on a map, (?P<a>\d+(?:\.\d+)?) cm represents (?P<b>\d+(?:\.\d+)?) km. "
+    r"two cities are (?P<d>\d+(?:\.\d+)?) km apart. how far apart are they on the map\?")
+
+
+def map_scale_distance(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MAP_SCALE_DISTANCE.fullmatch(text)
+    if match is None:
+        return None
+    a, b, d = Fraction(match.group("a")), Fraction(match.group("b")), Fraction(match.group("d"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, d]:
+        return None
+    if a <= 0 or b <= 0 or d <= 0:
+        return None
+    x = d * a / b
+    if x <= 0:
+        return None
+    if x / a != d / b:
+        return None
+    eq = "x/%s = %s/%s" % (show(a), show(d), show(b))
+    return Result("map_scale_distance", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_SIMILAR_SHADOWS_HEIGHT = re.compile(
+    r"at noon a (?P<p>\d+(?:\.\d+)?) m post casts a (?P<ps>\d+(?:\.\d+)?) m shadow, "
+    r"and a building nearby casts a (?P<bs>\d+(?:\.\d+)?) m shadow. how tall is the building\?")
+
+
+def similar_shadows_height(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SIMILAR_SHADOWS_HEIGHT.fullmatch(text)
+    if match is None:
+        return None
+    p, ps, bs = Fraction(match.group("p")), Fraction(match.group("ps")), Fraction(match.group("bs"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, ps, bs]:
+        return None
+    if p <= 0 or ps <= 0 or bs <= 0:
+        return None
+    h = p * bs / ps
+    if h <= 0:
+        return None
+    if h / bs != p / ps:
+        return None
+    eq = "h/%s = %s/%s" % (show(bs), show(p), show(ps))
+    return Result("similar_shadows_height", [h], eq, "%s, so h = %s" % (eq, show_exact(h)))
+
+
+_SQUARE_MORE_THAN_TIMES_NUMBER = re.compile(
+    r"the square of a positive number is (?P<c>\d+(?:\.\d+)?) more than (?P<k>\d+(?:\.\d+)?) times the number. find the number.")
+
+
+def square_more_than_times_number(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SQUARE_MORE_THAN_TIMES_NUMBER.fullmatch(text)
+    if match is None:
+        return None
+    c, k = Fraction(match.group("c")), Fraction(match.group("k"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [c, k]:
+        return None
+    x = _positive_quadratic(1, -k, -c)
+    if x is None:
+        return None
+    if x * x != k * x + c:
+        return None
+    eq = "x² = %s*x + %s" % (show(k), show(c))
+    return Result("square_more_than_times_number", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_CONSECUTIVE_SQUARES_SUM = re.compile(
+    r"the sum of the squares of two consecutive positive integers is (?P<s>\d+(?:\.\d+)?). find the integers.")
+
+
+def consecutive_squares_sum(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CONSECUTIVE_SQUARES_SUM.fullmatch(text)
+    if match is None:
+        return None
+    s = Fraction(match.group("s"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 1 or numbers[0][1] or numbers[0][0] != s:
+        return None
+    n = _positive_quadratic(2, 2, 1 - s)
+    if n is None or n.denominator != 1:
+        return None
+    if n * n + (n + 1) * (n + 1) != s:
+        return None
+    eq = "n² + (n + 1)² = %s" % show(s)
+    return Result("consecutive_squares_sum", [n, n + 1], eq, "%s, so n = %s and n + 1 = %s" % (eq, show_exact(n), show_exact(n + 1)))
+
+
+_SQUARE_PLUS_TIMES_EQUALS = re.compile(
+    r"the square of a positive number plus (?P<k>\d+(?:\.\d+)?) times the number equals (?P<c>\d+(?:\.\d+)?). find the number.")
+
+
+def square_plus_times_equals(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SQUARE_PLUS_TIMES_EQUALS.fullmatch(text)
+    if match is None:
+        return None
+    k, c = Fraction(match.group("k")), Fraction(match.group("c"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [k, c]:
+        return None
+    x = _positive_quadratic(1, k, -c)
+    if x is None:
+        return None
+    if x * x + k * x != c:
+        return None
+    eq = "x² + %s*x = %s" % (show(k), show(c))
+    return Result("square_plus_times_equals", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_POLYGON_DIAGONALS_TO_SIDES = re.compile(
+    r"a polygon has (?P<diag>\d+) diagonals. using d = n\(n [−\-] (?P<k>\d+)\)/(?P<den>\d+), how many sides does it have\?")
+
+
+def polygon_diagonals_to_sides(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _POLYGON_DIAGONALS_TO_SIDES.fullmatch(text)
+    if match is None:
+        return None
+    diag, k, den = Fraction(match.group("diag")), Fraction(match.group("k")), Fraction(match.group("den"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [diag, k, den]:
+        return None
+    if den == 0:
+        return None
+    n = _positive_quadratic(1, -k, -den * diag)
+    if n is None or n.denominator != 1 or n <= 2:
+        return None
+    if n * (n - k) / den != diag:
+        return None
+    eq = "n(n - %s)/%s = %s" % (show(k), show(den), show(diag))
+    return Result("polygon_diagonals_to_sides", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_TRIANGULAR_SUM_FROM_ONE = re.compile(
+    r"how many consecutive whole numbers, starting from (?P<start>\d+), must be added to get a sum of (?P<s>\d+)\? "
+    r"\(use (?P<a>\d+) \+ (?P<b>\d+) \+ [.…]+ \+ n = n\(n \+ (?P<one>\d+)\)/(?P<two>\d+).\)")
+
+
+def triangular_sum_from_one(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TRIANGULAR_SUM_FROM_ONE.fullmatch(text)
+    if match is None:
+        return None
+    start, s, a, b, one, two = (Fraction(match.group(g)) for g in ("start", "s", "a", "b", "one", "two"))
+    numbers = digit_numbers(problem)
+    expected = [start, s, a, b, one, two]
+    if len(numbers) != 6 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != expected:
+        return None
+    if start != 1 or a != 1 or b != 2 or one != 1 or two != 2 or s <= 0:
+        return None
+    n = _positive_quadratic(1, 1, -2 * s)
+    if n is None or n.denominator != 1:
+        return None
+    if n * (n + 1) / 2 != s:
+        return None
+    eq = "n(n + 1)/2 = %s" % show(s)
+    return Result("triangular_sum_from_one", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_ROPE_CUT_IN_RATIO = re.compile(
+    r"a (?P<length>\d+(?:\.\d+)?) m rope is cut into two pieces in the ratio (?P<a>\d+):(?P<b>\d+). how long is each piece\?")
+
+
+def rope_cut_in_ratio(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ROPE_CUT_IN_RATIO.fullmatch(text)
+    if match is None:
+        return None
+    length, a, b = Fraction(match.group("length")), Fraction(match.group("a")), Fraction(match.group("b"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [length, a, b]:
+        return None
+    if length <= 0 or a <= 0 or b <= 0:
+        return None
+    x, y = length * a / (a + b), length * b / (a + b)
+    if x + y != length:
+        return None
+    eq = "x + y = %s; x/y = %s/%s" % (show(length), show(a), show(b))
+    return Result("rope_cut_in_ratio", [x, y], eq, "%s, so the pieces are %s and %s" % (eq, show_exact(x), show_exact(y)))
+
+
+_SAVINGS_JAR_WEEK_N = re.compile(
+    r"a savings jar holds \$(?P<a>\d+(?:\.\d+)?) in week (?P<w0>\d+) and grows by \$(?P<d>\d+(?:\.\d+)?) each week. "
+    r"in which week does it hold \$(?P<target>\d+(?:\.\d+)?)\?")
+
+
+def savings_jar_week_n(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SAVINGS_JAR_WEEK_N.fullmatch(text)
+    if match is None:
+        return None
+    a, w0, d, target = Fraction(match.group("a")), Fraction(match.group("w0")), Fraction(match.group("d")), Fraction(match.group("target"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, True, True] or [n[0] for n in numbers] != [a, w0, d, target]:
+        return None
+    if d == 0 or w0.denominator != 1:
+        return None
+    n = w0 + (target - a) / d
+    if n.denominator != 1 or n < w0:
+        return None
+    if a + d * (n - w0) != target:
+        return None
+    eq = "%s + %s*(n - %s) = %s" % (show(a), show(d), show(w0), show(target))
+    return Result("savings_jar_week_n", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_SPLIT_EQUAL_SIMPLE_INTEREST = re.compile(
+    r"\$(?P<t>\d+(?:\.\d+)?) is split between two accounts paying (?P<r1>\d+(?:\.\d+)?)% and (?P<r2>\d+(?:\.\d+)?)% simple interest. "
+    r"both accounts earn the same interest in a year. how much is in each\?")
+
+
+def split_equal_simple_interest(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SPLIT_EQUAL_SIMPLE_INTEREST.fullmatch(text)
+    if match is None:
+        return None
+    t, r1, r2 = Fraction(match.group("t")), Fraction(match.group("r1")), Fraction(match.group("r2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [True, False, False] or [n[0] for n in numbers] != [t, r1, r2]:
+        return None
+    if t <= 0 or r1 <= 0 or r2 <= 0 or r1 == r2:
+        return None
+    x = r2 * t / (r1 + r2)
+    y = t - x
+    if x <= 0 or y <= 0:
+        return None
+    if (r1 / 100) * x != (r2 / 100) * y:
+        return None
+    eq = "%s*x = %s*(%s - x)" % (show(r1 / 100), show(r2 / 100), show(t))
+    return Result("split_equal_simple_interest", [x, y], eq, "%s, so x = %s and y = %s" % (eq, show_exact(x), show_exact(y)))
+
+
+_SIMPLE_INTEREST_YEARS = re.compile(
+    r"how many years will it take \$(?P<p>\d+(?:\.\d+)?) to earn \$(?P<i>\d+(?:\.\d+)?) in simple interest at (?P<r>\d+(?:\.\d+)?)% per year\?")
+
+
+def simple_interest_years(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SIMPLE_INTEREST_YEARS.fullmatch(text)
+    if match is None:
+        return None
+    p, i, r = Fraction(match.group("p")), Fraction(match.group("i")), Fraction(match.group("r"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [flag for _v, flag, _s, _e in numbers] != [True, True, False] or [n[0] for n in numbers] != [p, i, r]:
+        return None
+    if p <= 0 or i <= 0 or r <= 0:
+        return None
+    years = i / (p * r / 100)
+    if years <= 0:
+        return None
+    if p * (r / 100) * years != i:
+        return None
+    eq = "%s*(%s/100)*t = %s" % (show(p), show(r), show(i))
+    return Result("simple_interest_years", [years], eq, "%s, so t = %s" % (eq, show_exact(years)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay, formula_perimeter_solve_width, fahrenheit_twice_celsius, fahrenheit_to_celsius, rental_car_days_plus_miles, item_coupon_when_coupon_exceeds_paid, sound_travel_time, raised_plus_per_item_to_goal, loses_value_each_year, part_is_percent_of_whole, split_bill_including_tip, percent_boys_given_girls, percent_up_then_down_ending, weekly_pay_plus_percent_of_sales, scale_model_from_real, map_scale_distance, similar_shadows_height, square_more_than_times_number, consecutive_squares_sum, square_plus_times_equals, polygon_diagonals_to_sides, triangular_sum_from_one, rope_cut_in_ratio, savings_jar_week_n, split_equal_simple_interest, simple_interest_years,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
