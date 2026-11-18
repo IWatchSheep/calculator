@@ -6,7 +6,7 @@ Equation: 1.1 × 0.6 × p = 580.8
 Solve   : 0.66p = 580.8 → p = 880
 Answer  : $880.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: percent_up_then_down_ending answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '1.1 × 0.6 × p = 580.8'
 SOLVE = '0.66p = 580.8 → p = 880'
 ANSWER = '$880.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'percent_up_then_down_ending'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A stock's price rose {0}% one month and then fell {1}% the next, ending at ${2}. What was the starting price?"
 NUMBERS = ['10', '40', '580.80']

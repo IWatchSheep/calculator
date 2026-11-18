@@ -6,7 +6,7 @@ Equation: 15 + (n − 1)(6) = 63
 Solve   : 6n = 54 → n = 9
 Answer  : Week 9
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: savings_jar_week_n answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '15 + (n − 1)(6) = 63'
 SOLVE = '6n = 54 → n = 9'
 ANSWER = 'Week 9'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'savings_jar_week_n'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A savings jar holds ${0} in week {1} and grows by ${2} each week. In which week does it hold ${3}?'
 NUMBERS = ['15', '1', '6', '63']

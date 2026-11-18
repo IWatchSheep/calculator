@@ -6,7 +6,7 @@ Equation: x² + 16x = 720
 Solve   : x² + 16x − 720 = 0 → (x − 20)(x + 36) = 0 → x = 20
 Answer  : 20
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: square_plus_times_equals answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x² + 16x = 720'
 SOLVE = 'x² + 16x − 720 = 0 → (x − 20)(x + 36) = 0 → x = 20'
 ANSWER = '20'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'square_plus_times_equals'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The square of a positive number plus {0} times the number equals {1}. Find the number.'
 NUMBERS = ['16', '720']

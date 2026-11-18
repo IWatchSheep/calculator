@@ -6,7 +6,7 @@ Equation: 343t = 2744
 Solve   : 343t = 2744 → t = 8
 Answer  : 8 seconds
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: sound_travel_time answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '343t = 2744'
 SOLVE = '343t = 2744 → t = 8'
 ANSWER = '8 seconds'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'sound_travel_time'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Sound travels about {0} m/s, so d = {1}t. A storm is {2} m away. How many seconds after the lightning flash will the thunder be heard?'
 NUMBERS = ['343', '343', '2744']

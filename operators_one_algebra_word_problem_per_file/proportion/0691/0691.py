@@ -6,7 +6,7 @@ Equation: 1/50 = x/50
 Solve   : x/50 = 0.02 → x = 0.02 × 50 = 1
 Answer  : 1
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: scale_model_from_real answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '1/50 = x/50'
 SOLVE = 'x/50 = 0.02 → x = 0.02 × 50 = 1'
 ANSWER = '1'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'scale_model_from_real'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A model car is built at a {0}:{1} scale. The real car is {2} cm long. How long is the model?'
 NUMBERS = ['1', '50', '50']

@@ -1,7 +1,7 @@
 """Row for the algebra word problem: Percent 0623
 
 Picture:      1.25 b / □ = □   (the equation of the problem; each box is a number of the problem text; the answer is right of =)
-Calculation:  reference - the problem is stored; no solver answers it yet
+Calculation:  ready - fill the boxes, press = and the answer appears right of =
 Try it:       python operator_row_math_for_algebra_word_problems/preview.py percent/0623
 """
 import os
@@ -16,7 +16,7 @@ LIBRARY_KEY = 'percent/0623'    # the problem in operators_one_algebra_word_prob
 PATTERN = '1.25 b / □ = □  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
-CALC = 'reference'
+CALC = 'ready'
 INPUTS = ['number 1', 'number 3']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
 BOX_INDEX = [0, 2]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
 DEFAULTS = ['9', '175.00']    # the boxes' numbers as written in the stored problem

@@ -6,7 +6,7 @@ Equation: x² = 2x + 48
 Solve   : x² − 2x − 48 = 0 → x = 8 (the other root, -6, is rejected)
 Answer  : 8
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: square_more_than_times_number answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x² = 2x + 48'
 SOLVE = 'x² − 2x − 48 = 0 → x = 8 (the other root, -6, is rejected)'
 ANSWER = '8'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'square_more_than_times_number'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The square of a positive number is {0} more than {1} times the number. Find the number.'
 NUMBERS = ['48', '2']

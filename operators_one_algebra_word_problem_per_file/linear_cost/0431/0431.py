@@ -6,7 +6,7 @@ Equation: 45(2) + 0.5m = 185
 Solve   : m/2 = 95 → m = 95 × 2 = 190
 Answer  : 190 miles
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rental_car_days_plus_miles answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '45(2) + 0.5m = 185'
 SOLVE = 'm/2 = 95 → m = 95 × 2 = 190'
 ANSWER = '190 miles'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rental_car_days_plus_miles'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rental car costs ${0} per day plus ${1} per mile. A {2}-day rental cost ${3}. How many miles were driven?'
 NUMBERS = ['45', '0.50', '2', '185.00']

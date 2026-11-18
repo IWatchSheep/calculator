@@ -6,7 +6,7 @@ Equation: 0.8n = 136
 Solve   : 0.8n = 136 → n = 170
 Answer  : 170 students
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: percent_boys_given_girls answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.8n = 136'
 SOLVE = '0.8n = 136 → n = 170'
 ANSWER = '170 students'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'percent_boys_given_girls'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = '{0}% of the students in a club are boys. There are {1} girls. How many students are in the club?'
 NUMBERS = ['20', '136']

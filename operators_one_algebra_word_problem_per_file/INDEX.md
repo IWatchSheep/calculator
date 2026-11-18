@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 427 ready (412 word_solver, 15 number_puzzle), 52 reference.
+479 problems: 452 ready (437 word_solver, 15 number_puzzle), 27 reference.
 
 ## Age
 
@@ -196,12 +196,12 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0178 | Using distance = speed × time, how long does it take to travel 160 km at 40 km/h? | 4 hours | Ready | distance_speed_time | `formula/0178/` |
 | 0179 | Using v = u + at, how long does it take an object to go from 0 m/s to 30 m/s with acceleration 5 m/s²? | 6 seconds | Ready | kinematics_time | `formula/0179/` |
-| 0180 | Solve P = 2l + 2w for w when P = 70 and l = 27. | 8 | Reference |  | `formula/0180/` |
+| 0180 | Solve P = 2l + 2w for w when P = 70 and l = 27. | 8 | Ready | formula_perimeter_solve_width | `formula/0180/` |
 | 0181 | Using V = IR, find the current when the voltage is 12 V and the resistance is 4 Ω. | 3 A | Ready | archive_formula_1 | `formula/0181/` |
-| 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32) | 160°C (320°F) | Reference |  | `formula/0182/` |
+| 0182 | At what Celsius temperature is the Fahrenheit reading exactly 2 times the Celsius reading? (F = (9/5)C + 32) | 160°C (320°F) | Ready | fahrenheit_twice_celsius | `formula/0182/` |
 | 0183 | An object has a mass of 16.2 g and a density of 2.7 g/cm³. Using density = mass/volume, find its volume. | 6 cm³ | Ready | archive_formula_2 | `formula/0183/` |
 | 0184 | On a seesaw, weight × distance from the pivot must be equal on both sides. Jade (69 kg) sits 3 m from the pivot. How far from the pivot must Theo (36 kg) sit to balance? | 5.75 m | Ready | seesaw_balance_distance | `formula/0184/` |
-| 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F? | 45°C | Reference |  | `formula/0188/` |
+| 0188 | Using F = (9/5)C + 32, what Celsius temperature equals 113°F? | 45°C | Ready | fahrenheit_to_celsius | `formula/0188/` |
 | 0189 | On a seesaw, weight × distance from the pivot must be equal on both sides. Yara (36 kg) sits 6 m from the pivot. How far from the pivot must Priya (54 kg) sit to balance? | 4 m | Ready | seesaw_balance_distance | `formula/0189/` |
 | 0195 | On a seesaw, weight × distance from the pivot must be equal on both sides. Sofia (66 kg) sits 6 m from the pivot. How far from the pivot must Mateo (22 kg) sit to balance? | 18 m | Ready | seesaw_balance_distance | `formula/0195/` |
 | 0203 | On a seesaw, weight × distance from the pivot must be equal on both sides. Ivan (35 kg) sits 1 m from the pivot. How far from the pivot must Pablo (70 kg) sit to balance? | 0.5 m | Ready | seesaw_balance_distance | `formula/0203/` |
@@ -376,7 +376,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used? | 940 kWh | Ready | archive_linear_cost_1 | `linear_cost/0428/` |
 | 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours did they park? | 4 hours | Ready | archive_linear_cost_2 | `linear_cost/0429/` |
 | 0430 | A taxi charges $3.50 plus $1.50 per mile. A ride costs $39.50. How many miles was the ride? | 24 miles | Ready | fixed_plus_rate | `linear_cost/0430/` |
-| 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven? | 190 miles | Reference |  | `linear_cost/0431/` |
+| 0431 | A rental car costs $45 per day plus $0.50 per mile. A 2-day rental cost $185.00. How many miles were driven? | 190 miles | Ready | rental_car_days_plus_miles | `linear_cost/0431/` |
 | 0432 | Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950.00. How many overtime hours were worked? | 5 overtime hours (45 hours total) | Ready | overtime_hours_time_and_a_half | `linear_cost/0432/` |
 | 0433 | Umar works two jobs paying $18/h and $20/h. Last month 53 hours were worked in total, earning $1010. How many hours were worked at the $18 job? | 25 hours at $18, 28 hours at $20 | Ready | two_prices_known_count | `linear_cost/0433/` |
 | 0435 | Zane gets $10 allowance a week plus $3 for each extra chore. Over 8 weeks that came to $92. How many extra chores were done? | 4 chores | Ready | base_plus_extra_over_time | `linear_cost/0435/` |
@@ -387,7 +387,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0447 | Bowling costs $6.00 per game plus $3.00 for shoe rental. Theo spent $9.00. How many games were bowled? | 1 game | Ready | bowling_games_plus_shoe_rental | `linear_cost/0447/` |
 | 0448 | Priya earns $12/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $552.00. How many overtime hours were worked? | 4 overtime hours (44 hours total) | Ready | overtime_hours_time_and_a_half | `linear_cost/0448/` |
 | 0450 | Leo gets $8 allowance a week plus $4 for each extra chore. Over 6 weeks that came to $64. How many extra chores were done? | 4 chores | Ready | base_plus_extra_over_time | `linear_cost/0450/` |
-| 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought? | 4 notebooks | Reference |  | `linear_cost/0453/` |
+| 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought? | 4 notebooks | Ready | item_coupon_when_coupon_exceeds_paid | `linear_cost/0453/` |
 | 0454 | Pablo works two jobs paying $12/h and $17/h. Last month 21 hours were worked in total, earning $297. How many hours were worked at the $12 job? | 12 hours at $12, 9 hours at $17 | Ready | two_prices_known_count | `linear_cost/0454/` |
 | 0456 | A gym charges a $50 joining fee and $25 per month. Uma has paid $325 in total. How many months has Uma been a member? | 11 months | Ready | fixed_plus_rate | `linear_cost/0456/` |
 | 0459 | Notebooks cost $3.50 each. With a $2 coupon, Dev paid $33.00. How many notebooks were bought? | 10 notebooks | Ready | price_minus_coupon | `linear_cost/0459/` |
@@ -411,13 +411,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0483 | Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height? | 7.5 weeks | Ready | two_changing_equal | `linear_model/0483/` |
 | 0484 | A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days? | 53 pages per day | Ready | pages_per_day | `linear_model/0484/` |
 | 0485 | One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. When will they be the same height? | 4.5 hours | Ready | two_candles_equal | `linear_model/0485/` |
-| 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the thunder be heard? | 8 seconds | Reference |  | `linear_model/0486/` |
+| 0486 | Sound travels about 343 m/s, so d = 343t. A storm is 2744 m away. How many seconds after the lightning flash will the thunder be heard? | 8 seconds | Ready | sound_travel_time | `linear_model/0486/` |
 | 0487 | A tractor bought for $23,000.00 loses $1,600.00 in value each year. After how many years will it be worth $16,600.00? | 4 years | Ready | archive_linear_model_1 | `linear_model/0487/` |
 | 0488 | A club has raised $10 so far. At its bake sale it charges $5 per box of cookies. How many more boxes must it sell to reach its $130 goal? | 24 | Ready | archive_linear_model_2 | `linear_model/0488/` |
 | 0489 | A hot-air balloon at 5500 ft descends 650 ft per minute. Another at 1300 ft rises 400 ft per minute. When are they at the same height? | 4 minutes | Ready | archive_linear_model_3 | `linear_model/0489/` |
 | 0490 | A phone at 90% battery loses 5% per hour. After how many hours will it be at 20%? | 14 hours | Ready | archive_linear_model_4 | `linear_model/0490/` |
-| 0509 | A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 goal? | 38 | Reference |  | `linear_model/0509/` |
-| 0513 | A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00? | 4 years | Reference |  | `linear_model/0513/` |
+| 0509 | A club has raised $30 so far. At its car wash it charges $12 per car. How many more cars must it sell to reach its $486 goal? | 38 | Ready | raised_plus_per_item_to_goal | `linear_model/0509/` |
+| 0513 | A delivery van bought for $22,000.00 loses $3,800.00 in value each year. After how many years will it be worth $6,800.00? | 4 years | Ready | loses_value_each_year | `linear_model/0513/` |
 | 0522 | For a plumber's bill, 5 hours cost $107 and 7 hours cost $121. The cost is linear: C = m·x + b. Find m and b, then how many hours cost $142. | m = 7, b = 72; 10 hours | Ready | line_from_two_points | `linear_model/0522/` |
 
 ## Mixture
@@ -486,11 +486,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0618 | Yara spent 75% of a paycheck on rent and had $280 left. How much was the paycheck? | $1120 | Ready | percent_spent_left | `percent/0618/` |
 | 0619 | The total cost of an item including 7.5% sales tax is $46.87. What was the price before tax? | $43.60 | Ready | percent_change | `percent/0619/` |
 | 0620 | What percent of 95 is 114? | 120% | Ready | archive_percent_1 | `percent/0620/` |
-| 0621 | 3 is 30% of what number? | 10 | Reference |  | `percent/0621/` |
+| 0621 | 3 is 30% of what number? | 10 | Ready | part_is_percent_of_whole | `percent/0621/` |
 | 0622 | After a 20% discount, a backpack costs $20.00. What was the original price? | $25.00 | Ready | percent_change | `percent/0622/` |
-| 0623 | 9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip? | $1,260.00 | Reference |  | `percent/0623/` |
-| 0624 | 20% of the students in a club are boys. There are 136 girls. How many students are in the club? | 170 students | Reference |  | `percent/0624/` |
-| 0625 | A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price? | $880.00 | Reference |  | `percent/0625/` |
+| 0623 | 9 friends split a restaurant bill equally, including a 25% tip. Each paid $175.00. What was the bill before the tip? | $1,260.00 | Ready | split_bill_including_tip | `percent/0623/` |
+| 0624 | 20% of the students in a club are boys. There are 136 girls. How many students are in the club? | 170 students | Ready | percent_boys_given_girls | `percent/0624/` |
+| 0625 | A stock's price rose 10% one month and then fell 40% the next, ending at $580.80. What was the starting price? | $880.00 | Ready | percent_up_then_down_ending | `percent/0625/` |
 | 0629 | Rhea spent 40% of a paycheck on rent and had $192 left. How much was the paycheck? | $320 | Ready | percent_spent_left | `percent/0629/` |
 | 0631 | After a 2% raise, Kira's salary is $55,080.00. What was the salary before the raise? | $54,000.00 | Ready | percent_change | `percent/0631/` |
 | 0633 | A test has 20 questions. Isla scored 65%. How many questions were answered correctly? | 13 questions | Ready | percent_of_count | `percent/0633/` |
@@ -513,7 +513,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0677 | Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sales? | $8,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0677/` |
 | 0678 | Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What were the sales? | $32,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0678/` |
-| 0679 | A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell? | $17,500.00 | Reference |  | `percent_commission/0679/` |
+| 0679 | A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell? | $17,500.00 | Ready | weekly_pay_plus_percent_of_sales | `percent_commission/0679/` |
 | 0681 | Nia earns a weekly base pay of $500 plus 15% commission on sales. One week the total pay was $2,900.00. What were the sales? | $16,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0681/` |
 
 ## Percent (markup)
@@ -537,13 +537,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0691 | A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the model? | 1 | Reference |  | `proportion/0691/` |
+| 0691 | A model car is built at a 1:50 scale. The real car is 50 cm long. How long is the model? | 1 | Ready | scale_model_from_real | `proportion/0691/` |
 | 0692 | A lawn needs 4 kg of fertilizer per 25 m². How much is needed for 400 m²? | 64 kg | Ready | proportion | `proportion/0692/` |
 | 0693 | A shade of green uses blue and yellow paint in the ratio 2:3. If 6 L of blue is used, how much yellow is needed? | 9 L | Ready | ratio_split | `proportion/0693/` |
 | 0694 | A recipe uses 0.5 cups of flour for 4 servings. How many cups are needed for 8 servings? | 1 cup | Ready | proportion | `proportion/0694/` |
 | 0695 | Suppose 1 dollar buys 1.25 units of a foreign currency. How many dollars do you need to get 1875 units? | $1,500.00 | Ready | proportion | `proportion/0695/` |
 | 0696 | A cookie recipe needs 4 eggs for 24 cookies. How many eggs for 60 cookies? | 10 eggs | Ready | proportion | `proportion/0696/` |
-| 0697 | On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they on the map? | 19 cm | Reference |  | `proportion/0697/` |
+| 0697 | On a map, 1 cm represents 20 km. Two cities are 380 km apart. How far apart are they on the map? | 19 cm | Ready | map_scale_distance | `proportion/0697/` |
 | 0711 | A recipe uses 1.5 cups of sugar for 3 servings. How many cups are needed for 10 servings? | 5 cups | Ready | proportion | `proportion/0711/` |
 | 0716 | A recipe uses 1 cups of rice for 6 servings. How many cups are needed for 15 servings? | 2.5 cups | Ready | proportion | `proportion/0716/` |
 | 0722 | A recipe uses 0.75 cups of milk for 6 servings. How many cups are needed for 5 servings? | 5/8 cups | Ready | proportion | `proportion/0722/` |
@@ -553,16 +553,16 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0725 | A 5 ft person casts a 2 ft shadow. At the same time a tree casts a 30 ft shadow. How tall is the tree? | 75 | Ready | archive_proportion_similar_triangles_1 | `proportion_similar_triangles/0725/` |
-| 0726 | At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building? | 90 | Reference |  | `proportion_similar_triangles/0726/` |
+| 0726 | At noon a 6 m post casts a 10 m shadow, and a building nearby casts a 150 m shadow. How tall is the building? | 90 | Ready | similar_shadows_height | `proportion_similar_triangles/0726/` |
 
 ## Quadratic
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0729 | The square of a positive number is 48 more than 2 times the number. Find the number. | 8 | Reference |  | `quadratic/0729/` |
-| 0730 | The sum of the squares of two consecutive positive integers is 85. Find the integers. | 6 and 7 | Reference |  | `quadratic/0730/` |
-| 0731 | The square of a positive number plus 16 times the number equals 720. Find the number. | 20 | Reference |  | `quadratic/0731/` |
-| 0732 | A polygon has 5 diagonals. Using D = n(n − 3)/2, how many sides does it have? | 5 sides | Reference |  | `quadratic/0732/` |
+| 0729 | The square of a positive number is 48 more than 2 times the number. Find the number. | 8 | Ready | square_more_than_times_number | `quadratic/0729/` |
+| 0730 | The sum of the squares of two consecutive positive integers is 85. Find the integers. | 6 and 7 | Ready | consecutive_squares_sum | `quadratic/0730/` |
+| 0731 | The square of a positive number plus 16 times the number equals 720. Find the number. | 20 | Ready | square_plus_times_equals | `quadratic/0731/` |
+| 0732 | A polygon has 5 diagonals. Using D = n(n − 3)/2, how many sides does it have? | 5 sides | Ready | polygon_diagonals_to_sides | `quadratic/0732/` |
 | 0733 | The product of two consecutive positive integers is 12. Find the integers. | 3 and 4 | Ready | consecutive_product | `quadratic/0733/` |
 | 0734 | Two numbers add up to 56 and multiply to 780. What are they? | 26 and 30 | Ready | two_numbers_sum_and_product | `quadratic/0734/` |
 | 0736 | The sum of two numbers is 43 and their product is 456. Find the numbers. | 19 and 24 | Ready | two_numbers_sum_and_product | `quadratic/0736/` |
@@ -588,7 +588,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0764 | How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2.) | 51 numbers (1 through 51) | Reference |  | `quadratic_sequences/0764/` |
+| 0764 | How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2.) | 51 numbers (1 through 51) | Ready | triangular_sum_from_one | `quadratic_sequences/0764/` |
 | 0765 | A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in total. How many rows are there? | 5 rows | Ready | stack_of_cans_rows | `quadratic_sequences/0765/` |
 | 0766 | A stack of cans has 8 cans in the top row, and each row below has 2 more than the row above. The stack has 260 cans in total. How many rows are there? | 13 rows | Ready | stack_of_cans_rows | `quadratic_sequences/0766/` |
 
@@ -607,7 +607,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0781 | A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used? | 96, 48, 60 kg | Ready | three_part_mix_ratio | `ratio/0781/` |
 | 0782 | The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did each have at first? | Yusuf 18, Dev 30 | Ready | marbles_given_ratio_changes | `ratio/0782/` |
 | 0783 | Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get? | Sofia $15,000.00, Pablo $7,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0783/` |
-| 0784 | A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece? | 2 m and 8 m | Reference |  | `ratio/0784/` |
+| 0784 | A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece? | 2 m and 8 m | Ready | rope_cut_in_ratio | `ratio/0784/` |
 | 0785 | A 105 cm board is cut into two pieces. One piece is 7 cm longer than the other. How long is each piece? | 49 cm and 56 cm | Ready | sum_difference | `ratio/0785/` |
 | 0786 | A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used? | 16, 32, 40 g | Ready | three_part_mix_ratio | `ratio/0786/` |
 | 0787 | The ratio of Hana's marbles to Maya's is 1:1. After Hana gives Maya 23 marbles, the ratio is 1:3. How many did each have at first? | Hana 46, Maya 46 | Ready | marbles_given_ratio_changes | `ratio/0787/` |
@@ -658,7 +658,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0857 | A theater has 29 seats in the first row and each row has 5 more seats than the row before. Which row has 209 seats? | Row 37 | Ready | archive_sequences_1 | `sequences/0857/` |
-| 0860 | A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63? | Week 9 | Reference |  | `sequences/0860/` |
+| 0860 | A savings jar holds $15 in week 1 and grows by $6 each week. In which week does it hold $63? | Week 9 | Ready | savings_jar_week_n | `sequences/0860/` |
 
 ## Simple interest
 
@@ -666,8 +666,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0862 | Dev has $18,000.00 invested at 3%. How much more must be invested at 9% so that the total earns 6% overall? | $18,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0862/` |
 | 0863 | Quinn invests $31,000.00, part at 2% and the rest at 3% simple annual interest. After one year the total interest is $770.00. How much was invested at each rate? | $16,000.00 at 2% and $15,000.00 at 3% | Ready | two_rate_interest | `simple_interest/0863/` |
-| 0864 | $16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a year. How much is in each? | $6,600.00 at 6%, $9,900.00 at 4% | Reference |  | `simple_interest/0864/` |
-| 0865 | How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year? | 6 years | Reference |  | `simple_interest/0865/` |
+| 0864 | $16,500.00 is split between two accounts paying 6% and 4% simple interest. Both accounts earn the same interest in a year. How much is in each? | $6,600.00 at 6%, $9,900.00 at 4% | Ready | split_equal_simple_interest | `simple_interest/0864/` |
+| 0865 | How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year? | 6 years | Ready | simple_interest_years | `simple_interest/0865/` |
 | 0867 | Victor invests $20,500.00, part at 5% and the rest at 7% simple annual interest. After one year the total interest is $1,055.00. How much was invested at each rate? | $19,000.00 at 5% and $1,500.00 at 7% | Ready | two_rate_interest | `simple_interest/0867/` |
 | 0869 | Emeka has $6,000.00 invested at 2%. How much more must be invested at 8% so that the total earns 5% overall? | $6,000.00 | Ready | more_invested_for_overall_rate | `simple_interest/0869/` |
 | 0871 | Yusuf has $19,000.00 invested at 4%. How much more must be invested at 9% so that the total earns 7% overall? | $28,500.00 | Ready | more_invested_for_overall_rate | `simple_interest/0871/` |
