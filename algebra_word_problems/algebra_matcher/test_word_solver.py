@@ -445,6 +445,21 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How far has Carla driven when they meet?"))
         self.assertIsNone(answers("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How long after Carla leaves do they meet?"))
 
+    def test_works_alone_then_partner_joins(self):
+        cases = [
+            ("Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish?", Fraction(4, 3)),
+            ("Grace can do a job in 5 hours and Isla can do it in 15 hours. Grace works alone for 2 hours, then Isla joins. How much longer will it take to finish?", Fraction(9, 4)),
+            ("Rhea can do a job in 4 hours and Carla can do it in 12 hours. Rhea works alone for 2 hours, then Carla joins. How much longer will it take to finish?", Fraction(3, 2)),
+        ]
+        for sentence, hours in cases:
+            result = WS.works_alone_then_partner_joins(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [hours], sentence)
+        self.assertIsNone(WS.works_alone_then_partner_joins("Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish?"))
+        self.assertIsNone(WS.works_alone_then_partner_joins("Sam can do a job in 4 hours and Hana can do it in 8 hours. How long will they take working together?"))
+        self.assertIsNone(answers("Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much of the job is left?"))
+        self.assertIsNone(answers("Sam can do a job in 4 hours and Hana can do it in 8 hours. Hana works alone for 2 hours, then Sam joins. How much longer will it take to finish?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
