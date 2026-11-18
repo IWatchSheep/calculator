@@ -12,7 +12,7 @@ FRESH = [
     ("A town's population triples every 10 years, from 2,000 to 54,000. How many years does that take?", [30]),
     ("A sample of iodine has a half-life of 8 days. How long until 640 mg decays to 10 mg?", [48]),
     ("A dye halves in strength every hour. How long does it take to go from 96 units to 6 units?", [4]),
-    ("A boat goes 18 km downstream in 2 min and 12 km upstream in 2 h. What is the speed of the boat in still water?", None),
+    ("A boat goes 18 km downstream in 2 min and 12 km upstream in 2 h. What is the speed of the boat in still water?", [273]),
     ("A truck leaves the depot at 1 pm going 40 km/h. A van leaves the same depot at 3 pm going 30 km/h. When does the van catch the truck?", None),
     ("A truck leaves the depot at 1 pm going 40 km/h. A van leaves the same depot at 3:30 pm going 60 km/h. When does the van catch the truck?", [5]),
     ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 100?", None),

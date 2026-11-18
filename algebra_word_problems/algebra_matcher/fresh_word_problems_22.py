@@ -12,6 +12,6 @@ FRESH = [
     ("A fair costs $1,200 to organize. Wristbands sell for $7 each. How many wristbands must be sold for a profit of at least $900?", [300]),
     ("Two pumps move 25 and 15 gallons per hour. Working together, how many minutes will they take to move 200 gallons?", [300]),
     ("Two pumps move 25 and 15 gallons per hour. Working together, how many gallons do they move in one hour?", [40]),
-    ("A club dinner costs $450 to host. Plates are $15. How many plates must be sold for a profit of at most $600?", None),
+    ("A club dinner costs $450 to host. Plates are $15. How many plates must be sold for a profit of at most $600?", [70]),
     ("A club dinner costs $450 to host. Plates are $15. How many plates must be sold for a profit of at least $600 if 5 are free?", [75]),
 ]

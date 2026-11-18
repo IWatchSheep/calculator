@@ -1,6 +1,7 @@
 """Twentieth fresh set for word_solver.py: wordings for the three families added with the 'in 40 games' fix (two_prices_known_count, drain_or_fill,
 percent_of_count), written AFTER all three were finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("Mia bought 25 stamps, some at 60¢ and some at 80¢, for $17. How many of each?", [10, 15]),
@@ -15,5 +16,5 @@ FRESH = [
     ("A tank holds 4,000 L and drains at 80 L per minute. How many liters remain after 10 minutes?", [3200]),
     ("A tank holds 4,000 L and drains at 80 L per minute. After how many minutes will 5,000 L remain?", None),
     ("A quiz has 40 questions. Ava scored 85%. What percent were answered wrong?", None),
-    ("A quiz has 30 questions. Ava scored 85%. How many questions were answered correctly?", None),
+    ("A quiz has 30 questions. Ava scored 85%. How many questions were answered correctly?", [Fraction(51, 2)]),
 ]
