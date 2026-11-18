@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 322 ready (307 word_solver, 15 number_puzzle), 157 reference.
+479 problems: 326 ready (311 word_solver, 15 number_puzzle), 153 reference.
 
 ## Age
 
@@ -372,7 +372,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0424 | Umar gets $10 allowance a week plus $4 for each extra chore. Over 8 weeks that came to $120. How many extra chores were done? | 10 chores | Ready | base_plus_extra_over_time | `linear_cost/0424/` |
 | 0425 | Notebooks cost $3.50 each. With a $3 coupon, Hiro paid $46.00. How many notebooks were bought? | 14 notebooks | Ready | price_minus_coupon | `linear_cost/0425/` |
 | 0426 | A plumber charges a $80 call-out fee plus $85 per hour. The bill was $250.00. How long did the job take? | 2 hours | Ready | fixed_plus_rate | `linear_cost/0426/` |
-| 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled? | 1 game | Reference |  | `linear_cost/0427/` |
+| 0427 | Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled? | 1 game | Ready | bowling_games_plus_shoe_rental | `linear_cost/0427/` |
 | 0428 | An electric bill is $20 per month plus $0.18 per kWh. This month's bill is $189.20. How many kWh were used? | 940 kWh | Ready | archive_linear_cost_1 | `linear_cost/0428/` |
 | 0429 | A parking garage charges $5 for the first hour and $2.00 for each additional hour. A driver paid $11.00. How many hours did they park? | 4 hours | Ready | archive_linear_cost_2 | `linear_cost/0429/` |
 | 0430 | A taxi charges $3.50 plus $1.50 per mile. A ride costs $39.50. How many miles was the ride? | 24 miles | Ready | fixed_plus_rate | `linear_cost/0430/` |
@@ -383,15 +383,15 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0441 | Bags of chips cost $7.50 each. With a $10 coupon, Kira paid $12.50. How many bags of chips were bought? | 3 bags of chips | Ready | price_minus_coupon | `linear_cost/0441/` |
 | 0442 | Pablo earns $16/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $832.00. How many overtime hours were worked? | 8 overtime hours (48 hours total) | Ready | overtime_hours_time_and_a_half | `linear_cost/0442/` |
 | 0443 | A gym charges a $100 joining fee and $15 per month. Caleb has paid $145 in total. How many months has Caleb been a member? | 3 months | Ready | fixed_plus_rate | `linear_cost/0443/` |
-| 0445 | Bowling costs $6.00 per game plus $4.00 for shoe rental. Nia spent $22.00. How many games were bowled? | 3 games | Reference |  | `linear_cost/0445/` |
-| 0447 | Bowling costs $6.00 per game plus $3.00 for shoe rental. Theo spent $9.00. How many games were bowled? | 1 game | Reference |  | `linear_cost/0447/` |
+| 0445 | Bowling costs $6.00 per game plus $4.00 for shoe rental. Nia spent $22.00. How many games were bowled? | 3 games | Ready | bowling_games_plus_shoe_rental | `linear_cost/0445/` |
+| 0447 | Bowling costs $6.00 per game plus $3.00 for shoe rental. Theo spent $9.00. How many games were bowled? | 1 game | Ready | bowling_games_plus_shoe_rental | `linear_cost/0447/` |
 | 0448 | Priya earns $12/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $552.00. How many overtime hours were worked? | 4 overtime hours (44 hours total) | Ready | overtime_hours_time_and_a_half | `linear_cost/0448/` |
 | 0450 | Leo gets $8 allowance a week plus $4 for each extra chore. Over 6 weeks that came to $64. How many extra chores were done? | 4 chores | Ready | base_plus_extra_over_time | `linear_cost/0450/` |
 | 0453 | Notebooks cost $4.50 each. With a $10 coupon, Bea paid $8.00. How many notebooks were bought? | 4 notebooks | Reference |  | `linear_cost/0453/` |
 | 0454 | Pablo works two jobs paying $12/h and $17/h. Last month 21 hours were worked in total, earning $297. How many hours were worked at the $12 job? | 12 hours at $12, 9 hours at $17 | Ready | two_prices_known_count | `linear_cost/0454/` |
 | 0456 | A gym charges a $50 joining fee and $25 per month. Uma has paid $325 in total. How many months has Uma been a member? | 11 months | Ready | fixed_plus_rate | `linear_cost/0456/` |
 | 0459 | Notebooks cost $3.50 each. With a $2 coupon, Dev paid $33.00. How many notebooks were bought? | 10 notebooks | Ready | price_minus_coupon | `linear_cost/0459/` |
-| 0462 | Bowling costs $7.00 per game plus $4.00 for shoe rental. Wren spent $39.00. How many games were bowled? | 5 games | Reference |  | `linear_cost/0462/` |
+| 0462 | Bowling costs $7.00 per game plus $4.00 for shoe rental. Wren spent $39.00. How many games were bowled? | 5 games | Ready | bowling_games_plus_shoe_rental | `linear_cost/0462/` |
 | 0464 | Caleb earns $18/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $801.00. How many overtime hours were worked? | 3 overtime hours (43 hours total) | Ready | overtime_hours_time_and_a_half | `linear_cost/0464/` |
 | 0465 | Ava gets $8 allowance a week plus $3 for each extra chore. Over 6 weeks that came to $78. How many extra chores were done? | 10 chores | Ready | base_plus_extra_over_time | `linear_cost/0465/` |
 | 0466 | Ivan works two jobs paying $14/h and $17/h. Last month 24 hours were worked in total, earning $363. How many hours were worked at the $14 job? | 15 hours at $14, 9 hours at $17 | Ready | two_prices_known_count | `linear_cost/0466/` |
