@@ -6,7 +6,7 @@ Equation: 40(20) + 30h = 950
 Solve   : 30h = 150 → h = 5
 Answer  : 5 overtime hours (45 hours total)
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: overtime_hours_time_and_a_half answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '40(20) + 30h = 950'
 SOLVE = '30h = 150 → h = 5'
 ANSWER = '5 overtime hours (45 hours total)'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'overtime_hours_time_and_a_half'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "Sam earns ${0}/hour for the first {1} hours and time-and-a-half after that. Last week's pay was ${2}. How many overtime hours were worked?"
 NUMBERS = ['20', '40', '950.00']
