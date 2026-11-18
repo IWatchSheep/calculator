@@ -383,6 +383,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?"))
         self.assertIsNone(answers("Elena has $670 and saves $40 a week. What is the fewest weeks needed to have at least $670?"))
 
+    def test_bowling_games_plus_shoe_rental(self):
+        cases = [
+            ("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How many games were bowled?", 1),
+            ("Bowling costs $6.00 per game plus $4.00 for shoe rental. Nia spent $22.00. How many games were bowled?", 3),
+            ("Bowling costs $6.00 per game plus $3.00 for shoe rental. Theo spent $9.00. How many games were bowled?", 1),
+            ("Bowling costs $7.00 per game plus $4.00 for shoe rental. Wren spent $39.00. How many games were bowled?", 5),
+        ]
+        for sentence, expected in cases:
+            result = WS.bowling_games_plus_shoe_rental(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(expected)], sentence)
+        self.assertIsNone(WS.bowling_games_plus_shoe_rental("A taxi costs $4.00 plus $5.50 per mile. Uma spent $9.50. How many miles were driven?"))
+        self.assertIsNone(answers("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $9.50. How much was the rental?"))
+        self.assertIsNone(answers("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $4.00. How many games were bowled?"))
+        self.assertIsNone(answers("Bowling costs $5.50 per game plus $4.00 for shoe rental. Uma spent $10.00. How many games were bowled?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

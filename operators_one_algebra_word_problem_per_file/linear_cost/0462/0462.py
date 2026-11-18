@@ -6,7 +6,7 @@ Equation: 4 + 7n = 39
 Solve   : 7n = 35 → n = 5
 Answer  : 5 games
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: bowling_games_plus_shoe_rental answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4 + 7n = 39'
 SOLVE = '7n = 35 → n = 5'
 ANSWER = '5 games'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'bowling_games_plus_shoe_rental'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Bowling costs ${0} per game plus ${1} for shoe rental. Wren spent ${2}. How many games were bowled?'
 NUMBERS = ['7.00', '4.00', '39.00']
