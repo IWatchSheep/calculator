@@ -6,7 +6,7 @@ Equation: (x + 10) + (3x + 10) = 68
 Solve   : 4x + 20 = 68 → x = 12
 Answer  : Yusuf is 12, Uma is 36
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: times_as_old_future_sum answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(x + 10) + (3x + 10) = 68'
 SOLVE = '4x + 20 = 68 → x = 12'
 ANSWER = 'Yusuf is 12, Uma is 36'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'times_as_old_future_sum'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Uma is {0} times as old as Yusuf. In {1} years, the sum of their ages will be {2}. How old is each now?'
 NUMBERS = ['3', '10', '68']
