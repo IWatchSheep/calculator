@@ -6,7 +6,7 @@ Equation: x + y + z = 21;  x + y = 10;  y + z = 12
 Solve   : z = 21 − 10 = 11; x = 21 − 12 = 9; y = 10 − 9 = 1 → x = 9, y = 1, z = 11
 Answer  : 9, 1, 11
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_numbers_pair_sums answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + y + z = 21;  x + y = 10;  y + z = 12'
 SOLVE = 'z = 21 − 10 = 11; x = 21 − 12 = 9; y = 10 − 9 = 1 → x = 9, y = 1, z = 11'
 ANSWER = '9, 1, 11'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_numbers_pair_sums'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Three numbers add up to {0}. The first plus the second is {1}, and the second plus the third is {2}. Find all three.'
 NUMBERS = ['21', '10', '12']

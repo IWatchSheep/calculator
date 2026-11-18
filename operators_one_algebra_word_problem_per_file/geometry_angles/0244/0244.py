@@ -6,7 +6,7 @@ Equation: (2x + 21) + (3x − 33) = 3x + 22
 Solve   : 2x = 34 → x = 17
 Answer  : x = 17; exterior angle = 73°
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: exterior_equals_remote_interiors answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(2x + 21) + (3x − 33) = 3x + 22'
 SOLVE = '2x = 34 → x = 17'
 ANSWER = 'x = 17; exterior angle = 73°'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'exterior_equals_remote_interiors'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'An exterior angle of a triangle measures ({0}x + {1})°. The two remote interior angles measure ({2}x + {3})° and ({4}x − {5})°. Find x and the exterior angle.'
 NUMBERS = ['3', '22', '2', '21', '3', '33']

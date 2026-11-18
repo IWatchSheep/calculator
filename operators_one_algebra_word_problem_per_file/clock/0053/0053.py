@@ -6,7 +6,7 @@ Equation: 6m = 30 + 0.5m
 Solve   : 5.5m = 30 → m = 60/11
 Answer  : 60/11 ≈ 5.45 minutes after 1:00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: clock_hands_together answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6m = 30 + 0.5m'
 SOLVE = '5.5m = 30 → m = 60/11'
 ANSWER = '60/11 ≈ 5.45 minutes after 1:00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'clock_hands_together'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'At what time between {0}:{1} and {2}:{3} are the hour and minute hands of a clock exactly together?'
 NUMBERS = ['1', '00', '2', '00']

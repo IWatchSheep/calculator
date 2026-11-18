@@ -6,7 +6,7 @@ Equation: 6x − 13 = 4x + 17
 Solve   : 2x = 30 → x = 15
 Answer  : x = 15; each angle is 77°
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: vertical_angles_linear_pair_measures answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6x − 13 = 4x + 17'
 SOLVE = '2x = 30 → x = 15'
 ANSWER = 'x = 15; each angle is 77°'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'vertical_angles_linear_pair_measures'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two vertical angles measure ({0}x − {1})° and ({2}x + {3})°. Find x and the angle measure.'
 NUMBERS = ['6', '13', '4', '17']
