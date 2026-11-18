@@ -15,5 +15,5 @@ FRESH = [
     ("A barn holds ducks and goats. Counting heads gives 20 and counting feet gives 56. How many ducks are there?", [8, 12]),
     ("A yard has 25 heads and 70 legs among its geese and horses. How many horses are there?", [10, 15]),
     ("A shed has hens, cows and pigs. There are 40 heads and 110 legs. How many cows are there?", None),
-    ("There are 18 heads and 50 legs in a room with people and dogs. How many dogs are there?", None),
+    ("There are 18 heads and 50 legs in a room with people and dogs. How many dogs are there?", [7]),
 ]
