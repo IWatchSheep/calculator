@@ -13,6 +13,6 @@ FRESH = [
     (PIPES + "The taps are all together. How long does it take to fill the tank?", None),
     (PIPES + "The lamps are all on. How long does it take to fill the tank?", None),
     (PIPES + "The pipes are all open. How long does it take to fill the tank?", None),
-    (RATIO + "How many students were there originally and how many girls?", None),
-    (RATIO + "How many students were there originally, and how many boys were there?", None),
+    (RATIO + "How many students were there originally and how many girls?", [12, 21]),
+    (RATIO + "How many students were there originally, and how many boys were there?", [9, 21]),
 ]
