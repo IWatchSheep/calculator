@@ -3837,7 +3837,57 @@ def times_as_old_future_sum(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum,
+# Read a/b of a book, then c/d of the remainder. L pages left.
+# x * (1 - a/b) * (1 - c/d) = L.
+_LEFTOVER_PAGES_AFTER_TWO_READS = re.compile(
+    r"(?P<name>[a-z]+) read "
+    r"(?P<a>\d+)/(?P<b>\d+) "
+    r"of a book on monday and "
+    r"(?P<c>\d+)/(?P<d>\d+) "
+    r"of the remaining pages on tuesday\. "
+    r"(?P<leftover>\d+) pages are left\. "
+    r"how many pages does the book have\?")
+
+
+def leftover_pages_after_two_reads(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LEFTOVER_PAGES_AFTER_TWO_READS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 5 or [n[1] for n in numbers] != [False, False, False, False, False]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    c = Fraction(match.group("c"))
+    d = Fraction(match.group("d"))
+    leftover = Fraction(match.group("leftover"))
+    if [n[0] for n in numbers] != [a, b, c, d, leftover]:
+        return None
+    if b <= 0 or d <= 0:
+        return None
+    first_fraction = a / b
+    second_fraction = c / d
+    if not (0 < first_fraction < 1) or not (0 < second_fraction < 1) or leftover <= 0:
+        return None
+    remaining_fraction = (1 - first_fraction) * (1 - second_fraction)
+    if remaining_fraction <= 0:
+        return None
+    total_pages = leftover / remaining_fraction
+    if total_pages <= 0:
+        return None
+    if total_pages * remaining_fraction != leftover:
+        return None
+    eq = "x(1 - %s/%s)(1 - %s/%s) = %s" % (show(a), show(b), show(c), show(d), show(leftover))
+    return Result(
+        "leftover_pages_after_two_reads",
+        [total_pages],
+        eq,
+        "%s, so x = %s" % (eq, show_exact(total_pages))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
