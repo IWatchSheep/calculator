@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 318 ready (303 word_solver, 15 number_puzzle), 161 reference.
+479 problems: 322 ready (307 word_solver, 15 number_puzzle), 157 reference.
 
 ## Age
 
@@ -329,22 +329,22 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0359 | A school dance costs $303 to run. Tickets are $8. How many tickets must be sold for a profit of at least $2200? | 313 tickets | Ready | least_for_profit | `inequality/0359/` |
 | 0360 | An elevator holds at most 1200 lb. A 200 lb worker is loading 60 lb boxes. How many boxes can go up with the worker in one trip? | 16 boxes | Ready | most_that_fits | `inequality/0360/` |
 | 0361 | The temperature is 26°F and falling 3°F per hour. For how many whole hours will it stay at or above 1°F? | 8 hours | Ready | temperature_whole_hours | `inequality/0361/` |
-| 0362 | Elena has $160 and saves $40 a week. What is the fewest weeks needed to have at least $670? | 13 weeks | Reference |  | `inequality/0362/` |
+| 0362 | Elena has $160 and saves $40 a week. What is the fewest weeks needed to have at least $670? | 13 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0362/` |
 | 0363 | Hana has $157 to spend. There is a $25 entry fee, and T-shirts cost $12.00 each. What is the most T-shirts that can be bought? | 11 T-shirts | Ready | most_you_can_buy | `inequality/0363/` |
 | 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for which Plan B is cheaper? | 172 minutes | Reference |  | `inequality/0364/` |
 | 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width possible? | 14 ft | Reference |  | `inequality/0365/` |
 | 0366 | Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85? | 97 | Reference |  | `inequality/0366/` |
 | 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500? | $9,167.00 | Reference |  | `inequality/0367/` |
-| 0370 | Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920? | 61 weeks | Reference |  | `inequality/0370/` |
+| 0370 | Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920? | 61 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0370/` |
 | 0372 | Gus has $136 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0372/` |
 | 0373 | Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80? | 85 | Reference |  | `inequality/0373/` |
-| 0378 | Jade has $110 and saves $40 a week. What is the fewest weeks needed to have at least $510? | 10 weeks | Reference |  | `inequality/0378/` |
+| 0378 | Jade has $110 and saves $40 a week. What is the fewest weeks needed to have at least $510? | 10 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0378/` |
 | 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 85? | 86 | Reference |  | `inequality/0379/` |
 | 0382 | Emeka has $113 to spend. There is a $10 entry fee, and T-shirts cost $6.00 each. What is the most T-shirts that can be bought? | 17 T-shirts | Ready | most_you_can_buy | `inequality/0382/` |
 | 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88? | 91 | Reference |  | `inequality/0386/` |
 | 0388 | Wes has $138 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0388/` |
 | 0392 | The temperature is 16°F and falling 3°F per hour. For how many whole hours will it stay at or above -8°F? | 8 hours | Ready | temperature_whole_hours | `inequality/0392/` |
-| 0394 | Ivan has $70 and saves $20 a week. What is the fewest weeks needed to have at least $670? | 30 weeks | Reference |  | `inequality/0394/` |
+| 0394 | Ivan has $70 and saves $20 a week. What is the fewest weeks needed to have at least $670? | 30 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0394/` |
 | 0397 | Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75? | 95 | Reference |  | `inequality/0397/` |
 
 ## Inverse variation
