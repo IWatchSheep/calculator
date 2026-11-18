@@ -6,7 +6,7 @@ Equation: 2w + 2(3w − 3) = 178
 Solve   : 8w − 6 = 178 → w = 23
 Answer  : Width 23 cm, length 66 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_length_from_width_perimeter answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2w + 2(3w − 3) = 178'
 SOLVE = '8w − 6 = 178 → w = 23'
 ANSWER = 'Width 23 cm, length 66 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_length_from_width_perimeter'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The length of a rectangle is {0} less than {1} times its width. The perimeter is {2} cm. Find the dimensions.'
 NUMBERS = ['3', '3', '178']

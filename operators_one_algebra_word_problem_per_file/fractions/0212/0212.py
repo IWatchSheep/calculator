@@ -6,7 +6,7 @@ Equation: (1/2)c + 1 = (2/3)c
 Solve   : c/6 = 1 → c = 1 × 6 = 6
 Answer  : 6
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: tank_fill_from_fraction answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(1/2)c + 1 = (2/3)c'
 SOLVE = 'c/6 = 1 → c = 1 × 6 = 6'
 ANSWER = '6'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'tank_fill_from_fraction'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A gas tank is {0}/{1} full. Adding {2} gallons fills it to {3}/{4}. How much does the tank hold?'
 NUMBERS = ['1', '2', '1', '2', '3']

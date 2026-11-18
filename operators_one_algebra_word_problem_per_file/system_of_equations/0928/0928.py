@@ -6,7 +6,7 @@ Equation: −x + 3y = 3;  5x − 2y = -41
 Solve   : Solve by elimination → x = -9, y = -2
 Answer  : x = -9, y = -2
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_linear_equations_xy answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '−x + 3y = 3;  5x − 2y = -41'
 SOLVE = 'Solve by elimination → x = -9, y = -2'
 ANSWER = 'x = -9, y = -2'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_linear_equations_xy'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two numbers x and y satisfy −x + {0}y = {1} and {2}x − {3}y = -{4}. Find x and y.'
 NUMBERS = ['3', '3', '5', '2', '41']

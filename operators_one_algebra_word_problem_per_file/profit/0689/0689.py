@@ -6,7 +6,7 @@ Equation: 8n − (100 + 2n) = 452
 Solve   : 6n = 552 → n = 92
 Answer  : 92 items
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: items_sold_for_given_profit answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '8n − (100 + 2n) = 452'
 SOLVE = '6n = 552 → n = 92'
 ANSWER = '92 items'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'items_sold_for_given_profit'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A T-shirt business has fixed costs of ${0}. Each item costs ${1} to make and sells for ${2}. How many items must be sold to make a profit of ${3}?'
 NUMBERS = ['100', '2', '8', '452']

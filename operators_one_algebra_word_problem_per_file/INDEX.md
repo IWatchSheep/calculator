@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 377 ready (362 word_solver, 15 number_puzzle), 102 reference.
+479 problems: 402 ready (387 word_solver, 15 number_puzzle), 77 reference.
 
 ## Age
 
@@ -48,16 +48,16 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do they cost the same? | 230 kWhs | Reference |  | `break_even/0029/` |
+| 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do they cost the same? | 230 kWhs | Ready | two_plans_same_cost | `break_even/0029/` |
 | 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is the total cost the same? | 16 months | Ready | archive_break_even_1 | `break_even/0030/` |
 | 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same? | $17,000.00 | Reference |  | `break_even/0031/` |
-| 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs? | 50 meals | Reference |  | `break_even/0032/` |
+| 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs? | 50 meals | Ready | food_truck_meals_cover_costs | `break_even/0032/` |
 | 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying? | 9 uses | Ready | rent_fee_plus_use_equals_buy | `break_even/0033/` |
 | 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost the same? | 70 miles | Ready | archive_break_even_2 | `break_even/0035/` |
-| 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even? | 125 posters | Reference |  | `break_even/0036/` |
+| 0036 | It costs $250 to set up a print run plus $15 per poster. Posters sell for $17 each. How many must be sold to break even? | 125 posters | Ready | print_run_posters_break_even | `break_even/0036/` |
 | 0037 | Buying a carpet cleaner costs $550. Renting one costs $25 once plus $15 per use. After how many uses does renting cost the same as buying? | 35 uses | Ready | rent_fee_plus_use_equals_buy | `break_even/0037/` |
 | 0040 | Buying a kayak costs $475. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 19 uses | Ready | rent_per_use_equals_buy | `break_even/0040/` |
-| 0042 | Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they cost the same? | 340 minutes | Reference |  | `break_even/0042/` |
+| 0042 | Phone plan A costs $20.00 plus $0.10 per minute. Plan B costs $3.00 plus $0.15 per minute. For how many minutes do they cost the same? | 340 minutes | Ready | two_plans_same_cost | `break_even/0042/` |
 | 0047 | Buying a pressure washer costs $1275. Renting costs $25 per use. After how many uses would renting cost the same as buying? | 51 uses | Ready | rent_per_use_equals_buy | `break_even/0047/` |
 
 ## Clock
@@ -214,9 +214,9 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with? | $540 | Ready | leftover_after_two_fraction_spends | `fractions/0210/` |
 | 0211 | A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the father live? | 84 years | Reference |  | `fractions/0211/` |
-| 0212 | A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold? | 6 | Reference |  | `fractions/0212/` |
+| 0212 | A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold? | 6 | Ready | tank_fill_from_fraction | `fractions/0212/` |
 | 0213 | Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have? | 180 pages | Ready | leftover_pages_after_two_reads | `fractions/0213/` |
-| 0214 | A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity? | 400 | Reference |  | `fractions/0214/` |
+| 0214 | A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity? | 400 | Ready | tank_fill_from_fraction | `fractions/0214/` |
 | 0215 | Gus spent 1/4 of their money on a game and then 1/3 of what was left on lunch, leaving $60. How much did they start with? | $120 | Ready | leftover_after_two_fraction_spends | `fractions/0215/` |
 | 0216 | Omar read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 252 pages are left. How many pages does the book have? | 420 pages | Ready | leftover_pages_after_two_reads | `fractions/0216/` |
 | 0217 | Sam read 1/5 of a book on Monday and 1/2 of the remaining pages on Tuesday. 52 pages are left. How many pages does the book have? | 130 pages | Ready | leftover_pages_after_two_reads | `fractions/0217/` |
@@ -303,9 +303,9 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0341 | The length of a rectangle is 3 less than 3 times its width. The perimeter is 178 cm. Find the dimensions. | Width 23 cm, length 66 cm | Reference |  | `geometry_rectangle/0341/` |
-| 0342 | The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the dimensions. | Width 32 cm, length 34 cm | Reference |  | `geometry_rectangle/0342/` |
-| 0344 | The length of a rectangle is 5 more than 3 times its width. The perimeter is 170 cm. Find the dimensions. | Width 20 cm, length 65 cm | Reference |  | `geometry_rectangle/0344/` |
+| 0341 | The length of a rectangle is 3 less than 3 times its width. The perimeter is 178 cm. Find the dimensions. | Width 23 cm, length 66 cm | Ready | rectangle_length_from_width_perimeter | `geometry_rectangle/0341/` |
+| 0342 | The length of a rectangle is 2 more than its width. The perimeter is 132 cm. Find the dimensions. | Width 32 cm, length 34 cm | Ready | rectangle_length_from_width_perimeter | `geometry_rectangle/0342/` |
+| 0344 | The length of a rectangle is 5 more than 3 times its width. The perimeter is 170 cm. Find the dimensions. | Width 20 cm, length 65 cm | Ready | rectangle_length_from_width_perimeter | `geometry_rectangle/0344/` |
 
 ## Geometry (triangle)
 
@@ -333,7 +333,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0363 | Hana has $157 to spend. There is a $25 entry fee, and T-shirts cost $12.00 each. What is the most T-shirts that can be bought? | 11 T-shirts | Ready | most_you_can_buy | `inequality/0363/` |
 | 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for which Plan B is cheaper? | 172 minutes | Reference |  | `inequality/0364/` |
 | 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width possible? | 14 ft | Reference |  | `inequality/0365/` |
-| 0366 | Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85? | 97 | Reference |  | `inequality/0366/` |
+| 0366 | Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85? | 97 | Ready | lowest_next_score_few_tests | `inequality/0366/` |
 | 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500? | $9,167.00 | Reference |  | `inequality/0367/` |
 | 0370 | Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920? | 61 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0370/` |
 | 0372 | Gus has $136 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0372/` |
@@ -341,11 +341,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0378 | Jade has $110 and saves $40 a week. What is the fewest weeks needed to have at least $510? | 10 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0378/` |
 | 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 85? | 86 | Ready | lowest_next_score_for_average | `inequality/0379/` |
 | 0382 | Emeka has $113 to spend. There is a $10 entry fee, and T-shirts cost $6.00 each. What is the most T-shirts that can be bought? | 17 T-shirts | Ready | most_you_can_buy | `inequality/0382/` |
-| 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88? | 91 | Reference |  | `inequality/0386/` |
+| 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88? | 91 | Ready | lowest_next_score_few_tests | `inequality/0386/` |
 | 0388 | Wes has $138 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0388/` |
 | 0392 | The temperature is 16°F and falling 3°F per hour. For how many whole hours will it stay at or above -8°F? | 8 hours | Ready | temperature_whole_hours | `inequality/0392/` |
 | 0394 | Ivan has $70 and saves $20 a week. What is the fewest weeks needed to have at least $670? | 30 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0394/` |
-| 0397 | Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75? | 95 | Reference |  | `inequality/0397/` |
+| 0397 | Gus's test scores are 61, 80, 75, 64. What is the lowest score on the next test that gives an average of at least 75? | 95 | Ready | lowest_next_score_few_tests | `inequality/0397/` |
 
 ## Inverse variation
 
@@ -530,8 +530,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0686 | A candle shop has fixed costs of $2000. Each item costs $2 to make and sells for $17. How many items must be sold to make a profit of $9775? | 785 items | Ready | archive_profit_1 | `profit/0686/` |
-| 0689 | A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to make a profit of $452? | 92 items | Reference |  | `profit/0689/` |
-| 0690 | A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make a profit of $302? | 526 items | Reference |  | `profit/0690/` |
+| 0689 | A T-shirt business has fixed costs of $100. Each item costs $2 to make and sells for $8. How many items must be sold to make a profit of $452? | 92 items | Ready | items_sold_for_given_profit | `profit/0689/` |
+| 0690 | A bakery stall has fixed costs of $750. Each item costs $2 to make and sells for $4. How many items must be sold to make a profit of $302? | 526 items | Ready | items_sold_for_given_profit | `profit/0690/` |
 
 ## Proportion
 
@@ -580,17 +580,17 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0759 | A rocket is launched upward from a height of 96 ft at 16 ft/s. Its height is h = −16t² + 16t + 96. After how many seconds does it hit the ground? | 3 seconds | Reference |  | `quadratic_projectile/0759/` |
-| 0762 | A rock is launched upward from a height of 16 ft at 24 ft/s. Its height is h = −16t² + 24t + 16. After how many seconds does it hit the ground? | 2 seconds | Reference |  | `quadratic_projectile/0762/` |
-| 0763 | A stone is launched upward from a height of 32 ft at 124 ft/s. Its height is h = −16t² + 124t + 32. After how many seconds does it hit the ground? | 8 seconds | Reference |  | `quadratic_projectile/0763/` |
+| 0759 | A rocket is launched upward from a height of 96 ft at 16 ft/s. Its height is h = −16t² + 16t + 96. After how many seconds does it hit the ground? | 3 seconds | Ready | projectile_hit_ground | `quadratic_projectile/0759/` |
+| 0762 | A rock is launched upward from a height of 16 ft at 24 ft/s. Its height is h = −16t² + 24t + 16. After how many seconds does it hit the ground? | 2 seconds | Ready | projectile_hit_ground | `quadratic_projectile/0762/` |
+| 0763 | A stone is launched upward from a height of 32 ft at 124 ft/s. Its height is h = −16t² + 124t + 32. After how many seconds does it hit the ground? | 8 seconds | Ready | projectile_hit_ground | `quadratic_projectile/0763/` |
 
 ## Quadratic (sequences)
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0764 | How many consecutive whole numbers, starting from 1, must be added to get a sum of 1326? (Use 1 + 2 + … + n = n(n + 1)/2.) | 51 numbers (1 through 51) | Reference |  | `quadratic_sequences/0764/` |
-| 0765 | A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in total. How many rows are there? | 5 rows | Reference |  | `quadratic_sequences/0765/` |
-| 0766 | A stack of cans has 8 cans in the top row, and each row below has 2 more than the row above. The stack has 260 cans in total. How many rows are there? | 13 rows | Reference |  | `quadratic_sequences/0766/` |
+| 0765 | A stack of cans has 1 can in the top row, and each row below has 1 more than the row above. The stack has 15 cans in total. How many rows are there? | 5 rows | Ready | stack_of_cans_rows | `quadratic_sequences/0765/` |
+| 0766 | A stack of cans has 8 cans in the top row, and each row below has 2 more than the row above. The stack has 260 cans in total. How many rows are there? | 13 rows | Ready | stack_of_cans_rows | `quadratic_sequences/0766/` |
 
 ## Rate
 
@@ -631,13 +631,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0812 | A field trip costs $350 for the bus plus $15 admission per student. The bus cost is shared equally, and each student pays $32.50 in total. How many students went? | 20 students | Ready | shared_fixed_cost | `rational_equation/0812/` |
 | 0813 | A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. What is the plane's speed in still air? | 490 mph | Ready | wind_same_time | `rational_equation/0813/` |
 | 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the original fraction. | 10/12 | Reference |  | `rational_equation/0814/` |
-| 0815 | A number plus its reciprocal equals 2.5. Find the number. | 2 or 1/2 | Reference |  | `rational_equation/0815/` |
+| 0815 | A number plus its reciprocal equals 2.5. Find the number. | 2 or 1/2 | Ready | number_plus_reciprocal | `rational_equation/0815/` |
 | 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group originally? | 3 people | Ready | archive_rational_equation_1 | `rational_equation/0816/` |
 | 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds. | Truck 32 mph, car 46 mph | Ready | archive_rational_equation_2 | `rational_equation/0817/` |
 | 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the speed of the current? | 10 km/h | Ready | archive_rational_equation_3 | `rational_equation/0818/` |
 | 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route? | 48 km | Ready | archive_rational_equation_4 | `rational_equation/0819/` |
 | 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route? | 48 km | Reference |  | `rational_equation/0821/` |
-| 0847 | A number plus its reciprocal equals 10/3. Find the number. | 3 or 1/3 | Reference |  | `rational_equation/0847/` |
+| 0847 | A number plus its reciprocal equals 10/3. Find the number. | 3 or 1/3 | Ready | number_plus_reciprocal | `rational_equation/0847/` |
 
 ## Savings
 
@@ -688,7 +688,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0885 | Jade is 5 times as old as Emeka. In 5 years, Jade will be 4 times as old as Emeka. How old is each now? | Jade 75, Emeka 15 | Ready | ages_later_multiple | `system_of_equations/0885/` |
 | 0886 | A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each? | 19 kg at $5, 12 kg at $12 | Ready | two_prices_known_count | `system_of_equations/0886/` |
 | 0887 | A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500. How many of each were sold? | 495 lawn, 133 reserved | Ready | two_priced_items | `system_of_equations/0887/` |
-| 0888 | Two numbers x and y satisfy −4x − 3y = 9 and 5x − 3y = -18. Find x and y. | x = -3, y = 1 | Reference |  | `system_of_equations/0888/` |
+| 0888 | Two numbers x and y satisfy −4x − 3y = 9 and 5x − 3y = -18. Find x and y. | x = -3, y = 1 | Ready | two_linear_equations_xy | `system_of_equations/0888/` |
 | 0889 | The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the length and width. | 21 m by 14 m | Reference |  | `system_of_equations/0889/` |
 | 0890 | A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each? | 17 of 12, 24 of 30 | Reference |  | `system_of_equations/0890/` |
 | 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there? | 8 tables of 4, 9 tables of 8 | Reference |  | `system_of_equations/0891/` |
@@ -702,15 +702,15 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0902 | A camp rents 16 paddle boats for 74 campers, filling every seat. Some paddle boats hold 4 people and the rest hold 6. How many of each were rented? | 11 4-person and 5 6-person | Reference |  | `system_of_equations/0902/` |
 | 0904 | Vera is 5 times as old as Xena. In 18 years, Vera will be 3 times as old as Xena. How old is each now? | Vera 90, Xena 18 | Ready | ages_later_multiple | `system_of_equations/0904/` |
 | 0908 | 2 coffees and 5 muffins cost $33.85. 3 coffees and 5 muffins cost $37.90. Find the price of one of each. | coffees: $4.05 each, muffins: $5.15 each | Ready | two_purchases | `system_of_equations/0908/` |
-| 0910 | Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y. | x = 1, y = -9 | Reference |  | `system_of_equations/0910/` |
+| 0910 | Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y. | x = 1, y = -9 | Ready | two_linear_equations_xy | `system_of_equations/0910/` |
 | 0911 | A test has 50 questions. Each correct answer earns 3 points and each wrong answer loses 1. Priya answered every question and scored 90. How many were correct? | 35 correct, 15 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0911/` |
-| 0912 | Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y. | x = 4, y = 2 | Reference |  | `system_of_equations/0912/` |
+| 0912 | Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y. | x = 4, y = 2 | Ready | two_linear_equations_xy | `system_of_equations/0912/` |
 | 0920 | A farm has chickens and pigs. There are 48 heads and 138 legs. How many of each are there? | 27 chickens and 21 pigs | Ready | heads_and_feet | `system_of_equations/0920/` |
 | 0921 | 1 notebooks and 6 pens cost $32.85. 1 notebooks and 3 pens cost $19.20. Find the price of one of each. | notebooks: $5.55 each, pens: $4.55 each | Ready | two_purchases | `system_of_equations/0921/` |
 | 0923 | Kofi bought 36 stamps, some at 55¢ and some at 70¢, for $21.30. How many of each? | 26 at 55¢, 10 at 70¢ | Ready | two_prices_known_count | `system_of_equations/0923/` |
 | 0924 | Hiro is 5 times as old as Xena. In 2 years, Hiro will be 4 times as old as Xena. How old is each now? | Hiro 30, Xena 6 | Ready | ages_later_multiple | `system_of_equations/0924/` |
 | 0925 | A test has 30 questions. Each correct answer earns 5 points and each wrong answer loses 2. Zoe answered every question and scored 52. How many were correct? | 16 correct, 14 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0925/` |
-| 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y. | x = -9, y = -2 | Reference |  | `system_of_equations/0928/` |
+| 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y. | x = -9, y = -2 | Ready | two_linear_equations_xy | `system_of_equations/0928/` |
 | 0931 | Kira is 4 times as old as Ava. In 8 years, Kira will be 2 times as old as Ava. How old is each now? | Kira 16, Ava 4 | Ready | ages_later_multiple | `system_of_equations/0931/` |
 | 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there? | 4 spiders and 13 beetles | Reference |  | `system_of_equations/0932/` |
 | 0936 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Noah answered every question and scored 75. How many were correct? | 25 correct, 25 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0936/` |
