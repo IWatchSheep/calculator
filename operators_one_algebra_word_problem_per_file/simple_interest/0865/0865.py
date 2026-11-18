@@ -6,7 +6,7 @@ Equation: 2000 × 0.04 × t = 480
 Solve   : 80t = 480 → t = 6
 Answer  : 6 years
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: simple_interest_years answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2000 × 0.04 × t = 480'
 SOLVE = '80t = 480 → t = 6'
 ANSWER = '6 years'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'simple_interest_years'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'How many years will it take ${0} to earn ${1} in simple interest at {2}% per year?'
 NUMBERS = ['2000.00', '480.00', '4']

@@ -6,7 +6,7 @@ Equation: 0.06x = 0.04(16500 − x)
 Solve   : x/10 = 660 → x = 660 × 10 = 6600
 Answer  : $6,600.00 at 6%, $9,900.00 at 4%
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: split_equal_simple_interest answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.06x = 0.04(16500 − x)'
 SOLVE = 'x/10 = 660 → x = 660 × 10 = 6600'
 ANSWER = '$6,600.00 at 6%, $9,900.00 at 4%'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'split_equal_simple_interest'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = '${0} is split between two accounts paying {1}% and {2}% simple interest. Both accounts earn the same interest in a year. How much is in each?'
 NUMBERS = ['16500.00', '6', '4']

@@ -6,7 +6,7 @@ Equation: 4.5n − 10 = 8
 Solve   : 4.5n = 18 → n = 4
 Answer  : 4 notebooks
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: item_coupon_when_coupon_exceeds_paid answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4.5n − 10 = 8'
 SOLVE = '4.5n = 18 → n = 4'
 ANSWER = '4 notebooks'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'item_coupon_when_coupon_exceeds_paid'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Notebooks cost ${0} each. With a ${1} coupon, Bea paid ${2}. How many notebooks were bought?'
 NUMBERS = ['4.50', '10', '8.00']

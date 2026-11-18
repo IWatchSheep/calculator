@@ -6,7 +6,7 @@ Equation: 30 + 12n = 486
 Solve   : 12n = 456 → n = 38
 Answer  : 38
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: raised_plus_per_item_to_goal answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '30 + 12n = 486'
 SOLVE = '12n = 456 → n = 38'
 ANSWER = '38'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'raised_plus_per_item_to_goal'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A club has raised ${0} so far. At its car wash it charges ${1} per car. How many more cars must it sell to reach its ${2} goal?'
 NUMBERS = ['30', '12', '486']

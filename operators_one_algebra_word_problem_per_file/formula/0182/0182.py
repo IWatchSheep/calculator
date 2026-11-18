@@ -6,7 +6,7 @@ Equation: (9/5)c + 32 = 2c
 Solve   : c/5 = 32 → c = 32 × 5 = 160
 Answer  : 160°C (320°F)
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: fahrenheit_twice_celsius answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(9/5)c + 32 = 2c'
 SOLVE = 'c/5 = 32 → c = 32 × 5 = 160'
 ANSWER = '160°C (320°F)'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'fahrenheit_twice_celsius'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'At what Celsius temperature is the Fahrenheit reading exactly {0} times the Celsius reading? (F = ({1}/{2})C + {3})'
 NUMBERS = ['2', '9', '5', '32']
