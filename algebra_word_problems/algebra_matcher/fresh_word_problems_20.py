@@ -12,7 +12,7 @@ FRESH = [
     ("A quiz has 40 questions. Ava scored 85%. How many questions were answered correctly?", [34]),
     ("A basketball team scored 56 points in 30 games, all 2-pointers and 3-pointers. How many of each?", None),
     ("Mia bought 25 stamps, some at 60¢, some at 80¢ and some at 90¢, for $17. How many of each?", None),
-    ("Mia bought 25 stamps, some at 60¢ and some at 80¢, for $17.50. How many of each?", None),
+    ("Mia bought 25 stamps, some at 60¢ and some at 80¢, for $17.50. How many of each?", [Fraction(25, 2), Fraction(25, 2)]),
     ("A tank holds 4,000 L and drains at 80 L per minute. How many liters remain after 10 minutes?", [3200]),
     ("A tank holds 4,000 L and drains at 80 L per minute. After how many minutes will 5,000 L remain?", None),
     ("A quiz has 40 questions. Ava scored 85%. What percent were answered wrong?", None),
