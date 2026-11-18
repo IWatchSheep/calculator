@@ -474,6 +474,67 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there if 3 are pennies?"))
         self.assertIsNone(WS.dimes_and_quarters_count("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How much is that in cents?"))
 
+    def test_two_hours_later_toward_meet(self):
+        cases = [
+            ("Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Emeka at 65 mph. How long after Quinn leaves do they meet?", 2),
+            ("Yusuf and Theo live 618 miles apart. Yusuf drives toward Theo at 59 mph. 2 hours later, Theo starts driving toward Yusuf at 66 mph. How long after Theo leaves do they meet?", 4),
+        ]
+        for sentence, hours in cases:
+            result = WS.two_hours_later_toward_meet(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(hours)], sentence)
+        self.assertIsNone(WS.two_hours_later_toward_meet("Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How long after Jamal leaves do they meet?"))
+        self.assertIsNone(answers("Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Emeka at 65 mph. How far has Emeka driven when they meet?"))
+
+    def test_lowest_next_score_for_average(self):
+        cases = [
+            ("Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80?", 85),
+            ("Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 85?", 86),
+        ]
+        for sentence, score in cases:
+            result = WS.lowest_next_score_for_average(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(score)], sentence)
+        self.assertIsNone(WS.lowest_next_score_for_average("Lena's test scores are 81, 88, 63, 78, 85. What average does she have now?"))
+        self.assertIsNone(answers("Lena's test scores are 81, 88, 63, 78, 85. What is the highest score on the next test that keeps an average of at most 80?"))
+
+    def test_weekly_base_plus_commission_sales(self):
+        cases = [
+            ("Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What were the sales?", 32000),
+            ("Nia earns a weekly base pay of $500 plus 15% commission on sales. One week the total pay was $2,900.00. What were the sales?", 16000),
+            ("Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sales?", 8000),
+        ]
+        for sentence, sales in cases:
+            result = WS.weekly_base_plus_commission_sales(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(sales)], sentence)
+        self.assertIsNone(WS.weekly_base_plus_commission_sales("Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What was the commission?"))
+        self.assertIsNone(answers("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same?"))
+
+    def test_weeks_until_guitar(self):
+        cases = [
+            ("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?", 24),
+            ("Lena has $0 and saves $30 per week to buy a guitar that costs $750. How many weeks until there is enough?", 25),
+        ]
+        for sentence, weeks in cases:
+            result = WS.weeks_until_guitar(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(weeks)], sentence)
+        self.assertIsNone(WS.weeks_until_guitar("Noah has $270 and saves $15 a week. What is the fewest weeks needed to have at least $630?"))
+        self.assertIsNone(answers("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How much more does he need?"))
+
+    def test_works_alone_one_hour_then_joins(self):
+        cases = [
+            ("Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish?", Fraction(9, 4)),
+            ("Dev can do a job in 12 hours and Pablo can do it in 3 hours. Dev works alone for 1 hour, then Pablo joins. How much longer will it take to finish?", Fraction(11, 5)),
+        ]
+        for sentence, hours in cases:
+            result = WS.works_alone_one_hour_then_joins(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [hours], sentence)
+        self.assertIsNone(WS.works_alone_one_hour_then_joins("Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish?"))
+        self.assertIsNone(answers("Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much of the job is left?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

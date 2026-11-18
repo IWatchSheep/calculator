@@ -6,7 +6,7 @@ Equation: 59(t + 2) + 66t = 618
 Solve   : 125t = 500 → t = 4
 Answer  : 4 hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_hours_later_toward_meet answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '59(t + 2) + 66t = 618'
 SOLVE = '125t = 500 → t = 4'
 ANSWER = '4 hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_hours_later_toward_meet'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Yusuf and Theo live {0} miles apart. Yusuf drives toward Theo at {1} mph. {2} hours later, Theo starts driving toward Yusuf at {3} mph. How long after Theo leaves do they meet?'
 NUMBERS = ['618', '59', '2', '66']
