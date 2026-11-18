@@ -6,7 +6,7 @@ Equation: (3k − 12)/(5k + 12) = 1/7
 Solve   : Multiply both sides by the denominator and collect terms → k = 6
 Answer  : Yusuf 18, Dev 30
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: marbles_given_ratio_changes answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(3k − 12)/(5k + 12) = 1/7'
 SOLVE = 'Multiply both sides by the denominator and collect terms → k = 6'
 ANSWER = 'Yusuf 18, Dev 30'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'marbles_given_ratio_changes'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "The ratio of Yusuf's marbles to Dev's is {0}:{1}. After Yusuf gives Dev {2} marbles, the ratio is {3}:{4}. How many did each have at first?"
 NUMBERS = ['3', '5', '12', '1', '7']
