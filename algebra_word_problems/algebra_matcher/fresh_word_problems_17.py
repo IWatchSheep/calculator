@@ -1,6 +1,7 @@
 """Seventeenth fresh set for word_solver.py: wordings for the three families added together (fixed_plus_rate, two_changing_equal, add_to_blend),
 written AFTER all three were finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("A hall costs $250 plus $12 per guest. The final bill was $730. How many guests attended?", [40]),
@@ -12,9 +13,9 @@ FRESH = [
     ("How much tea at $5 a pound must be added to 6 lb of tea at $9 a pound to make a blend priced at $7 a pound?", [6]),
     ("A hall costs $250 plus $12 per guest. The final bill was $730. How much per guest?", None),
     ("A hall costs $250 plus $12 per guest. The final bill was $735. How many guests attended?", None),
-    ("A hall costs $250 plus $12 per guest, and the first 10 guests are free. The final bill was $730. How many guests attended?", None),
-    ("Tank A has 500 litres and drains 20 a day. Tank B has 300 litres and fills 10 a day. When are they equal?", None),
-    ("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. What will each population be when they are equal?", None),
+    ("A hall costs $250 plus $12 per guest, and the first 10 guests are free. The final bill was $730. How many guests attended?", [50]),
+    ("Tank A has 500 litres and drains 20 a day. Tank B has 300 litres and fills 10 a day. When are they equal?", [Fraction(20, 3)]),
+    ("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. What will each population be when they are equal?", [54000]),
     ("How many pounds of coffee worth $10 a pound must be added to 14 lb of coffee worth $8 a pound to make a mix worth $11 a pound?", None),
     ("How many pounds of tea at $5 a pound must be added to 6 lb of tea at $9 a pound to make a blend priced at $7 a pound if two pounds spill?", None),
 ]

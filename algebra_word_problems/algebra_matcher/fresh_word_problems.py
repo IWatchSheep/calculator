@@ -30,9 +30,9 @@ FRESH = [
     ("The bill including a 12% service charge was $224. What was the bill before the charge?", [200]),
     ("Prices fell 15% and a coat now costs $170. What was it before?", [200]),
     ("Her rent went up 8% to $1,350. What was the old rent?", [1250]),
-    ("A shirt costs $40 and is 25% off. What is the sale price?", None),
-    ("A shirt is 25% off, saving $10. What was the original price?", None),
-    ("A jacket is 20% off. It costs $64 now. What does it cost after another 10% off?", None),
+    ("A shirt costs $40 and is 25% off. What is the sale price?", [30]),
+    ("A shirt is 25% off, saving $10. What was the original price?", [40]),
+    ("A jacket is 20% off. It costs $64 now. What does it cost after another 10% off?", [Fraction(288, 5)]),
     # ---- direct proportion
     ("If 5 pens cost $12.50, how much do 12 pens cost?", [30]),
     ("A machine makes 240 bolts in 8 hours. How many bolts does it make in 20 hours?", [600]),

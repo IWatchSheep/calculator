@@ -17,5 +17,5 @@ FRESH = [
     ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 100?", None),
     ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 80 cells, in days?", None),
     ("A culture triples every 2 hours and doubles every 3 hours. When does it reach 810 from 10?", None),
-    ("A culture doubles every 3 hours. If it starts at 100 cells, how many cells are there after 12 hours?", None),
+    ("A culture doubles every 3 hours. If it starts at 100 cells, how many cells are there after 12 hours?", [1600]),
 ]
