@@ -6,7 +6,7 @@ Equation: (19 + 2x)(19 + 2x) − 361 = 168
 Solve   : 4x² + 76x − 168 = 0 → x = 2 (reject negative)
 Answer  : 2 ft
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: path_around_square_garden answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(19 + 2x)(19 + 2x) − 361 = 168'
 SOLVE = '4x² + 76x − 168 = 0 → x = 2 (reject negative)'
 ANSWER = '2 ft'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'path_around_square_garden'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A {0} ft by {1} ft garden has a path of uniform width around it. The path's area is {2} ft². How wide is the path?"
 NUMBERS = ['19', '19', '168']

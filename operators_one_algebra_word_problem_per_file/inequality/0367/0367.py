@@ -6,7 +6,7 @@ Equation: 400 + 0.12s ≥ 1500
 Solve   : s ≥ 27500/3 → s = 9167 (smallest whole number that works)
 Answer  : $9,167.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: least_sales_for_pay_floor answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '400 + 0.12s ≥ 1500'
 SOLVE = 's ≥ 27500/3 → s = 9167 (smallest whole number that works)'
 ANSWER = '$9,167.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'least_sales_for_pay_floor'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A salesperson earns ${0} a week plus {1}% of sales. What is the least (whole-dollar) amount of sales needed to earn at least ${2}?'
 NUMBERS = ['400', '12', '1500']

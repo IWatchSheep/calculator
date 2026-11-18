@@ -6,7 +6,7 @@ Equation: (x + 8) − 32 = 2(x − 32)
 Solve   : x + -24 = 2x − 64 → x = 40
 Answer  : Sam is 40, Ben is 48
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: ago_older_was_twice answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(x + 8) − 32 = 2(x − 32)'
 SOLVE = 'x + -24 = 2x − 64 → x = 40'
 ANSWER = 'Sam is 40, Ben is 48'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'ago_older_was_twice'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Ben is {0} years older than Sam. {1} years ago, Ben was twice as old as Sam. How old is each now?'
 NUMBERS = ['8', '32']

@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 452 ready (437 word_solver, 15 number_puzzle), 27 reference.
+479 problems: 478 ready (463 word_solver, 15 number_puzzle), 1 reference.
 
 ## Age
 
@@ -13,7 +13,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0001 | Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now? | Jamal is 19, Wren is 76 | Ready | times_as_old_future_sum | `age/0001/` |
 | 0002 | Wes is 13 years older than Theo. The sum of their ages is 85. How old is each? | Theo is 36, Wes is 49 | Ready | sum_difference | `age/0002/` |
-| 0003 | Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now? | Sam is 40, Ben is 48 | Reference |  | `age/0003/` |
+| 0003 | Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now? | Sam is 40, Ben is 48 | Ready | ago_older_was_twice | `age/0003/` |
 | 0004 | Dana is 2 times as old as Aiden. In 6 years, the sum of their ages will be 33. How old is each now? | Aiden is 7, Dana is 14 | Ready | times_as_old_future_sum | `age/0004/` |
 | 0005 | Uma is 3 times as old as Yusuf. In 10 years, the sum of their ages will be 68. How old is each now? | Yusuf is 12, Uma is 36 | Ready | times_as_old_future_sum | `age/0005/` |
 | 0006 | Hiro is 2 years older than Maya. The sum of their ages is 24. How old is each? | Maya is 11, Hiro is 13 | Ready | sum_difference | `age/0006/` |
@@ -64,14 +64,14 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0053 | At what time between 1:00 and 2:00 are the hour and minute hands of a clock exactly together? | 60/11 ≈ 5.45 minutes after 1:00 | Reference |  | `clock/0053/` |
+| 0053 | At what time between 1:00 and 2:00 are the hour and minute hands of a clock exactly together? | 60/11 ≈ 5.45 minutes after 1:00 | Ready | clock_hands_together | `clock/0053/` |
 
 ## Coins
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0057 | Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there? | 19 nickels and 26 quarters | Ready | nickels_and_quarters_count | `coins/0057/` |
-| 0058 | A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as quarters. How many of each coin? | 5 quarters, 9 dimes, 10 nickels | Reference |  | `coins/0058/` |
+| 0058 | A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as quarters. How many of each coin? | 5 quarters, 9 dimes, 10 nickels | Ready | jar_three_coins | `coins/0058/` |
 | 0059 | Theo has 37 coins, all nickels and quarters, worth $2.85 in total. How many of each coin are there? | 32 nickels and 5 quarters | Ready | nickels_and_quarters_count | `coins/0059/` |
 | 0062 | Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there? | 29 dimes and 13 quarters | Ready | dimes_and_quarters_count | `coins/0062/` |
 | 0064 | Yusuf has 79 coins, all nickels and quarters, worth $11.95 in total. How many of each coin are there? | 39 nickels and 40 quarters | Ready | nickels_and_quarters_count | `coins/0064/` |
@@ -82,11 +82,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0067 | Of three consecutive even integers, the sum of the smallest and largest is 8. Find all three. | 2, 4, 6 | Ready | archive_consecutive_integers_1 | `consecutive_integers/0067/` |
-| 0068 | The average of 5 consecutive integers is 50. What is the smallest? | 48 (the integers are 48 to 52) | Reference |  | `consecutive_integers/0068/` |
+| 0068 | The average of 5 consecutive integers is 50. What is the smallest? | 48 (the integers are 48 to 52) | Ready | average_of_consecutive | `consecutive_integers/0068/` |
 | 0069 | Three consecutive integers are such that 3 times the smallest is 4 more than the largest. Find the integers. | 3, 4, 5 | Ready | archive_consecutive_integers_2 | `consecutive_integers/0069/` |
 | 0070 | The sum of 3 consecutive integers is 120. What are the integers? | 39, 40, 41 | Ready | consecutive | `consecutive_integers/0070/` |
 | 0074 | The sum of 4 consecutive odd integers is 160. What are the integers? | 37, 39, 41, 43 | Ready | consecutive | `consecutive_integers/0074/` |
-| 0078 | Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers. | -3, -2, -1 | Reference |  | `consecutive_integers/0078/` |
+| 0078 | Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers. | -3, -2, -1 | Ready | consecutive_times_smallest_vs_largest | `consecutive_integers/0078/` |
 | 0084 | The sum of 4 consecutive even integers is 244. What are the integers? | 58, 60, 62, 64 | Ready | consecutive | `consecutive_integers/0084/` |
 
 ## Current / wind
@@ -94,14 +94,14 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0086 | A boat travels 34 km downstream in 2 hours and 35 km upstream in 5 hours. Find the speed of the boat in still water and the speed of the current. | Boat 12 km/h, current 5 km/h | Ready | still_water_current | `current_wind/0086/` |
-| 0087 | A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. Find the plane's speed in still air and the wind speed. | Plane 150 mph, wind 30 mph | Reference |  | `current_wind/0087/` |
+| 0087 | A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. Find the plane's speed in still air and the wind speed. | Plane 150 mph, wind 30 mph | Ready | plane_with_and_against_wind | `current_wind/0087/` |
 | 0088 | A boat travels 38 km downstream in 2 hours and 3 km upstream in 1 hour. Find the speed of the boat in still water and the speed of the current. | Boat 11 km/h, current 8 km/h | Ready | still_water_current | `current_wind/0088/` |
 
 ## Digits
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0095 | In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find the number. | 39 | Reference |  | `digits/0095/` |
+| 0095 | In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find the number. | 39 | Ready | two_digit_units_times_tens | `digits/0095/` |
 | 0096 | The digits of a two-digit number add up to 11. When the digits are reversed, the new number is 63 less than the original. Find the original number. | 92 | Ready | reverse_digits_sum_and_diff | `digits/0096/` |
 | 0098 | The digits of a two-digit number add up to 12. When the digits are reversed, the new number is 18 more than the original. Find the original number. | 57 | Ready | reverse_digits_sum_and_diff | `digits/0098/` |
 
@@ -154,7 +154,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0140 | Tara drove to a lake at 45 mph and returned on the same road at 36 mph. The round trip took 8 hours. How far is the lake? | 160 miles | Ready | round_trip_lake_distance | `distance_round_trip/0140/` |
 | 0141 | A cyclist rides 225 km to a town and returns 5 km/h faster. The whole trip takes 9.5 hours. How fast was the outbound ride? | 45 km/h | Ready | archive_distance_round_trip_1 | `distance_round_trip/0141/` |
 | 0142 | Bea drove to a lake at 60 mph and returned on the same road at 30 mph. The round trip took 10 hours. How far is the lake? | 200 miles | Ready | round_trip_lake_distance | `distance_round_trip/0142/` |
-| 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride? | 30 km/h | Reference |  | `distance_round_trip/0143/` |
+| 0143 | A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride? | 30 km/h | Ready | round_trip_faster_return | `distance_round_trip/0143/` |
 | 0144 | Kofi drove to a lake at 40 mph and returned on the same road at 20 mph. The round trip took 6 hours. How far is the lake? | 80 miles | Ready | round_trip_lake_distance | `distance_round_trip/0144/` |
 | 0146 | Isla drove to a lake at 45 mph and returned on the same road at 30 mph. The round trip took 2 hours. How far is the lake? | 36 miles | Ready | round_trip_lake_distance | `distance_round_trip/0146/` |
 | 0148 | Aiden drove to a lake at 30 mph and returned on the same road at 20 mph. The round trip took 5 hours. How far is the lake? | 60 miles | Ready | round_trip_lake_distance | `distance_round_trip/0148/` |
@@ -213,7 +213,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with? | $540 | Ready | leftover_after_two_fraction_spends | `fractions/0210/` |
-| 0211 | A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the father live? | 84 years | Reference |  | `fractions/0211/` |
+| 0211 | A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the father live? | 84 years | Ready | diophantus_life_ages | `fractions/0211/` |
 | 0212 | A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold? | 6 | Ready | tank_fill_from_fraction | `fractions/0212/` |
 | 0213 | Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have? | 180 pages | Ready | leftover_pages_after_two_reads | `fractions/0213/` |
 | 0214 | A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity? | 400 | Ready | tank_fill_from_fraction | `fractions/0214/` |
@@ -248,13 +248,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0241 | Two angles form a linear pair. One measures (4x + 29)° and the other (1x + 41)°. Find both angles. | x = 22; the angles are 117° and 63° | Ready | linear_pair_two_angles | `geometry_angles/0241/` |
 | 0242 | In an isosceles triangle, the vertex angle is 18° more than each base angle. Find all three angles. | 54°, 54°, 72° | Ready | archive_geometry_angles_1 | `geometry_angles/0242/` |
 | 0243 | In a triangle, the second angle is 3 times the first, and the third angle is 75 more than the first. Find all three angles. | 21°, 63°, 96° | Ready | archive_geometry_angles_2 | `geometry_angles/0243/` |
-| 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find x and the exterior angle. | x = 17; exterior angle = 73° | Reference |  | `geometry_angles/0244/` |
+| 0244 | An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find x and the exterior angle. | x = 17; exterior angle = 73° | Ready | exterior_equals_remote_interiors | `geometry_angles/0244/` |
 | 0249 | Two angles are complementary. One angle is 20 more than 4 times the other. Find both angles. | 14° and 76° | Ready | complementary_supplementary | `geometry_angles/0249/` |
 | 0251 | Angles A and B lie on a straight line. A = (1x − 2)° and B = (2x + 104)°. What are A and B? | x = 26; the angles are 24° and 156° | Ready | straight_line_angles_a_b | `geometry_angles/0251/` |
 | 0252 | Where two lines cross, opposite angles are (3x − 10)° and (6x − 118)°. Find the angle. | x = 36; each angle is 98° | Ready | opposite_angles_equal | `geometry_angles/0252/` |
-| 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure. | x = 15; each angle is 77° | Reference |  | `geometry_angles/0253/` |
+| 0253 | Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure. | x = 15; each angle is 77° | Ready | vertical_angles_linear_pair_measures | `geometry_angles/0253/` |
 | 0254 | Angles A and B lie on a straight line. A = (1x + 2)° and B = (3x + 138)°. What are A and B? | x = 10; the angles are 12° and 168° | Ready | straight_line_angles_a_b | `geometry_angles/0254/` |
-| 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles. | 64°, 64°, 52° | Reference |  | `geometry_angles/0256/` |
+| 0256 | In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles. | 64°, 64°, 52° | Ready | isosceles_vertex_less_than_base | `geometry_angles/0256/` |
 | 0257 | Two parallel lines are cut by a transversal. A pair of corresponding angles measure (4x + 4)° and (6x − 54)°. Find x and the angle. | x = 29; each angle is 120° | Ready | transversal_equal_angles | `geometry_angles/0257/` |
 | 0262 | Two angles form a linear pair. One measures (3x + 18)° and the other (4x − 69)°. Find both angles. | x = 33; the angles are 117° and 63° | Ready | linear_pair_two_angles | `geometry_angles/0262/` |
 | 0263 | Two angles are supplementary. One angle is 6 less than 5 times the other. Find both angles. | 31° and 149° | Ready | complementary_supplementary | `geometry_angles/0263/` |
@@ -266,8 +266,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length. | 22 cm | Reference |  | `geometry_area/0274/` |
-| 0275 | A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stays the same. Find the original dimensions. | Width 12 m, length 24 m | Reference |  | `geometry_area/0275/` |
+| 0274 | If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length. | 22 cm | Ready | square_side_increase_area | `geometry_area/0274/` |
+| 0275 | A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stays the same. Find the original dimensions. | Width 12 m, length 24 m | Ready | rectangle_twice_width_area_same | `geometry_area/0275/` |
 | 0276 | A trapezoid has parallel sides of 7 cm and 29 cm and an area of 270 cm². Find its height. | 15 cm | Ready | archive_geometry_area_1 | `geometry_area/0276/` |
 | 0277 | A triangle has an area of 60 m² and a height of 3 m. How long is its base? | 40 m | Ready | archive_geometry_area_2 | `geometry_area/0277/` |
 
@@ -292,10 +292,10 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0309 | A rectangle has a perimeter of 40 ft and an area of 36 ft². Find its length and width. | 18 ft by 2 ft | Ready | rectangle_from_perimeter_area | `geometry_quadratic/0309/` |
-| 0310 | A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 216 m². What dimensions work? | Two answers: 18 m × 12 m, or 6 m × 36 m | Reference |  | `geometry_quadratic/0310/` |
-| 0311 | Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. The base of the box has area 209 cm². Find x. | 5 cm | Reference |  | `geometry_quadratic/0311/` |
+| 0310 | A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 216 m². What dimensions work? | Two answers: 18 m × 12 m, or 6 m × 36 m | Ready | pen_against_barn_two_dimensions | `geometry_quadratic/0310/` |
+| 0311 | Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. The base of the box has area 209 cm². Find x. | 5 cm | Ready | open_box_cut_squares | `geometry_quadratic/0311/` |
 | 0312 | A rectangle's length is 12 m more than its width, and its area is 640 m². Find the dimensions. | Width 20 m, length 32 m | Ready | archive_geometry_quadratic_1 | `geometry_quadratic/0312/` |
-| 0313 | A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path? | 2 ft | Reference |  | `geometry_quadratic/0313/` |
+| 0313 | A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path? | 2 ft | Ready | path_around_square_garden | `geometry_quadratic/0313/` |
 | 0314 | The height of a triangle is 9 cm more than its base. The area is 243 cm². Find the base and height. | Base 18 cm, height 27 cm | Ready | archive_geometry_quadratic_2 | `geometry_quadratic/0314/` |
 | 0315 | A 18 in × 15 in photo is surrounded by a frame of uniform width. The framed picture covers 418 in². How wide is the frame? | 2 in | Ready | archive_geometry_quadratic_3 | `geometry_quadratic/0315/` |
 
@@ -320,7 +320,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0355 | A rectangular box is 16 in long and 5 in wide. Its volume is 320 in³. How tall is it? | 4 in | Ready | archive_geometry_volume_1 | `geometry_volume/0355/` |
-| 0356 | An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it? | 6 dm | Reference |  | `geometry_volume/0356/` |
+| 0356 | An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it? | 6 dm | Ready | aquarium_volume_depth | `geometry_volume/0356/` |
 
 ## Inequality
 
@@ -331,10 +331,10 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0361 | The temperature is 26°F and falling 3°F per hour. For how many whole hours will it stay at or above 1°F? | 8 hours | Ready | temperature_whole_hours | `inequality/0361/` |
 | 0362 | Elena has $160 and saves $40 a week. What is the fewest weeks needed to have at least $670? | 13 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0362/` |
 | 0363 | Hana has $157 to spend. There is a $25 entry fee, and T-shirts cost $12.00 each. What is the most T-shirts that can be bought? | 11 T-shirts | Ready | most_you_can_buy | `inequality/0363/` |
-| 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for which Plan B is cheaper? | 172 minutes | Reference |  | `inequality/0364/` |
-| 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width possible? | 14 ft | Reference |  | `inequality/0365/` |
+| 0364 | Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for which Plan B is cheaper? | 172 minutes | Ready | fewest_minutes_plan_b_cheaper | `inequality/0364/` |
+| 0365 | A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width possible? | 14 ft | Ready | greatest_whole_garden_width | `inequality/0365/` |
 | 0366 | Isla's test scores are 94, 64. What is the lowest score on the next test that gives an average of at least 85? | 97 | Ready | lowest_next_score_few_tests | `inequality/0366/` |
-| 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500? | $9,167.00 | Reference |  | `inequality/0367/` |
+| 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500? | $9,167.00 | Ready | least_sales_for_pay_floor | `inequality/0367/` |
 | 0370 | Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920? | 61 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0370/` |
 | 0372 | Gus has $136 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0372/` |
 | 0373 | Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80? | 85 | Ready | lowest_next_score_for_average | `inequality/0373/` |
@@ -431,7 +431,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0536 | A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates? | 18 L | Ready | salt_water_evaporates | `mixture/0536/` |
 | 0537 | 50 lb of a blend of coffee beans selling for $13.60/lb is made from coffee beans costing $8/lb and $15/lb. How many pounds of each are used? | 10 lb at $8 and 40 lb at $15 | Ready | price_blend | `mixture/0537/` |
 | 0538 | How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix? | 10 L | Ready | pure_antifreeze_added | `mixture/0538/` |
-| 0539 | A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%? | 8 L | Reference |  | `mixture/0539/` |
+| 0539 | A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%? | 8 L | Ready | drain_replace_pure_antifreeze | `mixture/0539/` |
 | 0541 | A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added? | 34 L | Ready | water_added_to_dilute | `mixture/0541/` |
 | 0544 | One alloy is 10% silver and another is 50% silver. How many kilograms of each are needed to make 20 kg of an alloy that is 16% silver? | 17 kg of 10%, 3 kg of 50% | Ready | two_solution_mix | `mixture/0544/` |
 | 0545 | 40 lb of a blend of candy selling for $13.60/lb is made from candy costing $8/lb and $24/lb. How many pounds of each are used? | 26 lb at $8 and 14 lb at $24 | Ready | price_blend | `mixture/0545/` |
@@ -447,7 +447,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0570 | 6 times the difference of a number and 6 is 174. What is the number? | 35 | Ready | number_puzzle | `number_puzzle/0570/` |
-| 0571 | The second of three numbers is 3 times the first. The third is 8 more than the second. Their sum is 176. Find the numbers. | 24, 72, 80 | Reference |  | `number_puzzle/0571/` |
+| 0571 | The second of three numbers is 3 times the first. The third is 8 more than the second. Their sum is 176. Find the numbers. | 24, 72, 80 | Ready | three_numbers_times_and_more | `number_puzzle/0571/` |
 | 0572 | Tara has 3 more than 4 times as many stamps as Aiden. Together they have 38 stamps. How many does each have? | Aiden: 7, Tara: 31 | Ready | more_than_times_stamps | `number_puzzle/0572/` |
 | 0573 | If you divide a number by 7 and add 1, you get -3. What was the number? | -28 | Ready | number_puzzle | `number_puzzle/0573/` |
 | 0574 | Five times a number, decreased by 19, is 106. Find the number. | 25 | Ready | number_puzzle | `number_puzzle/0574/` |
@@ -630,13 +630,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0812 | A field trip costs $350 for the bus plus $15 admission per student. The bus cost is shared equally, and each student pays $32.50 in total. How many students went? | 20 students | Ready | shared_fixed_cost | `rational_equation/0812/` |
 | 0813 | A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. What is the plane's speed in still air? | 490 mph | Ready | wind_same_time | `rational_equation/0813/` |
-| 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the original fraction. | 10/12 | Reference |  | `rational_equation/0814/` |
+| 0814 | The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the original fraction. | 10/12 | Ready | fraction_add_to_both | `rational_equation/0814/` |
 | 0815 | A number plus its reciprocal equals 2.5. Find the number. | 2 or 1/2 | Ready | number_plus_reciprocal | `rational_equation/0815/` |
 | 0816 | A group shares a $42 rental equally. If 2 more people join, each pays $5.60 less. How many people are in the group originally? | 3 people | Ready | archive_rational_equation_1 | `rational_equation/0816/` |
 | 0817 | A truck travels 96 miles in the same time a car travels 138 miles. The car is 14 mph faster. Find both speeds. | Truck 32 mph, car 46 mph | Ready | archive_rational_equation_2 | `rational_equation/0817/` |
 | 0818 | A boat goes 52 km upstream in the same time it goes 132 km downstream. Its speed in still water is 23 km/h. What is the speed of the current? | 10 km/h | Ready | archive_rational_equation_3 | `rational_equation/0818/` |
 | 0819 | Jogging a route at 10 km/h takes 2.8 hours longer than cycling it at 24 km/h. How long is the route? | 48 km | Ready | archive_rational_equation_4 | `rational_equation/0819/` |
-| 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route? | 48 km | Reference |  | `rational_equation/0821/` |
+| 0821 | Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route? | 48 km | Ready | jog_minus_cycle_time | `rational_equation/0821/` |
 | 0847 | A number plus its reciprocal equals 10/3. Find the number. | 3 or 1/3 | Ready | number_plus_reciprocal | `rational_equation/0847/` |
 
 ## Savings
@@ -722,7 +722,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cups cost $4.70. Find each price. | apple $1.10, banana $1.20, cherry cup $1.75 | Reference |  | `system_of_equations_3_variables/0950/` |
-| 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three. | 9, 1, 11 | Reference |  | `system_of_equations_3_variables/0951/` |
+| 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three. | 9, 1, 11 | Ready | three_numbers_pair_sums | `system_of_equations_3_variables/0951/` |
 
 ## Tickets
 

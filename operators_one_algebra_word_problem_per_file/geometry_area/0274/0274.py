@@ -6,7 +6,7 @@ Equation: (s + 2)² − s² = 92
 Solve   : 4s = 88 → s = 22
 Answer  : 22 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: square_side_increase_area answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(s + 2)² − s² = 92'
 SOLVE = '4s = 88 → s = 22'
 ANSWER = '22 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'square_side_increase_area'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'If each side of a square is increased by {0} cm, its area increases by {1} cm². Find the original side length.'
 NUMBERS = ['2', '92']

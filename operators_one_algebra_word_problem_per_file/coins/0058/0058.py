@@ -6,7 +6,7 @@ Equation: 25q + 10(q + 4) + 5(2q) = 265
 Solve   : 45q = 225 → q = 5
 Answer  : 5 quarters, 9 dimes, 10 nickels
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: jar_three_coins answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '25q + 10(q + 4) + 5(2q) = 265'
 SOLVE = '45q = 225 → q = 5'
 ANSWER = '5 quarters, 9 dimes, 10 nickels'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'jar_three_coins'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A jar has quarters, dimes, and nickels worth ${0}. There are {1} more dimes than quarters and twice as many nickels as quarters. How many of each coin?'
 NUMBERS = ['2.65', '4']

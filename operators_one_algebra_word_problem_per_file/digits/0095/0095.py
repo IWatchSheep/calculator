@@ -6,7 +6,7 @@ Equation: (10t + 3t) − (t + 3t) = 27
 Solve   : 9t = 27 → t = 3
 Answer  : 39
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: two_digit_units_times_tens answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(10t + 3t) − (t + 3t) = 27'
 SOLVE = '9t = 27 → t = 3'
 ANSWER = '39'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'two_digit_units_times_tens'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'In a two-digit number, the units digit is {0} times the tens digit. The number is {1} more than the sum of its digits. Find the number.'
 NUMBERS = ['3', '27']
