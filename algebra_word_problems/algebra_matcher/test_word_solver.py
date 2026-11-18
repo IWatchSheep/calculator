@@ -2390,7 +2390,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (sixteenth set, h / clock / growth): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (11, 0, 4))
+        self.assertEqual((solved, declined, required), (12, 0, 3))
 
     def test_fixed_plus_rate(self):
         self.assertEqual(answers("A venue charges $100 plus $15 per guest. The total was $865. How many guests came?"), values(51))
@@ -2641,7 +2641,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twentieth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (7, 0, 6))
+        self.assertEqual((solved, declined, required), (8, 0, 5))
 
     def test_percent_of_count_needs_a_score(self):
         # "65% of the students passed" is a percent of the STUDENTS, not a score on the questions
@@ -2789,7 +2789,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-second set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (10, 0, 1))
+        self.assertEqual((solved, declined, required), (11, 0, 0))
 
     def test_known_amount_unit_matches_the_price_unit(self):
         # 31 lb at $5/kg is not 31 kg: the known amount's unit has to be the unit of the price
@@ -3113,7 +3113,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-sixth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (8, 0, 4))
+        self.assertEqual((solved, declined, required), (9, 0, 3))
 
     def test_pages_days_are_the_time_to_finish(self):
         # the day count must be the time allowed to FINISH the book: "to finish in 6 days" and "within 5 days" stay
@@ -3179,7 +3179,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-seventh set, neighbours of the fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (5, 0, 6))
+        self.assertEqual((solved, declined, required), (7, 0, 4))
 
     def test_pages_deadline_belongs_to_this_book(self):
         base = "A 331-page book has 13 pages already read. How many pages a day must be read to finish"
@@ -3871,7 +3871,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (forty-first set, neighbours of the batch-38 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (3, 0, 5))
+        self.assertEqual((solved, declined, required), (5, 0, 3))
 
     def test_pipes_all_three_must_be_open_not_stopped(self):
         base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
@@ -4052,7 +4052,7 @@ class FreshWordings(unittest.TestCase):
         """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 7 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 7 required declines,
         0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected. The sandwich coupon larger than the amount paid is now a whole count."""
         from fresh_word_problems_49 import FRESH
-        self.assertEqual(score(FRESH), (10, 0, 5))
+        self.assertEqual(score(FRESH), (11, 0, 4))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
