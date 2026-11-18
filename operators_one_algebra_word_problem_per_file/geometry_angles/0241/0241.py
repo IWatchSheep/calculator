@@ -6,7 +6,7 @@ Equation: (4x + 29) + (x + 41) = 180
 Solve   : 5x = 110 → x = 22
 Answer  : x = 22; the angles are 117° and 63°
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: linear_pair_two_angles answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(4x + 29) + (x + 41) = 180'
 SOLVE = '5x = 110 → x = 22'
 ANSWER = 'x = 22; the angles are 117° and 63°'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'linear_pair_two_angles'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Two angles form a linear pair. One measures ({0}x + {1})° and the other ({2}x + {3})°. Find both angles.'
 NUMBERS = ['4', '29', '1', '41']

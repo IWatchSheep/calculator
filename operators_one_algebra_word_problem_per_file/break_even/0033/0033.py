@@ -6,7 +6,7 @@ Equation: 50 + 50n = 500
 Solve   : 50n = 450 → n = 9
 Answer  : 9 uses
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rent_fee_plus_use_equals_buy answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '50 + 50n = 500'
 SOLVE = '50n = 450 → n = 9'
 ANSWER = '9 uses'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rent_fee_plus_use_equals_buy'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Buying a pressure washer costs ${0}. Renting one costs ${1} once plus ${2} per use. After how many uses does renting cost the same as buying?'
 NUMBERS = ['500', '50', '50']

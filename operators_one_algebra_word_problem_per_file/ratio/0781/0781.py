@@ -6,7 +6,7 @@ Equation: 8k + 4k + 5k = 204
 Solve   : 17k = 204 → k = 12
 Answer  : 96, 48, 60 kg
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_part_mix_ratio answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '8k + 4k + 5k = 204'
 SOLVE = '17k = 204 → k = 12'
 ANSWER = '96, 48, 60 kg'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_part_mix_ratio'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A mix uses cement, sand, and gravel in the ratio {0}:{1}:{2}. The total is {3} kg. How much of each is used?'
 NUMBERS = ['8', '4', '5', '204']

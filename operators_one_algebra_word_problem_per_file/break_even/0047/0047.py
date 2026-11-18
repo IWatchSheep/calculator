@@ -6,7 +6,7 @@ Equation: 25n = 1275
 Solve   : 25n = 1275 → n = 51
 Answer  : 51 uses
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rent_per_use_equals_buy answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '25n = 1275'
 SOLVE = '25n = 1275 → n = 51'
 ANSWER = '51 uses'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rent_per_use_equals_buy'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Buying a pressure washer costs ${0}. Renting costs ${1} per use. After how many uses would renting cost the same as buying?'
 NUMBERS = ['1275', '25']
