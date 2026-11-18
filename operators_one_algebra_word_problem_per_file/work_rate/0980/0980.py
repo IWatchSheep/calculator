@@ -6,7 +6,7 @@ Equation: 2/4 + t/4 + t/12 = 1
 Solve   : Combine rates → t = 1.5
 Answer  : 1.5 more hours
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: works_alone_then_partner_joins answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2/4 + t/4 + t/12 = 1'
 SOLVE = 'Combine rates → t = 1.5'
 ANSWER = '1.5 more hours'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'works_alone_then_partner_joins'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Rhea can do a job in {0} hours and Carla can do it in {1} hours. Rhea works alone for {2} hours, then Carla joins. How much longer will it take to finish?'
 NUMBERS = ['4', '12', '2']

@@ -4127,7 +4127,57 @@ def hour_later_toward_meet(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet,
+_WORKS_ALONE_THEN_PARTNER_JOINS = re.compile(
+    r"(?P<first_person>[a-z]+) can do a job in "
+    r"(?P<a>\d+) hours and "
+    r"(?P<second_person>[a-z]+) can do it in "
+    r"(?P<b>\d+) hours\. "
+    r"(?P=first_person) works alone for "
+    r"(?P<alone>2) hours, "
+    r"then (?P=second_person) joins\. "
+    r"how much longer will it take to finish\?")
+
+
+def works_alone_then_partner_joins(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WORKS_ALONE_THEN_PARTNER_JOINS.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first_person") == match.group("second_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [False, False, False]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    alone = Fraction(match.group("alone"))
+    if [n[0] for n in numbers] != [a, b, alone]:
+        return None
+    if a <= 0 or b <= 0 or alone != 2 or alone >= a:
+        return None
+    remaining_work = 1 - alone / a
+    if remaining_work <= 0:
+        return None
+    combined_rate = 1 / a + 1 / b
+    if combined_rate <= 0:
+        return None
+    time = remaining_work / combined_rate
+    if time <= 0:
+        return None
+    if alone / a + time / a + time / b != 1:
+        return None
+    if time != (a - alone) * b / (a + b):
+        return None
+    eq = "%s/%s + t/%s + t/%s = 1" % (show(alone), show(a), show(a), show(b))
+    return Result(
+        "works_alone_then_partner_joins",
+        [time],
+        eq,
+        "%s, so t = %s" % (eq, show_exact(time))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
