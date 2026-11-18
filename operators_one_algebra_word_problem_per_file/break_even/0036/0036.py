@@ -6,7 +6,7 @@ Equation: 17n = 250 + 15n
 Solve   : 2n = 250 → n = 125
 Answer  : 125 posters
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: print_run_posters_break_even answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '17n = 250 + 15n'
 SOLVE = '2n = 250 → n = 125'
 ANSWER = '125 posters'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'print_run_posters_break_even'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'It costs ${0} to set up a print run plus ${1} per poster. Posters sell for ${2} each. How many must be sold to break even?'
 NUMBERS = ['250', '15', '17']

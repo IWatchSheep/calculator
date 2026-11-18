@@ -6,7 +6,7 @@ Equation: (n/2)(2(1) + (n − 1)(1)) = 15
 Solve   : n² + n − 30 = 0 → n = 5 (the other root, -6, is rejected)
 Answer  : 5 rows
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: stack_of_cans_rows answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(n/2)(2(1) + (n − 1)(1)) = 15'
 SOLVE = 'n² + n − 30 = 0 → n = 5 (the other root, -6, is rejected)'
 ANSWER = '5 rows'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'stack_of_cans_rows'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A stack of cans has {0} can in the top row, and each row below has {1} more than the row above. The stack has {2} cans in total. How many rows are there?'
 NUMBERS = ['1', '1', '15']

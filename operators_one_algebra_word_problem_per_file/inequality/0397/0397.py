@@ -6,7 +6,7 @@ Equation: (61 + 80 + 75 + 64 + x)/5 ≥ 75
 Solve   : x ≥ 95 → x = 95 (smallest whole number that works)
 Answer  : 95
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: lowest_next_score_few_tests answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(61 + 80 + 75 + 64 + x)/5 ≥ 75'
 SOLVE = 'x ≥ 95 → x = 95 (smallest whole number that works)'
 ANSWER = '95'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'lowest_next_score_few_tests'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "Gus's test scores are {0}, {1}, {2}, {3}. What is the lowest score on the next test that gives an average of at least {4}?"
 NUMBERS = ['61', '80', '75', '64', '75']
