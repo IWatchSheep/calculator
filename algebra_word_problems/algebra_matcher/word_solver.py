@@ -3887,7 +3887,55 @@ def leftover_pages_after_two_reads(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads,
+# Start with A, save R a week, fewest whole weeks so A + R*w >= T.
+_FEWEST_WEEKS_TO_HAVE_AT_LEAST = re.compile(
+    r"(?P<name>[a-z]+) has "
+    r"\$(?P<start>\d+(?:\.\d+)?) "
+    r"and saves "
+    r"\$(?P<rate>\d+(?:\.\d+)?) a week\. "
+    r"what is the fewest weeks needed "
+    r"to have at least "
+    r"\$(?P<target>\d+(?:\.\d+)?)\?")
+
+
+def fewest_weeks_to_have_at_least(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _FEWEST_WEEKS_TO_HAVE_AT_LEAST.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    start = Fraction(match.group("start"))
+    rate = Fraction(match.group("rate"))
+    target = Fraction(match.group("target"))
+    if [n[0] for n in numbers] != [start, rate, target]:
+        return None
+    if rate <= 0 or start >= target:
+        return None
+    remaining = target - start
+    if remaining <= 0:
+        return None
+    exact_weeks = remaining / rate
+    if exact_weeks <= 0:
+        return None
+    weeks = (exact_weeks.numerator + exact_weeks.denominator - 1) // exact_weeks.denominator
+    if weeks <= 0:
+        return None
+    if start + rate * weeks < target:
+        return None
+    if start + rate * (weeks - 1) >= target:
+        return None
+    eq = "%s + %s*w >= %s" % (show(start), show(rate), show(target))
+    return Result(
+        "fewest_weeks_to_have_at_least",
+        [Fraction(weeks)],
+        eq,
+        "%s, so the fewest whole weeks is %s" % (eq, show_exact(Fraction(weeks)))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

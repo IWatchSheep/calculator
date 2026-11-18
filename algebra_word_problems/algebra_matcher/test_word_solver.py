@@ -367,6 +367,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sofia read 5/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have?"))
         self.assertIsNone(answers("Sofia read 1/5 of a book on Monday and 1/0 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have?"))
 
+    def test_fewest_weeks_to_have_at_least(self):
+        cases = [
+            ("Elena has $160 and saves $40 a week. What is the fewest weeks needed to have at least $670?", 13),
+            ("Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920?", 61),
+            ("Jade has $110 and saves $40 a week. What is the fewest weeks needed to have at least $510?", 10),
+            ("Ivan has $70 and saves $20 a week. What is the fewest weeks needed to have at least $670?", 30),
+        ]
+        for sentence, expected in cases:
+            result = WS.fewest_weeks_to_have_at_least(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(expected)], sentence)
+        self.assertIsNone(WS.fewest_weeks_to_have_at_least("I have $200 and save $15 a week. My sister has $350 and saves $5 a week. When will we have the same?"))
+        self.assertIsNone(answers("Elena has $160 and saves $40 a week. What is the fewest weeks needed to have exactly $670?"))
+        self.assertIsNone(answers("Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough?"))
+        self.assertIsNone(answers("Elena has $670 and saves $40 a week. What is the fewest weeks needed to have at least $670?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

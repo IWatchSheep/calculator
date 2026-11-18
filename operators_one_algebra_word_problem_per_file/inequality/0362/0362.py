@@ -6,7 +6,7 @@ Equation: 160 + 40w ≥ 670
 Solve   : w ≥ 12.75 → w = 13 (smallest whole number that works)
 Answer  : 13 weeks
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: fewest_weeks_to_have_at_least answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '160 + 40w ≥ 670'
 SOLVE = 'w ≥ 12.75 → w = 13 (smallest whole number that works)'
 ANSWER = '13 weeks'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'fewest_weeks_to_have_at_least'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Elena has ${0} and saves ${1} a week. What is the fewest weeks needed to have at least ${2}?'
 NUMBERS = ['160', '40', '670']
