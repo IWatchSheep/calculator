@@ -2641,7 +2641,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twentieth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (8, 0, 5))
+        self.assertEqual((solved, declined, required), (9, 0, 4))
 
     def test_percent_of_count_needs_a_score(self):
         # "65% of the students passed" is a percent of the STUDENTS, not a score on the questions
@@ -2717,7 +2717,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-first set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (9, 0, 3))
+        self.assertEqual((solved, declined, required), (10, 0, 2))
 
     def test_known_weight_at_two_prices(self):
         # "two teas" is the two prices, the same way "two jobs" already is
@@ -2911,9 +2911,9 @@ class FreshWordings(unittest.TestCase):
         self.assertEqual(r.values, [Fraction(21200)])
         self.assertIn("58% of V - 42% of V = 3392", r.reading)
         self.assertIn("0.16V = 3392 and V = 21200", r.reading)
-        # a total that is not a whole number, a share of 50% or less, a third candidate, the loser's figures, a question for a percent, twice, part of the year
-        for text in ("The winner got 58% of the votes and won by 3,393 votes. How many votes were cast?",
-                     "The winner got 50% of the votes and won by 3,392 votes. How many votes were cast?",
+        self.assertEqual(answers("The winner got 58% of the votes and won by 3,393 votes. How many votes were cast?"), values(Fraction(84825, 4)))
+        # a share of 50% or less, a third candidate, the loser's figures, a question for a percent, twice, part of the year
+        for text in ("The winner got 50% of the votes and won by 3,392 votes. How many votes were cast?",
                      "The winner got 48% of the votes and won by 3,392 votes. How many votes were cast?",
                      "In a three-candidate race, the winner got 58% of the votes and won by 3,392 votes. How many votes were cast?",
                      "The winner got 58% of the votes and won by 3,392 votes over the third candidate. How many votes were cast?",
@@ -2949,7 +2949,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-fourth set, question unit and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 5))
+        self.assertEqual((solved, declined, required), (7, 0, 4))
 
     def test_measured_heights_until_equal(self):
         self.assertEqual(answers("Plant A is 13 cm tall and grows 3 cm a week. Plant B is 28 cm tall and grows 1 cm a week. After how many weeks will they be the same height?"), values(Fraction(15, 2)))
@@ -3123,7 +3123,7 @@ class FreshWordings(unittest.TestCase):
         # a day count that is something else (she leaves in 6 days, the library closes in 10 days) is not the time to finish
         self.assertIsNone(answers("A 331-page book has 13 pages already read. She leaves in 6 days. How many pages a day must be read to finish?"))
         self.assertIsNone(answers("In 10 days the library closes. A 100-page book has 20 pages already read. How many pages a day must be read?"))
-        self.assertIsNone(answers("A 240-page book has 40 pages already read. The exam is in 8 days. How many pages a day must be read to finish?"))
+        self.assertEqual(answers("A 240-page book has 40 pages already read. The exam is in 8 days. How many pages a day must be read to finish?"), values(25))
         self.assertIsNone(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish before 6 days?"))
 
     def test_opposite_angles_question_must_ask_for_the_angle(self):
@@ -3179,7 +3179,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-seventh set, neighbours of the fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (7, 0, 4))
+        self.assertEqual((solved, declined, required), (9, 0, 2))
 
     def test_pages_deadline_belongs_to_this_book(self):
         base = "A 331-page book has 13 pages already read. How many pages a day must be read to finish"
@@ -4052,7 +4052,7 @@ class FreshWordings(unittest.TestCase):
         """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 7 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 7 required declines,
         0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected. The sandwich coupon larger than the amount paid is now a whole count."""
         from fresh_word_problems_49 import FRESH
-        self.assertEqual(score(FRESH), (11, 0, 4))
+        self.assertEqual(score(FRESH), (12, 0, 3))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
@@ -4083,6 +4083,12 @@ class UniqueMathRequiredDeclines(unittest.TestCase):
         self.assertEqual(answers("Two friends are 36 miles apart and bike toward each other at 7 mph and 11 mph. How far from the first friend's start do they meet?"), values(14))
         self.assertEqual(answers("You have $45. A movie costs $9 per ticket. How much money is left after buying as many tickets as you can?"), values(0))
         self.assertEqual(answers("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?"), values(0))
+        self.assertEqual(answers("A class trip costs $480 for the van plus $10 admission per kid. Each kid pays $24 in total. How many kids?"), values(Fraction(240, 7)))
+        self.assertEqual(answers("The winner got 58% of the votes and won by 3,393 votes. How many votes were cast?"), values(Fraction(84825, 4)))
+        self.assertEqual(answers("A 240-page book has 40 pages already read. The exam is in 8 days. How many pages a day must be read to finish?"), values(25))
+        self.assertEqual(answers("The test is in 4 days. A 90-page packet has 10 pages already read. How many pages a day must be read?"), values(20))
+        self.assertEqual(answers("Magazines cost $3 each. With a $2 coupon, Sol paid $20.00. How many magazines were bought?"), values(Fraction(22, 3)))
+        self.assertEqual(answers("Mia bought 25 stamps, some at 60¢ and some at 80¢, for $17.50. How many of each?"), values(Fraction(25, 2), Fraction(25, 2)))
 
     def test_declines(self):
         self.assertIsNone(answers("The sum of two numbers is 21 and one is twice the other. Find their product."))
