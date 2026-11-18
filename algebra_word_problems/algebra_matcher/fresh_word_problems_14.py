@@ -14,7 +14,7 @@ FRESH = [
     ("Mia brought $36 and wants stickers at $5 each. How many stickers can she afford?", [7]),
     ("Two friends are 36 miles apart and bike toward each other at 7 mph and 11 mph. How far from the first friend's start do they meet?", [14]),
     ("The product of two consecutive integers is 100. Find the integers.", None),
-    ("The sum of two consecutive even integers is 50 and their product is 624. Find the integers.", None),
+    ("The sum of two consecutive even integers is 50 and their product is 624. Find the integers.", [24, 26]),
     ("You have $45. A movie costs $9 per ticket. How much money is left after buying as many tickets as you can?", [0]),
     ("You have $45. Tickets cost $9 each with a 10% discount for groups. What is the greatest number of tickets you can buy?", None),
     ("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?", None),
