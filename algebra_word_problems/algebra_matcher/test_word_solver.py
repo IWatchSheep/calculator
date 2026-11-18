@@ -415,6 +415,21 @@ class Families(unittest.TestCase):
         self.assertIsNone(WS.test_correct_and_wrong_penalty("A test has 20 questions. Jamal scored 65%. How many questions were answered correctly?"))
         self.assertIsNone(answers("A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus left some blank and scored 180. How many were correct?"))
 
+    def test_nickels_and_quarters_count(self):
+        cases = [
+            ("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there?", 19, 26),
+            ("Theo has 37 coins, all nickels and quarters, worth $2.85 in total. How many of each coin are there?", 32, 5),
+            ("Yusuf has 79 coins, all nickels and quarters, worth $11.95 in total. How many of each coin are there?", 39, 40),
+        ]
+        for sentence, nickels, quarters in cases:
+            result = WS.nickels_and_quarters_count(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(nickels), Fraction(quarters)], sentence)
+        self.assertIsNone(WS.nickels_and_quarters_count("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there?"))
+        self.assertIsNone(answers("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many nickels are there?"))
+        self.assertIsNone(answers("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there if 3 are pennies?"))
+        self.assertIsNone(WS.nickels_and_quarters_count("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How much is that in cents?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
