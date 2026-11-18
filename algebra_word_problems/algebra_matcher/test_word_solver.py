@@ -335,6 +335,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sofia and Pablo split a loss of $22,500.00 in the ratio 2:1. How much does each get?"))
         self.assertIsNone(WS.profit_shared_in_investment_ratio("Sofia and Sofia invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get?"))
 
+    def test_times_as_old_future_sum(self):
+        cases = [
+            ("Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now?", 19, 76),
+            ("Dana is 2 times as old as Aiden. In 6 years, the sum of their ages will be 33. How old is each now?", 7, 14),
+            ("Uma is 3 times as old as Yusuf. In 10 years, the sum of their ages will be 68. How old is each now?", 12, 36),
+            ("Noah is 3 times as old as Ava. In 3 years, the sum of their ages will be 82. How old is each now?", 19, 57),
+        ]
+        for sentence, younger, older in cases:
+            result = WS.times_as_old_future_sum(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(younger), Fraction(older)], sentence)
+        self.assertIsNone(WS.times_as_old_future_sum("Wren is 4 times as old as Jamal. In 5 years, Wren will be 3 times as old as Jamal. How old is each now?"))
+        self.assertIsNone(answers("Wren is 1 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now?"))
+        self.assertIsNone(answers("Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is Wren now?"))
+        self.assertIsNone(WS.times_as_old_future_sum("Wren is 4 times as old as Wren. In 5 years, the sum of their ages will be 105. How old is each now?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

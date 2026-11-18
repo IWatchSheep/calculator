@@ -3791,7 +3791,53 @@ def profit_shared_in_investment_ratio(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio,
+# A is k times as old as B. In y years their ages sum to S.
+# x = (S - 2y)/(k + 1). Answers are x, k*x (younger, then older).
+_TIMES_AS_OLD_FUTURE_SUM = re.compile(
+    r"(?P<older_person>[a-z]+) is "
+    r"(?P<k>\d+) times as old as "
+    r"(?P<younger_person>[a-z]+)\. "
+    r"in (?P<years>\d+) years, "
+    r"the sum of their ages will be "
+    r"(?P<total>\d+)\. "
+    r"how old is each now\?")
+
+
+def times_as_old_future_sum(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TIMES_AS_OLD_FUTURE_SUM.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("older_person") == match.group("younger_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [False, False, False]:
+        return None
+    k = Fraction(match.group("k"))
+    years = Fraction(match.group("years"))
+    total = Fraction(match.group("total"))
+    if [n[0] for n in numbers] != [k, years, total]:
+        return None
+    if k <= 1 or years < 0 or total <= 0:
+        return None
+    younger_now = (total - 2 * years) / (k + 1)
+    older_now = k * younger_now
+    if younger_now <= 0 or older_now <= 0:
+        return None
+    if older_now != k * younger_now:
+        return None
+    if younger_now + years + older_now + years != total:
+        return None
+    eq = "(x + %s) + (%s*x + %s) = %s" % (show(years), show(k), show(years), show(total))
+    return Result(
+        "times_as_old_future_sum",
+        [younger_now, older_now],
+        eq,
+        "%s, so x = %s and %s*x = %s" % (eq, show_exact(younger_now), show(k), show_exact(older_now))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

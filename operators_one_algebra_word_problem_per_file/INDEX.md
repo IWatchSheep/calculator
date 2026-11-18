@@ -5,19 +5,19 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 310 ready (295 word_solver, 15 number_puzzle), 169 reference.
+479 problems: 314 ready (299 word_solver, 15 number_puzzle), 165 reference.
 
 ## Age
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0001 | Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now? | Jamal is 19, Wren is 76 | Reference |  | `age/0001/` |
+| 0001 | Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is each now? | Jamal is 19, Wren is 76 | Ready | times_as_old_future_sum | `age/0001/` |
 | 0002 | Wes is 13 years older than Theo. The sum of their ages is 85. How old is each? | Theo is 36, Wes is 49 | Ready | sum_difference | `age/0002/` |
 | 0003 | Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now? | Sam is 40, Ben is 48 | Reference |  | `age/0003/` |
-| 0004 | Dana is 2 times as old as Aiden. In 6 years, the sum of their ages will be 33. How old is each now? | Aiden is 7, Dana is 14 | Reference |  | `age/0004/` |
-| 0005 | Uma is 3 times as old as Yusuf. In 10 years, the sum of their ages will be 68. How old is each now? | Yusuf is 12, Uma is 36 | Reference |  | `age/0005/` |
+| 0004 | Dana is 2 times as old as Aiden. In 6 years, the sum of their ages will be 33. How old is each now? | Aiden is 7, Dana is 14 | Ready | times_as_old_future_sum | `age/0004/` |
+| 0005 | Uma is 3 times as old as Yusuf. In 10 years, the sum of their ages will be 68. How old is each now? | Yusuf is 12, Uma is 36 | Ready | times_as_old_future_sum | `age/0005/` |
 | 0006 | Hiro is 2 years older than Maya. The sum of their ages is 24. How old is each? | Maya is 11, Hiro is 13 | Ready | sum_difference | `age/0006/` |
-| 0007 | Noah is 3 times as old as Ava. In 3 years, the sum of their ages will be 82. How old is each now? | Ava is 19, Noah is 57 | Reference |  | `age/0007/` |
+| 0007 | Noah is 3 times as old as Ava. In 3 years, the sum of their ages will be 82. How old is each now? | Ava is 19, Noah is 57 | Ready | times_as_old_future_sum | `age/0007/` |
 | 0008 | Emeka is 5 years older than Yara. The sum of their ages is 67. How old is each? | Yara is 31, Emeka is 36 | Ready | sum_difference | `age/0008/` |
 | 0009 | Maya is 30 years older than Yara. The sum of their ages is 40. How old is each? | Yara is 5, Maya is 35 | Ready | sum_difference | `age/0009/` |
 
