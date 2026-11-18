@@ -6,7 +6,7 @@ Equation: x + y = 41;  12x + 30y = 924
 Solve   : Solve by elimination → x = 17, y = 24
 Answer  : 17 of 12, 24 of 30
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: packed_two_carton_sizes answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + y = 41;  12x + 30y = 924'
 SOLVE = 'Solve by elimination → x = 17, y = 24'
 ANSWER = '17 of 12, 24 of 30'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'packed_two_carton_sizes'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A farm packed {0} eggs into {1} cartons, using cartons of {2} and cartons of {3}. All cartons were full. How many of each?'
 NUMBERS = ['924', '41', '12', '30']

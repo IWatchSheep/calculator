@@ -6,7 +6,7 @@ Equation: 0.8(6) = 0.12(6 + w)
 Solve   : 0.12w = 4.08 → w = 34
 Answer  : 34 L
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: water_added_to_dilute answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.8(6) = 0.12(6 + w)'
 SOLVE = '0.12w = 4.08 → w = 34'
 ANSWER = '34 L'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'water_added_to_dilute'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A {0} L batch of {1}% juice concentrate is diluted with water to {2}% juice. How much water is added?'
 NUMBERS = ['6', '80', '12']

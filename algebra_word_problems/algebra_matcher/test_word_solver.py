@@ -510,7 +510,7 @@ class Families(unittest.TestCase):
             self.assertIsNotNone(result, sentence)
             self.assertEqual(result.values, [Fraction(sales)], sentence)
         self.assertIsNone(WS.weekly_base_plus_commission_sales("Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What was the commission?"))
-        self.assertIsNone(answers("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same?"))
+        self.assertIsNone(WS.weekly_base_plus_commission_sales("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same?"))
 
     def test_weeks_until_guitar(self):
         cases = [
@@ -802,6 +802,128 @@ class Families(unittest.TestCase):
         self.assertIsNone(WS.two_linear_equations_xy("Two numbers x and y satisfy 3x + 5y = 22. Find x and y."))
         self.assertIsNone(answers("Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x + y."))
 
+    def test_camp_two_seat_sizes(self):
+        cases = [
+            ("A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many of each were rented?", [10, 3]),
+            ("A camp rents 16 paddle boats for 74 campers, filling every seat. Some paddle boats hold 4 people and the rest hold 6. How many of each were rented?", [11, 5]),
+        ]
+        for sentence, vals in cases:
+            result = WS.camp_two_seat_sizes(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(answers("A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many seats are empty?"))
+
+    def test_packed_two_carton_sizes(self):
+        result = WS.packed_two_carton_sizes("A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each?")
+        self.assertEqual(result.values, [Fraction(17), Fraction(24)])
+        self.assertIsNone(answers("A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many eggs were leftover?"))
+
+    def test_banquet_two_table_sizes(self):
+        result = WS.banquet_two_table_sizes("A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there?")
+        self.assertEqual(result.values, [Fraction(8), Fraction(9)])
+        self.assertIsNone(answers("A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many guests sit at 4-seat tables?"))
+
+    def test_cash_drawer_two_bill_values(self):
+        result = WS.cash_drawer_two_bill_values("A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each?")
+        self.assertEqual(result.values, [Fraction(27), Fraction(11)])
+        self.assertIsNone(answers("A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How much is in $10 bills?"))
+
+    def test_lot_two_wheel_vehicles(self):
+        cases = [
+            ("A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many of each are there?", [54, 59]),
+            ("A lot has bicycles and tricycles. There are 112 vehicles and 277 wheels. How many of each are there?", [59, 53]),
+        ]
+        for sentence, vals in cases:
+            result = WS.lot_two_wheel_vehicles(sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(answers("A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many wheels are on the cars?"))
+
+    def test_farm_spiders_and_beetles(self):
+        result = WS.farm_spiders_and_beetles("A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there?")
+        self.assertEqual(result.values, [Fraction(4), Fraction(13)])
+        self.assertIsNone(WS.farm_spiders_and_beetles("A farm has hens and sheep. There are 17 animals and 110 legs. How many of each are there?"))
+
+    def test_rectangle_side_and_diagonal(self):
+        cases = [
+            ("A rectangular field is 4 m long. A diagonal path across it is 5 m long. How wide is the field?", 3),
+            ("A rectangular TV screen is 12 in tall with a diagonal of 20 in. How wide is it?", 16),
+        ]
+        for sentence, width in cases:
+            result = WS.rectangle_side_and_diagonal(sentence)
+            self.assertEqual(result.values, [Fraction(width)], sentence)
+        self.assertIsNone(answers("A rectangular field is 4 m long. A diagonal path across it is 5 m long. What is the perimeter?"))
+
+    def test_ladder_wire_ramp_height(self):
+        cases = [
+            ("A 10 ft ladder leans against a wall with its foot 6 ft from the wall. How high up the wall does it reach?", 8),
+            ("A 29 m support wire runs from the top of a pole to a stake 20 m from the pole's base. How tall is the pole?", 21),
+            ("A ramp is 41 ft long and covers a horizontal distance of 9 ft; how high does it rise?", 40),
+        ]
+        for sentence, height in cases:
+            result = WS.ladder_wire_ramp_height(sentence)
+            self.assertEqual(result.values, [Fraction(height)], sentence)
+        self.assertIsNone(answers("A 10 ft ladder leans against a wall with its foot 6 ft from the wall. What is the angle with the ground?"))
+
+    def test_right_triangle_legs_differ(self):
+        cases = [
+            ("One leg of a right triangle is 23 cm longer than the other. The hypotenuse is 37 cm. Find the legs.", [12, 35]),
+            ("The hypotenuse of a right triangle is 29 in, and one leg is 1 in longer than the other leg. How long are the legs?", [20, 21]),
+        ]
+        for sentence, vals in cases:
+            result = WS.right_triangle_legs_differ(sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(answers("One leg of a right triangle is 23 cm longer than the other. The hypotenuse is 37 cm. Find the area."))
+
+    def test_water_added_to_dilute(self):
+        cases = [
+            ("How much water must be added to 4 L of a 30% salt solution to make it 5% salt?", 20),
+            ("A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added?", 34),
+        ]
+        for sentence, w in cases:
+            result = WS.water_added_to_dilute(sentence)
+            self.assertEqual(result.values, [Fraction(w)], sentence)
+        self.assertIsNone(answers("How much water must be added to 4 L of a 30% salt solution to make it 5% salt? How much salt is that?"))
+
+    def test_pure_antifreeze_added(self):
+        result = WS.pure_antifreeze_added("How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix?")
+        self.assertEqual(result.values, [Fraction(10)])
+        self.assertIsNone(answers("How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix? What is the new volume?"))
+
+    def test_salt_water_evaporates(self):
+        result = WS.salt_water_evaporates("A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates?")
+        self.assertEqual(result.values, [Fraction(18)])
+        self.assertIsNone(answers("A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much salt remains?"))
+
+    def test_handshake_or_round_robin_count(self):
+        cases = [
+            ("At a party everyone shook hands with everyone else exactly once, for 10 handshakes. How many people were there?", 5),
+            ("In a round-robin tournament each team plays every other team once, for 45 games. How many teams are there?", 10),
+        ]
+        for sentence, n in cases:
+            result = WS.handshake_or_round_robin_count(sentence)
+            self.assertEqual(result.values, [Fraction(n)], sentence)
+        self.assertIsNone(answers("At a party everyone shook hands with everyone else exactly once, for 10 handshakes. How many people did not shake hands?"))
+
+    def test_triangle_three_sides_perimeter(self):
+        cases = [
+            ("A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the perimeter is 122 in, how long is each side?", [29, 40, 53]),
+            ("The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side.", [21, 29, 39]),
+        ]
+        for sentence, vals in cases:
+            result = WS.triangle_three_sides_perimeter(sentence)
+            self.assertEqual(result.values, [Fraction(v) for v in vals], sentence)
+        self.assertIsNone(answers("The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find the area."))
+
+    def test_rectangle_perimeter_length_more_width(self):
+        result = WS.rectangle_perimeter_length_more_width("The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the length and width.")
+        self.assertEqual(result.values, [Fraction(21), Fraction(14)])
+        self.assertIsNone(answers("The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the area."))
+
+    def test_two_jobs_same_commission_pay(self):
+        result = WS.two_jobs_same_commission_pay("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same?")
+        self.assertEqual(result.values, [Fraction(17000)])
+        self.assertIsNone(answers("Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. Which job pays more at $1000 in sales?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -978,6 +1100,18 @@ class GroundTruth(unittest.TestCase):
             return [Fraction(am.group(2))]                                                     # "Find the angle" (or no problem text): the angle alone
         if re.search(r"\d\s?(?:L|kg) of", text):                       # a mixture answer: compare the amounts, not the percents
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:L|kg)\b", text))
+        m = re.match(r"(\d+) of \d+, (\d+) of \d+$", text)             # "17 of 12, 24 of 30": the two counts
+        if m:
+            return sorted([Fraction(m.group(1)), Fraction(m.group(2))])
+        m = re.match(r"(\d+) tables of \d+, (\d+) tables of \d+$", text)
+        if m:
+            return sorted([Fraction(m.group(1)), Fraction(m.group(2))])
+        m = re.match(r"(\d+) \d+-person and (\d+) \d+-person$", text)
+        if m:
+            return sorted([Fraction(m.group(1)), Fraction(m.group(2))])
+        m = re.match(r"(\d+) \$\d+ bills and (\d+) \$\d+ bills$", text)
+        if m:
+            return sorted([Fraction(m.group(1)), Fraction(m.group(2))])
         text = re.sub(r"\([^)]*\)", "", text)
         text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
         return sorted(Fraction(x) for x in re.findall(r"-?\d+(?:\.\d+)?(?:/\d+)?", text))

@@ -6,7 +6,7 @@ Equation: 0.06(30) = 0.15(30 − e)
 Solve   : 0.15e = 2.7 → e = 18
 Answer  : 18 L
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: salt_water_evaporates answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.06(30) = 0.15(30 − e)'
 SOLVE = '0.15e = 2.7 → e = 18'
 ANSWER = '18 L'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'salt_water_evaporates'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A {0} L tank of {1}% salt water is left to evaporate until it is {2}% salt. How much water evaporates?'
 NUMBERS = ['30', '6', '15']

@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 402 ready (387 word_solver, 15 number_puzzle), 77 reference.
+479 problems: 427 ready (412 word_solver, 15 number_puzzle), 52 reference.
 
 ## Age
 
@@ -50,7 +50,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 |---|---|---|---|---|---|
 | 0029 | Electric utility plan A costs $38.00 plus $0.15 per kWh. Plan B costs $26.50 plus $0.20 per kWh. For how many kWhs do they cost the same? | 230 kWhs | Ready | two_plans_same_cost | `break_even/0029/` |
 | 0030 | Service A has a $160 sign-up fee and costs $5/month. Service B has no fee and costs $15/month. After how many months is the total cost the same? | 16 months | Ready | archive_break_even_1 | `break_even/0030/` |
-| 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same? | $17,000.00 | Reference |  | `break_even/0031/` |
+| 0031 | Job A pays $1000 a month plus 2% commission. Job B pays $490 a month plus 5% commission. At what monthly sales total do both pay the same? | $17,000.00 | Ready | two_jobs_same_commission_pay | `break_even/0031/` |
 | 0032 | A food truck pays $350 in daily costs, and each meal costs $1 in ingredients. Meals sell for $8. How many meals a day cover the costs? | 50 meals | Ready | food_truck_meals_cover_costs | `break_even/0032/` |
 | 0033 | Buying a pressure washer costs $500. Renting one costs $50 once plus $50 per use. After how many uses does renting cost the same as buying? | 9 uses | Ready | rent_fee_plus_use_equals_buy | `break_even/0033/` |
 | 0035 | Car rental A costs $15.00 plus $0.25 per mile. Plan B costs $4.50 plus $0.40 per mile. For how many miles do they cost the same? | 70 miles | Ready | archive_break_even_2 | `break_even/0035/` |
@@ -229,13 +229,13 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0224 | A rectangular field is 4 m long. A diagonal path across it is 5 m long. How wide is the field? | 3 m | Reference |  | `geometry_pythagorean/0224/` |
-| 0225 | A 10 ft ladder leans against a wall with its foot 6 ft from the wall. How high up the wall does it reach? | 8 ft | Reference |  | `geometry_pythagorean/0225/` |
-| 0226 | One leg of a right triangle is 23 cm longer than the other. The hypotenuse is 37 cm. Find the legs. | 12 and 35 | Reference |  | `geometry_pythagorean/0226/` |
-| 0228 | A rectangular TV screen is 12 in tall with a diagonal of 20 in. How wide is it? | 16 in | Reference |  | `geometry_pythagorean/0228/` |
-| 0229 | The hypotenuse of a right triangle is 29 in, and one leg is 1 in longer than the other leg. How long are the legs? | 20 and 21 | Reference |  | `geometry_pythagorean/0229/` |
-| 0231 | A 29 m support wire runs from the top of a pole to a stake 20 m from the pole's base. How tall is the pole? | 21 m | Reference |  | `geometry_pythagorean/0231/` |
-| 0234 | A ramp is 41 ft long and covers a horizontal distance of 9 ft; how high does it rise? | 40 ft | Reference |  | `geometry_pythagorean/0234/` |
+| 0224 | A rectangular field is 4 m long. A diagonal path across it is 5 m long. How wide is the field? | 3 m | Ready | rectangle_side_and_diagonal | `geometry_pythagorean/0224/` |
+| 0225 | A 10 ft ladder leans against a wall with its foot 6 ft from the wall. How high up the wall does it reach? | 8 ft | Ready | ladder_wire_ramp_height | `geometry_pythagorean/0225/` |
+| 0226 | One leg of a right triangle is 23 cm longer than the other. The hypotenuse is 37 cm. Find the legs. | 12 and 35 | Ready | right_triangle_legs_differ | `geometry_pythagorean/0226/` |
+| 0228 | A rectangular TV screen is 12 in tall with a diagonal of 20 in. How wide is it? | 16 in | Ready | rectangle_side_and_diagonal | `geometry_pythagorean/0228/` |
+| 0229 | The hypotenuse of a right triangle is 29 in, and one leg is 1 in longer than the other leg. How long are the legs? | 20 and 21 | Ready | right_triangle_legs_differ | `geometry_pythagorean/0229/` |
+| 0231 | A 29 m support wire runs from the top of a pole to a stake 20 m from the pole's base. How tall is the pole? | 21 m | Ready | ladder_wire_ramp_height | `geometry_pythagorean/0231/` |
+| 0234 | A ramp is 41 ft long and covers a horizontal distance of 9 ft; how high does it rise? | 40 ft | Ready | ladder_wire_ramp_height | `geometry_pythagorean/0234/` |
 
 ## Geometry (angles)
 
@@ -312,8 +312,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
 | 0346 | Each of the two equal sides of an isosceles triangle is 2 cm longer than the base. The perimeter is 52 cm. Find the side lengths. | Base 16 cm, equal sides 18 cm | Ready | archive_geometry_triangle_1 | `geometry_triangle/0346/` |
-| 0347 | A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the perimeter is 122 in, how long is each side? | 29 in, 40 in, 53 in | Reference |  | `geometry_triangle/0347/` |
-| 0353 | The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side. | 21 in, 29 in, 39 in | Reference |  | `geometry_triangle/0353/` |
+| 0347 | A triangle's second side is 11 in longer than the first, and its third side is 5 in less than twice the first. If the perimeter is 122 in, how long is each side? | 29 in, 40 in, 53 in | Ready | triangle_three_sides_perimeter | `geometry_triangle/0347/` |
+| 0353 | The sides of a triangle are x, x + 8, and 2x − 3 inches long. The perimeter is 89 inches. Find each side. | 21 in, 29 in, 39 in | Ready | triangle_three_sides_perimeter | `geometry_triangle/0353/` |
 
 ## Geometry (volume)
 
@@ -427,12 +427,12 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0532 | How many pounds of coffee worth $10/lb must be added to 14 lb of coffee worth $8/lb to make a mix worth $9/lb? | 14 lb | Ready | add_to_blend | `mixture/0532/` |
 | 0533 | How many liters of a 25% juice drink must be mixed with a 50% juice drink to make 100 liters of a 39% juice drink? | 44 L of the 25% and 56 L of the 50% | Ready | two_solution_mix | `mixture/0533/` |
 | 0534 | One alloy is 25% nickel and another is 75% nickel. How many kilograms of each are needed to make 25 kg of an alloy that is 31% nickel? | 22 kg of 25%, 3 kg of 75% | Ready | two_solution_mix | `mixture/0534/` |
-| 0535 | How much water must be added to 4 L of a 30% salt solution to make it 5% salt? | 20 L | Reference |  | `mixture/0535/` |
-| 0536 | A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates? | 18 L | Reference |  | `mixture/0536/` |
+| 0535 | How much water must be added to 4 L of a 30% salt solution to make it 5% salt? | 20 L | Ready | water_added_to_dilute | `mixture/0535/` |
+| 0536 | A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates? | 18 L | Ready | salt_water_evaporates | `mixture/0536/` |
 | 0537 | 50 lb of a blend of coffee beans selling for $13.60/lb is made from coffee beans costing $8/lb and $15/lb. How many pounds of each are used? | 10 lb at $8 and 40 lb at $15 | Ready | price_blend | `mixture/0537/` |
-| 0538 | How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix? | 10 L | Reference |  | `mixture/0538/` |
+| 0538 | How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix? | 10 L | Ready | pure_antifreeze_added | `mixture/0538/` |
 | 0539 | A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%? | 8 L | Reference |  | `mixture/0539/` |
-| 0541 | A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added? | 34 L | Reference |  | `mixture/0541/` |
+| 0541 | A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added? | 34 L | Ready | water_added_to_dilute | `mixture/0541/` |
 | 0544 | One alloy is 10% silver and another is 50% silver. How many kilograms of each are needed to make 20 kg of an alloy that is 16% silver? | 17 kg of 10%, 3 kg of 50% | Ready | two_solution_mix | `mixture/0544/` |
 | 0545 | 40 lb of a blend of candy selling for $13.60/lb is made from candy costing $8/lb and $24/lb. How many pounds of each are used? | 26 lb at $8 and 14 lb at $24 | Ready | price_blend | `mixture/0545/` |
 | 0547 | How many liters of a 60% acid solution must be mixed with a 70% acid solution to make 40 liters of a 65% acid solution? | 20 L of the 60% and 20 L of the 70% | Ready | two_solution_mix | `mixture/0547/` |
@@ -573,8 +573,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0755 | At a party everyone shook hands with everyone else exactly once, for 10 handshakes. How many people were there? | 5 | Reference |  | `quadratic_counting/0755/` |
-| 0757 | In a round-robin tournament each team plays every other team once, for 45 games. How many teams are there? | 10 | Reference |  | `quadratic_counting/0757/` |
+| 0755 | At a party everyone shook hands with everyone else exactly once, for 10 handshakes. How many people were there? | 5 | Ready | handshake_or_round_robin_count | `quadratic_counting/0755/` |
+| 0757 | In a round-robin tournament each team plays every other team once, for 45 games. How many teams are there? | 10 | Ready | handshake_or_round_robin_count | `quadratic_counting/0757/` |
 
 ## Quadratic (projectile)
 
@@ -689,17 +689,17 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0886 | A shop sold 31 kg of two teas, one at $5/kg and one at $12/kg, for $239. How many kg of each? | 19 kg at $5, 12 kg at $12 | Ready | two_prices_known_count | `system_of_equations/0886/` |
 | 0887 | A concert sold 628 tickets: lawn seats at $30 and reserved seats at $50. Ticket sales totaled $21,500. How many of each were sold? | 495 lawn, 133 reserved | Ready | two_priced_items | `system_of_equations/0887/` |
 | 0888 | Two numbers x and y satisfy −4x − 3y = 9 and 5x − 3y = -18. Find x and y. | x = -3, y = 1 | Ready | two_linear_equations_xy | `system_of_equations/0888/` |
-| 0889 | The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the length and width. | 21 m by 14 m | Reference |  | `system_of_equations/0889/` |
-| 0890 | A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each? | 17 of 12, 24 of 30 | Reference |  | `system_of_equations/0890/` |
-| 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there? | 8 tables of 4, 9 tables of 8 | Reference |  | `system_of_equations/0891/` |
+| 0889 | The perimeter of a rectangle is 70 m and its length is 7 m more than its width. Find the length and width. | 21 m by 14 m | Ready | rectangle_perimeter_length_more_width | `system_of_equations/0889/` |
+| 0890 | A farm packed 924 eggs into 41 cartons, using cartons of 12 and cartons of 30. All cartons were full. How many of each? | 17 of 12, 24 of 30 | Ready | packed_two_carton_sizes | `system_of_equations/0890/` |
+| 0891 | A banquet hall seats 104 guests at 17 tables. Some tables seat 4 and the others seat 8. How many of each kind are there? | 8 tables of 4, 9 tables of 8 | Ready | banquet_two_table_sizes | `system_of_equations/0891/` |
 | 0892 | The sum of two numbers is 126 and their difference is 100. Find the numbers. | 113 and 13 | Ready | sum_difference | `system_of_equations/0892/` |
-| 0893 | A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many of each are there? | 54 motorcycles and 59 cars | Reference |  | `system_of_equations/0893/` |
+| 0893 | A lot has motorcycles and cars. There are 113 vehicles and 344 wheels. How many of each are there? | 54 motorcycles and 59 cars | Ready | lot_two_wheel_vehicles | `system_of_equations/0893/` |
 | 0894 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Gus answered every question and scored 180. How many were correct? | 46 correct, 4 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0894/` |
-| 0895 | A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many of each were rented? | 10 2-person and 3 4-person | Reference |  | `system_of_equations/0895/` |
-| 0896 | A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each? | 27 $10 bills and 11 $20 bills | Reference |  | `system_of_equations/0896/` |
-| 0900 | A lot has bicycles and tricycles. There are 112 vehicles and 277 wheels. How many of each are there? | 59 bicycles and 53 tricycles | Reference |  | `system_of_equations/0900/` |
+| 0895 | A camp rents 13 canoes for 32 campers, filling every seat. Some canoes hold 2 people and the rest hold 4. How many of each were rented? | 10 2-person and 3 4-person | Ready | camp_two_seat_sizes | `system_of_equations/0895/` |
+| 0896 | A cash drawer has 38 bills, all $10 and $20 bills, totaling $490. How many of each? | 27 $10 bills and 11 $20 bills | Ready | cash_drawer_two_bill_values | `system_of_equations/0896/` |
+| 0900 | A lot has bicycles and tricycles. There are 112 vehicles and 277 wheels. How many of each are there? | 59 bicycles and 53 tricycles | Ready | lot_two_wheel_vehicles | `system_of_equations/0900/` |
 | 0901 | Zane bought 24 stamps, some at 44¢ and some at 63¢, for $12.27. How many of each? | 15 at 44¢, 9 at 63¢ | Ready | two_prices_known_count | `system_of_equations/0901/` |
-| 0902 | A camp rents 16 paddle boats for 74 campers, filling every seat. Some paddle boats hold 4 people and the rest hold 6. How many of each were rented? | 11 4-person and 5 6-person | Reference |  | `system_of_equations/0902/` |
+| 0902 | A camp rents 16 paddle boats for 74 campers, filling every seat. Some paddle boats hold 4 people and the rest hold 6. How many of each were rented? | 11 4-person and 5 6-person | Ready | camp_two_seat_sizes | `system_of_equations/0902/` |
 | 0904 | Vera is 5 times as old as Xena. In 18 years, Vera will be 3 times as old as Xena. How old is each now? | Vera 90, Xena 18 | Ready | ages_later_multiple | `system_of_equations/0904/` |
 | 0908 | 2 coffees and 5 muffins cost $33.85. 3 coffees and 5 muffins cost $37.90. Find the price of one of each. | coffees: $4.05 each, muffins: $5.15 each | Ready | two_purchases | `system_of_equations/0908/` |
 | 0910 | Two numbers x and y satisfy 4x + 5y = -41 and −2x − 3y = 25. Find x and y. | x = 1, y = -9 | Ready | two_linear_equations_xy | `system_of_equations/0910/` |
@@ -712,7 +712,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0925 | A test has 30 questions. Each correct answer earns 5 points and each wrong answer loses 2. Zoe answered every question and scored 52. How many were correct? | 16 correct, 14 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0925/` |
 | 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y. | x = -9, y = -2 | Ready | two_linear_equations_xy | `system_of_equations/0928/` |
 | 0931 | Kira is 4 times as old as Ava. In 8 years, Kira will be 2 times as old as Ava. How old is each now? | Kira 16, Ava 4 | Ready | ages_later_multiple | `system_of_equations/0931/` |
-| 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there? | 4 spiders and 13 beetles | Reference |  | `system_of_equations/0932/` |
+| 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there? | 4 spiders and 13 beetles | Ready | farm_spiders_and_beetles | `system_of_equations/0932/` |
 | 0936 | A test has 50 questions. Each correct answer earns 4 points and each wrong answer loses 1. Noah answered every question and scored 75. How many were correct? | 25 correct, 25 wrong | Ready | test_correct_and_wrong_penalty | `system_of_equations/0936/` |
 | 0941 | Omar bought 39 stamps, some at 50¢ and some at 75¢, for $23.00. How many of each? | 25 at 50¢, 14 at 75¢ | Ready | two_prices_known_count | `system_of_equations/0941/` |
 | 0942 | Gus bought 40 stamps, some at 44¢ and some at 63¢, for $21.97. How many of each? | 17 at 44¢, 23 at 63¢ | Ready | two_prices_known_count | `system_of_equations/0942/` |

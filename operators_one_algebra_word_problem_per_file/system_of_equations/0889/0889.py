@@ -6,7 +6,7 @@ Equation: 2l + 2w = 70;  l = w + 7
 Solve   : Substitute → l = 21, w = 14
 Answer  : 21 m by 14 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_perimeter_length_more_width answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2l + 2w = 70;  l = w + 7'
 SOLVE = 'Substitute → l = 21, w = 14'
 ANSWER = '21 m by 14 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_perimeter_length_more_width'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'The perimeter of a rectangle is {0} m and its length is {1} m more than its width. Find the length and width.'
 NUMBERS = ['70', '7']
