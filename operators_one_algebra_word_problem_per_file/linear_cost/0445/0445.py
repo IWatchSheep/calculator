@@ -6,7 +6,7 @@ Equation: 4 + 6n = 22
 Solve   : 6n = 18 → n = 3
 Answer  : 3 games
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: bowling_games_plus_shoe_rental answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '4 + 6n = 22'
 SOLVE = '6n = 18 → n = 3'
 ANSWER = '3 games'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'bowling_games_plus_shoe_rental'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Bowling costs ${0} per game plus ${1} for shoe rental. Nia spent ${2}. How many games were bowled?'
 NUMBERS = ['6.00', '4.00', '22.00']
