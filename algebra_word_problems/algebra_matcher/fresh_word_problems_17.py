@@ -12,7 +12,7 @@ FRESH = [
     ("How many kilograms of nuts worth $12 per kilogram must be added to 20 kg of nuts worth $8 per kilogram to make a mix worth $10 per kilogram?", [20]),
     ("How much tea at $5 a pound must be added to 6 lb of tea at $9 a pound to make a blend priced at $7 a pound?", [6]),
     ("A hall costs $250 plus $12 per guest. The final bill was $730. How much per guest?", None),
-    ("A hall costs $250 plus $12 per guest. The final bill was $735. How many guests attended?", None),
+    ("A hall costs $250 plus $12 per guest. The final bill was $735. How many guests attended?", [Fraction(485, 12)]),
     ("A hall costs $250 plus $12 per guest, and the first 10 guests are free. The final bill was $730. How many guests attended?", [50]),
     ("Tank A has 500 litres and drains 20 a day. Tank B has 300 litres and fills 10 a day. When are they equal?", [Fraction(20, 3)]),
     ("Town A has 18,000 people and grows by 2,000 a year. Town B has 63,000 and shrinks by 500 a year. What will each population be when they are equal?", [54000]),

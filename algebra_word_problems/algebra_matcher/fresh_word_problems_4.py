@@ -7,7 +7,7 @@ FRESH = [
     ("A copier prints 40 sheets in 2 minutes. How many sheets will it print in 15 minutes?", [300]),
     ("A pump moves 50 litres in 10 minutes. How many litres does it move in 35 minutes?", [175]),
     ("A press stamps 90 plates in 15 minutes. How many plates do three presses stamp in 30 minutes?", [540]),
-    ("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?", None),
+    ("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?", [360]),
     ("A truck covers 180 miles in 4 hours. How far will two trucks go in 10 hours?", [900]),
     ("A stamp costs $2. How much do 7 stamps cost?", [14]),
 ]
