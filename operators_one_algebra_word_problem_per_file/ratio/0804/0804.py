@@ -6,7 +6,7 @@ Equation: 3x + x + (x + 9000) = 31500
 Solve   : 5x = 22500 → x = 4500
 Answer  : Xena $13,500.00, Dana $4,500.00, Finn $13,500.00
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: estate_three_heirs_times_and_more answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '3x + x + (x + 9000) = 31500'
 SOLVE = '5x = 22500 → x = 4500'
 ANSWER = 'Xena $13,500.00, Dana $4,500.00, Finn $13,500.00'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'estate_three_heirs_times_and_more'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'An estate of ${0} is split among three heirs. Xena gets {1} times as much as Dana, and Finn gets ${2} more than Dana. How much does each receive?'
 NUMBERS = ['31500.00', '3', '9000.00']

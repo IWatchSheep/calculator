@@ -3626,7 +3626,62 @@ def give_until_equal_money(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money,
+# Three heirs: k times the base, and m more than the base.
+# k*x + x + (x + m) = total. Answers are k*x, x, x + m.
+_ESTATE_THREE_HEIRS_TIMES_AND_MORE = re.compile(
+    r"an estate of "
+    r"\$(?P<total>\d+(?:\.\d+)?) "
+    r"is split among three heirs\. "
+    r"(?P<times_person>[a-z]+) gets "
+    r"(?P<k>\d+) times as much as "
+    r"(?P<base_person>[a-z]+), "
+    r"and (?P<extra_person>[a-z]+) gets "
+    r"\$(?P<m>\d+(?:\.\d+)?) "
+    r"more than (?P=base_person)\. "
+    r"how much does each receive\?")
+
+
+def estate_three_heirs_times_and_more(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ESTATE_THREE_HEIRS_TIMES_AND_MORE.fullmatch(text)
+    if match is None:
+        return None
+    times_person = match.group("times_person")
+    base_person = match.group("base_person")
+    extra_person = match.group("extra_person")
+    if len({times_person, base_person, extra_person}) != 3:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, False, True]:
+        return None
+    total = Fraction(match.group("total"))
+    k = Fraction(match.group("k"))
+    m = Fraction(match.group("m"))
+    if [n[0] for n in numbers] != [total, k, m]:
+        return None
+    if k.denominator != 1 or k < 2 or m <= 0 or total <= m:
+        return None
+    base_share = (total - m) / (k + 2)
+    times_share = k * base_share
+    extra_share = base_share + m
+    if base_share <= 0 or times_share <= 0 or extra_share <= 0:
+        return None
+    if times_share != k * base_share or extra_share != base_share + m:
+        return None
+    if times_share + base_share + extra_share != total:
+        return None
+    eq = "%s*x + x + (x + %s) = %s" % (show(k), show(m), show(total))
+    return Result(
+        "estate_three_heirs_times_and_more",
+        [times_share, base_share, extra_share],
+        eq,
+        "%s, so x = %s, %s*x = %s, and x + %s = %s" % (
+            eq, show_exact(base_share), show(k), show_exact(times_share), show(m), show_exact(extra_share)
+        )
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
