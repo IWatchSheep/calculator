@@ -6,7 +6,7 @@ Equation: (29 − 2x)(21 − 2x) = 209
 Solve   : x² − 25x + 100 = 0 → x = 5 (the other root, 20, is rejected)
 Answer  : 5 cm
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: open_box_cut_squares answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(29 − 2x)(21 − 2x) = 209'
 SOLVE = 'x² − 25x + 100 = 0 → x = 5 (the other root, 20, is rejected)'
 ANSWER = '5 cm'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'open_box_cut_squares'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Squares of side x are cut from each corner of a {0} cm by {1} cm sheet, and the sides are folded up to make an open box. The base of the box has area {2} cm². Find x.'
 NUMBERS = ['29', '21', '209']

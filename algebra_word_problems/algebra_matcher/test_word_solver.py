@@ -1049,6 +1049,136 @@ class Families(unittest.TestCase):
         self.assertEqual(result.values, [Fraction(6)])
         self.assertIsNone(answers("How many years will it take $2,000.00 to earn $480.00 in simple interest at 4% per year? What is the final amount?"))
 
+    def test_ago_older_was_twice(self):
+        result = WS.ago_older_was_twice("Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old is each now?")
+        self.assertEqual(result.values, [Fraction(40), Fraction(48)])
+        self.assertIsNone(answers("Ben is 8 years older than Sam. 32 years ago, Ben was twice as old as Sam. How old was Sam then?"))
+
+    def test_clock_hands_together(self):
+        result = WS.clock_hands_together("At what time between 1:00 and 2:00 are the hour and minute hands of a clock exactly together?")
+        self.assertEqual(result.values, [Fraction(60, 11)])
+        self.assertIsNone(answers("At what time between 1:00 and 2:00 are the hour and minute hands of a clock exactly opposite?"))
+
+    def test_jar_three_coins(self):
+        result = WS.jar_three_coins("A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as quarters. How many of each coin?")
+        self.assertEqual(result.values, [Fraction(5), Fraction(9), Fraction(10)])
+        self.assertIsNone(answers("A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as quarters. How many quarters?"))
+
+    def test_average_of_consecutive(self):
+        result = WS.average_of_consecutive("The average of 5 consecutive integers is 50. What is the smallest?")
+        self.assertEqual(result.values, [Fraction(48)])
+        self.assertIsNone(answers("The average of 5 consecutive integers is 50. What is the largest?"))
+
+    def test_consecutive_times_smallest_vs_largest(self):
+        result = WS.consecutive_times_smallest_vs_largest("Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find the integers.")
+        self.assertEqual(result.values, [Fraction(-3), Fraction(-2), Fraction(-1)])
+        self.assertIsNone(answers("Three consecutive integers are such that 3 times the smallest is 8 less than the largest. Find their product."))
+
+    def test_plane_with_and_against_wind(self):
+        result = WS.plane_with_and_against_wind("A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. Find the plane's speed in still air and the wind speed.")
+        self.assertEqual(result.values, [Fraction(150), Fraction(30)])
+        self.assertIsNone(answers("A plane flies 540 miles with the wind in 3 hours. Flying back against the same wind takes 4.5 hours. How long is the round trip?"))
+
+    def test_two_digit_units_times_tens(self):
+        result = WS.two_digit_units_times_tens("In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find the number.")
+        self.assertEqual(result.values, [Fraction(39)])
+        self.assertIsNone(answers("In a two-digit number, the units digit is 3 times the tens digit. The number is 27 more than the sum of its digits. Find the tens digit."))
+
+    def test_round_trip_faster_return(self):
+        result = WS.round_trip_faster_return("A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride?")
+        self.assertEqual(result.values, [Fraction(30)])
+        self.assertIsNone(answers("A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the return?"))
+
+    def test_diophantus_life_ages(self):
+        result = WS.diophantus_life_ages("A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the father live?")
+        self.assertEqual(result.values, [Fraction(84)])
+        self.assertIsNone(answers("A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the son live?"))
+
+    def test_exterior_equals_remote_interiors(self):
+        result = WS.exterior_equals_remote_interiors("An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find x and the exterior angle.")
+        self.assertEqual(result.values, [Fraction(17), Fraction(73)])
+        self.assertIsNone(answers("An exterior angle of a triangle measures (3x + 22)°. The two remote interior angles measure (2x + 21)° and (3x − 33)°. Find the interior angles."))
+
+    def test_vertical_angles_linear_pair_measures(self):
+        result = WS.vertical_angles_linear_pair_measures("Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure.")
+        self.assertEqual(result.values, [Fraction(15), Fraction(77)])
+        self.assertIsNone(WS.opposite_angles_equal("Two vertical angles measure (6x − 13)° and (4x + 17)°. Find x and the angle measure."))
+
+    def test_isosceles_vertex_less_than_base(self):
+        result = WS.isosceles_vertex_less_than_base("In an isosceles triangle, the vertex angle is 12° less than each base angle. Find all three angles.")
+        self.assertEqual(result.values, [Fraction(64), Fraction(64), Fraction(52)])
+        self.assertIsNone(answers("In an isosceles triangle, the vertex angle is 12° less than each base angle. Find the vertex angle only."))
+
+    def test_square_side_increase_area(self):
+        result = WS.square_side_increase_area("If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the original side length.")
+        self.assertEqual(result.values, [Fraction(22)])
+        self.assertIsNone(answers("If each side of a square is increased by 2 cm, its area increases by 92 cm². Find the new area."))
+
+    def test_rectangle_twice_width_area_same(self):
+        result = WS.rectangle_twice_width_area_same("A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stays the same. Find the original dimensions.")
+        self.assertEqual(result.values, [Fraction(12), Fraction(24)])
+        self.assertIsNone(answers("A rectangle's length is twice its width. If the length is decreased by 6 m and the width increased by 4 m, the area stays the same. Find the new area."))
+
+    def test_pen_against_barn_two_dimensions(self):
+        result = WS.pen_against_barn_two_dimensions("A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 216 m². What dimensions work?")
+        self.assertEqual(result.values, [Fraction(6), Fraction(36), Fraction(12), Fraction(18)])
+        self.assertIsNone(answers("A farmer has 48 m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of 216 m². What is the perimeter of the barn?"))
+
+    def test_open_box_cut_squares(self):
+        result = WS.open_box_cut_squares("Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. The base of the box has area 209 cm². Find x.")
+        self.assertEqual(result.values, [Fraction(5)])
+        self.assertIsNone(answers("Squares of side x are cut from each corner of a 29 cm by 21 cm sheet, and the sides are folded up to make an open box. The base of the box has area 209 cm². Find the volume."))
+
+    def test_path_around_square_garden(self):
+        result = WS.path_around_square_garden("A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². How wide is the path?")
+        self.assertEqual(result.values, [Fraction(2)])
+        self.assertIsNone(answers("A 19 ft by 19 ft garden has a path of uniform width around it. The path's area is 168 ft². What is the outer perimeter?"))
+
+    def test_aquarium_volume_depth(self):
+        result = WS.aquarium_volume_depth("An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. How deep is it?")
+        self.assertEqual(result.values, [Fraction(6)])
+        self.assertIsNone(answers("An aquarium 16 dm long and 4 dm wide holds 384 dm³ of water when full. What is the surface area?"))
+
+    def test_fewest_minutes_plan_b_cheaper(self):
+        result = WS.fewest_minutes_plan_b_cheaper("Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. What is the fewest whole minutes for which Plan B is cheaper?")
+        self.assertEqual(result.values, [Fraction(172)])
+        self.assertIsNone(answers("Plan A costs $21 plus $0.10 per minute. Plan B costs $33 plus $0.03 per minute. At how many minutes do they cost the same?"))
+
+    def test_greatest_whole_garden_width(self):
+        result = WS.greatest_whole_garden_width("A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the greatest whole-number width possible?")
+        self.assertEqual(result.values, [Fraction(14)])
+        self.assertIsNone(answers("A rectangular garden is 40 ft long, and there is at most 109 ft of fencing. What is the least whole-number width possible?"))
+
+    def test_least_sales_for_pay_floor(self):
+        result = WS.least_sales_for_pay_floor("A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500?")
+        self.assertEqual(result.values, [Fraction(9167)])
+        self.assertIsNone(answers("A salesperson earns $400 a week plus 12% of sales. What is the pay if sales are $1500?"))
+
+    def test_drain_replace_pure_antifreeze(self):
+        result = WS.drain_replace_pure_antifreeze("A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%?")
+        self.assertEqual(result.values, [Fraction(8)])
+        self.assertIsNone(answers("A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%? What is left of the old mix?"))
+
+    def test_three_numbers_times_and_more(self):
+        result = WS.three_numbers_times_and_more("The second of three numbers is 3 times the first. The third is 8 more than the second. Their sum is 176. Find the numbers.")
+        self.assertEqual(result.values, [Fraction(24), Fraction(72), Fraction(80)])
+        self.assertIsNone(answers("The second of three numbers is 3 times the first. The third is 8 more than the second. Their sum is 176. Find the second number only."))
+
+    def test_fraction_add_to_both(self):
+        result = WS.fraction_add_to_both("The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the original fraction.")
+        self.assertEqual(result.values, [Fraction(10, 12)])
+        self.assertIsNone(answers("The denominator of a fraction is 2 more than the numerator. If 4 is added to both, the fraction becomes 7/8. Find the new fraction."))
+
+    def test_jog_minus_cycle_time(self):
+        result = WS.jog_minus_cycle_time("Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long is the route?")
+        self.assertEqual(result.values, [Fraction(48)])
+        self.assertIsNone(answers("Jogging a route at 8 km/h takes 10/3 hours longer than cycling it at 18 km/h. How long does the jog take?"))
+
+    def test_three_numbers_pair_sums(self):
+        result = WS.three_numbers_pair_sums("Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three.")
+        self.assertEqual(result.values, [Fraction(9), Fraction(1), Fraction(11)])
+        self.assertIsNone(answers("Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find their product."))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -1237,6 +1367,9 @@ class GroundTruth(unittest.TestCase):
         m = re.match(r"(\d+) \$\d+ bills and (\d+) \$\d+ bills$", text)
         if m:
             return sorted([Fraction(m.group(1)), Fraction(m.group(2))])
+        m = re.match(r"(\d+)/(\d+) ≈", text)
+        if m:
+            return [Fraction(int(m.group(1)), int(m.group(2)))]
         text = re.sub(r"\([^)]*\)", "", text)
         text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
         return sorted(Fraction(x) for x in re.findall(r"-?\d+(?:\.\d+)?(?:/\d+)?", text))

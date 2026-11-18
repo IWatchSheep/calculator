@@ -6,7 +6,7 @@ Equation: w(48 − 2w) = 216
 Solve   : w² − 24w + 108 = 0 → w = 6 (the other root, 18, also works)
 Answer  : Two answers: 18 m × 12 m, or 6 m × 36 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: pen_against_barn_two_dimensions answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'w(48 − 2w) = 216'
 SOLVE = 'w² − 24w + 108 = 0 → w = 6 (the other root, 18, also works)'
 ANSWER = 'Two answers: 18 m × 12 m, or 6 m × 36 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'pen_against_barn_two_dimensions'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A farmer has {0} m of fencing to build a rectangular pen against a barn wall (no fence on the wall side). The pen must have an area of {1} m². What dimensions work?'
 NUMBERS = ['48', '216']

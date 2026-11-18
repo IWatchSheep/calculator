@@ -6,7 +6,7 @@ Equation: p + w = 180;  p − w = 120
 Solve   : 2p = 300 → p = 150, w = 30
 Answer  : Plane 150 mph, wind 30 mph
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: plane_with_and_against_wind answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'p + w = 180;  p − w = 120'
 SOLVE = '2p = 300 → p = 150, w = 30'
 ANSWER = 'Plane 150 mph, wind 30 mph'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'plane_with_and_against_wind'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A plane flies {0} miles with the wind in {1} hours. Flying back against the same wind takes {2} hours. Find the plane's speed in still air and the wind speed."
 NUMBERS = ['540', '3', '4.5']

@@ -6,7 +6,7 @@ Equation: (2w − 6)(w + 4) = 2w²
 Solve   : 2w = 24 → w = 12
 Answer  : Width 12 m, length 24 m
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_twice_width_area_same answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '(2w − 6)(w + 4) = 2w²'
 SOLVE = '2w = 24 → w = 12'
 ANSWER = 'Width 12 m, length 24 m'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_twice_width_area_same'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = "A rectangle's length is twice its width. If the length is decreased by {0} m and the width increased by {1} m, the area stays the same. Find the original dimensions."
 NUMBERS = ['6', '4']

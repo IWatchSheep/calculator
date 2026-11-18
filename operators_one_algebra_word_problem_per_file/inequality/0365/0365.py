@@ -6,7 +6,7 @@ Equation: 2(40) + 2w ≤ 109
 Solve   : w ≤ 14.5 → w = 14 (largest whole number that works)
 Answer  : 14 ft
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: greatest_whole_garden_width answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '2(40) + 2w ≤ 109'
 SOLVE = 'w ≤ 14.5 → w = 14 (largest whole number that works)'
 ANSWER = '14 ft'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'greatest_whole_garden_width'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rectangular garden is {0} ft long, and there is at most {1} ft of fencing. What is the greatest whole-number width possible?'
 NUMBERS = ['40', '109']
