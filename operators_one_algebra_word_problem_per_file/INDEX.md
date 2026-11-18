@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 341 ready (326 word_solver, 15 number_puzzle), 138 reference.
+479 problems: 352 ready (337 word_solver, 15 number_puzzle), 127 reference.
 
 ## Age
 
@@ -166,8 +166,8 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0149 | Carla and Jamal live 391 miles apart. Carla drives toward Jamal at 67 mph. 1 hour later, Jamal starts driving toward Carla at 41 mph. How long after Jamal leaves do they meet? | 3 hours | Ready | hour_later_toward_meet | `distance_toward_each_other/0149/` |
 | 0150 | Two trains start 142 miles apart and travel toward each other at 38 mph and 33 mph. When will they meet? | 2 hours | Ready | toward_each_other | `distance_toward_each_other/0150/` |
 | 0151 | Two cyclists are 198 km apart and ride toward each other at 64 km/h and 35 km/h. How long until they meet? | 2 hours | Ready | toward_each_other | `distance_toward_each_other/0151/` |
-| 0152 | Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Emeka at 65 mph. How long after Quinn leaves do they meet? | 2 hours | Reference |  | `distance_toward_each_other/0152/` |
-| 0154 | Yusuf and Theo live 618 miles apart. Yusuf drives toward Theo at 59 mph. 2 hours later, Theo starts driving toward Yusuf at 66 mph. How long after Theo leaves do they meet? | 4 hours | Reference |  | `distance_toward_each_other/0154/` |
+| 0152 | Emeka and Quinn live 362 miles apart. Emeka drives toward Quinn at 58 mph. 2 hours later, Quinn starts driving toward Emeka at 65 mph. How long after Quinn leaves do they meet? | 2 hours | Ready | two_hours_later_toward_meet | `distance_toward_each_other/0152/` |
+| 0154 | Yusuf and Theo live 618 miles apart. Yusuf drives toward Theo at 59 mph. 2 hours later, Theo starts driving toward Yusuf at 66 mph. How long after Theo leaves do they meet? | 4 hours | Ready | two_hours_later_toward_meet | `distance_toward_each_other/0154/` |
 | 0156 | Carla and Zane live 370 miles apart. Carla drives toward Zane at 58 mph. 1 hour later, Zane starts driving toward Carla at 46 mph. How long after Zane leaves do they meet? | 3 hours | Ready | hour_later_toward_meet | `distance_toward_each_other/0156/` |
 | 0157 | Victor and Aiden live 327 miles apart. Victor drives toward Aiden at 63 mph. 1 hour later, Aiden starts driving toward Victor at 69 mph. How long after Aiden leaves do they meet? | 2 hours | Ready | hour_later_toward_meet | `distance_toward_each_other/0157/` |
 
@@ -337,9 +337,9 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0367 | A salesperson earns $400 a week plus 12% of sales. What is the least (whole-dollar) amount of sales needed to earn at least $1500? | $9,167.00 | Reference |  | `inequality/0367/` |
 | 0370 | Isla has $10 and saves $15 a week. What is the fewest weeks needed to have at least $920? | 61 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0370/` |
 | 0372 | Gus has $136 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0372/` |
-| 0373 | Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80? | 85 | Reference |  | `inequality/0373/` |
+| 0373 | Lena's test scores are 81, 88, 63, 78, 85. What is the lowest score on the next test that gives an average of at least 80? | 85 | Ready | lowest_next_score_for_average | `inequality/0373/` |
 | 0378 | Jade has $110 and saves $40 a week. What is the fewest weeks needed to have at least $510? | 10 weeks | Ready | fewest_weeks_to_have_at_least | `inequality/0378/` |
-| 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 85? | 86 | Reference |  | `inequality/0379/` |
+| 0379 | Emeka's test scores are 92, 93, 72, 74, 93. What is the lowest score on the next test that gives an average of at least 85? | 86 | Ready | lowest_next_score_for_average | `inequality/0379/` |
 | 0382 | Emeka has $113 to spend. There is a $10 entry fee, and T-shirts cost $6.00 each. What is the most T-shirts that can be bought? | 17 T-shirts | Ready | most_you_can_buy | `inequality/0382/` |
 | 0386 | Lena's test scores are 93, 83, 85. What is the lowest score on the next test that gives an average of at least 88? | 91 | Reference |  | `inequality/0386/` |
 | 0388 | Wes has $138 to spend. There is a $8 entry fee, and bags of mulch cost $12.00 each. What is the most bags of mulch that can be bought? | 10 bags of mulch | Ready | most_you_can_buy | `inequality/0388/` |
@@ -511,10 +511,10 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0677 | Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sales? | $8,000.00 | Reference |  | `percent_commission/0677/` |
-| 0678 | Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What were the sales? | $32,000.00 | Reference |  | `percent_commission/0678/` |
+| 0677 | Theo earns a weekly base pay of $400 plus 2% commission on sales. One week the total pay was $560.00. What were the sales? | $8,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0677/` |
+| 0678 | Isla earns a weekly base pay of $750 plus 6% commission on sales. One week the total pay was $2,670.00. What were the sales? | $32,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0678/` |
 | 0679 | A salesperson gets $750 per week plus 5% of everything they sell. To earn $1,625.00 in a week, how much must they sell? | $17,500.00 | Reference |  | `percent_commission/0679/` |
-| 0681 | Nia earns a weekly base pay of $500 plus 15% commission on sales. One week the total pay was $2,900.00. What were the sales? | $16,000.00 | Reference |  | `percent_commission/0681/` |
+| 0681 | Nia earns a weekly base pay of $500 plus 15% commission on sales. One week the total pay was $2,900.00. What were the sales? | $16,000.00 | Ready | weekly_base_plus_commission_sales | `percent_commission/0681/` |
 
 ## Percent (markup)
 
@@ -646,10 +646,10 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0848 | Ben has $150 saved and adds $25 each week. Ava has $310 saved and adds $15 each week. After how many weeks will they have the same amount? | 16 weeks (each will have $550) | Ready | savings_equal | `savings/0848/` |
 | 0849 | Ben has $70 and saves $15 per week to buy a laptop that costs $220. How many weeks until there is enough? | 10 weeks | Reference |  | `savings/0849/` |
 | 0850 | Victor has $0 saved and adds $25 each week. Kira has $180 saved and adds $10 each week. After how many weeks will they have the same amount? | 12 weeks (each will have $300) | Ready | savings_equal | `savings/0850/` |
-| 0851 | Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough? | 24 weeks | Reference |  | `savings/0851/` |
+| 0851 | Noah has $270 and saves $15 per week to buy a guitar that costs $630. How many weeks until there is enough? | 24 weeks | Ready | weeks_until_guitar | `savings/0851/` |
 | 0852 | Jamal has $60 and saves $20 per week to buy a game console that costs $320. How many weeks until there is enough? | 13 weeks | Reference |  | `savings/0852/` |
 | 0853 | Yusuf has $350 saved and adds $25 each week. Umar has $630 saved and adds $20 each week. After how many weeks will they have the same amount? | 56 weeks (each will have $1750) | Ready | savings_equal | `savings/0853/` |
-| 0854 | Lena has $0 and saves $30 per week to buy a guitar that costs $750. How many weeks until there is enough? | 25 weeks | Reference |  | `savings/0854/` |
+| 0854 | Lena has $0 and saves $30 per week to buy a guitar that costs $750. How many weeks until there is enough? | 25 weeks | Ready | weeks_until_guitar | `savings/0854/` |
 | 0855 | Rhea has $330 saved and adds $15 each week. Jamal has $440 saved and adds $10 each week. After how many weeks will they have the same amount? | 22 weeks (each will have $660) | Ready | savings_equal | `savings/0855/` |
 | 0856 | Finn has $50 and saves $15 per week to buy concert tickets that costs $320. How many weeks until there is enough? | 18 weeks | Reference |  | `savings/0856/` |
 
@@ -753,10 +753,10 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0986 | Aiden, Lena, and Yara can each paint a room alone in 8, 30, and 20 hours. How long will it take all three together? | 4.8 hours | Ready | three_painters_together | `work_rate/0986/` |
 | 0987 | Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. How long would Sam take alone? | 6 hours | Ready | partner_alone_from_together | `work_rate/0987/` |
 | 0990 | Sofia, Grace, and Sam can each paint a room alone in 24, 15, and 10 hours. How long will it take all three together? | 4.8 hours | Ready | three_painters_together | `work_rate/0990/` |
-| 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish? | 2.25 more hours | Reference |  | `work_rate/0991/` |
+| 0991 | Vera can do a job in 4 hours and Zane can do it in 12 hours. Vera works alone for 1 hour, then Zane joins. How much longer will it take to finish? | 2.25 more hours | Ready | works_alone_one_hour_then_joins | `work_rate/0991/` |
 | 0992 | Maya can wash the cars in 10 hours. Kira can do it in 20 hours. How long will it take them working together? | 20/3 hours (6.67 h) | Ready | work_together | `work_rate/0992/` |
 | 0995 | Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. How long would Nia take alone? | 12 hours | Ready | partner_alone_from_together | `work_rate/0995/` |
 | 0997 | Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. How long would Fatima take alone? | 4 hours | Ready | partner_alone_from_together | `work_rate/0997/` |
 | 0998 | Grace, Uma, and Omar can each paint a room alone in 10, 30, and 24 hours. How long will it take all three together? | 40/7 hours | Ready | three_painters_together | `work_rate/0998/` |
 | 0999 | Dana can clean the house in 15 hours. Priya can do it in 10 hours. How long will it take them working together? | 6 hours | Ready | work_together | `work_rate/0999/` |
-| 1000 | Dev can do a job in 12 hours and Pablo can do it in 3 hours. Dev works alone for 1 hour, then Pablo joins. How much longer will it take to finish? | 2.2 more hours | Reference |  | `work_rate/1000/` |
+| 1000 | Dev can do a job in 12 hours and Pablo can do it in 3 hours. Dev works alone for 1 hour, then Pablo joins. How much longer will it take to finish? | 2.2 more hours | Ready | works_alone_one_hour_then_joins | `work_rate/1000/` |

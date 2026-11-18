@@ -4218,7 +4218,234 @@ def dimes_and_quarters_count(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count,
+_TWO_HOURS_LATER_TOWARD_MEET = re.compile(
+    r"(?P<first_person>[a-z]+) and "
+    r"(?P<second_person>[a-z]+) live "
+    r"(?P<distance>\d+(?:\.\d+)?) miles apart\. "
+    r"(?P=first_person) drives toward "
+    r"(?P=second_person) at "
+    r"(?P<speed1>\d+(?:\.\d+)?) mph\. "
+    r"(?P<delay>2) hours later, "
+    r"(?P=second_person) starts driving toward "
+    r"(?P=first_person) at "
+    r"(?P<speed2>\d+(?:\.\d+)?) mph\. "
+    r"how long after (?P=second_person) "
+    r"leaves do they meet\?")
+
+
+def two_hours_later_toward_meet(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_HOURS_LATER_TOWARD_MEET.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first_person") == match.group("second_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [n[1] for n in numbers] != [False, False, False, False]:
+        return None
+    distance = Fraction(match.group("distance"))
+    speed1 = Fraction(match.group("speed1"))
+    delay = Fraction(match.group("delay"))
+    speed2 = Fraction(match.group("speed2"))
+    if [n[0] for n in numbers] != [distance, speed1, delay, speed2]:
+        return None
+    if delay != 2 or distance <= 0 or speed1 <= 0 or speed2 <= 0:
+        return None
+    distance_before_second_leaves = speed1 * delay
+    if distance <= distance_before_second_leaves:
+        return None
+    combined_speed = speed1 + speed2
+    if combined_speed <= 0:
+        return None
+    time = (distance - distance_before_second_leaves) / combined_speed
+    if time <= 0:
+        return None
+    first_distance = speed1 * (time + delay)
+    second_distance = speed2 * time
+    if first_distance + second_distance != distance or first_distance <= 0 or second_distance <= 0:
+        return None
+    eq = "%s*(t + 2) + %s*t = %s" % (show(speed1), show(speed2), show(distance))
+    return Result(
+        "two_hours_later_toward_meet",
+        [time],
+        eq,
+        "%s, so t = %s" % (eq, show_exact(time))
+    )
+
+
+_LOWEST_NEXT_SCORE_FOR_AVERAGE = re.compile(
+    r"(?P<name>[a-z]+)'s test scores are "
+    r"(?P<s1>\d+), (?P<s2>\d+), (?P<s3>\d+), (?P<s4>\d+), (?P<s5>\d+)\. "
+    r"what is the lowest score on the next test "
+    r"that gives an average of at least (?P<target>\d+)\?")
+
+
+def lowest_next_score_for_average(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LOWEST_NEXT_SCORE_FOR_AVERAGE.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 6 or any(n[1] for n in numbers):
+        return None
+    scores = [Fraction(match.group(g)) for g in ("s1", "s2", "s3", "s4", "s5")]
+    target = Fraction(match.group("target"))
+    if [n[0] for n in numbers] != scores + [target]:
+        return None
+    needed = target * 6 - sum(scores)
+    if needed < 0:
+        return None
+    if needed.denominator == 1:
+        lowest = needed
+    else:
+        lowest = Fraction((needed.numerator + needed.denominator - 1) // needed.denominator)
+    if lowest < 0:
+        return None
+    if all(s <= 100 for s in scores) and target <= 100 and lowest > 100:
+        return None
+    if (sum(scores) + lowest) / 6 < target:
+        return None
+    if lowest > 0 and (sum(scores) + (lowest - 1)) / 6 >= target:
+        return None
+    listed = " + ".join(show(s) for s in scores)
+    eq = "(%s + x)/6 >= %s" % (listed, show(target))
+    return Result(
+        "lowest_next_score_for_average",
+        [lowest],
+        eq,
+        "%s, so the lowest whole score is %s" % (eq, show_exact(lowest))
+    )
+
+
+_WEEKLY_BASE_PLUS_COMMISSION_SALES = re.compile(
+    r"(?P<name>[a-z]+) earns a weekly base pay of "
+    r"\$(?P<base>\d+(?:\.\d+)?) "
+    r"plus (?P<percent>\d+(?:\.\d+)?)% commission on sales\. "
+    r"one week the total pay was "
+    r"\$(?P<pay>\d+(?:\.\d+)?)\. "
+    r"what were the sales\?")
+
+
+def weekly_base_plus_commission_sales(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WEEKLY_BASE_PLUS_COMMISSION_SALES.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, False, True]:
+        return None
+    base = Fraction(match.group("base"))
+    percent = Fraction(match.group("percent"))
+    pay = Fraction(match.group("pay"))
+    if [n[0] for n in numbers] != [base, percent, pay]:
+        return None
+    if base < 0 or percent <= 0 or pay <= base:
+        return None
+    rate = percent / 100
+    sales = (pay - base) / rate
+    if sales <= 0:
+        return None
+    if base + rate * sales != pay:
+        return None
+    eq = "%s + %s*s = %s" % (show(base), show(rate), show(pay))
+    return Result(
+        "weekly_base_plus_commission_sales",
+        [sales],
+        eq,
+        "%s, so s = %s" % (eq, show_exact(sales))
+    )
+
+
+_WEEKS_UNTIL_GUITAR = re.compile(
+    r"(?P<name>[a-z]+) has "
+    r"\$(?P<start>\d+(?:\.\d+)?) "
+    r"and saves "
+    r"\$(?P<rate>\d+(?:\.\d+)?) per week "
+    r"to buy a guitar that costs "
+    r"\$(?P<target>\d+(?:\.\d+)?)\. "
+    r"how many weeks until there is enough\?")
+
+
+def weeks_until_guitar(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WEEKS_UNTIL_GUITAR.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [True, True, True]:
+        return None
+    start = Fraction(match.group("start"))
+    rate = Fraction(match.group("rate"))
+    target = Fraction(match.group("target"))
+    if [n[0] for n in numbers] != [start, rate, target]:
+        return None
+    if start < 0 or rate <= 0 or start >= target:
+        return None
+    weeks = (target - start) / rate
+    if weeks <= 0 or weeks.denominator != 1:
+        return None
+    if start + rate * weeks != target:
+        return None
+    eq = "%s + %s*w = %s" % (show(start), show(rate), show(target))
+    return Result(
+        "weeks_until_guitar",
+        [weeks],
+        eq,
+        "%s, so w = %s" % (eq, show_exact(weeks))
+    )
+
+
+_WORKS_ALONE_ONE_HOUR_THEN_JOINS = re.compile(
+    r"(?P<first_person>[a-z]+) can do a job in "
+    r"(?P<a>\d+) hours and "
+    r"(?P<second_person>[a-z]+) can do it in "
+    r"(?P<b>\d+) hours\. "
+    r"(?P=first_person) works alone for "
+    r"(?P<alone>1) hour, "
+    r"then (?P=second_person) joins\. "
+    r"how much longer will it take to finish\?")
+
+
+def works_alone_one_hour_then_joins(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _WORKS_ALONE_ONE_HOUR_THEN_JOINS.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first_person") == match.group("second_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [False, False, False]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    alone = Fraction(match.group("alone"))
+    if [n[0] for n in numbers] != [a, b, alone]:
+        return None
+    if a <= 0 or b <= 0 or alone != 1 or alone >= a:
+        return None
+    remaining_work = 1 - alone / a
+    if remaining_work <= 0:
+        return None
+    combined_rate = 1 / a + 1 / b
+    if combined_rate <= 0:
+        return None
+    time = remaining_work / combined_rate
+    if time <= 0:
+        return None
+    if alone / a + time / a + time / b != 1:
+        return None
+    if time != (a - alone) * b / (a + b):
+        return None
+    eq = "%s/%s + t/%s + t/%s = 1" % (show(alone), show(a), show(a), show(b))
+    return Result(
+        "works_alone_one_hour_then_joins",
+        [time],
+        eq,
+        "%s, so t = %s" % (eq, show_exact(time))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
