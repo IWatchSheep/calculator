@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 339 ready (324 word_solver, 15 number_puzzle), 140 reference.
+479 problems: 341 ready (326 word_solver, 15 number_puzzle), 138 reference.
 
 ## Age
 
@@ -73,9 +73,9 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0057 | Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there? | 19 nickels and 26 quarters | Ready | nickels_and_quarters_count | `coins/0057/` |
 | 0058 | A jar has quarters, dimes, and nickels worth $2.65. There are 4 more dimes than quarters and twice as many nickels as quarters. How many of each coin? | 5 quarters, 9 dimes, 10 nickels | Reference |  | `coins/0058/` |
 | 0059 | Theo has 37 coins, all nickels and quarters, worth $2.85 in total. How many of each coin are there? | 32 nickels and 5 quarters | Ready | nickels_and_quarters_count | `coins/0059/` |
-| 0062 | Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there? | 29 dimes and 13 quarters | Reference |  | `coins/0062/` |
+| 0062 | Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there? | 29 dimes and 13 quarters | Ready | dimes_and_quarters_count | `coins/0062/` |
 | 0064 | Yusuf has 79 coins, all nickels and quarters, worth $11.95 in total. How many of each coin are there? | 39 nickels and 40 quarters | Ready | nickels_and_quarters_count | `coins/0064/` |
-| 0065 | Oscar has 30 coins, all dimes and quarters, worth $3.45 in total. How many of each coin are there? | 27 dimes and 3 quarters | Reference |  | `coins/0065/` |
+| 0065 | Oscar has 30 coins, all dimes and quarters, worth $3.45 in total. How many of each coin are there? | 27 dimes and 3 quarters | Ready | dimes_and_quarters_count | `coins/0065/` |
 
 ## Consecutive integers
 

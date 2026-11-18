@@ -460,6 +460,20 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sam can do a job in 4 hours and Hana can do it in 8 hours. Sam works alone for 2 hours, then Hana joins. How much of the job is left?"))
         self.assertIsNone(answers("Sam can do a job in 4 hours and Hana can do it in 8 hours. Hana works alone for 2 hours, then Sam joins. How much longer will it take to finish?"))
 
+    def test_dimes_and_quarters_count(self):
+        cases = [
+            ("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there?", 29, 13),
+            ("Oscar has 30 coins, all dimes and quarters, worth $3.45 in total. How many of each coin are there?", 27, 3),
+        ]
+        for sentence, dimes, quarters in cases:
+            result = WS.dimes_and_quarters_count(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(dimes), Fraction(quarters)], sentence)
+        self.assertIsNone(WS.dimes_and_quarters_count("Pablo has 45 coins, all nickels and quarters, worth $7.45 in total. How many of each coin are there?"))
+        self.assertIsNone(answers("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many dimes are there?"))
+        self.assertIsNone(answers("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How many of each coin are there if 3 are pennies?"))
+        self.assertIsNone(WS.dimes_and_quarters_count("Xena has 42 coins, all dimes and quarters, worth $6.15 in total. How much is that in cents?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

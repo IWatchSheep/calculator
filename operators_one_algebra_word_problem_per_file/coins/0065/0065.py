@@ -6,7 +6,7 @@ Equation: 10x + 25(30 − x) = 345
 Solve   : 15x = 405 → x = 27
 Answer  : 27 dimes and 3 quarters
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: dimes_and_quarters_count answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '10x + 25(30 − x) = 345'
 SOLVE = '15x = 405 → x = 27'
 ANSWER = '27 dimes and 3 quarters'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'dimes_and_quarters_count'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Oscar has {0} coins, all dimes and quarters, worth ${1} in total. How many of each coin are there?'
 NUMBERS = ['30', '3.45']
