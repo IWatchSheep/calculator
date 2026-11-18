@@ -6,7 +6,7 @@ Equation: 6² + h² = 10²
 Solve   : h² − 64 = 0 → h = 8 (the other root, -8, is rejected)
 Answer  : 8 ft
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: ladder_wire_ramp_height answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '6² + h² = 10²'
 SOLVE = 'h² − 64 = 0 → h = 8 (the other root, -8, is rejected)'
 ANSWER = '8 ft'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'ladder_wire_ramp_height'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A {0} ft ladder leans against a wall with its foot {1} ft from the wall. How high up the wall does it reach?'
 NUMBERS = ['10', '6']

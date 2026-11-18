@@ -6,7 +6,7 @@ Equation: 0.3(4) = 0.05(4 + w)
 Solve   : w/20 = 1 → w = 1 × 20 = 20
 Answer  : 20 L
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: water_added_to_dilute answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '0.3(4) = 0.05(4 + w)'
 SOLVE = 'w/20 = 1 → w = 1 × 20 = 20'
 ANSWER = '20 L'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'water_added_to_dilute'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'How much water must be added to {0} L of a {1}% salt solution to make it {2}% salt?'
 NUMBERS = ['4', '30', '5']

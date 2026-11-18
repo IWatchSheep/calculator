@@ -6,7 +6,7 @@ Equation: x² + (x + 23)² = 37²
 Solve   : x² + 23x − 420 = 0 → x = 12 (the other root, -35, is rejected)
 Answer  : 12 and 35
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: right_triangle_legs_differ answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x² + (x + 23)² = 37²'
 SOLVE = 'x² + 23x − 420 = 0 → x = 12 (the other root, -35, is rejected)'
 ANSWER = '12 and 35'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'right_triangle_legs_differ'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'One leg of a right triangle is {0} cm longer than the other. The hypotenuse is {1} cm. Find the legs.'
 NUMBERS = ['23', '37']

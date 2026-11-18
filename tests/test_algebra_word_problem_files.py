@@ -17,9 +17,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "algebra_word_problems", "algebra_matcher"))
 
-import operator_row_math_for_algebra_word_problems as rows  # noqa: E402
-import operators_one_algebra_word_problem_per_file as library  # noqa: E402
-import word_solver  # noqa: E402
+import operator_row_math_for_algebra_word_problems as rows  # noqa: E427
+import operators_one_algebra_word_problem_per_file as library  # noqa: E427
+import word_solver  # noqa: E427
 
 LIB = os.path.join(ROOT, "operators_one_algebra_word_problem_per_file")
 SOURCE = os.path.join(ROOT, "algebra_word_problems", "algebra_word_problems.txt")
@@ -108,7 +108,7 @@ class Catalog(unittest.TestCase):
         items = catalog.load_catalog(os.path.join(LIB, "INDEX.md"))
         self.assertEqual(len(items), 479)
         self.assertEqual(len({i["category"] for i in items}), 55)
-        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 402)
+        self.assertEqual(sum(1 for i in items if i["status"] == "Ready"), 427)
         savings = next(i for i in items if i["key"] == "savings/0848")
         self.assertIn("Ben has $150", savings["problem"])
         self.assertEqual(savings["id"], "0848")
@@ -132,7 +132,7 @@ class Computing(unittest.TestCase):
                 self.assertEqual(expected.family, m.FAMILY, key)
                 got = answer if isinstance(answer, list) else [answer]
                 self.assertEqual(got, [float(v) if v.denominator != 1 else int(v) for v in expected.values], key)
-        self.assertEqual(ready, 402)                                           # 387 word_solver + 15 number_puzzle; one stored problem per wording
+        self.assertEqual(ready, 427)                                           # 412 word_solver + 15 number_puzzle; one stored problem per wording
 
     def test_your_own_numbers(self):
         self.assertEqual(library.get("savings/0848").compute(), 16)
@@ -158,7 +158,7 @@ class InTheCalculator(unittest.TestCase):
             else:
                 ready += 1
                 self.assertEqual(row_tree.evaluate(node), lib.compute(), key)      # the boxes start with the stored numbers
-        self.assertEqual(ready, 402)
+        self.assertEqual(ready, 427)
 
     def test_a_list_of_answers_cannot_be_joined(self):
         from operator_row_math import row_tree

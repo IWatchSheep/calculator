@@ -6,7 +6,7 @@ Equation: 12² + x² = 20²
 Solve   : x² − 256 = 0 → x = 16 (the other root, -16, is rejected)
 Answer  : 16 in
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: rectangle_side_and_diagonal answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = '12² + x² = 20²'
 SOLVE = 'x² − 256 = 0 → x = 16 (the other root, -16, is rejected)'
 ANSWER = '16 in'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'rectangle_side_and_diagonal'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'A rectangular TV screen is {0} in tall with a diagonal of {1} in. How wide is it?'
 NUMBERS = ['12', '20']
