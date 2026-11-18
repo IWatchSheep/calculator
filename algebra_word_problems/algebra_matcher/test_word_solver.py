@@ -351,6 +351,22 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. How old is Wren now?"))
         self.assertIsNone(WS.times_as_old_future_sum("Wren is 4 times as old as Wren. In 5 years, the sum of their ages will be 105. How old is each now?"))
 
+    def test_leftover_pages_after_two_reads(self):
+        cases = [
+            ("Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have?", 180),
+            ("Omar read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 252 pages are left. How many pages does the book have?", 420),
+            ("Sam read 1/5 of a book on Monday and 1/2 of the remaining pages on Tuesday. 52 pages are left. How many pages does the book have?", 130),
+            ("Isla read 1/3 of a book on Monday and 1/2 of the remaining pages on Tuesday. 12 pages are left. How many pages does the book have?", 36),
+        ]
+        for sentence, expected in cases:
+            result = WS.leftover_pages_after_two_reads(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(expected)], sentence)
+        self.assertIsNone(WS.leftover_pages_after_two_reads("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with?"))
+        self.assertIsNone(answers("Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages did Sofia read?"))
+        self.assertIsNone(answers("Sofia read 5/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have?"))
+        self.assertIsNone(answers("Sofia read 1/5 of a book on Monday and 1/0 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
