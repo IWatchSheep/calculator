@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 280 ready (265 word_solver, 15 number_puzzle), 199 reference.
+479 problems: 285 ready (270 word_solver, 15 number_puzzle), 194 reference.
 
 ## Age
 
@@ -212,18 +212,18 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with? | $540 | Reference |  | `fractions/0210/` |
+| 0210 | Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with? | $540 | Ready | leftover_after_two_fraction_spends | `fractions/0210/` |
 | 0211 | A puzzle: a man spent 1/6 of his life as a boy, 1/12 more as a youth, and 1/7 more before marrying. 5 years later a son was born, who lived 1/2 as long as his father. The father died 4 years after the son. How long did the father live? | 84 years | Reference |  | `fractions/0211/` |
 | 0212 | A gas tank is 1/2 full. Adding 1 gallons fills it to 2/3. How much does the tank hold? | 6 | Reference |  | `fractions/0212/` |
 | 0213 | Sofia read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 108 pages are left. How many pages does the book have? | 180 pages | Reference |  | `fractions/0213/` |
 | 0214 | A tank is 2/5 full. After 200 liters are added, it is 9/10 full. What is the tank's capacity? | 400 | Reference |  | `fractions/0214/` |
-| 0215 | Gus spent 1/4 of their money on a game and then 1/3 of what was left on lunch, leaving $60. How much did they start with? | $120 | Reference |  | `fractions/0215/` |
+| 0215 | Gus spent 1/4 of their money on a game and then 1/3 of what was left on lunch, leaving $60. How much did they start with? | $120 | Ready | leftover_after_two_fraction_spends | `fractions/0215/` |
 | 0216 | Omar read 1/5 of a book on Monday and 1/4 of the remaining pages on Tuesday. 252 pages are left. How many pages does the book have? | 420 pages | Reference |  | `fractions/0216/` |
 | 0217 | Sam read 1/5 of a book on Monday and 1/2 of the remaining pages on Tuesday. 52 pages are left. How many pages does the book have? | 130 pages | Reference |  | `fractions/0217/` |
-| 0218 | Yara spent 1/2 of their money on a game and then 1/3 of what was left on lunch, leaving $20. How much did they start with? | $60 | Reference |  | `fractions/0218/` |
-| 0220 | Uma spent 1/4 of their money on a game and then 1/5 of what was left on lunch, leaving $60. How much did they start with? | $100 | Reference |  | `fractions/0220/` |
+| 0218 | Yara spent 1/2 of their money on a game and then 1/3 of what was left on lunch, leaving $20. How much did they start with? | $60 | Ready | leftover_after_two_fraction_spends | `fractions/0218/` |
+| 0220 | Uma spent 1/4 of their money on a game and then 1/5 of what was left on lunch, leaving $60. How much did they start with? | $100 | Ready | leftover_after_two_fraction_spends | `fractions/0220/` |
 | 0221 | Isla read 1/3 of a book on Monday and 1/2 of the remaining pages on Tuesday. 12 pages are left. How many pages does the book have? | 36 pages | Reference |  | `fractions/0221/` |
-| 0223 | Aiden spent 1/3 of their money on a game and then 1/2 of what was left on lunch, leaving $34. How much did they start with? | $102 | Reference |  | `fractions/0223/` |
+| 0223 | Aiden spent 1/3 of their money on a game and then 1/2 of what was left on lunch, leaving $34. How much did they start with? | $102 | Ready | leftover_after_two_fraction_spends | `fractions/0223/` |
 
 ## Geometry (Pythagorean)
 
