@@ -1661,8 +1661,8 @@ class Families(unittest.TestCase):
         self.assertEqual(answers("A bus covers 210 miles in 6 hours. How far does it go in 9 hours?"), values(315))
         self.assertEqual(answers("A press stamps 90 plates in 15 minutes. How many plates does it stamp in 40 minutes?"), values(240))
         self.assertEqual(answers("A printer prints 48 pages in 3 minutes. How many pages will it print in 10 minutes?"), values(160))
-        # a number written as a word has no role: "two printers" doubles the answer, so decline (found by fresh set 3)
-        self.assertIsNone(answers("If a printer prints 48 pages in 3 minutes, how many pages will two printers print in 10 minutes?"))
+        # a spelled "two printers" at the same rate is twice one printer: 2*(48/3)*10
+        self.assertEqual(answers("If a printer prints 48 pages in 3 minutes, how many pages will two printers print in 10 minutes?"), values(320))
         self.assertIsNone(answers("A copier prints 75 sheets in 5 minutes. How many sheets will it print in 12 minutes if it runs twice as fast?"))
         self.assertEqual(answers("If 6 workers build a wall in 12 days, how long would 9 workers take?"), values(8))
         self.assertIsNone(WS.proportion("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $950. How many overtime hours were worked?"))
@@ -1898,7 +1898,7 @@ class DevelopmentWordingsLater(unittest.TestCase):
         from fresh_word_problems_2 import FRESH as F2
         from fresh_word_problems_3 import FRESH as F3
         self.assertEqual(score(F2), (26, 0, 1))      # 18/3 then 22/0/5; unique-math required-declines then answered 4 more
-        self.assertEqual(score(F3), (10, 0, 5))       # it had 1 WRONG answer (two printers) before the spelled-number rule
+        self.assertEqual(score(F3), (15, 0, 0))       # unique-math required-declines then answered the last 5 cover/stamp/print extras
 
 
 class FreshWordings(unittest.TestCase):
@@ -2216,7 +2216,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (fourteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (12, 0, 4))
+        self.assertEqual((solved, declined, required), (13, 0, 3))
 
     def test_or_is_a_choice_not_a_fee(self):
         # "entry tickets at $12 OR snacks at $4": the snacks alone are 15 (4n <= 60); the $12 is not a fee that must be paid
@@ -2314,7 +2314,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (fifteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (11, 0, 4))
+        self.assertEqual((solved, declined, required), (12, 0, 3))
 
     def test_hour_abbreviation_h(self):
         # a lone "h" after the time is hours; "2 hours" and "2 hr" stay answered; "h" never matches inside another word
@@ -2480,7 +2480,7 @@ class FreshWordings(unittest.TestCase):
               % (s18[0], s18[0] + s18[1], s18[1], s18[2], s18[2]))
         self.assertEqual(s17, (10, 0, 4))
         # (3, 3, 3) when written; "Plant A is 30 cm tall and grows 4 cm a week ..." was a safe miss and is now solved (20 weeks) by the measured-things statement: (4, 2, 3)
-        self.assertEqual(s18, (6, 0, 3))
+        self.assertEqual(s18, (7, 0, 2))
 
     def test_two_scores(self):
         self.assertEqual(answers("A basketball team scored 92 points from 40 field goals, all 2-pointers and 3-pointers. How many of each?"), values(12, 28))
@@ -2553,7 +2553,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (nineteenth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 7))
+        self.assertEqual((solved, declined, required), (8, 0, 5))
 
     def test_scores_count_is_introduced_by_from(self):
         # "from 40 field goals" is the number of scores; "in 40 games" and "on 40 ..." are not (the 40 could be games, not baskets)
@@ -2717,7 +2717,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-first set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (8, 0, 4))
+        self.assertEqual((solved, declined, required), (9, 0, 3))
 
     def test_known_weight_at_two_prices(self):
         # "two teas" is the two prices, the same way "two jobs" already is
@@ -2789,7 +2789,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-second set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (7, 0, 4))
+        self.assertEqual((solved, declined, required), (10, 0, 1))
 
     def test_known_amount_unit_matches_the_price_unit(self):
         # 31 lb at $5/kg is not 31 kg: the known amount's unit has to be the unit of the price
@@ -2872,7 +2872,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-third set, unit fix and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (7, 0, 6))
+        self.assertEqual((solved, declined, required), (10, 0, 3))
 
     def test_plan_question_counts_the_included_unit(self):
         # "how many hours were used" on a plan in gigabytes asks for something else: X in "how many X" has to be the included unit
@@ -3040,7 +3040,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-fifth set, three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (7, 0, 5))
+        self.assertEqual((solved, declined, required), (9, 0, 3))
 
     def test_pages_per_day(self):
         self.assertEqual(answers("A 331-page book has 13 pages already read. How many pages a day must be read to finish in 6 days?"), values(53))
@@ -4082,6 +4082,7 @@ class UniqueMathRequiredDeclines(unittest.TestCase):
         self.assertEqual(answers("Two angles are complementary. One angle is 12 less than 5 times the other. Find the larger angle."), values(73))
         self.assertEqual(answers("Two friends are 36 miles apart and bike toward each other at 7 mph and 11 mph. How far from the first friend's start do they meet?"), values(14))
         self.assertEqual(answers("You have $45. A movie costs $9 per ticket. How much money is left after buying as many tickets as you can?"), values(0))
+        self.assertEqual(answers("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?"), values(0))
 
     def test_declines(self):
         self.assertIsNone(answers("The sum of two numbers is 21 and one is twice the other. Find their product."))
@@ -4089,7 +4090,6 @@ class UniqueMathRequiredDeclines(unittest.TestCase):
         self.assertIsNone(answers("A 40 cm stick is cut into two pieces. One piece is 4 times the other. How long is the leftover 3 cm?"))
         self.assertIsNone(answers("A sloped roof rises 5 m over 12 m, then 7 m over a longer run. The hypotenuse is 13 m. How long is the run?"))
         self.assertIsNone(answers("Two angles are complementary. One angle is 12 less than 5 times the other. Find the smaller angle."))
-        self.assertIsNone(answers("You have $8. Tickets cost $9 each. What is the greatest number of tickets you can buy?"))
 
 
 if __name__ == "__main__":
