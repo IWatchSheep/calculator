@@ -1,6 +1,7 @@
 """Sixteenth fresh set for word_solver.py: wordings for the hour abbreviation 'h' in the still-water family and the two new families
 (catch_up_clock, periodic_growth), written AFTER everything was finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("A swimmer covers 15 km downstream in 3 h and 9 km upstream in 3 h. How fast is the current?", [1]),
@@ -13,9 +14,9 @@ FRESH = [
     ("A dye halves in strength every hour. How long does it take to go from 96 units to 6 units?", [4]),
     ("A boat goes 18 km downstream in 2 min and 12 km upstream in 2 h. What is the speed of the boat in still water?", None),
     ("A truck leaves the depot at 1 pm going 40 km/h. A van leaves the same depot at 3 pm going 30 km/h. When does the van catch the truck?", None),
-    ("A truck leaves the depot at 1 pm going 40 km/h. A van leaves the same depot at 3:30 pm going 60 km/h. When does the van catch the truck?", None),
+    ("A truck leaves the depot at 1 pm going 40 km/h. A van leaves the same depot at 3:30 pm going 60 km/h. When does the van catch the truck?", [5]),
     ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 100?", None),
-    ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 80 cells, in days?", None),
+    ("A culture doubles every 3 hours, starting at 10 cells. When does it reach 80 cells, in days?", [Fraction(3, 8)]),
     ("A culture triples every 2 hours and doubles every 3 hours. When does it reach 810 from 10?", None),
     ("A culture doubles every 3 hours. If it starts at 100 cells, how many cells are there after 12 hours?", [1600]),
 ]

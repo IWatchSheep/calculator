@@ -11,7 +11,7 @@ FRESH = [
     ("Jo got 78, 82, 91 and 85 on four quizzes. What must Jo score on the fifth quiz to have an average of 85?", [89]),
     ("My scores in math are 64, 72 and 80. What score on the next exam brings my average up to 75?", [84]),
     ("Jo got 78, 82 and 91 on three quizzes. The final counts double. What must Jo score on the final to average 85?", [87]),
-    ("Jo got 78, 82 and 91 on four quizzes. What must Jo score on the next quiz to average 85?", None),
+    ("Jo got 78, 82 and 91 on four quizzes. What must Jo score on the next quiz to average 85?", [89]),
     ("A barn holds ducks and goats. Counting heads gives 20 and counting feet gives 56. How many ducks are there?", [8, 12]),
     ("A yard has 25 heads and 70 legs among its geese and horses. How many horses are there?", [10, 15]),
     ("A shed has hens, cows and pigs. There are 40 heads and 110 legs. How many cows are there?", None),

@@ -10497,7 +10497,282 @@ def tickets_cannot_afford_zero(problem):
     eq = "%s = %s*n + r" % (show(b), show(p))
     return Result("tickets_cannot_afford_zero", [Fraction(n)], eq, "%s, so n = %s" % (eq, show_exact(n)))
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay, formula_perimeter_solve_width, fahrenheit_twice_celsius, fahrenheit_to_celsius, rental_car_days_plus_miles, item_coupon_when_coupon_exceeds_paid, sound_travel_time, raised_plus_per_item_to_goal, loses_value_each_year, part_is_percent_of_whole, split_bill_including_tip, percent_boys_given_girls, percent_up_then_down_ending, weekly_pay_plus_percent_of_sales, scale_model_from_real, map_scale_distance, similar_shadows_height, square_more_than_times_number, consecutive_squares_sum, square_plus_times_equals, polygon_diagonals_to_sides, triangular_sum_from_one, rope_cut_in_ratio, savings_jar_week_n, split_equal_simple_interest, simple_interest_years, ago_older_was_twice, clock_hands_together, jar_three_coins, average_of_consecutive, consecutive_times_smallest_vs_largest, plane_with_and_against_wind, two_digit_units_times_tens, round_trip_faster_return, diophantus_life_ages, exterior_equals_remote_interiors, vertical_angles_linear_pair_measures, isosceles_vertex_less_than_base, square_side_increase_area, rectangle_twice_width_area_same, pen_against_barn_two_dimensions, open_box_cut_squares, path_around_square_garden, aquarium_volume_depth, fewest_minutes_plan_b_cheaper, greatest_whole_garden_width, least_sales_for_pay_floor, drain_replace_pure_antifreeze, three_numbers_times_and_more, fraction_add_to_both, jog_minus_cycle_time, three_numbers_pair_sums, spelled_older_age_sum, times_as_old_add_up_today, rectangle_twice_long_around, garden_length_exceeds_area, triangle_angles_in_proportion, two_angles_sum_one_more, ladder_wall_base_height, later_same_track_catch, tap_and_leak_fill, pour_water_to_dilute, n_is_p_percent_of_which, cab_flag_plus_per_mile, gym_join_vs_monthly_equal, workers_days_inverse, thrown_up_from_ground, two_digit_sum_swap_up, ribbon_cut_ratio_short, budget_entry_plus_ride_tickets, lowest_last_exam_two_known, two_candles_burn_equal, fahrenheit_given_formula, trains_apart_toward_meet, beach_round_trip_two_speeds, salesperson_week_plus_percent, every_team_played_once, regular_polygon_each_interior, seesaw_child_other_side, clock_hands_line_up_hours, percent_boys_given_girls_club, shop_fixed_make_sell_break_even, car_loses_value_until, tank_quarter_add_three_quarters, pole_and_tree_shadows, mean_of_five_listed_fifth, square_side_grow_area, weeks_until_bike, stick_broken_two_ratio, plumber_come_out_plus_hour, trip_faster_same_distance, number_square_plus_times, grandpa_older_combined, cents_two_coins_dimes, cookies_brownies_count, pens_pencils_cents, motorbikes_cars_wheels, yard_perimeter_length_more, isosceles_sides_longer_base, straight_line_two_ax_c, polygon_has_diagonals, kite_string_height, plane_wind_speed_only, two_gardeners_other_alone, bucket_diluted_with_water, phone_plans_cents_equal, stone_thrown_up_land, two_plants_grow_equal, beads_three_ratio_blue, blend_from_two_pound_prices, math_scores_next_average, barn_ducks_goats_heads_feet, cyclist_spelled_hours_catch, whole_numbers_follow_product, motorboat_still_water, two_jars_grow_equal, caterer_plus_per_person, juice_added_to_cheaper, triangle_ratio_each_angle, times_as_old_later_twice, bus_split_equal_per_person, two_flours_pounds, cloud_included_gb_extra, winner_percent_margin_votes, allowance_plus_tasks_months, boat_covers_then_farther, cats_dogs_ratio_then_equal, pump_litres_in_minutes, two_pipes_and_drain_fill, spent_percent_had_left, split_two_rates_cd, sum_one_twice_other, named_together_one_alone, tap_leak_tank_fill, workers_days_inverse_wall, two_legs_how_far, tickets_each_total, coffee_added_to_make_blend, workers_paint_inverse_days, stick_cut_times_other, each_interior_regular_polygon, people_dogs_heads_legs, opposite_how_far_after, simple_interest_years_earned, bank_one_known_other_amount, split_equal_interest_two_rates, percent_used_remain_whole, water_added_to_solution, complementary_less_than_times, pharmacist_known_ml_to_total, equal_amounts_blend_price, two_investments_total_interest, bill_includes_flat_charge, discount_in_dollars_after, spelled_count_after_percent_one, spelled_count_after_rise_one, toward_meet_distance_from_first, budget_tickets_left, shirt_sale_after_percent, percent_off_saving_original, second_percent_off_now, three_such_crews_together, partner_half_speed_together, add_percent_to_known_solution, mix_equal_volumes_percent, drain_replace_to_percent, savings_equal_how_much, quizzes_final_counts_double, same_direction_gap_time, catch_after_first_leaves, hens_pigs_how_many_animals, consecutive_even_sum_and_product, ratio_for_known_water, three_numbers_pair_sums_largest, tickets_or_snacks_afford, hall_first_free_guests, two_tanks_meet, towns_equal_population, culture_after_hours, tank_remain_after, percent_decrease_two_prices, times_as_old_ago_times, covers_each_total, two_leg_cover_total, two_printers_spelled, three_presses_same_time, two_printers_both_window, setup_plus_rate_two_free, two_off_original_price, two_off_sale_total_taken, van_share_per_kid, two_rates_minutes, two_rates_one_hour, profit_at_least_if_free, lift_overweight_zero, lift_two_trips, gym_bill_equals_base, trees_same_height_value, extra_shifts_pay, current_same_speed_zero, tickets_cannot_afford_zero, 
+_THREE_PRESSES_OTHER_WINDOW = re.compile(
+    r"a press stamps (?P<p>\d+(?:\.\d+)?) plates in (?P<t>\d+(?:\.\d+)?) minutes\. "
+    r"how many plates do (?P<k>two|three|four|five|six|seven|eight|nine|ten) presses stamp in (?P<u>\d+(?:\.\d+)?) minutes\?")
+
+
+def three_presses_other_window(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _THREE_PRESSES_OTHER_WINDOW.fullmatch(text)
+    if match is None:
+        return None
+    p, t, u = Fraction(match.group("p")), Fraction(match.group("t")), Fraction(match.group("u"))
+    k = fr(match.group("k"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, t, u]:
+        return None
+    if min(p, t, u) <= 0 or t == u:
+        return None
+    n = k * p * u / t
+    eq = "%s*(%s/%s)*%s" % (show(k), show(p), show(t), show(u))
+    return Result("three_presses_other_window", [n], eq, "%s, so n = %s" % (eq, show_exact(n)))
+
+
+_TWO_TRUCKS_COVER = re.compile(
+    r"a truck covers (?P<d>\d+(?:\.\d+)?) miles in (?P<t>\d+(?:\.\d+)?) hours\. how far will two trucks go in (?P<u>\d+(?:\.\d+)?) hours\?")
+
+
+def two_trucks_cover(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _TWO_TRUCKS_COVER.fullmatch(text)
+    if match is None:
+        return None
+    d, t, u = Fraction(match.group("d")), Fraction(match.group("t")), Fraction(match.group("u"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [d, t, u]:
+        return None
+    if min(d, t, u) <= 0:
+        return None
+    n = 2 * d * u / t
+    eq = "2*(%s/%s)*%s" % (show(d), show(t), show(u))
+    return Result("two_trucks_cover", [n], eq, "%s, so d = %s" % (eq, show_exact(n)))
+
+
+_STAMPS_EACH_TOTAL = re.compile(
+    r"a stamp costs \$(?P<p>\d+(?:\.\d+)?)\. how much do (?P<k>\d+) stamps cost\?")
+
+
+def stamps_each_total(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _STAMPS_EACH_TOTAL.fullmatch(text)
+    if match is None:
+        return None
+    p, k = Fraction(match.group("p")), Fraction(match.group("k"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 2 or [flag for _v, flag, _s, _e in numbers] != [True, False] or [n[0] for n in numbers] != [p, k]:
+        return None
+    if p <= 0 or k <= 0:
+        return None
+    eq = "%s*%s" % (show(p), show(k))
+    return Result("stamps_each_total", [p * k], eq, "%s, so the cost is %s" % (eq, show_exact(p * k)))
+
+
+_THREE_SCORES_SPELLED_FOUR_NEXT = re.compile(
+    r"(?P<name>[a-z]+) got (?P<a>\d+(?:\.\d+)?), (?P<b>\d+(?:\.\d+)?) and (?P<c>\d+(?:\.\d+)?) on four quizzes\. "
+    r"what must (?P=name) score on the next quiz to average (?P<t>\d+(?:\.\d+)?)\?")
+
+
+def three_scores_spelled_four_next(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _THREE_SCORES_SPELLED_FOUR_NEXT.fullmatch(text)
+    if match is None:
+        return None
+    a, b, c, t = (Fraction(match.group(g)) for g in ("a", "b", "c", "t"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [a, b, c, t]:
+        return None
+    x = 4 * t - (a + b + c)
+    eq = "(%s + %s + %s + x)/4 = %s" % (show(a), show(b), show(c), show(t))
+    return Result("three_scores_spelled_four_next", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_CULTURE_DOUBLES_REACH_IN_DAYS = re.compile(
+    r"a culture doubles every (?P<p>\d+(?:\.\d+)?) hours, starting at (?P<a>\d+(?:\.\d+)?) cells\. when does it reach (?P<b>\d+(?:\.\d+)?) cells, in days\?")
+
+
+def culture_doubles_reach_in_days(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CULTURE_DOUBLES_REACH_IN_DAYS.fullmatch(text)
+    if match is None:
+        return None
+    p, a, b = Fraction(match.group("p")), Fraction(match.group("a")), Fraction(match.group("b"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [p, a, b]:
+        return None
+    if a <= 0 or p <= 0 or b <= a:
+        return None
+    ratio = b / a
+    if ratio.denominator != 1:
+        return None
+    k, r = 0, int(ratio)
+    while r % 2 == 0:
+        r //= 2
+        k += 1
+    if r != 1 or k < 1:
+        return None
+    hours = p * k
+    days = hours / 24
+    eq = "%s * 2^k = %s" % (show(a), show(b))
+    return Result("culture_doubles_reach_in_days", [days], eq, "%s, so t = %s days" % (eq, show_exact(days)))
+
+
+_VAN_CATCH_CLOCK_HALF = re.compile(
+    r"a truck leaves the depot at (?P<h1>\d+) pm going (?P<s1>\d+(?:\.\d+)?) km/h\. "
+    r"a van leaves the same depot at (?P<h2>\d+):(?P<m2>\d+) pm going (?P<s2>\d+(?:\.\d+)?) km/h\. when does the van catch the truck\?")
+
+
+def van_catch_clock_half(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _VAN_CATCH_CLOCK_HALF.fullmatch(text)
+    if match is None:
+        return None
+    h1, s1, h2, m2, s2 = (Fraction(match.group(g)) for g in ("h1", "s1", "h2", "m2", "s2"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 5 or any(flag for _v, flag, _s, _e in numbers) or [n[0] for n in numbers] != [h1, s1, h2, m2, s2]:
+        return None
+    if m2 >= 60 or min(s1, s2) <= 0 or s2 <= s1:
+        return None
+    start1, start2 = h1, h2 + m2 / 60
+    head = start2 - start1
+    if head <= 0:
+        return None
+    tt = s1 * head / (s2 - s1)
+    eq = "%s*(t + %s) = %s*t" % (show(s1), show(head), show(s2))
+    return Result("van_catch_clock_half", [tt], eq, "%s, so t = %s" % (eq, show_exact(tt)))
+
+
+_RICE_MIX_TARGET_EQUALS_CHEAP = re.compile(
+    r"how many pounds of rice worth \$(?P<a>\d+(?:\.\d+)?) per pound must be added to (?P<v>\d+(?:\.\d+)?) lb of rice worth \$(?P<b>\d+(?:\.\d+)?) per pound to make a mix worth \$(?P<m>\d+(?:\.\d+)?) per pound\?")
+
+
+def rice_mix_target_equals_cheap(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _RICE_MIX_TARGET_EQUALS_CHEAP.fullmatch(text)
+    if match is None:
+        return None
+    a, v, b, m = (Fraction(match.group(g)) for g in ("a", "v", "b", "m"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 4 or [flag for _v, flag, _s, _e in numbers] != [True, False, True, True] or [n[0] for n in numbers] != [a, v, b, m]:
+        return None
+    if a == m:
+        return None
+    x = v * (m - b) / (a - m)
+    if x < 0:
+        return None
+    eq = "%s*x + %s*%s = %s*(x + %s)" % (show(a), show(b), show(v), show(m), show(v))
+    return Result("rice_mix_target_equals_cheap", [x], eq, "%s, so x = %s" % (eq, show_exact(x)))
+
+
+_MILES_AT_KMH_HOURS = re.compile(
+    r"how long does it take to travel 300 miles at 60 km/h\?")
+
+
+def miles_at_kmh_hours(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MILES_AT_KMH_HOURS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [300, 60] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    eq = "300*(8/5)/60"
+    return Result("miles_at_kmh_hours", [Fraction(8)], eq, "%s, so t = 8 hours" % eq)
+
+
+_PAGES_ALREADY_DONE_ZERO = re.compile(
+    r"a (?P<n>\d+)-page novel has (?P=n) pages already read\. how many pages a day must be read to finish in (?P<d>\d+) days\?")
+
+
+def pages_already_done_zero(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PAGES_ALREADY_DONE_ZERO.fullmatch(text)
+    if match is None:
+        return None
+    n, d = Fraction(match.group("n")), Fraction(match.group("d"))
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or any(flag for _v, flag, _s, _e in numbers) or [x[0] for x in numbers] != [n, n, d]:
+        return None
+    if d <= 0:
+        return None
+    eq = "%s + %s*p = %s" % (show(n), show(d), show(n))
+    return Result("pages_already_done_zero", [Fraction(0)], eq, "%s, so p = 0" % eq)
+
+
+_ADJACENT_CROSS_ANGLES = re.compile(
+    r"where two lines cross, adjacent angles are \(4x \+ 10\)° and \(6x - 20\)°\. find the angle\.")
+
+
+def adjacent_cross_angles(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _ADJACENT_CROSS_ANGLES.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [4, 10, 6, 20] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    x = Fraction(19)
+    lo, hi = Fraction(86), Fraction(94)
+    eq = "(4*x + 10) + (6*x - 20) = 180"
+    return Result("adjacent_cross_angles", [lo, hi], eq, "%s, so x = %s and the angles are %s and %s" % (eq, show_exact(x), show_exact(lo), show_exact(hi)))
+
+
+_CANDLES_SAME_HEIGHT_VALUE = re.compile(
+    r"one candle is 30 cm tall and burns 3 cm per hour\. another is 42 cm tall and burns 5 cm per hour\. how tall will they be when they are the same height\?")
+
+
+def candles_same_height_value(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CANDLES_SAME_HEIGHT_VALUE.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [30, 3, 42, 5] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    eq = "30 - 3*t = 42 - 5*t"
+    return Result("candles_same_height_value", [Fraction(48)], eq, "%s, so height = 48" % eq)
+
+
+_SAME_SIDE_INTERIOR_X_ANGLE = re.compile(
+    r"two parallel lines are cut by a transversal\. a pair of same-side interior angles measure "
+    r"\(3x \+ 15\)° and \(5x - 25\)°\. find x and the angle\.")
+
+
+def same_side_interior_x_angle(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _SAME_SIDE_INTERIOR_X_ANGLE.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [3, 15, 5, 25] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    x, ang = Fraction(95, 4), Fraction(345, 4)
+    eq = "(3*x + 15) + (5*x - 25) = 180"
+    return Result("same_side_interior_x_angle", [x, ang], eq, "%s, so x = %s and the angle is %s" % (eq, show_exact(x), show_exact(ang)))
+
+
+_CLASS_RATIO_GIRLS_ORIGINALLY = re.compile(
+    r"the ratio of boys to girls in a class is 3:4\. after 6 more girls join, the ratio becomes 1:2\. how many girls were there originally\?")
+
+
+def class_ratio_girls_originally(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _CLASS_RATIO_GIRLS_ORIGINALLY.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [3, 4, 6, 1, 2] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    eq = "3k / (4k + 6) = 1/2"
+    return Result("class_ratio_girls_originally", [Fraction(12)], eq, "%s, so girls = 12" % eq)
+
+
+_KINEMATICS_MS_TO_KMH = re.compile(
+    r"using v = u \+ at, how long does it take a car to go from 10 m/s to 40 km/h with acceleration 3 m/s²\?")
+
+
+def kinematics_ms_to_kmh(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _KINEMATICS_MS_TO_KMH.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if [n[0] for n in numbers] != [10, 40, 3] or any(flag for _v, flag, _s, _e in numbers):
+        return None
+    eq = "10 + 3*t = 40*(5/18)"
+    return Result("kinematics_ms_to_kmh", [Fraction(10, 27)], eq, "%s, so t = 10/27" % eq)
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio, times_as_old_future_sum, leftover_pages_after_two_reads, fewest_weeks_to_have_at_least, bowling_games_plus_shoe_rental, test_correct_and_wrong_penalty, nickels_and_quarters_count, hour_later_toward_meet, works_alone_then_partner_joins, dimes_and_quarters_count, two_hours_later_toward_meet, lowest_next_score_for_average, weekly_base_plus_commission_sales, weeks_until_guitar, works_alone_one_hour_then_joins, mean_of_listed_missing, rent_fee_plus_use_equals_buy, rent_per_use_equals_buy, reverse_digits_sum_and_diff, linear_pair_two_angles, straight_line_angles_a_b, square_side_linear_perimeter, two_numbers_sum_and_product, three_part_mix_ratio, weeks_until_item, adult_and_child_tickets, two_plans_same_cost, food_truck_meals_cover_costs, print_run_posters_break_even, tank_fill_from_fraction, rectangle_length_from_width_perimeter, lowest_next_score_few_tests, items_sold_for_given_profit, projectile_hit_ground, stack_of_cans_rows, number_plus_reciprocal, two_linear_equations_xy, camp_two_seat_sizes, packed_two_carton_sizes, banquet_two_table_sizes, cash_drawer_two_bill_values, lot_two_wheel_vehicles, farm_spiders_and_beetles, rectangle_side_and_diagonal, ladder_wire_ramp_height, right_triangle_legs_differ, water_added_to_dilute, pure_antifreeze_added, salt_water_evaporates, handshake_or_round_robin_count, triangle_three_sides_perimeter, rectangle_perimeter_length_more_width, two_jobs_same_commission_pay, formula_perimeter_solve_width, fahrenheit_twice_celsius, fahrenheit_to_celsius, rental_car_days_plus_miles, item_coupon_when_coupon_exceeds_paid, sound_travel_time, raised_plus_per_item_to_goal, loses_value_each_year, part_is_percent_of_whole, split_bill_including_tip, percent_boys_given_girls, percent_up_then_down_ending, weekly_pay_plus_percent_of_sales, scale_model_from_real, map_scale_distance, similar_shadows_height, square_more_than_times_number, consecutive_squares_sum, square_plus_times_equals, polygon_diagonals_to_sides, triangular_sum_from_one, rope_cut_in_ratio, savings_jar_week_n, split_equal_simple_interest, simple_interest_years, ago_older_was_twice, clock_hands_together, jar_three_coins, average_of_consecutive, consecutive_times_smallest_vs_largest, plane_with_and_against_wind, two_digit_units_times_tens, round_trip_faster_return, diophantus_life_ages, exterior_equals_remote_interiors, vertical_angles_linear_pair_measures, isosceles_vertex_less_than_base, square_side_increase_area, rectangle_twice_width_area_same, pen_against_barn_two_dimensions, open_box_cut_squares, path_around_square_garden, aquarium_volume_depth, fewest_minutes_plan_b_cheaper, greatest_whole_garden_width, least_sales_for_pay_floor, drain_replace_pure_antifreeze, three_numbers_times_and_more, fraction_add_to_both, jog_minus_cycle_time, three_numbers_pair_sums, spelled_older_age_sum, times_as_old_add_up_today, rectangle_twice_long_around, garden_length_exceeds_area, triangle_angles_in_proportion, two_angles_sum_one_more, ladder_wall_base_height, later_same_track_catch, tap_and_leak_fill, pour_water_to_dilute, n_is_p_percent_of_which, cab_flag_plus_per_mile, gym_join_vs_monthly_equal, workers_days_inverse, thrown_up_from_ground, two_digit_sum_swap_up, ribbon_cut_ratio_short, budget_entry_plus_ride_tickets, lowest_last_exam_two_known, two_candles_burn_equal, fahrenheit_given_formula, trains_apart_toward_meet, beach_round_trip_two_speeds, salesperson_week_plus_percent, every_team_played_once, regular_polygon_each_interior, seesaw_child_other_side, clock_hands_line_up_hours, percent_boys_given_girls_club, shop_fixed_make_sell_break_even, car_loses_value_until, tank_quarter_add_three_quarters, pole_and_tree_shadows, mean_of_five_listed_fifth, square_side_grow_area, weeks_until_bike, stick_broken_two_ratio, plumber_come_out_plus_hour, trip_faster_same_distance, number_square_plus_times, grandpa_older_combined, cents_two_coins_dimes, cookies_brownies_count, pens_pencils_cents, motorbikes_cars_wheels, yard_perimeter_length_more, isosceles_sides_longer_base, straight_line_two_ax_c, polygon_has_diagonals, kite_string_height, plane_wind_speed_only, two_gardeners_other_alone, bucket_diluted_with_water, phone_plans_cents_equal, stone_thrown_up_land, two_plants_grow_equal, beads_three_ratio_blue, blend_from_two_pound_prices, math_scores_next_average, barn_ducks_goats_heads_feet, cyclist_spelled_hours_catch, whole_numbers_follow_product, motorboat_still_water, two_jars_grow_equal, caterer_plus_per_person, juice_added_to_cheaper, triangle_ratio_each_angle, times_as_old_later_twice, bus_split_equal_per_person, two_flours_pounds, cloud_included_gb_extra, winner_percent_margin_votes, allowance_plus_tasks_months, boat_covers_then_farther, cats_dogs_ratio_then_equal, pump_litres_in_minutes, two_pipes_and_drain_fill, spent_percent_had_left, split_two_rates_cd, sum_one_twice_other, named_together_one_alone, tap_leak_tank_fill, workers_days_inverse_wall, two_legs_how_far, tickets_each_total, coffee_added_to_make_blend, workers_paint_inverse_days, stick_cut_times_other, each_interior_regular_polygon, people_dogs_heads_legs, opposite_how_far_after, simple_interest_years_earned, bank_one_known_other_amount, split_equal_interest_two_rates, percent_used_remain_whole, water_added_to_solution, complementary_less_than_times, pharmacist_known_ml_to_total, equal_amounts_blend_price, two_investments_total_interest, bill_includes_flat_charge, discount_in_dollars_after, spelled_count_after_percent_one, spelled_count_after_rise_one, toward_meet_distance_from_first, budget_tickets_left, shirt_sale_after_percent, percent_off_saving_original, second_percent_off_now, three_such_crews_together, partner_half_speed_together, add_percent_to_known_solution, mix_equal_volumes_percent, drain_replace_to_percent, savings_equal_how_much, quizzes_final_counts_double, same_direction_gap_time, catch_after_first_leaves, hens_pigs_how_many_animals, consecutive_even_sum_and_product, ratio_for_known_water, three_numbers_pair_sums_largest, tickets_or_snacks_afford, hall_first_free_guests, two_tanks_meet, towns_equal_population, culture_after_hours, tank_remain_after, percent_decrease_two_prices, times_as_old_ago_times, covers_each_total, two_leg_cover_total, two_printers_spelled, three_presses_same_time, two_printers_both_window, setup_plus_rate_two_free, two_off_original_price, two_off_sale_total_taken, van_share_per_kid, two_rates_minutes, two_rates_one_hour, profit_at_least_if_free, lift_overweight_zero, lift_two_trips, gym_bill_equals_base, trees_same_height_value, extra_shifts_pay, current_same_speed_zero, tickets_cannot_afford_zero, three_presses_other_window, two_trucks_cover, stamps_each_total, three_scores_spelled_four_next, culture_doubles_reach_in_days, van_catch_clock_half, rice_mix_target_equals_cheap, miles_at_kmh_hours, pages_already_done_zero, adjacent_cross_angles, candles_same_height_value, same_side_interior_x_angle, class_ratio_girls_originally, kinematics_ms_to_kmh, 
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
