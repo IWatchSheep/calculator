@@ -232,6 +232,24 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How far was the walk?"))
         self.assertIsNone(WS.walk_then_bus_unknown_time("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 40 km and took 1 hours. How long was the walk?"))
 
+    def test_leftover_after_two_fraction_spends(self):
+        cases = [
+            ("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with?", 540),
+            ("Gus spent 1/4 of their money on a game and then 1/3 of what was left on lunch, leaving $60. How much did they start with?", 120),
+            ("Yara spent 1/2 of their money on a game and then 1/3 of what was left on lunch, leaving $20. How much did they start with?", 60),
+            ("Uma spent 1/4 of their money on a game and then 1/5 of what was left on lunch, leaving $60. How much did they start with?", 100),
+            ("Aiden spent 1/3 of their money on a game and then 1/2 of what was left on lunch, leaving $34. How much did they start with?", 102),
+        ]
+        for sentence, expected in cases:
+            result = WS.leftover_after_two_fraction_spends(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(expected)], sentence)
+            self.assertEqual(len(result.values), 1, sentence)
+        self.assertIsNone(answers("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much was spent?"))
+        self.assertIsNone(answers("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much was left?"))
+        self.assertIsNone(answers("Maya spent 2/2 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with?"))
+        self.assertIsNone(WS.leftover_after_two_fraction_spends("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $0. How much did they start with?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

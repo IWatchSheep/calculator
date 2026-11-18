@@ -3491,7 +3491,53 @@ def walk_then_bus_unknown_time(problem):
     return Result("walk_then_bus_unknown_time", [walking_time], eq, "%s, so t = %s" % (eq, show_exact(walking_time)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time,
+# Two successive fraction spends. The only answer is the starting amount.
+# x * (1 - a/b) * (1 - c/d) = leftover.
+_LEFTOVER_AFTER_TWO_FRACTION_SPENDS = re.compile(
+    r"(?P<name>[a-z]+) spent "
+    r"(?P<a>\d+)/(?P<b>\d+) "
+    r"of their money on a game "
+    r"and then "
+    r"(?P<c>\d+)/(?P<d>\d+) "
+    r"of what was left on lunch, "
+    r"leaving \$(?P<leftover>\d+(?:\.\d+)?)\. "
+    r"how much did they start with\?")
+
+
+def leftover_after_two_fraction_spends(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _LEFTOVER_AFTER_TWO_FRACTION_SPENDS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 5 or [n[1] for n in numbers] != [False, False, False, False, True]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    c = Fraction(match.group("c"))
+    d = Fraction(match.group("d"))
+    leftover = Fraction(match.group("leftover"))
+    if [n[0] for n in numbers] != [a, b, c, d, leftover]:
+        return None
+    if b <= 0 or d <= 0 or leftover <= 0:
+        return None
+    first_fraction = a / b
+    second_fraction = c / d
+    if not (0 < first_fraction < 1) or not (0 < second_fraction < 1):
+        return None
+    remaining_fraction = (1 - first_fraction) * (1 - second_fraction)
+    if remaining_fraction <= 0:
+        return None
+    starting_money = leftover / remaining_fraction
+    if starting_money <= 0:
+        return None
+    if starting_money * (1 - first_fraction) * (1 - second_fraction) != leftover:
+        return None
+    eq = "x(1 - %s/%s)(1 - %s/%s) = %s" % (show(a), show(b), show(c), show(d), show(leftover))
+    return Result("leftover_after_two_fraction_spends", [starting_money], eq, "%s, so x = %s" % (eq, show_exact(starting_money)))
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
