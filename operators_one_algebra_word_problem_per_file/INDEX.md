@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 275 ready (260 word_solver, 15 number_puzzle), 204 reference.
+479 problems: 280 ready (265 word_solver, 15 number_puzzle), 199 reference.
 
 ## Age
 
@@ -175,11 +175,11 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0159 | Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the walk? | 0.75 h walking, 0.25 h on the bus | Reference |  | `distance_two_legs/0159/` |
-| 0160 | Lena walked at 5 km/h and then rode a bus at 36 km/h. The whole trip was 38.5 km and took 1.5 hours. How long was the walk? | 0.5 h walking, 1 h on the bus | Reference |  | `distance_two_legs/0160/` |
-| 0161 | Quinn walked at 3 km/h and then rode a bus at 30 km/h. The whole trip was 10.5 km and took 1.25 hours. How long was the walk? | 1 h walking, 0.25 h on the bus | Reference |  | `distance_two_legs/0161/` |
-| 0162 | Hana walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 39.75 km and took 2.25 hours. How long was the walk? | 0.75 h walking, 1.5 h on the bus | Reference |  | `distance_two_legs/0162/` |
-| 0163 | Kira walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 38.5 km and took 2 hours. How long was the walk? | 0.5 h walking, 1.5 h on the bus | Reference |  | `distance_two_legs/0163/` |
+| 0159 | Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the walk? | 0.75 h walking, 0.25 h on the bus | Ready | walk_then_bus_unknown_time | `distance_two_legs/0159/` |
+| 0160 | Lena walked at 5 km/h and then rode a bus at 36 km/h. The whole trip was 38.5 km and took 1.5 hours. How long was the walk? | 0.5 h walking, 1 h on the bus | Ready | walk_then_bus_unknown_time | `distance_two_legs/0160/` |
+| 0161 | Quinn walked at 3 km/h and then rode a bus at 30 km/h. The whole trip was 10.5 km and took 1.25 hours. How long was the walk? | 1 h walking, 0.25 h on the bus | Ready | walk_then_bus_unknown_time | `distance_two_legs/0161/` |
+| 0162 | Hana walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 39.75 km and took 2.25 hours. How long was the walk? | 0.75 h walking, 1.5 h on the bus | Ready | walk_then_bus_unknown_time | `distance_two_legs/0162/` |
+| 0163 | Kira walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 38.5 km and took 2 hours. How long was the walk? | 0.5 h walking, 1.5 h on the bus | Ready | walk_then_bus_unknown_time | `distance_two_legs/0163/` |
 
 ## Exponential
 

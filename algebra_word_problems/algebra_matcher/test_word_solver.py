@@ -214,6 +214,24 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Sam earns $20/hour for the first 40 hours and double time after that. Last week's pay was $950.00. How many overtime hours were worked?"))
         self.assertIsNone(WS.overtime_hours_time_and_a_half("Sam earns $20/hour for the first 40 hours and time-and-a-half after that. Last week's pay was $955.00. How many overtime hours were worked?"))
 
+    def test_walk_then_bus_unknown_time(self):
+        cases = [
+            ("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the walk?", Fraction(3, 4)),
+            ("Lena walked at 5 km/h and then rode a bus at 36 km/h. The whole trip was 38.5 km and took 1.5 hours. How long was the walk?", Fraction(1, 2)),
+            ("Quinn walked at 3 km/h and then rode a bus at 30 km/h. The whole trip was 10.5 km and took 1.25 hours. How long was the walk?", Fraction(1)),
+            ("Hana walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 39.75 km and took 2.25 hours. How long was the walk?", Fraction(3, 4)),
+            ("Kira walked at 5 km/h and then rode a bus at 24 km/h. The whole trip was 38.5 km and took 2 hours. How long was the walk?", Fraction(1, 2)),
+        ]
+        for sentence, expected in cases:
+            result = WS.walk_then_bus_unknown_time(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [expected], sentence)
+            self.assertEqual(len(result.values), 1, sentence)
+        self.assertIsNone(answers("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How long was the bus ride?"))
+        self.assertIsNone(answers("Pablo walked at 40 km/h and then rode a bus at 4 km/h. The whole trip was 13 km and took 1 hours. How long was the walk?"))
+        self.assertIsNone(answers("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 13 km and took 1 hours. How far was the walk?"))
+        self.assertIsNone(WS.walk_then_bus_unknown_time("Pablo walked at 4 km/h and then rode a bus at 40 km/h. The whole trip was 40 km and took 1 hours. How long was the walk?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))
@@ -372,6 +390,10 @@ class GroundTruth(unittest.TestCase):
             return sorted(Fraction(x.replace(",", "")) for x in re.findall(r"\$([\d,]+(?:\.\d+)?)", text))
         if re.search(r"^\d+ (?:weeks|months|days) \(each will have", text):      # a savings answer: compare the time, not the amount each has
             return [Fraction(re.match(r"\d+", text).group())]
+        if re.search(r"how long was the walk\?", (problem or "").lower()):        # a walk-then-bus answer: compare the walk, not the bus hours
+            wm = re.match(r"(\d+(?:\.\d+)?) h walking", text)
+            if wm:
+                return [Fraction(wm.group(1))]
         if re.search(r"\d\s?(?:lb|kg) at \$", text):                           # a price-blend answer: compare the weights, not the prices
             return sorted(Fraction(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s?(?:lb|kg)\b", text))
         if len(re.findall(r"(\d+(?:\.\d+)?)\s+(?:[a-z]+\s+)?at\s+[$\d]", text)) == 2:         # "9 at 55c, 21 at 70c" / "31 hours at $16, 30 hours at $22": compare the counts, not the prices
