@@ -250,6 +250,23 @@ class Families(unittest.TestCase):
         self.assertIsNone(answers("Maya spent 2/2 of their money on a game and then 1/5 of what was left on lunch, leaving $360. How much did they start with?"))
         self.assertIsNone(WS.leftover_after_two_fraction_spends("Maya spent 1/6 of their money on a game and then 1/5 of what was left on lunch, leaving $0. How much did they start with?"))
 
+    def test_more_than_times_stamps(self):
+        cases = [
+            ("Tara has 3 more than 4 times as many stamps as Aiden. Together they have 38 stamps. How many does each have?", 7, 31),
+            ("Grace has 9 more than 4 times as many stamps as Uma. Together they have 139 stamps. How many does each have?", 26, 113),
+            ("Caleb has 12 more than 3 times as many stamps as Bea. Together they have 88 stamps. How many does each have?", 19, 69),
+            ("Isla has 5 more than 2 times as many stamps as Caleb. Together they have 26 stamps. How many does each have?", 7, 19),
+            ("Maya has 5 more than 4 times as many stamps as Ben. Together they have 285 stamps. How many does each have?", 56, 229),
+        ]
+        for sentence, smaller, larger in cases:
+            result = WS.more_than_times_stamps(sentence)
+            self.assertIsNotNone(result, sentence)
+            self.assertEqual(result.values, [Fraction(smaller), Fraction(larger)], sentence)
+        self.assertIsNone(answers("Tara has 3 more than 4 times as many stamps as Aiden. Together they have 38 stamps. How many does Tara have?"))
+        self.assertIsNone(answers("Tara has 3 more than 1 times as many stamps as Aiden. Together they have 38 stamps. How many does each have?"))
+        self.assertIsNone(answers("Tara has 3 more than 4 times as many coins as Aiden. Together they have 38 coins. How many does each have?"))
+        self.assertIsNone(WS.more_than_times_stamps("Tara has 3 more than 4 times as many stamps as Aiden. Together they have 3 stamps. How many does each have?"))
+
     def test_percent_change(self):
         self.assertEqual(answers("After a 5% raise, Vera's salary is $32,550.00. What was the salary before the raise?"), values(31000))
         self.assertEqual(answers("A TV is marked down 25% to $450. What was the original price?"), values(600))

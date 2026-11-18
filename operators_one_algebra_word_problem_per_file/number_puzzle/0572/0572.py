@@ -6,7 +6,7 @@ Equation: x + (4x + 3) = 38
 Solve   : 5x = 35 → x = 7
 Answer  : Aiden: 7, Tara: 31
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: more_than_times_stamps answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -24,8 +24,8 @@ EQUATION = 'x + (4x + 3) = 38'
 SOLVE = '5x = 35 → x = 7'
 ANSWER = 'Aiden: 7, Tara: 31'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'more_than_times_stamps'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
 TEMPLATE = 'Tara has {0} more than {1} times as many stamps as Aiden. Together they have {2} stamps. How many does each have?'
 NUMBERS = ['3', '4', '38']

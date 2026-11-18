@@ -3537,7 +3537,49 @@ def leftover_after_two_fraction_spends(problem):
     return Result("leftover_after_two_fraction_spends", [starting_money], eq, "%s, so x = %s" % (eq, show_exact(starting_money)))
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends,
+# One person has m more than k times as many stamps as the other.
+# x + (k*x + m) = total. Answers are x, then k*x + m.
+_MORE_THAN_TIMES_STAMPS = re.compile(
+    r"(?P<more_person>[a-z]+) has "
+    r"(?P<m>\d+) more than "
+    r"(?P<k>\d+) times as many stamps as "
+    r"(?P<less_person>[a-z]+)\. "
+    r"together they have "
+    r"(?P<total>\d+) stamps\. "
+    r"how many does each have\?")
+
+
+def more_than_times_stamps(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _MORE_THAN_TIMES_STAMPS.fullmatch(text)
+    if match is None:
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [False, False, False]:
+        return None
+    m = Fraction(match.group("m"))
+    k = Fraction(match.group("k"))
+    total = Fraction(match.group("total"))
+    if [n[0] for n in numbers] != [m, k, total]:
+        return None
+    if m < 0 or k < 2 or total <= m:
+        return None
+    smaller = (total - m) / (k + 1)
+    larger = k * smaller + m
+    if smaller <= 0 or larger <= 0 or smaller.denominator != 1 or larger.denominator != 1:
+        return None
+    if smaller + larger != total or larger != k * smaller + m:
+        return None
+    eq = "x + (%s*x + %s) = %s" % (show(k), show(m), show(total))
+    return Result(
+        "more_than_times_stamps",
+        [smaller, larger],
+        eq,
+        "%s, so x = %s and %s*x + %s = %s" % (eq, show_exact(smaller), show(k), show(m), show_exact(larger))
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,
