@@ -9,7 +9,7 @@ FRESH = [
     ("Lena spent 100% of a paycheck on rent and had $50 left. How much was the paycheck?", None),
     ("Lena spent 20% of a paycheck on rent and had $0 left. How much was the paycheck?", None),
     ("Lena spent 20% of a paycheck on rent and $50 on food and had $300 left. How much was the paycheck?", None),
-    ("After using 30% of the fuel in a tank, 70 liters remain. How much did the tank hold?", None),
+    ("After using 30% of the fuel in a tank, 70 liters remain. How much did the tank hold?", [100]),
     ("Plants cost $4.50 each. With a $5 coupon, Tara paid $40.00. How many plants were bought?", [Fraction(10)]),
     ("Magazines cost $3 each. With a $2 coupon, Sol paid $20.00. How many magazines were bought?", None),
     ("Sandwiches cost $6 each. With a $10 coupon, Ana paid $8.00. How many sandwiches were bought?", [Fraction(3)]),
@@ -18,6 +18,6 @@ FRESH = [
     ("Two angles are complementary. One angle is 40 less than 2 times the other. Find both angles.", [Fraction(130, 3), Fraction(140, 3)]),
     # (first written as a required decline by mistake: 190/3 and 80/3 are both positive and add to 90, so the answer is right)
     ("Two angles are complementary. One angle is 100 less than 2 times the other. Find both angles.", [Fraction(80, 3), Fraction(190, 3)]),
-    ("Two angles are complementary. One angle is 12 less than 5 times the other. Find the larger angle.", None),
+    ("Two angles are complementary. One angle is 12 less than 5 times the other. Find the larger angle.", [73]),
     ("Two angles are complementary. One angle is 12 less than 5 times the other and the bigger is 3 more than that. Find both angles.", None),
 ]

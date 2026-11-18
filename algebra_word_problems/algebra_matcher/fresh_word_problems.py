@@ -10,7 +10,7 @@ FRESH = [
     ("A 120 cm rope is cut into two pieces. One piece is 30 cm longer than the other. How long are the pieces?", [45, 75]),
     ("Dev is 6 years older than Mia. The sum of their ages is 40. How old is each?", [17, 23]),
     ("The sum of two numbers is 30 and their product is 200. Find the numbers.", [10, 20]),  # was a required decline until two_numbers_sum_and_product
-    ("The sum of two numbers is 21 and one is twice the other. Find the numbers.", None),
+    ("The sum of two numbers is 21 and one is twice the other. Find the numbers.", [7, 14]),
     # ---- consecutive integers
     ("The sum of 3 consecutive integers is 60. Find them.", [19, 20, 21]),
     ("Five consecutive integers sum to 105. What are they?", [19, 20, 21, 22, 23]),
@@ -22,8 +22,8 @@ FRESH = [
     ("Ann can paint a room in 6 hours and Bob can paint it in 3 hours. Working together, how long will they take?", [2]),
     ("Pipe A fills a pool in 10 hours and pipe B fills it in 15 hours. How long does it take if both are open?", [6]),
     ("Two machines finish an order in 8 hours and 12 hours respectively. How long will it take them together?", [Fraction(24, 5)]),
-    ("Tara and Joe together mow a lawn in 4 hours. Tara alone takes 6 hours. How long would Joe take alone?", None),
-    ("A tap fills a tank in 5 hours but a leak empties it in 8 hours. How long to fill it with both going?", None),
+    ("Tara and Joe together mow a lawn in 4 hours. Tara alone takes 6 hours. How long would Joe take alone?", [12]),
+    ("A tap fills a tank in 5 hours but a leak empties it in 8 hours. How long to fill it with both going?", [Fraction(40, 3)]),
     # ---- a price after a percent change
     ("After a 20% discount, a jacket costs $64. What was the original price?", [80]),
     ("A phone costs $330 after a 10% price increase. What was the price before the increase?", [300]),
@@ -39,7 +39,7 @@ FRESH = [
     ("A train travels 150 km in 2 hours. At that rate, how far does it go in 5 hours?", [375]),
     ("A recipe needs 2 cups of flour for 12 cookies. How many cookies can I make with 5 cups?", [30]),
     ("A 3 kg bag of rice costs $9. How much does an 8 kg bag cost?", [24]),
-    ("If 6 workers build a wall in 12 days, how long would 9 workers take?", None),
-    ("A car goes 60 mph for 3 hours then 40 mph for 2 hours. How far does it go in all?", None),
-    ("Tickets cost $8 each. How much do 5 tickets cost?", None),
+    ("If 6 workers build a wall in 12 days, how long would 9 workers take?", [8]),
+    ("A car goes 60 mph for 3 hours then 40 mph for 2 hours. How far does it go in all?", [260]),
+    ("Tickets cost $8 each. How much do 5 tickets cost?", [40]),
 ]

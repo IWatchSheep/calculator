@@ -11,8 +11,8 @@ FRESH = [
     ("After a 30% discount, a chair costs $140. What was the original price?", [200]),
     ("Her salary rose 4% to $62,400. What was her salary before the raise?", [60000]),
     ("A laptop is on sale for $720 after 10% off. What was the price before the sale?", [800]),
-    ("A shirt costs $60 after a 20% discount. What is the discount in dollars?", None),
-    ("A bill of $90 includes a $10 service charge. What was it before the service charge?", None),
+    ("A shirt costs $60 after a 20% discount. What is the discount in dollars?", [15]),
+    ("A bill of $90 includes a $10 service charge. What was it before the service charge?", [80]),
     # ---- proportion (incl. "how far" and "machine")
     ("A cyclist rides 36 km in 3 hours. At that rate, how far will they ride in 8 hours?", [96]),
     ("A bus covers 210 miles in 6 hours. How far does it go in 9 hours?", [315]),
@@ -23,7 +23,7 @@ FRESH = [
     ("A garden hose uses 30 litres in 4 minutes. How many litres does it use in 10 minutes?", [75]),
     ("A recipe uses 3 eggs for 12 muffins. How many eggs for 20 muffins?", [5]),
     ("A car goes 50 mph for 2 hours. How far does it go?", [100]),   # was a required decline until the distance_speed_time family
-    ("If 8 workers paint a house in 6 days, how many days for 12 workers?", None),
+    ("If 8 workers paint a house in 6 days, how many days for 12 workers?", [4]),
     # ---- sum and difference, consecutive, work together
     ("The sum of two numbers is 64 and their difference is 10. Find the numbers.", [27, 37]),
     ("Two numbers add up to 100 and one is 24 bigger than the other. Find them.", [38, 62]),
@@ -33,5 +33,5 @@ FRESH = [
     ("Ann can wash a car in 20 minutes and Bea can wash it in 30 minutes. How long will they take working together?", [12]),
     ("One hose fills a tub in 12 minutes and another hose fills it in 6 minutes. How long does it take with both hoses running?", [4]),
     ("Two taps fill a tank, one in 6 hours and the other in 12 hours. How long does the other tap need alone?", None),
-    ("A 40 cm stick is cut into two pieces. One piece is 4 times the other. How long is each piece?", None),
+    ("A 40 cm stick is cut into two pieces. One piece is 4 times the other. How long is each piece?", [8, 32]),
 ]
