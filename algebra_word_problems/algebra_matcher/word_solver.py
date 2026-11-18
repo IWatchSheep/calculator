@@ -3743,7 +3743,55 @@ def marbles_given_ratio_changes(problem):
     )
 
 
-FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes,
+# Profit shared in the same ratio as the investment.
+# a*k + b*k = profit. Answers are a*k, b*k.
+_PROFIT_SHARED_IN_INVESTMENT_RATIO = re.compile(
+    r"(?P<first_person>[a-z]+) and "
+    r"(?P<second_person>[a-z]+) "
+    r"invested in a business in the ratio "
+    r"(?P<a>\d+):(?P<b>\d+)\. "
+    r"they share a profit of "
+    r"\$(?P<profit>\d+(?:\.\d+)?) "
+    r"in the same ratio\. "
+    r"how much does each get\?")
+
+
+def profit_shared_in_investment_ratio(problem):
+    text = re.sub(r"\s+", " ", clean(problem)).strip()
+    match = _PROFIT_SHARED_IN_INVESTMENT_RATIO.fullmatch(text)
+    if match is None:
+        return None
+    if match.group("first_person") == match.group("second_person"):
+        return None
+    numbers = digit_numbers(problem)
+    if len(numbers) != 3 or [n[1] for n in numbers] != [False, False, True]:
+        return None
+    a = Fraction(match.group("a"))
+    b = Fraction(match.group("b"))
+    profit = Fraction(match.group("profit"))
+    if [n[0] for n in numbers] != [a, b, profit]:
+        return None
+    if a <= 0 or b <= 0 or profit <= 0:
+        return None
+    share_unit = profit / (a + b)
+    first_share = a * share_unit
+    second_share = b * share_unit
+    if first_share <= 0 or second_share <= 0:
+        return None
+    if first_share + second_share != profit or b * first_share != a * second_share:
+        return None
+    eq = "%s*k + %s*k = %s" % (show(a), show(b), show(profit))
+    return Result(
+        "profit_shared_in_investment_ratio",
+        [first_share, second_share],
+        eq,
+        "%s, so k = %s, %s*k = %s, and %s*k = %s" % (
+            eq, show_exact(share_unit), show(a), show_exact(first_share), show(b), show_exact(second_share)
+        )
+    )
+
+
+FAMILIES = [sum_difference, age_sum, consecutive, work_together, partner_alone_from_together, three_painters_together, percent_change, course_grade_final_exam, proportion, two_solution_mix, two_rate_interest, seesaw_balance_distance, more_invested_for_overall_rate, overtime_hours_time_and_a_half, walk_then_bus_unknown_time, leftover_after_two_fraction_spends, more_than_times_stamps, give_until_equal_money, estate_three_heirs_times_and_more, marbles_given_ratio_changes, profit_shared_in_investment_ratio,
             two_purchases, price_blend, savings_equal, average_needed, heads_and_feet,
             opposite_directions, catch_up, polygon_angle_sum,
             toward_each_other, consecutive_product, most_you_can_buy,

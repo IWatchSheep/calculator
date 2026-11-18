@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 305 ready (290 word_solver, 15 number_puzzle), 174 reference.
+479 problems: 310 ready (295 word_solver, 15 number_puzzle), 169 reference.
 
 ## Age
 
@@ -606,23 +606,23 @@ One wording is stored once. Further numbers for that wording are a slider on the
 | 0780 | An estate of $64,500.00 is split among three heirs. Wes gets 2 times as much as Nia, and Noah gets $6,500.00 more than Nia. How much does each receive? | Wes $29,000.00, Nia $14,500.00, Noah $21,000.00 | Ready | estate_three_heirs_times_and_more | `ratio/0780/` |
 | 0781 | A mix uses cement, sand, and gravel in the ratio 8:4:5. The total is 204 kg. How much of each is used? | 96, 48, 60 kg | Reference |  | `ratio/0781/` |
 | 0782 | The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. How many did each have at first? | Yusuf 18, Dev 30 | Ready | marbles_given_ratio_changes | `ratio/0782/` |
-| 0783 | Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get? | Sofia $15,000.00, Pablo $7,500.00 | Reference |  | `ratio/0783/` |
+| 0783 | Sofia and Pablo invested in a business in the ratio 2:1. They share a profit of $22,500.00 in the same ratio. How much does each get? | Sofia $15,000.00, Pablo $7,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0783/` |
 | 0784 | A 10 m rope is cut into two pieces in the ratio 1:4. How long is each piece? | 2 m and 8 m | Reference |  | `ratio/0784/` |
 | 0785 | A 105 cm board is cut into two pieces. One piece is 7 cm longer than the other. How long is each piece? | 49 cm and 56 cm | Ready | sum_difference | `ratio/0785/` |
 | 0786 | A mix uses flour, sugar, and butter in the ratio 2:4:5. The total is 88 g. How much of each is used? | 16, 32, 40 g | Reference |  | `ratio/0786/` |
 | 0787 | The ratio of Hana's marbles to Maya's is 1:1. After Hana gives Maya 23 marbles, the ratio is 1:3. How many did each have at first? | Hana 46, Maya 46 | Ready | marbles_given_ratio_changes | `ratio/0787/` |
 | 0790 | An estate of $92,000.00 is split among three heirs. Finn gets 3 times as much as Sam, and Ben gets $2,000.00 more than Sam. How much does each receive? | Finn $54,000.00, Sam $18,000.00, Ben $20,000.00 | Ready | estate_three_heirs_times_and_more | `ratio/0790/` |
-| 0792 | Caleb and Quinn invested in a business in the ratio 6:4. They share a profit of $82,500.00 in the same ratio. How much does each get? | Caleb $49,500.00, Quinn $33,000.00 | Reference |  | `ratio/0792/` |
+| 0792 | Caleb and Quinn invested in a business in the ratio 6:4. They share a profit of $82,500.00 in the same ratio. How much does each get? | Caleb $49,500.00, Quinn $33,000.00 | Ready | profit_shared_in_investment_ratio | `ratio/0792/` |
 | 0793 | The ratio of Ben's marbles to Carla's is 3:5. After Ben gives Carla 16 marbles, the ratio is 1:7. How many did each have at first? | Ben 24, Carla 40 | Ready | marbles_given_ratio_changes | `ratio/0793/` |
-| 0794 | Finn and Jade invested in a business in the ratio 4:2. They share a profit of $10,500.00 in the same ratio. How much does each get? | Finn $7,000.00, Jade $3,500.00 | Reference |  | `ratio/0794/` |
+| 0794 | Finn and Jade invested in a business in the ratio 4:2. They share a profit of $10,500.00 in the same ratio. How much does each get? | Finn $7,000.00, Jade $3,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0794/` |
 | 0799 | An estate of $71,000.00 is split among three heirs. Jamal gets 3 times as much as Maya, and Noah gets $6,000.00 more than Maya. How much does each receive? | Jamal $39,000.00, Maya $13,000.00, Noah $19,000.00 | Ready | estate_three_heirs_times_and_more | `ratio/0799/` |
 | 0802 | The ratio of Yusuf's marbles to Zane's is 5:6. After Yusuf gives Zane 18 marbles, the ratio is 2:9. How many did each have at first? | Yusuf 30, Zane 36 | Ready | marbles_given_ratio_changes | `ratio/0802/` |
 | 0804 | An estate of $31,500.00 is split among three heirs. Xena gets 3 times as much as Dana, and Finn gets $9,000.00 more than Dana. How much does each receive? | Xena $13,500.00, Dana $4,500.00, Finn $13,500.00 | Ready | estate_three_heirs_times_and_more | `ratio/0804/` |
-| 0805 | Aiden and Quinn invested in a business in the ratio 1:3. They share a profit of $10,000.00 in the same ratio. How much does each get? | Aiden $2,500.00, Quinn $7,500.00 | Reference |  | `ratio/0805/` |
+| 0805 | Aiden and Quinn invested in a business in the ratio 1:3. They share a profit of $10,000.00 in the same ratio. How much does each get? | Aiden $2,500.00, Quinn $7,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0805/` |
 | 0808 | A mix uses red, blue, and yellow paint in the ratio 7:4:2. The total is 390 mL. How much of each is used? | 210, 120, 60 mL | Reference |  | `ratio/0808/` |
 | 0809 | The ratio of Gus's marbles to Kira's is 6:5. After Gus gives Kira 16 marbles, the ratio is 4:7. How many did each have at first? | Gus 48, Kira 40 | Ready | marbles_given_ratio_changes | `ratio/0809/` |
 | 0810 | An estate of $88,500.00 is split among three heirs. Theo gets 3 times as much as Kira, and Umar gets $1,000.00 more than Kira. How much does each receive? | Theo $52,500.00, Kira $17,500.00, Umar $18,500.00 | Ready | estate_three_heirs_times_and_more | `ratio/0810/` |
-| 0811 | Zane and Wes invested in a business in the ratio 5:2. They share a profit of $50,750.00 in the same ratio. How much does each get? | Zane $36,250.00, Wes $14,500.00 | Reference |  | `ratio/0811/` |
+| 0811 | Zane and Wes invested in a business in the ratio 5:2. They share a profit of $50,750.00 in the same ratio. How much does each get? | Zane $36,250.00, Wes $14,500.00 | Ready | profit_shared_in_investment_ratio | `ratio/0811/` |
 
 ## Rational equation
 
