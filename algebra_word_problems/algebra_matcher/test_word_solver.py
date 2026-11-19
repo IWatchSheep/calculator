@@ -2872,7 +2872,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-third set, unit fix and three families): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (10, 0, 3))
+        self.assertEqual((solved, declined, required), (11, 0, 2))
 
     def test_plan_question_counts_the_included_unit(self):
         # "how many hours were used" on a plan in gigabytes asks for something else: X in "how many X" has to be the included unit
@@ -3320,7 +3320,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (twenty-ninth set, neighbours of the batch-26 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (6, 0, 5))
+        self.assertEqual((solved, declined, required), (7, 0, 4))
 
     def test_pages_finishing_and_other_deadlines(self):
         book = "A 100-page book has 20 pages already read. She must finish the book in 6 days. "
@@ -3692,7 +3692,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (thirty-seventh set, neighbours of the batch-34 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (5, 0, 4))
+        self.assertEqual((solved, declined, required), (6, 0, 3))
 
     def test_candles_same_height_as_what(self):
         c = "One candle is 13 cm tall and burns 2 cm per hour. Another is 22 cm tall and burns 4 cm per hour. "
@@ -4052,7 +4052,7 @@ class FreshWordings(unittest.TestCase):
         """Set 49 (15 wordings) was written after the batch-45 families and run once, untuned: 7 solved, 1 declined (safe: "an allowance" is not an article the pattern lists), 7 required declines,
         0 wrong.  One item was first written as a required decline by mistake (190/3 and 80/3 are both positive, so the solver's answer was right) and was corrected. The sandwich coupon larger than the amount paid is now a whole count."""
         from fresh_word_problems_49 import FRESH
-        self.assertEqual(score(FRESH), (12, 0, 3))
+        self.assertEqual(score(FRESH), (13, 0, 2))
 
     def test_fourth_set_is_now_a_development_set(self):
         from fresh_word_problems_4 import FRESH
@@ -4095,6 +4095,10 @@ class UniqueMathRequiredDeclines(unittest.TestCase):
         self.assertEqual(answers("A rower goes 12 km downstream in 2 hours and 18 km upstream in 2 hours. What is the speed in still water?"), values(Fraction(15, 2)))
         self.assertEqual(answers("A hall costs $250 plus $12 per guest. The final bill was $735. How many guests attended?"), values(Fraction(485, 12)))
         self.assertEqual(answers("The temperature is 30°F and falling 4°F per hour. For how many hours will it stay at or above 5°F?"), values(Fraction(25, 4)))
+        self.assertEqual(answers("Lena spent 20% of a paycheck on rent and $50 on food and had $300 left. How much was the paycheck?"), values(Fraction(875, 2)))
+        self.assertEqual(answers("The temperature is 30°F and falling 4°F per hour. For how many hours in a row will it stay at or above 5°F?"), values(Fraction(25, 4)))
+        self.assertEqual(answers("A theater sold 300 tickets: balcony seats at $20 and floor seats at $35. Ticket sales totaled $7,501. How many of each?"), values(Fraction(1501, 15), Fraction(2999, 15)))
+        self.assertEqual(answers("Where two lines cross, the opposite angles form a right angle: (3x + 0)° and (2x + 30)°. Find x."), values(30))
 
     def test_declines(self):
         self.assertIsNone(answers("The sum of two numbers is 21 and one is twice the other. Find their product."))

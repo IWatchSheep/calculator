@@ -11,7 +11,7 @@ FRESH = [
     ("A rectangle has a perimeter of 34 m and an area of 60 m^2. The width is the narrower side. What is its width?", [5]),
     ("A 300-page novel has 60 pages already read. She must finish the novel in 8 days. How many pages a day must be read to finish the homework?", None),
     ("A 300-page novel has 60 pages already read. How many pages a day must be read to finish the lab report? She must finish the novel in 8 days.", None),
-    ("Where two lines cross, the opposite angles form a right angle: (3x + 0)° and (2x + 30)°. Find x.", None),
+    ("Where two lines cross, the opposite angles form a right angle: (3x + 0)° and (2x + 30)°. Find x.", [30]),
     ("A rectangle has a perimeter of 34 m and an area of 60 m^2. What is the sum of its sides if the length is shorter than the width?", None),
     ("A rectangle has a perimeter of 34 m and an area of 60 m^2. What is its length if the length is less than the length?", None),
 ]

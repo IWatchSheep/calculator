@@ -13,7 +13,7 @@ FRESH = [
     ("A truck can carry up to 900 lb. A 150 lb driver sits in front and 40 lb sacks are loaded. How many sacks can the truck take?", [18]),
     ("A market sold 20 oz of two coffees, one at $4/lb and one at $9/lb, for $120. How many lb of each?", None),
     ("A theater sold 300 tickets: balcony seats at $20, floor seats at $35 and box seats at $60. Ticket sales totaled $7,500. How many of each?", None),
-    ("A theater sold 300 tickets: balcony seats at $20 and floor seats at $35. Ticket sales totaled $7,501. How many of each?", None),
+    ("A theater sold 300 tickets: balcony seats at $20 and floor seats at $35. Ticket sales totaled $7,501. How many of each?", [Fraction(1501, 15), Fraction(2999, 15)]),
     ("A gym plan costs $40 a month and includes 10 hours of court time. Each extra hour costs $6. The bill was $40. How many hours were used?", [10]),
     ("A lift holds at most 500 lb. A 520 lb worker is loading 20 lb boxes. How many boxes can go up with the worker?", [0]),
     ("A lift holds at most 500 lb. A 100 lb worker is loading 20 lb boxes. How many boxes can go up in two trips?", [40]),
