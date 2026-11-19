@@ -146,9 +146,16 @@ A. MORE GENERATED TEMPLATES (the main list).  651 of the 1,000 generated problem
    Note: the matcher can recognise many of these types, but the SOLVER only answers when every number has a role; "Number puzzle" shapes are mostly handled by number_puzzle.py (it answers some before word_solver is tried).
 B. NEW WORDINGS OF FAMILIES THAT EXIST.  The solver was built against the generator's wording plus the user's examples; real textbook wording is the real test.  Every "fix only" batch (24 to 40) came from Grok / the user
    probing one family with nearby wordings and finding a wrong number.  Expect more.  Do not guess: wait for the user's job, or write nearby wordings yourself and look for a wrong number (a decline is fine, a wrong number is a bug).
-C. THE OPERATOR (not started).  Wire word_solver.solve() and the matcher into the calculator's Templates text box as an algebra word-problem operator: split pasted text into word boxes and number boxes, call solve(), show the
-   family's reading (the "reading" string already says the equation and the steps), fall back to the matcher's top 3 with a confidence ("ask the user when the score is low").  The decisions still open are in chess_test_results.txt
-   part 7.4: the scope of a first version, how the ~20 problem families are defined, where the archive of past problems lives, whether the experiment files go in the repo.  Ask the user before building.
+C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/algebra_matcher/paste_text.py
+   analyze(text) calls word_solver.solve() first, then number_puzzle.solve() if that is None. A solver hit becomes a
+   PasteResult (supported True, that family's name or "number_puzzle", the solver values, equation, and existing
+   reading). Empty text, template math, 0950, leftover-number wordings, and any other miss become supported False with
+   "Unsupported problem — no matching solution found." No matcher, no top-3, no row placement, no person-name labels,
+   no new families. Tests: test_paste_text.py. Catalog baseline stays 478 Ready / 1 Reference / wrong 0.
+   Stage 1b (GUI, not started): a Templates-panel button that reads pasted English, calls analyze(), and prints the
+   PasteResult in Detailed Results. Preview Posted stays typed-math only. Do not edit main.py until Stage 1b is
+   authorized. Later stages (word/number boxes, placing a row, matcher fallback) are not Stage 1; chess_test_results.txt
+   part 7.4 still holds those open decisions. Ask the user before building anything past 1a.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
