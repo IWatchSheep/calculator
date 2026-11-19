@@ -152,10 +152,13 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    reading). Empty text, template math, 0950, leftover-number wordings, and any other miss become supported False with
    "Unsupported problem — no matching solution found." No matcher, no top-3, no row placement, no person-name labels,
    no new families. Tests: test_paste_text.py. Catalog baseline stays 478 Ready / 1 Reference / wrong 0.
-   Stage 1b (GUI, not started): a Templates-panel button that reads pasted English, calls analyze(), and prints the
-   PasteResult in Detailed Results. Preview Posted stays typed-math only. Do not edit main.py until Stage 1b is
-   authorized. Later stages (word/number boxes, placing a row, matcher fallback) are not Stage 1; chess_test_results.txt
-   part 7.4 still holds those open decisions. Ask the user before building anything past 1a.
+   Stage 1b (GUI, 2026-11-19): Mathematical Templates panel has an r3 row with "Solve Word Problem".
+   _tpl_solve_word_problem reads tpl_entry.get() unchanged, calls paste_text.analyze(), and _say()s Family / Values
+   (word_solver.show_exact) / Equation / Reading, or the existing unsupported sentence. No row, no compute(), no
+   word: nodes, no matcher. Preview Posted, _tpl_preview, _tpl_build, _tpl_typed, _place_word_problem and _equals
+   are unchanged. Pasting may still open the math-template guide; that is left as it is. Tests: TemplatePanelTests
+   in tests/test_operators.py. Later stages (word/number boxes, placing a row, matcher fallback) are not Stage 1;
+   chess_test_results.txt part 7.4 still holds those open decisions. Ask the user before building anything past 1b.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
