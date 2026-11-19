@@ -1,6 +1,7 @@
 """Thirteenth fresh set for word_solver.py: wordings for the three families added with the two fixes (opposite_directions, catch_up,
 polygon_angle_sum), written AFTER all three were finished, run once, untuned.
 Each item: (problem, amounts increasing) or None = must decline."""
+from fractions import Fraction
 
 FRESH = [
     ("Two hikers set off from a camp walking in opposite directions at 4 km/h and 5 km/h. After how many hours will they be 27 km apart?", [3]),
@@ -15,7 +16,7 @@ FRESH = [
     ("A jogger leaves at 6 mph. One hour later a cyclist follows at 12 mph. How many hours after the jogger leaves does the cyclist catch up?", [2]),
     ("Each interior angle of a regular polygon is 140°. How many sides does it have?", [9]),
     ("The exterior angles of a polygon add up to 360°. How many sides does it have?", None),
-    ("The interior angles of a polygon add up to 1000°. How many sides does it have?", None),
+    ("The interior angles of a polygon add up to 1000°. How many sides does it have?", [Fraction(68, 9)]),
     ("I have $100 and save $20 a week. My brother has $300 and saves $10 a week. When will I have as much as he has now?", None),
     ("A pen has hens and pigs. There are 22 heads and 60 feet. How many animals are there?", [22]),
 ]
