@@ -8,7 +8,7 @@ FRESH = [
     ("After burning 40% of the fuel in a tank, 90 liters remain. How much fuel was there at first?", [Fraction(150)]),
     ("Lena spent 100% of a paycheck on rent and had $50 left. How much was the paycheck?", None),
     ("Lena spent 20% of a paycheck on rent and had $0 left. How much was the paycheck?", [0]),
-    ("Lena spent 20% of a paycheck on rent and $50 on food and had $300 left. How much was the paycheck?", None),
+    ("Lena spent 20% of a paycheck on rent and $50 on food and had $300 left. How much was the paycheck?", [Fraction(875, 2)]),
     ("After using 30% of the fuel in a tank, 70 liters remain. How much did the tank hold?", [100]),
     ("Plants cost $4.50 each. With a $5 coupon, Tara paid $40.00. How many plants were bought?", [Fraction(10)]),
     ("Magazines cost $3 each. With a $2 coupon, Sol paid $20.00. How many magazines were bought?", [Fraction(22, 3)]),
