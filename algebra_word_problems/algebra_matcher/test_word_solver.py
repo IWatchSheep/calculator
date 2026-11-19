@@ -3838,7 +3838,7 @@ class FreshWordings(unittest.TestCase):
         solved, declined, required = score(FRESH)
         print("  fresh wordings (fortieth set, neighbours of the batch-37 fixes): %d of the %d with an answer solved, %d declined (safe), 0 wrong; %d of %d required declines correct"
               % (solved, solved + declined, declined, required, required))
-        self.assertEqual((solved, declined, required), (3, 0, 4))
+        self.assertEqual((solved, declined, required), (5, 0, 2))
 
     def test_pipes_all_must_be_the_three_devices(self):
         base = "Pipe A fills a pool in 4 hours, pipe B in 5 hours, and a drain empties it in 20 hours. "
@@ -4099,6 +4099,8 @@ class UniqueMathRequiredDeclines(unittest.TestCase):
         self.assertEqual(answers("The temperature is 30°F and falling 4°F per hour. For how many hours in a row will it stay at or above 5°F?"), values(Fraction(25, 4)))
         self.assertEqual(answers("A theater sold 300 tickets: balcony seats at $20 and floor seats at $35. Ticket sales totaled $7,501. How many of each?"), values(Fraction(1501, 15), Fraction(2999, 15)))
         self.assertEqual(answers("Where two lines cross, the opposite angles form a right angle: (3x + 0)° and (2x + 30)°. Find x."), values(30))
+        self.assertEqual(answers("The ratio of boys to girls in a class is 3:4. After 6 more girls join, the ratio becomes 1:2. How many students are there now?"), values(27))
+        self.assertEqual(answers("The ratio of boys to girls in a class is 3:4. After 6 more girls join, the ratio becomes 1:2. How many students were there originally? How many students are there after they join?"), values(21, 27))
 
     def test_declines(self):
         self.assertIsNone(answers("The sum of two numbers is 21 and one is twice the other. Find their product."))
