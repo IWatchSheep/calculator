@@ -2205,13 +2205,28 @@ class CalculatorGUI(tk.Tk):
         return (ok, ok and self._tpl_previewed == text, ok and text in self.saved_templates,
                 ok and self._tpl_applied and self.tpl_combo.get().strip() == text)
 
+    def _tpl_looks_like_typed_math(self, text):
+        """True when the Templates box is typed math (finished or still being typed), not English.
+
+        Uses template_math.parse_math only. Does not call paste_text.analyze() or the matcher.
+        IncompleteMath means keep typing; any other ValueError means this is not a template.
+        """
+        try:
+            template_math.parse_math(text)
+        except template_math.IncompleteMath:
+            return True
+        except ValueError:
+            return False
+        return True
+
     def _tpl_typed(self):
         """Called after every key typed in the template text box."""
         text = self.tpl_entry.get().strip()
         if text != getattr(self, "_tpl_last_text", ""):
             self._tpl_last_text = text
             self._tpl_applied = False
-        if text and self._tpl_was_empty and not self.tpl_hide_guide and self.tpl_guide is None:
+        if (text and self._tpl_was_empty and not self.tpl_hide_guide and self.tpl_guide is None
+                and self._tpl_looks_like_typed_math(text)):
             self._tpl_show_guide()
         self._tpl_was_empty = not text
         self._tpl_guide_refresh()
