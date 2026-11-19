@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import ttk
 
@@ -2395,6 +2396,26 @@ class CalculatorGUI(tk.Tk):
                      else "No empty boxes, so press the keypad = key to calculate it."))
         self._tpl_guide_refresh()
 
+    def _tpl_solve_word_problem(self):
+        """Solve Word Problem: send the Templates box to paste_text.analyze and print that result.
+
+        Does not place a row, call compute(), or change Preview Posted. Pasting may still open
+        the math-template guide (_tpl_typed); that is left as it is.
+        """
+        matcher = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "algebra_word_problems", "algebra_matcher")
+        if matcher not in sys.path:
+            sys.path.insert(0, matcher)
+        import paste_text
+        import word_solver as WS
+        result = paste_text.analyze(self.tpl_entry.get())
+        if not result.supported:
+            self._say(result.reading)
+            return
+        values = " and ".join(WS.show_exact(v) for v in result.values)
+        self._say("Family: %s\nValues: %s\nEquation: %s\nReading: %s"
+                  % (result.family, values, result.equation, result.reading))
+
     def _tpl_save(self):
         """Save Template: keep the typed math so it shows up in the Apply Template list."""
         text = self.tpl_entry.get().strip()
@@ -3012,6 +3033,10 @@ class CalculatorGUI(tk.Tk):
         tk.Label(r2, text="=", bg="#f0f4f4", font=("Segoe UI", 11, "bold")).pack(side="left", padx=4)
         btn(r2, "Preview Posted", "#fbe4cf", fg="#c05000", command=self._tpl_preview).pack(side="left", padx=2)
         btn(r2, "Save Template", "#e8e8e8", fg="black", command=self._tpl_save).pack(side="left", padx=2)
+        r3 = tk.Frame(tpl, bg="#f0f4f4")
+        r3.pack(anchor="w", padx=4, pady=2)
+        btn(r3, "Solve Word Problem", "#fff3c4", fg="#7a5a00",
+            command=self._tpl_solve_word_problem).pack(side="left", padx=2)
 
         desc = tk.LabelFrame(mid, text="Descriptive Columns Console (Col 2 & 3)", fg=PURPLE,
                              font=("Segoe UI", 8, "bold"), bg="#f0f4f4")
