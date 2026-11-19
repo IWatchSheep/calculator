@@ -155,10 +155,13 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    Stage 1b (GUI, 2026-11-19): Mathematical Templates panel has an r3 row with "Solve Word Problem".
    _tpl_solve_word_problem reads tpl_entry.get() unchanged, calls paste_text.analyze(), and _say()s Family / Values
    (word_solver.show_exact) / Equation / Reading, or the existing unsupported sentence. No row, no compute(), no
-   word: nodes, no matcher. Preview Posted, _tpl_preview, _tpl_build, _tpl_typed, _place_word_problem and _equals
-   are unchanged. Pasting may still open the math-template guide; that is left as it is. Tests: TemplatePanelTests
-   in tests/test_operators.py. Later stages (word/number boxes, placing a row, matcher fallback) are not Stage 1;
-   chess_test_results.txt part 7.4 still holds those open decisions. Ask the user before building anything past 1b.
+   word: nodes, no matcher. Preview Posted, _tpl_preview, _tpl_build, _place_word_problem and _equals
+   are unchanged. Tests: TemplatePanelTests in tests/test_operators.py.
+   Stage 1c (GUI, 2026-11-19): _tpl_typed opens the math-template guide only when template_math.parse_math
+   accepts the text or raises IncompleteMath. English (ValueError, e.g. a period in a sentence) does not open
+   the guide. Does not call analyze() or the matcher to decide. Typed math such as x or sqrt( still opens the
+   guide. Entry width, row placement from paste, and matcher fallback stay later work. Ask the user before
+   building anything past 1c.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.

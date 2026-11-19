@@ -2243,6 +2243,10 @@ class TemplatePanelTests(unittest.TestCase):
         self.app.tpl_entry.insert(0, text)
         self.app._tpl_typed()
 
+    def paste_templates(self, text):
+        """Paste into the Templates box (insert then KeyRelease / _tpl_typed), the same as a paste."""
+        self.type_math(text)
+
     def row_text(self, i=0):
         return " ".join(t if t else "\u25a1" for _k, t, _p in self.app._cards(i))
 
@@ -2530,6 +2534,34 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
         self.assertIn("Preview - posted in Row 1", self.said())
         self.assertNotIn("times_as_old_future_sum", self.said())
+
+    def test_paste_english_does_not_open_math_guide(self):
+        app = self.app
+        self.assertIsNone(app.tpl_guide)
+        self.paste_templates(self.WREN)
+        self.assertIsNone(app.tpl_guide)
+        self.assertTrue(app._is_blank(app.rows[0]))
+        self.button("Solve Word Problem").invoke()
+        said = self.said()
+        self.assertIn("times_as_old_future_sum", said)
+        self.assertIn("19", said)
+        self.assertIn("76", said)
+        self.assertIn(self.WREN_READING, said)
+        self.assertTrue(app._is_blank(app.rows[0]))
+
+    def test_paste_unsupported_english_does_not_open_math_guide(self):
+        self.paste_templates(self.ROOF_DECLINE)
+        self.assertIsNone(self.app.tpl_guide)
+        self.button("Solve Word Problem").invoke()
+        self.assertIn(self.UNSUPPORTED, self.said())
+        self.assertTrue(self.app._is_blank(self.app.rows[0]))
+
+    def test_paste_valid_math_still_opens_the_guide(self):
+        self.paste_templates("(\u25a1 + 3) * 2")
+        self.assertIsNotNone(self.app.tpl_guide)
+        self.button("Preview Posted").invoke()
+        self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
+        self.assertIn("Preview - posted in Row 1", self.said())
 
 
 if __name__ == "__main__":
