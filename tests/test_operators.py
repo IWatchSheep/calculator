@@ -2256,7 +2256,8 @@ class TemplatePanelTests(unittest.TestCase):
         texts = {w.cget("text") for w in self.widgets() if isinstance(w, tk.Button)}
         for gone in ("Calculate (e)", "+ Add Description Col", "Delete Selected Col"):
             self.assertNotIn(gone, texts)
-        for kept in ("Clear (C)", "Next Row (\u2193)", "Apply Template", "Save Template", "Preview Posted", "?"):
+        for kept in ("Clear (C)", "Next Row (\u2193)", "Apply Template", "Save Template", "Preview Posted",
+                     "Solve Word Problem", "?"):
             self.assertIn(kept, texts)
 
     def test_the_equals_beside_the_text_box_is_only_a_sign(self):
@@ -2474,6 +2475,61 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertIsNone(app.tpl_guide)                           # no pop-up any more
         self.button("?").invoke()                                  # but ? still opens it
         self.assertIsNotNone(app.tpl_guide)
+
+    # ---- Solve Word Problem (paste-text Stage 1b)
+    WREN = ("Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. "
+            "How old is each now?")
+    PROBLEM_0950 = ("An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana "
+                    "cost $3.40. A banana and two cherry cups cost $4.70. Find each price.")
+    ROOF_DECLINE = ("A sloped roof rises 5 m over 12 m, then 7 m over a longer run. "
+                    "The hypotenuse is 13 m. How long is the run?")
+    WREN_READING = "(x + 5) + (4*x + 5) = 105, so x = 19 and 4*x = 76"
+    UNSUPPORTED = "Unsupported problem — no matching solution found."
+
+    def test_solve_word_problem_wren(self):
+        app = self.app
+        before = self.row_text()
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Solve Word Problem").invoke()
+        said = self.said()
+        self.assertIn("times_as_old_future_sum", said)
+        self.assertIn("19", said)
+        self.assertIn("76", said)
+        self.assertIn(self.WREN_READING, said)
+        self.assertNotIn("Jamal: 19", said)
+        self.assertEqual(self.row_text(), before)
+        self.assertTrue(app._is_blank(app.rows[0]))
+        node = app.rows[0]["node"]
+        key = None if node is None else node.get("key")
+        self.assertFalse(isinstance(key, str) and key.startswith("word:"))
+
+    def test_solve_word_problem_declines(self):
+        cases = (
+            "",
+            self.PROBLEM_0950,
+            self.ROOF_DECLINE,
+            "(\u25a1 + 3) \u00d7 2",
+        )
+        for text in cases:
+            self.app.tpl_entry.delete(0, "end")
+            if text:
+                self.app.tpl_entry.insert(0, text)
+            self.button("Solve Word Problem").invoke()
+            self.assertIn(self.UNSUPPORTED, self.said(), repr(text))
+            self.assertTrue(self.app._is_blank(self.app.rows[0]), repr(text))
+
+    def test_solve_word_problem_does_not_interfere_with_preview_posted(self):
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Solve Word Problem").invoke()
+        self.assertIn("times_as_old_future_sum", self.said())
+        self.assertTrue(self.app._is_blank(self.app.rows[0]))
+        self.type_math("(\u25a1 + 3) * 2")
+        self.button("Preview Posted").invoke()
+        self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
+        self.assertIn("Preview - posted in Row 1", self.said())
+        self.assertNotIn("times_as_old_future_sum", self.said())
 
 
 if __name__ == "__main__":
