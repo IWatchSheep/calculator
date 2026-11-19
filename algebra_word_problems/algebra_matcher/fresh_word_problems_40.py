@@ -10,8 +10,8 @@ FRESH = [
     (RATIO + "How many students were there to begin with?", [21]),
     (PIPES + "With all three running, how long does it take to fill the tank?", [Fraction(12, 5)]),
     (PIPES + "The pipes and the drain are open together. How long does it take to fill the tank?", [Fraction(12, 5)]),
-    (RATIO + "How many students are there now?", None),
-    (RATIO + "How many students were there originally? How many students are there after they join?", None),
+    (RATIO + "How many students are there now?", [27]),
+    (RATIO + "How many students were there originally? How many students are there after they join?", [21, 27]),
     (PIPES + "Both pipes are open at the same time. How long does it take to fill the tank?", None),
     (PIPES + "Both pipes work at once. How long does it take to fill the tank?", None),
 ]
