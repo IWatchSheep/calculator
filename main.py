@@ -3042,7 +3042,7 @@ class CalculatorGUI(tk.Tk):
             command=lambda: self._tpl_show_guide()).pack(side="left", padx=2)          # opens the how-to guide
         r2 = tk.Frame(tpl, bg="#f0f4f4")
         r2.pack(anchor="w", padx=4, pady=2)
-        self.tpl_entry = tk.Entry(r2, width=26)
+        self.tpl_entry = tk.Entry(r2, width=36)
         self.tpl_entry.pack(side="left")
         self.tpl_entry.bind("<KeyRelease>", lambda e: self._tpl_typed())
         tk.Label(r2, text="=", bg="#f0f4f4", font=("Segoe UI", 11, "bold")).pack(side="left", padx=4)

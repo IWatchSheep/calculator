@@ -2269,6 +2269,7 @@ class TemplatePanelTests(unittest.TestCase):
         panel = self.widgets(self.app.tpl_panel)
         self.assertEqual([w for w in panel if isinstance(w, tk.Button) and w.cget("text") == "="], [])
         self.assertTrue(any(isinstance(w, tk.Label) and w.cget("text") == "=" for w in panel))
+        self.assertEqual(self.app.tpl_entry.cget("width"), 36)
 
     # ---- Preview Posted
     def test_preview_posted_puts_the_math_in_the_row(self):
