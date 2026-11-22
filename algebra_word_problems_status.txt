@@ -178,6 +178,13 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    to shared ('box', '') card with SLOTS = [0, 1, 0, 2], mapping 4 visible boxes to 3 underlying slots (years,
    multiplier, sum). Editing either years box updates both displayed values simultaneously; keypad = evaluates
    dynamically with unchanged compute(). Preserves BOX_INDEX and DEFAULTS. Other 478 catalog rows remain untouched.
+   Stage 2c.2 (Remaining age synchronization, 2026-11-22): Native SLOTS synchronization extended to the remaining
+   three verified problems in times_as_old_future_sum: age/0004 (Dana/Aiden, SLOTS = [0, 1, 0, 2]), age/0005
+   (Uma/Yusuf, SLOTS = [0, 1, 0, 2]), and age/0007 (Noah/Ava, SLOTS = [1, 0, 1, 2] reflecting its BOX_INDEX = [0, 1, 2]).
+   Second elapsed-years static card converted to shared ('box', '') card; editing either years box updates both;
+   multiplier and sum remain independent; keypad = evaluates dynamically with existing compute(). age/0009 belongs
+   to sum_difference with 2 independent boxes and remains untouched. Bulk generator make_algebra_word_problem_files.py
+   must not be run until updated to support SLOTS generation.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.

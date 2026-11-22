@@ -2567,6 +2567,10 @@ class TemplatePanelTests(unittest.TestCase):
     # ---- Post Problem to Row (Stage 2b)
     WREN_MODIFIED = ("Wren is 4 times as old as Jamal. In 6 years, the sum of their ages will be 105. "
                      "How old is each now?")
+    DANA = ("Dana is 2 times as old as Aiden. In 6 years, the sum of their ages will be 33. How old is each now?")
+    UMA = ("Uma is 3 times as old as Yusuf. In 10 years, the sum of their ages will be 68. How old is each now?")
+    NOAH = ("Noah is 3 times as old as Ava. In 3 years, the sum of their ages will be 82. How old is each now?")
+    MAYA = ("Maya is 30 years older than Yara. The sum of their ages is 40. How old is each?")
 
     def test_post_problem_to_row_wren_places_row_and_computes(self):
         """A, B, C: Exact Wren/Jamal catalog wording posts age/0001, boxes are 5, 4, 105, = gives (19, 76)."""
@@ -2658,6 +2662,209 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual(cards[box_indices[1]][1], "3")
         self.assertEqual(cards[box_indices[2]][1], "5")
         self.assertEqual(cards[box_indices[3]][1], "105")
+
+    def test_stage_2c2_age_0004_slots_synchronization(self):
+        """Stage 2c.2: age/0004 (Dana/Aiden) has 4 visible boxes for 3 slots; editing either 6 updates both; = recomputes."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.DANA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "2")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        self.assertEqual(cards[box_indices[3]][1], "33")
+
+        # Initial = gives (7, 14)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(7, 14)")
+
+        # Edit years from 6 to 3 via Box 0 -> both update to 3 -> = gives (9, 18)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "2")
+        self.assertEqual(cards[box_indices[3]][1], "33")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(9, 18)")
+
+        # Restore years from 3 to 6 via Box 2 -> both update to 6 -> = gives (7, 14)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(7, 14)")
+
+    def test_stage_2c2_age_0005_slots_synchronization(self):
+        """Stage 2c.2: age/0005 (Uma/Yusuf) has 4 visible boxes for 3 slots; editing either 10 updates both; = recomputes."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.UMA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual(cards[box_indices[0]][1], "10")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "10")
+        self.assertEqual(cards[box_indices[3]][1], "68")
+
+        # Initial = gives (12, 36)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(12, 36)")
+
+        # Edit years from 10 to 6 via Box 0 -> both update to 6 -> = gives (14, 42)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        self.assertEqual(cards[box_indices[3]][1], "68")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(14, 42)")
+
+        # Restore years from 6 to 10 via Box 2 -> both update to 10 -> = gives (12, 36)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "10")
+        self.assertEqual(cards[box_indices[2]][1], "10")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(12, 36)")
+
+    def test_stage_2c2_age_0007_slots_synchronization(self):
+        """Stage 2c.2: age/0007 (Noah/Ava) has SLOTS = [1, 0, 1, 2]; editing either 3 updates both; multiplier is slot 0."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.NOAH)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        # In age/0007: Box 0 is Years (Slot 1), Box 1 is Multiplier (Slot 0), Box 2 is Years (Slot 1), Box 3 is Sum (Slot 2)
+        self.assertEqual(cards[box_indices[0]][2], (0, 1))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        self.assertEqual(cards[box_indices[3]][1], "82")
+
+        # Initial = gives (19, 57)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 57)")
+
+        # Edit years from 3 to 5 via Box 0 -> both years boxes update to 5, multiplier remains 3 -> = gives (18, 54)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        self.assertEqual(cards[box_indices[3]][1], "82")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(18, 54)")
+
+        # Restore years from 5 to 3 via Box 2 -> both years boxes update to 3 -> = gives (19, 57)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 57)")
+
+        # Edit multiplier from 3 to 4 via Box 1 -> multiplier is 4, years remain 3 -> = gives (15.2, 60.8)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[3]][1], "82")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(15.2, 60.8)")
+
+    def test_stage_2c2_age_0009_remains_unchanged(self):
+        """Stage 2c.2: age/0009 belongs to sum_difference, has 2 independent boxes and no SLOTS."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.MAYA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        node = app.rows[0]["node"]["slots"][0]
+        self.assertEqual(node["key"], "word:age/0009")
+        self.assertEqual(node["slots"], ["30", "40"])
+        self.assertFalse(hasattr(node["mod"], "SLOTS"))
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(5, 35)")
 
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
