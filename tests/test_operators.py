@@ -2261,7 +2261,7 @@ class TemplatePanelTests(unittest.TestCase):
         for gone in ("Calculate (e)", "+ Add Description Col", "Delete Selected Col"):
             self.assertNotIn(gone, texts)
         for kept in ("Clear (C)", "Next Row (\u2193)", "Apply Template", "Save Template", "Preview Posted",
-                     "Solve Word Problem", "?"):
+                     "Solve Word Problem", "Post Problem to Row", "?"):
             self.assertIn(kept, texts)
 
     def test_the_equals_beside_the_text_box_is_only_a_sign(self):
@@ -2408,7 +2408,7 @@ class TemplatePanelTests(unittest.TestCase):
             self.assertGreaterEqual(y, 0)
             self.assertLessEqual(x + w, sw)
             self.assertLessEqual(y + h, sh)                            # the Got it button is reachable
-        for name in ("Preview Posted", "Save Template", "Apply Template"):
+        for name in ("Preview Posted", "Save Template", "Apply Template", "Solve Word Problem", "Post Problem to Row"):
             b = self.button(name)
             bx, by, bw, bh = b.winfo_rootx(), b.winfo_rooty(), b.winfo_width(), b.winfo_height()
             overlap = bx < x + w and x < bx + bw and by < y + h and y < by + bh
@@ -2563,6 +2563,108 @@ class TemplatePanelTests(unittest.TestCase):
         self.button("Preview Posted").invoke()
         self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
         self.assertIn("Preview - posted in Row 1", self.said())
+
+    # ---- Post Problem to Row (Stage 2b)
+    WREN_MODIFIED = ("Wren is 4 times as old as Jamal. In 6 years, the sum of their ages will be 105. "
+                     "How old is each now?")
+
+    def test_post_problem_to_row_wren_places_row_and_computes(self):
+        """A, B, C: Exact Wren/Jamal catalog wording posts age/0001, boxes are 5, 4, 105, = gives (19, 76)."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # A & B: node is age/0001 with slots ['5', '4', '105'] and row text is equation
+        self.assertFalse(app._is_blank(app.rows[0]))
+        node = app.rows[0]["node"]["slots"][0]
+        self.assertEqual(node["key"], "word:age/0001")
+        self.assertEqual(node["slots"], ["5", "4", "105"])
+        self.assertEqual(self.row_text(), "( x + 5 ) + ( 4 x + 5 ) = 105")
+
+        # C: Keypad = evaluates the row and produces the expected result
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 76)")
+        self.assertIn("=  (19, 76)", self.said())
+
+    def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
+        """D: Solve Word Problem still only displays results and does not place a row."""
+        app = self.app
+        before = self.row_text()
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Solve Word Problem").invoke()
+        app.update()
+        said = self.said()
+        self.assertIn("times_as_old_future_sum", said)
+        self.assertIn("19", said)
+        self.assertIn("76", said)
+        self.assertEqual(self.row_text(), before)
+        self.assertTrue(app._is_blank(app.rows[0]))
+
+    def test_preview_posted_still_handles_math_templates(self):
+        """E: Preview Posted still handles mathematical templates."""
+        self.type_math("(\u25a1 + 3) * 2")
+        self.button("Preview Posted").invoke()
+        self.assertEqual(self.row_text(), "\u25a1 + 3 \u00d7 2")
+        self.assertIn("Preview - posted in Row 1", self.said())
+
+    def test_post_problem_declines_and_preserves_existing_row(self):
+        """F & G: Empty text, problem 0950, fresh decline, modified Wren refuse placement and preserve row."""
+        app = self.app
+        self.type_math("(\u25a1 + 3) * 2")
+        self.button("Preview Posted").invoke()
+        before_text = self.row_text()
+        before_node = app.rows[0]["node"]
+
+        cases = (
+            "",
+            "   ",
+            self.PROBLEM_0950,
+            self.ROOF_DECLINE,
+            self.WREN_MODIFIED,
+        )
+        for text in cases:
+            self.app.tpl_entry.delete(0, "end")
+            if text.strip():
+                self.app.tpl_entry.insert(0, text)
+            self.button("Post Problem to Row").invoke()
+            app.update()
+            self.assertEqual(self.row_text(), before_text, f"Row changed on: {text!r}")
+            self.assertIs(app.rows[0]["node"], before_node, f"Node changed on: {text!r}")
+
+    def test_post_problem_to_selected_target_row(self):
+        """H: A valid problem posts to the currently selected target row."""
+        app = self.app
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        self.assertTrue(app._is_blank(app.rows[0]))
+        self.assertFalse(app._is_blank(app.rows[1]))
+        node1 = app.rows[1]["node"]["slots"][0]
+        self.assertEqual(node1["key"], "word:age/0001")
+        self.assertEqual(node1["slots"], ["5", "4", "105"])
+
+    def test_catalog_integrity(self):
+        """J: Catalog remains 479 total: 478 Ready, 1 Reference (0950), 0 Wrong."""
+        import algebra_word_problem_catalog as c
+        index_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                               "operators_one_algebra_word_problem_per_file", "INDEX.md")
+        items = c.load_catalog(index_p)
+        self.assertEqual(len(items), 479)
+        self.assertEqual(sum(1 for x in items if x["status"] == "Ready"), 478)
+        self.assertEqual(sum(1 for x in items if x["status"] == "Reference"), 1)
+        p0950 = [x for x in items if x["id"] == "0950"]
+        self.assertEqual(len(p0950), 1)
+        self.assertEqual(p0950[0]["status"], "Reference")
 
 
 if __name__ == "__main__":

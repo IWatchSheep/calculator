@@ -2431,6 +2431,30 @@ class CalculatorGUI(tk.Tk):
         self._say("Family: %s\nValues: %s\nEquation: %s\nReading: %s"
                   % (result.family, values, result.equation, result.reading))
 
+    def _tpl_post_word_problem(self):
+        """Post Problem to Row: place the problem into the selected row if it matches a Ready catalog entry.
+
+        Exact catalog matching only. Does not modify or clear the row if the text is empty,
+        unsupported, ambiguous, reference-only, or has modified numbers.
+        """
+        text = self.tpl_entry.get().strip()
+        if not text:
+            self._say("No text to post. Type or paste an algebra word problem into the Templates box first.")
+            return
+        matches = [item for item in self._word_catalog() if item["problem"].strip() == text]
+        if not matches:
+            self._say("Unsupported problem \u2014 no matching solution found.")
+            return
+        if len(matches) > 1:
+            self._say("Ambiguous problem \u2014 multiple catalog matches found.")
+            return
+        item = matches[0]
+        if item.get("status") != "Ready":
+            self._say("%s %s is reference only: its text, steps and diagram are stored, but no solver answers it yet, so it is not placed in a row.\n%s"
+                      % (item.get("category", ""), item.get("id", ""), item.get("problem", "")))
+            return
+        self._place_word_problem(item)
+
     def _tpl_save(self):
         """Save Template: keep the typed math so it shows up in the Apply Template list."""
         text = self.tpl_entry.get().strip()
@@ -3052,6 +3076,8 @@ class CalculatorGUI(tk.Tk):
         r3.pack(anchor="w", padx=4, pady=2)
         btn(r3, "Solve Word Problem", "#fff3c4", fg="#7a5a00",
             command=self._tpl_solve_word_problem).pack(side="left", padx=2)
+        btn(r3, "Post Problem to Row", "#cfe0f7", fg=BLUE,
+            command=self._tpl_post_word_problem).pack(side="left", padx=2)
 
         desc = tk.LabelFrame(mid, text="Descriptive Columns Console (Col 2 & 3)", fg=PURPLE,
                              font=("Segoe UI", 8, "bold"), bg="#f0f4f4")
