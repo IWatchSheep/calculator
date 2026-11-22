@@ -2589,6 +2589,76 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 76)")
         self.assertIn("=  (19, 76)", self.said())
 
+    def test_stage_2c1_pilot_age_0001_slots_synchronization(self):
+        """Stage 2c.1 pilot: age/0001 has 4 visible boxes for 3 slots; editing either 5 updates both; = recomputes."""
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.WREN)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        # Check slot paths
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        # Initial display
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "105")
+
+        # Edit first years box to 10 -> updates both box 0 and box 2
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "10")
+        self.assertEqual(cards[box_indices[2]][1], "10")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[3]][1], "105")
+
+        # Keypad = computes (17, 68)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(17, 68)")
+
+        # Edit second years box back to 5 -> updates both box 0 and box 2
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+
+        # Keypad = computes (19, 76)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 76)")
+
+        # Multiplier and total remain independent
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "3")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "105")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

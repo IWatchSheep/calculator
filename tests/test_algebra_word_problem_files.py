@@ -96,7 +96,16 @@ class Rows(unittest.TestCase):
             self.assertEqual(len(set(r.BOX_INDEX)), len(r.BOX_INDEX), key)                          # a text number is in one box at most
             self.assertEqual(len(r.INPUTS), len(blue), key)
             self.assertEqual(len(r.KINDS), len(blue), key)
-            self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
+            if hasattr(r, "SLOTS"):
+                self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(r.SLOTS), key)
+                self.assertEqual(set(r.SLOTS), set(range(len(r.DEFAULTS))), key)
+                self.assertTrue(all(0 <= s < len(r.DEFAULTS) for s in r.SLOTS), key)
+                if key == "age/0001":
+                    self.assertEqual(r.SLOTS, [0, 1, 0, 2], key)
+                    self.assertEqual(r.BOX_INDEX, [1, 0, 2], key)
+                    self.assertEqual(r.DEFAULTS, ["5", "4", "105"], key)
+            else:
+                self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)
             self.assertEqual(r.CALC, "ready" if m.SOLVER else "reference", key)
             self.assertTrue(callable(r.place))
