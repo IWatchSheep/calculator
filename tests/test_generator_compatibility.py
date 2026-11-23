@@ -246,6 +246,8 @@ class GeneratorReproductionTests(unittest.TestCase):
             "distance_average_speed/0120": ([0, 1, 2, 1, 3], [1, 0, 2, 3], ["30", "2", "75", "45"], 5),
             "distance_average_speed/0121": ([0, 1, 2, 1, 3], [1, 0, 2, 3], ["50", "1", "45", "46"], 5),
             "distance_average_speed/0124": ([0, 1, 2, 1, 3], [1, 0, 2, 3], ["60", "3", "75", "66"], 5),
+            "rational_equation/0813": ([0, 1, 2, 1], [0, 1, 2], ["1590", "40", "1350"], 4),
+            "distance_round_trip/0143": ([0, 0, 1, 2, 3], [0, 1, 2, 3], ["60", "15", "10", "3"], 5),
         }
         for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")

@@ -5263,6 +5263,354 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual(app.rows[0]["result"].cget("text"), "2.2")
 
 
+    def test_stage_2l2_rational_equation_0813_slots_synchronization(self):
+        """Stage 2l.2: rational_equation/0813 plane tailwind/headwind 1590/(p + 40) = 1350/(p − 40)
+        Native SLOTS synchronization links wind speed in both fraction denominators (slot 1),
+        leaving tailwind distance (slot 0) and headwind distance (slot 2) independent."""
+        app = self.app
+        plane_text = (
+            "A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. "
+            "What is the plane's speed in still air?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, plane_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(
+            mod.FRAC,
+            [[[1, 'n']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], [[2, 'n']], [[2, 'bar']], [[2, 'hide']], [[2, 'd']], [[2, 'd']], [[2, 'd']], [[2, 'hide']]]
+        )
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        self.assertEqual(box_indices, [0, 5, 8, 13])
+
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 2))
+        self.assertEqual(cards[box_indices[3]][2], (0, 1))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 3)
+
+        # Initial displayed values: ['1590', '40', '1350', '40']
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["1590", "40", "1350", "40"])
+
+        # 1. Original default evaluation -> p = 490
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "490")
+
+        # 2. Edit Box 1 (wind speed) from 40 to 50 -> both Box 1 and Box 3 display 50, p = 612.5
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "50")
+        self.assertEqual(cards[box_indices[3]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "612.5")
+
+        # 3. Edit Box 3 (second occurrence of wind speed) from 50 to 30 -> both display 30, p = 367.5
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "30")
+        self.assertEqual(cards[box_indices[3]][1], "30")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "367.5")
+
+        # 4. Edit Box 0 (tailwind distance) independently: 1590 -> 1600
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "1600":
+            app._key(ch)
+        app.update()
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["1600", "30", "1350", "30"])
+
+        # Restore Box 0 to 1590
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "1590":
+            app._key(ch)
+        app.update()
+
+        # 5. Edit Box 2 (headwind distance) independently: 1350 -> 1400
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "1400":
+            app._key(ch)
+        app.update()
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["1590", "30", "1400", "30"])
+
+        # Restore Box 2 to 1350
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "1350":
+            app._key(ch)
+        app.update()
+
+        # 6. Restore defaults: wind speed Box 1 back to 40 -> both 40, p = 490
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["1590", "40", "1350", "40"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "490")
+
+    def test_stage_2l2_distance_round_trip_0143_slots_synchronization(self):
+        """Stage 2l.2: distance_round_trip/0143 cyclist round trip 60/s + 60/(s + 15) = 10/3
+        Native SLOTS synchronization links one-way distance in both fraction numerators (slot 0),
+        leaving speed increase (slot 1), time numerator (slot 2), and time denominator (slot 3) independent.
+        Also includes simultaneous cross-row isolation testing with rational_equation/0813."""
+        app = self.app
+        cyclist_text = (
+            "A cyclist rides 60 km to a town and returns 15 km/h faster. The whole trip takes 10/3 hours. How fast was the outbound ride?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, cyclist_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(
+            mod.FRAC,
+            [[[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [[2, 'n']], [[2, 'bar']], [[2, 'hide']], [[2, 'd']], [[2, 'd']], [[2, 'd']], [[2, 'hide']], [], [[3, 'n']], [[3, 'bar']], [[3, 'd']]]
+        )
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 5)
+        self.assertEqual(box_indices, [0, 4, 9, 12, 14])
+
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual(cards[box_indices[4]][2], (0, 3))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 4)
+
+        # Initial displayed values: ['60', '60', '15', '10', '3']
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["60", "60", "15", "10", "3"])
+
+        # 1. Original default evaluation -> s = 30
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "30")
+
+        # 2. Edit Box 0 (one-way distance) from 60 to 312 -> both Box 0 and Box 1 display 312, s = 180
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "312":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "312")
+        self.assertEqual(cards[box_indices[1]][1], "312")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "180")
+
+        # 3. Edit Box 1 (second occurrence of distance) from 312 to 40 -> both display 40
+        # and edit Box 2 (speed increase) from 15 to 10 -> s = 20
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "40":
+            app._key(ch)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "40")
+        self.assertEqual(cards[box_indices[1]][1], "40")
+        self.assertEqual(cards[box_indices[2]][1], "10")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "20")
+
+        # 4. Edit Box 0 to 20, Box 2 to 5 -> s = 10
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "20":
+            app._key(ch)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "5":
+            app._key(ch)
+        app.update()
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "10")
+
+        # 5. Edit Box 0 to 60, Box 2 to 10, Box 3 to 7, Box 4 to 2 (time = 7/2) -> s = 30
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "60":
+            app._key(ch)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "7":
+            app._key(ch)
+        app._pick_box(0, box_indices[4])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "2":
+            app._key(ch)
+        app.update()
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "30")
+
+        # 6. Restore defaults: Box 0 to 60, Box 2 to 15, Box 3 to 10, Box 4 to 3 -> s = 30
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "60":
+            app._key(ch)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "15":
+            app._key(ch)
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app._pick_box(0, box_indices[4])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "3":
+            app._key(ch)
+        app.update()
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["60", "60", "15", "10", "3"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "30")
+
+        # 7. Live Cross-Row Simultaneous Test:
+        # Load rational_equation/0813 in Row 0 and distance_round_trip/0143 in Row 1
+        app._clear_all()
+        app.update()
+        plane_text = (
+            "A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. "
+            "What is the plane's speed in still air?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, plane_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Switch to Row 1 and post 0143
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, cyclist_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Set join on Row 1 so both rows can evaluate together
+        app._set_join(1, "+")
+        app.update()
+
+        # Verify Row 0 and Row 1 are both populated
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 4)
+        self.assertEqual(len(boxes1), 5)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["1590", "40", "1350", "40"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["60", "60", "15", "10", "3"])
+
+        # Edit Row 0 wind speed (box index boxes0[1]) to 50
+        app._pick_box(0, boxes0[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("0")
+        app.update()
+
+        # Check Row 0 is updated and Row 1 is untouched
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["1590", "50", "1350", "50"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["60", "60", "15", "10", "3"])
+
+        # Edit Row 1 distance (box index boxes1[0]) to 312
+        app._pick_box(1, boxes1[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "312":
+            app._key(ch)
+        app.update()
+
+        # Check Row 1 is updated and Row 0 is untouched
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["1590", "50", "1350", "50"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["312", "312", "15", "10", "3"])
+
+        # Evaluate both rows joined by +
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "612.5")
+        self.assertEqual(app.rows[1]["result"].cget("text"), "180")
+        self.assertEqual(app.rows[2]["result"].cget("text"), "792.5")
+
+        # Clear Row 0; Row 1 math and result must remain intact
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["312", "312", "15", "10", "3"])
+        self.assertEqual(app.rows[1]["result"].cget("text"), "180")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

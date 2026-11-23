@@ -179,6 +179,14 @@ class Rows(unittest.TestCase):
                         self.assertEqual(r.DEFAULTS, ["1", "4", "12"], key)
                     elif key == "work_rate/1000":
                         self.assertEqual(r.DEFAULTS, ["1", "12", "3"], key)
+                elif key == "rational_equation/0813":
+                    self.assertEqual(r.SLOTS, [0, 1, 2, 1], key)
+                    self.assertEqual(r.BOX_INDEX, [0, 1, 2], key)
+                    self.assertEqual(r.DEFAULTS, ["1590", "40", "1350"], key)
+                elif key == "distance_round_trip/0143":
+                    self.assertEqual(r.SLOTS, [0, 0, 1, 2, 3], key)
+                    self.assertEqual(r.BOX_INDEX, [0, 1, 2, 3], key)
+                    self.assertEqual(r.DEFAULTS, ["60", "15", "10", "3"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)

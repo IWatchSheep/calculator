@@ -339,6 +339,28 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 2", "number 1", "number 3", "number 4"],
         "kinds": ["number", "number", "number", "number"],
     },
+    "rational_equation/0813": {
+        "equation": "1590/(p + 40) = 1350/(p − 40)",
+        "repeat_token": 13,
+        "expected_token": "40",
+        "slots": [0, 1, 2, 1],
+        "slots_comment": "boxes 1 and 3 share slot 1 (wind speed)",
+        "box_index": [0, 1, 2],
+        "defaults": ["1590", "40", "1350"],
+        "inputs": ["number 1", "number 2", "number 3"],
+        "kinds": ["number", "number", "number"],
+    },
+    "distance_round_trip/0143": {
+        "equation": "60/s + 60/(s + 15) = 10/3",
+        "repeat_token": 4,
+        "expected_token": "60",
+        "slots": [0, 0, 1, 2, 3],
+        "slots_comment": "boxes 0 and 1 share slot 0 (distance)",
+        "box_index": [0, 1, 2, 3],
+        "defaults": ["60", "15", "10", "3"],
+        "inputs": ["number 1", "number 2", "number 3", "number 4"],
+        "kinds": ["number", "number", "number", "number"],
+    },
 }
 
 
