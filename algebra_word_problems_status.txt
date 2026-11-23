@@ -226,6 +226,18 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    modules, 479 row modules, JPEG diagrams, and INDEX.md byte-for-byte. Presentation limitation preserved:
    the existing catalog JPEG (0970.jpg) remains unchanged and still depicts the original static second numerator
    until diagram rendering is addressed in a separate milestone. Other 4 work_rate problems remain untouched for this pilot.
+   Stage 2f.2 (Remaining work-rate fraction row synchronization, 2026-11-22): Native SLOTS synchronization extended
+   to the four remaining verified problems in partner_alone_from_together: work_rate/0972 (Noah/Victor, together 6h,
+   alone 12h, SLOTS = [0, 1, 0]), work_rate/0987 (Gus/Sam, together 3h, alone 6h, SLOTS = [0, 1, 0]), work_rate/0995
+   (Hiro/Nia, together 3h, alone 4h, SLOTS = [0, 1, 0]), and work_rate/0997 (Omar/Fatima, together 3h, alone 12h,
+   SLOTS = [0, 1, 0]). Static second working-together numerator at LEFT index 4 converted to shared ('box', '') card;
+   editing either numerator updates both; denominator remains independent; keypad = evaluates dynamically with existing
+   compute(). Preserves BOX_INDEX = [0, 1] and original DEFAULTS. Fraction layout and grouping (FRAC and LEVELS) remain
+   structurally unchanged and visually correct with numerators above and denominators below the division bars.
+   Updated generator EXPLICIT_ROW_SYNCHRONIZATION for all 4 problems with strict preflight validation. Isolated generation
+   reproduces all 479 problem modules, row modules, diagrams, and index byte-for-byte. Presentation limitation preserved:
+   existing catalog JPEGs remain unchanged and continue to depict static secondary cards until diagram rendering is
+   addressed in a separate milestone.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.

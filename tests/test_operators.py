@@ -3329,6 +3329,364 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "6")
 
+    def test_stage_2f2_work_rate_0972_slots_synchronization(self):
+        """Stage 2f.2: work_rate/0972 (Noah/Victor) has SLOTS = [0, 1, 0]; editing either numerator updates both; = recomputes."""
+        NOAH_VICTOR = ("Working together, Noah and Victor can finish a job in 6 hours. Noah alone takes 12 hours. "
+                       "How long would Victor take alone?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, NOAH_VICTOR)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "n"]], [[1, "bar"]], [[1, "d"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]], [], []])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+
+        # Initial = gives 12
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Edit first numerator (Box 0) from 6 to 4 -> both numerators become 4, denominator remains 12
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Restore second numerator (Box 2) from 4 to 6 -> both numerators return to 6
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Edit denominator (Box 1) independently from 12 to 8 -> numerators remain 6 -> 6/8 + 6/x = 1 -> x = 24
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("8")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "8")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "24")
+
+        # Restore denominator from 8 back to 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "6")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+    def test_stage_2f2_work_rate_0987_slots_synchronization(self):
+        """Stage 2f.2: work_rate/0987 (Gus/Sam) has SLOTS = [0, 1, 0]; editing either numerator updates both; = recomputes."""
+        GUS_SAM = ("Working together, Gus and Sam can finish a job in 3 hours. Gus alone takes 6 hours. "
+                   "How long would Sam take alone?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, GUS_SAM)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "n"]], [[1, "bar"]], [[1, "d"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]], [], []])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+
+        # Initial = gives 6
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Edit first numerator (Box 0) from 3 to 2 -> both numerators become 2, denominator remains 6
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "2")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "3")
+
+        # Restore second numerator (Box 2) from 2 to 3 -> both numerators return to 3
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Edit denominator (Box 1) independently from 6 to 4 -> numerators remain 3 -> 3/4 + 3/x = 1 -> x = 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Restore denominator from 4 back to 6
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+    def test_stage_2f2_work_rate_0995_slots_synchronization(self):
+        """Stage 2f.2: work_rate/0995 (Hiro/Nia) has SLOTS = [0, 1, 0]; editing either numerator updates both; = recomputes."""
+        HIRO_NIA = ("Working together, Hiro and Nia can finish a job in 3 hours. Hiro alone takes 4 hours. "
+                    "How long would Nia take alone?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, HIRO_NIA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "n"]], [[1, "bar"]], [[1, "d"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]], [], []])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+
+        # Initial = gives 12
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Edit first numerator (Box 0) from 3 to 2 -> both numerators become 2, denominator remains 4
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "2")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Restore second numerator (Box 2) from 2 to 3 -> both numerators return to 3
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Edit denominator (Box 1) independently from 4 to 6 -> numerators remain 3 -> 3/6 + 3/x = 1 -> x = 6
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Restore denominator from 6 back to 4
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+    def test_stage_2f2_work_rate_0997_slots_synchronization(self):
+        """Stage 2f.2: work_rate/0997 (Omar/Fatima) has SLOTS = [0, 1, 0]; editing either numerator updates both; = recomputes."""
+        OMAR_FATIMA = ("Working together, Omar and Fatima can finish a job in 3 hours. Omar alone takes 12 hours. "
+                       "How long would Fatima take alone?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, OMAR_FATIMA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "n"]], [[1, "bar"]], [[1, "d"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]], [], []])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+
+        # Initial = gives 4
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Edit first numerator (Box 0) from 3 to 4 -> both numerators become 4, denominator remains 12
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Restore second numerator (Box 2) from 4 to 3 -> both numerators return to 3
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Edit denominator (Box 1) independently from 12 to 4 -> numerators remain 3 -> 3/4 + 3/x = 1 -> x = 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Restore denominator from 4 back to 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app
