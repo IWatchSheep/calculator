@@ -2866,6 +2866,80 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "(5, 35)")
 
+    def test_stage_2e2_number_puzzle_0576_slots_synchronization(self):
+        """Stage 2e.2: number_puzzle/0576 (Aiden/Fatima) has SLOTS = [0, 1, 1]; editing either 43 updates both; multiplier is slot 0."""
+        AIDEN_FATIMA = ("Aiden has 3 times as much money as Fatima. After Aiden gives Fatima $43, they have the same amount. "
+                        "How much did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, AIDEN_FATIMA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+
+        # In number_puzzle/0576: Box 0 is Multiplier (Slot 0), Box 1 is Transferred money (Slot 1), Box 2 is Transferred money (Slot 1)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "43")
+        self.assertEqual(cards[box_indices[2]][1], "43")
+
+        # Initial = gives (43, 129)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(43, 129)")
+
+        # Edit transfer from 43 to 50 via Box 1 -> both transfer boxes update to 50, multiplier remains 3 -> = gives (50, 150)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "50")
+        self.assertEqual(cards[box_indices[2]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(50, 150)")
+
+        # Restore transfer from 50 to 43 via Box 2 -> both transfer boxes update to 43 -> = gives (43, 129)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "43")
+        self.assertEqual(cards[box_indices[2]][1], "43")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(43, 129)")
+
+        # Edit multiplier from 3 to 5 via Box 0 -> multiplier is 5, transfer remains 43 -> = gives (21.5, 107.5)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "43")
+        self.assertEqual(cards[box_indices[2]][1], "43")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(21.5, 107.5)")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

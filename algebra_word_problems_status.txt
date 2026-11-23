@@ -195,6 +195,16 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    all other 475 rows untouched; (4) complete isolated-generation test suite (tests/test_generator_compatibility.py)
    verifying byte-for-byte fidelity with the repository for all 479 problem modules, all 479 row modules, JPEG diagrams,
    and INDEX.md. Live catalog and row files remain untouched.
+   Stage 2e.2 Pilot (Money-transfer row synchronization, 2026-11-22): number_puzzle/0576 (Aiden/Fatima) second
+   static '43' token at LEFT index 7 converted to shared ('box', '') card with SLOTS = [0, 1, 1], mapping 3 visible
+   boxes to 2 underlying slots (multiplier, transferred money). Editing either transfer box updates both displayed values
+   simultaneously; multiplier remains independent; keypad = evaluates dynamically with existing compute(). Preserves
+   BOX_INDEX = [0, 1] and DEFAULTS = ['3', '43']. Updated generator EXPLICIT_ROW_SYNCHRONIZATION and generalized
+   validate_preflight to strictly enforce len(BOX_INDEX) == len(DEFAULTS) == len(INPUTS) == len(KINDS) and valid
+   box index bounds for arbitrary underlying slot counts. Presentation limitation preserved: the calculator row is
+   synchronized, but the existing catalog JPEG (0576.jpg) remains unchanged and still depicts the original static second
+   43 rather than the new shared-slot representation; updating diagram rendering is deferred to a separately authorized
+   future milestone. Other 4 give_until_equal_money problems remain untouched for this pilot.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.

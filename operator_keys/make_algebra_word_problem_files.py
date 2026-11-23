@@ -40,6 +40,7 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "box_index": [1, 0, 2],
         "defaults": ["5", "4", "105"],
         "inputs": ["number 2", "number 1", "number 3"],
+        "kinds": ["number", "number", "number"],
     },
     "age/0004": {
         "equation": "(x + 6) + (2x + 6) = 33",
@@ -50,6 +51,7 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "box_index": [1, 0, 2],
         "defaults": ["6", "2", "33"],
         "inputs": ["number 2", "number 1", "number 3"],
+        "kinds": ["number", "number", "number"],
     },
     "age/0005": {
         "equation": "(x + 10) + (3x + 10) = 68",
@@ -60,6 +62,7 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "box_index": [1, 0, 2],
         "defaults": ["10", "3", "68"],
         "inputs": ["number 2", "number 1", "number 3"],
+        "kinds": ["number", "number", "number"],
     },
     "age/0007": {
         "equation": "(x + 3) + (3x + 3) = 82",
@@ -70,6 +73,18 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "box_index": [0, 1, 2],
         "defaults": ["3", "3", "82"],
         "inputs": ["number 1", "number 2", "number 3"],
+        "kinds": ["number", "number", "number"],
+    },
+    "number_puzzle/0576": {
+        "equation": "3x − 43 = x + 43",
+        "repeat_token": 7,
+        "expected_token": "43",
+        "slots": [0, 1, 1],
+        "slots_comment": "box 0 is slot 0 (multiplier); boxes 1 and 2 share slot 1 (transferred money)",
+        "box_index": [0, 1],
+        "defaults": ["3", "43"],
+        "inputs": ["number 1", "number 2"],
+        "kinds": ["number", "number"],
     },
 }
 
@@ -117,6 +132,8 @@ def validate_preflight(problems, explicit_specs):
         kind, val = cards[rep_idx]
         if kind != "op" or val != spec["expected_token"]:
             raise ValueError("Expected static token ('op', %r) at index %d for %s, found %r" % (spec["expected_token"], rep_idx, key, (kind, val)))
+        if not all(0 <= idx < len(numbers) for idx in spec["box_index"]):
+            raise ValueError("BOX_INDEX entries out of bounds for %s (%d text numbers)" % (key, len(numbers)))
         if spec["box_index"] != orig_box_index:
             raise ValueError("Mismatched BOX_INDEX for %s: expected %r, found %r" % (key, spec["box_index"], orig_box_index))
         expected_defaults = [numbers[i] for i in spec["box_index"]]
@@ -124,6 +141,11 @@ def validate_preflight(problems, explicit_specs):
             raise ValueError("Mismatched DEFAULTS for %s: expected %r, found %r" % (key, spec["defaults"], expected_defaults))
         if len(spec["inputs"]) != len(spec["defaults"]):
             raise ValueError("Length of INPUTS must match DEFAULTS for %s" % key)
+        kinds = spec.get("kinds", ["number"] * len(spec["defaults"]))
+        if len(kinds) != len(spec["defaults"]):
+            raise ValueError("Length of KINDS (%d) must match DEFAULTS (%d) for %s" % (len(kinds), len(spec["defaults"]), key))
+        if not (len(spec["box_index"]) == len(spec["defaults"]) == len(spec["inputs"]) == len(kinds)):
+            raise ValueError("Metadata length invariant len(BOX_INDEX) == len(DEFAULTS) == len(INPUTS) == len(KINDS) violated for %s" % key)
         slots = spec["slots"]
         expected_box_count = sum(1 for k, _ in cards if k == "box") + 1
         if len(slots) != expected_box_count:
@@ -132,8 +154,8 @@ def validate_preflight(problems, explicit_specs):
             raise ValueError("Invalid slot index in %r for %s" % (slots, key))
         if set(slots) != set(range(len(spec["defaults"]))):
             raise ValueError("Not all underlying slots represented in %r for %s" % (slots, key))
-        if len(spec["defaults"]) != 3:
-            raise ValueError("Expected 3 underlying slots for %s, found %d" % (key, len(spec["defaults"])))
+        if len(spec["defaults"]) < 1:
+            raise ValueError("Expected at least 1 underlying slot for %s, found %d" % (key, len(spec["defaults"])))
 
 
 def slug(text):

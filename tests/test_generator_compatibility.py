@@ -124,6 +124,24 @@ class GeneratorSafetyAndCliTests(unittest.TestCase):
             validate_preflight(problems, bad_specs)
         self.assertIn("Not all underlying slots represented", str(cm.exception))
 
+    def test_preflight_detects_mismatched_kinds_metadata(self):
+        """Preflight must fail if KINDS metadata length does not match DEFAULTS."""
+        bad_specs = copy.deepcopy(EXPLICIT_ROW_SYNCHRONIZATION)
+        bad_specs["number_puzzle/0576"]["kinds"] = ["number"]  # expected 2
+        problems = read_problems()
+        with self.assertRaises(ValueError) as cm:
+            validate_preflight(problems, bad_specs)
+        self.assertIn("Length of KINDS", str(cm.exception))
+
+    def test_preflight_detects_out_of_bounds_box_index(self):
+        """Preflight must fail if BOX_INDEX references a nonexistent problem number."""
+        bad_specs = copy.deepcopy(EXPLICIT_ROW_SYNCHRONIZATION)
+        bad_specs["number_puzzle/0576"]["box_index"] = [0, 99]
+        problems = read_problems()
+        with self.assertRaises(ValueError) as cm:
+            validate_preflight(problems, bad_specs)
+        self.assertIn("BOX_INDEX entries out of bounds", str(cm.exception))
+
 
 class GeneratorReproductionTests(unittest.TestCase):
     """Test full isolated generation and reproduction fidelity."""
@@ -197,15 +215,16 @@ class GeneratorReproductionTests(unittest.TestCase):
                 mismatches.append(("diff", f"{cat}/{pid}.jpg"))
         self.assertEqual(mismatches, [], "JPEG diagrams with differences: %r" % mismatches)
 
-    def test_four_synchronized_age_rows_structure(self):
-        """Verify the 4 synchronized rows have SLOTS and 4 box cards."""
+    def test_synchronized_rows_structure(self):
+        """Verify the synchronized rows have SLOTS and correct box cards."""
         expected = {
-            "age/0001": ([0, 1, 0, 2], [1, 0, 2], ["5", "4", "105"]),
-            "age/0004": ([0, 1, 0, 2], [1, 0, 2], ["6", "2", "33"]),
-            "age/0005": ([0, 1, 0, 2], [1, 0, 2], ["10", "3", "68"]),
-            "age/0007": ([1, 0, 1, 2], [0, 1, 2], ["3", "3", "82"]),
+            "age/0001": ([0, 1, 0, 2], [1, 0, 2], ["5", "4", "105"], 4),
+            "age/0004": ([0, 1, 0, 2], [1, 0, 2], ["6", "2", "33"], 4),
+            "age/0005": ([0, 1, 0, 2], [1, 0, 2], ["10", "3", "68"], 4),
+            "age/0007": ([1, 0, 1, 2], [0, 1, 2], ["3", "3", "82"], 4),
+            "number_puzzle/0576": ([0, 1, 1], [0, 1], ["3", "43"], 3),
         }
-        for key, (exp_slots, exp_box_index, exp_defaults) in expected.items():
+        for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")
             gen_path = os.path.join(self.gen_rows, cat, pid, f"{pid}.py")
             with open(gen_path, "r", encoding="utf-8") as f:
@@ -213,11 +232,10 @@ class GeneratorReproductionTests(unittest.TestCase):
             self.assertIn(f"SLOTS = {exp_slots}", content, f"{key} missing SLOTS")
             self.assertIn(f"BOX_INDEX = {exp_box_index}", content, f"{key} BOX_INDEX mismatch")
             self.assertIn(f"DEFAULTS = {exp_defaults}", content, f"{key} DEFAULTS mismatch")
-            # Verify 4 box cards in LEFT
             ns = {"__file__": gen_path}
             exec(content, ns)
             boxes = [c for c in ns["LEFT"] if c[0] == "box"]
-            self.assertEqual(len(boxes), 4, f"{key} must have exactly 4 box cards in LEFT")
+            self.assertEqual(len(boxes), exp_box_count, f"{key} must have exactly {exp_box_count} box cards in LEFT")
             self.assertEqual(ns["SLOTS"], exp_slots, f"{key} SLOTS mismatch")
             self.assertEqual(ns["BOX_INDEX"], exp_box_index, f"{key} BOX_INDEX mismatch")
             self.assertEqual(ns["DEFAULTS"], exp_defaults, f"{key} DEFAULTS mismatch")
