@@ -5,12 +5,12 @@
     operators_one_algebra_word_problem_per_file/INDEX.md                  one line per problem
     operator_row_math_for_algebra_word_problems/<category>/<id>/<id>.py   how the problem is laid out as a row of cards in the calculator
 
-Run it from the project folder with the project's own virtual environment (it needs Pillow for the pictures):
+Safety requirement: An explicit output directory outside the repository is required.
+Direct generation into the live repository is prohibited to prevent accidental overwrites.
 
-    .venv\\Scripts\\python.exe operator_keys\\make_algebra_word_problem_files.py
+Run it from the project folder into a target directory (e.g., in a temporary directory or staging build folder):
 
-It is safe to run again: it rewrites every generated file.  Run it again whenever the word solver gains or loses a family, because each problem file records which
-solver answers it (SOLVER) and the rows are marked ready or reference from that.  The two folders' __init__.py, _solve.py and preview.py are written by hand and not touched.
+    .venv\\Scripts\\python.exe operator_keys\\make_algebra_word_problem_files.py <output_directory>
 """
 import os
 import re
@@ -30,13 +30,119 @@ import word_solver as WS  # noqa: E402
 NUMBER = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 BOX = "\u25a1"
 
+EXPLICIT_ROW_SYNCHRONIZATION = {
+    "age/0001": {
+        "equation": "(x + 5) + (4x + 5) = 105",
+        "repeat_token": 10,
+        "expected_token": "5",
+        "slots": [0, 1, 0, 2],
+        "slots_comment": "boxes 0 and 2 share slot 0 (elapsed years)",
+        "box_index": [1, 0, 2],
+        "defaults": ["5", "4", "105"],
+        "inputs": ["number 2", "number 1", "number 3"],
+    },
+    "age/0004": {
+        "equation": "(x + 6) + (2x + 6) = 33",
+        "repeat_token": 10,
+        "expected_token": "6",
+        "slots": [0, 1, 0, 2],
+        "slots_comment": "boxes 0 and 2 share slot 0 (elapsed years)",
+        "box_index": [1, 0, 2],
+        "defaults": ["6", "2", "33"],
+        "inputs": ["number 2", "number 1", "number 3"],
+    },
+    "age/0005": {
+        "equation": "(x + 10) + (3x + 10) = 68",
+        "repeat_token": 10,
+        "expected_token": "10",
+        "slots": [0, 1, 0, 2],
+        "slots_comment": "boxes 0 and 2 share slot 0 (elapsed years)",
+        "box_index": [1, 0, 2],
+        "defaults": ["10", "3", "68"],
+        "inputs": ["number 2", "number 1", "number 3"],
+    },
+    "age/0007": {
+        "equation": "(x + 3) + (3x + 3) = 82",
+        "repeat_token": 10,
+        "expected_token": "3",
+        "slots": [1, 0, 1, 2],
+        "slots_comment": "boxes 0 and 2 share slot 1 (elapsed years); box 1 is slot 0 (multiplier)",
+        "box_index": [0, 1, 2],
+        "defaults": ["3", "3", "82"],
+        "inputs": ["number 1", "number 2", "number 3"],
+    },
+}
+
+
+def is_protected_destination(path):
+    """True if path resolves to or is inside any protected repository directory (ROOT, LIB, ROWS)."""
+    if not path:
+        return False
+    target = os.path.realpath(os.path.abspath(path))
+    for protected in (LIB, ROWS, ROOT):
+        prot_real = os.path.realpath(os.path.abspath(protected))
+        if target == prot_real:
+            return True
+        try:
+            rel = os.path.relpath(target, prot_real)
+            if not rel.startswith("..") and rel != ".":
+                return True
+        except ValueError:
+            pass
+        try:
+            rel = os.path.relpath(prot_real, target)
+            if not rel.startswith("..") and rel != ".":
+                return True
+        except ValueError:
+            pass
+    return False
+
+
+def validate_preflight(problems, explicit_specs):
+    """Validate all catalog problems and explicit specifications BEFORE any file is created or written."""
+    if len(problems) != 479:
+        raise ValueError("Expected 479 problems, found %d" % len(problems))
+    problems_by_key = {"%s/%s" % (slug(p["category"]), p["id"]): p for p in problems}
+    for key, spec in explicit_specs.items():
+        if key not in problems_by_key:
+            raise ValueError("Explicit synchronization key %r not found in catalog." % key)
+        p = problems_by_key[key]
+        if p["Equation"] != spec["equation"]:
+            raise ValueError("Mismatched equation for %s: expected %r, found %r" % (key, spec["equation"], p["Equation"]))
+        template, numbers = template_of(p["Problem"])
+        cards, orig_box_index, pattern, levels, fracs = row_cards(equation_plan(p["Equation"], numbers))
+        rep_idx = spec["repeat_token"]
+        if rep_idx >= len(cards):
+            raise ValueError("Repeat token index %d out of range for %s" % (rep_idx, key))
+        kind, val = cards[rep_idx]
+        if kind != "op" or val != spec["expected_token"]:
+            raise ValueError("Expected static token ('op', %r) at index %d for %s, found %r" % (spec["expected_token"], rep_idx, key, (kind, val)))
+        if spec["box_index"] != orig_box_index:
+            raise ValueError("Mismatched BOX_INDEX for %s: expected %r, found %r" % (key, spec["box_index"], orig_box_index))
+        expected_defaults = [numbers[i] for i in spec["box_index"]]
+        if spec["defaults"] != expected_defaults:
+            raise ValueError("Mismatched DEFAULTS for %s: expected %r, found %r" % (key, spec["defaults"], expected_defaults))
+        if len(spec["inputs"]) != len(spec["defaults"]):
+            raise ValueError("Length of INPUTS must match DEFAULTS for %s" % key)
+        slots = spec["slots"]
+        expected_box_count = sum(1 for k, _ in cards if k == "box") + 1
+        if len(slots) != expected_box_count:
+            raise ValueError("Length of SLOTS (%d) must match total box cards (%d) for %s" % (len(slots), expected_box_count, key))
+        if not all(0 <= s < len(spec["defaults"]) for s in slots):
+            raise ValueError("Invalid slot index in %r for %s" % (slots, key))
+        if set(slots) != set(range(len(spec["defaults"]))):
+            raise ValueError("Not all underlying slots represented in %r for %s" % (slots, key))
+        if len(spec["defaults"]) != 3:
+            raise ValueError("Expected 3 underlying slots for %s, found %d" % (key, len(spec["defaults"])))
+
 
 def slug(text):
     return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
 
 
 def read_problems():
-    text = open(SOURCE, encoding="utf-8").read()
+    with open(SOURCE, encoding="utf-8") as f:
+        text = f.read()
     out = []
     for block in re.split(r"\n-{20,}\n", text):
         m = re.search(r"^#(\d{4}) \[([^\]]+)\]\n(.*)", block, flags=re.S | re.M)       # (the first block also holds the file's header)
@@ -281,7 +387,7 @@ LET = %(let_r)s
 EQUATION = %(equation_r)s
 SOLVE = %(solve_r)s
 ANSWER = %(answer_r)s
-# who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
+# who answers it today:  \"word_solver\" (a family in algebra_word_problems/algebra_matcher/word_solver.py), \"number_puzzle\", or None (reference only)
 SOLVER = %(solver_r)s
 FAMILY = %(family_r)s
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
@@ -290,7 +396,7 @@ NUMBERS = %(numbers_r)s
 
 
 def compute(*numbers):
-    """Solve the problem with these numbers (one per box, in the order of NUMBERS).  Returns the answer (a number, or a list when the problem has several answers)."""
+    \"\"\"Solve the problem with these numbers (one per box, in the order of NUMBERS).  Returns the answer (a number, or a list when the problem has several answers).\"\"\"
     return solve_numbers(TEMPLATE, SOLVER, numbers or NUMBERS)
 ''' % {
         "id": p["id"], "category": p["category"], "problem": p["Problem"], "let": p["Let"], "equation": p["Equation"], "solve": p["Solve"], "answer": p["Answer"],
@@ -325,6 +431,27 @@ def row_cards(plan):
 
 def row_file(p, key, numbers, solver):
     cards, box_index, pattern, levels, fracs = row_cards(equation_plan(p["Equation"], numbers))
+    spec = EXPLICIT_ROW_SYNCHRONIZATION.get(key)
+    if spec is not None:
+        rep_idx = spec["repeat_token"]
+        cards[rep_idx] = ("box", "")
+        pattern_tokens = pattern.split(" ")
+        pattern_tokens[rep_idx] = BOX
+        pattern = " ".join(pattern_tokens)
+        from operator_row_math.layout import group_fractions
+        fracs = group_fractions(cards, levels)
+        slots_line = "SLOTS = %s    # box cards to input slots: %s\n" % (spec["slots"], spec["slots_comment"])
+        inputs_r = py_str(spec["inputs"])
+        box_index_r = py_str(spec["box_index"])
+        defaults_r = py_str(spec["defaults"])
+        kinds_r = py_str(["number"] * len(spec["defaults"]))
+    else:
+        slots_line = ""
+        inputs_r = py_str(["number %d" % (i + 1) for i in box_index])
+        box_index_r = py_str(box_index)
+        defaults_r = py_str([numbers[i] for i in box_index])
+        kinds_r = py_str(["number"] * len(box_index))
+
     boxes = pattern
     left = repr(cards)
     return '''"""Row for the algebra word problem: %(category)s %(id)s
@@ -349,7 +476,7 @@ CALC = %(calc_r)s
 INPUTS = %(inputs_r)s    # what each box (left to right, as in the equation) is: which number of the problem text it holds
 BOX_INDEX = %(box_index_r)s    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
 DEFAULTS = %(defaults_r)s    # the boxes' numbers as written in the stored problem
-KINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
+%(slots_line)sKINDS = %(kinds_r)s    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
 FRAC = %(frac_r)s    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 LEVELS = %(levels_r)s    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
@@ -365,14 +492,27 @@ def place(parent, stacked=False):
         "calc_text": "ready - fill the boxes, press = and the answer appears right of =" if solver else "reference - the problem is stored; no solver answers it yet",
         "name_r": py_str("%s %s" % (p["category"], p["id"])), "key_r": py_str(key),
         "pattern_r": py_str("%s  ->  answer %s" % (pattern, BOX)), "calc_r": py_str("ready" if solver else "reference"),
-        "inputs_r": py_str(["number %d" % (i + 1) for i in box_index]), "box_index_r": py_str(box_index), "defaults_r": py_str([numbers[i] for i in box_index]),
-        "kinds_r": py_str(["number"] * len(box_index)), "left": left, "levels_r": py_str(levels), "frac_r": py_str([[list(e) for e in f] for f in fracs])}
+        "inputs_r": inputs_r, "box_index_r": box_index_r, "defaults_r": defaults_r,
+        "slots_line": slots_line,
+        "kinds_r": kinds_r, "left": left, "levels_r": py_str(levels), "frac_r": py_str([[list(e) for e in f] for f in fracs])}
 
 
-def main():
+def generate_all(dest_dir):
+    """Generate all 479 problem files, diagrams, row files, and index into dest_dir.
+    dest_dir must be an explicit, safe path outside the live repository."""
+    if not dest_dir:
+        raise ValueError("Explicit output directory required. Direct generation into the repository is prohibited.")
+    if is_protected_destination(dest_dir):
+        raise ValueError("Destination %r resolves to or overlaps with protected repository directories." % dest_dir)
+
     problems = read_problems()
-    if len(problems) != 479:
-        raise SystemExit("expected 479 problems, one per wording, found %d" % len(problems))
+    validate_preflight(problems, EXPLICIT_ROW_SYNCHRONIZATION)
+
+    out_lib = os.path.join(dest_dir, "operators_one_algebra_word_problem_per_file")
+    out_rows = os.path.join(dest_dir, "operator_row_math_for_algebra_word_problems")
+    if is_protected_destination(out_lib) or is_protected_destination(out_rows):
+        raise ValueError("Derived output directories overlap with protected repository directories.")
+
     index = {}
     counts = {"word_solver": 0, "number_puzzle": 0, None: 0}
     for n, p in enumerate(problems, 1):
@@ -381,17 +521,19 @@ def main():
         template, numbers = template_of(p["Problem"])
         solver, family = solver_of(p["Problem"])
         counts[solver] += 1
-        folder = os.path.join(LIB, cat, p["id"])
+        folder = os.path.join(out_lib, cat, p["id"])
         write(os.path.join(folder, p["id"] + ".py"), problem_file(p, key, template, numbers, solver, family))
         make_picture(os.path.join(folder, p["id"] + ".jpg"), p, numbers)
-        write(os.path.join(ROWS, cat, p["id"], p["id"] + ".py"), row_file(p, key, numbers, solver))
+        write(os.path.join(out_rows, cat, p["id"], p["id"] + ".py"), row_file(p, key, numbers, solver))
         index.setdefault(p["category"], []).append((p, key, solver, family))
         if n % 100 == 0:
-            print("%d / 1000" % n)
+            print("%d / %d" % (n, len(problems)))
+
     lines = ["# Algebra word problem index", "",
              "One folder per problem, holding `<id>.py` (the problem, its steps, its answer and `compute(...)`) and `<id>.jpg` (a diagram of the problem).",
              "**Ready** = a solver answers it today (`compute(...)` works); **Reference** = the problem and its steps are stored, no solver answers it yet.",
-             "Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.", "",
+             "Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.",
+             "One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.", "",
              "%d problems: %d ready (%d word_solver, %d number_puzzle), %d reference." % (
                  len(problems), counts["word_solver"] + counts["number_puzzle"], counts["word_solver"], counts["number_puzzle"], counts[None]), ""]
     for category in sorted(index):
@@ -400,7 +542,20 @@ def main():
             prob = p["Problem"].replace("|", "\\|")
             lines.append("| %s | %s | %s | %s | %s | `%s/` |" % (p["id"], prob, p["Answer"].replace("|", "\\|"), "Ready" if solver else "Reference", family or "", key))
         lines.append("")
-    write(os.path.join(LIB, "INDEX.md"), "\n".join(lines))
+    write(os.path.join(out_lib, "INDEX.md"), "\n".join(lines))
+    return counts
+
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+    if not argv:
+        print("Error: An explicit output directory is required.", file=sys.stderr)
+        print("Usage: python make_algebra_word_problem_files.py <output_directory>", file=sys.stderr)
+        print("Direct generation into the live repository is prohibited.", file=sys.stderr)
+        sys.exit(1)
+    dest_dir = argv[0]
+    counts = generate_all(dest_dir)
     print("done:", counts)
 
 

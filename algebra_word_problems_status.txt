@@ -185,6 +185,16 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    multiplier and sum remain independent; keypad = evaluates dynamically with existing compute(). age/0009 belongs
    to sum_difference with 2 independent boxes and remains untouched. Bulk generator make_algebra_word_problem_files.py
    must not be run until updated to support SLOTS generation.
+   Stage 2d.2 (Generator synchronization compatibility, 2026-11-22): Updated bulk algebra word-problem
+   generator (operator_keys/make_algebra_word_problem_files.py) to safely reproduce the 4 verified
+   synchronized times_as_old_future_sum rows without touching live files. Added: (1) explicit CLI destination
+   requirement (python make_algebra_word_problem_files.py <output_directory>) strictly rejecting direct generation
+   into or overlapping with the repository tree; (2) preflight validation ensuring all 479 catalog problems match
+   expected equations, tokens, and underlying slots before writing any file; (3) explicit synchronization specification
+   reproducing exact SLOTS mappings and 4-box layouts for age/0001, age/0004, age/0005, and age/0007 while leaving
+   all other 475 rows untouched; (4) complete isolated-generation test suite (tests/test_generator_compatibility.py)
+   verifying byte-for-byte fidelity with the repository for all 479 problem modules, all 479 row modules, JPEG diagrams,
+   and INDEX.md. Live catalog and row files remain untouched.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
