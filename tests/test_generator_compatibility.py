@@ -249,6 +249,10 @@ class GeneratorReproductionTests(unittest.TestCase):
             "rational_equation/0813": ([0, 1, 2, 1], [0, 1, 2], ["1590", "40", "1350"], 4),
             "distance_round_trip/0143": ([0, 0, 1, 2, 3], [0, 1, 2, 3], ["60", "15", "10", "3"], 5),
             "mixture/0533": ([0, 0], [2], ["100"], 2),
+            "mixture/0544": ([0, 0], [2], ["20"], 2),
+            "mixture/0547": ([0, 0], [2], ["40"], 2),
+            "mixture/0561": ([0, 0], [2], ["30"], 2),
+            "mixture/0566": ([0, 0], [2], ["20"], 2),
         }
         for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")
@@ -265,6 +269,7 @@ class GeneratorReproductionTests(unittest.TestCase):
             self.assertEqual(ns["SLOTS"], exp_slots, f"{key} SLOTS mismatch")
             self.assertEqual(ns["BOX_INDEX"], exp_box_index, f"{key} BOX_INDEX mismatch")
             self.assertEqual(ns["DEFAULTS"], exp_defaults, f"{key} DEFAULTS mismatch")
+            self.assertEqual(ns["PATTERN"].count("□"), exp_box_count + 1, f"{key} PATTERN box count mismatch")
 
 
 if __name__ == "__main__":

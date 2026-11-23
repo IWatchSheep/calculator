@@ -187,10 +187,17 @@ class Rows(unittest.TestCase):
                     self.assertEqual(r.SLOTS, [0, 0, 1, 2, 3], key)
                     self.assertEqual(r.BOX_INDEX, [0, 1, 2, 3], key)
                     self.assertEqual(r.DEFAULTS, ["60", "15", "10", "3"], key)
-                elif key == "mixture/0533":
+                elif key in ("mixture/0533", "mixture/0544", "mixture/0547", "mixture/0561", "mixture/0566"):
                     self.assertEqual(r.SLOTS, [0, 0], key)
                     self.assertEqual(r.BOX_INDEX, [2], key)
-                    self.assertEqual(r.DEFAULTS, ["100"], key)
+                    if key == "mixture/0533":
+                        self.assertEqual(r.DEFAULTS, ["100"], key)
+                    elif key in ("mixture/0544", "mixture/0566"):
+                        self.assertEqual(r.DEFAULTS, ["20"], key)
+                    elif key == "mixture/0547":
+                        self.assertEqual(r.DEFAULTS, ["40"], key)
+                    elif key == "mixture/0561":
+                        self.assertEqual(r.DEFAULTS, ["30"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)
