@@ -223,6 +223,10 @@ class GeneratorReproductionTests(unittest.TestCase):
             "age/0005": ([0, 1, 0, 2], [1, 0, 2], ["10", "3", "68"], 4),
             "age/0007": ([1, 0, 1, 2], [0, 1, 2], ["3", "3", "82"], 4),
             "number_puzzle/0576": ([0, 1, 1], [0, 1], ["3", "43"], 3),
+            "number_puzzle/0579": ([0, 1, 1], [0, 1], ["4", "42"], 3),
+            "number_puzzle/0591": ([0, 1, 1], [0, 1], ["3", "15"], 3),
+            "number_puzzle/0597": ([0, 1, 1], [0, 1], ["3", "38"], 3),
+            "number_puzzle/0607": ([0, 1, 1], [0, 1], ["2", "25"], 3),
         }
         for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")

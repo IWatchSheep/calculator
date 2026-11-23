@@ -2940,6 +2940,302 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "(21.5, 107.5)")
 
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "43")
+        self.assertEqual(cards[box_indices[2]][1], "43")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(21.5, 107.5)")
+
+    def test_stage_2e3_number_puzzle_0579_slots_synchronization(self):
+        """Stage 2e.3: number_puzzle/0579 (Grace/Nia) has SLOTS = [0, 1, 1]; editing either 42 updates both; multiplier is slot 0."""
+        GRACE_NIA = ("Grace has 4 times as much money as Nia. After Grace gives Nia $42, they have the same amount. "
+                     "How much did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, GRACE_NIA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "42")
+        self.assertEqual(cards[box_indices[2]][1], "42")
+
+        # Initial = gives (28, 112)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(28, 112)")
+
+        # Edit transfer from 42 to 30 via Box 1 -> both transfer boxes update to 30 -> = gives (20, 80)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "30")
+        self.assertEqual(cards[box_indices[2]][1], "30")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(20, 80)")
+
+        # Restore transfer from 30 to 42 via Box 2 -> both transfer boxes update to 42 -> = gives (28, 112)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "42")
+        self.assertEqual(cards[box_indices[2]][1], "42")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(28, 112)")
+
+        # Edit multiplier from 4 to 5 via Box 0 -> multiplier is 5, transfer remains 42 -> = gives (21, 105)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "42")
+        self.assertEqual(cards[box_indices[2]][1], "42")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(21, 105)")
+
+    def test_stage_2e3_number_puzzle_0591_slots_synchronization(self):
+        """Stage 2e.3: number_puzzle/0591 (Wren/Sam) has SLOTS = [0, 1, 1]; editing either 15 updates both; multiplier is slot 0."""
+        WREN_SAM = ("Wren has 3 times as much money as Sam. After Wren gives Sam $15, they have the same amount. "
+                    "How much did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, WREN_SAM)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "15")
+        self.assertEqual(cards[box_indices[2]][1], "15")
+
+        # Initial = gives (15, 45)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(15, 45)")
+
+        # Edit transfer from 15 to 20 via Box 1 -> both transfer boxes update to 20 -> = gives (20, 60)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "20")
+        self.assertEqual(cards[box_indices[2]][1], "20")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(20, 60)")
+
+        # Restore transfer from 20 to 15 via Box 2 -> both transfer boxes update to 15 -> = gives (15, 45)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "15")
+        self.assertEqual(cards[box_indices[2]][1], "15")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(15, 45)")
+
+        # Edit multiplier from 3 to 5 via Box 0 -> multiplier is 5, transfer remains 15 -> = gives (7.5, 37.5)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "15")
+        self.assertEqual(cards[box_indices[2]][1], "15")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(7.5, 37.5)")
+
+    def test_stage_2e3_number_puzzle_0597_slots_synchronization(self):
+        """Stage 2e.3: number_puzzle/0597 (Ben/Dev) has SLOTS = [0, 1, 1]; editing either 38 updates both; multiplier is slot 0."""
+        BEN_DEV = ("Ben has 3 times as much money as Dev. After Ben gives Dev $38, they have the same amount. "
+                   "How much did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, BEN_DEV)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "38")
+        self.assertEqual(cards[box_indices[2]][1], "38")
+
+        # Initial = gives (38, 114)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(38, 114)")
+
+        # Edit transfer from 38 to 10 via Box 1 -> both transfer boxes update to 10 -> = gives (10, 30)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "10")
+        self.assertEqual(cards[box_indices[2]][1], "10")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(10, 30)")
+
+        # Restore transfer from 10 to 38 via Box 2 -> both transfer boxes update to 38 -> = gives (38, 114)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app._key("8")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "38")
+        self.assertEqual(cards[box_indices[2]][1], "38")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(38, 114)")
+
+        # Edit multiplier from 3 to 5 via Box 0 -> multiplier is 5, transfer remains 38 -> = gives (19, 95)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "38")
+        self.assertEqual(cards[box_indices[2]][1], "38")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(19, 95)")
+
+    def test_stage_2e3_number_puzzle_0607_slots_synchronization(self):
+        """Stage 2e.3: number_puzzle/0607 (Victor/Yara) has SLOTS = [0, 1, 1]; editing either 25 updates both; multiplier is slot 0."""
+        VICTOR_YARA = ("Victor has 2 times as much money as Yara. After Victor gives Yara $25, they have the same amount. "
+                       "How much did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, VICTOR_YARA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "25")
+        self.assertEqual(cards[box_indices[2]][1], "25")
+
+        # Initial = gives (50, 100)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(50, 100)")
+
+        # Edit transfer from 25 to 15 via Box 1 -> both transfer boxes update to 15 -> = gives (30, 60)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "15")
+        self.assertEqual(cards[box_indices[2]][1], "15")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(30, 60)")
+
+        # Restore transfer from 15 to 25 via Box 2 -> both transfer boxes update to 25 -> = gives (50, 100)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "25")
+        self.assertEqual(cards[box_indices[2]][1], "25")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(50, 100)")
+
+        # Edit multiplier from 2 to 5 via Box 0 -> multiplier is 5, transfer remains 25 -> = gives (12.5, 62.5)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "5")
+        self.assertEqual(cards[box_indices[1]][1], "25")
+        self.assertEqual(cards[box_indices[2]][1], "25")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(12.5, 62.5)")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

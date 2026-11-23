@@ -116,10 +116,19 @@ class Rows(unittest.TestCase):
                     self.assertEqual(r.SLOTS, [1, 0, 1, 2], key)
                     self.assertEqual(r.BOX_INDEX, [0, 1, 2], key)
                     self.assertEqual(r.DEFAULTS, ["3", "3", "82"], key)
-                elif key == "number_puzzle/0576":
+                elif key in ("number_puzzle/0576", "number_puzzle/0579", "number_puzzle/0591", "number_puzzle/0597", "number_puzzle/0607"):
                     self.assertEqual(r.SLOTS, [0, 1, 1], key)
                     self.assertEqual(r.BOX_INDEX, [0, 1], key)
-                    self.assertEqual(r.DEFAULTS, ["3", "43"], key)
+                    if key == "number_puzzle/0576":
+                        self.assertEqual(r.DEFAULTS, ["3", "43"], key)
+                    elif key == "number_puzzle/0579":
+                        self.assertEqual(r.DEFAULTS, ["4", "42"], key)
+                    elif key == "number_puzzle/0591":
+                        self.assertEqual(r.DEFAULTS, ["3", "15"], key)
+                    elif key == "number_puzzle/0597":
+                        self.assertEqual(r.DEFAULTS, ["3", "38"], key)
+                    elif key == "number_puzzle/0607":
+                        self.assertEqual(r.DEFAULTS, ["2", "25"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)
