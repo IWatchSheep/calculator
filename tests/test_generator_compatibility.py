@@ -253,6 +253,11 @@ class GeneratorReproductionTests(unittest.TestCase):
             "mixture/0547": ([0, 0], [2], ["40"], 2),
             "mixture/0561": ([0, 0], [2], ["30"], 2),
             "mixture/0566": ([0, 0], [2], ["20"], 2),
+            "mixture/0535": ([0, 0], [0], ["4"], 2),
+            "mixture/0541": ([0, 0], [0], ["6"], 2),
+            "mixture/0536": ([0, 0], [0], ["30"], 2),
+            "mixture/0538": ([0, 0], [0], ["4"], 2),
+            "mixture/0539": ([0, 0], [0], ["20"], 2),
         }
         for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")

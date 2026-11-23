@@ -198,6 +198,17 @@ class Rows(unittest.TestCase):
                         self.assertEqual(r.DEFAULTS, ["40"], key)
                     elif key == "mixture/0561":
                         self.assertEqual(r.DEFAULTS, ["30"], key)
+                elif key in ("mixture/0535", "mixture/0541", "mixture/0536", "mixture/0538", "mixture/0539"):
+                    self.assertEqual(r.SLOTS, [0, 0], key)
+                    self.assertEqual(r.BOX_INDEX, [0], key)
+                    if key in ("mixture/0535", "mixture/0538"):
+                        self.assertEqual(r.DEFAULTS, ["4"], key)
+                    elif key == "mixture/0541":
+                        self.assertEqual(r.DEFAULTS, ["6"], key)
+                    elif key == "mixture/0536":
+                        self.assertEqual(r.DEFAULTS, ["30"], key)
+                    elif key == "mixture/0539":
+                        self.assertEqual(r.DEFAULTS, ["20"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)

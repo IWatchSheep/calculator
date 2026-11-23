@@ -6159,6 +6159,441 @@ class TemplatePanelTests(unittest.TestCase):
         cards1_after = app._cards(1)
         self.assertEqual([cards1_after[k][1] for k in boxes1], ["80", "80"])
 
+    def test_stage_2m4_mixture_0535_slots_synchronization(self):
+        """Stage 2m.4: mixture/0535 water dilution 0.3(4) = 0.05(4 + w)
+        Native SLOTS synchronization links initial solution volume in both occurrences (slot 0)."""
+        app = self.app
+        prob_text = (
+            "How much water must be added to 4 L of a 30% salt solution to make it 5% salt?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.PATTERN, '0.3 ( □ ) = 0.05 ( □ + w )  ->  answer □')
+        self.assertIn('Picture:      0.3 ( □ ) = 0.05 ( □ + w )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 11)
+        self.assertEqual(mod.FRAC, [[] for _ in range(11)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [2, 7])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["4", "4"])
+
+        # 1. Original default evaluation -> 20 L
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "20")
+
+        # 2. Case B: Double volume (8 L) via Box 0 -> both 8, result 40 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "8":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["8", "8"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "40")
+
+        # 3. Case C: Half volume (2 L) via Box 1 -> both 2, result 10 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "2":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["2", "2"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "10")
+
+        # 4. Restore defaults (4 L) via Box 0 -> both 4, result 20 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "4":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["4", "4"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "20")
+
+    def test_stage_2m4_mixture_0541_slots_synchronization(self):
+        """Stage 2m.4: mixture/0541 water dilution 0.8(6) = 0.12(6 + w)
+        Native SLOTS synchronization links concentrate volume in both occurrences (slot 0)."""
+        app = self.app
+        prob_text = (
+            "A 6 L batch of 80% juice concentrate is diluted with water to 12% juice. How much water is added?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.PATTERN, '0.8 ( □ ) = 0.12 ( □ + w )  ->  answer □')
+        self.assertIn('Picture:      0.8 ( □ ) = 0.12 ( □ + w )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 11)
+        self.assertEqual(mod.FRAC, [[] for _ in range(11)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [2, 7])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["6", "6"])
+
+        # 1. Original default evaluation -> 34 L
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "34")
+
+        # 2. Case B: Double volume (12 L) via Box 0 -> both 12, result 68 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "12":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["12", "12"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "68")
+
+        # 3. Case C: Half volume (3 L) via Box 1 -> both 3, result 17 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "3":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["3", "3"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "17")
+
+        # 4. Restore defaults (6 L) via Box 0 -> both 6, result 34 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "6":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["6", "6"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "34")
+
+    def test_stage_2m4_mixture_0536_slots_synchronization(self):
+        """Stage 2m.4: mixture/0536 salt-water evaporation 0.06(30) = 0.15(30 − e)
+        Native SLOTS synchronization links original salt water volume in both occurrences (slot 0)."""
+        app = self.app
+        prob_text = (
+            "A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.PATTERN, '0.06 ( □ ) = 0.15 ( □ − e )  ->  answer □')
+        self.assertIn('Picture:      0.06 ( □ ) = 0.15 ( □ − e )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 11)
+        self.assertEqual(mod.FRAC, [[] for _ in range(11)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [2, 7])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["30", "30"])
+
+        # 1. Original default evaluation -> 18 L
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "18")
+
+        # 2. Case B: Double volume (60 L) via Box 0 -> both 60, result 36 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "60":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["60", "60"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "36")
+
+        # 3. Case C: Half volume (15 L) via Box 1 -> both 15, result 9 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "15":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["15", "15"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "9")
+
+        # 4. Restore defaults (30 L) via Box 0 -> both 30, result 18 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "30":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["30", "30"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "18")
+
+    def test_stage_2m4_mixture_0538_slots_synchronization(self):
+        """Stage 2m.4: mixture/0538 pure antifreeze addition 0.3(4) + x = 0.8(4 + x)
+        Native SLOTS synchronization links initial antifreeze volume in both occurrences (slot 0)."""
+        app = self.app
+        prob_text = (
+            "How many liters of pure antifreeze must be added to 4 L of a 30% antifreeze mix to get a 80% mix?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.PATTERN, '0.3 ( □ ) + x = 0.8 ( □ + x )  ->  answer □')
+        self.assertIn('Picture:      0.3 ( □ ) + x = 0.8 ( □ + x )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 13)
+        self.assertEqual(mod.FRAC, [[] for _ in range(13)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [2, 9])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["4", "4"])
+
+        # 1. Original default evaluation -> 10 L
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "10")
+
+        # 2. Case B: Double volume (8 L) via Box 0 -> both 8, result 20 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "8":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["8", "8"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "20")
+
+        # 3. Case C: Half volume (2 L) via Box 1 -> both 2, result 5 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "2":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["2", "2"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "5")
+
+        # 4. Restore defaults (4 L) via Box 0 -> both 4, result 10 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "4":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["4", "4"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "10")
+
+    def test_stage_2m4_mixture_0539_slots_synchronization(self):
+        """Stage 2m.4: mixture/0539 radiator drain and replace 0.5(20 − x) + x = 0.7(20)
+        Native SLOTS synchronization links radiator capacity in both occurrences (slot 0).
+        Also includes simultaneous cross-row isolation testing between mixture/0535 and mixture/0536."""
+        app = self.app
+        prob_text = (
+            "A 20-liter radiator holds a 50% antifreeze mix. How much must be drained and replaced with pure antifreeze to raise it to 70%?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.PATTERN, '0.5 ( □ − x ) + x = 0.7 ( □ )  ->  answer □')
+        self.assertIn('Picture:      0.5 ( □ − x ) + x = 0.7 ( □ )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 13)
+        self.assertEqual(mod.FRAC, [[] for _ in range(13)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [2, 11])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["20", "20"])
+
+        # 1. Original default evaluation -> 8 L
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+
+        # 2. Case B: Double capacity (40 L) via Box 0 -> both 40, result 16 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "40":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["40", "40"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "16")
+
+        # 3. Case C: Half capacity (10 L) via Box 1 -> both 10, result 4 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["10", "10"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # 4. Restore defaults (20 L) via Box 0 -> both 20, result 8 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "20":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["20", "20"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+
+        # 5. Live Cross-Row Simultaneous Isolation Test:
+        # Load mixture/0535 in Row 0 and mixture/0536 in Row 1
+        app._clear_all()
+        app.update()
+        water_text = (
+            "How much water must be added to 4 L of a 30% salt solution to make it 5% salt?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, water_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Advance to Row 1 and post mixture/0536
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        evap_text = (
+            "A 30 L tank of 6% salt water is left to evaporate until it is 15% salt. How much water evaporates?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, evap_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Set join on Row 1
+        app._set_join(1, "+")
+        app.update()
+
+        # Verify initial box counts and values in both rows
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 2)
+        self.assertEqual(len(boxes1), 2)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["4", "4"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["30", "30"])
+
+        # Edit Row 0 volume to 8
+        app._pick_box(0, boxes0[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "8":
+            app._key(ch)
+        app.update()
+
+        # Edit Row 1 volume to 60
+        app._pick_box(1, boxes1[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "60":
+            app._key(ch)
+        app.update()
+
+        # Check Row 0 updated and Row 1 untouched by Row 0 edit
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["8", "8"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["60", "60"])
+
+        # Clear Row 0; Row 1 must remain intact with 60
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["60", "60"])
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

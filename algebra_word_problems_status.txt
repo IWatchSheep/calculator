@@ -341,6 +341,18 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
     byte-for-byte. Presentation limitation preserved: existing catalog JPEGs remain unchanged and continue to depict
     static secondary tokens until diagram rendering is addressed in a separate milestone. Preserved quarantine on
     mixture/0534 and ratio/0787.
+    Stage 2m.4 Implementation (Five single-equation mixture synchronizations, 2026-11-23):
+    Native SLOTS synchronization implemented for the remaining five clean single-equation mixture problems: mixture/0535
+    (water dilution 4 L salt solution, SLOTS = [0, 0]), mixture/0541 (water dilution 6 L juice concentrate, SLOTS = [0, 0]),
+    mixture/0536 (salt-water evaporation 30 L, SLOTS = [0, 0]), mixture/0538 (antifreeze addition 4 L mix, SLOTS = [0, 0]),
+    and mixture/0539 (radiator drain and replace 20 L capacity, SLOTS = [0, 0]). Converts static second initial quantity token
+    to a shared ('box', '') card at LEFT index 7 (0535, 0541, 0536), index 9 (0538), or index 11 (0539). Editing either initial
+    quantity box updates both; keypad = evaluates dynamically with existing compute(). Preserves BOX_INDEX = [0] and original
+    DEFAULTS ('4', '6', '30', '4', '20'). Flat layout and levels (FRAC and LEVELS) remain structurally unchanged. Updated
+    generator EXPLICIT_ROW_SYNCHRONIZATION for all five problems with strict preflight validation. Isolated generation
+    reproduces all 479 problem modules, row modules, diagrams, and index byte-for-byte. Presentation limitation preserved:
+    existing catalog JPEGs remain unchanged and continue to depict static secondary tokens until diagram rendering is
+    addressed in a separate milestone. Preserved quarantine on mixture/0534 and ratio/0787.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
