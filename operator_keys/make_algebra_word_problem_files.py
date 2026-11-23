@@ -130,6 +130,17 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 2"],
         "kinds": ["number", "number"],
     },
+    "work_rate/0970": {
+        "equation": "4/12 + 4/x = 1",
+        "repeat_token": 4,
+        "expected_token": "4",
+        "slots": [0, 1, 0],
+        "slots_comment": "boxes 0 and 2 share slot 0 (working-together time); box 1 is slot 1 (partner alone time)",
+        "box_index": [0, 1],
+        "defaults": ["4", "12"],
+        "inputs": ["number 1", "number 2"],
+        "kinds": ["number", "number"],
+    },
 }
 
 

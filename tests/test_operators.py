@@ -3236,6 +3236,99 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "(12.5, 62.5)")
 
+    def test_stage_2f1_work_rate_0970_slots_synchronization(self):
+        """Stage 2f.1 pilot: work_rate/0970 (Rhea/Emeka) has SLOTS = [0, 1, 0]; editing either numerator updates both; = recomputes."""
+        RHEA_EMEKA = ("Working together, Rhea and Emeka can finish a job in 4 hours. Rhea alone takes 12 hours. "
+                      "How long would Emeka take alone?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, RHEA_EMEKA)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Verify fraction layout and levels
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "n"]], [[1, "bar"]], [[1, "d"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]], [], []])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 3)
+        # Check slot paths
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 0))
+        # Initial box values
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+
+        # Initial = gives 6
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Edit first numerator (Box 0) from 4 to 3 -> both numerators become 3, denominator remains 12
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Restore second numerator (Box 2) from 3 to 4 -> both numerators return to 4
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
+        # Edit denominator (Box 1) independently from 12 to 6 -> numerators remain 4 -> 4/6 + 4/x = 1 -> x = 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "12")
+
+        # Restore denominator from 6 back to 12
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "4")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "6")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

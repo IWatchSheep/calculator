@@ -129,6 +129,10 @@ class Rows(unittest.TestCase):
                         self.assertEqual(r.DEFAULTS, ["3", "38"], key)
                     elif key == "number_puzzle/0607":
                         self.assertEqual(r.DEFAULTS, ["2", "25"], key)
+                elif key == "work_rate/0970":
+                    self.assertEqual(r.SLOTS, [0, 1, 0], key)
+                    self.assertEqual(r.BOX_INDEX, [0, 1], key)
+                    self.assertEqual(r.DEFAULTS, ["4", "12"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)
