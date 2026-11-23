@@ -166,6 +166,10 @@ class Rows(unittest.TestCase):
                         self.assertEqual(r.DEFAULTS, ["50", "1", "45", "46"], key)
                     elif key == "distance_average_speed/0124":
                         self.assertEqual(r.DEFAULTS, ["60", "3", "75", "66"], key)
+                elif key == "work_rate/0971":
+                    self.assertEqual(r.SLOTS, [0, 1, 1, 2], key)
+                    self.assertEqual(r.BOX_INDEX, [2, 0, 1], key)
+                    self.assertEqual(r.DEFAULTS, ["2", "4", "8"], key)
             else:
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(blue), key)
             self.assertEqual(r.RIGHT, [("box", "")], key)

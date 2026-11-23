@@ -141,6 +141,17 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 2"],
         "kinds": ["number", "number"],
     },
+    "work_rate/0971": {
+        "equation": "2/4 + t/4 + t/8 = 1",
+        "repeat_token": 6,
+        "expected_token": "4",
+        "slots": [0, 1, 1, 2],
+        "slots_comment": "boxes 1 and 2 share slot 1 (first worker total hours alone)",
+        "box_index": [2, 0, 1],
+        "defaults": ["2", "4", "8"],
+        "inputs": ["number 3", "number 1", "number 2"],
+        "kinds": ["number", "number", "number"],
+    },
     "work_rate/0972": {
         "equation": "6/12 + 6/x = 1",
         "repeat_token": 4,

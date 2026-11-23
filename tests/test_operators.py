@@ -4686,6 +4686,128 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "2")
 
+    def test_stage_2k1_work_rate_0971_slots_synchronization(self):
+        """Stage 2k.1: work_rate/0971 Sam and Hana 2/4 + t/4 + t/8 = 1
+        Native SLOTS synchronization links first-worker alone time in two fraction denominators (slot 1),
+        leaving first-worker initial work (slot 0) and second-worker alone time (slot 2) independent."""
+        app = self.app
+        sam_text = (
+            "Sam can do a job in 4 hours and Hana can do it in 8 hours. "
+            "Sam works alone for 2 hours, then Hana joins. How much longer will it take to finish?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, sam_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(
+            mod.FRAC,
+            [[[1, 'n']], [[1, 'bar']], [[1, 'd']], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']], [], [[3, 'n']], [[3, 'bar']], [[3, 'd']], [], []]
+        )
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        self.assertEqual(box_indices, [0, 2, 6, 10])
+
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 3)
+
+        # Initial displayed values: ['2', '4', '4', '8']
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "4")
+        self.assertEqual(cards[box_indices[2]][1], "4")
+        self.assertEqual(cards[box_indices[3]][1], "8")
+
+        # 1. Original default evaluation -> t = 4/3 (~1.333333333)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "1.333333333")
+
+        # 2. Edit Box 1 (Sam's alone time) from 4 to 6 -> both Box 1 and Box 2 display 6, t = 16/7 (~2.285714286)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "6")
+        self.assertEqual(cards[box_indices[2]][1], "6")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2.285714286")
+
+        # 3. Edit Box 2 (second occurrence of Sam's alone time) from 6 to 5 -> both display 5, t = 24/13 (~1.846153846)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "5")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "1.846153846")
+
+        # 4. Edit Box 3 (Hana's alone time) from 8 to 12 -> t = 36/17 (~2.117647059)
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "2")
+        self.assertEqual(cards[box_indices[1]][1], "5")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "12")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2.117647059")
+
+        # 5. Edit Box 0 (initial work 2 -> 1) independently
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "1")
+        self.assertEqual(cards[box_indices[1]][1], "5")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "12")
+
+        # 6. Restore Box 0 to 2, restore all original defaults [2, 4, 4, 8] -> t = 4/3 (~1.333333333)
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("8")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["2", "4", "4", "8"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "1.333333333")
+
 
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
