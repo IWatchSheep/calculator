@@ -4092,6 +4092,135 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "(48, 40)")
 
+    def test_stage_2h1_average_speed_0115_slots_synchronization(self):
+        """Stage 2h.1 Pilot: distance_average_speed/0115 Kofi (30×1 + 55t)/(1 + t) = 50
+        Native SLOTS synchronization links numerator and denominator first-leg hours (slot 1),
+        leaving first-leg speed (slot 0), second-leg speed (slot 2), and average speed (slot 3) independent."""
+        app = self.app
+        kofi_text = (
+            "Kofi drove 1 hour at 30 mph and then some hours at 55 mph. "
+            "The average speed for the whole trip was 50 mph. How long was the second part?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, kofi_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], []])
+
+        # 5 visible boxes on the left
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 5)
+        self.assertEqual(box_indices, [1, 3, 5, 10, 15])
+
+        # Verify underlying logical slots
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 2))
+        self.assertEqual(cards[box_indices[3]][2], (0, 1))
+        self.assertEqual(cards[box_indices[4]][2], (0, 3))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 4)
+
+        # Initial displayed values
+        self.assertEqual(cards[box_indices[0]][1], "30")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "55")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+
+        # Test A: Default evaluation -> t = 4
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Test B: Edit numerator first-leg time (Box 1) from 1 to 2 -> both display 2, t = 8
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "2")
+        self.assertEqual(cards[box_indices[3]][1], "2")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+
+        # Test C: Edit denominator first-leg time (Box 3) back from 2 to 1 -> both display 1, t = 4
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Test D: Change second-leg speed independently (Box 2) from 55 to 60 -> t = 2
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "30")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "60")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+        # Test E: Restore speed 55, then change first-leg speed independently (Box 0) from 30 to 40 -> t = 2
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("5")
+        app.update()
+
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "40")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "55")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+        # Test F: Restore every input to original defaults -> t = 4
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["30", "1", "55", "1", "50"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
         # Independently edit final-ratio denominator (Box 5) from 7 to 6 -> (60, 50)
         app._pick_box(0, box_indices[5])
         for _ in range(5):
@@ -4142,6 +4271,135 @@ class TemplatePanelTests(unittest.TestCase):
         app._equals()
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "(48, 40)")
+
+    def test_stage_2h1_average_speed_0115_slots_synchronization(self):
+        """Stage 2h.1 Pilot: distance_average_speed/0115 Kofi (30×1 + 55t)/(1 + t) = 50
+        Native SLOTS synchronization links numerator and denominator first-leg hours (slot 1),
+        leaving first-leg speed (slot 0), second-leg speed (slot 2), and average speed (slot 3) independent."""
+        app = self.app
+        kofi_text = (
+            "Kofi drove 1 hour at 30 mph and then some hours at 55 mph. "
+            "The average speed for the whole trip was 50 mph. How long was the second part?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, kofi_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']], [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']], [[1, 'hide']], [], []])
+
+        # 5 visible boxes on the left
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 5)
+        self.assertEqual(box_indices, [1, 3, 5, 10, 15])
+
+        # Verify underlying logical slots
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 2))
+        self.assertEqual(cards[box_indices[3]][2], (0, 1))
+        self.assertEqual(cards[box_indices[4]][2], (0, 3))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 4)
+
+        # Initial displayed values
+        self.assertEqual(cards[box_indices[0]][1], "30")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "55")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+
+        # Test A: Default evaluation -> t = 4
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Test B: Edit numerator first-leg time (Box 1) from 1 to 2 -> both display 2, t = 8
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "2")
+        self.assertEqual(cards[box_indices[3]][1], "2")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "8")
+
+        # Test C: Edit denominator first-leg time (Box 3) back from 2 to 1 -> both display 1, t = 4
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
+
+        # Test D: Change second-leg speed independently (Box 2) from 55 to 60 -> t = 2
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("6")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "30")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "60")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+        # Test E: Restore speed 55, then change first-leg speed independently (Box 0) from 30 to 40 -> t = 2
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("5")
+        app.update()
+
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("4")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "40")
+        self.assertEqual(cards[box_indices[1]][1], "1")
+        self.assertEqual(cards[box_indices[2]][1], "55")
+        self.assertEqual(cards[box_indices[3]][1], "1")
+        self.assertEqual(cards[box_indices[4]][1], "50")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "2")
+
+        # Test F: Restore every input to original defaults -> t = 4
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app._key("0")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["30", "1", "55", "1", "50"])
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "4")
 
 
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):

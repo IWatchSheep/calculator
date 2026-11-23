@@ -229,6 +229,17 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 3", "number 2", "number 4", "number 5"],
         "kinds": ["number", "number", "number", "number", "number"],
     },
+    "distance_average_speed/0115": {
+        "equation": "(30×1 + 55t)/(1 + t) = 50",
+        "repeat_token": 10,
+        "expected_token": "1",
+        "slots": [0, 1, 2, 1, 3],
+        "slots_comment": "boxes 1 and 3 share slot 1 (first-leg hours)",
+        "box_index": [1, 0, 2, 3],
+        "defaults": ["30", "1", "55", "50"],
+        "inputs": ["number 2", "number 1", "number 3", "number 4"],
+        "kinds": ["number", "number", "number", "number"],
+    },
 }
 
 
