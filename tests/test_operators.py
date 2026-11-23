@@ -5611,6 +5611,162 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual([cards1_after[k][1] for k in boxes1], ["312", "312", "15", "10", "3"])
         self.assertEqual(app.rows[1]["result"].cget("text"), "180")
 
+    def test_stage_2m2_mixture_0533_slots_synchronization(self):
+        """Stage 2m.2: mixture/0533 juice drink 0.25x + 0.5(100 − x) = 0.39(100)
+        Native SLOTS synchronization links total mixture volume in both occurrences (slot 0),
+        leaving percentages fixed in the equation text.
+        Also includes simultaneous cross-row isolation testing with rational_equation/0813."""
+        app = self.app
+        juice_text = (
+            "How many liters of a 25% juice drink must be mixed with a 50% juice drink to make 100 liters of a 39% juice drink?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, juice_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(
+            mod.FRAC,
+            [[], [], [], [], [], [], [], [], [], [], [], [], [], []]
+        )
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [5, 12])
+
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual(len(set(cards[k][2] for k in box_indices)), 1)
+
+        # Initial displayed values: ['100', '100']
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["100", "100"])
+
+        # 1. Original default evaluation -> 44 L and 56 L
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("44", res_text)
+        self.assertIn("56", res_text)
+
+        # 2. Case B: Double the total (T = 200 L) -> both Box 0 and Box 1 display 200, results 88 L and 112 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "200":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "200")
+        self.assertEqual(cards[box_indices[1]][1], "200")
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("88", res_text)
+        self.assertIn("112", res_text)
+
+        # 3. Case C: Half the total (T = 50 L) via Box 1 -> both Box 0 and Box 1 display 50, results 22 L and 28 L
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "50":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "50")
+        self.assertEqual(cards[box_indices[1]][1], "50")
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("22", res_text)
+        self.assertIn("28", res_text)
+
+        # 4. Restore defaults: Box 0 back to 100 -> both display 100, results 44 L and 56 L
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "100":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["100", "100"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("44", res_text)
+        self.assertIn("56", res_text)
+
+        # 5. Live Cross-Row Simultaneous Test:
+        # Load rational_equation/0813 in Row 0 and mixture/0533 in Row 1
+        app._clear_all()
+        app.update()
+        plane_text = (
+            "A plane flies 1590 miles with a 40 mph tailwind in the same time it flies 1350 miles into the same wind as a headwind. "
+            "What is the plane's speed in still air?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, plane_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Advance to Row 1 and post mixture/0533
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, juice_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Set join on Row 1
+        app._set_join(1, "+")
+        app.update()
+
+        # Verify initial box counts and values in both rows
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 4)
+        self.assertEqual(len(boxes1), 2)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["1590", "40", "1350", "40"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["100", "100"])
+
+        # Edit Row 0 wind speed to 50
+        app._pick_box(0, boxes0[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app._key("0")
+        app.update()
+
+        # Edit Row 1 total volume to 200
+        app._pick_box(1, boxes1[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "200":
+            app._key(ch)
+        app.update()
+
+        # Check Row 0 is updated and Row 1 is untouched by Row 0 edit
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["1590", "50", "1350", "50"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["200", "200"])
+
+        # Clear Row 0; Row 1 must remain intact with 200
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["200", "200"])
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

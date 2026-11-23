@@ -361,6 +361,17 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 2", "number 3", "number 4"],
         "kinds": ["number", "number", "number", "number"],
     },
+    "mixture/0533": {
+        "equation": "0.25x + 0.5(100 − x) = 0.39(100)",
+        "repeat_token": 12,
+        "expected_token": "100",
+        "slots": [0, 0],
+        "slots_comment": "boxes 0 and 1 share slot 0 (total mixture volume)",
+        "box_index": [2],
+        "defaults": ["100"],
+        "inputs": ["number 3"],
+        "kinds": ["number"],
+    },
 }
 
 
