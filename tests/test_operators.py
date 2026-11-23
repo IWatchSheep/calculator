@@ -3687,6 +3687,131 @@ class TemplatePanelTests(unittest.TestCase):
         app.update()
         self.assertEqual(app.rows[0]["result"].cget("text"), "4")
 
+    def test_stage_2g1_ratio_0782_slots_synchronization(self):
+        """Stage 2g.1 Pilot: ratio/0782 (Yusuf/Dev) has SLOTS = [0, 1, 2, 1, 3, 4]; editing either gift box updates both; = recomputes."""
+        YUSUF_DEV = ("The ratio of Yusuf's marbles to Dev's is 3:5. After Yusuf gives Dev 12 marbles, the ratio is 1:7. "
+                     "How many did each have at first?")
+        app = self.app
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, YUSUF_DEV)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.LEVELS, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(mod.FRAC, [[[1, "hide"]], [[1, "n"]], [[1, "n"]], [[1, "n"]], [[1, "n"]], [[1, "hide"]], [[1, "bar"]], [[1, "hide"]], [[1, "d"]], [[1, "d"]], [[1, "d"]], [[1, "d"]], [[1, "hide"]], [], [[2, "n"]], [[2, "bar"]], [[2, "d"]]])
+
+        cards = app._cards(0)
+        box_indices = [k for k, c in enumerate(cards) if c[0] == "box"]
+        self.assertEqual(len(box_indices), 6)
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 1))
+        self.assertEqual(cards[box_indices[2]][2], (0, 2))
+        self.assertEqual(cards[box_indices[3]][2], (0, 1))
+        self.assertEqual(cards[box_indices[4]][2], (0, 3))
+        self.assertEqual(cards[box_indices[5]][2], (0, 4))
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "12")
+        self.assertEqual(cards[box_indices[4]][1], "1")
+        self.assertEqual(cards[box_indices[5]][1], "7")
+
+        # Initial = gives (18, 30)
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(18, 30)")
+
+        # Change gift from 12 to 16 using numerator gift box (Box 1) -> both gift boxes become 16 -> (24, 40)
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("6")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "16")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "16")
+        self.assertEqual(cards[box_indices[4]][1], "1")
+        self.assertEqual(cards[box_indices[5]][1], "7")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(24, 40)")
+
+        # Change denominator gift box (Box 3) from 16 back to 12 -> both return to 12 -> (18, 30)
+        app._pick_box(0, box_indices[3])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("1")
+        app._key("2")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "12")
+        self.assertEqual(cards[box_indices[4]][1], "1")
+        self.assertEqual(cards[box_indices[5]][1], "7")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(18, 30)")
+
+        # Independently edit final-ratio denominator (Box 5) from 7 to 3 -> (36, 60)
+        app._pick_box(0, box_indices[5])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("3")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[5]][1], "3")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(36, 60)")
+
+        # Restore final-ratio denominator back to 7
+        app._pick_box(0, box_indices[5])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("7")
+        app.update()
+
+        # Independently edit initial-ratio denominator (Box 2) from 5 to 9 -> (24, 72)
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("9")
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[2]][1], "9")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(24, 72)")
+
+        # Restore initial-ratio denominator back to 5
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        app._key("5")
+        app.update()
+
+        # Final check on restored defaults
+        cards = app._cards(0)
+        self.assertEqual(cards[box_indices[0]][1], "3")
+        self.assertEqual(cards[box_indices[1]][1], "12")
+        self.assertEqual(cards[box_indices[2]][1], "5")
+        self.assertEqual(cards[box_indices[3]][1], "12")
+        self.assertEqual(cards[box_indices[4]][1], "1")
+        self.assertEqual(cards[box_indices[5]][1], "7")
+        app._equals()
+        app.update()
+        self.assertEqual(app.rows[0]["result"].cget("text"), "(18, 30)")
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

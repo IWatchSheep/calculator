@@ -232,6 +232,7 @@ class GeneratorReproductionTests(unittest.TestCase):
             "work_rate/0987": ([0, 1, 0], [0, 1], ["3", "6"], 3),
             "work_rate/0995": ([0, 1, 0], [0, 1], ["3", "4"], 3),
             "work_rate/0997": ([0, 1, 0], [0, 1], ["3", "12"], 3),
+            "ratio/0782": ([0, 1, 2, 1, 3, 4], [0, 2, 1, 3, 4], ["3", "12", "5", "1", "7"], 6),
         }
         for key, (exp_slots, exp_box_index, exp_defaults, exp_box_count) in expected.items():
             cat, pid = key.split("/")

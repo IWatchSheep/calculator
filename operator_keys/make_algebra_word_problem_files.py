@@ -185,6 +185,17 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 2"],
         "kinds": ["number", "number"],
     },
+    "ratio/0782": {
+        "equation": "(3k − 12)/(5k + 12) = 1/7",
+        "repeat_token": 11,
+        "expected_token": "12",
+        "slots": [0, 1, 2, 1, 3, 4],
+        "slots_comment": "boxes 1 and 3 share slot 1 (transferred marbles)",
+        "box_index": [0, 2, 1, 3, 4],
+        "defaults": ["3", "12", "5", "1", "7"],
+        "inputs": ["number 1", "number 3", "number 2", "number 4", "number 5"],
+        "kinds": ["number", "number", "number", "number", "number"],
+    },
 }
 
 

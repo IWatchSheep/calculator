@@ -215,6 +215,18 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
    strict preflight validation. Isolated generation reproduces all 479 problem modules, row modules, diagrams, and index
    byte-for-byte. Presentation limitation preserved: existing catalog JPEGs remain unchanged and continue to depict
    static secondary cards until diagram rendering is addressed in a separate milestone.
+    Stage 2g.1 Pilot (Marble-ratio row synchronization, 2026-11-23): ratio/0782 (Yusuf/Dev)
+    second static '12' token at LEFT index 11 converted to shared ('box', '') card with SLOTS = [0, 1, 2, 1, 3, 4],
+    mapping 6 visible boxes to 5 underlying slots (initial ratio a, transferred marbles g, initial ratio b, new ratio c,
+    new ratio d). Editing either transferred-marbles box updates both displayed values simultaneously; initial and
+    resulting ratio parameters remain independent; keypad = evaluates dynamically with existing compute(). Preserves
+    BOX_INDEX = [0, 2, 1, 3, 4] and DEFAULTS = ['3', '12', '5', '1', '7']. Fraction layout and grouping (FRAC and LEVELS)
+    remain structurally unchanged. Updated generator EXPLICIT_ROW_SYNCHRONIZATION and verified isolated generation
+    reproduces all 479 problem modules, 479 row modules, JPEG diagrams, and INDEX.md byte-for-byte. Presentation limitation
+    preserved: the existing catalog JPEG (0782.jpg) remains unchanged and still depicts the original static second
+    transfer amount until diagram rendering is addressed in a separate milestone. Note on ratio/0787: identified pre-existing
+    parameter-mapping defect where missing initial 1:1 ratio boxes and greedy token matching misrouted the new ratio numerator
+    to NUMBERS[0]; ratio/0787 is quarantined for separate investigation. Other 3 clean ratio problems remain untouched for this pilot.
    Stage 2f.1 Pilot (Work-rate fraction row synchronization, 2026-11-22): work_rate/0970 (Rhea/Emeka)
    second static '4' token at LEFT index 4 converted to shared ('box', '') card with SLOTS = [0, 1, 0],
    mapping 3 visible boxes to 2 underlying slots (working-together time, partner alone time). Both
