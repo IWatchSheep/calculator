@@ -90,7 +90,7 @@ class Rows(unittest.TestCase):
             self.assertEqual(r.KEY, key)
             self.assertEqual(r.LIBRARY_KEY, key)
             spec = generator.EXPLICIT_ROW_SYNCHRONIZATION.get(key)
-            if spec and spec.get("already_boxed"):
+            if spec and (spec.get("already_boxed") or spec.get("remap_box_index")):
                 self.assertEqual(r.BOX_INDEX, spec["box_index"], key)
                 self.assertEqual(r.DEFAULTS, spec["defaults"], key)
                 self.assertEqual(len(r.INPUTS), len(spec["inputs"]), key)
@@ -160,6 +160,10 @@ class Rows(unittest.TestCase):
                         self.assertEqual(r.DEFAULTS, ["5", "18", "6", "2", "9"], key)
                     elif key == "ratio/0809":
                         self.assertEqual(r.DEFAULTS, ["6", "16", "5", "4", "7"], key)
+                elif key == "ratio/0787":
+                    self.assertEqual(r.SLOTS, [0, 0, 1, 2], key)
+                    self.assertEqual(r.BOX_INDEX, [2, 3, 4], key)
+                    self.assertEqual(r.DEFAULTS, ["23", "1", "3"], key)
                 elif key in ("distance_average_speed/0115", "distance_average_speed/0117", "distance_average_speed/0120", "distance_average_speed/0121", "distance_average_speed/0124"):
                     self.assertEqual(r.SLOTS, [0, 1, 2, 1, 3], key)
                     self.assertEqual(r.BOX_INDEX, [1, 0, 2, 3], key)

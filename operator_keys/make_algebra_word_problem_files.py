@@ -284,6 +284,18 @@ EXPLICIT_ROW_SYNCHRONIZATION = {
         "inputs": ["number 1", "number 3", "number 2", "number 4", "number 5"],
         "kinds": ["number", "number", "number", "number", "number"],
     },
+    "ratio/0787": {
+        "equation": "(k − 23)/(k + 23) = 1/3",
+        "repeat_token": 9,
+        "expected_token": "23",
+        "slots": [0, 0, 1, 2],
+        "slots_comment": "boxes 0 and 1 share slot 0 (transferred marbles); boxes 2 and 3 are final ratio parameters",
+        "box_index": [2, 3, 4],
+        "defaults": ["23", "1", "3"],
+        "inputs": ["number 3", "number 4", "number 5"],
+        "kinds": ["number", "number", "number"],
+        "remap_box_index": True,
+    },
     "distance_average_speed/0115": {
         "equation": "(30×1 + 55t)/(1 + t) = 50",
         "repeat_token": 10,
@@ -562,6 +574,57 @@ def validate_preflight(problems, explicit_specs):
                 raise ValueError("Not all underlying slots represented in %r for %s" % (spec["slots"], key))
             if len(spec["defaults"]) < 1:
                 raise ValueError("Expected at least 1 underlying slot for %s, found %d" % (key, len(spec["defaults"])))
+        elif spec.get("remap_box_index"):
+            if key != "ratio/0787":
+                raise ValueError("remap_box_index is only authorized for ratio/0787, found %s" % key)
+            if p["Equation"] != "(k − 23)/(k + 23) = 1/3":
+                raise ValueError("Expected equation '(k − 23)/(k + 23) = 1/3' for %s, found %r" % (key, p["Equation"]))
+            if numbers != ["1", "1", "23", "1", "3"]:
+                raise ValueError("Expected NUMBERS ['1', '1', '23', '1', '3'] for %s, found %r" % (key, numbers))
+            if len(cards) != 15:
+                raise ValueError("Expected 15 cards for %s, found %d" % (key, len(cards)))
+            if cards[3] != ("box", ""):
+                raise ValueError("Expected cards[3] to be ('box', '') for %s, found %r" % (key, cards[3]))
+            rep_idx = spec["repeat_token"]
+            if rep_idx != 9:
+                raise ValueError("Expected repeat_token == 9 for %s, found %r" % (key, rep_idx))
+            if cards[9] != ("op", "23") or spec["expected_token"] != "23":
+                raise ValueError("Expected cards[9] == ('op', '23') for %s, found %r" % (key, cards[9]))
+            if cards[12] != ("box", "") or cards[14] != ("box", ""):
+                raise ValueError("Expected cards[12] and cards[14] to be ('box', '') for %s, found %r and %r" % (key, cards[12], cards[14]))
+            if orig_box_index != [2, 0, 4]:
+                raise ValueError("Expected orig_box_index == [2, 0, 4] for %s, found %r" % (key, orig_box_index))
+            inferred_defaults = [numbers[i] for i in orig_box_index]
+            if inferred_defaults != ["23", "1", "3"]:
+                raise ValueError("Expected inferred defaults ['23', '1', '3'] for %s, found %r" % (key, inferred_defaults))
+            inferred_inputs = ["number %d" % (i + 1) for i in orig_box_index]
+            if inferred_inputs != ["number 3", "number 1", "number 5"]:
+                raise ValueError("Expected inferred inputs ['number 3', 'number 1', 'number 5'] for %s, found %r" % (key, inferred_inputs))
+            if spec["box_index"] != [2, 3, 4]:
+                raise ValueError("Expected target spec['box_index'] == [2, 3, 4] for %s, found %r" % (key, spec["box_index"]))
+            expected_defaults = [numbers[i] for i in spec["box_index"]]
+            if spec["defaults"] != expected_defaults or spec["defaults"] != ["23", "1", "3"]:
+                raise ValueError("Mismatched DEFAULTS for %s: expected %r, found %r" % (key, expected_defaults, spec["defaults"]))
+            if spec["slots"] != [0, 0, 1, 2]:
+                raise ValueError("Expected target spec['slots'] == [0, 0, 1, 2] for %s, found %r" % (key, spec["slots"]))
+            expected_box_count = sum(1 for k, _ in cards if k == "box") + 1
+            if expected_box_count != 4 or len(spec["slots"]) != expected_box_count:
+                raise ValueError("Expected 4 box cards matching len(slots) for %s, found %d and %d" % (key, expected_box_count, len(spec["slots"])))
+            if len(spec["defaults"]) != 3:
+                raise ValueError("Expected 3 independent inputs for %s, found %d" % (key, len(spec["defaults"])))
+            if not all(0 <= idx < len(numbers) for idx in spec["box_index"]):
+                raise ValueError("BOX_INDEX entries out of bounds for %s (%d text numbers)" % (key, len(numbers)))
+            if len(spec["inputs"]) != len(spec["defaults"]):
+                raise ValueError("Length of INPUTS must match DEFAULTS for %s" % key)
+            kinds = spec.get("kinds", ["number"] * len(spec["defaults"]))
+            if len(kinds) != len(spec["defaults"]):
+                raise ValueError("Length of KINDS (%d) must match DEFAULTS (%d) for %s" % (len(kinds), len(spec["defaults"]), key))
+            if not (len(spec["box_index"]) == len(spec["defaults"]) == len(spec["inputs"]) == len(kinds)):
+                raise ValueError("Metadata length invariant len(BOX_INDEX) == len(DEFAULTS) == len(INPUTS) == len(KINDS) violated for %s" % key)
+            if not all(0 <= s < len(spec["defaults"]) for s in spec["slots"]):
+                raise ValueError("Invalid slot index in %r for %s" % (spec["slots"], key))
+            if set(spec["slots"]) != set(range(len(spec["defaults"]))):
+                raise ValueError("Not all underlying slots represented in %r for %s" % (spec["slots"], key))
         else:
             rep_idx = spec["repeat_token"]
             if rep_idx >= len(cards):

@@ -6760,6 +6760,197 @@ class TemplatePanelTests(unittest.TestCase):
         cards1_after = app._cards(1)
         self.assertEqual([cards1_after[k][1] for k in boxes1], ["50", "50"])
 
+    def test_stage_2n3_ratio_0787_slots_synchronization(self):
+        """Stage 2n.3: ratio/0787 marble ratio (k − 23)/(k + 23) = 1/3
+        Repairs parameter collision and synchronizes repeated transfer amount (23 marbles).
+        Native SLOTS synchronization links transferred marbles in both occurrences (slot 0).
+        Final ratio parameters 1:3 are slots 1 and 2; initial 1:1 ratio is unedited."""
+        app = self.app
+        prob_text = (
+            "The ratio of Hana's marbles to Maya's is 1:1. "
+            "After Hana gives Maya 23 marbles, the ratio is 1:3. "
+            "How many did each have at first?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.KEY, "ratio/0787")
+        self.assertEqual(mod.SLOTS, [0, 0, 1, 2])
+        self.assertEqual(mod.BOX_INDEX, [2, 3, 4])
+        self.assertEqual(mod.DEFAULTS, ["23", "1", "3"])
+        self.assertEqual(mod.INPUTS, ["number 3", "number 4", "number 5"])
+        self.assertEqual(mod.KINDS, ["number", "number", "number"])
+        self.assertEqual(mod.PATTERN, '( k − □ ) / ( k + □ ) = □ / □  ->  answer □')
+        self.assertIn('Picture:      ( k − □ ) / ( k + □ ) = □ / □', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 15)
+        self.assertEqual(
+            mod.FRAC,
+            [[[1, 'hide']], [[1, 'n']], [[1, 'n']], [[1, 'n']], [[1, 'hide']],
+             [[1, 'bar']], [[1, 'hide']], [[1, 'd']], [[1, 'd']], [[1, 'd']],
+             [[1, 'hide']], [], [[2, 'n']], [[2, 'bar']], [[2, 'd']]]
+        )
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 4)
+        self.assertEqual(box_indices, [3, 9, 12, 14])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual(cards[box_indices[2]][2], (0, 1))
+        self.assertEqual(cards[box_indices[3]][2], (0, 2))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["23", "23", "1", "3"])
+
+        # 1. Original default evaluation (transfer 23, ratio 1:3) -> [46, 46] marbles
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(46, 46)")
+
+        # 2. Case B: Edit transfer to 10 via Box 0 -> both transfer boxes show 10, results [20, 20]
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["10", "10", "1", "3"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(20, 20)")
+
+        # 3. Case C: Edit transfer to 30 via Box 1 -> both transfer boxes show 30, results [60, 60]
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "30":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["30", "30", "1", "3"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(60, 60)")
+
+        # 4. Restore transfer to 23 via Box 0 -> both transfer boxes return to 23, results [46, 46]
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "23":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["23", "23", "1", "3"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(46, 46)")
+
+        # 5. Case D: Edit final ratio numerator from 1 to 2 via Box 2 -> results [115, 115]
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "2":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["23", "23", "2", "3"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(115, 115)")
+
+        # 6. Restore final ratio numerator back to 1 via Box 2 -> results [46, 46]
+        app._pick_box(0, box_indices[2])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "1":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["23", "23", "1", "3"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertEqual(res_text, "(46, 46)")
+
+        # 7. Live Cross-Row Simultaneous Isolation Test:
+        # Load ratio/0782 in Row 0 and ratio/0787 in Row 1
+        app._clear_all()
+        app.update()
+        yusuf_dev = (
+            "The ratio of Yusuf's marbles to Dev's is 3:5. "
+            "After Yusuf gives Dev 12 marbles, the ratio is 1:7. "
+            "How many did each have at first?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, yusuf_dev)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Advance to Row 1 and post ratio/0787
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Set join on Row 1
+        app._set_join(1, "+")
+        app.update()
+
+        # Verify initial box counts and values in both rows
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 6)
+        self.assertEqual(len(boxes1), 4)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["3", "12", "5", "12", "1", "7"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["23", "23", "1", "3"])
+
+        # Edit Row 0 transfer to 16
+        app._pick_box(0, boxes0[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "16":
+            app._key(ch)
+        app.update()
+
+        # Edit Row 1 transfer to 30
+        app._pick_box(1, boxes1[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "30":
+            app._key(ch)
+        app.update()
+
+        # Check Row 0 updated and Row 1 untouched by Row 0 edit
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["3", "16", "5", "16", "1", "7"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["30", "30", "1", "3"])
+
+        # Clear Row 0; Row 1 must remain intact with 30
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["30", "30", "1", "3"])
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app
