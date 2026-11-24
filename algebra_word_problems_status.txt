@@ -376,6 +376,15 @@ C. THE OPERATOR.  Stage 1a (library only, 2026-11-19): algebra_word_problems/alg
     edited to 2:3 -> (115, 115)). Updated generator with explicit remap_box_index preflight validator that strictly asserts all
     16 invariants before applying the row specification. Isolated generation reproduces all 479 problem modules, row modules,
     diagrams, and index byte-for-byte. All 42 repeated-parameter candidates across the catalog are now fully synchronized.
+    Stage 3b Implementation (Correct Generated Problem 0950 and Make It Solvable, 2026-11-23):
+    Corrected defective word problem system_of_equations_3_variables/0950 and made it Ready.
+    Replaced underdetermined condition 'A banana and two cherry cups cost $4.70.' with linearly independent
+    condition 'An apple and two cherry cups cost $4.60.' (det(A) = -3 != 0). Preserved exact expected prices
+    (apple $1.10, banana $1.20, cherry cup $1.75). Added dedicated three_item_prices solver family to word_solver.py
+    with exact rational/integer-cent arithmetic, positivity checks, and full equation verification. Updated authoritative
+    catalog source (algebra_word_problems/algebra_word_problems.txt). Regenerated problem module, row module, diagram,
+    and INDEX.md in isolated generator environment with 100% byte-for-byte fidelity across all 479 problems.
+    Catalog achieves milestone of exactly 479 Ready, 0 Reference, 0 Wrong.
 D. HOUSEKEEPING worth doing when asked: (1) solve() swallows only ZeroDivisionError, ValueError, KeyError, IndexError; the no-raise test guards every family, keep it passing; (2) the test suite takes ~11 seconds (the no-raise guard is
    most of it); (3) word_solver.py is one 3,000-line file: splitting it by family group would help, but only on request; (4) line endings: the repo is CRLF, git warns "LF will be replaced by CRLF" on new files, that is harmless.
 E. MEMORY: the Claude memory file algebra-word-problem-operator-plan.md points here; keep its status line true when the operator work starts.
@@ -660,7 +669,7 @@ UNCLAIMED WORDING SHAPES (category | problems | first id | example):
   System of equations | 1 | 0912 | Two numbers x and y satisfy 3x + 5y = 22 and 3x + 4y = 20. Find x and y.
   System of equations | 1 | 0928 | Two numbers x and y satisfy −x + 3y = 3 and 5x − 2y = -41. Find x and y.
   System of equations | 1 | 0932 | A farm has spiders and beetles. There are 17 bugs and 110 legs. How many of each are there?
-  System of equations (3 variables) | 5 | 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cu
+  System of equations (3 variables) | 5 | 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. An apple and two cherry cu
   System of equations (3 variables) | 4 | 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three.
   Tickets | 1 | 0960 | Adult tickets to a museum cost $10 and child tickets cost $4. 599 tickets were sold for a total of $4196. How many of ea
   Tickets | 1 | 0962 | Adult tickets to a concert cost $15 and child tickets cost $4. 225 tickets were sold for a total of $1967. How many of e

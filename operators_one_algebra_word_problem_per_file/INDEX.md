@@ -5,7 +5,7 @@ One folder per problem, holding `<id>.py` (the problem, its steps, its answer an
 Written by `operator_keys/make_algebra_word_problem_files.py`; the solver column comes from `algebra_word_problems/algebra_matcher/word_solver.py`.
 One wording is stored once. Further numbers for that wording are a slider on the unknown, not another stored problem.
 
-479 problems: 478 ready (463 word_solver, 15 number_puzzle), 1 reference.
+479 problems: 479 ready (464 word_solver, 15 number_puzzle), 0 reference.
 
 ## Age
 
@@ -721,7 +721,7 @@ One wording is stored once. Further numbers for that wording are a slider on the
 
 | Id | Problem | Answer | Status | Solver | Folder |
 |---|---|---|---|---|---|
-| 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cups cost $4.70. Find each price. | apple $1.10, banana $1.20, cherry cup $1.75 | Reference |  | `system_of_equations_3_variables/0950/` |
+| 0950 | An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. An apple and two cherry cups cost $4.60. Find each price. | apple $1.10, banana $1.20, cherry cup $1.75 | Ready | three_item_prices | `system_of_equations_3_variables/0950/` |
 | 0951 | Three numbers add up to 21. The first plus the second is 10, and the second plus the third is 12. Find all three. | 9, 1, 11 | Ready | three_numbers_pair_sums | `system_of_equations_3_variables/0951/` |
 
 ## Tickets

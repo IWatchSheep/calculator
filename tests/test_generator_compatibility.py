@@ -160,12 +160,12 @@ class GeneratorReproductionTests(unittest.TestCase):
         cls.temp_dir.cleanup()
 
     def test_generated_counts(self):
-        """Generator counts must match catalog status: 478 Ready, 1 Reference."""
+        """Generator counts must match catalog status: 479 Ready, 0 Reference."""
         self.assertEqual(len(self.problems), 479)
-        self.assertEqual(self.counts["word_solver"], 463)
+        self.assertEqual(self.counts["word_solver"], 464)
         self.assertEqual(self.counts["number_puzzle"], 15)
-        self.assertEqual(self.counts[None], 1)
-        self.assertEqual(self.counts["word_solver"] + self.counts["number_puzzle"], 478)
+        self.assertEqual(self.counts[None], 0)
+        self.assertEqual(self.counts["word_solver"] + self.counts["number_puzzle"], 479)
 
     def test_all_problem_files_byte_for_byte_identical(self):
         """All 479 generated problem Python files must match the repository files."""

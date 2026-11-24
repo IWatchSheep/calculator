@@ -1,12 +1,12 @@
 """Algebra word problem 0950   [System of equations (3 variables)]
 
-Problem : An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cups cost $4.70. Find each price.
+Problem : An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. An apple and two cherry cups cost $4.60. Find each price.
 Let     : a, b, c = prices
-Equation: a + b + c = 4.05;  2a + b = 3.4;  b + 2c = 4.7
-Solve   : Subtract eq 1 from eq 2: a − c = -0.65; substitute into eq 3 → a = 1.1, b = 1.2, c = 1.75
+Equation: a + b + c = 4.05;  2a + b = 3.4;  a + 2c = 4.6
+Solve   : From eq 2: b = 3.4 − 2a; from eq 3: c = (4.6 − a)/2; substitute into eq 1 → a = 1.1, b = 1.2, c = 1.75
 Answer  : apple $1.10, banana $1.20, cherry cup $1.75
 
-Status  : reference only: no solver answers it yet (compute(...) raises)
+Status  : ready: three_item_prices answers it (compute(...) solves it with any numbers the solver accepts)
 """
 import os
 import sys
@@ -18,17 +18,17 @@ ID = '0950'
 KEY = 'system_of_equations_3_variables/0950'
 NAME = 'System of equations (3 variables) 0950'
 CATEGORY = 'System of equations (3 variables)'
-PROBLEM = 'An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cups cost $4.70. Find each price.'
+PROBLEM = 'An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. An apple and two cherry cups cost $4.60. Find each price.'
 LET = 'a, b, c = prices'
-EQUATION = 'a + b + c = 4.05;  2a + b = 3.4;  b + 2c = 4.7'
-SOLVE = 'Subtract eq 1 from eq 2: a − c = -0.65; substitute into eq 3 → a = 1.1, b = 1.2, c = 1.75'
+EQUATION = 'a + b + c = 4.05;  2a + b = 3.4;  a + 2c = 4.6'
+SOLVE = 'From eq 2: b = 3.4 − 2a; from eq 3: c = (4.6 − a)/2; substitute into eq 1 → a = 1.1, b = 1.2, c = 1.75'
 ANSWER = 'apple $1.10, banana $1.20, cherry cup $1.75'
 # who answers it today:  "word_solver" (a family in algebra_word_problems/algebra_matcher/word_solver.py), "number_puzzle", or None (reference only)
-SOLVER = None
-FAMILY = None
+SOLVER = 'word_solver'
+FAMILY = 'three_item_prices'
 # the problem text with every number replaced by {0}, {1}, ...; NUMBERS are the numbers as written, in order (these fill the boxes of the row)
-TEMPLATE = 'An apple, a banana, and a cherry cup cost ${0} together. Two apples and a banana cost ${1}. A banana and two cherry cups cost ${2}. Find each price.'
-NUMBERS = ['4.05', '3.40', '4.70']
+TEMPLATE = 'An apple, a banana, and a cherry cup cost ${0} together. Two apples and a banana cost ${1}. An apple and two cherry cups cost ${2}. Find each price.'
+NUMBERS = ['4.05', '3.40', '4.60']
 
 
 def compute(*numbers):

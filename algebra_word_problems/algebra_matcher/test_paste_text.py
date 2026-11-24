@@ -15,9 +15,13 @@ WREN = (
     "How old is each now?"
 )
 NUMBER_PUZZLE = "6 times the difference of a number and 6 is 174. What is the number?"
-PROBLEM_0950 = (
+PROBLEM_0950_OLD_DEFECTIVE = (
     "An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana "
     "cost $3.40. A banana and two cherry cups cost $4.70. Find each price."
+)
+PROBLEM_0950 = (
+    "An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana "
+    "cost $3.40. An apple and two cherry cups cost $4.60. Find each price."
 )
 ROOF = (
     "A sloped roof rises 5 m over 12 m, then 7 m over a longer run. "
@@ -78,10 +82,16 @@ class Analyze(unittest.TestCase):
         self.assertEqual(result.family, "times_as_old_future_sum")
         self.assertNotEqual(result.family, "number_puzzle")
 
-    def test_problem_0950_is_unsupported(self):
-        self.assertTrue(declined(PT.analyze(PROBLEM_0950)))
-        self.assertIsNone(WS.solve(PROBLEM_0950))
-        self.assertIsNone(NP.solve(PROBLEM_0950))
+    def test_problem_0950_old_defective_is_unsupported(self):
+        self.assertTrue(declined(PT.analyze(PROBLEM_0950_OLD_DEFECTIVE)))
+        self.assertIsNone(WS.solve(PROBLEM_0950_OLD_DEFECTIVE))
+        self.assertIsNone(NP.solve(PROBLEM_0950_OLD_DEFECTIVE))
+
+    def test_problem_0950_supported(self):
+        result = PT.analyze(PROBLEM_0950)
+        self.assertTrue(result.supported)
+        self.assertEqual(result.family, "three_item_prices")
+        self.assertEqual(result.values, [Fraction(11, 10), Fraction(6, 5), Fraction(7, 4)])
 
     def test_roof_leftover_numbers_are_unsupported(self):
         self.assertTrue(declined(PT.analyze(ROOF)))

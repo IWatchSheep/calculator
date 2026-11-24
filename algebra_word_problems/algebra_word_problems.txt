@@ -3213,10 +3213,10 @@ Solve: Solve by elimination → x = 17, y = 23
 Answer: 17 at 44¢, 23 at 63¢
 ----------------------------------------------------------------------
 #0950 [System of equations (3 variables)]
-Problem: An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. A banana and two cherry cups cost $4.70. Find each price.
+Problem: An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana cost $3.40. An apple and two cherry cups cost $4.60. Find each price.
 Let: a, b, c = prices
-Equation: a + b + c = 4.05;  2a + b = 3.4;  b + 2c = 4.7
-Solve: Subtract eq 1 from eq 2: a − c = -0.65; substitute into eq 3 → a = 1.1, b = 1.2, c = 1.75
+Equation: a + b + c = 4.05;  2a + b = 3.4;  a + 2c = 4.6
+Solve: From eq 2: b = 3.4 − 2a; from eq 3: c = (4.6 − a)/2; substitute into eq 1 → a = 1.1, b = 1.2, c = 1.75
 Answer: apple $1.10, banana $1.20, cherry cup $1.75
 ----------------------------------------------------------------------
 #0951 [System of equations (3 variables)]

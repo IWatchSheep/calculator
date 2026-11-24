@@ -2484,12 +2484,29 @@ class TemplatePanelTests(unittest.TestCase):
     # ---- Solve Word Problem (paste-text Stage 1b)
     WREN = ("Wren is 4 times as old as Jamal. In 5 years, the sum of their ages will be 105. "
             "How old is each now?")
+    PROBLEM_0950_OLD_DEFECTIVE = ("An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana "
+                                  "cost $3.40. A banana and two cherry cups cost $4.70. Find each price.")
     PROBLEM_0950 = ("An apple, a banana, and a cherry cup cost $4.05 together. Two apples and a banana "
-                    "cost $3.40. A banana and two cherry cups cost $4.70. Find each price.")
+                    "cost $3.40. An apple and two cherry cups cost $4.60. Find each price.")
     ROOF_DECLINE = ("A sloped roof rises 5 m over 12 m, then 7 m over a longer run. "
                     "The hypotenuse is 13 m. How long is the run?")
     WREN_READING = "(x + 5) + (4*x + 5) = 105, so x = 19 and 4*x = 76"
     UNSUPPORTED = "Unsupported problem — no matching solution found."
+
+    def test_solve_word_problem_0950(self):
+        """Solve Word Problem on corrected problem 0950."""
+        app = self.app
+        before = self.row_text()
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, self.PROBLEM_0950)
+        self.button("Solve Word Problem").invoke()
+        said = self.said()
+        self.assertIn("three_item_prices", said)
+        self.assertIn("11/10", said)
+        self.assertIn("6/5", said)
+        self.assertIn("7/4", said)
+        self.assertEqual(self.row_text(), before)
+        self.assertTrue(app._is_blank(app.rows[0]))
 
     def test_solve_word_problem_wren(self):
         app = self.app
@@ -2512,7 +2529,7 @@ class TemplatePanelTests(unittest.TestCase):
     def test_solve_word_problem_declines(self):
         cases = (
             "",
-            self.PROBLEM_0950,
+            self.PROBLEM_0950_OLD_DEFECTIVE,
             self.ROOF_DECLINE,
             "(\u25a1 + 3) \u00d7 2",
         )
@@ -6951,6 +6968,138 @@ class TemplatePanelTests(unittest.TestCase):
         cards1_after = app._cards(1)
         self.assertEqual([cards1_after[k][1] for k in boxes1], ["30", "30", "1", "3"])
 
+    def test_stage_3b_system_of_equations_3_variables_0950_post_and_evaluate(self):
+        """Stage 3b: system_of_equations_3_variables/0950 corrected problem posting and evaluation.
+        Equation: a + b + c = 4.05; 2a + b = 3.40; a + 2c = 4.60.
+        All three prices: apple $1.10, banana $1.20, cherry cup $1.75."""
+        from operator_row_math import row_tree
+        app = self.app
+        prob_text = (
+            "An apple, a banana, and a cherry cup cost $4.05 together. "
+            "Two apples and a banana cost $3.40. "
+            "An apple and two cherry cups cost $4.60. "
+            "Find each price."
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.KEY, "system_of_equations_3_variables/0950")
+        self.assertEqual(mod.CALC, "ready")
+        self.assertEqual(mod.BOX_INDEX, [0, 1, 2])
+        self.assertEqual(mod.DEFAULTS, ["4.05", "3.40", "4.60"])
+        self.assertEqual(mod.INPUTS, ["number 1", "number 2", "number 3"])
+        self.assertEqual(mod.KINDS, ["number", "number", "number"])
+        self.assertEqual(mod.PATTERN, 'a + b + c = □ ; 2 a + b = □ ; a + 2 c = □  ->  answer □')
+        self.assertIn('Picture:      a + b + c = □ ; 2 a + b = □ ; a + 2 c = □', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 21)
+        self.assertEqual(mod.FRAC, [[]] * 21)
+
+        # 1. Inspect cards and initial box values
+        cards = app._cards(0)
+        self.assertEqual(len(cards), 21)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(box_indices, [6, 13, 20])
+        self.assertEqual(cards[15][:2], ("op", "a"))
+        self.assertEqual([cards[k][1] for k in box_indices], ["4.05", "3.40", "4.60"])
+
+        # 2. Evaluate with default values
+        app._equals()
+        app.update()
+        self.assertEqual(row_tree.evaluate(app.rows[0]["node"]), [1.1, 1.2, 1.75])
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("1.1", res_text)
+        self.assertIn("1.2", res_text)
+
+        # 3. Edit boxes to scaled totals ($8.10, $6.80, $9.20) -> [2.2, 2.4, 3.5]
+        for idx, new_val in zip(box_indices, ["8.10", "6.80", "9.20"]):
+            app._pick_box(0, idx)
+            for _ in range(6):
+                app._key("⌫")
+            for ch in new_val:
+                app._key(ch)
+            app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[k][1] for k in box_indices], ["8.10", "6.80", "9.20"])
+        app._equals()
+        app.update()
+        self.assertEqual(row_tree.evaluate(app.rows[0]["node"]), [2.2, 2.4, 3.5])
+
+        # 4. Edit to non-cent value (e.g. 4.055) which must be rejected by the solver
+        app._pick_box(0, box_indices[0])
+        for _ in range(6):
+            app._key("⌫")
+        for ch in "4.055":
+            app._key(ch)
+        app.update()
+        with self.assertRaises(ValueError):
+            row_tree.evaluate(app.rows[0]["node"])
+
+        # 5. Restore defaults
+        for idx, def_val in zip(box_indices, ["4.05", "3.40", "4.60"]):
+            app._pick_box(0, idx)
+            for _ in range(6):
+                app._key("⌫")
+            for ch in def_val:
+                app._key(ch)
+            app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[k][1] for k in box_indices], ["4.05", "3.40", "4.60"])
+        app._equals()
+        app.update()
+        self.assertEqual(row_tree.evaluate(app.rows[0]["node"]), [1.1, 1.2, 1.75])
+
+        # 6. Live Cross-Row Simultaneous Isolation Test:
+        # Load 0950 in Row 0 and mixture/0533 in Row 1
+        app._clear_all()
+        app.update()
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Advance to Row 1 and post mixture/0533
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        juice_text = (
+            "How many liters of a 25% juice drink must be mixed with a 50% juice drink "
+            "to make 100 liters of a 39% juice drink?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, juice_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Verify initial box counts and values in both rows
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 3)
+        self.assertEqual(len(boxes1), 2)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["4.05", "3.40", "4.60"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["100", "100"])
+
+        # Evaluate both rows
+        self.assertEqual(row_tree.evaluate(app.rows[0]["node"]), [1.1, 1.2, 1.75])
+        self.assertEqual(row_tree.evaluate(app.rows[1]["node"]), [44, 56])
+
+        # Clear Row 0; Row 1 must remain intact
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["100", "100"])
+        self.assertEqual(row_tree.evaluate(app.rows[1]["node"]), [44, 56])
+        app._clear_all()
+        app.update()
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app
@@ -6984,7 +7133,7 @@ class TemplatePanelTests(unittest.TestCase):
         cases = (
             "",
             "   ",
-            self.PROBLEM_0950,
+            self.PROBLEM_0950_OLD_DEFECTIVE,
             self.ROOF_DECLINE,
             self.WREN_MODIFIED,
         )
@@ -7016,17 +7165,17 @@ class TemplatePanelTests(unittest.TestCase):
         self.assertEqual(node1["slots"], ["5", "4", "105"])
 
     def test_catalog_integrity(self):
-        """J: Catalog remains 479 total: 478 Ready, 1 Reference (0950), 0 Wrong."""
+        """J: Catalog remains 479 total: 479 Ready, 0 Reference, 0 Wrong."""
         import algebra_word_problem_catalog as c
         index_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
                                "operators_one_algebra_word_problem_per_file", "INDEX.md")
         items = c.load_catalog(index_p)
         self.assertEqual(len(items), 479)
-        self.assertEqual(sum(1 for x in items if x["status"] == "Ready"), 478)
-        self.assertEqual(sum(1 for x in items if x["status"] == "Reference"), 1)
+        self.assertEqual(sum(1 for x in items if x["status"] == "Ready"), 479)
+        self.assertEqual(sum(1 for x in items if x["status"] == "Reference"), 0)
         p0950 = [x for x in items if x["id"] == "0950"]
         self.assertEqual(len(p0950), 1)
-        self.assertEqual(p0950[0]["status"], "Reference")
+        self.assertEqual(p0950[0]["status"], "Ready")
 
 
 if __name__ == "__main__":
