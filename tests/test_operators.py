@@ -6594,6 +6594,172 @@ class TemplatePanelTests(unittest.TestCase):
         cards1_after = app._cards(1)
         self.assertEqual([cards1_after[k][1] for k in boxes1], ["60", "60"])
 
+    def test_stage_2n2_mixture_0534_slots_synchronization(self):
+        """Stage 2n.2: mixture/0534 nickel alloy 0.25x + 0.75(25 − x) = 0.31(25)
+        Repairs parameter collision between 25% concentration and 25 kg total mass.
+        Native SLOTS synchronization links total alloy mass in both occurrences (slot 0).
+        Static concentration percentages (25%, 75%, 31%) remain uneditable and unaffected."""
+        app = self.app
+        prob_text = (
+            "One alloy is 25% nickel and another is 75% nickel. "
+            "How many kilograms of each are needed to make 25 kg of an alloy that is 31% nickel?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        mod = app.rows[0]["node"]["slots"][0]["mod"]
+        self.assertEqual(mod.KEY, "mixture/0534")
+        self.assertEqual(mod.SLOTS, [0, 0])
+        self.assertEqual(mod.BOX_INDEX, [2])
+        self.assertEqual(mod.DEFAULTS, ["25"])
+        self.assertEqual(mod.INPUTS, ["number 3"])
+        self.assertEqual(mod.KINDS, ["number"])
+        self.assertEqual(mod.PATTERN, '0.25 x + 0.75 ( □ − x ) = 0.31 ( □ )  ->  answer □')
+        self.assertIn('Picture:      0.25 x + 0.75 ( □ − x ) = 0.31 ( □ )', mod.__doc__)
+        self.assertEqual(mod.LEVELS, [0] * 14)
+        self.assertEqual(mod.FRAC, [[] for _ in range(14)])
+
+        cards = app._cards(0)
+        box_indices = [k for k, card in enumerate(cards) if card[0] == "box"]
+        self.assertEqual(len(box_indices), 2)
+        self.assertEqual(box_indices, [5, 12])
+        self.assertEqual(cards[box_indices[0]][2], (0, 0))
+        self.assertEqual(cards[box_indices[1]][2], (0, 0))
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["25", "25"])
+
+        # Guard: Static concentration percentages must not be box cards
+        self.assertEqual(cards[0], ("op", "0.25", None))
+        self.assertEqual(cards[3], ("op", "0.75", None))
+        self.assertEqual(cards[10], ("op", "0.31", None))
+
+        # 1. Original default evaluation (25 kg) -> [22, 3] kg
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("22", res_text)
+        self.assertIn("3", res_text)
+
+        # 2. Case B: Double total (50 kg) via Box 0 -> both 50, results [44, 6] kg
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "50":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["50", "50"])
+        # Guard: Concentration percentages remain untouched
+        self.assertEqual(cards[0], ("op", "0.25", None))
+        self.assertEqual(cards[3], ("op", "0.75", None))
+        self.assertEqual(cards[10], ("op", "0.31", None))
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("44", res_text)
+        self.assertIn("6", res_text)
+
+        # 3. Case C: Test arbitrary total (10 kg) via Box 1 -> both 10, results [8.8, 1.2] kg
+        app._pick_box(0, box_indices[1])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "10":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["10", "10"])
+        self.assertEqual(cards[0], ("op", "0.25", None))
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("8.8", res_text)
+        self.assertIn("1.2", res_text)
+
+        # 4. Restore defaults (25 kg) via Box 0 -> both 25, results [22, 3] kg
+        app._pick_box(0, box_indices[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "25":
+            app._key(ch)
+        app.update()
+
+        cards = app._cards(0)
+        self.assertEqual([cards[idx][1] for idx in box_indices], ["25", "25"])
+        app._equals()
+        app.update()
+        res_text = app.rows[0]["result"].cget("text")
+        self.assertIn("22", res_text)
+        self.assertIn("3", res_text)
+
+        # 5. Live Cross-Row Simultaneous Isolation Test:
+        # Load mixture/0533 in Row 0 and mixture/0534 in Row 1
+        app._clear_all()
+        app.update()
+        mix533_text = (
+            "How many liters of a 25% juice drink must be mixed with a 50% juice drink "
+            "to make 100 liters of a 39% juice drink?"
+        )
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, mix533_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Advance to Row 1 and post mixture/0534
+        app._next_row()
+        app.update()
+        self.assertEqual(app.op_target, 1)
+
+        self.app.tpl_entry.delete(0, "end")
+        self.app.tpl_entry.insert(0, prob_text)
+        self.button("Post Problem to Row").invoke()
+        app.update()
+
+        # Set join on Row 1
+        app._set_join(1, "+")
+        app.update()
+
+        # Verify initial box counts and values in both rows
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        boxes0 = [k for k, c in enumerate(cards0) if c[0] == "box"]
+        boxes1 = [k for k, c in enumerate(cards1) if c[0] == "box"]
+        self.assertEqual(len(boxes0), 2)
+        self.assertEqual(len(boxes1), 2)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["100", "100"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["25", "25"])
+
+        # Edit Row 0 total volume to 200
+        app._pick_box(0, boxes0[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "200":
+            app._key(ch)
+        app.update()
+
+        # Edit Row 1 total mass to 50
+        app._pick_box(1, boxes1[0])
+        for _ in range(5):
+            app._key("⌫")
+        for ch in "50":
+            app._key(ch)
+        app.update()
+
+        # Check Row 0 updated and Row 1 untouched by Row 0 edit
+        cards0 = app._cards(0)
+        cards1 = app._cards(1)
+        self.assertEqual([cards0[k][1] for k in boxes0], ["200", "200"])
+        self.assertEqual([cards1[k][1] for k in boxes1], ["50", "50"])
+
+        # Clear Row 0; Row 1 must remain intact with 50
+        app._clear_row_math(0)
+        app.update()
+        self.assertTrue(app._is_blank(app.rows[0]))
+        cards1_after = app._cards(1)
+        self.assertEqual([cards1_after[k][1] for k in boxes1], ["50", "50"])
+
     def test_solve_word_problem_still_only_displays_and_does_not_place_row(self):
         """D: Solve Word Problem still only displays results and does not place a row."""
         app = self.app

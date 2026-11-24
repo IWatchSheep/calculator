@@ -89,13 +89,20 @@ class Rows(unittest.TestCase):
             r, m = rows.get(key), library.get(key)
             self.assertEqual(r.KEY, key)
             self.assertEqual(r.LIBRARY_KEY, key)
-            blue = [t for t in generator.equation_plan(m.EQUATION, m.NUMBERS) if t[0] == "num"]       # what the picture draws in blue
-            self.assertEqual(r.BOX_INDEX, [t[2] for t in blue], key)
-            self.assertEqual([Fraction(d) for d in r.DEFAULTS], [Fraction(t[1].replace(",", "")) for t in blue], key)      # same value (the text may write 38.00 where the equation has 38)
+            spec = generator.EXPLICIT_ROW_SYNCHRONIZATION.get(key)
+            if spec and spec.get("already_boxed"):
+                self.assertEqual(r.BOX_INDEX, spec["box_index"], key)
+                self.assertEqual(r.DEFAULTS, spec["defaults"], key)
+                self.assertEqual(len(r.INPUTS), len(spec["inputs"]), key)
+                self.assertEqual(len(r.KINDS), len(spec.get("kinds", spec["defaults"])), key)
+            else:
+                blue = [t for t in generator.equation_plan(m.EQUATION, m.NUMBERS) if t[0] == "num"]       # what the picture draws in blue
+                self.assertEqual(r.BOX_INDEX, [t[2] for t in blue], key)
+                self.assertEqual([Fraction(d) for d in r.DEFAULTS], [Fraction(t[1].replace(",", "")) for t in blue], key)      # same value (the text may write 38.00 where the equation has 38)
+                self.assertEqual(len(r.INPUTS), len(blue), key)
+                self.assertEqual(len(r.KINDS), len(blue), key)
             self.assertEqual(r.DEFAULTS, [m.NUMBERS[i] for i in r.BOX_INDEX], key)
             self.assertEqual(len(set(r.BOX_INDEX)), len(r.BOX_INDEX), key)                          # a text number is in one box at most
-            self.assertEqual(len(r.INPUTS), len(blue), key)
-            self.assertEqual(len(r.KINDS), len(blue), key)
             if hasattr(r, "SLOTS"):
                 self.assertEqual(sum(1 for kind, _ in r.LEFT if kind == "box"), len(r.SLOTS), key)
                 self.assertEqual(set(r.SLOTS), set(range(len(r.DEFAULTS))), key)
@@ -187,11 +194,13 @@ class Rows(unittest.TestCase):
                     self.assertEqual(r.SLOTS, [0, 0, 1, 2, 3], key)
                     self.assertEqual(r.BOX_INDEX, [0, 1, 2, 3], key)
                     self.assertEqual(r.DEFAULTS, ["60", "15", "10", "3"], key)
-                elif key in ("mixture/0533", "mixture/0544", "mixture/0547", "mixture/0561", "mixture/0566"):
+                elif key in ("mixture/0533", "mixture/0534", "mixture/0544", "mixture/0547", "mixture/0561", "mixture/0566"):
                     self.assertEqual(r.SLOTS, [0, 0], key)
                     self.assertEqual(r.BOX_INDEX, [2], key)
                     if key == "mixture/0533":
                         self.assertEqual(r.DEFAULTS, ["100"], key)
+                    elif key == "mixture/0534":
+                        self.assertEqual(r.DEFAULTS, ["25"], key)
                     elif key in ("mixture/0544", "mixture/0566"):
                         self.assertEqual(r.DEFAULTS, ["20"], key)
                     elif key == "mixture/0547":

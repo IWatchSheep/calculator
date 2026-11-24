@@ -17,10 +17,11 @@ PATTERN = '0.25 x + 0.75 ( □ − x ) = 0.31 ( □ )  ->  answer □'
 # "ready"     = the boxes on the left feed compute() and the answer shows right of "="
 # "reference" = the problem and its steps are stored, but no solver answers it yet
 CALC = 'ready'
-INPUTS = ['number 1', 'number 3']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
-BOX_INDEX = [0, 2]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
-DEFAULTS = ['25', '25']    # the boxes' numbers as written in the stored problem
-KINDS = ['number', 'number']    # what to type in each box (see advanced_input.KINDS)
+INPUTS = ['number 3']    # what each box (left to right, as in the equation) is: which number of the problem text it holds
+BOX_INDEX = [2]    # the place of each box's number in the problem text (NUMBERS of the problem file); the other text numbers stay as written
+DEFAULTS = ['25']    # the boxes' numbers as written in the stored problem
+SLOTS = [0, 0]    # box cards to input slots: boxes 0 and 1 share slot 0 (total alloy mass)
+KINDS = ['number']    # what to type in each box (see advanced_input.KINDS)
 # ("box", "")  = small square box card      ("op", text) = operator card
 FRAC = [[], [], [], [], [], [], [], [], [], [], [], [], [], []]    # for each card of LEFT the fractions it is inside: (group, n = numerator on the row above | d = denominator on the row below | bar | hide = not drawn)
 LEVELS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    # the grid row of each card of LEFT: -1 = an exponent (one row up), +1 = a subscript (one row down), 0 = on the line
